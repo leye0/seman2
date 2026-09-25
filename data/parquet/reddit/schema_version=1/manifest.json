@@ -1,0 +1,2957 @@
+{
+  "dataset": "reddit",
+  "schema_version": 1,
+  "transformation_version": "1.0.0",
+  "created_at": "2026-09-24T18:33:26.778230+00:00",
+  "compression": "zstd",
+  "sources": [
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/000.parquet",
+      "bytes": 64586235,
+      "rows": 500000,
+      "sha256": "50947d565e4802745970e37cc69d6da490e5bb8b37f718432d6628e0b7dbfa53"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/001.parquet",
+      "bytes": 63836339,
+      "rows": 500000,
+      "sha256": "0fe5918f7a7b1cc71aea993ce4f239a7e74fab98e98821e403c6f6ef03fb4184"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/002.parquet",
+      "bytes": 64143370,
+      "rows": 500000,
+      "sha256": "a20c137f1029dcab156e780d6da5e27106b83cfd299a5802ad023346c1230e0f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/003.parquet",
+      "bytes": 62304671,
+      "rows": 500000,
+      "sha256": "b674156acf2a52e0e4aa3fd7e6c1dbaeba965e10d068be19315c27654c6090c3"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/004.parquet",
+      "bytes": 62580863,
+      "rows": 500000,
+      "sha256": "859c1500d48db62262c0edab47d19777e2ee77ee1ec45f323662af1ce5a40b2f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/005.parquet",
+      "bytes": 65276921,
+      "rows": 500000,
+      "sha256": "2b0e5927f3b5e818c67cecafd7669892f56bd98ad7dea79b4316d3c8b4a78e98"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/006.parquet",
+      "bytes": 65048463,
+      "rows": 500000,
+      "sha256": "f7f787fe2b209c0de630efb077027adcc6f96acb3f044ce135ac5c1fb4a59b5a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/007.parquet",
+      "bytes": 64751542,
+      "rows": 500000,
+      "sha256": "8f366293df969080abb09aa99fdc5f2b3bb7968fcce6ca211a2394e501a1bfd6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/008.parquet",
+      "bytes": 64141841,
+      "rows": 500000,
+      "sha256": "e80cb795d0beaaaf58e5d7e370e1f85310d4e4fc87c83e1cd4de0cc2566ce28c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/009.parquet",
+      "bytes": 62933571,
+      "rows": 500000,
+      "sha256": "ccca91c676c4851d245193150024a72d190f202afa0cd25c743cf98525a75f97"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/010.parquet",
+      "bytes": 66244271,
+      "rows": 500000,
+      "sha256": "d9bffebf1733c59737ad6b4c2eb1ac35c28b1c95b770cf80ee286345892b50c4"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/011.parquet",
+      "bytes": 65414261,
+      "rows": 500000,
+      "sha256": "44ea2a9f7446b1552e30949401e3e001326f2055ef5cdef23d6abc1fb1506559"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/012.parquet",
+      "bytes": 65816168,
+      "rows": 500000,
+      "sha256": "a484173abe8e5dd8a13155bb0102c68e0f32f39991bd0720691e569cff940d9c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/013.parquet",
+      "bytes": 64855633,
+      "rows": 500000,
+      "sha256": "07a371c382be9f4681473de67c91ff77105a8a58c72cbe1af1e0610c6b45d51d"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/014.parquet",
+      "bytes": 64162682,
+      "rows": 500000,
+      "sha256": "a130bcec70b79c1e2888503ec4fdecc58e6c50d4f3c21a006c74a521ebfd242c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/015.parquet",
+      "bytes": 66042167,
+      "rows": 500000,
+      "sha256": "72c07957ec8168c3e9c726916ca497d17f3168eee9e358e79211555d42f69cbd"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/016.parquet",
+      "bytes": 65610740,
+      "rows": 500000,
+      "sha256": "73d952f01ed38ae336f1c39d9f61f55c0d30c6677f3d8b246414ea1e566b13e8"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/017.parquet",
+      "bytes": 64916871,
+      "rows": 500000,
+      "sha256": "b387fbf5b2b74a11aadfa4856a9d21e0b09ce896be0f628f33fd03194c4c69fd"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/018.parquet",
+      "bytes": 64476131,
+      "rows": 500000,
+      "sha256": "2a6e7be0b6477ad15630717ada1cbedda480ec9499c9b83c4769ef5a359a8f03"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/019.parquet",
+      "bytes": 64424739,
+      "rows": 500000,
+      "sha256": "3963c58b54d636d5679597b06bc49a253e99a917118bd12466faf901993993ac"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/020.parquet",
+      "bytes": 65683141,
+      "rows": 500000,
+      "sha256": "cba8a7617d80a9a4edc5b985e3804f1038a4094327412bc11105e0804f846a37"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/021.parquet",
+      "bytes": 65209999,
+      "rows": 500000,
+      "sha256": "4e640df1d689237211cfdcc3f8e25bbf0752f3fe67eefd28607fd772fac8483f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/022.parquet",
+      "bytes": 66010402,
+      "rows": 500000,
+      "sha256": "bab21735e5866019bacf3755e08070299bcfd0e73d38834f363c2af747928d9a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/023.parquet",
+      "bytes": 63913986,
+      "rows": 500000,
+      "sha256": "0627245da995820e39f2d56ec87e340b259fe21840f2b11093db257a7575e518"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/submissions/2018/05/024.parquet",
+      "bytes": 10648161,
+      "rows": 79652,
+      "sha256": "53c8b3ddf0345d40738257435d6a121538fb2ef15997cc3efaccc329c4fcb135"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/000.parquet",
+      "bytes": 42157460,
+      "rows": 500000,
+      "sha256": "35a8dd15f04bb023f010d2bc2d07cbfd8a0f8b277a12f6a2d274c32940d683f1"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/001.parquet",
+      "bytes": 44971454,
+      "rows": 500000,
+      "sha256": "7ce99024250f30cb17865c8699fe6eb878d3d4e6fd7fed47f73e0ace4a6ed81c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/002.parquet",
+      "bytes": 46453737,
+      "rows": 500000,
+      "sha256": "92a933aca433c69f7783843f3c21f7c84ad7fb24fc00f3c0b5eadc0ce75be607"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/003.parquet",
+      "bytes": 48423275,
+      "rows": 500000,
+      "sha256": "4a44e461e663a6d202333b41c3822108388c44f1433e0ccc74c8769c95dbf2a7"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/004.parquet",
+      "bytes": 47878727,
+      "rows": 500000,
+      "sha256": "d1303effcb3eb09c077acfbd330d8012431baa55d0c46091d83db21a3ec2a19f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/005.parquet",
+      "bytes": 46285334,
+      "rows": 500000,
+      "sha256": "1a3f9c6989bf635ff4d8c8c06f6e6fbeca6d61bfc971bebbefa59935617f5d26"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/006.parquet",
+      "bytes": 44741103,
+      "rows": 500000,
+      "sha256": "b7f9b7616ca7afc7e24b24472140a4e6e38e8b6bc86e72e4cb97d4e316319b2b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/007.parquet",
+      "bytes": 41247525,
+      "rows": 500000,
+      "sha256": "98f3d17c45d9ea0f88b3db4ec057aaa4dcc5b5b2044e0e35c017fb1e6ca4be7a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/008.parquet",
+      "bytes": 46101662,
+      "rows": 500000,
+      "sha256": "6e8904c446faa4f26920cbdeb2e1111934f72b14e5b08fc736a4c505746835ba"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/009.parquet",
+      "bytes": 47362674,
+      "rows": 500000,
+      "sha256": "78ad4c84e16759b45ca203b6bc315327a24a06eff8601820db41a300652d8b7f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/010.parquet",
+      "bytes": 48465942,
+      "rows": 500000,
+      "sha256": "bfc0b7a10a5ca9143eceaf782d5e62ac382dbb9826f0b71649eb6ff6f7c0e6c6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/011.parquet",
+      "bytes": 47606455,
+      "rows": 500000,
+      "sha256": "39146572efdeda29f4a9a07760e819c25c9c845aed8c22d46818e2496a40b2b6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/012.parquet",
+      "bytes": 46429296,
+      "rows": 500000,
+      "sha256": "672b2dd372a1453db06ac5fe3366890ed3a34fc2bb2b3c7b62f7a56be302a933"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/013.parquet",
+      "bytes": 44518438,
+      "rows": 500000,
+      "sha256": "fe388014e694e65919659f89d9b9e664364b08fe1ccbd3a1b6339fdc49e21fc2"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/014.parquet",
+      "bytes": 42933171,
+      "rows": 500000,
+      "sha256": "1b0d24a95525bf816efecb9cf5a97505eeeefa017697fd079197f778bcdd7085"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/015.parquet",
+      "bytes": 46277211,
+      "rows": 500000,
+      "sha256": "e09ed580f6e551cee7668b1ac9dde0eafdf839630b46cf930386f306fc2f01e0"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/016.parquet",
+      "bytes": 47297041,
+      "rows": 500000,
+      "sha256": "6ea2b1afc907a5d863e2906d78a2c662657711b56afe2d04e17865420e4e4f42"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/017.parquet",
+      "bytes": 48075847,
+      "rows": 500000,
+      "sha256": "3f022af3149c82dfe66bfc955598759f5775ea4796041e9ade9e3da7ff8ae4ff"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/018.parquet",
+      "bytes": 47294189,
+      "rows": 500000,
+      "sha256": "5122e0a24831812ec30f7c6e354bd72e6b8a92e5ba6b9249958448e8d30431bf"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/019.parquet",
+      "bytes": 45823287,
+      "rows": 500000,
+      "sha256": "222c1dc5e5eb26112ecf7ba910419b3a86ddc0b501d1d688dada86fcb59179da"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/020.parquet",
+      "bytes": 42492733,
+      "rows": 500000,
+      "sha256": "7c54ab9b0fb77001ab794434d09a9683cff8694f8db8155b907485b6868b1afb"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/021.parquet",
+      "bytes": 42636474,
+      "rows": 500000,
+      "sha256": "95c7705a7c631622c9c53b457ea37982615c816c98ef4fc09bfa619f7efc8859"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/022.parquet",
+      "bytes": 46345350,
+      "rows": 500000,
+      "sha256": "5b21b92c178ff0d93669e636d3fc8fd68794ad8b4ebf8b471236f980607fbca2"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/023.parquet",
+      "bytes": 47152406,
+      "rows": 500000,
+      "sha256": "12ca03c864bcbd02e9cf9e623c2e6d65cee2851bf8258ecaf241fdd2462dd074"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/024.parquet",
+      "bytes": 47885154,
+      "rows": 500000,
+      "sha256": "1a00ce6a33a2f7d89c274fd0fd5925d6aaeb383c324304d373cd9e0883604b14"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/025.parquet",
+      "bytes": 47297574,
+      "rows": 500000,
+      "sha256": "7652669d8711977651ab213658a304dba406023994ec432ceee56410f227eadd"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/026.parquet",
+      "bytes": 45317293,
+      "rows": 500000,
+      "sha256": "7447af9baeb44eeaf27307270613c138a2fdbb260228f4e5851a9e743127c142"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/027.parquet",
+      "bytes": 41992744,
+      "rows": 500000,
+      "sha256": "e09c18096b8c458e7197bdcf861f5b810a5d7ee6489e029d7c066f778301ca4a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/028.parquet",
+      "bytes": 44559189,
+      "rows": 500000,
+      "sha256": "65f97c5c6efc03066422ce229605830eb4f23f1486899ec062473057b277afd9"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/029.parquet",
+      "bytes": 45302465,
+      "rows": 500000,
+      "sha256": "7d3c12829cb6561cc585d5a3d83f9f203f687989fa4f751744408843aad13e4d"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/030.parquet",
+      "bytes": 45060679,
+      "rows": 500000,
+      "sha256": "25643955017315759a9f04d346bd98d1d7ab2dcc2111ac9804fb15808a28be3d"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/031.parquet",
+      "bytes": 44291323,
+      "rows": 500000,
+      "sha256": "74dd7578d247cb67c43e724489e42d88ecd085c7d4c30d9cf8fc3bfc52dd07c5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/032.parquet",
+      "bytes": 41590225,
+      "rows": 500000,
+      "sha256": "fb676260340584c2fe764260a361fc0837432e9bcf3acd6e30ab45af7ba2d187"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/033.parquet",
+      "bytes": 41052599,
+      "rows": 500000,
+      "sha256": "4749c3bc9586bbc0ac7f7c7c8da99f06ad28a519b123a84743cfed4a485ef12f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/034.parquet",
+      "bytes": 45646299,
+      "rows": 500000,
+      "sha256": "988d8c27f92ba3356099c1423adcb88dd9bd87f80f52435755b3534c44d16055"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/035.parquet",
+      "bytes": 45612544,
+      "rows": 500000,
+      "sha256": "47645f1a7e9ec93061af6dc199d32427f338510861908f7e672c5b11ad856fa9"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/036.parquet",
+      "bytes": 44598617,
+      "rows": 500000,
+      "sha256": "b69cac73f8da6cff804050a2e9a987edf3e52ea143e5f1d92c789404effb0601"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/037.parquet",
+      "bytes": 43067407,
+      "rows": 500000,
+      "sha256": "ee2bb75c49f0959a4634f1d2f6ee4014e6b16826a90e2e60b3cb631152d444b7"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/038.parquet",
+      "bytes": 42588172,
+      "rows": 500000,
+      "sha256": "16ae768b281f1c090e6098fec992e6ddbed507d5cb915ccd544d9483f8b36481"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/039.parquet",
+      "bytes": 44728661,
+      "rows": 500000,
+      "sha256": "ea8414c499414abc5b4f34593b40c97ada28831f0104bea3b110c47e1981587e"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/040.parquet",
+      "bytes": 47156134,
+      "rows": 500000,
+      "sha256": "93e4f642d5bec5c672722a32e5019a6154fa73de9e05639daabc7f3d21bdad2c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/041.parquet",
+      "bytes": 48513240,
+      "rows": 500000,
+      "sha256": "ccdb01102a89a70b3511d8b8cd419d32bc198c9e505474ce114568be227b1280"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/042.parquet",
+      "bytes": 48439776,
+      "rows": 500000,
+      "sha256": "749094bf559f34459dfa7e7056872c13132fb5e33079981ad0c16c3ecc33234d"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/043.parquet",
+      "bytes": 47122882,
+      "rows": 500000,
+      "sha256": "bf584849856eb3a84a7907ca0794378c2d7d2eeb6804b4ecb2bd1084175a0422"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/044.parquet",
+      "bytes": 43863566,
+      "rows": 500000,
+      "sha256": "1543348660862709631d97c2dc195c5059a621646e6b6d27579311e04100da91"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/045.parquet",
+      "bytes": 42158090,
+      "rows": 500000,
+      "sha256": "f08c1ef3734d521bd65de2f83a3791427cc2179343b11e6b405a2952c8dfe399"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/046.parquet",
+      "bytes": 46635326,
+      "rows": 500000,
+      "sha256": "2d3fa8d8dd886b3587f4eee39a195fabc9b238baa63d739145cf76b25a1a8cfa"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/047.parquet",
+      "bytes": 47935626,
+      "rows": 500000,
+      "sha256": "42d444dfabe648902d217e01b33c7b8a360fbf6f77786675e146bafd49919c6c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/048.parquet",
+      "bytes": 48327467,
+      "rows": 500000,
+      "sha256": "d2e200a4b6b53d3d69b579615e60805f8ea7266d825069ebdb98d79f8d4d14dd"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/049.parquet",
+      "bytes": 47327712,
+      "rows": 500000,
+      "sha256": "5ccc397c5dd5c4028749862330bdcbf15450eff507422239f649cf75a389eaf2"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/050.parquet",
+      "bytes": 46476500,
+      "rows": 500000,
+      "sha256": "84dafb116b43250cea24bf153b3662d733faee1b8251c8d53e2a74b9d50eca46"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/051.parquet",
+      "bytes": 44632389,
+      "rows": 500000,
+      "sha256": "d7a7d208096f38bbdce969553635cc236cc984778faf668ed0593241008b0572"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/052.parquet",
+      "bytes": 43394996,
+      "rows": 500000,
+      "sha256": "82363e331048f0eefba963415c85899236fa3f6e7348d7214e1c10df81a081d4"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/053.parquet",
+      "bytes": 46936398,
+      "rows": 500000,
+      "sha256": "baab839d6eb0189b849c80ce70d795891a8b1fa140b6d613afdb490d6e1761b6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/054.parquet",
+      "bytes": 47629086,
+      "rows": 500000,
+      "sha256": "33f073c158ec3d25573c58d9acee4955694dd5eff62cce8f9d427964b3a17168"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/055.parquet",
+      "bytes": 48413562,
+      "rows": 500000,
+      "sha256": "9cadd6678a50684db1f6ed7392709ac72150cd43554a72bb770ba8bc1d4917be"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/056.parquet",
+      "bytes": 47642487,
+      "rows": 500000,
+      "sha256": "5d33d275c532d6afb6809447a337dbc7b80ee416f00a0172e0aa7e009bfaca17"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/057.parquet",
+      "bytes": 46413381,
+      "rows": 500000,
+      "sha256": "c73956acdf51e528409ec2a5e2a2a56fc5ca69bef3ba910ce1ce191b61a8c77f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/058.parquet",
+      "bytes": 44059968,
+      "rows": 500000,
+      "sha256": "28d553fad26c6fabc29f029eab90aa6cfa5dc035f7c230ba20750018de6dc7e3"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/059.parquet",
+      "bytes": 43332593,
+      "rows": 500000,
+      "sha256": "1c06c8f98366d228e1a15948ed1032544f0ab1acd83404b91e7f42d5c8f7644b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/060.parquet",
+      "bytes": 46696536,
+      "rows": 500000,
+      "sha256": "460b4aeb67f728871c2f978963df17de911a37972a240d3fb0e5ee61cac94c22"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/061.parquet",
+      "bytes": 47917708,
+      "rows": 500000,
+      "sha256": "186587f0199116e2facda05e4661869fbc51151d3a99c631b56d19bd1b3596ae"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/062.parquet",
+      "bytes": 47840027,
+      "rows": 500000,
+      "sha256": "db555244cb7543007afb49cba4a204a26ea151d1a430bb22d3a14b807545c547"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/063.parquet",
+      "bytes": 46882600,
+      "rows": 500000,
+      "sha256": "feabd207c20d43f2f8b1999d7f6e8f3c7d0033f98b60a1f360d87d8e9a7c4f2f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/064.parquet",
+      "bytes": 45801569,
+      "rows": 500000,
+      "sha256": "c60f50e95b54be47655ad5da4cdb61495449abebeeaeb3ce67009a409e96ab4b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/065.parquet",
+      "bytes": 42602249,
+      "rows": 500000,
+      "sha256": "1e1481aba80f5587f43472e7583a1cb31c47abfb6e83bd5aa1bcf78e316e14f5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/066.parquet",
+      "bytes": 45720249,
+      "rows": 500000,
+      "sha256": "fe509073ea6230c9be2c447ea9c946a9386826d76bc7fcf2d2f61e4110476414"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/067.parquet",
+      "bytes": 46708336,
+      "rows": 500000,
+      "sha256": "d03fa2d6e15f9921a26c8bdbffbd0445d6b38d1963e2f1569199b898706a3fd2"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/068.parquet",
+      "bytes": 47608098,
+      "rows": 500000,
+      "sha256": "76cea1bd3be34e52746381de65f1e3bde61ade84c898e5fe33bea6ceebcebeb0"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/069.parquet",
+      "bytes": 47547549,
+      "rows": 500000,
+      "sha256": "6df5c8cfc4150585319b50dd56cd3e93fc1fad29bbac2b4ad0666fd6c4c93f25"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/070.parquet",
+      "bytes": 46252468,
+      "rows": 500000,
+      "sha256": "48776f03d2b6a1fea9530e8acd7424acf6a1d139bc8c2522efc38e35d5c4ee5b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/071.parquet",
+      "bytes": 43923451,
+      "rows": 500000,
+      "sha256": "349005a4aeaab779ae256b9efb7b489214faa76f19e2e6c5d4a59ee7f4b1eef4"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/072.parquet",
+      "bytes": 43187318,
+      "rows": 500000,
+      "sha256": "e1ce9ee7f84c7da84e6c42d489a4a409c3cd6988cc08d0bc50e03191b90161cb"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/073.parquet",
+      "bytes": 45084223,
+      "rows": 500000,
+      "sha256": "78169f76c3b5839edbc11a11c72db6c52717259cce97e49256fb268977922700"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/074.parquet",
+      "bytes": 44550249,
+      "rows": 500000,
+      "sha256": "044f4b235fa6aae0ec9f0d4c0c10d3877b9cc6cff45124e442528afffd94d8f7"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/075.parquet",
+      "bytes": 44353312,
+      "rows": 500000,
+      "sha256": "5a58365251164920be761a4b5c458bcccc2b895fe93b0b7d1d31a35870c0aba6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/076.parquet",
+      "bytes": 41843724,
+      "rows": 500000,
+      "sha256": "cf6b70092673c5ce4886e810e7f60357cf24636a01d47261ab1df00455ce53eb"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/077.parquet",
+      "bytes": 42053165,
+      "rows": 500000,
+      "sha256": "30060bb0d5a087a2c2eb44ccc54dae0d64c0c3c6e20e6f855f3ea1353ab6c988"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/078.parquet",
+      "bytes": 43582842,
+      "rows": 500000,
+      "sha256": "d7c7e781e2b5fe29eb92ee72ec96daec9441158893219d903054fc198b074820"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/079.parquet",
+      "bytes": 45089957,
+      "rows": 500000,
+      "sha256": "bc054a99a99828e7301801f681b606d551b3a2dba9e5052006dd91265097dc41"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/080.parquet",
+      "bytes": 44090690,
+      "rows": 500000,
+      "sha256": "09ad26d098eb4e0ae495d8cc773ffe37c0109b022f96de75c81f9ddbee2bed73"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/081.parquet",
+      "bytes": 43907719,
+      "rows": 500000,
+      "sha256": "d78324673a95cf4b05fd8243607eedaea33194955103a5aaa5cc8e70c1db068b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/082.parquet",
+      "bytes": 43542863,
+      "rows": 500000,
+      "sha256": "c841743364f4d0cbe1aebc30d7bbe512f0157fe0567963514acc6d13056db969"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/083.parquet",
+      "bytes": 43423944,
+      "rows": 500000,
+      "sha256": "98cf38fbd79e798d470a4b299211d292d70e3f994cb07c2b1011b56b74155053"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/084.parquet",
+      "bytes": 46114606,
+      "rows": 500000,
+      "sha256": "b331def2b27b0e25bd2fdc5099d948e3390a1caacd850c215e6f07806001e1a6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/085.parquet",
+      "bytes": 46687032,
+      "rows": 500000,
+      "sha256": "62886731019ed9c268d5d7b613e3b228b748784f7a5f2a6e5f9684d27a0f96c1"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/086.parquet",
+      "bytes": 48689559,
+      "rows": 500000,
+      "sha256": "90900aab018a907e8750bd173d06a4c51e0b63d01352294146ad7a4f192c9097"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/087.parquet",
+      "bytes": 48233120,
+      "rows": 500000,
+      "sha256": "26570f388ae046565af69a1b7f66f2e5fc15d50e3ebfb6a6c8257a7d0cb2be42"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/088.parquet",
+      "bytes": 47367841,
+      "rows": 500000,
+      "sha256": "8f5e6ba170e2f355e2d5356fb90d99012d6dec868cb2e6680ec1d3ca2e7cdcb5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/089.parquet",
+      "bytes": 45081915,
+      "rows": 500000,
+      "sha256": "39b7cb728411b0b9967d579f37bdcf77ef4860c4441342329ca8f9310a9888ad"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/090.parquet",
+      "bytes": 43006547,
+      "rows": 500000,
+      "sha256": "28dce4e9ec861c4d3136629b074ed79fec3d4d2b52876f9d54988ca8c4f268b8"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/091.parquet",
+      "bytes": 47110435,
+      "rows": 500000,
+      "sha256": "4801388878045acc34c124a1aa0f7b79f63edb70d76027e05e756d7dca060298"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/092.parquet",
+      "bytes": 47507725,
+      "rows": 500000,
+      "sha256": "fb90200c561e9de046d3bfdd9b5fc375d2a4db9295740cb092818c66c35bd748"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/093.parquet",
+      "bytes": 48283969,
+      "rows": 500000,
+      "sha256": "beabbc275d9ee844550b57c9b9a2f1278ae707b8d522b3832abc1e35cbdfa9c6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/094.parquet",
+      "bytes": 47977149,
+      "rows": 500000,
+      "sha256": "322dfd64ef10cd137bebe357b9578a176c2afc281a9f2cede3cac997ff6964e0"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/095.parquet",
+      "bytes": 46318471,
+      "rows": 500000,
+      "sha256": "b75c3bcff63372fad9c4ce2255b52d4bd0b1c379b68fac1b8e91289edaef305d"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/096.parquet",
+      "bytes": 42599837,
+      "rows": 500000,
+      "sha256": "0ac70dc52533009ca94a5f727dd683e78e15c986392cd6c02e395a5f0afd0da0"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/097.parquet",
+      "bytes": 43090430,
+      "rows": 500000,
+      "sha256": "7c1238a57fb2fb6aa05c99ee7760bb097a4e35ec360e191bfdf9d6cbe7fa0210"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/098.parquet",
+      "bytes": 47272170,
+      "rows": 500000,
+      "sha256": "41bff46785a09d03dc2ee7701ce50fa6b6a91e55d4dd80447f83e66fdae405a4"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/099.parquet",
+      "bytes": 47826182,
+      "rows": 500000,
+      "sha256": "f665d4ffc7f851e74fc3ca656387df131bc4913e3f244890d98de8f96f83552c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/100.parquet",
+      "bytes": 48637104,
+      "rows": 500000,
+      "sha256": "dded626198a3fcced6fef57a2d1bacb8e8a3fb9d7dfc74e1abd9582ffe9580cf"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/101.parquet",
+      "bytes": 47992531,
+      "rows": 500000,
+      "sha256": "1582525f18985f7b6392a9ef24c4648a545ec00b6ab6a8ed92d61d51e11525b1"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/102.parquet",
+      "bytes": 46651298,
+      "rows": 500000,
+      "sha256": "e94cdfd60dae46a7cd4518b8666accebf156a49462966fd5b20280a1e8dfd4e5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/103.parquet",
+      "bytes": 43446171,
+      "rows": 500000,
+      "sha256": "41dcfca8a91fce79f924d4465e4a48f24592f4c6fbd4e6655ebf5001f42e982c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/104.parquet",
+      "bytes": 43849524,
+      "rows": 500000,
+      "sha256": "08cff56e096649f9bd974b32556395c868e68ea9dba67aca288c62a5900d5c3e"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/105.parquet",
+      "bytes": 47494069,
+      "rows": 500000,
+      "sha256": "6693957af199f880a36aa7858cf954c8cbfee0190266458637ff28d454234ec5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/106.parquet",
+      "bytes": 48260198,
+      "rows": 500000,
+      "sha256": "04d9e6abfbc041d6fbce24e531f83eea6f9dd49145b4a591e160ea484d8e4fcd"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/107.parquet",
+      "bytes": 48230462,
+      "rows": 500000,
+      "sha256": "903506691d510f34090cf812c6748cf2e675f9df1d0f484893d80e9928179e1f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/108.parquet",
+      "bytes": 47534597,
+      "rows": 500000,
+      "sha256": "6935de94cc70f89cdc09e48900e42267e0a3fb0269c07b6653072ac101201acb"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/109.parquet",
+      "bytes": 46072381,
+      "rows": 500000,
+      "sha256": "ff3a8c39f4fb3156c53c6a5f989a080093718ff61e5ed5388240fd45f1299585"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/110.parquet",
+      "bytes": 43448819,
+      "rows": 500000,
+      "sha256": "235b3297ba5b1cd1e764bff0323acf86b1ab7511aa14320d3e347f43e383e8f8"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/111.parquet",
+      "bytes": 45175609,
+      "rows": 500000,
+      "sha256": "86d7cc5cf6c25e7e77235fbe8bf92e114fd1b87e1db60d9b847cf10c3c8ed418"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/112.parquet",
+      "bytes": 46607321,
+      "rows": 500000,
+      "sha256": "19325265b30c23b04c50bd2e282083fe749136192c9a95d0f771318f43c2c30e"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/113.parquet",
+      "bytes": 47762879,
+      "rows": 500000,
+      "sha256": "cfe02259d312c74115837f4e5d1d49bd031005ed91380c5b7caf5720fbeb7b7f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/114.parquet",
+      "bytes": 47450819,
+      "rows": 500000,
+      "sha256": "f520367d917451acab76c5761ec807bc5c8dd5baaab2c5477aadc7378edf9688"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/115.parquet",
+      "bytes": 46703781,
+      "rows": 500000,
+      "sha256": "942a77c2b57edfbfb31b0baee889e553b96d8e4e5351b92d0099687365027a20"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/116.parquet",
+      "bytes": 44373986,
+      "rows": 500000,
+      "sha256": "03e58cfaf03c45e154b7375b89370ed0d2ae859478ff871d9507b014cd6132ae"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/117.parquet",
+      "bytes": 43891986,
+      "rows": 500000,
+      "sha256": "4b12e8af4a238063c42e7bbb5c4295886f89109e152811a87e81d366898b252c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/118.parquet",
+      "bytes": 45041068,
+      "rows": 500000,
+      "sha256": "bca89a4e21c50f1c400065156d626b761c4fa5196667591fb4991011274a73ca"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/119.parquet",
+      "bytes": 45362300,
+      "rows": 500000,
+      "sha256": "ba014f461fa90b97801404a3fa734fdfc5596f000f2436c2b3dee27b7b9c200b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/120.parquet",
+      "bytes": 44393232,
+      "rows": 500000,
+      "sha256": "74ed0eebe481d396c71070c12bb3b2a948d8139173c7cb26e7fa521e9cf9d4f2"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/121.parquet",
+      "bytes": 44143167,
+      "rows": 500000,
+      "sha256": "31eff9891bccd8b33a44ab2ad1ba71484ec4e5356f7014dd0f837f80e5209b48"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/122.parquet",
+      "bytes": 42177932,
+      "rows": 500000,
+      "sha256": "c9fafa3241927eef26476aea1f06476da63ffb4b9dbadf3d5cb82bfc21688df8"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/123.parquet",
+      "bytes": 44358276,
+      "rows": 500000,
+      "sha256": "4bf7070d4b5185ba8b94b29cb4e02c9dddf7e715a83c840eb0a56ea99f31ec93"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/124.parquet",
+      "bytes": 46235375,
+      "rows": 500000,
+      "sha256": "b5c3bbe86b10d50862bfe3231279a3a44297be9d1bfffd4ce13a302294f31f6c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/125.parquet",
+      "bytes": 45748416,
+      "rows": 500000,
+      "sha256": "0fddcc2d9b9626c40011a0e21437768b96894efa5b7183c890fcbe5ea43976cb"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/126.parquet",
+      "bytes": 44469128,
+      "rows": 500000,
+      "sha256": "ee634e8bd5d276452565237d7f6962a03d65e133f25f6344e59d17e0ef0448b0"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/127.parquet",
+      "bytes": 44070751,
+      "rows": 500000,
+      "sha256": "349eb5221a840d3dacd7d2b26708a6d493d15c8893648b8d62b3f5908d485f7f"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/128.parquet",
+      "bytes": 43597637,
+      "rows": 500000,
+      "sha256": "2bcef27ad86ad496e0c508dc0b60dbafe7bd345f306a86b70ed5c0ebe7f9ea8b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/129.parquet",
+      "bytes": 47014493,
+      "rows": 500000,
+      "sha256": "c7865d5d356fefd3bdc58142abb9634234cc0cd0b3b232588129b4f0b47e4c23"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/130.parquet",
+      "bytes": 47869164,
+      "rows": 500000,
+      "sha256": "6661f23e10a5a230fcae71bad55babb89b216aa07cd44187aab78454725c4151"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/131.parquet",
+      "bytes": 48855456,
+      "rows": 500000,
+      "sha256": "66a531aa2a6f5ec4931852637818a1ef78591d230228b0b7beda4b32eb7037d3"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/132.parquet",
+      "bytes": 48835576,
+      "rows": 500000,
+      "sha256": "e1339530cc8f21c241432b1ecee1f143f6fcd57a6e1df52b76cebe9f250b6f8a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/133.parquet",
+      "bytes": 47400213,
+      "rows": 500000,
+      "sha256": "52139adc2859a299672118dc1bc601a255876b5e460a9ca8d476fd82788cba55"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/134.parquet",
+      "bytes": 42822277,
+      "rows": 500000,
+      "sha256": "9da5c6e9975de2e7214522bcdd934407fe301cdb08bb995f4124ec7fb70cb27c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/135.parquet",
+      "bytes": 45375604,
+      "rows": 500000,
+      "sha256": "efc71cf405023161af27901f93e441c49496c443cda12db3de13210023f504da"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/136.parquet",
+      "bytes": 47784617,
+      "rows": 500000,
+      "sha256": "6565d1521d8de9ffd3ebb358e5b468acf209d55d88756ae4404a5f95095617e3"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/137.parquet",
+      "bytes": 48734361,
+      "rows": 500000,
+      "sha256": "58117a0e38e116d9c8bbc5fe3f5c790ed855e7281640d5b176e32f0d0b7a9348"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/138.parquet",
+      "bytes": 48680632,
+      "rows": 500000,
+      "sha256": "c9199b66b71690d1a11db94029157c5ae2d4958efd6c334506cf98e95c50abde"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/139.parquet",
+      "bytes": 47623922,
+      "rows": 500000,
+      "sha256": "ffb81c6a5dfaeea78b3bbe00fc2f2ec936b1d3c16ea93380933666089f858ba8"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/140.parquet",
+      "bytes": 45739372,
+      "rows": 500000,
+      "sha256": "e71b42054010e51be6c8ab9532e3f3f11c5434e86194c86adcd47727be0612d4"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/141.parquet",
+      "bytes": 41729074,
+      "rows": 500000,
+      "sha256": "8a0cfc20d2107aa9f4efbe75f43b61fb200c28bbc08012bb37ea95d19b0ff29d"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/142.parquet",
+      "bytes": 45320826,
+      "rows": 500000,
+      "sha256": "071c0159456091da2737f61eb8804a6a446baf375cb59e953a8147a9200eb74c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/143.parquet",
+      "bytes": 47520745,
+      "rows": 500000,
+      "sha256": "957dcbda5db52697b7e025be546ac525a2ff41200f6edf4d85ab0db767434f9c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/144.parquet",
+      "bytes": 48409281,
+      "rows": 500000,
+      "sha256": "760ead9787ee454b0a6d2f93fc6f6f2925d420919f61b4232c166ecbed349126"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/145.parquet",
+      "bytes": 48033370,
+      "rows": 500000,
+      "sha256": "8f80ca6f235d126203998f5cfa8d391e894f057c11502a46b860cedf144ec8c1"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/146.parquet",
+      "bytes": 47071629,
+      "rows": 500000,
+      "sha256": "edb1d54aba5d8696f2ca933b432f6c22a9237685d83754058c02d7d926929018"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/147.parquet",
+      "bytes": 45256681,
+      "rows": 500000,
+      "sha256": "7ca399cbb133d9b331650db2a04af5fa9df18db9280ce207cbbd2c89234bfa55"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/148.parquet",
+      "bytes": 41039890,
+      "rows": 500000,
+      "sha256": "e5a8aad1c0e136ff772f1ab77baa0bcaa92f0bc0177994cedc37ddc460627208"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/149.parquet",
+      "bytes": 45622585,
+      "rows": 500000,
+      "sha256": "432ebb712780eb4f61e1be96ca391b8b5f79ac44f983f71cc288823250b18fc2"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/150.parquet",
+      "bytes": 47108386,
+      "rows": 500000,
+      "sha256": "2ffb98a14a0076537e1c200ca41ef082109a6a7c042c48fc6febca0a374e1b7b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/151.parquet",
+      "bytes": 47895674,
+      "rows": 500000,
+      "sha256": "ebf5efea83c4e0598d5fa4d7880c138d15b91b86b3429e0509bae812673e5749"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/152.parquet",
+      "bytes": 47833290,
+      "rows": 500000,
+      "sha256": "840081647977602ada52efedca73dfa458ff61ec92667be33abfdaac15527dfb"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/153.parquet",
+      "bytes": 46920644,
+      "rows": 500000,
+      "sha256": "283dbd66e33b7eae3e3f0353ad47d65c23f91cfbcd55d1a4d480a090237df601"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/154.parquet",
+      "bytes": 45086261,
+      "rows": 500000,
+      "sha256": "18fff03789444ec2b4d81100fd6075d32ede215d232b10a0d3cbcd8870d77b0e"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/155.parquet",
+      "bytes": 41875561,
+      "rows": 500000,
+      "sha256": "7a50db58f8aa7e9493e3aaef47209a9e7823489b71197e50dbc2ff7b88cfeb61"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/156.parquet",
+      "bytes": 46092708,
+      "rows": 500000,
+      "sha256": "25153e7e01ef3e55f1fe2ba865e495c012fa58db4f43400d4ae62f9b07db69b5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/157.parquet",
+      "bytes": 46914968,
+      "rows": 500000,
+      "sha256": "9395fa7ea927c0d88ead8c7173fd95a2bbf662bc9ef5a7438321337ab53f7f81"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/158.parquet",
+      "bytes": 48200141,
+      "rows": 500000,
+      "sha256": "35baa8af369c7697a03326d1da258ed4f21db7c590527fa1d98f03afd390fcb7"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/159.parquet",
+      "bytes": 47581559,
+      "rows": 500000,
+      "sha256": "bb6c10cb3b9dbeb2e115769436af9e0819f735fe230e624c2b8701abcbd85c07"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/160.parquet",
+      "bytes": 46002075,
+      "rows": 500000,
+      "sha256": "9e33fcda3c7eef93494031cea1a3ba7aca2c116f797abd585b17a57abfcf65ea"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/161.parquet",
+      "bytes": 42458971,
+      "rows": 500000,
+      "sha256": "81d38be98ddc9b5f368fdabe70855b3253d6c8c1ec2e1d51119062e4fbe03f27"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/162.parquet",
+      "bytes": 43104229,
+      "rows": 500000,
+      "sha256": "b0fe4971fced2757aa645940ccae71b276002b5d4d163a92e8407806a5d4dfc3"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/163.parquet",
+      "bytes": 45241047,
+      "rows": 500000,
+      "sha256": "77fb82fc540d7a0e4b0ae861bebff624a573c97c1a5b740e81ae8cc632ae7ae8"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/164.parquet",
+      "bytes": 45341624,
+      "rows": 500000,
+      "sha256": "94d732a05be8dfab3a22ee8ccd6fff4ed08058888f16763b1195ab3729712a7b"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/165.parquet",
+      "bytes": 42327494,
+      "rows": 500000,
+      "sha256": "2b4810f392b14b30474b0e21a0fce47930d55f10414533ddca2013b5a5c89658"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/166.parquet",
+      "bytes": 42745092,
+      "rows": 500000,
+      "sha256": "5f388549ac2c1456981fbb1fa62b92124a6a7052d296dfcac161115efe83c510"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/167.parquet",
+      "bytes": 41172355,
+      "rows": 500000,
+      "sha256": "3e2e9a135b22806f3ec3e0db5040e151fc33c4a0546696b0829e543b270188ec"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/168.parquet",
+      "bytes": 44544852,
+      "rows": 500000,
+      "sha256": "c157955003ba2b4f7a57a0bbf537d4c21452c818a1f41a9b41a349fb76653b18"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/169.parquet",
+      "bytes": 45081982,
+      "rows": 500000,
+      "sha256": "1955280c58f9fa2fc94d446e6555f8d5c2c74186e027f8b68f10bb4900cafc59"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/170.parquet",
+      "bytes": 44671907,
+      "rows": 500000,
+      "sha256": "5f35ae4fc1dc840c5c422f57249dad1e3282c774ee06b91eb13509dea37512c5"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/171.parquet",
+      "bytes": 44303756,
+      "rows": 500000,
+      "sha256": "8155e1060ffc4f582bd43796a1cf37983abef9242e10455572f7cde316051847"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/172.parquet",
+      "bytes": 43967443,
+      "rows": 500000,
+      "sha256": "be92d98c20742bd94379a66477bbfa8bf672a3d3b061263a0191f68fa9df2bbc"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/173.parquet",
+      "bytes": 40120220,
+      "rows": 500000,
+      "sha256": "89e9593ed739e37a27abff1e085acf03ee6bb65e98fa6d0156f88e11acf34181"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/174.parquet",
+      "bytes": 45142764,
+      "rows": 500000,
+      "sha256": "43cc9099bf7a7c0b3a9861a8b9587c557aa24d9fd96d3158f02c1f0b310b2ed6"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/175.parquet",
+      "bytes": 47157266,
+      "rows": 500000,
+      "sha256": "b829ed3337e62faadc8442e40d8cba42cbfd250b2c22d3f7f84ba246349c199a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/176.parquet",
+      "bytes": 47189775,
+      "rows": 500000,
+      "sha256": "b0a6d76145456594d7f3c0b0adca5cc9df1e01479734cc207ebb45d56955444e"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/177.parquet",
+      "bytes": 45867281,
+      "rows": 500000,
+      "sha256": "de836f4231c990bcf8fc6b92c69be6f9d4223f54e3231c2a1482d24aea5e0634"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/178.parquet",
+      "bytes": 45208167,
+      "rows": 500000,
+      "sha256": "bd9227ede6f46f7cd7538fe51e63ddebffc3bf2572c95589f185dfe7e8df24a7"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/179.parquet",
+      "bytes": 40878499,
+      "rows": 500000,
+      "sha256": "0fda440a17c61bd7b90e95f07d2faf82a3af078b9102d990f489eff79fe4c571"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/180.parquet",
+      "bytes": 41611590,
+      "rows": 500000,
+      "sha256": "249d1a392d52389384843d26ef68d2d73216cf5c25ddae4ef51fd1aa8cbf4d34"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/181.parquet",
+      "bytes": 47109755,
+      "rows": 500000,
+      "sha256": "c122d9abc246e454dabf31bf58aeee4e51f199f2b041c6a422eecb60ccd1b47c"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/182.parquet",
+      "bytes": 48054742,
+      "rows": 500000,
+      "sha256": "fb7a8c7447c5d987f3604b5917af7c842df120370cca45a3e378fe89f0013009"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/183.parquet",
+      "bytes": 48055786,
+      "rows": 500000,
+      "sha256": "f30caa9c7400b2287137de40198a839ac7cce3b05cb3651da95a9b4bf2b91f04"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/184.parquet",
+      "bytes": 47824250,
+      "rows": 500000,
+      "sha256": "01e3d787df5903a2f0dea17883c2fd831bed57d6f28e727e004be6b99a1bb0dc"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/185.parquet",
+      "bytes": 46576512,
+      "rows": 500000,
+      "sha256": "be165178ba72882790a92d0cd52fddb62b7b2d2ff29286c6ccd39960722ace84"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/186.parquet",
+      "bytes": 43701281,
+      "rows": 500000,
+      "sha256": "3ba7bb7bb4a6e878ae1595c202e1101c6b6facccc443b313a35c3a403d1bf05a"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/187.parquet",
+      "bytes": 44107574,
+      "rows": 500000,
+      "sha256": "e9e58ef412b7952801c68b9f586eb6abf69a04ed74da16ae631d06a4e56acdc0"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/188.parquet",
+      "bytes": 47356115,
+      "rows": 500000,
+      "sha256": "9c0cc79a4b819b0b4c32f0907600ddcc795beb8f191c8f4893557ff84f1b5918"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/189.parquet",
+      "bytes": 47692192,
+      "rows": 500000,
+      "sha256": "cde6c7237b351ac6d144c05315454644658b02cc6ed51c57a468c3e31b1f5969"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/190.parquet",
+      "bytes": 48136778,
+      "rows": 500000,
+      "sha256": "d62c78722be9697d5480c02448f6f043dc53a958db4a75fb8afc9f8e3be55043"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/191.parquet",
+      "bytes": 47944885,
+      "rows": 500000,
+      "sha256": "d9258cfbb1fce4d6005574c4c26fc406e097e23254877f3cd325cdfcc5c25604"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/192.parquet",
+      "bytes": 46907141,
+      "rows": 500000,
+      "sha256": "65c3f9e776fdc1b4ed0e8b41a58984699c850e17dbca8f91b6bd8fab92727909"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/193.parquet",
+      "bytes": 43388976,
+      "rows": 500000,
+      "sha256": "dc441f3e69714f99f6f955d674167064e1df3ac3753bdaa53628e742e3c46c25"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/194.parquet",
+      "bytes": 44466564,
+      "rows": 500000,
+      "sha256": "934f2984674301183e80d72b864be5c6a5fcf50a3709ef4711b4c251822bdd73"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/195.parquet",
+      "bytes": 46707097,
+      "rows": 500000,
+      "sha256": "ff6ea77dde00c21a34725a3fd8e8adcf2533b555134c8f1d73bb2c4a70bf81fa"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/196.parquet",
+      "bytes": 47974690,
+      "rows": 500000,
+      "sha256": "6d991db95abe5e04be15d2a1a0f593c10cd7eb9809f136a3fa1a53cb2eb40f02"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/197.parquet",
+      "bytes": 48457494,
+      "rows": 500000,
+      "sha256": "78ef2e4c1dda22fa1f2bfb158074148c3d6bad94964a2917cd703d5aa26b5860"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/198.parquet",
+      "bytes": 47638775,
+      "rows": 500000,
+      "sha256": "d5034d9999e57ed37fa863049d153e25db235d468a1c8ff2dcad90e643f2f04e"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/199.parquet",
+      "bytes": 46268259,
+      "rows": 500000,
+      "sha256": "f59ebe16070728e1ac514a4d4a2364958da7fe46a7305846fe579ecd6bd55535"
+    },
+    {
+      "file": "data/reddit-arctic-2018-05/data/comments/2018/05/200.parquet",
+      "bytes": 9727003,
+      "rows": 109100,
+      "sha256": "6abeaa0a9ca0941cb923ce917296fdaa47408bed61c0ff7053c86789934144ff"
+    }
+  ],
+  "outputs": [
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-000.parquet",
+      "bytes": 65507224,
+      "rows": 500000,
+      "sha256": "ce74c177c6b9f8a00369e9bce849455a38934fb15ec21003c6d068bfdf42c7e0"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-001.parquet",
+      "bytes": 64782159,
+      "rows": 500000,
+      "sha256": "2241e911351abddb665df647d2cae689bf35167c99f976aa0de2fb6f0bbd2db8"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-002.parquet",
+      "bytes": 65450858,
+      "rows": 500000,
+      "sha256": "20dbf37c9b7d541d2590aa97b10549dfa53857b328a890a286d49c456c34c13a"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-003.parquet",
+      "bytes": 63441935,
+      "rows": 500000,
+      "sha256": "fa84fd9b09f084244b3831bfc6d18fc329018fe1a5eac89b0210ef5384b67b73"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-004.parquet",
+      "bytes": 63328591,
+      "rows": 500000,
+      "sha256": "289adcf9e6aef9f0de7f931e0fb2ce532dde0ec862197d06764f9c370889e0b7"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-005.parquet",
+      "bytes": 66152771,
+      "rows": 500000,
+      "sha256": "906f5a7cc598caae0587e7e48eaa723a282cc0ad463813ec15e67f225949fdd9"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-006.parquet",
+      "bytes": 65954148,
+      "rows": 500000,
+      "sha256": "46b2959149860ee77e3c4e9752b9d5a992f6b5d0a2f3aee283ea40ae90e6d2a2"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-007.parquet",
+      "bytes": 65662644,
+      "rows": 500000,
+      "sha256": "4a069ef03cdfba79ad6064dddc5a41550f22c17e5e564feb54fea11858443136"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-008.parquet",
+      "bytes": 65072532,
+      "rows": 500000,
+      "sha256": "8f9b6d5d7ddced9a21812a484520a486031b06cc48cbe5f4d6f5f2f1971df1a1"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-009.parquet",
+      "bytes": 63761263,
+      "rows": 500000,
+      "sha256": "f505acf9aa594b7248824f0a92d70284d4d0dc12f6558886a3de6e38f6d1e4dc"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-010.parquet",
+      "bytes": 67179653,
+      "rows": 500000,
+      "sha256": "9f6646b3077eb1cd42f2a22c5cab2914b2ff20272b2184b40e827c2e145d3790"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-011.parquet",
+      "bytes": 66603947,
+      "rows": 500000,
+      "sha256": "83777c93a91347e5b2d7f3313a4354cf07300d0b20077987746fc60173c319ff"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-012.parquet",
+      "bytes": 66697997,
+      "rows": 500000,
+      "sha256": "6b8e57d46d848a54240029988094160dd115fc91a35cbdebb509a3f2c7db7b08"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-013.parquet",
+      "bytes": 65815766,
+      "rows": 500000,
+      "sha256": "d57e656e54564a3d34e6f70fa8c261c516f0c191dfe9319ed8a773c80b963e96"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-014.parquet",
+      "bytes": 65081027,
+      "rows": 500000,
+      "sha256": "986941cd6056d6bbe4db22fd2794d4156fcfb61ad2820dae238e2344c648f42a"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-015.parquet",
+      "bytes": 67116174,
+      "rows": 500000,
+      "sha256": "c3eabd371ab6a2c35065504277f782bfaa89c699f4f0b1b85e1b61776e7d7d4c"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-016.parquet",
+      "bytes": 66512398,
+      "rows": 500000,
+      "sha256": "320e97bef063d835c10b319f326e9be43bc7a77afd3a765165c19a84e0efb742"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-017.parquet",
+      "bytes": 65904594,
+      "rows": 500000,
+      "sha256": "ab28474dbd960a4f1cd126b2ed73c6022f7e0998e76a100b6c4de8fec161849c"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-018.parquet",
+      "bytes": 65453941,
+      "rows": 500000,
+      "sha256": "8b496f6d7e0c121773b30ca8f0d90076021d5a0689938f348491d397b362dc13"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-019.parquet",
+      "bytes": 65387930,
+      "rows": 500000,
+      "sha256": "149b8e5a9adc3c02f6545fccb267f3d34bf9071e6a753a2c34959f58cffde114"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-020.parquet",
+      "bytes": 66820957,
+      "rows": 500000,
+      "sha256": "f5a42b2067dfcbc80001bf0f44d85a8dd7a84023b1598036154ebbf2fa499773"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-021.parquet",
+      "bytes": 66134841,
+      "rows": 500000,
+      "sha256": "81c72b3ab0fbf6a3145f3919834ff121e8d2f08f0e4c9014fe23fdcca22ee2a5"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-022.parquet",
+      "bytes": 66907664,
+      "rows": 500000,
+      "sha256": "cc2c37228725f04fc77b90f56fcd50aa1b5be0d6b0d0ae7bec6dfa937ca6fd53"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-023.parquet",
+      "bytes": 64820901,
+      "rows": 500000,
+      "sha256": "bf3a973cd4c0b994d8a74129345f90d0611cb1ad093625fda06681e98aac102c"
+    },
+    {
+      "table": "submissions",
+      "file": "data/parquet/reddit/schema_version=1/submissions/part-024.parquet",
+      "bytes": 10766059,
+      "rows": 79652,
+      "sha256": "d834a49422fd61e5cbf7a7c87ffa7ccd5d144f8a7f3896c6691cc6e29035a2c1"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-000.parquet",
+      "bytes": 44940517,
+      "rows": 500000,
+      "sha256": "d14e752d25aad1ff0a60c92bf1eb5b8cf9aa055f14edcadb8c784df850321662"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-001.parquet",
+      "bytes": 47791850,
+      "rows": 500000,
+      "sha256": "e614d9223625225ebabb8e4648364fec7b62a47c69d24cb93761b2de139392e4"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-002.parquet",
+      "bytes": 49224576,
+      "rows": 500000,
+      "sha256": "25883b81b54c3e3e3ecf943275e00980721ab6eb5f08f6ca597e14111b335f90"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-003.parquet",
+      "bytes": 51182895,
+      "rows": 500000,
+      "sha256": "4b4333e6b22ed3c44684a4758d93cffad66340488a2938e42085352581feb2c7"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-004.parquet",
+      "bytes": 50707760,
+      "rows": 500000,
+      "sha256": "27d65549aeb489d4e2f04f371845484ad7988de081d0ef9a60b02cadaeda2baa"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-005.parquet",
+      "bytes": 49086449,
+      "rows": 500000,
+      "sha256": "0c89aa7ab1dc5fd5f235401eb4a9457d99f22f96cb181b0ae4c87031faae107e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-006.parquet",
+      "bytes": 47481857,
+      "rows": 500000,
+      "sha256": "fc3fad3b093b8351657775e62a6d1768f53a102707f747e64217f7ce22dae239"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-007.parquet",
+      "bytes": 43973077,
+      "rows": 500000,
+      "sha256": "656b9dfc5aef29889cbb7e889ad7e75fd501b4295f4a6f527cdcf8af2122a133"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-008.parquet",
+      "bytes": 48859806,
+      "rows": 500000,
+      "sha256": "83bfecd280c719af2a3c5628a2db1c280656112d38093f08e3bc12ce7f78ea58"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-009.parquet",
+      "bytes": 50091794,
+      "rows": 500000,
+      "sha256": "4a82edf3d93309b6f1bfd50e1f64ad057947d503f5ac68cce708f762a82f896d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-010.parquet",
+      "bytes": 51212531,
+      "rows": 500000,
+      "sha256": "e56c97e334440660ec9087831642710c9034d378d0aac2908e3a0298322be9a2"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-011.parquet",
+      "bytes": 50404430,
+      "rows": 500000,
+      "sha256": "eee3fddfdc20bd32d566639a98d124e971bfa1b50bd29890eef6cc8a10ba8473"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-012.parquet",
+      "bytes": 49185969,
+      "rows": 500000,
+      "sha256": "321cddf5bf992a2b0975321a60a88a332bed82940b28461719a9e7cec6f45689"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-013.parquet",
+      "bytes": 47229128,
+      "rows": 500000,
+      "sha256": "70f554733c384dd3435d56e22dbc3c764a24410a9e860cf571080ea1ce425245"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-014.parquet",
+      "bytes": 45669332,
+      "rows": 500000,
+      "sha256": "d3bf79799400e3f4e8b34eb8226d40d7b4defa5da1d7b04c109f4ef1c2dea604"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-015.parquet",
+      "bytes": 48989543,
+      "rows": 500000,
+      "sha256": "080f08c63d1e25a94efa877646abfae238979e54e79a3ca91dc4f24300d6af7f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-016.parquet",
+      "bytes": 50000024,
+      "rows": 500000,
+      "sha256": "1dddba859f4feb99e2709f9d188f44eaa0fd041a04249786ebd1c7cd754a11c0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-017.parquet",
+      "bytes": 50872001,
+      "rows": 500000,
+      "sha256": "0ca3ab197600a70fed6d8fe00d3fe7561c3a26d0a59644b72fb7fd81034d991b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-018.parquet",
+      "bytes": 50084260,
+      "rows": 500000,
+      "sha256": "ae9492bea68bc6092632a9c1ba5f6e496df28d502a742c592b2cc2bf24834e78"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-019.parquet",
+      "bytes": 48560891,
+      "rows": 500000,
+      "sha256": "1fcdfc57751696bcaad11f382a05c7704078b7a90e55090a05733f767bb5e104"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-020.parquet",
+      "bytes": 45154818,
+      "rows": 500000,
+      "sha256": "ebf4002b03f8d42eebbf24e039e57d532f272a52fff1f2045b6fb0080192b040"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-021.parquet",
+      "bytes": 45399250,
+      "rows": 500000,
+      "sha256": "8c8ed588f1efdf80ba6840733219059ef9ee97d4c4806c1c447d0f19a24ad05b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-022.parquet",
+      "bytes": 49073578,
+      "rows": 500000,
+      "sha256": "08746952ec9578cd214191dc8910aa22ddf302d25a67392338d5d26b176fbb6f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-023.parquet",
+      "bytes": 49861371,
+      "rows": 500000,
+      "sha256": "9a3e76c4f5b5304183ad4137f87fff8bff99df979c9a6e38bcaca2fe04a7d18e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-024.parquet",
+      "bytes": 50751174,
+      "rows": 500000,
+      "sha256": "7ae0d9a15392c35760ddbc979a824ea39db5e468da70c51239d7f4b028431742"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-025.parquet",
+      "bytes": 50155710,
+      "rows": 500000,
+      "sha256": "2f45c6e5ee69da2b1cd9d759ecef5acae8c028fc84f5657fb7e712206ed203b6"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-026.parquet",
+      "bytes": 48146137,
+      "rows": 500000,
+      "sha256": "457c7fae36d7163473cc2de2ccaf0b7c3d3138784c034bd92aa1145bfdaee9cf"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-027.parquet",
+      "bytes": 44786341,
+      "rows": 500000,
+      "sha256": "355497da02524de46b7b8ca4c0f9633182a4fb299ebccf9f6bd477a93920e854"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-028.parquet",
+      "bytes": 47388405,
+      "rows": 500000,
+      "sha256": "0bc29e2340c0ceee0d1d59996597c22695424c6187127e6e945807ff69f74bdb"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-029.parquet",
+      "bytes": 48025077,
+      "rows": 500000,
+      "sha256": "60e94d87f0f95c9edcd889ee17803accac3c1a98acdf857b075601e404c768ca"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-030.parquet",
+      "bytes": 47830517,
+      "rows": 500000,
+      "sha256": "b633597af7d972647a30a6f42d5f9f0d387c03b52c28c88624d558d5d350c5a9"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-031.parquet",
+      "bytes": 47048609,
+      "rows": 500000,
+      "sha256": "b93ffe97412257908cdd22fefade6f1d47bf545798ade1f3ddff060d8f825072"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-032.parquet",
+      "bytes": 44278214,
+      "rows": 500000,
+      "sha256": "d301c2ca00d82a6a8111509827a1bd56d63edc47e455ed07ce8f80263ec0ef3f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-033.parquet",
+      "bytes": 43795653,
+      "rows": 500000,
+      "sha256": "b7a4207897e728fc3c37686197680e720535a1d04c5879d510ba821285e455b9"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-034.parquet",
+      "bytes": 48386318,
+      "rows": 500000,
+      "sha256": "c6e187a35e27d992adc8e5a1959b6147cb75d4cf4c0cb532b4ed46c5c6c4b04c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-035.parquet",
+      "bytes": 48337700,
+      "rows": 500000,
+      "sha256": "6604edc8d52019d7a85c34c9a04c87adefd132fc4b88a3b9cf59d8586d2dd54f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-036.parquet",
+      "bytes": 47308537,
+      "rows": 500000,
+      "sha256": "962b4b8c91f80b85ac8f0a87e227cab326a4e407807d3c7eec13b3f302de41dc"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-037.parquet",
+      "bytes": 45799433,
+      "rows": 500000,
+      "sha256": "155d24822559284183b213253e6924e6d0c3df0926dfb89ac3c1ebbf7b2d117e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-038.parquet",
+      "bytes": 45319226,
+      "rows": 500000,
+      "sha256": "2d6753362f7d58ca46d2a24a3de7c2677b09ecc6c62723534b78d0e6b4078f2a"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-039.parquet",
+      "bytes": 47455441,
+      "rows": 500000,
+      "sha256": "eec19152876bcb35e71d68cdcf3815cd97ef2c1bedd28711ecda09047d1e76d1"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-040.parquet",
+      "bytes": 49844438,
+      "rows": 500000,
+      "sha256": "334ca566e37d64b21ff64f81a65de71ba76f429390dd5a4bab8be4611186194a"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-041.parquet",
+      "bytes": 51300304,
+      "rows": 500000,
+      "sha256": "3a29d0d07a4f4b48106f36736e26737f3a9b0898f4ac601549264b15e889c0be"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-042.parquet",
+      "bytes": 51200946,
+      "rows": 500000,
+      "sha256": "8627e6ffeec53835098fc495dc4598515abb17bc668ac7f38f26b04e279d8a41"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-043.parquet",
+      "bytes": 49838967,
+      "rows": 500000,
+      "sha256": "04dbe98c8a03b81f11414b09790589e90cf5c4351e8fc07127d4c44fa49b772f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-044.parquet",
+      "bytes": 46628350,
+      "rows": 500000,
+      "sha256": "fb4b76ce421a211a9ab93dc56422c6b70e423670e144149f984353f2fb16f907"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-045.parquet",
+      "bytes": 44896212,
+      "rows": 500000,
+      "sha256": "379424903a52279e2d72a0d3eb8f94135a9ff38c8ede6423bff3de143ce5deca"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-046.parquet",
+      "bytes": 49379594,
+      "rows": 500000,
+      "sha256": "dce79c11d1900e3101249b50aac6a8cc3c99c0f795bd4ed7217b7971885fb48c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-047.parquet",
+      "bytes": 50673777,
+      "rows": 500000,
+      "sha256": "f1ff51614c192c9ef7ceef05349c17dfd1808f19c48eb1762d2c571f86441675"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-048.parquet",
+      "bytes": 51105772,
+      "rows": 500000,
+      "sha256": "3fa2546fc3a68d0eaabd90dbcad82cc1e7cad9226cc53fd3613eb8fce5fe6329"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-049.parquet",
+      "bytes": 50050596,
+      "rows": 500000,
+      "sha256": "1e25d73176baca777299aad2796387fcf393e2b554b439bccc7709590ed15c56"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-050.parquet",
+      "bytes": 49266601,
+      "rows": 500000,
+      "sha256": "82f429ebafda1e15dbcfd110dc7b6d39c04a5b03fc0d506117ed919c44d06ea9"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-051.parquet",
+      "bytes": 47504234,
+      "rows": 500000,
+      "sha256": "9d9ee7da0499449634ca1d866a72859ae9b465e39b2287ba3478412d82e2498d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-052.parquet",
+      "bytes": 46248008,
+      "rows": 500000,
+      "sha256": "ea65fa04cd1a68da8a5b4e0cc4f7c375871fb57e8302dca2935faedb34dbf275"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-053.parquet",
+      "bytes": 49738431,
+      "rows": 500000,
+      "sha256": "daa1e7f347018ab66f67a6f1c36e6d833e37a1bace066f174f9af793f1f30590"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-054.parquet",
+      "bytes": 50439657,
+      "rows": 500000,
+      "sha256": "4c88276cbecc69c722e71633e252b668432ab7d119b0d51371dd296fbd48219e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-055.parquet",
+      "bytes": 51233236,
+      "rows": 500000,
+      "sha256": "c517a3142a425cd570171bd8453f7508c93e08802f4d5d8b2552151a7390d0a3"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-056.parquet",
+      "bytes": 50421748,
+      "rows": 500000,
+      "sha256": "7a55f780045893fd1f8e4f3754f031174cf0d9f64daf37854666e809e0c0a2ad"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-057.parquet",
+      "bytes": 49260816,
+      "rows": 500000,
+      "sha256": "9785dcd94c0ecd8fe9d3410fbb367dc26036cf379d43c24eb448bceb8dc9f69f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-058.parquet",
+      "bytes": 46837354,
+      "rows": 500000,
+      "sha256": "630e24d4342bee5f47a0d4e54756d1c741a7b5a306e7c216ab49d9daf125f95d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-059.parquet",
+      "bytes": 46067556,
+      "rows": 500000,
+      "sha256": "3336e29f5630bd2b7884cab5c0364da3ad13d89496559f6a94045c076c510160"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-060.parquet",
+      "bytes": 49450299,
+      "rows": 500000,
+      "sha256": "f825d05e5af94b7c82da2797f014295df0ad772282c7f7ef4af0b8c6dd726cf9"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-061.parquet",
+      "bytes": 50696644,
+      "rows": 500000,
+      "sha256": "53b8edd27b335349017173690a8bf1406a181fe227abda7a77301fd2f9d86170"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-062.parquet",
+      "bytes": 50591785,
+      "rows": 500000,
+      "sha256": "855f6b8af7c1b53fed7bccc297fec3ce979f0cc7b34d3cfb0cf569ba92d392a4"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-063.parquet",
+      "bytes": 49630307,
+      "rows": 500000,
+      "sha256": "3ad430566a95388c2d3cc508f199008d489e30d9c3f73a7fa33b14f48f0c6434"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-064.parquet",
+      "bytes": 48565515,
+      "rows": 500000,
+      "sha256": "f25743f22912f1bba0281fb0c686e8071969f905b8bd691e2641cdd66bbf622a"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-065.parquet",
+      "bytes": 45337856,
+      "rows": 500000,
+      "sha256": "52d9dd71e348880e87ad59026a8050ff8cdf964d0a93a0fcc3fd3669a5384995"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-066.parquet",
+      "bytes": 48459990,
+      "rows": 500000,
+      "sha256": "913cad5f372e5e1ae2e4cf57d924641ec6d49ef3db46bafd80220770814566cd"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-067.parquet",
+      "bytes": 49445567,
+      "rows": 500000,
+      "sha256": "429536f43b18427ce531b3f19d9412d116fe376402833434a30c4a53d4518ad2"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-068.parquet",
+      "bytes": 50395483,
+      "rows": 500000,
+      "sha256": "faf3fb07ff8558136052d93300dcc4a32946a498a2effba86be7e9dfcb7093fa"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-069.parquet",
+      "bytes": 50306830,
+      "rows": 500000,
+      "sha256": "5fa10aade135c02c771869c9ec35634715e2dc6d637b59ac01c57d86820216e3"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-070.parquet",
+      "bytes": 48991662,
+      "rows": 500000,
+      "sha256": "4ba173e956d0596f281e8afd08bc57f64f772c43b0ecede06cde047a468654a3"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-071.parquet",
+      "bytes": 46676799,
+      "rows": 500000,
+      "sha256": "8ad05ab8d40179ad9716cc92335664d343c50f58ee48c0f1aa124490dabf4944"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-072.parquet",
+      "bytes": 45916490,
+      "rows": 500000,
+      "sha256": "811b62c64b18138288de9a8c6b2a8615f792d0668e7cd451105f012cd21a8497"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-073.parquet",
+      "bytes": 47758542,
+      "rows": 500000,
+      "sha256": "32c4ff4493372fdfd09abcf3c433a11836a9ea018215099140259e3d77706af5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-074.parquet",
+      "bytes": 47257757,
+      "rows": 500000,
+      "sha256": "596571debfe125088d51538fad6078eb1e2ca0bbfcdda61a1cd1aede178f56e1"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-075.parquet",
+      "bytes": 47091811,
+      "rows": 500000,
+      "sha256": "824ebd1bab4c4050eb32dc58d73485aff511c04c927058383cbcfd9e27bcc240"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-076.parquet",
+      "bytes": 44526145,
+      "rows": 500000,
+      "sha256": "aaf6f54b200b364bbf78047e9b15f4ac654223b2a10afcb4b1eb7fc1e1958b50"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-077.parquet",
+      "bytes": 44829456,
+      "rows": 500000,
+      "sha256": "0ff476cca60ec80716f8fd8f9250ba7adabfeb245fb88caa829ebed78a6f1dba"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-078.parquet",
+      "bytes": 46441197,
+      "rows": 500000,
+      "sha256": "d863cce18c5bb21fdd8694269b7750354c03a3ecc9f0212e390be7f237533170"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-079.parquet",
+      "bytes": 47860542,
+      "rows": 500000,
+      "sha256": "65752f961b1fe21438bb1d1fedbb687830c6e69c7424dd34ed13d6d4a8078f29"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-080.parquet",
+      "bytes": 46872047,
+      "rows": 500000,
+      "sha256": "99e7982350304d5e5bb140c863c603fef4df8904d98e67c794183fd8b42212c4"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-081.parquet",
+      "bytes": 46716081,
+      "rows": 500000,
+      "sha256": "14760ea2820ea9895d1bb8c98af01c9df5d61e625cf3bc22c068a23033f341bb"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-082.parquet",
+      "bytes": 46284292,
+      "rows": 500000,
+      "sha256": "eb929f377c29fecb30bf28d5b06638be339df1e64c1a613efdc95dc0a388f299"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-083.parquet",
+      "bytes": 46159303,
+      "rows": 500000,
+      "sha256": "68a24f1431d7efec421a55ec38b4fbae609ea35b951f5299cf556c81700c8116"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-084.parquet",
+      "bytes": 48904594,
+      "rows": 500000,
+      "sha256": "63f6e5d6757010def968055af604849fed600540e2d23a2c73e1b9d3aa8b2d96"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-085.parquet",
+      "bytes": 49444148,
+      "rows": 500000,
+      "sha256": "a03ed47b9bad24b34abe35a78afb25461a6400a3c5ccf41528a708bdc4fef956"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-086.parquet",
+      "bytes": 51440512,
+      "rows": 500000,
+      "sha256": "0f677feec7a11a54a344ad7dd062e824b2a3f3fc0cfc053280abbb0a760223f9"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-087.parquet",
+      "bytes": 51031014,
+      "rows": 500000,
+      "sha256": "525b2ec7242ad14f10a61b72559a1df6f235d8dccfb2a575787e68dc3529995c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-088.parquet",
+      "bytes": 50143165,
+      "rows": 500000,
+      "sha256": "17c61276887b15abb5370717575f623d48b890829fdcac224ddd5da974b775c5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-089.parquet",
+      "bytes": 47828558,
+      "rows": 500000,
+      "sha256": "ed2f7a2f5fe3e139f9568a47a4222613d19ab60cd4d84aac298ea76609e66e09"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-090.parquet",
+      "bytes": 45758298,
+      "rows": 500000,
+      "sha256": "57de705dfc0e06f344f15e5e4ab2aff6a77c831a26c39d2fade306bd3eb7ec90"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-091.parquet",
+      "bytes": 49888570,
+      "rows": 500000,
+      "sha256": "f4890a40d0cc124a0c831333f9a7025a57f78fab1be1f34f3ef4abf32c61541f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-092.parquet",
+      "bytes": 50221876,
+      "rows": 500000,
+      "sha256": "698b7bce1b2b113d24da8fc3426e40626935cef59b3a1d4c182e60f079b6ff9f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-093.parquet",
+      "bytes": 51032092,
+      "rows": 500000,
+      "sha256": "9b0c66af50bfbb1f3e92ed26e3d69a2d4a0a026f45439d3e72e90b8fa0936e29"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-094.parquet",
+      "bytes": 50768770,
+      "rows": 500000,
+      "sha256": "fddf8bc2e1ef93e77e2bb2f544d50338937aea56a44286adc2efcd995b871ee0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-095.parquet",
+      "bytes": 49130143,
+      "rows": 500000,
+      "sha256": "5c82c562d787e0fa60561b8a5cfdb684c79b6ab377ca85b49e302c92ac73444a"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-096.parquet",
+      "bytes": 45316056,
+      "rows": 500000,
+      "sha256": "7f6dcbb68bb676dd3dc1a908cae1d64ef9bbb5949a4926b2c86a6a6290e7b835"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-097.parquet",
+      "bytes": 45816608,
+      "rows": 500000,
+      "sha256": "d1c238c4d653e956994b4e42b2a0a50142903d4b638d677341c07d1c6be7d03f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-098.parquet",
+      "bytes": 50021647,
+      "rows": 500000,
+      "sha256": "912e45db43d1edc4eb9d33e9e42d952a233871dc516619271a21cccf3fc5cd11"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-099.parquet",
+      "bytes": 50558212,
+      "rows": 500000,
+      "sha256": "5898eccc8b40373c705e475d546488bd23ca14b5c97fef67af2580925db6d6be"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-100.parquet",
+      "bytes": 51405785,
+      "rows": 500000,
+      "sha256": "0078a766d779fa2de1b8efe8e5c417db8af1efbb61b72b4d0954b8dd56b0708e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-101.parquet",
+      "bytes": 50795315,
+      "rows": 500000,
+      "sha256": "31a530ced084ee7a6a6db91dc71bb1fccaa04353e3e9cd5c4941a083a63e831b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-102.parquet",
+      "bytes": 49408131,
+      "rows": 500000,
+      "sha256": "bd5287565d863f6d0de57cbf93339877844ef2278236dc2b7179359b6a6a262b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-103.parquet",
+      "bytes": 46157908,
+      "rows": 500000,
+      "sha256": "24094f15bc26a88bf819a270eab22f74b620b93c2f13e69b3aa0861364e54621"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-104.parquet",
+      "bytes": 46688863,
+      "rows": 500000,
+      "sha256": "f17f434b17a33306ee6397649c53e5cb5dfa806901f9cfa97d9b43281e5ee473"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-105.parquet",
+      "bytes": 50359041,
+      "rows": 500000,
+      "sha256": "18f76d82236b315ab5450bd065d520423cb4a14e140d63351f2b4d376b5e24de"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-106.parquet",
+      "bytes": 51077892,
+      "rows": 500000,
+      "sha256": "aeb890f6e138e7a6da650d816e0c59153f6dbc73522bbb7e58ca561e7274edf6"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-107.parquet",
+      "bytes": 51081714,
+      "rows": 500000,
+      "sha256": "5192d6ad84b6016aacd76386de5568005ac6c4304a5d40d2f4816c53f944c6ab"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-108.parquet",
+      "bytes": 50345807,
+      "rows": 500000,
+      "sha256": "2e272ac194e800122de46560ee2ec1b41d8d4beccead9ecb6559faaafc4185c7"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-109.parquet",
+      "bytes": 48849318,
+      "rows": 500000,
+      "sha256": "b64a4ce48c886624add657a131f48a7f4b9d2c58a79a4e291a03c0eb56f8b5cb"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-110.parquet",
+      "bytes": 46251116,
+      "rows": 500000,
+      "sha256": "af42c7c355ef515fd3b635fe5b1477c62a3d4f8145851fa66ee1710496abf021"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-111.parquet",
+      "bytes": 47961182,
+      "rows": 500000,
+      "sha256": "19f76f9b492a94ba2b2cfc8b081977ebc6aa7df70f68bad8007a2f8ecc707262"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-112.parquet",
+      "bytes": 49335767,
+      "rows": 500000,
+      "sha256": "137b151b873d112eee58bdc79d4af8fcaba03143162726daac83828c4c83f28e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-113.parquet",
+      "bytes": 50499951,
+      "rows": 500000,
+      "sha256": "0f52ac96564c43ab308d1b05874d9a4504bfd1d0b02c1b1054ec330df7f6709c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-114.parquet",
+      "bytes": 50246096,
+      "rows": 500000,
+      "sha256": "7d7c2389e57f0b4ad45d697f5ea869bee18636b8118d6b00245a976fa10b6003"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-115.parquet",
+      "bytes": 49476741,
+      "rows": 500000,
+      "sha256": "d19afc9def53adf4ea017dd7f413ae8dc25fba733f002e623aaa5021ab0641d0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-116.parquet",
+      "bytes": 47118199,
+      "rows": 500000,
+      "sha256": "3db336535f66702b1da46aa1921bd4268d95e9f648e06eb1d985278c76706bbd"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-117.parquet",
+      "bytes": 46610649,
+      "rows": 500000,
+      "sha256": "70a58999c802aa76a6e5241343cab66fffcb2ce09b50cb71e163db68fc9ab8b7"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-118.parquet",
+      "bytes": 47729023,
+      "rows": 500000,
+      "sha256": "cb8bc6214e7f08a7d2207664c21a2a47823987751c381d6bdd405e2b3c0adb88"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-119.parquet",
+      "bytes": 48038833,
+      "rows": 500000,
+      "sha256": "e6885808928c6489a53b07a184a08c6c65bc7ebe535f579cef9c04d3e2556407"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-120.parquet",
+      "bytes": 47127965,
+      "rows": 500000,
+      "sha256": "53fbb60cfd2d3b3aa51bddbb20045b6c6b2b9585fd4865d476c16e28ba5271fb"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-121.parquet",
+      "bytes": 46910054,
+      "rows": 500000,
+      "sha256": "3529d271a8ee543d1fb01b8b084933c72498f420dfa632fbf909e428489a95a3"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-122.parquet",
+      "bytes": 44856601,
+      "rows": 500000,
+      "sha256": "e8b2957c5ae6d9747728af74fe2673146c25a5a02f1282fc89645ea9baca6d9b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-123.parquet",
+      "bytes": 47006795,
+      "rows": 500000,
+      "sha256": "963cc104c30c0250e20db852613f1b79c3f294062e9ff1e05f712223c27e4e81"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-124.parquet",
+      "bytes": 48922732,
+      "rows": 500000,
+      "sha256": "b48fb901775ef9e03788e660ed8f16378fd47707c0934c994f0cd3f20c8d4d07"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-125.parquet",
+      "bytes": 48472590,
+      "rows": 500000,
+      "sha256": "0f9e79bbc98c91d245cabc291453ba2615c60b70718802c0f13d5481e74cb2e5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-126.parquet",
+      "bytes": 47186974,
+      "rows": 500000,
+      "sha256": "d09138e4584fe24fb68a39595d213449cd39141251ecfd00cded7fa829581f69"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-127.parquet",
+      "bytes": 46798491,
+      "rows": 500000,
+      "sha256": "8b3057851ac04b9fee586b12456fbf5e3eaa0cd4fd1730f683f6f0de54a23f5b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-128.parquet",
+      "bytes": 46303339,
+      "rows": 500000,
+      "sha256": "87b6bbc6c53125867a7ace17349495b132ec9791e7f6d6bf6bd65c3e08af7e34"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-129.parquet",
+      "bytes": 49726522,
+      "rows": 500000,
+      "sha256": "471f5ee1df1a96ced5c2e7df2121ca9a906182b7827d382dede2d7ce0a765f14"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-130.parquet",
+      "bytes": 50689116,
+      "rows": 500000,
+      "sha256": "a674aadfb21493ea5bb495ce217ed3dcdf8edd078cc279842b1c9591aecc634e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-131.parquet",
+      "bytes": 51740000,
+      "rows": 500000,
+      "sha256": "8b8514bdf4ec74f8aa45762a538d295d2ad936bf1d47c7564515b7b21cf66deb"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-132.parquet",
+      "bytes": 51665562,
+      "rows": 500000,
+      "sha256": "d45072de6420523fb829531e1ca622a6c5e27324bb9fff307120060039894bf8"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-133.parquet",
+      "bytes": 50196474,
+      "rows": 500000,
+      "sha256": "6d8a160c25e55f4c8f353dde5a6e4d71b8125a8e888d3642a47c019341c4a641"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-134.parquet",
+      "bytes": 45588403,
+      "rows": 500000,
+      "sha256": "4e3e713c8630747737dd51d307197cd8b85d9a1507ae4a9258b5c6512974a273"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-135.parquet",
+      "bytes": 48158786,
+      "rows": 500000,
+      "sha256": "b4e93b904eb4c71b4c7faea54f83ebfa4dc9480e6fb66a32066b3477544fe177"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-136.parquet",
+      "bytes": 50508772,
+      "rows": 500000,
+      "sha256": "e28fa9179447434be32ca110346a764389ae3196bee4de815157c9e5074385a5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-137.parquet",
+      "bytes": 51523925,
+      "rows": 500000,
+      "sha256": "39e42486a22f2a13709e016f8e8f4b40e8757d2b43ebb05d5171fa60db87bb45"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-138.parquet",
+      "bytes": 51461861,
+      "rows": 500000,
+      "sha256": "309939f07a4357a20c87d5ca691bb04fe7cf6fcb265088d5df5f90738ecf5915"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-139.parquet",
+      "bytes": 50392082,
+      "rows": 500000,
+      "sha256": "3b5a947e924848b481f66094a85459e4d243c8af5a294731f47e50cbadc053c7"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-140.parquet",
+      "bytes": 48545587,
+      "rows": 500000,
+      "sha256": "5fd4dab8feeb2f21f41ea6f083348eabf87320e89b884c76b02d725a71f4497a"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-141.parquet",
+      "bytes": 44454179,
+      "rows": 500000,
+      "sha256": "3855520f98d972a952af055f1d5fc89291f1fabf9180de75d6d7e9033c445a76"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-142.parquet",
+      "bytes": 48024330,
+      "rows": 500000,
+      "sha256": "41de00c09c44afa5aa20da40b0d66a7291a106c762912bf4664aaf0d2e15b7bb"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-143.parquet",
+      "bytes": 50232955,
+      "rows": 500000,
+      "sha256": "8db011b6a2efc704e09d64fbc8e78d5de7eb442422f3ef93ae0104af05b067e0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-144.parquet",
+      "bytes": 51178205,
+      "rows": 500000,
+      "sha256": "e233058af09068ada7bba3c5302aa866cf1cb33f5ce25fd4d3f306a640fccd4d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-145.parquet",
+      "bytes": 50821066,
+      "rows": 500000,
+      "sha256": "c776dde8b6af7771cece3cf3b190131429ece02ae8b244c9835abf91afb24732"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-146.parquet",
+      "bytes": 49802540,
+      "rows": 500000,
+      "sha256": "96ba4cccebc43c883c447ba12fe7e5b9d383a604e90bef50a241c063aeb5f832"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-147.parquet",
+      "bytes": 47998087,
+      "rows": 500000,
+      "sha256": "8c662a02c965289c8f2422f933c0bcdffe24b1a555f94005158de3f333ec411f"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-148.parquet",
+      "bytes": 43740373,
+      "rows": 500000,
+      "sha256": "4bdfb0d4ccdf195ae5a846db76db2cf2d2b39268317a2e0e75ac4842bd6e99e8"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-149.parquet",
+      "bytes": 48322806,
+      "rows": 500000,
+      "sha256": "6285a23477692c395e6b0f9890e4428b58430ae562ff46fcc2cfcbc7ca0e5320"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-150.parquet",
+      "bytes": 49849263,
+      "rows": 500000,
+      "sha256": "066a594fdc4f5824571c33dae57da9a5fcbf00ef6cdf002f8304f68cc64fcb6e"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-151.parquet",
+      "bytes": 50697093,
+      "rows": 500000,
+      "sha256": "d47df18faca2c728f10e9c2d511ddf5af8f4e548e98436f1eb8678d51ba1750b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-152.parquet",
+      "bytes": 50594688,
+      "rows": 500000,
+      "sha256": "d59e41fa42d5914d22e6f21eb3d8c3dd48a7ce2591915f048fe407e20a0021cc"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-153.parquet",
+      "bytes": 49618950,
+      "rows": 500000,
+      "sha256": "7de6e71233a5f26ae4aeaf88cbdf2fa46828413dd29230b43c008d01e5d84554"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-154.parquet",
+      "bytes": 47821048,
+      "rows": 500000,
+      "sha256": "deeec72d174b96f04082ff7d987357dbd6cca1626c0d54a8c9f28f048d0c9ad4"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-155.parquet",
+      "bytes": 44578591,
+      "rows": 500000,
+      "sha256": "af3a4a1b56e77807a5cd28e52ad3f8e693d0fa0a8c50a71fc7aab896f2af05ed"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-156.parquet",
+      "bytes": 48784440,
+      "rows": 500000,
+      "sha256": "b7a930d6bb47b2ee8f1c5a2097e73184fba142155d62c59072889622f209ef0d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-157.parquet",
+      "bytes": 49722249,
+      "rows": 500000,
+      "sha256": "a0ce9f3f8b3632061c24452a1079c565ad66afb926c5b43c4f3009ff5218e4b0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-158.parquet",
+      "bytes": 51053013,
+      "rows": 500000,
+      "sha256": "7bf86505ce10830722a0b98882f5f69c7d2e531665d6c796d5f00e2efac5d1ef"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-159.parquet",
+      "bytes": 50386026,
+      "rows": 500000,
+      "sha256": "7afc6628cd952d6ba95b18ab2003ed1864d10105b8e802f109f0cb4c6b52d1cf"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-160.parquet",
+      "bytes": 48819525,
+      "rows": 500000,
+      "sha256": "d24bf6e5e8809c37119f89090b0b4bf0afd52dbdf327dc01452ef9a479a0bf5c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-161.parquet",
+      "bytes": 45212966,
+      "rows": 500000,
+      "sha256": "f3c63bff6ec612e0e15171c1d91b2a95edc25c48df3e9c82a4a46f3a94b3f251"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-162.parquet",
+      "bytes": 45828408,
+      "rows": 500000,
+      "sha256": "35fe64e3c00dd8bb278b48993d82d1026aaa504258c9b27101b26391f469f3a0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-163.parquet",
+      "bytes": 47901085,
+      "rows": 500000,
+      "sha256": "55f96f3aa8c1b79875f1da18ad863880dfe8fc8e2125502eebe644637833d522"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-164.parquet",
+      "bytes": 48093864,
+      "rows": 500000,
+      "sha256": "248ca14339dc9dbd6878d9d88cdaa1120e281fee9fe1bac948dc7a1baa064775"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-165.parquet",
+      "bytes": 45039991,
+      "rows": 500000,
+      "sha256": "8ac39f2b14995a48bf374fde689cb07e603e1461deffc1a70f88b2ff431583af"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-166.parquet",
+      "bytes": 45473184,
+      "rows": 500000,
+      "sha256": "fda8909ba438430c80107dac16acd4e47a0a28735859f32a6d7011f969057aa5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-167.parquet",
+      "bytes": 43849273,
+      "rows": 500000,
+      "sha256": "b5fdad0b8c037bf13b7284b5858a865f9f3925966977ecf2a1b645ff1090d835"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-168.parquet",
+      "bytes": 47260122,
+      "rows": 500000,
+      "sha256": "25d195ed292987b51e6142cc16dd4b98878f99632de2a90570121284d6b0a0ea"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-169.parquet",
+      "bytes": 47762826,
+      "rows": 500000,
+      "sha256": "2df0cf4f7e94c72f4abe1435d944593719bd227aec5746b49ddbffc37df71305"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-170.parquet",
+      "bytes": 47397067,
+      "rows": 500000,
+      "sha256": "61969e71337073968f3bef0b7a96b60622ab60ea63d4763223fc91cf172af8ac"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-171.parquet",
+      "bytes": 47063423,
+      "rows": 500000,
+      "sha256": "adb2c8052ccb2305a1fdaffc5f1d8b1076a1f5c6ce43f1c15e4d5542a300663b"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-172.parquet",
+      "bytes": 46679876,
+      "rows": 500000,
+      "sha256": "32b66aebc1c45829f90bf33950056165efb2e017cdb4f9fb1990a15bb637ded5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-173.parquet",
+      "bytes": 42770384,
+      "rows": 500000,
+      "sha256": "0649bc27434e680899a85ea6680cc3e20bba76ec9fecea55aa4671cb55cacea3"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-174.parquet",
+      "bytes": 47872998,
+      "rows": 500000,
+      "sha256": "d5c2fe6ffcf63d779bfc22d988f8e316c0e60114d207cd95b9ea164b3148ca01"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-175.parquet",
+      "bytes": 49870234,
+      "rows": 500000,
+      "sha256": "6503506f369775dd860f3a1981f519c0cb1f1a63995ca7269736eca931547dd5"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-176.parquet",
+      "bytes": 49892062,
+      "rows": 500000,
+      "sha256": "6503187f4c89b1eb69aae6997df144e820721e78a94b8bed00c75378c0afa488"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-177.parquet",
+      "bytes": 48604956,
+      "rows": 500000,
+      "sha256": "2c7d3bd951606c24dda36168ae29bc0a53da87fbbb7a42b36ac140ea4db99542"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-178.parquet",
+      "bytes": 47971348,
+      "rows": 500000,
+      "sha256": "cbc65b5199f37a838b16211e962ca847660ed3509078e06a32dd5e6e1e308e83"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-179.parquet",
+      "bytes": 43554730,
+      "rows": 500000,
+      "sha256": "f72f471bb11d0a3ecfc742f8780e156ab71a3a9b454ceab3beba37ea7628493d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-180.parquet",
+      "bytes": 44274101,
+      "rows": 500000,
+      "sha256": "6b3244d880580b87b7457d162b59b497a3d39bc1f84e40393d604e534e7ce70c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-181.parquet",
+      "bytes": 49825696,
+      "rows": 500000,
+      "sha256": "91a80994fe40a279a53b538c344c13f41ef6a150e9b0c4f6aebd2d7690a76ccf"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-182.parquet",
+      "bytes": 50785333,
+      "rows": 500000,
+      "sha256": "cd842b320b2b8d959ea5739adb63c8191c519afa6238e263dd7fe72b363888d9"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-183.parquet",
+      "bytes": 50863893,
+      "rows": 500000,
+      "sha256": "0ce259c8339c4515821c1a3104dda32c478f36b3b659d8870ba7acf7f37fb50d"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-184.parquet",
+      "bytes": 50695390,
+      "rows": 500000,
+      "sha256": "f9c50109fe2f347eb4bc36341aa0e52605f97b17d8a2800ce485f733c80d95b1"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-185.parquet",
+      "bytes": 49408542,
+      "rows": 500000,
+      "sha256": "a454c06a93ecce17366f92bb1a106a5611d1c771910f38b6ef73c14319ef1f46"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-186.parquet",
+      "bytes": 46499861,
+      "rows": 500000,
+      "sha256": "b2be400e958bc180854376c2750c8d2a093f102af6579586a629fe5206d13283"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-187.parquet",
+      "bytes": 46914715,
+      "rows": 500000,
+      "sha256": "a8af0889e8eab18c9d15de8a9e02dd5f5d558e8c2a306adcefd88d0ab2358938"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-188.parquet",
+      "bytes": 50168382,
+      "rows": 500000,
+      "sha256": "16d2d07f59ca2d5c615104e8da894ecc791ee1fd19df872a34dc5c3d59d9be43"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-189.parquet",
+      "bytes": 50452334,
+      "rows": 500000,
+      "sha256": "8e83a81f89d675ed50602af25c96b19f47bee6196e006a9aa80e3960f6a69308"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-190.parquet",
+      "bytes": 50902722,
+      "rows": 500000,
+      "sha256": "fa7669f86ba30d6bafc2e0663d264fac8fa57b625a4eaf07bc8f90b4941b879c"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-191.parquet",
+      "bytes": 50751825,
+      "rows": 500000,
+      "sha256": "4435863ca7c66acfdb2a76bf685adc308445de0d8cf9663ec4140c7148b6ad74"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-192.parquet",
+      "bytes": 49713984,
+      "rows": 500000,
+      "sha256": "556f9576fb67361ada3555e94c79e4dc782b7403a668f5369b32f3d7f501edf4"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-193.parquet",
+      "bytes": 46112464,
+      "rows": 500000,
+      "sha256": "7f5c9e9d3f7fb440304232fed4f9bf254218eff862c1f8732d53006447f9da02"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-194.parquet",
+      "bytes": 47219962,
+      "rows": 500000,
+      "sha256": "f91aa8112388c1527dce9b0bae9500cd0b7d83f04c1ffe37e2821f79881e8921"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-195.parquet",
+      "bytes": 49443226,
+      "rows": 500000,
+      "sha256": "1508909487496ac5b343981f37c443937fb624319e330f1db555dc7840518177"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-196.parquet",
+      "bytes": 50694388,
+      "rows": 500000,
+      "sha256": "b55daf20d14fee658b0f49598c09120f2dcbfcd673e9923e3d684f65f3362eae"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-197.parquet",
+      "bytes": 51280774,
+      "rows": 500000,
+      "sha256": "3798256a1ec5600a61f08f8a0bcd7e2d3fd896e8357c1e68a52f2cca8e2ae0e0"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-198.parquet",
+      "bytes": 50449202,
+      "rows": 500000,
+      "sha256": "379e173552ed721a2977598919ab0efd36f53a70fd1a381f493317d3d599a4ee"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-199.parquet",
+      "bytes": 49003796,
+      "rows": 500000,
+      "sha256": "0132f8add79fa4e21a4af8c46371412b67a1b607b0c70fd086ac34e2ca3f32ea"
+    },
+    {
+      "table": "comments",
+      "file": "data/parquet/reddit/schema_version=1/comments/part-200.parquet",
+      "bytes": 10346821,
+      "rows": 109100,
+      "sha256": "c574c7c41af4360713b4a4100360e9c92931b0ecffa6a3a56178015a540792fc"
+    }
+  ],
+  "totals": {
+    "source_files": 226,
+    "source_bytes": 10710047952,
+    "source_rows": 112188752,
+    "output_files": 226,
+    "output_bytes": 11285297030,
+    "output_rows": 112188752
+  }
+}

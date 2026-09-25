@@ -1,0 +1,15 @@
+.venv/
+.venv-popper/
+.venv-rst/
+.local/
+.deps/
+log/
+__pycache__/
+*.pyc
+
+# Les manifestes JSON et le schéma restent versionnés; les données se recréent
+# avec ./scripts/seman2 fetch-corpus.
+data/**/*.parquet
+data/*.bz2
+data/reddit-arctic-2018-05/
+data/stackoverflow/

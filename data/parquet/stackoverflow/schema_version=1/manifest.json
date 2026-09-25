@@ -1,0 +1,819 @@
+{
+  "dataset": "stackoverflow",
+  "schema_version": 1,
+  "transformation_version": "1.0.0",
+  "created_at": "2026-09-24T18:26:08.113296+00:00",
+  "compression": "zstd",
+  "sources": [
+    {
+      "file": "data/stackoverflow/train-00000-of-00210-46972e1b0bb16c29.parquet",
+      "bytes": 272067105,
+      "rows": 94784,
+      "sha256": "51b1c75b196c24e77fcc53f2580a9df44d792407289782cf951c4031f292bf39"
+    },
+    {
+      "file": "data/stackoverflow/train-00005-of-00210-be7a54edb426a0a4.parquet",
+      "bytes": 226662672,
+      "rows": 94784,
+      "sha256": "e03ed9867bd11e613c2cf7d41c2e78db7ddbcefd82b5250b7383c0975eeccb2b"
+    },
+    {
+      "file": "data/stackoverflow/train-00010-of-00210-1dd6a34c4968b41e.parquet",
+      "bytes": 220314278,
+      "rows": 94784,
+      "sha256": "9af231db4371b6044f50788eab09e59b8f0422b16f537f9563233a24789c337f"
+    },
+    {
+      "file": "data/stackoverflow/train-00015-of-00210-12522c054ed9f264.parquet",
+      "bytes": 223508864,
+      "rows": 94784,
+      "sha256": "a5b1e8d951f2880e15972d80a8cbaa3099cbe00abbf4d166ee1c4b1d81b4f89c"
+    },
+    {
+      "file": "data/stackoverflow/train-00020-of-00210-a59f9c4219b04362.parquet",
+      "bytes": 227683563,
+      "rows": 94784,
+      "sha256": "9ab33232579beb7092d30fb95ca94e36bdd52153a98fec5e4754ae00cdf8f5d1"
+    },
+    {
+      "file": "data/stackoverflow/train-00025-of-00210-14749e3533b5fedf.parquet",
+      "bytes": 231856670,
+      "rows": 94784,
+      "sha256": "80ba5a55ebdca31d2bd582baa3fc5c1bc618b112c72e3c0e99486d9147ed7a74"
+    },
+    {
+      "file": "data/stackoverflow/train-00030-of-00210-7220c578348c95ab.parquet",
+      "bytes": 234738292,
+      "rows": 94784,
+      "sha256": "436ff296ff0ee4059c5d8ea91c5522f2a4c6040f089dbd7c950b206f262d32af"
+    },
+    {
+      "file": "data/stackoverflow/train-00035-of-00210-4ef3170e0300012b.parquet",
+      "bytes": 237831629,
+      "rows": 94784,
+      "sha256": "b976e05ae9664b85ab110fab5a56666b89aab557feeb9f9903d35cb2712f8e83"
+    },
+    {
+      "file": "data/stackoverflow/train-00040-of-00210-f2cbd1ccd3a16262.parquet",
+      "bytes": 241562525,
+      "rows": 94784,
+      "sha256": "e3751bcff0f50f0b9cb163de614d143e73d4b7e92cdf8d6825fb332959a3b67a"
+    },
+    {
+      "file": "data/stackoverflow/train-00045-of-00210-90c85ff366626a5d.parquet",
+      "bytes": 243089520,
+      "rows": 94784,
+      "sha256": "561f57de883327069e6adaa5043e4c1f79a0398f223a72f389d22d393cb0b763"
+    },
+    {
+      "file": "data/stackoverflow/train-00050-of-00210-a2d52f5dd35d21f9.parquet",
+      "bytes": 243276658,
+      "rows": 94784,
+      "sha256": "8a3c2708e60c4d499932ddb0fe265061fa135dc2186647ea203371822cb8f6e5"
+    },
+    {
+      "file": "data/stackoverflow/train-00055-of-00210-ecff984effd43d82.parquet",
+      "bytes": 242423809,
+      "rows": 94784,
+      "sha256": "22a1a2694c751a384b6b171207aa61fc75dd9e9523c0672f3cce9e8da1ce0164"
+    },
+    {
+      "file": "data/stackoverflow/train-00060-of-00210-46c23d926df892d7.parquet",
+      "bytes": 245873382,
+      "rows": 94784,
+      "sha256": "20e7ad71a74bdd1efadb42bdcd0420771cff576666309b84f5d2d932c770f8c9"
+    },
+    {
+      "file": "data/stackoverflow/train-00065-of-00210-7e69e5303b1e60a4.parquet",
+      "bytes": 247436727,
+      "rows": 94784,
+      "sha256": "159f87815fb01390cd0a0fcc7c00f6c7ed5e48ce48fb8bf2be296aeb92a64ed4"
+    },
+    {
+      "file": "data/stackoverflow/train-00070-of-00210-c41c2d442f869fb2.parquet",
+      "bytes": 247744992,
+      "rows": 94784,
+      "sha256": "a7a0ce94d602a62fdfa5b19ccf5b65cc21121556c4eb4d95f80ebf83e36d8279"
+    },
+    {
+      "file": "data/stackoverflow/train-00075-of-00210-60e7b4038c243f6a.parquet",
+      "bytes": 248113436,
+      "rows": 94784,
+      "sha256": "16d7c500b84db8cedde1c63f0b1071de72b6403e9cddcd51962242d8b22d7436"
+    },
+    {
+      "file": "data/stackoverflow/train-00080-of-00210-2bbbd6e3de43f11e.parquet",
+      "bytes": 250454152,
+      "rows": 94784,
+      "sha256": "a5be9961703d06d372f1f495cfcf084a8cac13557dcfb5783c88dfb06c6dc21b"
+    },
+    {
+      "file": "data/stackoverflow/train-00085-of-00210-29d55aa026595559.parquet",
+      "bytes": 253586503,
+      "rows": 94784,
+      "sha256": "b0baefa74c86c1a4fb3344fd32b346931161085fbe7ad0eed1c6de80f07b9f0f"
+    },
+    {
+      "file": "data/stackoverflow/train-00090-of-00210-6da832569a462b59.parquet",
+      "bytes": 256208402,
+      "rows": 94784,
+      "sha256": "4841cb6f1202941a17c090273bb12e29d0707592910e34b4cd196f83f2f6adf2"
+    },
+    {
+      "file": "data/stackoverflow/train-00095-of-00210-856ff839560e2ab7.parquet",
+      "bytes": 256248639,
+      "rows": 94784,
+      "sha256": "9228ba22611ced5cadc7f3314f6ec90c627054839beb67447f27918745d3101e"
+    },
+    {
+      "file": "data/stackoverflow/train-00100-of-00210-aaac44e37b599418.parquet",
+      "bytes": 256421848,
+      "rows": 94784,
+      "sha256": "b03b65e1e03fe28fa313a753a64007719718e64f76a2e64367e1df32ec2e7709"
+    },
+    {
+      "file": "data/stackoverflow/train-00105-of-00210-51f379c1823d0f5f.parquet",
+      "bytes": 259700315,
+      "rows": 94784,
+      "sha256": "d35789e2b298957703b1f058c20f19e8ea2df22760ee4b11f4cf8fee9c383171"
+    },
+    {
+      "file": "data/stackoverflow/train-00110-of-00210-a09886d965fe14f4.parquet",
+      "bytes": 259071325,
+      "rows": 94784,
+      "sha256": "9b8416750870cbdd1a701a4756def1241f1d8d6cef94a1c23dcf605252d11d4b"
+    },
+    {
+      "file": "data/stackoverflow/train-00115-of-00210-39cc31d4232cc2c2.parquet",
+      "bytes": 257863309,
+      "rows": 94784,
+      "sha256": "9092149ec270190b719267542e24ac93801a8634b56e40a6e7cd68ef7cabca19"
+    },
+    {
+      "file": "data/stackoverflow/train-00120-of-00210-fd018dcbc1c7de4a.parquet",
+      "bytes": 258610591,
+      "rows": 94784,
+      "sha256": "8f732264e0e022f2e626270b2db6fbe51668c957b956b51e3b53a133f0da2670"
+    },
+    {
+      "file": "data/stackoverflow/train-00125-of-00210-3d67371435ca7987.parquet",
+      "bytes": 258588910,
+      "rows": 94784,
+      "sha256": "2353fd24734780bc7ec6a9e2b44db00eef7461e028b547f37247d2c8f121aff5"
+    },
+    {
+      "file": "data/stackoverflow/train-00130-of-00210-4bdf6b2b359bcf17.parquet",
+      "bytes": 265015120,
+      "rows": 94784,
+      "sha256": "e0344feb917f014eef4559f0848f5f72124c35602fbc225758512c1e98b930ce"
+    },
+    {
+      "file": "data/stackoverflow/train-00135-of-00210-d304946ad7e413df.parquet",
+      "bytes": 266256747,
+      "rows": 94784,
+      "sha256": "12fe345b94db066f961668192972766e00fc53fe888eb441c2b4fda2ba607fd6"
+    },
+    {
+      "file": "data/stackoverflow/train-00140-of-00210-3b92ee99a238d183.parquet",
+      "bytes": 264701466,
+      "rows": 94784,
+      "sha256": "769437a10227e39f583d0faac534428b4e921fecee038a0cdeb990e619ee5286"
+    },
+    {
+      "file": "data/stackoverflow/train-00145-of-00210-d836386781dde93b.parquet",
+      "bytes": 264757098,
+      "rows": 94784,
+      "sha256": "2131698c6861e2fe61a442672642adcb3ec926abc680817bfb235912643d9ced"
+    },
+    {
+      "file": "data/stackoverflow/train-00150-of-00210-397750621e742c86.parquet",
+      "bytes": 268333017,
+      "rows": 94784,
+      "sha256": "ba9c6b5564d4ca02d5c2ead5b2cebf316452bd690033cb20823b674a08d5bc24"
+    },
+    {
+      "file": "data/stackoverflow/train-00155-of-00210-ca250d5f7a47aa96.parquet",
+      "bytes": 273073540,
+      "rows": 94784,
+      "sha256": "ce17c212c2f2902d4300a4abc9bb401dc86222f5e0edb5d4f30e2faafbdf78d7"
+    },
+    {
+      "file": "data/stackoverflow/train-00160-of-00210-edfa83f8beb23b0d.parquet",
+      "bytes": 267551948,
+      "rows": 94783,
+      "sha256": "b63385d23c4d090bca8fa40801ea5738ce8ed3c589b5bdc536287f66b68e0788"
+    },
+    {
+      "file": "data/stackoverflow/train-00165-of-00210-917d1e28ee31060a.parquet",
+      "bytes": 272916581,
+      "rows": 94783,
+      "sha256": "5a6f262f83b9400beaaaa5c6ecd088b8a6d6b7a22da006118e1080b281fa4589"
+    },
+    {
+      "file": "data/stackoverflow/train-00170-of-00210-260a46556e0ae99c.parquet",
+      "bytes": 270461812,
+      "rows": 94783,
+      "sha256": "fe6f717c649d324a4b136365fd5d8c98cb5755962fb792ef0e902bd0e546f245"
+    },
+    {
+      "file": "data/stackoverflow/train-00175-of-00210-bc31baa964b3d936.parquet",
+      "bytes": 277118250,
+      "rows": 94783,
+      "sha256": "d8f21a43553db276fd50a10f297327ac2ef133c51317e180272d237eea24707b"
+    },
+    {
+      "file": "data/stackoverflow/train-00180-of-00210-00715e6cd1db33d5.parquet",
+      "bytes": 276436402,
+      "rows": 94783,
+      "sha256": "cab510e4815f9a12841d40ef57565a98488ef259924a23fcdc655d95dcd96569"
+    },
+    {
+      "file": "data/stackoverflow/train-00185-of-00210-806b2d0f6a02cc45.parquet",
+      "bytes": 280566165,
+      "rows": 94783,
+      "sha256": "973220d408428bf62071f9f290df4412dc04001203256d726508e70b3b066efa"
+    },
+    {
+      "file": "data/stackoverflow/train-00190-of-00210-105f2617520fd4ec.parquet",
+      "bytes": 281052961,
+      "rows": 94783,
+      "sha256": "8b5135167d8ee49b30adc0577292b9aeb0f79e935fb9de2d9cc17c0ccee92fb8"
+    },
+    {
+      "file": "data/stackoverflow/train-00195-of-00210-864f245ddb24d44e.parquet",
+      "bytes": 283975638,
+      "rows": 94783,
+      "sha256": "72509727e62c72df67d0870df97d4a47e920a2b06dfb67135f79a39894aee18e"
+    }
+  ],
+  "outputs": [
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00000.parquet",
+      "bytes": 31078795,
+      "rows": 94784,
+      "sha256": "1ebd63594f9574680e86f5eca20584870c94b048da133181fabcee583672d5ce"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00000.parquet",
+      "bytes": 58543838,
+      "rows": 286478,
+      "sha256": "06d8b04f6ef9cf3cbee4c8fbc92b20336bf7bdd6c5edf48333b19d0f109414ec"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00005.parquet",
+      "bytes": 33273884,
+      "rows": 94784,
+      "sha256": "ce3f1f25b9cb118370c87e9f16bb1d9d08bd96ca173a5c745fd6af276ef1b8ad"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00005.parquet",
+      "bytes": 42442060,
+      "rows": 201857,
+      "sha256": "0cbdf7dbdc1ba6bbf8eda15f4a1a100fe1d45ba9397290245b8454e890ecab6c"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00010.parquet",
+      "bytes": 35429853,
+      "rows": 94784,
+      "sha256": "17a7787f39b8141fda3cff5007fe36cc4ecaf328a8872caf941886f97368935c"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00010.parquet",
+      "bytes": 38568467,
+      "rows": 187737,
+      "sha256": "f7ebdc968092eb6fe169fa75d3bcd9fa0613838f96eb957b9890dd48c1dc7f6e"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00015.parquet",
+      "bytes": 36954448,
+      "rows": 94784,
+      "sha256": "ec6546ac72500685afc3f923d3e6a0d6e930106502d3afc8e57c5f397ec0b3f6"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00015.parquet",
+      "bytes": 38248319,
+      "rows": 180817,
+      "sha256": "1c09fb7dd87e8e43cfeb2c8743b9171940d818e6d7c3a916759c932f3400a7c2"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00020.parquet",
+      "bytes": 38662109,
+      "rows": 94784,
+      "sha256": "6ea6e9dd9b7a956c3c31c6ec267a95de59125898d0a2ac098f26f3226bf75090"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00020.parquet",
+      "bytes": 37982311,
+      "rows": 176146,
+      "sha256": "fbccf02c83bc0015c3a726606287e276a131980081da80762ca3c5ecfa2cb9f8"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00025.parquet",
+      "bytes": 40140536,
+      "rows": 94784,
+      "sha256": "874ace5baae2c4377463f60c330294e9e7220f024a19a8c98b2ff6891b6c2d35"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00025.parquet",
+      "bytes": 37997214,
+      "rows": 169997,
+      "sha256": "cf5a3eec108d433b4a68057714519855c08f245b547d2a98ba85d210062ae67f"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00030.parquet",
+      "bytes": 40993436,
+      "rows": 94784,
+      "sha256": "2f3e646ea55e7d75e271cfb326f5c25bc5fabf91b33ccade77b193cc055e7054"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00030.parquet",
+      "bytes": 38358492,
+      "rows": 170431,
+      "sha256": "86533efc329b08d3ae0cdbf6cd1dce7a30d817211492f65b191373b6f383af59"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00035.parquet",
+      "bytes": 42069500,
+      "rows": 94784,
+      "sha256": "c3867604001999561820d6f70ebefead9b7a498d956e6ccbfdd14ae1b27446fc"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00035.parquet",
+      "bytes": 38311390,
+      "rows": 165596,
+      "sha256": "ad1bedd92e727e4a7df1795a9722277d00481c3f87e7f6e91a84ed46584b3fd4"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00040.parquet",
+      "bytes": 43499985,
+      "rows": 94784,
+      "sha256": "d4acb0a91776f0730fdb5a0b4c646189668a528fee555bc90ea00e57a2c905c0"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00040.parquet",
+      "bytes": 38208718,
+      "rows": 164043,
+      "sha256": "638579af12e6a3ccd33c33a697ba66ef543c21ebac879aa5c8b0b35345ac1a83"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00045.parquet",
+      "bytes": 43558219,
+      "rows": 94784,
+      "sha256": "868e97184c092e5a44ed952bf64d6575f2b4d44688ac9b4fb11bb70f893053e1"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00045.parquet",
+      "bytes": 38926127,
+      "rows": 166265,
+      "sha256": "dfafc432b0a70e8f0c52f96ecbfafee9ea2c9a35ed9a913429dc0f1969e299e7"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00050.parquet",
+      "bytes": 44452141,
+      "rows": 94784,
+      "sha256": "c6d68d836e13fc5e1c29ed14baf47b0f4bc06facb5164c1a958c38397b3dbb76"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00050.parquet",
+      "bytes": 38050007,
+      "rows": 161608,
+      "sha256": "541c8022037a978d25b6985b5d528bb51fe8629c34d78e943f55fd27b7086f07"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00055.parquet",
+      "bytes": 44340895,
+      "rows": 94784,
+      "sha256": "86e80b6127f82b12087eb6e8d9e57349d8a742c952da5a7b89deca9a3927385a"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00055.parquet",
+      "bytes": 38068438,
+      "rows": 162954,
+      "sha256": "d56dcea5740eb39e7d227041cb9ff234bf5d0b123baa050121735221cbc0aecd"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00060.parquet",
+      "bytes": 45454601,
+      "rows": 94784,
+      "sha256": "5950ba1d9b48a400038b598c54f081a0f674b2c8331f977b41afb2f99ed17823"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00060.parquet",
+      "bytes": 38039712,
+      "rows": 154383,
+      "sha256": "2ea275587a315257b4d8eaf090ad7898af6372cf30ac01b5caa7ebc860fd1f90"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00065.parquet",
+      "bytes": 45236387,
+      "rows": 94784,
+      "sha256": "afcb85a10d2d82f940ad8528c1696ee4752c7f978426320f833d6935bcfe61eb"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00065.parquet",
+      "bytes": 38864275,
+      "rows": 155326,
+      "sha256": "115953d556324d83126c4411a488bfecd37420d665e301e8789e9640ab829f5f"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00070.parquet",
+      "bytes": 45934383,
+      "rows": 94784,
+      "sha256": "4976eb62ac5f37b2b5677c0559d9f9ed55b7121fd36d4dd7c938b7f8de9257ae"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00070.parquet",
+      "bytes": 38683580,
+      "rows": 153870,
+      "sha256": "1f14ca8fe8aab6eebb271a80c4298f072cf754f592b860ab8229380da623b6ba"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00075.parquet",
+      "bytes": 45987812,
+      "rows": 94784,
+      "sha256": "09813f3103e38d6fd1b43a513f474c7be01876fb6ff98c30d36ebc88086b50df"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00075.parquet",
+      "bytes": 38632778,
+      "rows": 150965,
+      "sha256": "e34f0479b37277973bfd1c743cd2f8aaffd8f0d558944e9cf0f3f8a2a0e5aeec"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00080.parquet",
+      "bytes": 46029868,
+      "rows": 94784,
+      "sha256": "f4be8e264747b07336849b230a1f0b9417ecfb78df0bb4ba0ed275fc5051a34a"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00080.parquet",
+      "bytes": 39591954,
+      "rows": 154703,
+      "sha256": "d5aa0608a01fab449511e6b54b6bffdd61f3b96a49100a228491aa789ad031fe"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00085.parquet",
+      "bytes": 46371101,
+      "rows": 94784,
+      "sha256": "40531f2c83979bb6f672d7f0c8d4d62d005dc88087f0727220ae7254cae3c8af"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00085.parquet",
+      "bytes": 40287502,
+      "rows": 154421,
+      "sha256": "daa572d75d2ea749aabad7f6ea05adce4fbcf77ef7c37b8824c930d98ab8b87c"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00090.parquet",
+      "bytes": 47538091,
+      "rows": 94784,
+      "sha256": "0b94d4cea0c461c035172c07f8cbe3714fb635e22fcc126792265ac3e5b487e6"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00090.parquet",
+      "bytes": 39893396,
+      "rows": 152164,
+      "sha256": "118df1fda130f1e41455b0994aadfb77668158638a2d638cdceeab24acaae2b0"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00095.parquet",
+      "bytes": 47426753,
+      "rows": 94784,
+      "sha256": "266d61738ab5fe537f27a69bdf7d8b8e03f1bf9a87e1665e33b04e88204bcc9c"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00095.parquet",
+      "bytes": 40207552,
+      "rows": 152730,
+      "sha256": "76280ffb4e0e86b2d164a761e806192021863c1396c471abfb60d9e2536401cb"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00100.parquet",
+      "bytes": 47115187,
+      "rows": 94784,
+      "sha256": "3b348df66fc75e6b85294e8a88ac842eec8e958069a270357bad3e8508e58bd2"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00100.parquet",
+      "bytes": 40702383,
+      "rows": 153129,
+      "sha256": "a7fd3276de30650a2f70b7301c1adec83f5fdb105b45128e6ca641cffa333f6b"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00105.parquet",
+      "bytes": 47601035,
+      "rows": 94784,
+      "sha256": "5bfe8228f2593e9b04e19e8c1c76883862965e35b0140d48281164a811120434"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00105.parquet",
+      "bytes": 41344156,
+      "rows": 154248,
+      "sha256": "af7af1dd2993a02d87cdae5ebb18d0f1eea7cf91090f5b91f3c881552146493e"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00110.parquet",
+      "bytes": 47593134,
+      "rows": 94784,
+      "sha256": "31b262f1d07b21a4789e5111bf79944d9ed287516bfd57cf1fc8192112bea86c"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00110.parquet",
+      "bytes": 41240078,
+      "rows": 152846,
+      "sha256": "5d36f01dc2b03f4ecbb21ce917c53a878121d0f300256091a1d6a916cbf21a55"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00115.parquet",
+      "bytes": 47670122,
+      "rows": 94784,
+      "sha256": "464d28cdcf25ccbbf40d6776385b09a22256377b0286680ec1d8d76294ee6a05"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00115.parquet",
+      "bytes": 40701529,
+      "rows": 152253,
+      "sha256": "23b2fbb9aef38312e49ef38f0921702cf21740cf149b47eb1037b91387c1d8c2"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00120.parquet",
+      "bytes": 47621957,
+      "rows": 94784,
+      "sha256": "ad07d992200e129d985a0cb9af9d04d37e168a4906c2ceeb8be28d5c77716e8c"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00120.parquet",
+      "bytes": 41098265,
+      "rows": 153090,
+      "sha256": "83ac7e51518ba2c89235d3fb528c5eb2f6f65f9885f4daf647fd48dea5421e1c"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00125.parquet",
+      "bytes": 47451747,
+      "rows": 94784,
+      "sha256": "d9aa9a72428d0979035a6ad525be9e11071e331be3bf5dd77142314e25e164c2"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00125.parquet",
+      "bytes": 41477111,
+      "rows": 153949,
+      "sha256": "13a65675fdbd795901b2b34a830038657117c8ea9f6407f725259972362edb4e"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00130.parquet",
+      "bytes": 48096448,
+      "rows": 94784,
+      "sha256": "b8842af03cc425e0192c72df7c49b41ccb3c21332f8634aed0e730ba05310aaa"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00130.parquet",
+      "bytes": 42982679,
+      "rows": 151994,
+      "sha256": "875f33768503038711074c745459af01d761fd366a882b5deb2efe08e09533c1"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00135.parquet",
+      "bytes": 48606276,
+      "rows": 94784,
+      "sha256": "07387256f9a01a5c4bd049f93c099b028a75e80d6b2b402f989b0e574d9e034c"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00135.parquet",
+      "bytes": 43002455,
+      "rows": 153857,
+      "sha256": "04f91da4dcc962e863539225f41fe215b75f7d70478c684cdfae2a0aeb0fdfcc"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00140.parquet",
+      "bytes": 48192865,
+      "rows": 94784,
+      "sha256": "aa9ef66055c070e4c000dff0287e6b9e5e3f4a65b07660efa0bd7e7a9b5b43af"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00140.parquet",
+      "bytes": 42861203,
+      "rows": 153744,
+      "sha256": "bb7c01475fc1cf03062834a55f77162c3b4c4409516dc85da84cd9fe11baa13b"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00145.parquet",
+      "bytes": 48006577,
+      "rows": 94784,
+      "sha256": "4e1578deaaa88cb3c747101a765ec6ba65ce8a17f649960be49012c7b94e7677"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00145.parquet",
+      "bytes": 43109073,
+      "rows": 152220,
+      "sha256": "51b7e168d43db758a9ad5f470e6f53043838da6dbf0b9cc2f5e7ecc7b274ce9e"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00150.parquet",
+      "bytes": 48352133,
+      "rows": 94784,
+      "sha256": "09387f7e4ed2c1a610d3e5883598d2f5831b6fda518dc5832e40234ca017ede3"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00150.parquet",
+      "bytes": 44004944,
+      "rows": 155897,
+      "sha256": "f635502e4710f9db107387ededcc84071356f72abb368ebb55bae7a9c435c7a3"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00155.parquet",
+      "bytes": 49614759,
+      "rows": 94784,
+      "sha256": "8303e3f0a43c626486867c02d220cb78615a1a8546dd31194a7d935d4554fd2c"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00155.parquet",
+      "bytes": 44279571,
+      "rows": 155880,
+      "sha256": "cae80201186efed4c841be5771b0435efb82848680cd485613c08fe3fb643725"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00160.parquet",
+      "bytes": 48643952,
+      "rows": 94783,
+      "sha256": "c26be27c43e98064c4a3ca5bbcbee4930422b5dfc32494eecac3dce3a261546e"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00160.parquet",
+      "bytes": 43488035,
+      "rows": 156101,
+      "sha256": "b320830556d8fec938019d42f7e91e3f4f4f4f1433aa1c320a8e161bb3a29c13"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00165.parquet",
+      "bytes": 49565273,
+      "rows": 94783,
+      "sha256": "cdec647a09672ef99e0afb59102864500a9a20b7a852e8cde72485a8ba8385ff"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00165.parquet",
+      "bytes": 44500664,
+      "rows": 157306,
+      "sha256": "0c0d0ca789eea3bdb740433685f54a642f77fc2b2fd1ef43d46e3121cf7f3305"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00170.parquet",
+      "bytes": 49534655,
+      "rows": 94783,
+      "sha256": "07ec2ec52bf212c06e8b6473071f5089123f497933cd81a048ac4ba1b115efd6"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00170.parquet",
+      "bytes": 43656328,
+      "rows": 154283,
+      "sha256": "aa6d78fc466e35e2b38a6ff2da13721c74b9025e4e84f271f93d089be4d5e484"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00175.parquet",
+      "bytes": 50413431,
+      "rows": 94783,
+      "sha256": "3d23fc25506b75b81794907440fbd506205d8653540cd79fae7127269f76141e"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00175.parquet",
+      "bytes": 44956272,
+      "rows": 157176,
+      "sha256": "578ac584cbff7e0ea57c2970e404ee4978d0d0fec68486a8ba454816658f7be4"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00180.parquet",
+      "bytes": 50233403,
+      "rows": 94783,
+      "sha256": "42c0502afc1d925b1ff28dcd36f281119ef1aea59d66596e03043e6ff8e59412"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00180.parquet",
+      "bytes": 45001805,
+      "rows": 157466,
+      "sha256": "32a335c58d3d4d7f4e8354fca7b14e052b7bceb288aabc61632f9ef2b3c9d914"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00185.parquet",
+      "bytes": 50330888,
+      "rows": 94783,
+      "sha256": "635bc5d2a6ae6ab56717ef5479cfccf27ef6aa694fb885e7893de26e073831e4"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00185.parquet",
+      "bytes": 46253380,
+      "rows": 159512,
+      "sha256": "089b756b3352b5e087d7f376c06fb62d8ca3610f9182a27ccbacde8e2545a3c8"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00190.parquet",
+      "bytes": 50186543,
+      "rows": 94783,
+      "sha256": "83a7f069b18aae31ee80263bd0e77b7ceaac6dffda1290b3e9ec3da21a71f0d0"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00190.parquet",
+      "bytes": 46888121,
+      "rows": 165806,
+      "sha256": "f9c17c3b6752df59dedac27a376d3e8af8fbab1d824c2a8ac5e37aae39c6a4da"
+    },
+    {
+      "table": "questions",
+      "file": "data/parquet/stackoverflow/schema_version=1/questions/part-00195.parquet",
+      "bytes": 49573311,
+      "rows": 94783,
+      "sha256": "3f452cdc8f1e899603ef3a84e03b1c6ae2318b8e941b3d14613601e6338db2f8"
+    },
+    {
+      "table": "answers",
+      "file": "data/parquet/stackoverflow/schema_version=1/answers/part-00195.parquet",
+      "bytes": 48623224,
+      "rows": 170782,
+      "sha256": "408d95e7bf5d9c7dab4f0c8d1e1e3595a8c164977a0f6b9c7bfc24b53fdc619a"
+    }
+  ],
+  "totals": {
+    "source_files": 40,
+    "source_bytes": 10213154861,
+    "source_rows": 3791352,
+    "output_files": 80,
+    "output_bytes": 3486913899,
+    "output_rows": 10335382
+  }
+}

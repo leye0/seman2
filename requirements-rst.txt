@@ -1,0 +1,4 @@
+isanlp @ git+https://github.com/iinemo/isanlp.git@2a102e59f9718acc7fe259dd8d83c66d5da39794
+isanlp-rst @ git+https://github.com/tchewik/isanlp_rst.git@cc8789f44c1341c3e7752b472634d75e81b62518
+torch==2.14.0
+transformers==5.17.0
