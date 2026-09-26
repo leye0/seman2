@@ -1,0 +1,23 @@
+{
+  "fixture_count": 6,
+  "selected_lemma_count": 5,
+  "selected_roleset_count": 6,
+  "selected_instance_count": 6,
+  "selected_argument_count": 20,
+  "selected_pointer_counts": {
+    "chain": 2,
+    "split": 1,
+    "tree": 17
+  },
+  "corpus_verb_count": 3257,
+  "corpus_roleset_count": 4659,
+  "corpus_instance_count": 112917,
+  "installed_treebank_file_count": 199,
+  "nltk_ptb_catalog_entry_count": 2504,
+  "licensed_ptb_parse_file_count": 0,
+  "instances_with_installed_tree_count": 9353,
+  "instances_without_installed_tree_count": 103564,
+  "installed_tree_coverage_ratio": 0.08283075179113862,
+  "new_sentence_annotation_performed": false,
+  "verdict": "PARTIAL_CORPUS_READER_WITH_COMPLETE_FRAME_INVENTORY"
+}

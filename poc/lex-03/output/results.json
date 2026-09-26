@@ -1,0 +1,5312 @@
+[
+  {
+    "id": "simple-join",
+    "phenomenon": "simple arguments and adjuncts anchored in a Treebank tree",
+    "lemma": "join",
+    "roleset_id": "join.01",
+    "instance": {
+      "fileid": "wsj_0001.mrg",
+      "sentnum": 0,
+      "wordnum": 8
+    },
+    "expected_arguments": [
+      "ARG0",
+      "ARG1",
+      "ARGM-MOD",
+      "ARGM-PRD",
+      "ARGM-TMP"
+    ],
+    "expected_pointer_kinds": [
+      "tree"
+    ],
+    "available_roleset_ids_for_lemma": [
+      "join.01"
+    ],
+    "lemma_lookup_selects_a_roleset": false,
+    "roleset_definition": {
+      "roleset_id": "join.01",
+      "lemma": "join",
+      "name": "attach",
+      "verbnet_class_ids": [
+        "22.1-2"
+      ],
+      "attributes": {
+        "id": "join.01",
+        "name": "attach",
+        "vncls": "22.1-2"
+      },
+      "roles": [
+        {
+          "argument_label": "ARG0",
+          "number": "0",
+          "function": null,
+          "description": "agent, entity doing the tying",
+          "verbnet_roles": [
+            {
+              "vncls": "22.1-2",
+              "vntheta": "Agent"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG1",
+          "number": "1",
+          "function": null,
+          "description": "patient, thing(s) being tied",
+          "verbnet_roles": [
+            {
+              "vncls": "22.1-2",
+              "vntheta": "Patient1"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG2",
+          "number": "2",
+          "function": null,
+          "description": "instrument, string",
+          "verbnet_roles": [
+            {
+              "vncls": "22.1-2",
+              "vntheta": "Patient2"
+            }
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "attributes": {
+            "name": "straight transitive"
+          },
+          "text": "Mr. Harper, a veteran of several manufacturing companies who *trace* joined Campbell in 1986, will take charge of all overseas operations as well as Pepperidge.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "*trace* -> who -> a veteran",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "joined",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "Campbell",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "TMP",
+                "n": "M"
+              },
+              "text": "in 1986",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "join in, as arg1"
+          },
+          "text": "``Anheuser is the biggest guy in the bar, and he just decided *trace* to join in the barroom brawl,'' said Joseph J. Doyle, an analyst with Smith Barney, Harris Upham & Co.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "*trace* -> he",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "join",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "in",
+                "n": "1"
+              },
+              "text": "the barroom brawl",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "join in, as argM-PRD"
+          },
+          "text": "Bowing to criticism, Bear Stearns, Morgan Stanley and Oppenheimer joined PaineWebber in suspending stock-index arbitrage trading for their own accounts.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "Bear Stearns, Morgan Stanley and Oppenheimer",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "joined",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "PaineWebber",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "PRD",
+                "n": "M"
+              },
+              "text": "in suspending stock-index arbitrage trading for their own accounts",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "join as"
+          },
+          "text": "In Barry Wright, Mr. Sim sees a situation ``very similar'' to the one he faced when he joined Applied as president and chief operating officer in 1985.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "he",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "joined",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "Applied",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "PRD",
+                "n": "M"
+              },
+              "text": "as president and chief operating officer",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "TMP",
+                "n": "M"
+              },
+              "text": "in 1985",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "with instrument"
+          },
+          "text": "John joined the fragments of his coffee cup with duct tape.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "John",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "joined",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "the fragments of his coffee cup",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "with",
+                "n": "2"
+              },
+              "text": "duct tape",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "instance_annotation": {
+      "analysis_id": "propbank-annotation:ce26bb37c0ee964d99edd7579ef90805e5f511b4e7a4e0bae0a68eb7820ab488",
+      "producer": {
+        "interface": "NLTK PropBankCorpusReader",
+        "resource": "UPenn PropBank",
+        "resource_version": "1.0"
+      },
+      "support": {
+        "annotation_file": "prop.txt",
+        "treebank_fileid": "wsj_0001.mrg",
+        "sentence_number": 0,
+        "predicate_terminal_number": 8
+      },
+      "annotation_status": "gold",
+      "lemma": "join",
+      "sense_number": "01",
+      "roleset_id": "join.01",
+      "roleset_assignment_source": "existing PropBank corpus annotation",
+      "automatically_assigned_to_new_text": false,
+      "inflection": {
+        "code": "vf--a",
+        "form": "v",
+        "tense": "f",
+        "aspect": "-",
+        "person": "-",
+        "voice": "a"
+      },
+      "predicate": {
+        "kind": "tree",
+        "native_type": "PropbankTreePointer",
+        "notation": "8:0",
+        "word_number": 8,
+        "height": 0,
+        "tree_position": [
+          1,
+          1,
+          0
+        ],
+        "terminal_indices": [
+          8
+        ],
+        "selected_tokens": [
+          "join"
+        ],
+        "selected_text": "join",
+        "selected_tree": "(VB join)",
+        "pieces": []
+      },
+      "arguments": [
+        {
+          "label": "ARG0",
+          "roleset_role_definition": {
+            "argument_label": "ARG0",
+            "number": "0",
+            "function": null,
+            "description": "agent, entity doing the tying",
+            "verbnet_roles": [
+              {
+                "vncls": "22.1-2",
+                "vntheta": "Agent"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "0:2",
+            "word_number": 0,
+            "height": 2,
+            "tree_position": [
+              0
+            ],
+            "terminal_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "selected_tokens": [
+              "Pierre",
+              "Vinken",
+              ",",
+              "61",
+              "years",
+              "old",
+              ","
+            ],
+            "selected_text": "Pierre Vinken , 61 years old ,",
+            "selected_tree": "(NP-SBJ (NP (NNP Pierre) (NNP Vinken)) (, ,) (ADJP (NP (CD 61) (NNS years)) (JJ old)) (, ,))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARGM-MOD",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "7:0",
+            "word_number": 7,
+            "height": 0,
+            "tree_position": [
+              1,
+              0
+            ],
+            "terminal_indices": [
+              7
+            ],
+            "selected_tokens": [
+              "will"
+            ],
+            "selected_text": "will",
+            "selected_tree": "(MD will)",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG1",
+          "roleset_role_definition": {
+            "argument_label": "ARG1",
+            "number": "1",
+            "function": null,
+            "description": "patient, thing(s) being tied",
+            "verbnet_roles": [
+              {
+                "vncls": "22.1-2",
+                "vntheta": "Patient1"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "9:1",
+            "word_number": 9,
+            "height": 1,
+            "tree_position": [
+              1,
+              1,
+              1
+            ],
+            "terminal_indices": [
+              9,
+              10
+            ],
+            "selected_tokens": [
+              "the",
+              "board"
+            ],
+            "selected_text": "the board",
+            "selected_tree": "(NP (DT the) (NN board))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARGM-PRD",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "11:1",
+            "word_number": 11,
+            "height": 1,
+            "tree_position": [
+              1,
+              1,
+              2
+            ],
+            "terminal_indices": [
+              11,
+              12,
+              13,
+              14
+            ],
+            "selected_tokens": [
+              "as",
+              "a",
+              "nonexecutive",
+              "director"
+            ],
+            "selected_text": "as a nonexecutive director",
+            "selected_tree": "(PP-CLR (IN as) (NP (DT a) (JJ nonexecutive) (NN director)))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARGM-TMP",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "15:1",
+            "word_number": 15,
+            "height": 1,
+            "tree_position": [
+              1,
+              1,
+              3
+            ],
+            "terminal_indices": [
+              15,
+              16
+            ],
+            "selected_tokens": [
+              "Nov.",
+              "29"
+            ],
+            "selected_text": "Nov. 29",
+            "selected_tree": "(NP-TMP (NNP Nov.) (CD 29))",
+            "pieces": []
+          }
+        }
+      ],
+      "tree": {
+        "bracketed": "(S (NP-SBJ (NP (NNP Pierre) (NNP Vinken)) (, ,) (ADJP (NP (CD 61) (NNS years)) (JJ old)) (, ,)) (VP (MD will) (VP (VB join) (NP (DT the) (NN board)) (PP-CLR (IN as) (NP (DT a) (JJ nonexecutive) (NN director))) (NP-TMP (NNP Nov.) (CD 29)))) (. .))",
+        "tokens": [
+          {
+            "terminal_index": 0,
+            "token": "Pierre",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 1,
+            "token": "Vinken",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 2,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 3,
+            "token": "61",
+            "pos": "CD",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 4,
+            "token": "years",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 5,
+            "token": "old",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 6,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              3,
+              0
+            ]
+          },
+          {
+            "terminal_index": 7,
+            "token": "will",
+            "pos": "MD",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 8,
+            "token": "join",
+            "pos": "VB",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 9,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 10,
+            "token": "board",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 11,
+            "token": "as",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 12,
+            "token": "a",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 13,
+            "token": "nonexecutive",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 14,
+            "token": "director",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 15,
+            "token": "Nov.",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 16,
+            "token": "29",
+            "pos": "CD",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              3,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 17,
+            "token": ".",
+            "pos": ".",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              0
+            ]
+          }
+        ],
+        "text_with_empty_categories": "Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 .",
+        "surface_text_approximation": "Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 .",
+        "terminal_count": 18
+      },
+      "raw_annotation_line": "wsj/00/wsj_0001.mrg 0 8 gold join.01 vf--a 0:2-ARG0 7:0-ARGM-MOD 8:0-rel 9:1-ARG1 11:1-ARGM-PRD 15:1-ARGM-TMP"
+    }
+  },
+  {
+    "id": "ditransitive-give",
+    "phenomenon": "three core arguments with PropBank and VerbNet role descriptions",
+    "lemma": "give",
+    "roleset_id": "give.01",
+    "instance": {
+      "fileid": "wsj_0010.mrg",
+      "sentnum": 17,
+      "wordnum": 17
+    },
+    "expected_arguments": [
+      "ARG0",
+      "ARG1",
+      "ARG2",
+      "ARGM-ADV"
+    ],
+    "expected_pointer_kinds": [
+      "tree"
+    ],
+    "available_roleset_ids_for_lemma": [
+      "give.01",
+      "give.02",
+      "give.03",
+      "give.04",
+      "give.05",
+      "give.06",
+      "give.07",
+      "give.08",
+      "give.09"
+    ],
+    "lemma_lookup_selects_a_roleset": false,
+    "roleset_definition": {
+      "roleset_id": "give.01",
+      "lemma": "give",
+      "name": "transfer",
+      "verbnet_class_ids": [
+        "13.1-1"
+      ],
+      "attributes": {
+        "id": "give.01",
+        "name": "transfer",
+        "vncls": "13.1-1"
+      },
+      "roles": [
+        {
+          "argument_label": "ARG0",
+          "number": "0",
+          "function": null,
+          "description": "giver",
+          "verbnet_roles": [
+            {
+              "vncls": "13.1-1",
+              "vntheta": "Agent"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG1",
+          "number": "1",
+          "function": null,
+          "description": "thing given",
+          "verbnet_roles": [
+            {
+              "vncls": "13.1-1",
+              "vntheta": "Theme"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG2",
+          "number": "2",
+          "function": null,
+          "description": "entity given to",
+          "verbnet_roles": [
+            {
+              "vncls": "13.1-1",
+              "vntheta": "Recipient"
+            }
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "attributes": {
+            "name": "double object"
+          },
+          "text": "The executives gave the chefs a standing ovation.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "The executives",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "gave",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "2"
+              },
+              "text": "the chefs",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "a standing ovation",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "ditransitive"
+          },
+          "text": "She had given the answers to two low-ability geography classes.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "She",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "had given",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "the answers",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "to",
+                "n": "2"
+              },
+              "text": "to two low ability geography classes",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "give way"
+          },
+          "text": "The Beatles give way to baseball in the Nipponese version.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "The Beatles",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "give",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "way",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "to",
+                "n": "2"
+              },
+              "text": "to baseball",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "Odd discourse-level usage"
+          },
+          "text": "This is very odd, *trace* given uncertainties about the auction.",
+          "annotations": [
+            {
+              "element": "note",
+              "attributes": {},
+              "text": "*trace* is not linked to anything",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "2"
+              },
+              "text": "*trace*",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "given",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "uncertainties about the auction",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "another discourse-level usage"
+          },
+          "text": "Given the weakness in both the junk bond market and the stock market, traders fear that these transactions may be revised yet again.",
+          "annotations": [
+            {
+              "element": "inflection",
+              "attributes": {
+                "person": "ns",
+                "tense": "ns",
+                "aspect": "ns",
+                "voice": "passive",
+                "form": "participle"
+              },
+              "text": null,
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "given",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "the weakness in both the junk bond market and the stock market",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "2"
+              },
+              "text": "traders",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "instance_annotation": {
+      "analysis_id": "propbank-annotation:a103cbb6f2a135364677a40419a0f584bcfe289bcfde8f9934b9546a01791784",
+      "producer": {
+        "interface": "NLTK PropBankCorpusReader",
+        "resource": "UPenn PropBank",
+        "resource_version": "1.0"
+      },
+      "support": {
+        "annotation_file": "prop.txt",
+        "treebank_fileid": "wsj_0010.mrg",
+        "sentence_number": 17,
+        "predicate_terminal_number": 17
+      },
+      "annotation_status": "gold",
+      "lemma": "give",
+      "sense_number": "01",
+      "roleset_id": "give.01",
+      "roleset_assignment_source": "existing PropBank corpus annotation",
+      "automatically_assigned_to_new_text": false,
+      "inflection": {
+        "code": "vp--a",
+        "form": "v",
+        "tense": "p",
+        "aspect": "-",
+        "person": "-",
+        "voice": "a"
+      },
+      "predicate": {
+        "kind": "tree",
+        "native_type": "PropbankTreePointer",
+        "notation": "17:0",
+        "word_number": 17,
+        "height": 0,
+        "tree_position": [
+          3,
+          0
+        ],
+        "terminal_indices": [
+          17
+        ],
+        "selected_tokens": [
+          "gave"
+        ],
+        "selected_text": "gave",
+        "selected_tree": "(VBD gave)",
+        "pieces": []
+      },
+      "arguments": [
+        {
+          "label": "ARGM-ADV",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "0:2",
+            "word_number": 0,
+            "height": 2,
+            "tree_position": [
+              0
+            ],
+            "terminal_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "selected_tokens": [
+              "*-2",
+              "Knowing",
+              "a",
+              "tasty",
+              "--",
+              "and",
+              "free",
+              "--",
+              "meal",
+              "when",
+              "they",
+              "eat",
+              "one",
+              "*T*-1"
+            ],
+            "selected_text": "*-2 Knowing a tasty -- and free -- meal when they eat one *T*-1",
+            "selected_tree": "(S-ADV (NP-SBJ (-NONE- *-2)) (VP (VBG Knowing) (NP (DT a) (ADJP (JJ tasty) (PRN (: --) (CC and) (JJ free) (: --))) (NN meal)) (SBAR-TMP (WHADVP-1 (WRB when)) (S (NP-SBJ (PRP they)) (VP (VBP eat) (NP (CD one)) (ADVP-TMP (-NONE- *T*-1)))))))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG0",
+          "roleset_role_definition": {
+            "argument_label": "ARG0",
+            "number": "0",
+            "function": null,
+            "description": "giver",
+            "verbnet_roles": [
+              {
+                "vncls": "13.1-1",
+                "vntheta": "Agent"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "15:1",
+            "word_number": 15,
+            "height": 1,
+            "tree_position": [
+              2
+            ],
+            "terminal_indices": [
+              15,
+              16
+            ],
+            "selected_tokens": [
+              "the",
+              "executives"
+            ],
+            "selected_text": "the executives",
+            "selected_tree": "(NP-SBJ-2 (DT the) (NNS executives))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG2",
+          "roleset_role_definition": {
+            "argument_label": "ARG2",
+            "number": "2",
+            "function": null,
+            "description": "entity given to",
+            "verbnet_roles": [
+              {
+                "vncls": "13.1-1",
+                "vntheta": "Recipient"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "18:1",
+            "word_number": 18,
+            "height": 1,
+            "tree_position": [
+              3,
+              1
+            ],
+            "terminal_indices": [
+              18,
+              19
+            ],
+            "selected_tokens": [
+              "the",
+              "chefs"
+            ],
+            "selected_text": "the chefs",
+            "selected_tree": "(NP (DT the) (NNS chefs))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG1",
+          "roleset_role_definition": {
+            "argument_label": "ARG1",
+            "number": "1",
+            "function": null,
+            "description": "thing given",
+            "verbnet_roles": [
+              {
+                "vncls": "13.1-1",
+                "vntheta": "Theme"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "20:1",
+            "word_number": 20,
+            "height": 1,
+            "tree_position": [
+              3,
+              2
+            ],
+            "terminal_indices": [
+              20,
+              21,
+              22
+            ],
+            "selected_tokens": [
+              "a",
+              "standing",
+              "ovation"
+            ],
+            "selected_text": "a standing ovation",
+            "selected_tree": "(NP (DT a) (JJ standing) (NN ovation))",
+            "pieces": []
+          }
+        }
+      ],
+      "tree": {
+        "bracketed": "(S (S-ADV (NP-SBJ (-NONE- *-2)) (VP (VBG Knowing) (NP (DT a) (ADJP (JJ tasty) (PRN (: --) (CC and) (JJ free) (: --))) (NN meal)) (SBAR-TMP (WHADVP-1 (WRB when)) (S (NP-SBJ (PRP they)) (VP (VBP eat) (NP (CD one)) (ADVP-TMP (-NONE- *T*-1))))))) (, ,) (NP-SBJ-2 (DT the) (NNS executives)) (VP (VBD gave) (NP (DT the) (NNS chefs)) (NP (DT a) (JJ standing) (NN ovation))) (. .))",
+        "tokens": [
+          {
+            "terminal_index": 0,
+            "token": "*-2",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 1,
+            "token": "Knowing",
+            "pos": "VBG",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 2,
+            "token": "a",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 3,
+            "token": "tasty",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 4,
+            "token": "--",
+            "pos": ":",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 5,
+            "token": "and",
+            "pos": "CC",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 6,
+            "token": "free",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              1,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 7,
+            "token": "--",
+            "pos": ":",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              1,
+              3,
+              0
+            ]
+          },
+          {
+            "terminal_index": 8,
+            "token": "meal",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 9,
+            "token": "when",
+            "pos": "WRB",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 10,
+            "token": "they",
+            "pos": "PRP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 11,
+            "token": "eat",
+            "pos": "VBP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 12,
+            "token": "one",
+            "pos": "CD",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 13,
+            "token": "*T*-1",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 14,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 15,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 16,
+            "token": "executives",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 17,
+            "token": "gave",
+            "pos": "VBD",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 18,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 19,
+            "token": "chefs",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 20,
+            "token": "a",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 21,
+            "token": "standing",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              2,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 22,
+            "token": "ovation",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              2,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 23,
+            "token": ".",
+            "pos": ".",
+            "is_empty_category": false,
+            "tree_position": [
+              4,
+              0
+            ]
+          }
+        ],
+        "text_with_empty_categories": "*-2 Knowing a tasty -- and free -- meal when they eat one *T*-1 , the executives gave the chefs a standing ovation .",
+        "surface_text_approximation": "Knowing a tasty -- and free -- meal when they eat one , the executives gave the chefs a standing ovation .",
+        "terminal_count": 24
+      },
+      "raw_annotation_line": "wsj/00/wsj_0010.mrg 17 17 gold give.01 vp--a 0:2-ARGM-ADV 15:1-ARG0 17:0-rel 18:1-ARG2 20:1-ARG1"
+    }
+  },
+  {
+    "id": "polysemy-run-operate",
+    "phenomenon": "one annotated sense of a polysemous predicate with a chain pointer",
+    "lemma": "run",
+    "roleset_id": "run.01",
+    "instance": {
+      "fileid": "wsj_0027.mrg",
+      "sentnum": 8,
+      "wordnum": 15
+    },
+    "expected_arguments": [
+      "ARG0",
+      "ARG1"
+    ],
+    "expected_pointer_kinds": [
+      "tree",
+      "chain"
+    ],
+    "available_roleset_ids_for_lemma": [
+      "run.01",
+      "run.02",
+      "run.03",
+      "run.04",
+      "run.07",
+      "run.08",
+      "run.09",
+      "run.05",
+      "run.06"
+    ],
+    "lemma_lookup_selects_a_roleset": false,
+    "roleset_definition": {
+      "roleset_id": "run.01",
+      "lemma": "run",
+      "name": "operate, procede",
+      "verbnet_class_ids": [
+        "-"
+      ],
+      "attributes": {
+        "id": "run.01",
+        "name": "operate, procede",
+        "vncls": "-"
+      },
+      "roles": [
+        {
+          "argument_label": "ARG0",
+          "number": "0",
+          "function": null,
+          "description": "operator",
+          "verbnet_roles": []
+        },
+        {
+          "argument_label": "ARG1",
+          "number": "1",
+          "function": null,
+          "description": "machine, operation, procedure",
+          "verbnet_roles": []
+        },
+        {
+          "argument_label": "ARG2",
+          "number": "2",
+          "function": null,
+          "description": "employer",
+          "verbnet_roles": []
+        },
+        {
+          "argument_label": "ARG3",
+          "number": "3",
+          "function": null,
+          "description": "coworker",
+          "verbnet_roles": []
+        },
+        {
+          "argument_label": "ARG4",
+          "number": "4",
+          "function": null,
+          "description": "instrumental",
+          "verbnet_roles": []
+        }
+      ],
+      "examples": [
+        {
+          "attributes": {
+            "name": "agentive"
+          },
+          "text": "Mr. Stromach wants to resume a more influential role in *trace* running the company.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "*trace*=Mr. Stromach",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "running",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "the company",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "unaccusative"
+          },
+          "text": "Construction spending ran at an annual rate of $415.6 billion.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "Construction spending",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "ran",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "MNR",
+                "n": "m"
+              },
+              "text": "at an annual rate of $415.6 billion",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "with instrument"
+          },
+          "text": "65% or more of Brazil's newly made automobiles run on alcohol.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "65% or more of Brazil's newly made automobiles",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "run",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "MNR",
+                "n": "M"
+              },
+              "text": "on alcohol",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "instance_annotation": {
+      "analysis_id": "propbank-annotation:be77cbc0e3d834788443ff295e1e527b1e119f08d26100993d0f446e3b2007e1",
+      "producer": {
+        "interface": "NLTK PropBankCorpusReader",
+        "resource": "UPenn PropBank",
+        "resource_version": "1.0"
+      },
+      "support": {
+        "annotation_file": "prop.txt",
+        "treebank_fileid": "wsj_0027.mrg",
+        "sentence_number": 8,
+        "predicate_terminal_number": 15
+      },
+      "annotation_status": "gold",
+      "lemma": "run",
+      "sense_number": "01",
+      "roleset_id": "run.01",
+      "roleset_assignment_source": "existing PropBank corpus annotation",
+      "automatically_assigned_to_new_text": false,
+      "inflection": {
+        "code": "g----",
+        "form": "g",
+        "tense": "-",
+        "aspect": "-",
+        "person": "-",
+        "voice": "-"
+      },
+      "predicate": {
+        "kind": "tree",
+        "native_type": "PropbankTreePointer",
+        "notation": "15:0",
+        "word_number": 15,
+        "height": 0,
+        "tree_position": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0
+        ],
+        "terminal_indices": [
+          15
+        ],
+        "selected_tokens": [
+          "running"
+        ],
+        "selected_text": "running",
+        "selected_tree": "(VBG running)",
+        "pieces": []
+      },
+      "arguments": [
+        {
+          "label": "ARG0",
+          "roleset_role_definition": {
+            "argument_label": "ARG0",
+            "number": "0",
+            "function": null,
+            "description": "operator",
+            "verbnet_roles": []
+          },
+          "pointer": {
+            "kind": "chain",
+            "native_type": "PropbankChainTreePointer",
+            "notation": "3:1*6:0*14:0",
+            "word_number": null,
+            "height": null,
+            "tree_position": null,
+            "terminal_indices": [
+              3,
+              4,
+              6,
+              14
+            ],
+            "selected_tokens": [
+              "Mr.",
+              "Stronach",
+              "*-1",
+              "*"
+            ],
+            "selected_text": "Mr. Stronach *-1 *",
+            "selected_tree": "(*CHAIN* (NP-SBJ-1 (NNP Mr.) (NNP Stronach)) (-NONE- *-1) (-NONE- *))",
+            "pieces": [
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "3:1",
+                "word_number": 3,
+                "height": 1,
+                "tree_position": [
+                  1,
+                  1,
+                  1,
+                  0
+                ],
+                "terminal_indices": [
+                  3,
+                  4
+                ],
+                "selected_tokens": [
+                  "Mr.",
+                  "Stronach"
+                ],
+                "selected_text": "Mr. Stronach",
+                "selected_tree": "(NP-SBJ-1 (NNP Mr.) (NNP Stronach))",
+                "pieces": []
+              },
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "6:0",
+                "word_number": 6,
+                "height": 0,
+                "tree_position": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "terminal_indices": [
+                  6
+                ],
+                "selected_tokens": [
+                  "*-1"
+                ],
+                "selected_text": "*-1",
+                "selected_tree": "(-NONE- *-1)",
+                "pieces": []
+              },
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "14:0",
+                "word_number": 14,
+                "height": 0,
+                "tree_position": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0
+                ],
+                "terminal_indices": [
+                  14
+                ],
+                "selected_tokens": [
+                  "*"
+                ],
+                "selected_text": "*",
+                "selected_tree": "(-NONE- *)",
+                "pieces": []
+              }
+            ]
+          }
+        },
+        {
+          "label": "ARG1",
+          "roleset_role_definition": {
+            "argument_label": "ARG1",
+            "number": "1",
+            "function": null,
+            "description": "machine, operation, procedure",
+            "verbnet_roles": []
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "16:1",
+            "word_number": 16,
+            "height": 1,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "terminal_indices": [
+              16,
+              17
+            ],
+            "selected_tokens": [
+              "the",
+              "company"
+            ],
+            "selected_text": "the company",
+            "selected_tree": "(NP (DT the) (NN company))",
+            "pieces": []
+          }
+        }
+      ],
+      "tree": {
+        "bracketed": "(S (NP-SBJ (NNS Analysts)) (VP (VBD said) (SBAR (-NONE- 0) (S (NP-SBJ-1 (NNP Mr.) (NNP Stronach)) (VP (VBZ wants) (S (NP-SBJ (-NONE- *-1)) (VP (TO to) (VP (VB resume) (NP (NP (DT a) (ADJP (RBR more) (JJ influential)) (NN role)) (PP-LOC (IN in) (S-NOM (NP-SBJ (-NONE- *)) (VP (VBG running) (NP (DT the) (NN company))))))))))))) (. .))",
+        "tokens": [
+          {
+            "terminal_index": 0,
+            "token": "Analysts",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 1,
+            "token": "said",
+            "pos": "VBD",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 2,
+            "token": "0",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 3,
+            "token": "Mr.",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 4,
+            "token": "Stronach",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 5,
+            "token": "wants",
+            "pos": "VBZ",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 6,
+            "token": "*-1",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 7,
+            "token": "to",
+            "pos": "TO",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 8,
+            "token": "resume",
+            "pos": "VB",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 9,
+            "token": "a",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 10,
+            "token": "more",
+            "pos": "RBR",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 11,
+            "token": "influential",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 12,
+            "token": "role",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 13,
+            "token": "in",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 14,
+            "token": "*",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 15,
+            "token": "running",
+            "pos": "VBG",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 16,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 17,
+            "token": "company",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 18,
+            "token": ".",
+            "pos": ".",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              0
+            ]
+          }
+        ],
+        "text_with_empty_categories": "Analysts said 0 Mr. Stronach wants *-1 to resume a more influential role in * running the company .",
+        "surface_text_approximation": "Analysts said Mr. Stronach wants to resume a more influential role in running the company .",
+        "terminal_count": 19
+      },
+      "raw_annotation_line": "wsj/00/wsj_0027.mrg 8 15 gold run.01 g---- 3:1*6:0*14:0-ARG0 15:0-rel 16:1-ARG1"
+    }
+  },
+  {
+    "id": "polysemy-run-motion",
+    "phenomenon": "a different annotated roleset for the same lemma",
+    "lemma": "run",
+    "roleset_id": "run.02",
+    "instance": {
+      "fileid": "wsj_0037.mrg",
+      "sentnum": 25,
+      "wordnum": 31
+    },
+    "expected_arguments": [
+      "ARG0",
+      "ARGM-ADV",
+      "ARGM-DIR",
+      "ARGM-NEG"
+    ],
+    "expected_pointer_kinds": [
+      "tree"
+    ],
+    "available_roleset_ids_for_lemma": [
+      "run.01",
+      "run.02",
+      "run.03",
+      "run.04",
+      "run.07",
+      "run.08",
+      "run.09",
+      "run.05",
+      "run.06"
+    ],
+    "lemma_lookup_selects_a_roleset": false,
+    "roleset_definition": {
+      "roleset_id": "run.02",
+      "lemma": "run",
+      "name": "walk quickly",
+      "verbnet_class_ids": [
+        "51.3.2"
+      ],
+      "attributes": {
+        "id": "run.02",
+        "name": "walk quickly",
+        "vncls": "51.3.2"
+      },
+      "roles": [
+        {
+          "argument_label": "ARG0",
+          "number": "0",
+          "function": null,
+          "description": "runner",
+          "verbnet_roles": [
+            {
+              "vncls": "51.3.2",
+              "vntheta": "Theme"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG1",
+          "number": "1",
+          "function": null,
+          "description": "course, race, distance",
+          "verbnet_roles": [
+            {
+              "vncls": "51.3.2",
+              "vntheta": "Location"
+            }
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "attributes": {
+            "name": "agentive race"
+          },
+          "text": "John ran the Boston Marathon.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "John",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "ran",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "the Boston Marathon",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "high aspirations"
+          },
+          "text": "John decided to run for President of the United States of America, figuring that if a big lummox like George W. could do it, so could he.",
+          "annotations": [
+            {
+              "element": "inflection",
+              "attributes": {
+                "aspect": "ns",
+                "form": "infinitive",
+                "person": "ns",
+                "tense": "ns",
+                "voice": "active"
+              },
+              "text": null,
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "John",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "run",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "for",
+                "n": "1"
+              },
+              "text": "President of the United States of America",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "ergative race"
+          },
+          "text": "The Boston Marathon runs over Labor Day weekend.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "The Boston Marathon",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "runs",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "TMP",
+                "n": "m"
+              },
+              "text": "over Labor Day weekend",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "with direction"
+          },
+          "text": "A good number decide it's not worth it and run for home.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "A good number",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "run",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "DIR",
+                "n": "m"
+              },
+              "text": "for home",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "with pole position"
+          },
+          "text": "The fact is that as a savings or investment vehicle, insurance generally runs a poor second to any direct investment you might make in the same things the insurance company is putting your money into.",
+          "annotations": [
+            {
+              "element": "inflection",
+              "attributes": {
+                "person": "third",
+                "tense": "present",
+                "aspect": "ns",
+                "voice": "active",
+                "form": "full"
+              },
+              "text": null,
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "m"
+              },
+              "text": "as a savings or investment vehicle",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "insurance",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "m",
+                "f": "ADV"
+              },
+              "text": "generally",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "runs",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "2"
+              },
+              "text": "a poor second to any direct investment you might make in the same things the insurance ocmpany is putting your money into",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "instance_annotation": {
+      "analysis_id": "propbank-annotation:eb39f1383a945d22afeebc5b7a498f2f1ea9f60206895e776a2ac18558524abe",
+      "producer": {
+        "interface": "NLTK PropBankCorpusReader",
+        "resource": "UPenn PropBank",
+        "resource_version": "1.0"
+      },
+      "support": {
+        "annotation_file": "prop.txt",
+        "treebank_fileid": "wsj_0037.mrg",
+        "sentence_number": 25,
+        "predicate_terminal_number": 31
+      },
+      "annotation_status": "gold",
+      "lemma": "run",
+      "sense_number": "02",
+      "roleset_id": "run.02",
+      "roleset_assignment_source": "existing PropBank corpus annotation",
+      "automatically_assigned_to_new_text": false,
+      "inflection": {
+        "code": "vn--a",
+        "form": "v",
+        "tense": "n",
+        "aspect": "-",
+        "person": "-",
+        "voice": "a"
+      },
+      "predicate": {
+        "kind": "tree",
+        "native_type": "PropbankTreePointer",
+        "notation": "31:0",
+        "word_number": 31,
+        "height": 0,
+        "tree_position": [
+          3,
+          2,
+          0
+        ],
+        "terminal_indices": [
+          31
+        ],
+        "selected_tokens": [
+          "run"
+        ],
+        "selected_text": "run",
+        "selected_tree": "(VBP run)",
+        "pieces": []
+      },
+      "arguments": [
+        {
+          "label": "ARGM-ADV",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "0:1",
+            "word_number": 0,
+            "height": 1,
+            "tree_position": [
+              0
+            ],
+            "terminal_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
+            "selected_tokens": [
+              "Despite",
+              "the",
+              "enormous",
+              "sums",
+              "of",
+              "money",
+              "0",
+              "they",
+              "'re",
+              "paid",
+              "*T*-1",
+              "*-2",
+              "to",
+              "stand",
+              "up",
+              "at",
+              "a",
+              "Japanese",
+              "plate"
+            ],
+            "selected_text": "Despite the enormous sums of money 0 they 're paid *T*-1 *-2 to stand up at a Japanese plate",
+            "selected_tree": "(PP (IN Despite) (NP (NP (DT the) (JJ enormous) (NNS sums)) (PP (IN of) (NP (NN money))) (SBAR (WHNP-1 (-NONE- 0)) (S (NP-SBJ-2 (PRP they)) (VP (VBP 're) (VP (VBN paid) (NP (-NONE- *T*-1)) (S-CLR (NP-SBJ (-NONE- *-2)) (VP (TO to) (VP (VB stand) (PRT (RP up)) (PP-LOC (IN at) (NP (DT a) (JJ Japanese) (NN plate))))))))))))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG0",
+          "roleset_role_definition": {
+            "argument_label": "ARG0",
+            "number": "0",
+            "function": null,
+            "description": "runner",
+            "verbnet_roles": [
+              {
+                "vncls": "51.3.2",
+                "vntheta": "Theme"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "20:1",
+            "word_number": 20,
+            "height": 1,
+            "tree_position": [
+              2
+            ],
+            "terminal_indices": [
+              20,
+              21,
+              22
+            ],
+            "selected_tokens": [
+              "a",
+              "good",
+              "number"
+            ],
+            "selected_text": "a good number",
+            "selected_tree": "(NP-SBJ (DT a) (JJ good) (NN number))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARGM-NEG",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "27:0",
+            "word_number": 27,
+            "height": 0,
+            "tree_position": [
+              3,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "terminal_indices": [
+              27
+            ],
+            "selected_tokens": [
+              "not"
+            ],
+            "selected_text": "not",
+            "selected_tree": "(RB not)",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARGM-DIR",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "32:1",
+            "word_number": 32,
+            "height": 1,
+            "tree_position": [
+              3,
+              2,
+              1
+            ],
+            "terminal_indices": [
+              32,
+              33
+            ],
+            "selected_tokens": [
+              "for",
+              "home"
+            ],
+            "selected_text": "for home",
+            "selected_tree": "(PP-DIR (IN for) (NP (NN home)))",
+            "pieces": []
+          }
+        }
+      ],
+      "tree": {
+        "bracketed": "(S (PP (IN Despite) (NP (NP (DT the) (JJ enormous) (NNS sums)) (PP (IN of) (NP (NN money))) (SBAR (WHNP-1 (-NONE- 0)) (S (NP-SBJ-2 (PRP they)) (VP (VBP 're) (VP (VBN paid) (NP (-NONE- *T*-1)) (S-CLR (NP-SBJ (-NONE- *-2)) (VP (TO to) (VP (VB stand) (PRT (RP up)) (PP-LOC (IN at) (NP (DT a) (JJ Japanese) (NN plate)))))))))))) (, ,) (NP-SBJ (DT a) (JJ good) (NN number)) (VP (VP (VBP decide) (SBAR (-NONE- 0) (S (NP-SBJ (PRP it)) (VP (VBZ 's) (RB not) (ADJP-PRD (JJ worth) (NP (PRP it))))))) (CC and) (VP (VBP run) (PP-DIR (IN for) (NP (NN home))))) (. .))",
+        "tokens": [
+          {
+            "terminal_index": 0,
+            "token": "Despite",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 1,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 2,
+            "token": "enormous",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 3,
+            "token": "sums",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 4,
+            "token": "of",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 5,
+            "token": "money",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 6,
+            "token": "0",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              1,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 7,
+            "token": "they",
+            "pos": "PRP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 8,
+            "token": "'re",
+            "pos": "VBP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 9,
+            "token": "paid",
+            "pos": "VBN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 10,
+            "token": "*T*-1",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 11,
+            "token": "*-2",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 12,
+            "token": "to",
+            "pos": "TO",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 13,
+            "token": "stand",
+            "pos": "VB",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 14,
+            "token": "up",
+            "pos": "RP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 15,
+            "token": "at",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 16,
+            "token": "a",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 17,
+            "token": "Japanese",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              2,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 18,
+            "token": "plate",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              2,
+              1,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 19,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 20,
+            "token": "a",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 21,
+            "token": "good",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 22,
+            "token": "number",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 23,
+            "token": "decide",
+            "pos": "VBP",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 24,
+            "token": "0",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              3,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 25,
+            "token": "it",
+            "pos": "PRP",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 26,
+            "token": "'s",
+            "pos": "VBZ",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 27,
+            "token": "not",
+            "pos": "RB",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 28,
+            "token": "worth",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              1,
+              1,
+              1,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 29,
+            "token": "it",
+            "pos": "PRP",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              1,
+              1,
+              1,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 30,
+            "token": "and",
+            "pos": "CC",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 31,
+            "token": "run",
+            "pos": "VBP",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 32,
+            "token": "for",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 33,
+            "token": "home",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 34,
+            "token": ".",
+            "pos": ".",
+            "is_empty_category": false,
+            "tree_position": [
+              4,
+              0
+            ]
+          }
+        ],
+        "text_with_empty_categories": "Despite the enormous sums of money 0 they 're paid *T*-1 *-2 to stand up at a Japanese plate , a good number decide 0 it 's not worth it and run for home .",
+        "surface_text_approximation": "Despite the enormous sums of money they 're paid to stand up at a Japanese plate , a good number decide it 's not worth it and run for home .",
+        "terminal_count": 35
+      },
+      "raw_annotation_line": "wsj/00/wsj_0037.mrg 25 31 gold run.02 vn--a 0:1-ARGM-ADV 20:1-ARG0 27:0-ARGM-NEG 31:0-rel 32:1-ARGM-DIR"
+    }
+  },
+  {
+    "id": "discontinuous-say",
+    "phenomenon": "discontinuous argument represented by a chain pointer and trace",
+    "lemma": "say",
+    "roleset_id": "say.01",
+    "instance": {
+      "fileid": "wsj_0003.mrg",
+      "sentnum": 1,
+      "wordnum": 31
+    },
+    "expected_arguments": [
+      "ARG0",
+      "ARG1"
+    ],
+    "expected_pointer_kinds": [
+      "tree",
+      "chain"
+    ],
+    "available_roleset_ids_for_lemma": [
+      "say.01"
+    ],
+    "lemma_lookup_selects_a_roleset": false,
+    "roleset_definition": {
+      "roleset_id": "say.01",
+      "lemma": "say",
+      "name": "say",
+      "verbnet_class_ids": [
+        "37.7"
+      ],
+      "attributes": {
+        "id": "say.01",
+        "name": "say",
+        "vncls": "37.7"
+      },
+      "roles": [
+        {
+          "argument_label": "ARG0",
+          "number": "0",
+          "function": null,
+          "description": "Sayer",
+          "verbnet_roles": [
+            {
+              "vncls": "37.7",
+              "vntheta": "Agent"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG1",
+          "number": "1",
+          "function": null,
+          "description": "Utterance",
+          "verbnet_roles": [
+            {
+              "vncls": "37.7",
+              "vntheta": "Topic"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG2",
+          "number": "2",
+          "function": null,
+          "description": "Hearer",
+          "verbnet_roles": [
+            {
+              "vncls": "37.7",
+              "vntheta": "Recipient"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG3",
+          "number": "3",
+          "function": null,
+          "description": "Attributive",
+          "verbnet_roles": []
+        }
+      ],
+      "examples": [
+        {
+          "attributes": {
+            "name": "Transitive"
+          },
+          "text": "A Lorillard spokeswoman said \"This is an old story.\"",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "A Lorillard spokeswoman",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "\"This is an old story\"",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "Fronted"
+          },
+          "text": "Kent cigarettes were sold, the company said *trace*",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "the company",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "*trace* -> Kent cigarettes were sold*",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "Inverted"
+          },
+          "text": "What matters is what advertisers will pay, said *trace* Newsweek's chairman",
+          "annotations": [
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "*trace* -> What matters is what advertisers will pay",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "Newsweek's chairman",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "Split"
+          },
+          "text": "\"What you have to understand,\" said John, \"is that Philly literally stinks.\"",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "[\"What you have to understand\"] [\"is that Philly literally stinks\"]",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "John",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "with listener"
+          },
+          "text": "John said to Mary: \"you're an idiot.\"",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "John",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "to",
+                "n": "2"
+              },
+              "text": "to Mary",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "\"you're an idiot\"",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "Weird, attributive usage:"
+          },
+          "text": "\"Well that's odd,\" said John of the disappearance of his nose.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "\"Well that's odd\"",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "John",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "of",
+                "n": "3"
+              },
+              "text": "of the disappearance of his nose",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "As discourse-level event"
+          },
+          "text": "Let's assume someone, say John, has been killed.",
+          "annotations": [
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "say",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "John",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "split utterance"
+          },
+          "text": "John is said to be an idiot.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "[John][to be an idiot]",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "said",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "instance_annotation": {
+      "analysis_id": "propbank-annotation:2d18186f4daaac767dbc2164824e6110a03f51bada811df6392fdef5c73880fb",
+      "producer": {
+        "interface": "NLTK PropBankCorpusReader",
+        "resource": "UPenn PropBank",
+        "resource_version": "1.0"
+      },
+      "support": {
+        "annotation_file": "prop.txt",
+        "treebank_fileid": "wsj_0003.mrg",
+        "sentence_number": 1,
+        "predicate_terminal_number": 31
+      },
+      "annotation_status": "gold",
+      "lemma": "say",
+      "sense_number": "01",
+      "roleset_id": "say.01",
+      "roleset_assignment_source": "existing PropBank corpus annotation",
+      "automatically_assigned_to_new_text": false,
+      "inflection": {
+        "code": "vp--a",
+        "form": "v",
+        "tense": "p",
+        "aspect": "-",
+        "person": "-",
+        "voice": "a"
+      },
+      "predicate": {
+        "kind": "tree",
+        "native_type": "PropbankTreePointer",
+        "notation": "31:0",
+        "word_number": 31,
+        "height": 0,
+        "tree_position": [
+          3,
+          0
+        ],
+        "terminal_indices": [
+          31
+        ],
+        "selected_tokens": [
+          "said"
+        ],
+        "selected_text": "said",
+        "selected_tree": "(VBD said)",
+        "pieces": []
+      },
+      "arguments": [
+        {
+          "label": "ARG0",
+          "roleset_role_definition": {
+            "argument_label": "ARG0",
+            "number": "0",
+            "function": null,
+            "description": "Sayer",
+            "verbnet_roles": [
+              {
+                "vncls": "37.7",
+                "vntheta": "Agent"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "30:1",
+            "word_number": 30,
+            "height": 1,
+            "tree_position": [
+              2
+            ],
+            "terminal_indices": [
+              30
+            ],
+            "selected_tokens": [
+              "researchers"
+            ],
+            "selected_text": "researchers",
+            "selected_tree": "(NP-SBJ (NNS researchers))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG1",
+          "roleset_role_definition": {
+            "argument_label": "ARG1",
+            "number": "1",
+            "function": null,
+            "description": "Utterance",
+            "verbnet_roles": [
+              {
+                "vncls": "37.7",
+                "vntheta": "Topic"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "chain",
+            "native_type": "PropbankChainTreePointer",
+            "notation": "0:3*33:0",
+            "word_number": null,
+            "height": null,
+            "tree_position": null,
+            "terminal_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              33
+            ],
+            "selected_tokens": [
+              "The",
+              "asbestos",
+              "fiber",
+              ",",
+              "crocidolite",
+              ",",
+              "is",
+              "unusually",
+              "resilient",
+              "once",
+              "it",
+              "enters",
+              "the",
+              "lungs",
+              ",",
+              "with",
+              "even",
+              "brief",
+              "exposures",
+              "to",
+              "it",
+              "causing",
+              "symptoms",
+              "that",
+              "*T*-1",
+              "show",
+              "up",
+              "decades",
+              "later",
+              "*T*-2"
+            ],
+            "selected_text": "The asbestos fiber , crocidolite , is unusually resilient once it enters the lungs , with even brief exposures to it causing symptoms that *T*-1 show up decades later *T*-2",
+            "selected_tree": "(*CHAIN* (S-TPC-2 (NP-SBJ (NP (DT The) (NN asbestos) (NN fiber)) (, ,) (NP (NN crocidolite)) (, ,)) (VP (VBZ is) (ADJP-PRD (RB unusually) (JJ resilient)) (SBAR-TMP (IN once) (S (NP-SBJ (PRP it)) (VP (VBZ enters) (NP (DT the) (NNS lungs))))) (, ,) (PP (IN with) (S-NOM (NP-SBJ (NP (RB even) (JJ brief) (NNS exposures)) (PP (TO to) (NP (PRP it)))) (VP (VBG causing) (NP (NP (NNS symptoms)) (SBAR (WHNP-1 (WDT that)) (S (NP-SBJ (-NONE- *T*-1)) (VP (VBP show) (PRT (RP up)) (ADVP-TMP (NP (NNS decades)) (JJ later))))))))))) (-NONE- *T*-2))",
+            "pieces": [
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "0:3",
+                "word_number": 0,
+                "height": 3,
+                "tree_position": [
+                  0
+                ],
+                "terminal_indices": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23,
+                  24,
+                  25,
+                  26,
+                  27,
+                  28
+                ],
+                "selected_tokens": [
+                  "The",
+                  "asbestos",
+                  "fiber",
+                  ",",
+                  "crocidolite",
+                  ",",
+                  "is",
+                  "unusually",
+                  "resilient",
+                  "once",
+                  "it",
+                  "enters",
+                  "the",
+                  "lungs",
+                  ",",
+                  "with",
+                  "even",
+                  "brief",
+                  "exposures",
+                  "to",
+                  "it",
+                  "causing",
+                  "symptoms",
+                  "that",
+                  "*T*-1",
+                  "show",
+                  "up",
+                  "decades",
+                  "later"
+                ],
+                "selected_text": "The asbestos fiber , crocidolite , is unusually resilient once it enters the lungs , with even brief exposures to it causing symptoms that *T*-1 show up decades later",
+                "selected_tree": "(S-TPC-2 (NP-SBJ (NP (DT The) (NN asbestos) (NN fiber)) (, ,) (NP (NN crocidolite)) (, ,)) (VP (VBZ is) (ADJP-PRD (RB unusually) (JJ resilient)) (SBAR-TMP (IN once) (S (NP-SBJ (PRP it)) (VP (VBZ enters) (NP (DT the) (NNS lungs))))) (, ,) (PP (IN with) (S-NOM (NP-SBJ (NP (RB even) (JJ brief) (NNS exposures)) (PP (TO to) (NP (PRP it)))) (VP (VBG causing) (NP (NP (NNS symptoms)) (SBAR (WHNP-1 (WDT that)) (S (NP-SBJ (-NONE- *T*-1)) (VP (VBP show) (PRT (RP up)) (ADVP-TMP (NP (NNS decades)) (JJ later)))))))))))",
+                "pieces": []
+              },
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "33:0",
+                "word_number": 33,
+                "height": 0,
+                "tree_position": [
+                  3,
+                  1,
+                  1,
+                  0
+                ],
+                "terminal_indices": [
+                  33
+                ],
+                "selected_tokens": [
+                  "*T*-2"
+                ],
+                "selected_text": "*T*-2",
+                "selected_tree": "(-NONE- *T*-2)",
+                "pieces": []
+              }
+            ]
+          }
+        }
+      ],
+      "tree": {
+        "bracketed": "(S (S-TPC-2 (NP-SBJ (NP (DT The) (NN asbestos) (NN fiber)) (, ,) (NP (NN crocidolite)) (, ,)) (VP (VBZ is) (ADJP-PRD (RB unusually) (JJ resilient)) (SBAR-TMP (IN once) (S (NP-SBJ (PRP it)) (VP (VBZ enters) (NP (DT the) (NNS lungs))))) (, ,) (PP (IN with) (S-NOM (NP-SBJ (NP (RB even) (JJ brief) (NNS exposures)) (PP (TO to) (NP (PRP it)))) (VP (VBG causing) (NP (NP (NNS symptoms)) (SBAR (WHNP-1 (WDT that)) (S (NP-SBJ (-NONE- *T*-1)) (VP (VBP show) (PRT (RP up)) (ADVP-TMP (NP (NNS decades)) (JJ later))))))))))) (, ,) (NP-SBJ (NNS researchers)) (VP (VBD said) (SBAR (-NONE- 0) (S (-NONE- *T*-2)))) (. .))",
+        "tokens": [
+          {
+            "terminal_index": 0,
+            "token": "The",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 1,
+            "token": "asbestos",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 2,
+            "token": "fiber",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 3,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 4,
+            "token": "crocidolite",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 5,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              3,
+              0
+            ]
+          },
+          {
+            "terminal_index": 6,
+            "token": "is",
+            "pos": "VBZ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 7,
+            "token": "unusually",
+            "pos": "RB",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 8,
+            "token": "resilient",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 9,
+            "token": "once",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 10,
+            "token": "it",
+            "pos": "PRP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 11,
+            "token": "enters",
+            "pos": "VBZ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 12,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 13,
+            "token": "lungs",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              2,
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 14,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              3,
+              0
+            ]
+          },
+          {
+            "terminal_index": 15,
+            "token": "with",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 16,
+            "token": "even",
+            "pos": "RB",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 17,
+            "token": "brief",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 18,
+            "token": "exposures",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              0,
+              0,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 19,
+            "token": "to",
+            "pos": "TO",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 20,
+            "token": "it",
+            "pos": "PRP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 21,
+            "token": "causing",
+            "pos": "VBG",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 22,
+            "token": "symptoms",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 23,
+            "token": "that",
+            "pos": "WDT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 24,
+            "token": "*T*-1",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 25,
+            "token": "show",
+            "pos": "VBP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 26,
+            "token": "up",
+            "pos": "RP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 27,
+            "token": "decades",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 28,
+            "token": "later",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              2,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 29,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 30,
+            "token": "researchers",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 31,
+            "token": "said",
+            "pos": "VBD",
+            "is_empty_category": false,
+            "tree_position": [
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 32,
+            "token": "0",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              3,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 33,
+            "token": "*T*-2",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              3,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 34,
+            "token": ".",
+            "pos": ".",
+            "is_empty_category": false,
+            "tree_position": [
+              4,
+              0
+            ]
+          }
+        ],
+        "text_with_empty_categories": "The asbestos fiber , crocidolite , is unusually resilient once it enters the lungs , with even brief exposures to it causing symptoms that *T*-1 show up decades later , researchers said 0 *T*-2 .",
+        "surface_text_approximation": "The asbestos fiber , crocidolite , is unusually resilient once it enters the lungs , with even brief exposures to it causing symptoms that show up decades later , researchers said .",
+        "terminal_count": 35
+      },
+      "raw_annotation_line": "wsj/00/wsj_0003.mrg 1 31 gold say.01 vp--a 30:1-ARG0 31:0-rel 0:3*33:0-ARG1"
+    }
+  },
+  {
+    "id": "split-stop",
+    "phenomenon": "multi-piece argument represented by a split pointer",
+    "lemma": "stop",
+    "roleset_id": "stop.01",
+    "instance": {
+      "fileid": "wsj_0003.mrg",
+      "sentnum": 2,
+      "wordnum": 16
+    },
+    "expected_arguments": [
+      "ARG0",
+      "ARG1",
+      "ARGM-TMP"
+    ],
+    "expected_pointer_kinds": [
+      "tree",
+      "split"
+    ],
+    "available_roleset_ids_for_lemma": [
+      "stop.01",
+      "stop.03",
+      "stop.02"
+    ],
+    "lemma_lookup_selects_a_roleset": false,
+    "roleset_definition": {
+      "roleset_id": "stop.01",
+      "lemma": "stop",
+      "name": "stop",
+      "verbnet_class_ids": [
+        "55.1"
+      ],
+      "attributes": {
+        "id": "stop.01",
+        "name": "stop",
+        "vncls": "55.1"
+      },
+      "roles": [
+        {
+          "argument_label": "ARG0",
+          "number": "0",
+          "function": null,
+          "description": "Agent",
+          "verbnet_roles": [
+            {
+              "vncls": "55.1",
+              "vntheta": "Agent"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG1",
+          "number": "1",
+          "function": null,
+          "description": "Theme (action or object being stopped)",
+          "verbnet_roles": [
+            {
+              "vncls": "55.1",
+              "vntheta": "Theme"
+            }
+          ]
+        },
+        {
+          "argument_label": "ARG2",
+          "number": "2",
+          "function": null,
+          "description": "Instrument",
+          "verbnet_roles": []
+        }
+      ],
+      "examples": [
+        {
+          "attributes": {
+            "name": "transitive, NP theme"
+          },
+          "text": "The ban won't stop privately-funded tissue-transplant research.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "The ban",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "MOD",
+                "n": "m"
+              },
+              "text": "wo",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "NEG",
+                "n": "m"
+              },
+              "text": "n't",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "stop",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "privately-funded tissue-transplant research",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "transitive, S theme, agentive"
+          },
+          "text": "Lorillard Inc stopped using crocidolite in its Micronite cigarette filters in 1956.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "Lorillard",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "stopped",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "*trace* using crocidolite in its Micronite cigarette filters",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "TMP",
+                "n": "m"
+              },
+              "text": "in 1956",
+              "children": []
+            },
+            {
+              "element": "note",
+              "attributes": {},
+              "text": "Note the volitional agent, compare with the following example.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "transitive, S theme, agentless"
+          },
+          "text": "He said summer drought problems that had hit several southern agricultural regions had stopped [*-1] being a major source of price pressure in September.",
+          "annotations": [
+            {
+              "element": "inflection",
+              "attributes": {
+                "person": "ns",
+                "tense": "past",
+                "aspect": "perfect",
+                "voice": "active",
+                "form": "participle"
+              },
+              "text": null,
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "[summer drought problems that had hit several southern agricultural regions][being a major source of price pressure]",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "stopped",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "M",
+                "f": "TMP"
+              },
+              "text": "in September",
+              "children": []
+            },
+            {
+              "element": "note",
+              "attributes": {},
+              "text": "Note that the droughts cannot volitionally be a source of price pressure, so they cannot be an agent.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "ergative"
+          },
+          "text": "Which flights stop in Minneapolis?",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "Which flights",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "stop",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "LOC",
+                "n": "m"
+              },
+              "text": "in Minneapolis",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "made up examples with instrument"
+          },
+          "text": "Mary stopped John's incessant chattering with a deep passionate kick to the groin.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "0"
+              },
+              "text": "Mary",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "stopped",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "John's incessant chattering",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "f": "with",
+                "n": "3"
+              },
+              "text": "a deep passionate kick to the groin.",
+              "children": []
+            }
+          ]
+        },
+        {
+          "attributes": {
+            "name": "and proving its an arg"
+          },
+          "text": "Mary's kick to the groin stopped John's incessant chattering.",
+          "annotations": [
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "3"
+              },
+              "text": "Mary's kick to the groin",
+              "children": []
+            },
+            {
+              "element": "rel",
+              "attributes": {},
+              "text": "stopped",
+              "children": []
+            },
+            {
+              "element": "arg",
+              "attributes": {
+                "n": "1"
+              },
+              "text": "John's incessant chattering",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "instance_annotation": {
+      "analysis_id": "propbank-annotation:aab1f2b80e53023632cfca97ef3efdabf064b805b2742c4f14eb7e27cd48637f",
+      "producer": {
+        "interface": "NLTK PropBankCorpusReader",
+        "resource": "UPenn PropBank",
+        "resource_version": "1.0"
+      },
+      "support": {
+        "annotation_file": "prop.txt",
+        "treebank_fileid": "wsj_0003.mrg",
+        "sentence_number": 2,
+        "predicate_terminal_number": 16
+      },
+      "annotation_status": "gold",
+      "lemma": "stop",
+      "sense_number": "01",
+      "roleset_id": "stop.01",
+      "roleset_assignment_source": "existing PropBank corpus annotation",
+      "automatically_assigned_to_new_text": false,
+      "inflection": {
+        "code": "vp--a",
+        "form": "v",
+        "tense": "p",
+        "aspect": "-",
+        "person": "-",
+        "voice": "a"
+      },
+      "predicate": {
+        "kind": "tree",
+        "native_type": "PropbankTreePointer",
+        "notation": "16:0",
+        "word_number": 16,
+        "height": 0,
+        "tree_position": [
+          1,
+          0
+        ],
+        "terminal_indices": [
+          16
+        ],
+        "selected_tokens": [
+          "stopped"
+        ],
+        "selected_text": "stopped",
+        "selected_tree": "(VBD stopped)",
+        "pieces": []
+      },
+      "arguments": [
+        {
+          "label": "ARG0",
+          "roleset_role_definition": {
+            "argument_label": "ARG0",
+            "number": "0",
+            "function": null,
+            "description": "Agent",
+            "verbnet_roles": [
+              {
+                "vncls": "55.1",
+                "vntheta": "Agent"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "0:2",
+            "word_number": 0,
+            "height": 2,
+            "tree_position": [
+              0
+            ],
+            "terminal_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "selected_tokens": [
+              "Lorillard",
+              "Inc.",
+              ",",
+              "the",
+              "unit",
+              "of",
+              "New",
+              "York-based",
+              "Loews",
+              "Corp.",
+              "that",
+              "*T*-2",
+              "makes",
+              "Kent",
+              "cigarettes",
+              ","
+            ],
+            "selected_text": "Lorillard Inc. , the unit of New York-based Loews Corp. that *T*-2 makes Kent cigarettes ,",
+            "selected_tree": "(NP-SBJ (NP (NNP Lorillard) (NNP Inc.)) (, ,) (NP (NP (DT the) (NN unit)) (PP (IN of) (NP (ADJP (JJ New) (JJ York-based)) (NNP Loews) (NNP Corp.))) (SBAR (WHNP-2 (WDT that)) (S (NP-SBJ (-NONE- *T*-2)) (VP (VBZ makes) (NP (NNP Kent) (NNS cigarettes)))))) (, ,))",
+            "pieces": []
+          }
+        },
+        {
+          "label": "ARG1",
+          "roleset_role_definition": {
+            "argument_label": "ARG1",
+            "number": "1",
+            "function": null,
+            "description": "Theme (action or object being stopped)",
+            "verbnet_roles": [
+              {
+                "vncls": "55.1",
+                "vntheta": "Theme"
+              }
+            ]
+          },
+          "pointer": {
+            "kind": "split",
+            "native_type": "PropbankSplitTreePointer",
+            "notation": "17:0,18:1,19:1",
+            "word_number": null,
+            "height": null,
+            "tree_position": null,
+            "terminal_indices": [
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "selected_tokens": [
+              "using",
+              "crocidolite",
+              "in",
+              "its",
+              "Micronite",
+              "cigarette",
+              "filters"
+            ],
+            "selected_text": "using crocidolite in its Micronite cigarette filters",
+            "selected_tree": "(*SPLIT* (VBG using) (NP (NN crocidolite)) (PP-LOC-CLR (IN in) (NP (PRP$ its) (NN Micronite) (NN cigarette) (NNS filters))))",
+            "pieces": [
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "17:0",
+                "word_number": 17,
+                "height": 0,
+                "tree_position": [
+                  1,
+                  1,
+                  0
+                ],
+                "terminal_indices": [
+                  17
+                ],
+                "selected_tokens": [
+                  "using"
+                ],
+                "selected_text": "using",
+                "selected_tree": "(VBG using)",
+                "pieces": []
+              },
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "18:1",
+                "word_number": 18,
+                "height": 1,
+                "tree_position": [
+                  1,
+                  1,
+                  1
+                ],
+                "terminal_indices": [
+                  18
+                ],
+                "selected_tokens": [
+                  "crocidolite"
+                ],
+                "selected_text": "crocidolite",
+                "selected_tree": "(NP (NN crocidolite))",
+                "pieces": []
+              },
+              {
+                "kind": "tree",
+                "native_type": "PropbankTreePointer",
+                "notation": "19:1",
+                "word_number": 19,
+                "height": 1,
+                "tree_position": [
+                  1,
+                  1,
+                  2
+                ],
+                "terminal_indices": [
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
+                ],
+                "selected_tokens": [
+                  "in",
+                  "its",
+                  "Micronite",
+                  "cigarette",
+                  "filters"
+                ],
+                "selected_text": "in its Micronite cigarette filters",
+                "selected_tree": "(PP-LOC-CLR (IN in) (NP (PRP$ its) (NN Micronite) (NN cigarette) (NNS filters)))",
+                "pieces": []
+              }
+            ]
+          }
+        },
+        {
+          "label": "ARGM-TMP",
+          "roleset_role_definition": null,
+          "pointer": {
+            "kind": "tree",
+            "native_type": "PropbankTreePointer",
+            "notation": "24:1",
+            "word_number": 24,
+            "height": 1,
+            "tree_position": [
+              1,
+              1,
+              3
+            ],
+            "terminal_indices": [
+              24,
+              25
+            ],
+            "selected_tokens": [
+              "in",
+              "1956"
+            ],
+            "selected_text": "in 1956",
+            "selected_tree": "(PP-TMP (IN in) (NP (CD 1956)))",
+            "pieces": []
+          }
+        }
+      ],
+      "tree": {
+        "bracketed": "(S (NP-SBJ (NP (NNP Lorillard) (NNP Inc.)) (, ,) (NP (NP (DT the) (NN unit)) (PP (IN of) (NP (ADJP (JJ New) (JJ York-based)) (NNP Loews) (NNP Corp.))) (SBAR (WHNP-2 (WDT that)) (S (NP-SBJ (-NONE- *T*-2)) (VP (VBZ makes) (NP (NNP Kent) (NNS cigarettes)))))) (, ,)) (VP (VBD stopped) (VP (VBG using) (NP (NN crocidolite)) (PP-LOC-CLR (IN in) (NP (PRP$ its) (NN Micronite) (NN cigarette) (NNS filters))) (PP-TMP (IN in) (NP (CD 1956))))) (. .))",
+        "tokens": [
+          {
+            "terminal_index": 0,
+            "token": "Lorillard",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 1,
+            "token": "Inc.",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 2,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 3,
+            "token": "the",
+            "pos": "DT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 4,
+            "token": "unit",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 5,
+            "token": "of",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 6,
+            "token": "New",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              1,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 7,
+            "token": "York-based",
+            "pos": "JJ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              1,
+              1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 8,
+            "token": "Loews",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 9,
+            "token": "Corp.",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              1,
+              1,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 10,
+            "token": "that",
+            "pos": "WDT",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              2,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 11,
+            "token": "*T*-2",
+            "pos": "-NONE-",
+            "is_empty_category": true,
+            "tree_position": [
+              0,
+              2,
+              2,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 12,
+            "token": "makes",
+            "pos": "VBZ",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              2,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 13,
+            "token": "Kent",
+            "pos": "NNP",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              2,
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 14,
+            "token": "cigarettes",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              2,
+              2,
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 15,
+            "token": ",",
+            "pos": ",",
+            "is_empty_category": false,
+            "tree_position": [
+              0,
+              3,
+              0
+            ]
+          },
+          {
+            "terminal_index": 16,
+            "token": "stopped",
+            "pos": "VBD",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 17,
+            "token": "using",
+            "pos": "VBG",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 18,
+            "token": "crocidolite",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 19,
+            "token": "in",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 20,
+            "token": "its",
+            "pos": "PRP$",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 21,
+            "token": "Micronite",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "terminal_index": 22,
+            "token": "cigarette",
+            "pos": "NN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              2,
+              0
+            ]
+          },
+          {
+            "terminal_index": 23,
+            "token": "filters",
+            "pos": "NNS",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              2,
+              1,
+              3,
+              0
+            ]
+          },
+          {
+            "terminal_index": 24,
+            "token": "in",
+            "pos": "IN",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 25,
+            "token": "1956",
+            "pos": "CD",
+            "is_empty_category": false,
+            "tree_position": [
+              1,
+              1,
+              3,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "terminal_index": 26,
+            "token": ".",
+            "pos": ".",
+            "is_empty_category": false,
+            "tree_position": [
+              2,
+              0
+            ]
+          }
+        ],
+        "text_with_empty_categories": "Lorillard Inc. , the unit of New York-based Loews Corp. that *T*-2 makes Kent cigarettes , stopped using crocidolite in its Micronite cigarette filters in 1956 .",
+        "surface_text_approximation": "Lorillard Inc. , the unit of New York-based Loews Corp. that makes Kent cigarettes , stopped using crocidolite in its Micronite cigarette filters in 1956 .",
+        "terminal_count": 27
+      },
+      "raw_annotation_line": "wsj/00/wsj_0003.mrg 2 16 gold stop.01 vp--a 0:2-ARG0 16:0-rel 17:0,18:1,19:1-ARG1 24:1-ARGM-TMP"
+    }
+  }
+]

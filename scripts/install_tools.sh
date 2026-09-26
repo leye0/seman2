@@ -107,7 +107,7 @@ fi
 log "corpus NLTK"
 NLTK_DATA="$LOCAL/share/nltk_data" "$SEMAN2_ROOT/.venv/bin/python" \
   -m nltk.downloader -d "$LOCAL/share/nltk_data" \
-  wordnet verbnet propbank treebank framenet_v17 stopwords punkt punkt_tab
+  wordnet verbnet propbank treebank ptb framenet_v17 stopwords punkt punkt_tab
 
 log "ConvoKit et corpus Switchboard"
 clone_at "https://github.com/CornellNLP/ConvoKit.git" \

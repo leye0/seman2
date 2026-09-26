@@ -17,6 +17,7 @@ from nltk.tokenize import TextTilingTokenizer
 assert wordnet.synsets("dog")
 assert verbnet.classids("run")
 assert propbank.roleset("eat.01").attrib["id"] == "eat.01"
+assert nltk.data.find("corpora/ptb/allcats.txt")
 assert len(framenet.frames()) > 0
 assert stopwords.words("english")
 assert TextTilingTokenizer()

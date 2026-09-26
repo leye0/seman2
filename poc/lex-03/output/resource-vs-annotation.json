@@ -1,0 +1,26 @@
+{
+  "lemma_lookup": {
+    "input": "lemma",
+    "output": "all roleset definitions stored for that lemma",
+    "selects_sense_for_occurrence": false
+  },
+  "corpus_annotation_lookup": {
+    "input": "existing PropBank file/sentence/predicate coordinates",
+    "output": "the manually assigned roleset and argument tree pointers",
+    "assignment_source": "PropBank corpus annotation"
+  },
+  "new_sentence": {
+    "automatic_semantic_role_labeling_available_from_this_resource": false,
+    "required_additional_component": "a semantic role labeler or a project adapter combining syntax, lexical candidates, and context"
+  },
+  "tree_availability": {
+    "propbank_annotations": 112917,
+    "annotations_resolvable_against_installed_nltk_treebank": 9353,
+    "reason": "NLTK distributes PropBank annotation lines for the full WSJ corpus, while its freely included Treebank contains only a sample.",
+    "nltk_ptb_package": {
+      "catalog_entries": 2504,
+      "parse_files_present": 0,
+      "interpretation": "The downloadable NLTK ptb package supplies allcats.txt, but licensed .MRG files must be added by an authorized user."
+    }
+  }
+}

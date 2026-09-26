@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-09-26T15:13:11.714202+00:00",
+  "host_platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "nltk_version": "3.10.3",
+  "propbank_version": "1.0",
+  "propbank_root": "/mnt/new-home/leon-linux/home/leon/projects/seman2/.local/share/nltk_data/corpora/propbank.zip/propbank",
+  "treebank_root": "/mnt/new-home/leon-linux/home/leon/projects/seman2/.local/share/nltk_data/corpora/treebank/combined",
+  "ptb_root": "/mnt/new-home/leon-linux/home/leon/projects/seman2/.local/share/nltk_data/corpora/ptb",
+  "parameters": {
+    "rolesets": "propbank.rolesets(lemma) and propbank.roleset(id)",
+    "instances": "propbank.instances()",
+    "trees": "instance.tree through the installed NLTK Treebank sample",
+    "terminal_numbering": "zero-based and includes empty categories",
+    "new_sentence_annotation": false
+  }
+}
