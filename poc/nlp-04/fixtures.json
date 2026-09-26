@@ -1,0 +1,73 @@
+[
+  {
+    "id": "punctuation",
+    "phenomenon": "punctuation",
+    "sentence": "Wait, Kim, really?",
+    "expected_initial_tokens": [
+      ["Wait", 0, 4],
+      [",", 4, 5],
+      ["Kim", 6, 9],
+      [",", 9, 10],
+      ["really", 11, 17],
+      ["?", 17, 18]
+    ]
+  },
+  {
+    "id": "contraction",
+    "phenomenon": "ASCII contraction normalized by the tokenizer",
+    "sentence": "Kim can't leave.",
+    "expected_initial_tokens": [
+      ["Kim", 0, 3],
+      ["ca", 4, 6],
+      ["n't", 6, 9],
+      ["leave", 10, 15],
+      [".", 15, 16]
+    ]
+  },
+  {
+    "id": "unicode-non-bmp",
+    "phenomenon": "non-BMP Unicode before anchored words",
+    "sentence": "🙂 Kim smiled.",
+    "expected_initial_tokens": [
+      ["🙂", 0, 1],
+      ["Kim", 2, 5],
+      ["smiled", 6, 12],
+      [".", 12, 13]
+    ]
+  },
+  {
+    "id": "unicode-combining",
+    "phenomenon": "decomposed combining accent",
+    "sentence": "Café owners smiled.",
+    "expected_initial_tokens": [
+      ["Café", 0, 5],
+      ["owners", 6, 12],
+      ["smiled", 13, 19],
+      [".", 19, 20]
+    ]
+  },
+  {
+    "id": "multiple-spaces",
+    "phenomenon": "multiple spaces",
+    "sentence": "Kim   saw  Sandy.",
+    "expected_initial_tokens": [
+      ["Kim", 0, 3],
+      ["saw", 6, 9],
+      ["Sandy", 11, 16],
+      [".", 16, 17]
+    ]
+  },
+  {
+    "id": "repeated-tokens",
+    "phenomenon": "repeated surface forms",
+    "sentence": "The dog chased the dog.",
+    "expected_initial_tokens": [
+      ["The", 0, 3],
+      ["dog", 4, 7],
+      ["chased", 8, 14],
+      ["the", 15, 18],
+      ["dog", 19, 22],
+      [".", 22, 23]
+    ]
+  }
+]

@@ -1,0 +1,3263 @@
+[
+  {
+    "fixture": "simple-baseline",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:f3641ec468b5d71e2bebb6b0e3b7905cac50ee897ece65c68fbe71bd93946dde",
+    "words": [
+      "LEFT-WALL",
+      "the",
+      "dog.n",
+      "chased.v-d",
+      "the",
+      "cat.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-chased.v-d",
+      "LEFT-WALL-hWd-Wd-dog.n",
+      "dog.n-Ss*s-S-chased.v-d",
+      "the-D-Ds**c-dog.n",
+      "chased.v-d-O-Os-cat.n",
+      "the-D-Ds**c-cat.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 9,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP the dog.n NP] [VP chased.v-d [NP the cat.n NP] VP] . S] \n",
+    "diagram": "\n    +------------------Xp------------------+\n    +--------->WV-------->+                |\n    +---->Wd-----+        +-----Os-----+   |\n    |      +Ds**c+--Ss*s--+      +Ds**c+   +--RW--+\n    |      |     |        |      |     |   |      |\nLEFT-WALL the  dog.n chased.v-d the  cat.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "simple-baseline",
+    "pass": "strict",
+    "rank": 2,
+    "linkage_id": "lg-linkage:c0e2760db32310445aaa67d7eaa6f5ee25d35a691704647a21fc3e6313af26a7",
+    "words": [
+      "LEFT-WALL",
+      "the",
+      "dog.n",
+      "chased.v-d",
+      "the",
+      "cat.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-dog.n",
+      "the-D-Ds**c-dog.n",
+      "dog.n-Ss*s-S-chased.v-d",
+      "chased.v-d-O-Os-cat.n",
+      "the-D-Ds**c-cat.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP the dog.n NP] [VP chased.v-d [NP the cat.n NP] VP] . S] \n",
+    "diagram": "\n    +------------------Xp------------------+\n    +---->Wd-----+        +-----Os-----+   |\n    |      +Ds**c+--Ss*s--+      +Ds**c+   +--RW--+\n    |      |     |        |      |     |   |      |\nLEFT-WALL the  dog.n chased.v-d the  cat.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:2bbaec950bca525ae5e1360dbd18804b99ba4b7b5d0efd0baa991200eb871c7f",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-MV-MVp-with",
+      "saw.v-d-O-Os-man.n",
+      "man.n-M-Mp-with",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": -0.6100000143051147,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP [PP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-------MVp-------+                  |\n    +---->WV---->+-----Os----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 2,
+    "linkage_id": "lg-linkage:24a92c26652192ad2b31d87c2ed71ce26ef8399f1bdfba736354836b7b224ba9",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.w",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-MV-MVp-with",
+      "saw.w-O-Os-man.n",
+      "man.n-M-Mp-with",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": -0.6100000143051147,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP [PP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +-------MVp------+                  |\n    +---->WV--->+----Os----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 3,
+    "linkage_id": "lg-linkage:d318d17af59d70477d1a42a97911fdeba01bae7502676d354afa3c51db982eec",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-MV-MVp-with",
+      "saw.v-d-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP the man.n NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-------MVp-------+                  |\n    +---->WV---->+-----Os----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +Ds**c+     |   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 4,
+    "linkage_id": "lg-linkage:77ba39a45707b2ea15eac5c612eba98734cf98c3db07a49310018991105d5e4e",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.w",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-MV-MVp-with",
+      "saw.w-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP the man.n NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +-------MVp------+                  |\n    +---->WV--->+----Os----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +Ds**c+     |   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 5,
+    "linkage_id": "lg-linkage:ff14aeb1934a0e7759e7e6ddc6b42cf271cc94f6e9860b40b207dfb3cf201ec5",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "man.n-M-Mp-with",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.4000000059604645,
+      "link_cost": 10,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    +---->WV---->+-----Os----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 6,
+    "linkage_id": "lg-linkage:6ee62ec51242429ba748ebfa1937e6f45fc819cb805ada4a810fdc0cef33baf0",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.w",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "man.n-M-Mp-with",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.4000000059604645,
+      "link_cost": 10,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    +---->WV--->+----Os----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 7,
+    "linkage_id": "lg-linkage:a499bd7f56fa17c8ea59707c92ed00bb09f8226a993994fa145841c797c19241",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-MV-MVp-with",
+      "saw.v-d-O-Os-man.n",
+      "man.n-M-Mp-with",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 2.3899998664855957,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP [PP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-------MVp-------+                  |\n    |            +-----Os----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 8,
+    "linkage_id": "lg-linkage:f4ba9f18d5a567b410bd024fb8d72a8d29678aab9643d543e25cdf70decdd4ee",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-MV-MVp-with",
+      "saw.w-O-Os-man.n",
+      "man.n-M-Mp-with",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 2.3899998664855957,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP [PP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +-------MVp------+                  |\n    |           +----Os----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 9,
+    "linkage_id": "lg-linkage:d12156d872a815ae56b62921e3e3743956590df5a2bb144de7df935d4fbc3b81",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-MV-MVp-with",
+      "saw.v-d-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP the man.n NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-------MVp-------+                  |\n    |            +-----Os----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +Ds**c+     |   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 10,
+    "linkage_id": "lg-linkage:54891c5fa0753d41ebc06113bb3d2ae535c7f87bea31d4ca7f1159ebd6461654",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-MV-MVp-with",
+      "saw.w-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP the man.n NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +-------MVp------+                  |\n    |           +----Os----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +Ds**c+     |   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 11,
+    "linkage_id": "lg-linkage:b2202fff01e5291cb25ee2b1a951a699c0daa09f336b8387271057a4b0a5324d",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.ij",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-MV-MVp-with",
+      "saw.v-d-O-Op-man.ij",
+      "the-DD-man.ij",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP the man.ij NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-------MVp-------+                  |\n    +---->WV---->+-----Op----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +--DD-+     |   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the man.ij with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 12,
+    "linkage_id": "lg-linkage:1a366d5b99c137d128aa671793996637ca2b3cdef016e98df20d62aa843a6a0c",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.ij",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-saw.w",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-MV-MVp-with",
+      "saw.w-O-Op-man.ij",
+      "the-DD-man.ij",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP the man.ij NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +-------MVp------+                  |\n    +---->WV--->+----Op----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +--DD-+     |   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the man.ij with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 13,
+    "linkage_id": "lg-linkage:abb5bec7989759638aaa640e2c3fbc79ba7e9af55909ac3a46e8e7bd5e9cb5d7",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "man.n-M-Mp-with",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.4000000953674316,
+      "link_cost": 9,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-----Os----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 14,
+    "linkage_id": "lg-linkage:ed819450251c167ba48091c37fe4349aa16e2e7a1083514a6584d68b57bffb78",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.n",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-O-Os-man.n",
+      "the-D-Ds**c-man.n",
+      "man.n-M-Mp-with",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.4000000953674316,
+      "link_cost": 9,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP [NP the man.n NP] [PP with [NP the telescope.n NP] PP] NP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +----Os----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +Ds**c+--Mp-+   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the  man.n with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 15,
+    "linkage_id": "lg-linkage:38083cdf6bc4123f7fd508d695af2d3f476c57bc9ea51392b5fca0dfde1665ea",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.v-d",
+      "the",
+      "man.ij",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-saw.v-d",
+      "saw.v-d-MV-MVp-with",
+      "saw.v-d-O-Op-man.ij",
+      "the-DD-man.ij",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 6.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.v-d [NP the man.ij NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------Xp-----------------------+\n    |            +-------MVp-------+                  |\n    |            +-----Op----+     +-----Js----+      |\n    +->Wd--+-Sp*i+     +--DD-+     |   +-Ds**c-+      +--RW--+\n    |      |     |     |     |     |   |       |      |      |\nLEFT-WALL I.p saw.v-d the man.ij with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "pp-attachment",
+    "pass": "strict",
+    "rank": 16,
+    "linkage_id": "lg-linkage:f9d049d99a6141c274b1dc509a96365f772efd567af286e9a8075bb3286650b0",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "saw.w",
+      "the",
+      "man.ij",
+      "with",
+      "the",
+      "telescope.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-Sp-saw.w",
+      "saw.w-MV-MVp-with",
+      "saw.w-O-Op-man.ij",
+      "the-DD-man.ij",
+      "with-J-Js-telescope.n",
+      "the-D-Ds**c-telescope.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 6.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP saw.w [NP the man.ij NP] [PP with [NP the telescope.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    |           +-------MVp------+                  |\n    |           +----Op----+     +-----Js----+      |\n    +->Wd--+Sp*i+    +--DD-+     |   +-Ds**c-+      +--RW--+\n    |      |    |    |     |     |   |       |      |      |\nLEFT-WALL I.p saw.w the man.ij with the telescope.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:27ce08c4d4161fffd1cd9694f75981ae63f3b14c2e956a8a4ff0cfb6c5efb7b9",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.10000000149011612,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Op-------+                       |\n    +----->WV----->+       +<--SJlp<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 2,
+    "linkage_id": "lg-linkage:0853cb9e6e826bc76602d816e03fdd0fed8623a0d1e2bee9261ed2fbb0c2114b",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.10000000149011612,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s NP] VP] . S] \n",
+    "diagram": "\n    +--------------------------Xp--------------------------+\n    |              +--------Op-------+                     |\n    +----->WV----->+       +<--SJlp<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 3,
+    "linkage_id": "lg-linkage:2a0189de36a682a36d68a45421696f761037e93edbe61f3b2cf9da237094f1de",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.10000000149011612,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Op-------+                       |\n    +----->WV----->+       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 4,
+    "linkage_id": "lg-linkage:f85a71822d672e6157b4979f05ae5fae1735c3c33a1a236ca85cab5977d62293",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJru-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.100000023841858,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Ou-------+                       |\n    +----->WV----->+       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 5,
+    "linkage_id": "lg-linkage:564773a00c44a55709836401710722de87639b50c7e793d844b2ee671c61751a",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.100000023841858,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Ou-------+                       |\n    +----->WV----->+       +<--SJlu<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 6,
+    "linkage_id": "lg-linkage:7fe7633df5f8d65bed2b9be720945328e615f66320c589efb2591f6109a9e733",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.100000023841858,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s NP] VP] . S] \n",
+    "diagram": "\n    +--------------------------Xp--------------------------+\n    |              +--------Ou-------+                     |\n    +----->WV----->+       +<--SJlu<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 7,
+    "linkage_id": "lg-linkage:6f2ebf3d87c6197e220cbaca19f82e843f443b08e520d178cec9c96dc450d74d",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.100000023841858,
+      "link_cost": 12,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Ou-------+                       |\n    +----->WV----->+       +<--SJlu<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 8,
+    "linkage_id": "lg-linkage:4a071e5251f847b985b3159b8d5c94ac908473e045a16de79abca4fa04899e5d",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-coffee.n-u",
+      "and.j-n-AN-coffee.n-u",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-Sandy.b",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 2.0999999046325684,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +-----------------Ou----------------+     |\n    +----->WV----->+       +<--SJlp<-+--------AN-------+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+->SJrs>+         |     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 9,
+    "linkage_id": "lg-linkage:e2b2d69baadfd4523c96b7009446423ee3e4e16307f6ae04661570ad3c2d1c44",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-coffee.n-u",
+      "and.j-n-AN-coffee.n-u",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-Sandy.b",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 2.0999999046325684,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +-----------------Ou----------------+     |\n    +----->WV----->+       +<--SJlu<-+--------AN-------+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+->SJrs>+         |     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 10,
+    "linkage_id": "lg-linkage:6efe5d816dda411e873e4b852250fe21d3aca39b8dc05ccd2386c022cfd3d0a3",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0999999046325684,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Op-------+                       |\n    |              |       +<--SJlp<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 11,
+    "linkage_id": "lg-linkage:a522e1384dc096eb38cde0ffec27667a053c80bd18bc3b7d3a63f1fba1d6ba86",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0999999046325684,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s NP] VP] . S] \n",
+    "diagram": "\n    +--------------------------Xp--------------------------+\n    |              +--------Op-------+                     |\n    |              |       +<--SJlp<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 12,
+    "linkage_id": "lg-linkage:4f4f184dc90a74ab7fba57bdfc1af682f17d43d54bd5c25abbf706d00d1a3329",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0999999046325684,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Op-------+                       |\n    |              |       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 13,
+    "linkage_id": "lg-linkage:c45ebc7cabfb1dfec19e2723274b543eb5dc19b1c3e8aa8f7ff97b9da272ed57",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Op-------+-----------Xc----------+\n    +----->WV----->+       +<--SJlp<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 14,
+    "linkage_id": "lg-linkage:3abe4b44a39f476c8d67bd5cb12da488a6903cd6e58834801c8aeef5a88758c6",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s . NP] VP] S] \n",
+    "diagram": "\n                   +--------Op-------+----------Xc---------+\n    +----->WV----->+       +<--SJlp<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 15,
+    "linkage_id": "lg-linkage:445f5bab88dd0eb1def9a44caaa2ab695d40bca8bd34221c20205d1c3e18c7db",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Op-------+-----------Xc----------+\n    +----->WV----->+       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 16,
+    "linkage_id": "lg-linkage:2cebb7c148b43affe1cfb133c0e210126faaf20d361dfcb5159dcc73096e2bef",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJru-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Ou-------+                       |\n    |              |       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 17,
+    "linkage_id": "lg-linkage:5e81d879ccfc4fbd6a08ee43bdb80712da6dee866918a878b1b2dc5af7a69f71",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Ou-------+                       |\n    |              |       +<--SJlu<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 18,
+    "linkage_id": "lg-linkage:4220a666be971d2281de867f66b9114f64623de88dce51e40010e44317d6a838",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s NP] VP] . S] \n",
+    "diagram": "\n    +--------------------------Xp--------------------------+\n    |              +--------Ou-------+                     |\n    |              |       +<--SJlu<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 19,
+    "linkage_id": "lg-linkage:8fd75aa01de7f82becd154a833e23f9e0229c7abe8115e99b1dfb021d0315d13",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.099999904632568,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +--------Ou-------+                       |\n    |              |       +<--SJlu<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 20,
+    "linkage_id": "lg-linkage:d0c8f8419b7fcc4e0a4525d651462ceae864b9dd3d30d6915d59b5185e7dc773",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJru-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+-----------Xc----------+\n    +----->WV----->+       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 21,
+    "linkage_id": "lg-linkage:373d9975a1d457523ca0eead6e1ab4e4ed4f274f704382d549c48de2849f3c2c",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+-----------Xc----------+\n    +----->WV----->+       +<--SJlu<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 22,
+    "linkage_id": "lg-linkage:22b564b3897372791a90701aa61b737eb810bffc8e02bc7efb3c0627f89a2051",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+----------Xc---------+\n    +----->WV----->+       +<--SJlu<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 23,
+    "linkage_id": "lg-linkage:4c940cbe358590e65b4861aeb6763ecfdab04bf09e5204e47059eb0b933ff59d",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWV-dWV-likes.v",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.099999904632568,
+      "link_cost": 7,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+-----------Xc----------+\n    +----->WV----->+       +<--SJlu<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 24,
+    "linkage_id": "lg-linkage:17856cef7d8acb56361992d7cb908bb992b900edcd35e633438501e6ffed3028",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-coffee.n-u",
+      "and.j-n-AN-coffee.n-u",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-Sandy.b",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.099999904632568,
+      "link_cost": 13,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +-----------------Ou----------------+     |\n    |              |       +<--SJlp<-+--------AN-------+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+->SJrs>+         |     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 25,
+    "linkage_id": "lg-linkage:8cdaa88518a822cd745af65dfbcb64dd9538a8f7f85df6c8c332ab6464e7c4cc",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-coffee.n-u",
+      "and.j-n-AN-coffee.n-u",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-hSJr-dSJrs-Sandy.b",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.099999904632568,
+      "link_cost": 13,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u NP] VP] . S] \n",
+    "diagram": "\n    +---------------------------Xp---------------------------+\n    |              +-----------------Ou----------------+     |\n    |              |       +<--SJlu<-+--------AN-------+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+->SJrs>+         |     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 26,
+    "linkage_id": "lg-linkage:3f9e181ece5cb9450730c3e866c81f31943aee5af3e994696f78e208027beebd",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 7.099999904632568,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Op-------+-----------Xc----------+\n                   |       +<--SJlp<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 27,
+    "linkage_id": "lg-linkage:22e39519337fa1bf04aca177af08e9e868c5e1c98d6ee72106e37f1c505dad1a",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 7.099999904632568,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s . NP] VP] S] \n",
+    "diagram": "\n                   +--------Op-------+----------Xc---------+\n                   |       +<--SJlp<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 28,
+    "linkage_id": "lg-linkage:2660fd794b1c13e24be89687af54767f27f606e63882710ba2d46a70d4b8392f",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Op-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 7.099999904632568,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Op-------+-----------Xc----------+\n                   |       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 29,
+    "linkage_id": "lg-linkage:f7b26b49ce37d42a0208661fa0ebe74b0f0e48f9798c16cf46f8742cf74b002f",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlp-hSJlp-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJru-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 8.100000381469727,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+-----------Xc----------+\n                   |       +<--SJlp<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 30,
+    "linkage_id": "lg-linkage:645439a281f83232f21042647e6c0bba5911dc73548c3ea8d0fbe0d73dc268ac",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrp-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 8.100000381469727,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+-----------Xc----------+\n                   |       +<--SJlu<-+------>SJrp----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 31,
+    "linkage_id": "lg-linkage:d6c659fcda3dd591512df3bc9fe8dd8d933ae3a1dbe4c1505a38c7bc2386c792",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.s",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJrs-coffee.s",
+      "Sandy.b-AN-coffee.s",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 8.100000381469727,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.s . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+----------Xc---------+\n                   |       +<--SJlu<-+----->SJrs----->+    |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +---AN---+    +--RW--+\n    |       |      |       |    |    |       |        |    |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.s . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "gapping-coordination",
+    "pass": "strict",
+    "rank": 32,
+    "linkage_id": "lg-linkage:ffa05d9be95975c1456572e94a1938066b45fa01fd563abe976c9a8ae0077845",
+    "words": [
+      "LEFT-WALL",
+      "Kim.b",
+      "likes.v",
+      "tea.n-u",
+      ",",
+      "and.j-n",
+      "Sandy.b",
+      "coffee.n-u",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-hWd-Wd-Kim.b",
+      "Kim.b-Ss*s-Ss-likes.v",
+      "likes.v-O-Ou-and.j-n",
+      "tea.n-u-dSJlu-hSJlu-and.j-n",
+      ",-Xd-and.j-n",
+      "and.j-n-Xc-.",
+      "and.j-n-hSJr-dSJru-coffee.n-u",
+      "Sandy.b-AN-coffee.n-u",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 8.100000381469727,
+      "link_cost": 6,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP Kim.b NP] [VP likes.v [NP tea.n-u , and.j-n Sandy.b coffee.n-u . NP] VP] S] \n",
+    "diagram": "\n                   +--------Ou-------+-----------Xc----------+\n                   |       +<--SJlu<-+------>SJru----->+     |\n    +-->Wd--+-Ss*s-+       |    +-Xd-+       +----AN---+     +--RW--+\n    |       |      |       |    |    |       |         |     |      |\nLEFT-WALL Kim.b likes.v tea.n-u , and.j-n Sandy.b coffee.n-u . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:791553f20467b73282e1359fa4752e59edaf6616c3e40f263b187915517d059a",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWV-dWV-say.v",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-say.v",
+      "book.n-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-CV-dCV-bought.v-d",
+      "say.v-Ce-C-Sandy.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 15,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [SBAR [S [NP Sandy.b NP] [VP bought.v-d VP] S] SBAR] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    +--------------->WV--------------->+                      |\n    |              +--------Bsm--------+                      |\n    |              |      +-----I*d----+-------CV------>+     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     +--Ce--+---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 2,
+    "linkage_id": "lg-linkage:dcfb1c2c4c7a8c17dbdb266c8683c5968746e5a91c4ecbbcba24e53b77f3a8f2",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWV-dWV-say.v",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-say.v",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-CV-dCV-bought.v-d",
+      "say.v-Ce-C-Sandy.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.0,
+      "link_cost": 15,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [SBAR [S [NP Sandy.b NP] [VP bought.v-d VP] S] SBAR] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    +--------------->WV--------------->+                      |\n    |              +--------Bsm--------+                      |\n    |              |      +-----I*d----+-------CV------>+     |\n    +-->Wq--+-Ds*wc+      +--SIs-+     +--Ce--+---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 3,
+    "linkage_id": "lg-linkage:11b5ac028dbdb6456cbc5745228aec5e1c62edf40cfad2706e330390eb3d2548",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWV-dWV-bought.v-d",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Ss*s-S-bought.v-d",
+      "book.n-Bs-B*w-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-Os-Os*e-Sandy.b",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.0,
+      "link_cost": 20,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n [S did.v-d [NP Kim.b NP] [VP say.v [NP Sandy.b NP] VP] S] [VP bought.v-d VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    +------------------------>WV----------------------->+     |\n    |              +----------------Ss*s----------------+     |\n    |              +--------Bsw--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     +-Os*e-+         |     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 4,
+    "linkage_id": "lg-linkage:ee0bc1bfbaa84a2d019f3f5b66e8bc6cea1b5b6fedf87593773a12ed06476357",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWV-dWV-bought.v-d",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-bought.v-d",
+      "book.n-Bs-B*w-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.0,
+      "link_cost": 20,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n [S did.v-d [NP Kim.b NP] [VP say.v VP] S] Sandy.b [VP bought.v-d VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    +------------------------>WV----------------------->+     |\n    |              +-----------------Bsm----------------+     |\n    |              +--------Bsw--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     |      +---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 5,
+    "linkage_id": "lg-linkage:3c399f860920c8f0ed23ef1d41665f21c2effa157c93ca0a30dc3faa9218e18b",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWV-dWV-bought.v-d",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Ss*s-S-bought.v-d",
+      "book.n-Bs-B*m-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-Os-Os*e-Sandy.b",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.5,
+      "link_cost": 20,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [NP Sandy.b NP] [VP bought.v-d VP] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    +------------------------>WV----------------------->+     |\n    |              +----------------Ss*s----------------+     |\n    |              +--------Bsm--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     +-Os*e-+         |     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 6,
+    "linkage_id": "lg-linkage:e9369dff74c3569c128ca5e71422e94b34e52c1f4caa15a608c5225927b79ae5",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWV-dWV-bought.v-d",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-bought.v-d",
+      "book.n-Bs-B*m-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.5,
+      "link_cost": 20,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v Sandy.b [VP bought.v-d VP] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    +------------------------>WV----------------------->+     |\n    |              +-----------------Bsm----------------+     |\n    |              +--------Bsm--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     |      +---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 7,
+    "linkage_id": "lg-linkage:bef8357d8b3ae49a4bb071fb29060ba499973c6eed27cf9700af1edbd66e18bf",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-say.v",
+      "book.n-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-CV-dCV-bought.v-d",
+      "say.v-Ce-C-Sandy.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [SBAR [S [NP Sandy.b NP] [VP bought.v-d VP] S] SBAR] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +--------Bsm--------+                      |\n    |              |      +-----I*d----+-------CV------>+     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     +--Ce--+---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 8,
+    "linkage_id": "lg-linkage:9c064b17e1abf47119edb83b701c867b2ba702cc22647411268ccbae463f713e",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B-bought.v-d",
+      "say.v-CV-dCV-bought.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-Ce-C-Sandy.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.5,
+      "link_cost": 13,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [SBAR [S [NP Sandy.b NP] [VP bought.v-d VP] S] SBAR] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +-----------------Bsm----------------+     |\n    |              |      +-----I*d----+-------CV------>+     |\n    +-->Wq--+-Ds*wc+      +--SIs-+     +--Ce--+---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 9,
+    "linkage_id": "lg-linkage:641e7fcc324424f90c5a753f034771bd0cb74094c8de8dc86f68004745a6b716",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-say.v",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-CV-dCV-bought.v-d",
+      "say.v-Ce-C-Sandy.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [SBAR [S [NP Sandy.b NP] [VP bought.v-d VP] S] SBAR] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +--------Bsm--------+                      |\n    |              |      +-----I*d----+-------CV------>+     |\n    +-->Wq--+-Ds*wc+      +--SIs-+     +--Ce--+---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 10,
+    "linkage_id": "lg-linkage:3f3cc3a64b7b69f70d14dded8019a2b2bac7904b0fe19415499c7e5410cb1917",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Ss*s-S-bought.v-d",
+      "book.n-Bs-B*w-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-Os-Os*e-Sandy.b",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n [S did.v-d [NP Kim.b NP] [VP say.v [NP Sandy.b NP] VP] S] [VP bought.v-d VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +----------------Ss*s----------------+     |\n    |              +--------Bsw--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     +-Os*e-+         |     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 11,
+    "linkage_id": "lg-linkage:d8646e9c16b6968b41f80130d7b19421c8eedb981e2c5ecfc57c9c0d19cef4a7",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B-bought.v-d",
+      "book.n-Bs-B*w-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n [S did.v-d [NP Kim.b NP] [VP say.v VP] S] Sandy.b [VP bought.v-d VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +-----------------Bsm----------------+     |\n    |              +--------Bsw--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     |      +---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 12,
+    "linkage_id": "lg-linkage:0b4c2d03bb56de9ea3d8ba504757695275b0c4834fc1dc844f02c647ccf23486",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-bought.v-d",
+      "book.n-Bs-B*w-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n [S did.v-d [NP Kim.b NP] [VP say.v VP] S] Sandy.b [VP bought.v-d VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +-----------------Bsm----------------+     |\n    |              +--------Bsw--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     |      +---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 13,
+    "linkage_id": "lg-linkage:6e82abe63ec3c5b28d08653f4c7ae13d57c806e459a6041cfbc25c8d44c93343",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Ss*s-S-bought.v-d",
+      "book.n-Bs-B*m-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.v-Os-Os*e-Sandy.b",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.5,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v [NP Sandy.b NP] [VP bought.v-d VP] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +----------------Ss*s----------------+     |\n    |              +--------Bsm--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     +-Os*e-+         |     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 14,
+    "linkage_id": "lg-linkage:c27af7ef68f170c27ae5f70bc9265f7f859d8451a5521739cc879e0b2206ed1d",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B-bought.v-d",
+      "book.n-Bs-B*m-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.5,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v Sandy.b [VP bought.v-d VP] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +-----------------Bsm----------------+     |\n    |              +--------Bsm--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     |      +---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 15,
+    "linkage_id": "lg-linkage:b9c0b3221aa584928a53c6b993668c2873dcfcf057f0b3607ad359ab8c6efa81",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.v",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B*m-bought.v-d",
+      "book.n-Bs-B*m-say.v",
+      "book.n-R-Rw-did.v-d",
+      "did.v-d-I*d-I-say.v",
+      "did.v-d-SI-SIs-Kim.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.5,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.v Sandy.b [VP bought.v-d VP] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +-----------------Bsm----------------+     |\n    |              +--------Bsm--------+                |     |\n    |              |      +-----I*d----+                |     |\n    +-->Wq--+-Ds*wc+--Rw--+--SIs-+     |      +---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.v Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "long-distance-question",
+    "pass": "strict",
+    "rank": 16,
+    "linkage_id": "lg-linkage:1e4d88c3a7469c12def80ecf570506c19e3d2b4d53bac2ce7adfb0924438c4fd",
+    "words": [
+      "LEFT-WALL",
+      "which",
+      "book.n",
+      "did.v-d",
+      "Kim.b",
+      "say.q",
+      "Sandy.b",
+      "bought.v-d",
+      "?",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-?",
+      "LEFT-WALL-hWq-Wq-which",
+      "which-D**w-Ds**c-book.n",
+      "book.n-Bsm-B-bought.v-d",
+      "say.q-CV-dCV-bought.v-d",
+      "did.v-d-I*d-I-say.q",
+      "did.v-d-SI-SIs-Kim.b",
+      "say.q-Ce-C-Sandy.b",
+      "Sandy.b-Ss*s-S-bought.v-d",
+      "?-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 6.0,
+      "link_cost": 13,
+      "violation_name": null
+    },
+    "constituent_tree": "[S which book.n did.v-d [NP Kim.b NP] [VP say.q [SBAR [S [NP Sandy.b NP] [VP bought.v-d VP] S] SBAR] VP] ? S] \n",
+    "diagram": "\n    +----------------------------Xp---------------------------+\n    |              +-----------------Bsm----------------+     |\n    |              |      +-----I*d----+-------CV------>+     |\n    +-->Wq--+-Ds*wc+      +--SIs-+     +--Ce--+---Ss*s--+     +--RW--+\n    |       |      |      |      |     |      |         |     |      |\nLEFT-WALL which book.n did.v-d Kim.b say.q Sandy.b bought.v-d ? RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "shared-fragment",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:af43cbced6fb3468c9b0f383e03f1246e9ef8d0510b46d71f0db0fc189ce4e0c",
+    "words": [
+      "LEFT-WALL",
+      "in.r",
+      "the",
+      "garden.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWl-dWl-in.r",
+      "in.r-J-Js-garden.n",
+      "the-D-Ds**c-garden.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 4,
+      "violation_name": null
+    },
+    "constituent_tree": "[S in.r [NP the garden.n NP] . S] \n",
+    "diagram": "\n    +-----------Xp----------+\n    |       +----Js----+    |\n    +-->Wl->+   +-Ds**c+    +--RW--+\n    |       |   |      |    |      |\nLEFT-WALL in.r the garden.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:4f33efed9799ea6424054c6806c0815d041619965817f2078c3265761ee78480",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVp-about",
+      "about-J-Js-subject.n",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [PP about [NP the subject.n NP] PP] VP] S] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    +----->WV---->+         +-----CX-----+      +-----Js----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVp-+    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 2,
+    "linkage_id": "lg-linkage:d4ccda10f0fd9557d7b4f7db85b891070d54045b14f0827846eebfcfe077e8ff",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-MV-MVp-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "about-J-Js-subject.n",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [PP about [NP the subject.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------MVp-------------+                 |\n    +----->WV---->+         +-----CX-----+      +-----Js----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 3,
+    "linkage_id": "lg-linkage:cb4a3cb6adb913dc99bb8f967e4d8b99591b7fec9b1ea4aec1fad6b74ea73262",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Os-subject.n",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVa-about",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 1.0,
+      "link_cost": 15,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [ADVP about ADVP] VP] S] NP] [NP the subject.n NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Osn-------------------+     |\n    +----->WV---->+         +-----CX-----+                  |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVa-+    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 4,
+    "linkage_id": "lg-linkage:8f7343995e8b93607b1c361ca666abecc783ba3196885e495f77ce8eb5a3c1e1",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVp-about",
+      "about-J-Jp-subject.a",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 2.0,
+      "link_cost": 11,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [PP about [NP the subject.a NP] PP] VP] S] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    +----->WV---->+         +-----CX-----+      +-----Jp----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVp-+    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 5,
+    "linkage_id": "lg-linkage:c07d2c46725098433ca599ce680e378eb725805dfc0a3bdc168acac04e6b0ea2",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-MV-MVp-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "about-J-Jp-subject.a",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 2.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [PP about [NP the subject.a NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------MVp-------------+                 |\n    +----->WV---->+         +-----CX-----+      +-----Jp----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 6,
+    "linkage_id": "lg-linkage:8c9c49eea8bc5438ad49caa5a0f5b7f488e23ca3f5d01b545261e11b12373b8b",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVp-about",
+      "about-J-Js-subject.n",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 10,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [PP about [NP the subject.n NP] PP] VP] S] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |                       +-----CX-----+      +-----Js----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVp-+    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 7,
+    "linkage_id": "lg-linkage:e2746b7ee69d92f9cd9eff3df5cc6cbbb3ed5ecd8464acaa02e2ab29aa598d35",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-MV-MVp-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "about-J-Js-subject.n",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 13,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [PP about [NP the subject.n NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------MVp-------------+                 |\n    |             |         +-----CX-----+      +-----Js----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 8,
+    "linkage_id": "lg-linkage:dea299106ef1fd8756e6ac52a684057beecb959fc236f3fa1a8e831ef1eb3d29",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Op-subject.a",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVa-about",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 15,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [ADVP about ADVP] VP] S] NP] [NP the subject.a NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Opn-------------------+     |\n    +----->WV---->+         +-----CX-----+                  |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVa-+    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 9,
+    "linkage_id": "lg-linkage:fa1f440b5a2bdd4c7ff51469bfe61fe56ea5deb1b21866d8e6087cb7cd13f255",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Os-subject.n",
+      "read.v-d-MV-MVa-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 18,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [ADVP about ADVP] [NP the subject.n NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Osn-------------------+     |\n    |             +-------------MVa-------------+           |     |\n    +----->WV---->+         +-----CX-----+      |           |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 10,
+    "linkage_id": "lg-linkage:ac5399190de0f5ce33cf806ff62f59f7d20d68b12c3c9a14ce143688405b8e68",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Os-subject.n",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVa-about",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 4.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [ADVP about ADVP] VP] S] NP] [NP the subject.n NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Osn-------------------+     |\n    |             |         +-----CX-----+                  |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVa-+    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 11,
+    "linkage_id": "lg-linkage:a062c3766f6c9f70fff468e6287b05cb0957480918d17c8f9c230b876ca6edba",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVp-about",
+      "about-J-Jp-subject.a",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.0,
+      "link_cost": 10,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [PP about [NP the subject.a NP] PP] VP] S] NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |                       +-----CX-----+      +-----Jp----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVp-+    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 12,
+    "linkage_id": "lg-linkage:6910cc5b23b4c3052bf155aa39bf6ac515e2dd5dfed3e3eee5cc19e586223dd1",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-MV-MVp-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "about-J-Jp-subject.a",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.0,
+      "link_cost": 13,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [PP about [NP the subject.a NP] PP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------MVp-------------+                 |\n    |             |         +-----CX-----+      +-----Jp----+     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 13,
+    "linkage_id": "lg-linkage:0849c9722341934d7534076c0177f732b0f80c3b0cfcbb117a889e754d03907a",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-read.v-d",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Op-subject.a",
+      "read.v-d-MV-MVa-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 5.0,
+      "link_cost": 18,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [ADVP about ADVP] [NP the subject.a NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Opn-------------------+     |\n    |             +-------------MVa-------------+           |     |\n    +----->WV---->+         +-----CX-----+      |           |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 14,
+    "linkage_id": "lg-linkage:413096711835d8dee958d821263f811bea678d3bab658529b9961e47e377ad01",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Op-subject.a",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "could.v-MV-MVa-about",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 6.0,
+      "link_cost": 14,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v [ADVP about ADVP] VP] S] NP] [NP the subject.a NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Opn-------------------+     |\n    |             |         +-----CX-----+                  |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+--MVa-+    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 15,
+    "linkage_id": "lg-linkage:52e4061cc31392dca26e66c113d4aead49eb0e2126af104c81a110e98266d18f",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Os-subject.n",
+      "read.v-d-MV-MVa-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "the-D-Ds**c-subject.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 6.0,
+      "link_cost": 17,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [ADVP about ADVP] [NP the subject.n NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Osn-------------------+     |\n    |             +-------------MVa-------------+           |     |\n    |             |         +-----CX-----+      |           |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +-Ds**c+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-only-relative",
+    "pass": "strict",
+    "rank": 16,
+    "linkage_id": "lg-linkage:83abf4c0a5459e155c3bab6d3c9c2fc7deadeaa8c1624d060221c7ec9bd0737e",
+    "words": [
+      "LEFT-WALL",
+      "I.p",
+      "read.v-d",
+      "everything",
+      "I.p",
+      "could.v",
+      "about",
+      "the",
+      "subject.a",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-I.p",
+      "I.p-Sp*i-S-read.v-d",
+      "read.v-d-O*n-Op-subject.a",
+      "read.v-d-MV-MVa-about",
+      "read.v-d-O-Os-everything",
+      "everything-CX-could.v",
+      "I.p-Sp*i-Sp-could.v",
+      "the-DD-subject.a",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 8.0,
+      "link_cost": 17,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP I.p NP] [VP read.v-d [NP everything [S [NP I.p NP] [VP could.v VP] S] NP] [ADVP about ADVP] [NP the subject.a NP] VP] . S] \n",
+    "diagram": "\n    +------------------------------Xp-----------------------------+\n    |             +-------------------Opn-------------------+     |\n    |             +-------------MVa-------------+           |     |\n    |             |         +-----CX-----+      |           |     |\n    +->Wd--+-Sp*i-+----Os---+      +-Sp*i+      |    +--DD--+     +--RW--+\n    |      |      |         |      |     |      |    |      |     |      |\nLEFT-WALL I.p read.v-d everything I.p could.v about the subject.a . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-overgeneration",
+    "pass": "strict",
+    "rank": 1,
+    "linkage_id": "lg-linkage:97e219fdc6069d55e8f295999802c3642e124f4652825c61d7b846d331b86f61",
+    "words": [
+      "LEFT-WALL",
+      "A.n",
+      "dogs.v",
+      "runs.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWV-dWV-dogs.v",
+      "LEFT-WALL-hWd-Wd-A.n",
+      "A.n-Ss*s-Ss-dogs.v",
+      "dogs.v-O-Op-runs.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 0.0,
+      "link_cost": 4,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP A.n NP] [VP dogs.v [NP runs.n NP] VP] . S] \n",
+    "diagram": "\n    +-----------Xp----------+\n    +---->WV---->+          |\n    +->Wd--+-Ss*s+--Op--+   +--RW--+\n    |      |     |      |   |      |\nLEFT-WALL A.n dogs.v runs.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "link-grammar-overgeneration",
+    "pass": "strict",
+    "rank": 2,
+    "linkage_id": "lg-linkage:5e41013d161d68ca8a413d09e238e560bc510a24308765f8a5e2b6e628bc7b59",
+    "words": [
+      "LEFT-WALL",
+      "A.n",
+      "dogs.v",
+      "runs.n",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWd-Wd-A.n",
+      "A.n-Ss*s-Ss-dogs.v",
+      "dogs.v-O-Op-runs.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 0,
+      "disjunct_cost": 3.0,
+      "link_cost": 3,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [NP A.n NP] [VP dogs.v [NP runs.n NP] VP] . S] \n",
+    "diagram": "\n    +-----------Xp----------+\n    +->Wd--+-Ss*s+--Op--+   +--RW--+\n    |      |     |      |   |      |\nLEFT-WALL A.n dogs.v runs.n . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "shared-failure",
+    "pass": "null-link-recovery",
+    "rank": 1,
+    "linkage_id": "lg-linkage:c1b9b093dee542c748e3806259f1303a18a8b6df8ceb43bf5addbd50bf46763e",
+    "words": [
+      "LEFT-WALL",
+      "dog.n",
+      "[the]",
+      "[quickly]",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWa-Wa-dog.n",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 2,
+      "disjunct_cost": 0.04999999701976776,
+      "link_cost": 3,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [S [VP dog.n VP] S] {the} {quickly} . S] \n",
+    "diagram": "\n    +-------------Xp------------+\n    +-->Wa--+                   +--RW--+\n    |       |                   |      |\nLEFT-WALL dog.n [the] [quickly] . RIGHT-WALL\n\n"
+  },
+  {
+    "fixture": "shared-failure",
+    "pass": "null-link-recovery",
+    "rank": 2,
+    "linkage_id": "lg-linkage:4127bb692382b05931b8a214402ee84494be43c70b613f68fc475abe3bd724d8",
+    "words": [
+      "LEFT-WALL",
+      "Dog[!<CAPITALIZED-WORDS>]",
+      "[the]",
+      "[quickly]",
+      ".",
+      "RIGHT-WALL"
+    ],
+    "links": [
+      "LEFT-WALL-Xp-.",
+      "LEFT-WALL-hWa-Wa-Dog[!<CAPITALIZED-WORDS>]",
+      ".-RW-RIGHT-WALL"
+    ],
+    "costs": {
+      "unused_word_cost": 2,
+      "disjunct_cost": 0.05999999865889549,
+      "link_cost": 3,
+      "violation_name": null
+    },
+    "constituent_tree": "[S [S [VP Dog{!<CAPITALIZED-WORDS>} VP] S] {the} {quickly} . S] \n",
+    "diagram": "\n    +-----------------------Xp----------------------+\n    +------->Wa-------+                             +--RW--+\n    |                 |                             |      |\nLEFT-WALL Dog[!<CAPITALIZED-WORDS>] [the] [quickly] . RIGHT-WALL\n\n"
+  }
+]

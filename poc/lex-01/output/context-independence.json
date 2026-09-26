@@ -1,0 +1,63 @@
+{
+  "target": "bank",
+  "contexts": [
+    {
+      "text": "They sat on the bank of the river.",
+      "target": "bank",
+      "humanly_relevant_candidate": "bank.n.01",
+      "wordnet_lookup_input": "bank",
+      "returned_candidate_synset_ids": [
+        "bank.n.01",
+        "depository_financial_institution.n.01",
+        "bank.n.03",
+        "bank.n.04",
+        "bank.n.05",
+        "bank.n.06",
+        "bank.n.07",
+        "savings_bank.n.02",
+        "bank.n.09",
+        "bank.n.10",
+        "bank.v.01",
+        "bank.v.02",
+        "bank.v.03",
+        "bank.v.04",
+        "bank.v.05",
+        "deposit.v.02",
+        "bank.v.07",
+        "trust.v.01"
+      ],
+      "selected_synset_id": null
+    },
+    {
+      "text": "They deposited the money at the bank.",
+      "target": "bank",
+      "humanly_relevant_candidate": "depository_financial_institution.n.01",
+      "wordnet_lookup_input": "bank",
+      "returned_candidate_synset_ids": [
+        "bank.n.01",
+        "depository_financial_institution.n.01",
+        "bank.n.03",
+        "bank.n.04",
+        "bank.n.05",
+        "bank.n.06",
+        "bank.n.07",
+        "savings_bank.n.02",
+        "bank.n.09",
+        "bank.n.10",
+        "bank.v.01",
+        "bank.v.02",
+        "bank.v.03",
+        "bank.v.04",
+        "bank.v.05",
+        "deposit.v.02",
+        "bank.v.07",
+        "trust.v.01"
+      ],
+      "selected_synset_id": null
+    }
+  ],
+  "candidate_lists_identical": true,
+  "wordnet_lookup_uses_context": false,
+  "wordnet_lookup_selects_a_sense": false,
+  "conclusion": "WordNet lookup enumerates lexical candidates; contextual word-sense disambiguation must be performed by another component."
+}

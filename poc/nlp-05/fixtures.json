@@ -1,0 +1,43 @@
+[
+  {
+    "id": "simple-declarative",
+    "phenomenon": "simple",
+    "sentence": "The dog chased the cat.",
+    "expected_status": "parsed",
+    "minimum_linkages": 1
+  },
+  {
+    "id": "pp-attachment-ambiguity",
+    "phenomenon": "ambiguous",
+    "sentence": "I saw the man with the telescope.",
+    "expected_status": "parsed",
+    "minimum_linkages": 2,
+    "minimum_distinct_constituent_trees": 2,
+    "required_attachment_links": [
+      ["saw", "MVp", "with"],
+      ["man", "Mp", "with"]
+    ]
+  },
+  {
+    "id": "coordination",
+    "phenomenon": "coordinated",
+    "sentence": "Kim sang and Sandy danced.",
+    "expected_status": "parsed",
+    "minimum_linkages": 1
+  },
+  {
+    "id": "fragment",
+    "phenomenon": "fragmentary",
+    "sentence": "In the garden.",
+    "expected_status": "parsed",
+    "minimum_linkages": 1
+  },
+  {
+    "id": "ungrammatical",
+    "phenomenon": "ungrammatical",
+    "sentence": "Dog the quickly.",
+    "expected_status": "strict_parse_failure",
+    "recovery_max_null_count": 2,
+    "minimum_recovery_linkages": 1
+  }
+]

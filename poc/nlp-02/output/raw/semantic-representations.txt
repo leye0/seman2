@@ -1,0 +1,5523 @@
+===== multiple-predicates:40f5911fb62e4443 rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ named<0:3> LBL: h7 ARG0: x3 CARG: "Kim" ]
+          [ _give_v_1<4:8> LBL: h1 ARG0: e2 ARG1: x3 ARG2: x9 [ x PERS: 3 NUM: sg IND: + ] ARG3: x10 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ proper_q<9:14> LBL: h11 ARG0: x10 RSTR: h12 BODY: h13 ]
+          [ named<9:14> LBL: h14 ARG0: x10 CARG: "Sandy" ]
+          [ _a_q<15:16> LBL: h16 ARG0: x9 RSTR: h17 BODY: h18 ]
+          [ _book_n_of<17:22> LBL: h19 ARG0: x9 ARG1: i20 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h12 qeq h14 h17 qeq h19 > ]
+
+===== multiple-predicates:40f5911fb62e4443 rank=1 / EDS =====
+{e2:
+ _1:proper_q<0:3>[BV x3]
+ x3:named<0:3>("Kim"){x PERS 3, NUM sg, IND +}[]
+ e2:_give_v_1<4:8>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x9, ARG3 x10]
+ _2:proper_q<9:14>[BV x10]
+ x10:named<9:14>("Sandy"){x PERS 3, NUM sg, IND +}[]
+ _3:_a_q<15:16>[BV x9]
+ x9:_book_n_of<17:22>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== multiple-predicates:40f5911fb62e4443 rank=1 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Kim"
+    },
+    "e2": {
+      "label": "_give_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x9",
+        "ARG3": "x10"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x10"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    "x10": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 9,
+        "to": 14
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Sandy"
+    },
+    "_3": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x9"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 16
+      }
+    },
+    "x9": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 17,
+        "to": 22
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== multiple-predicates:40f5911fb62e4443 rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Kim",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_give_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Sandy",
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 15,
+        "to": 16
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 22
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10006,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG3",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10005,
+      "to": 10006,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== multiple-predicates:40f5911fb62e4443 rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e9 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h1 ARG0: x8 [ x PERS: 3 NUM: sg IND: + ] RSTR: h12 BODY: h13 ]
+          [ named<0:3> LBL: h2 ARG0: x8 CARG: "Kim" ]
+          [ _give_v_1<4:8> LBL: h3 ARG0: e9 ARG1: x8 ARG2: x11 [ x PERS: 3 NUM: sg IND: + ] ARG3: x10 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ proper_q<9:14> LBL: h4 ARG0: x10 RSTR: h14 BODY: h15 ]
+          [ named<9:14> LBL: h5 ARG0: x10 CARG: "Sandy" ]
+          [ _a_q<15:16> LBL: h6 ARG0: x11 RSTR: h16 BODY: h17 ]
+          [ _book_n_of<17:22> LBL: h7 ARG0: x11 ] >
+  HCONS: < h0 qeq h3 h12 qeq h2 h14 qeq h5 h16 qeq h7 > ]
+
+===== multiple-predicates:8f887ffb626e3402 rank=2 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ named<0:3> LBL: h7 ARG0: x3 CARG: "Kim" ]
+          [ _give_v_1<4:8> LBL: h1 ARG0: e2 ARG1: x3 ARG2: x9 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ proper_q<9:14> LBL: h10 ARG0: x9 RSTR: h11 BODY: h12 ]
+          [ named<9:14> LBL: h13 ARG0: x9 CARG: "Sandy" ]
+          [ mod<15:22> LBL: h1 ARG0: e15 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e2 ARG2: x16 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<15:16> LBL: h17 ARG0: x16 RSTR: h18 BODY: h19 ]
+          [ _book_n_of<17:22> LBL: h20 ARG0: x16 ARG1: i21 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h11 qeq h13 h18 qeq h20 > ]
+
+===== multiple-predicates:8f887ffb626e3402 rank=2 / EDS =====
+{e2:
+ _1:proper_q<0:3>[BV x3]
+ x3:named<0:3>("Kim"){x PERS 3, NUM sg, IND +}[]
+ e2:_give_v_1<4:8>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x9]
+ _2:proper_q<9:14>[BV x9]
+ x9:named<9:14>("Sandy"){x PERS 3, NUM sg, IND +}[]
+ e15:mod<15:22>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2, ARG2 x16]
+ _3:_a_q<15:16>[BV x16]
+ x16:_book_n_of<17:22>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== multiple-predicates:8f887ffb626e3402 rank=2 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Kim"
+    },
+    "e2": {
+      "label": "_give_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x9"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x9"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    "x9": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 9,
+        "to": 14
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Sandy"
+    },
+    "e15": {
+      "label": "mod",
+      "edges": {
+        "ARG1": "e2",
+        "ARG2": "x16"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 22
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_3": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x16"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 16
+      }
+    },
+    "x16": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 17,
+        "to": 22
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== multiple-predicates:8f887ffb626e3402 rank=2 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Kim",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_give_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Sandy",
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 22
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 15,
+        "to": 16
+      }
+    },
+    {
+      "nodeid": 10007,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 22
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10005,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10005,
+      "to": 10007,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10006,
+      "to": 10007,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== multiple-predicates:8f887ffb626e3402 rank=2 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e9 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h1 ARG0: x6 [ x PERS: 3 NUM: sg IND: + ] RSTR: h13 BODY: h14 ]
+          [ named<0:3> LBL: h2 ARG0: x6 CARG: "Kim" ]
+          [ _give_v_1<4:8> LBL: h3 ARG0: e9 ARG1: x6 ARG2: x10 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ proper_q<9:14> LBL: h4 ARG0: x10 RSTR: h15 BODY: h16 ]
+          [ named<9:14> LBL: h5 ARG0: x10 CARG: "Sandy" ]
+          [ mod<15:22> LBL: h3 ARG0: e11 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e9 ARG2: x12 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<15:16> LBL: h7 ARG0: x12 RSTR: h17 BODY: h18 ]
+          [ _book_n_of<17:22> LBL: h8 ARG0: x12 ] >
+  HCONS: < h0 qeq h3 h13 qeq h2 h15 qeq h5 h17 qeq h8 > ]
+
+===== multiple-predicates:dce7774e4e6ff4eb rank=3 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ named<0:3> LBL: h7 ARG0: x3 CARG: "Kim" ]
+          [ _give_v_yield<4:8> LBL: h9 ARG0: e2 ARG1: x3 ]
+          [ subord<9:14> LBL: h1 ARG0: e10 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: h11 ARG2: h12 ]
+          [ _sandy_a_1<9:14> LBL: h13 ARG0: e14 [ e SF: prop TENSE: untensed MOOD: indicative ] ARG1: i15 ]
+          [ mod<15:22> LBL: h1 ARG0: e16 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e2 ARG2: x17 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<15:16> LBL: h18 ARG0: x17 RSTR: h19 BODY: h20 ]
+          [ _book_n_of<17:22> LBL: h21 ARG0: x17 ARG1: i22 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h11 qeq h9 h12 qeq h13 h19 qeq h21 > ]
+
+===== multiple-predicates:dce7774e4e6ff4eb rank=3 / EDS =====
+{e10:
+ _1:proper_q<0:3>[BV x3]
+ x3:named<0:3>("Kim"){x PERS 3, NUM sg, IND +}[]
+ e2:_give_v_yield<4:8>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+ e10:subord<9:14>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2, ARG2 e14]
+ e14:_sandy_a_1<9:14>{e SF prop, TENSE untensed, MOOD indicative}[]
+ e16:mod<15:22>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2, ARG2 x17]
+ _2:_a_q<15:16>[BV x17]
+ x17:_book_n_of<17:22>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== multiple-predicates:dce7774e4e6ff4eb rank=3 / EDS JSON =====
+{
+  "top": "e10",
+  "nodes": {
+    "_1": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Kim"
+    },
+    "e2": {
+      "label": "_give_v_yield",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e10": {
+      "label": "subord",
+      "edges": {
+        "ARG1": "e2",
+        "ARG2": "e14"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 14
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e14": {
+      "label": "_sandy_a_1",
+      "edges": {},
+      "lnk": {
+        "from": 9,
+        "to": 14
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative"
+      }
+    },
+    "e16": {
+      "label": "mod",
+      "edges": {
+        "ARG1": "e2",
+        "ARG2": "x17"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 22
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x17"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 16
+      }
+    },
+    "x17": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 17,
+        "to": 22
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== multiple-predicates:dce7774e4e6ff4eb rank=3 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Kim",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_give_v_yield",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "subord",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_sandy_a_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 14
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 15,
+        "to": 22
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 15,
+        "to": 16
+      }
+    },
+    {
+      "nodeid": 10007,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 22
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "H"
+    },
+    {
+      "from": 10005,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10007,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10006,
+      "to": 10007,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10003,
+  "index": 10002
+}
+
+===== multiple-predicates:dce7774e4e6ff4eb rank=3 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e10 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h1 ARG0: x9 [ x PERS: 3 NUM: sg IND: + ] RSTR: h15 BODY: h16 ]
+          [ named<0:3> LBL: h2 ARG0: x9 CARG: "Kim" ]
+          [ _give_v_yield<4:8> LBL: h3 ARG0: e10 ARG1: x9 ]
+          [ subord<9:14> LBL: h4 ARG0: e11 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: h17 ARG2: h18 ]
+          [ _sandy_a_1<9:14> LBL: h5 ARG0: e12 [ e SF: prop TENSE: untensed MOOD: indicative ] ]
+          [ mod<15:22> LBL: h6 ARG0: e13 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e10 ARG2: x14 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<15:16> LBL: h7 ARG0: x14 RSTR: h19 BODY: h20 ]
+          [ _book_n_of<17:22> LBL: h8 ARG0: x14 ] >
+  HCONS: < h0 qeq h4 h15 qeq h2 h17 qeq h3 h18 qeq h5 h19 qeq h8 > ]
+
+===== quantifiers:66d2414819c971f6 rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ _dog_n_1<6:9> LBL: h7 ARG0: x3 ]
+          [ _chase_v_1<10:16> LBL: h1 ARG0: e2 ARG1: x3 ARG2: x8 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<17:18> LBL: h9 ARG0: x8 RSTR: h10 BODY: h11 ]
+          [ _cat_n_1<19:23> LBL: h12 ARG0: x8 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h10 qeq h12 > ]
+
+===== quantifiers:66d2414819c971f6 rank=1 / EDS =====
+{e2:
+ _1:_every_q<0:5>[BV x3]
+ x3:_dog_n_1<6:9>{x PERS 3, NUM sg, IND +}[]
+ e2:_chase_v_1<10:16>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x8]
+ _2:_a_q<17:18>[BV x8]
+ x8:_cat_n_1<19:23>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== quantifiers:66d2414819c971f6 rank=1 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x3": {
+      "label": "_dog_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 9
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "_chase_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x8"
+      },
+      "lnk": {
+        "from": 10,
+        "to": 16
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x8"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 18
+      }
+    },
+    "x8": {
+      "label": "_cat_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 19,
+        "to": 23
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== quantifiers:66d2414819c971f6 rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_dog_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 9
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_chase_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 10,
+        "to": 16
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 17,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_cat_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 23
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== quantifiers:66d2414819c971f6 rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h1 ARG0: x6 [ x PERS: 3 NUM: sg IND: + ] RSTR: h9 BODY: h10 ]
+          [ _dog_n_1<6:9> LBL: h2 ARG0: x6 ]
+          [ _chase_v_1<10:16> LBL: h3 ARG0: e7 ARG1: x6 ARG2: x8 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<17:18> LBL: h4 ARG0: x8 RSTR: h11 BODY: h12 ]
+          [ _cat_n_1<19:23> LBL: h5 ARG0: x8 ] >
+  HCONS: < h0 qeq h3 h9 qeq h2 h11 qeq h5 > ]
+
+===== quantifiers:fc4680009c108e90 rank=2 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:23> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ _every_q<0:5> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ _dog_n_1<6:9> LBL: h8 ARG0: x4 ]
+          [ _chase_v_1<10:16> LBL: h8 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: i10 ARG2: x4 ]
+          [ mod<17:23> LBL: h8 ARG0: e11 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e9 ARG2: x12 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<17:18> LBL: h13 ARG0: x12 RSTR: h14 BODY: h15 ]
+          [ _cat_n_1<19:23> LBL: h16 ARG0: x12 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h14 qeq h16 >
+  ICONS: < e9 topic x4 > ]
+
+===== quantifiers:fc4680009c108e90 rank=2 / EDS =====
+{e2:
+ e2:unknown<0:23>{e SF prop}[ARG x4]
+ _1:_every_q<0:5>[BV x4]
+ x4:_dog_n_1<6:9>{x PERS 3, NUM sg, IND +}[]
+ e9:_chase_v_1<10:16>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG2 x4]
+ e11:mod<17:23>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e9, ARG2 x12]
+ _2:_a_q<17:18>[BV x12]
+ x12:_cat_n_1<19:23>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== quantifiers:fc4680009c108e90 rank=2 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "e2": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 23
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x4": {
+      "label": "_dog_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 9
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e9": {
+      "label": "_chase_v_1",
+      "edges": {
+        "ARG2": "x4"
+      },
+      "lnk": {
+        "from": 10,
+        "to": 16
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e11": {
+      "label": "mod",
+      "edges": {
+        "ARG1": "e9",
+        "ARG2": "x12"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 23
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x12"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 18
+      }
+    },
+    "x12": {
+      "label": "_cat_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 19,
+        "to": 23
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== quantifiers:fc4680009c108e90 rank=2 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 23
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_dog_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 9
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_chase_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 10,
+        "to": 16
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 23
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 17,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_cat_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 23
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10002,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10002,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG2",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10003,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10006,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10006,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10000
+}
+
+===== quantifiers:fc4680009c108e90 rank=2 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e4 [ e SF: prop ]
+  RELS: < [ unknown<0:23> LBL: h1 ARG: x5 [ x PERS: 3 NUM: sg IND: + ] ARG0: e4 ]
+          [ _every_q<0:5> LBL: h2 ARG0: x5 RSTR: h11 BODY: h12 ]
+          [ _dog_n_1<6:9> LBL: h3 ARG0: x5 ]
+          [ _chase_v_1<10:16> LBL: h3 ARG0: e8 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG2: x5 ]
+          [ mod<17:23> LBL: h3 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e8 ARG2: x10 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<17:18> LBL: h6 ARG0: x10 RSTR: h13 BODY: h14 ]
+          [ _cat_n_1<19:23> LBL: h7 ARG0: x10 ] >
+  HCONS: < h0 qeq h1 h11 qeq h3 h13 qeq h7 > ]
+
+===== quantifiers:e2b13d509f77eb40 rank=3 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:23> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ _every_q<0:5> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ _dog_n_1<6:9> LBL: h8 ARG0: x4 ]
+          [ _chase_v_1<10:16> LBL: h8 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: i10 ARG2: x4 ]
+          [ mod<17:23> LBL: h1 ARG0: e2 ARG1: e2 ARG2: x11 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<17:18> LBL: h12 ARG0: x11 RSTR: h13 BODY: h14 ]
+          [ _cat_n_1<19:23> LBL: h15 ARG0: x11 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h13 qeq h15 >
+  ICONS: < e9 topic x4 > ]
+
+===== quantifiers:e2b13d509f77eb40 rank=3 / EDS =====
+{_3:
+ _3:unknown<0:23>{e SF prop}[ARG x4]
+ _1:_every_q<0:5>[BV x4]
+ x4:_dog_n_1<6:9>{x PERS 3, NUM sg, IND +}[]
+ e9:_chase_v_1<10:16>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG2 x4]
+ e2:mod<17:23>{e SF prop}[]
+ _2:_a_q<17:18>[BV x11]
+ x11:_cat_n_1<19:23>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== quantifiers:e2b13d509f77eb40 rank=3 / EDS JSON =====
+{
+  "top": "_3",
+  "nodes": {
+    "_3": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 23
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x4": {
+      "label": "_dog_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 9
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e9": {
+      "label": "_chase_v_1",
+      "edges": {
+        "ARG2": "x4"
+      },
+      "lnk": {
+        "from": 10,
+        "to": 16
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e2": {
+      "label": "mod",
+      "edges": {},
+      "lnk": {
+        "from": 17,
+        "to": 23
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x11"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 18
+      }
+    },
+    "x11": {
+      "label": "_cat_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 19,
+        "to": 23
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== quantifiers:e2b13d509f77eb40 rank=3 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 23
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_dog_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 9
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_chase_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 10,
+        "to": 16
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 17,
+        "to": 23
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 17,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_cat_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 23
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10002,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10002,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG2",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10004,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10006,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10006,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10004
+}
+
+===== quantifiers:e2b13d509f77eb40 rank=3 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e10 [ e SF: prop ]
+  RELS: < [ unknown<0:23> LBL: h1 ARG: x8 [ x PERS: 3 NUM: sg IND: + ] ARG0: e4 [ e SF: prop ] ]
+          [ _every_q<0:5> LBL: h2 ARG0: x8 RSTR: h12 BODY: h13 ]
+          [ _dog_n_1<6:9> LBL: h3 ARG0: x8 ]
+          [ _chase_v_1<10:16> LBL: h3 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG2: x8 ]
+          [ mod<17:23> LBL: h5 ARG0: e10 ARG1: e10 ARG2: x11 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<17:18> LBL: h6 ARG0: x11 RSTR: h14 BODY: h15 ]
+          [ _cat_n_1<19:23> LBL: h7 ARG0: x11 ] >
+  HCONS: < h0 qeq h1 h12 qeq h3 h14 qeq h7 > ]
+
+===== negation:bd7d9ec6544c939f rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ named<0:3> LBL: h7 ARG0: x3 CARG: "Kim" ]
+          [ neg<8:11> LBL: h1 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: h10 ]
+          [ _leave_v_1<12:18> LBL: h11 ARG0: e2 ARG1: x3 ARG2: i12 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h10 qeq h11 > ]
+
+===== negation:bd7d9ec6544c939f rank=1 / EDS =====
+{e9:
+ _1:proper_q<0:3>[BV x3]
+ x3:named<0:3>("Kim"){x PERS 3, NUM sg, IND +}[]
+ e9:neg<8:11>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2]
+ e2:_leave_v_1<12:18>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+}
+
+===== negation:bd7d9ec6544c939f rank=1 / EDS JSON =====
+{
+  "top": "e9",
+  "nodes": {
+    "_1": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Kim"
+    },
+    "e9": {
+      "label": "neg",
+      "edges": {
+        "ARG1": "e2"
+      },
+      "lnk": {
+        "from": 8,
+        "to": 11
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e2": {
+      "label": "_leave_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 12,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    }
+  }
+}
+
+===== negation:bd7d9ec6544c939f rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Kim",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "neg",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 8,
+        "to": 11
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_leave_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 12,
+        "to": 18
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10003,
+      "rargname": "ARG1",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    }
+  ],
+  "top": 10002,
+  "index": 10003
+}
+
+===== negation:bd7d9ec6544c939f rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h1 ARG0: x5 [ x PERS: 3 NUM: sg IND: + ] RSTR: h8 BODY: h9 ]
+          [ named<0:3> LBL: h2 ARG0: x5 CARG: "Kim" ]
+          [ neg<8:11> LBL: h3 ARG0: e6 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: h10 ]
+          [ _leave_v_1<12:18> LBL: h4 ARG0: e7 ARG1: x5 ] >
+  HCONS: < h0 qeq h3 h8 qeq h2 h10 qeq h4 > ]
+
+===== negation:45fe02fe7a31315a rank=2 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ named<0:3> LBL: h7 ARG0: x3 CARG: "Kim" ]
+          [ neg<8:11> LBL: h1 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: h10 ]
+          [ _leave_v_1<12:18> LBL: h11 ARG0: e2 ARG1: x3 ARG2: i12 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h10 qeq h11 > ]
+
+===== negation:45fe02fe7a31315a rank=2 / EDS =====
+{e9:
+ _1:proper_q<0:3>[BV x3]
+ x3:named<0:3>("Kim"){x PERS 3, NUM sg, IND +}[]
+ e9:neg<8:11>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2]
+ e2:_leave_v_1<12:18>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+}
+
+===== negation:45fe02fe7a31315a rank=2 / EDS JSON =====
+{
+  "top": "e9",
+  "nodes": {
+    "_1": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Kim"
+    },
+    "e9": {
+      "label": "neg",
+      "edges": {
+        "ARG1": "e2"
+      },
+      "lnk": {
+        "from": 8,
+        "to": 11
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e2": {
+      "label": "_leave_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 12,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    }
+  }
+}
+
+===== negation:45fe02fe7a31315a rank=2 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Kim",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "neg",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 8,
+        "to": 11
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_leave_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 12,
+        "to": 18
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10003,
+      "rargname": "ARG1",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    }
+  ],
+  "top": 10002,
+  "index": 10003
+}
+
+===== negation:45fe02fe7a31315a rank=2 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h1 ARG0: x5 [ x PERS: 3 NUM: sg IND: + ] RSTR: h8 BODY: h9 ]
+          [ named<0:3> LBL: h2 ARG0: x5 CARG: "Kim" ]
+          [ neg<8:11> LBL: h3 ARG0: e6 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: h10 ]
+          [ _leave_v_1<12:18> LBL: h4 ARG0: e7 ARG1: x5 ] >
+  HCONS: < h0 qeq h3 h8 qeq h2 h10 qeq h4 > ]
+
+===== scope-ambiguity:99bea2e465cae618 rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ _student_n_of<6:13> LBL: h7 ARG0: x3 ARG1: i8 ]
+          [ _read_v_1<14:18> LBL: h1 ARG0: e2 ARG1: x3 ARG2: x9 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h10 ARG0: x9 RSTR: h11 BODY: h12 ]
+          [ _book_n_of<21:26> LBL: h13 ARG0: x9 ARG1: i14 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h11 qeq h13 > ]
+
+===== scope-ambiguity:99bea2e465cae618 rank=1 / EDS =====
+{e2:
+ _1:_every_q<0:5>[BV x3]
+ x3:_student_n_of<6:13>{x PERS 3, NUM sg, IND +}[]
+ e2:_read_v_1<14:18>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x9]
+ _2:_a_q<19:20>[BV x9]
+ x9:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:99bea2e465cae618 rank=1 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x3": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "_read_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x9"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x9"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x9": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:99bea2e465cae618 rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_read_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== scope-ambiguity:99bea2e465cae618 rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h1 ARG0: x6 [ x PERS: 3 NUM: sg IND: + ] RSTR: h9 BODY: h10 ]
+          [ _student_n_of<6:13> LBL: h2 ARG0: x6 ]
+          [ _read_v_1<14:18> LBL: h3 ARG0: e7 ARG1: x6 ARG2: x8 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h4 ARG0: x8 RSTR: h11 BODY: h12 ]
+          [ _book_n_of<21:26> LBL: h5 ARG0: x8 ] >
+  HCONS: < h0 qeq h3 h9 qeq h2 h11 qeq h5 > ]
+
+===== scope-ambiguity:dd9fdb5db0bdeb9c rank=2 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ _every_q<0:5> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ compound<6:18> LBL: h8 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x4 ARG2: x10 [ x IND: + PT: notpro ] ]
+          [ udef_q<6:13> LBL: h11 ARG0: x10 RSTR: h12 BODY: h13 ]
+          [ _student_n_of<6:13> LBL: h14 ARG0: x10 ARG1: i15 ]
+          [ _read_n_1<14:18> LBL: h8 ARG0: x4 ]
+          [ _a_p_per<19:20> LBL: h8 ARG0: e16 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x4 ARG2: x17 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ udef_q<19:20> LBL: h18 ARG0: x17 RSTR: h19 BODY: h20 ]
+          [ _book_n_of<21:26> LBL: h21 ARG0: x17 ARG1: i22 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h12 qeq h14 h19 qeq h21 > ]
+
+===== scope-ambiguity:dd9fdb5db0bdeb9c rank=2 / EDS =====
+{e2:
+ e2:unknown<0:26>{e SF prop}[ARG x4]
+ _1:_every_q<0:5>[BV x4]
+ e9:compound<6:18>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 x4, ARG2 x10]
+ _2:udef_q<6:13>[BV x10]
+ x10:_student_n_of<6:13>{x IND +, PT notpro}[]
+ x4:_read_n_1<14:18>{x PERS 3, NUM sg, IND +}[]
+ e16:_a_p_per<19:20>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 x4, ARG2 x17]
+ _3:udef_q<19:20>[BV x17]
+ x17:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:dd9fdb5db0bdeb9c rank=2 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "e2": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "e9": {
+      "label": "compound",
+      "edges": {
+        "ARG1": "x4",
+        "ARG2": "x10"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "udef_q",
+      "edges": {
+        "BV": "x10"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    "x10": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "IND": "+",
+        "PT": "notpro"
+      }
+    },
+    "x4": {
+      "label": "_read_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e16": {
+      "label": "_a_p_per",
+      "edges": {
+        "ARG1": "x4",
+        "ARG2": "x17"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_3": {
+      "label": "udef_q",
+      "edges": {
+        "BV": "x17"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x17": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:dd9fdb5db0bdeb9c rank=2 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "compound",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "udef_q",
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "IND": "+",
+        "PT": "notpro",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_read_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_a_p_per",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10007,
+      "predicate": "udef_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10008,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10005,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10005,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10005,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10006,
+      "to": 10005,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10006,
+      "to": 10008,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10007,
+      "to": 10008,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10000
+}
+
+===== scope-ambiguity:dd9fdb5db0bdeb9c rank=2 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e6 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x11 [ x PERS: 3 NUM: sg IND: + ] ARG0: e6 ]
+          [ _every_q<0:5> LBL: h2 ARG0: x11 RSTR: h14 BODY: h15 ]
+          [ compound<6:18> LBL: h3 ARG0: e7 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x11 ARG2: x10 [ x IND: + PT: notpro ] ]
+          [ udef_q<6:13> LBL: h4 ARG0: x10 RSTR: h16 BODY: h17 ]
+          [ _student_n_of<6:13> LBL: h5 ARG0: x10 ]
+          [ _read_n_1<14:18> LBL: h3 ARG0: x11 ]
+          [ _a_p_per<19:20> LBL: h3 ARG0: e12 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x11 ARG2: x13 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ udef_q<19:20> LBL: h8 ARG0: x13 RSTR: h18 BODY: h19 ]
+          [ _book_n_of<21:26> LBL: h9 ARG0: x13 ] >
+  HCONS: < h0 qeq h1 h14 qeq h3 h16 qeq h5 h18 qeq h9 > ]
+
+===== scope-ambiguity:7b4adb2d98f65117 rank=3 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ udef_q<0:26> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ compound<0:18> LBL: h8 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x4 ARG2: x10 [ x IND: + PT: notpro ] ]
+          [ udef_q<0:13> LBL: h11 ARG0: x10 RSTR: h12 BODY: h13 ]
+          [ _every_a_1<0:5> LBL: h14 ARG0: e15 [ e SF: prop TENSE: untensed MOOD: indicative PROG: bool PERF: - ] ARG1: x10 ]
+          [ _student_n_of<6:13> LBL: h14 ARG0: x10 ARG1: i16 ]
+          [ _read_n_1<14:18> LBL: h8 ARG0: x4 ]
+          [ _a_p_per<19:20> LBL: h8 ARG0: e17 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x4 ARG2: x18 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ udef_q<19:20> LBL: h19 ARG0: x18 RSTR: h20 BODY: h21 ]
+          [ _book_n_of<21:26> LBL: h22 ARG0: x18 ARG1: i23 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h12 qeq h14 h20 qeq h22 > ]
+
+===== scope-ambiguity:7b4adb2d98f65117 rank=3 / EDS =====
+{e2:
+ e2:unknown<0:26>{e SF prop}[ARG x4]
+ _1:udef_q<0:26>[BV x4]
+ e9:compound<0:18>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 x4, ARG2 x10]
+ _2:udef_q<0:13>[BV x10]
+ e15:_every_a_1<0:5>{e SF prop, TENSE untensed, MOOD indicative, PROG bool, PERF -}[ARG1 x10]
+ x10:_student_n_of<6:13>{x IND +, PT notpro}[]
+ x4:_read_n_1<14:18>{x PERS 3, NUM sg, IND +}[]
+ e17:_a_p_per<19:20>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 x4, ARG2 x18]
+ _3:udef_q<19:20>[BV x18]
+ x18:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:7b4adb2d98f65117 rank=3 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "e2": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "udef_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    "e9": {
+      "label": "compound",
+      "edges": {
+        "ARG1": "x4",
+        "ARG2": "x10"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "udef_q",
+      "edges": {
+        "BV": "x10"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 13
+      }
+    },
+    "e15": {
+      "label": "_every_a_1",
+      "edges": {
+        "ARG1": "x10"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "bool",
+        "PERF": "-"
+      }
+    },
+    "x10": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "IND": "+",
+        "PT": "notpro"
+      }
+    },
+    "x4": {
+      "label": "_read_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e17": {
+      "label": "_a_p_per",
+      "edges": {
+        "ARG1": "x4",
+        "ARG2": "x18"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_3": {
+      "label": "udef_q",
+      "edges": {
+        "BV": "x18"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x18": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:7b4adb2d98f65117 rank=3 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "udef_q",
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "compound",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "udef_q",
+      "lnk": {
+        "from": 0,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_every_a_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "bool",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "IND": "+",
+        "PT": "notpro",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_read_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10007,
+      "predicate": "_a_p_per",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10008,
+      "predicate": "udef_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10009,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10006,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10006,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10006,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10002,
+      "to": 10005,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10005,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10004,
+      "to": 10005,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10007,
+      "to": 10006,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10007,
+      "to": 10009,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10008,
+      "to": 10009,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10000
+}
+
+===== scope-ambiguity:7b4adb2d98f65117 rank=3 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e6 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x12 [ x PERS: 3 NUM: sg IND: + ] ARG0: e6 ]
+          [ udef_q<0:26> LBL: h2 ARG0: x12 RSTR: h15 BODY: h16 ]
+          [ compound<0:18> LBL: h3 ARG0: e7 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x12 ARG2: x11 [ x IND: + PT: notpro ] ]
+          [ udef_q<0:13> LBL: h4 ARG0: x11 RSTR: h17 BODY: h18 ]
+          [ _every_a_1<0:5> LBL: h5 ARG0: e8 [ e SF: prop TENSE: untensed MOOD: indicative PROG: bool PERF: - ] ARG1: x11 ]
+          [ _student_n_of<6:13> LBL: h5 ARG0: x11 ]
+          [ _read_n_1<14:18> LBL: h3 ARG0: x12 ]
+          [ _a_p_per<19:20> LBL: h3 ARG0: e13 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x12 ARG2: x14 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ udef_q<19:20> LBL: h9 ARG0: x14 RSTR: h19 BODY: h20 ]
+          [ _book_n_of<21:26> LBL: h10 ARG0: x14 ] >
+  HCONS: < h0 qeq h1 h15 qeq h3 h17 qeq h5 h19 qeq h10 > ]
+
+===== scope-ambiguity:d98f82b2cb77bc46 rank=4 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ _every_q<0:5> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ compound<6:18> LBL: h8 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x4 ARG2: x10 [ x IND: + PT: notpro ] ]
+          [ udef_q<6:13> LBL: h11 ARG0: x10 RSTR: h12 BODY: h13 ]
+          [ _student_n_of<6:13> LBL: h14 ARG0: x10 ARG1: i15 ]
+          [ _read_n_1<14:18> LBL: h8 ARG0: x4 ]
+          [ mod<19:26> LBL: h1 ARG0: e2 ARG1: e2 ARG2: x16 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h17 ARG0: x16 RSTR: h18 BODY: h19 ]
+          [ _book_n_of<21:26> LBL: h20 ARG0: x16 ARG1: i21 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h12 qeq h14 h18 qeq h20 > ]
+
+===== scope-ambiguity:d98f82b2cb77bc46 rank=4 / EDS =====
+{_4:
+ _4:unknown<0:26>{e SF prop}[ARG x4]
+ _1:_every_q<0:5>[BV x4]
+ e9:compound<6:18>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 x4, ARG2 x10]
+ _2:udef_q<6:13>[BV x10]
+ x10:_student_n_of<6:13>{x IND +, PT notpro}[]
+ x4:_read_n_1<14:18>{x PERS 3, NUM sg, IND +}[]
+ e2:mod<19:26>{e SF prop}[]
+ _3:_a_q<19:20>[BV x16]
+ x16:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:d98f82b2cb77bc46 rank=4 / EDS JSON =====
+{
+  "top": "_4",
+  "nodes": {
+    "_4": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "e9": {
+      "label": "compound",
+      "edges": {
+        "ARG1": "x4",
+        "ARG2": "x10"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "udef_q",
+      "edges": {
+        "BV": "x10"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    "x10": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "IND": "+",
+        "PT": "notpro"
+      }
+    },
+    "x4": {
+      "label": "_read_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "mod",
+      "edges": {},
+      "lnk": {
+        "from": 19,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_3": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x16"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x16": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:d98f82b2cb77bc46 rank=4 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "compound",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "udef_q",
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "IND": "+",
+        "PT": "notpro",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_read_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10007,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10008,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10005,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10005,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10005,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10006,
+      "to": 10006,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10006,
+      "to": 10008,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10007,
+      "to": 10008,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10006
+}
+
+===== scope-ambiguity:d98f82b2cb77bc46 rank=4 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e13 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x12 [ x PERS: 3 NUM: sg IND: + ] ARG0: e6 [ e SF: prop ] ]
+          [ _every_q<0:5> LBL: h2 ARG0: x12 RSTR: h15 BODY: h16 ]
+          [ compound<6:18> LBL: h3 ARG0: e10 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x12 ARG2: x11 [ x IND: + PT: notpro ] ]
+          [ udef_q<6:13> LBL: h4 ARG0: x11 RSTR: h17 BODY: h18 ]
+          [ _student_n_of<6:13> LBL: h5 ARG0: x11 ]
+          [ _read_n_1<14:18> LBL: h3 ARG0: x12 ]
+          [ mod<19:26> LBL: h7 ARG0: e13 ARG1: e13 ARG2: x14 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h8 ARG0: x14 RSTR: h19 BODY: h20 ]
+          [ _book_n_of<21:26> LBL: h9 ARG0: x14 ] >
+  HCONS: < h0 qeq h1 h15 qeq h3 h17 qeq h5 h19 qeq h9 > ]
+
+===== scope-ambiguity:b266c8d89d17a34b rank=5 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ _student_n_of<6:13> LBL: h7 ARG0: x3 ARG1: i8 ]
+          [ _read_v_1<14:18> LBL: h1 ARG0: e2 ARG1: x3 ARG2: i9 ]
+          [ mod<19:26> LBL: h1 ARG0: e10 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e2 ARG2: x11 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h12 ARG0: x11 RSTR: h13 BODY: h14 ]
+          [ _book_n_of<21:26> LBL: h15 ARG0: x11 ARG1: i16 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h13 qeq h15 > ]
+
+===== scope-ambiguity:b266c8d89d17a34b rank=5 / EDS =====
+{e2:
+ _1:_every_q<0:5>[BV x3]
+ x3:_student_n_of<6:13>{x PERS 3, NUM sg, IND +}[]
+ e2:_read_v_1<14:18>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+ e10:mod<19:26>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2, ARG2 x11]
+ _2:_a_q<19:20>[BV x11]
+ x11:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:b266c8d89d17a34b rank=5 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x3": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "_read_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e10": {
+      "label": "mod",
+      "edges": {
+        "ARG1": "e2",
+        "ARG2": "x11"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x11"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x11": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:b266c8d89d17a34b rank=5 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_read_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10003,
+      "to": 10005,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10004,
+      "to": 10005,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== scope-ambiguity:b266c8d89d17a34b rank=5 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h1 ARG0: x4 [ x PERS: 3 NUM: sg IND: + ] RSTR: h10 BODY: h11 ]
+          [ _student_n_of<6:13> LBL: h2 ARG0: x4 ]
+          [ _read_v_1<14:18> LBL: h3 ARG0: e7 ARG1: x4 ]
+          [ mod<19:26> LBL: h3 ARG0: e8 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e7 ARG2: x9 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h5 ARG0: x9 RSTR: h12 BODY: h13 ]
+          [ _book_n_of<21:26> LBL: h6 ARG0: x9 ] >
+  HCONS: < h0 qeq h3 h10 qeq h2 h12 qeq h6 > ]
+
+===== scope-ambiguity:2f7181f255a2131f rank=6 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ _student_n_of<6:13> LBL: h7 ARG0: x3 ARG1: i8 ]
+          [ _read_v_1<14:18> LBL: h1 ARG0: e2 ARG1: x3 ARG2: h9 ARG3: i10 ]
+          [ unknown<19:26> LBL: h11 ARG: x13 [ x PERS: 3 NUM: sg IND: + ] ARG0: e12 [ e SF: prop ] ]
+          [ _a_q<19:20> LBL: h14 ARG0: x13 RSTR: h15 BODY: h16 ]
+          [ _book_n_of<21:26> LBL: h17 ARG0: x13 ARG1: i18 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h9 qeq h11 h15 qeq h17 > ]
+
+===== scope-ambiguity:2f7181f255a2131f rank=6 / EDS =====
+{e2:
+ _1:_every_q<0:5>[BV x3]
+ x3:_student_n_of<6:13>{x PERS 3, NUM sg, IND +}[]
+ e2:_read_v_1<14:18>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 e12]
+ e12:unknown<19:26>{e SF prop}[ARG x13]
+ _2:_a_q<19:20>[BV x13]
+ x13:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:2f7181f255a2131f rank=6 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x3": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "_read_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "e12"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e12": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x13"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x13"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x13": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:2f7181f255a2131f rank=6 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_read_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10003,
+      "rargname": "ARG2",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10005,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10004,
+      "to": 10005,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== scope-ambiguity:2f7181f255a2131f rank=6 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e8 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _every_q<0:5> LBL: h1 ARG0: x7 [ x PERS: 3 NUM: sg IND: + ] RSTR: h11 BODY: h12 ]
+          [ _student_n_of<6:13> LBL: h2 ARG0: x7 ]
+          [ _read_v_1<14:18> LBL: h3 ARG0: e8 ARG1: x7 ARG2: h13 ]
+          [ unknown<19:26> LBL: h4 ARG: x10 [ x PERS: 3 NUM: sg IND: + ] ARG0: e9 [ e SF: prop ] ]
+          [ _a_q<19:20> LBL: h5 ARG0: x10 RSTR: h14 BODY: h15 ]
+          [ _book_n_of<21:26> LBL: h6 ARG0: x10 ] >
+  HCONS: < h0 qeq h3 h11 qeq h2 h13 qeq h4 h14 qeq h6 > ]
+
+===== scope-ambiguity:6d4fe5883b538938 rank=7 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ _every_q<0:5> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ _student_n_of<6:13> LBL: h8 ARG0: x4 ARG1: i9 ]
+          [ _read_v_1<14:18> LBL: h8 ARG0: e10 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: i11 ARG2: x4 ]
+          [ mod<19:26> LBL: h8 ARG0: e12 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e10 ARG2: x13 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h14 ARG0: x13 RSTR: h15 BODY: h16 ]
+          [ _book_n_of<21:26> LBL: h17 ARG0: x13 ARG1: i18 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h15 qeq h17 >
+  ICONS: < e10 topic x4 > ]
+
+===== scope-ambiguity:6d4fe5883b538938 rank=7 / EDS =====
+{e2:
+ e2:unknown<0:26>{e SF prop}[ARG x4]
+ _1:_every_q<0:5>[BV x4]
+ x4:_student_n_of<6:13>{x PERS 3, NUM sg, IND +}[]
+ e10:_read_v_1<14:18>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG2 x4]
+ e12:mod<19:26>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e10, ARG2 x13]
+ _2:_a_q<19:20>[BV x13]
+ x13:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:6d4fe5883b538938 rank=7 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "e2": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x4": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e10": {
+      "label": "_read_v_1",
+      "edges": {
+        "ARG2": "x4"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e12": {
+      "label": "mod",
+      "edges": {
+        "ARG1": "e10",
+        "ARG2": "x13"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x13"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x13": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:6d4fe5883b538938 rank=7 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_read_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10002,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10002,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG2",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10003,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10006,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10006,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10000
+}
+
+===== scope-ambiguity:6d4fe5883b538938 rank=7 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e4 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x5 [ x PERS: 3 NUM: sg IND: + ] ARG0: e4 ]
+          [ _every_q<0:5> LBL: h2 ARG0: x5 RSTR: h11 BODY: h12 ]
+          [ _student_n_of<6:13> LBL: h3 ARG0: x5 ]
+          [ _read_v_1<14:18> LBL: h3 ARG0: e8 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG2: x5 ]
+          [ mod<19:26> LBL: h3 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e8 ARG2: x10 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h6 ARG0: x10 RSTR: h13 BODY: h14 ]
+          [ _book_n_of<21:26> LBL: h7 ARG0: x10 ] >
+  HCONS: < h0 qeq h1 h11 qeq h3 h13 qeq h7 > ]
+
+===== scope-ambiguity:caa01f5b88434529 rank=8 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x4 [ x PERS: 3 NUM: sg IND: + ] ARG0: e2 ]
+          [ _every_q<0:5> LBL: h5 ARG0: x4 RSTR: h6 BODY: h7 ]
+          [ _student_n_of<6:13> LBL: h8 ARG0: x4 ARG1: i9 ]
+          [ _read_v_1<14:18> LBL: h8 ARG0: e10 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: i11 ARG2: x4 ]
+          [ mod<19:26> LBL: h1 ARG0: e2 ARG1: e2 ARG2: x12 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h13 ARG0: x12 RSTR: h14 BODY: h15 ]
+          [ _book_n_of<21:26> LBL: h16 ARG0: x12 ARG1: i17 ] >
+  HCONS: < h0 qeq h1 h6 qeq h8 h14 qeq h16 >
+  ICONS: < e10 topic x4 > ]
+
+===== scope-ambiguity:caa01f5b88434529 rank=8 / EDS =====
+{_3:
+ _3:unknown<0:26>{e SF prop}[ARG x4]
+ _1:_every_q<0:5>[BV x4]
+ x4:_student_n_of<6:13>{x PERS 3, NUM sg, IND +}[]
+ e10:_read_v_1<14:18>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG2 x4]
+ e2:mod<19:26>{e SF prop}[]
+ _2:_a_q<19:20>[BV x12]
+ x12:_book_n_of<21:26>{x PERS 3, NUM sg, IND +}[]
+}
+
+===== scope-ambiguity:caa01f5b88434529 rank=8 / EDS JSON =====
+{
+  "top": "_3",
+  "nodes": {
+    "_3": {
+      "label": "unknown",
+      "edges": {
+        "ARG": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_1": {
+      "label": "_every_q",
+      "edges": {
+        "BV": "x4"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    "x4": {
+      "label": "_student_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 6,
+        "to": 13
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e10": {
+      "label": "_read_v_1",
+      "edges": {
+        "ARG2": "x4"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e2": {
+      "label": "mod",
+      "edges": {},
+      "lnk": {
+        "from": 19,
+        "to": 26
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop"
+      }
+    },
+    "_2": {
+      "label": "_a_q",
+      "edges": {
+        "BV": "x12"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    "x12": {
+      "label": "_book_n_of",
+      "edges": {},
+      "lnk": {
+        "from": 21,
+        "to": 26
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    }
+  }
+}
+
+===== scope-ambiguity:caa01f5b88434529 rank=8 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "unknown",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_every_q",
+      "lnk": {
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_student_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 6,
+        "to": 13
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_read_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 14,
+        "to": 18
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "mod",
+      "sortinfo": {
+        "SF": "prop",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 19,
+        "to": 26
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_a_q",
+      "lnk": {
+        "from": 19,
+        "to": 20
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_book_n_of",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 21,
+        "to": 26
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10002,
+      "rargname": "ARG",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10002,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG2",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10004,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10006,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10006,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10000,
+  "index": 10004
+}
+
+===== scope-ambiguity:caa01f5b88434529 rank=8 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e10 [ e SF: prop ]
+  RELS: < [ unknown<0:26> LBL: h1 ARG: x8 [ x PERS: 3 NUM: sg IND: + ] ARG0: e4 [ e SF: prop ] ]
+          [ _every_q<0:5> LBL: h2 ARG0: x8 RSTR: h12 BODY: h13 ]
+          [ _student_n_of<6:13> LBL: h3 ARG0: x8 ]
+          [ _read_v_1<14:18> LBL: h3 ARG0: e9 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG2: x8 ]
+          [ mod<19:26> LBL: h5 ARG0: e10 ARG1: e10 ARG2: x11 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _a_q<19:20> LBL: h6 ARG0: x11 RSTR: h14 BODY: h15 ]
+          [ _book_n_of<21:26> LBL: h7 ARG0: x11 ] >
+  HCONS: < h0 qeq h1 h12 qeq h3 h14 qeq h7 > ]
+
+===== pronouns:0ece1b4d3551e6a9 rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: pres MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ pron<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg GEND: f IND: + PT: std ] ]
+          [ pronoun_q<0:3> LBL: h5 ARG0: x3 RSTR: h6 BODY: h7 ]
+          [ _see_v_1<4:8> LBL: h1 ARG0: e2 ARG1: x3 ARG2: x8 [ x PERS: 3 NUM: sg GEND: f IND: + PT: refl ] ]
+          [ pron<9:17> LBL: h9 ARG0: x8 ]
+          [ pronoun_q<9:17> LBL: h10 ARG0: x8 RSTR: h11 BODY: h12 ] >
+  HCONS: < h0 qeq h1 h6 qeq h4 h11 qeq h9 > ]
+
+===== pronouns:0ece1b4d3551e6a9 rank=1 / EDS =====
+{e2:
+ x3:pron<0:3>{x PERS 3, NUM sg, GEND f, IND +, PT std}[]
+ _1:pronoun_q<0:3>[BV x3]
+ e2:_see_v_1<4:8>{e SF prop, TENSE pres, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x8]
+ x8:pron<9:17>{x PERS 3, NUM sg, GEND f, IND +, PT refl}[]
+ _2:pronoun_q<9:17>[BV x8]
+}
+
+===== pronouns:0ece1b4d3551e6a9 rank=1 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "x3": {
+      "label": "pron",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "IND": "+",
+        "PT": "std"
+      }
+    },
+    "_1": {
+      "label": "pronoun_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "e2": {
+      "label": "_see_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x8"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "pres",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "x8": {
+      "label": "pron",
+      "edges": {},
+      "lnk": {
+        "from": 9,
+        "to": 17
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "IND": "+",
+        "PT": "refl"
+      }
+    },
+    "_2": {
+      "label": "pronoun_q",
+      "edges": {
+        "BV": "x8"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    }
+  }
+}
+
+===== pronouns:0ece1b4d3551e6a9 rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "pron",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "IND": "+",
+        "PT": "std",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "pronoun_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_see_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "pres",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "pron",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "IND": "+",
+        "PT": "refl",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "pronoun_q",
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10001,
+      "to": 10000,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10000,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10002,
+      "to": 10003,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10004,
+      "to": 10003,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== pronouns:0ece1b4d3551e6a9 rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: pres MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ pron<0:3> LBL: h1 ARG0: x6 [ x PERS: 3 NUM: sg GEND: f IND: + PT: std ] ]
+          [ pronoun_q<0:3> LBL: h2 ARG0: x6 RSTR: h9 BODY: h10 ]
+          [ _see_v_1<4:8> LBL: h3 ARG0: e7 ARG1: x6 ARG2: x8 [ x PERS: 3 NUM: sg GEND: f IND: + PT: refl ] ]
+          [ pron<9:17> LBL: h4 ARG0: x8 ]
+          [ pronoun_q<9:17> LBL: h5 ARG0: x8 RSTR: h11 BODY: h12 ] >
+  HCONS: < h0 qeq h3 h9 qeq h1 h11 qeq h4 > ]
+
+===== pronouns:7d15ce156813b32c rank=2 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: pres MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ pron<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg GEND: f IND: + PT: std ] ]
+          [ pronoun_q<0:3> LBL: h5 ARG0: x3 RSTR: h6 BODY: h7 ]
+          [ _see_v_1<4:8> LBL: h1 ARG0: e2 ARG1: x3 ]
+          [ refl_mod<9:17> LBL: h1 ARG0: e8 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e2 ARG2: x9 [ x PERS: 3 NUM: sg GEND: f PT: refl ] ]
+          [ pron<9:17> LBL: h10 ARG0: x9 ]
+          [ pronoun_q<9:17> LBL: h11 ARG0: x9 RSTR: h12 BODY: h13 ] >
+  HCONS: < h0 qeq h1 h6 qeq h4 h12 qeq h10 > ]
+
+===== pronouns:7d15ce156813b32c rank=2 / EDS =====
+{e2:
+ x3:pron<0:3>{x PERS 3, NUM sg, GEND f, IND +, PT std}[]
+ _1:pronoun_q<0:3>[BV x3]
+ e2:_see_v_1<4:8>{e SF prop, TENSE pres, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+ e8:refl_mod<9:17>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 e2, ARG2 x9]
+ x9:pron<9:17>{x PERS 3, NUM sg, GEND f, PT refl}[]
+ _2:pronoun_q<9:17>[BV x9]
+}
+
+===== pronouns:7d15ce156813b32c rank=2 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "x3": {
+      "label": "pron",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "IND": "+",
+        "PT": "std"
+      }
+    },
+    "_1": {
+      "label": "pronoun_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "e2": {
+      "label": "_see_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "pres",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e8": {
+      "label": "refl_mod",
+      "edges": {
+        "ARG1": "e2",
+        "ARG2": "x9"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 17
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "x9": {
+      "label": "pron",
+      "edges": {},
+      "lnk": {
+        "from": 9,
+        "to": 17
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "PT": "refl"
+      }
+    },
+    "_2": {
+      "label": "pronoun_q",
+      "edges": {
+        "BV": "x9"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    }
+  }
+}
+
+===== pronouns:7d15ce156813b32c rank=2 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "pron",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "IND": "+",
+        "PT": "std",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "pronoun_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_see_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "pres",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "refl_mod",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "pron",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "f",
+        "PT": "refl",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "pronoun_q",
+      "lnk": {
+        "from": 9,
+        "to": 17
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10001,
+      "to": 10000,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10000,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    }
+  ],
+  "top": 10002,
+  "index": 10002
+}
+
+===== pronouns:7d15ce156813b32c rank=2 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e7 [ e SF: prop TENSE: pres MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ pron<0:3> LBL: h1 ARG0: x4 [ x PERS: 3 NUM: sg GEND: f IND: + PT: std ] ]
+          [ pronoun_q<0:3> LBL: h2 ARG0: x4 RSTR: h10 BODY: h11 ]
+          [ _see_v_1<4:8> LBL: h3 ARG0: e7 ARG1: x4 ]
+          [ refl_mod<9:17> LBL: h3 ARG0: e8 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: e7 ARG2: x9 [ x PERS: 3 NUM: sg GEND: f PT: refl ] ]
+          [ pron<9:17> LBL: h5 ARG0: x9 ]
+          [ pronoun_q<9:17> LBL: h6 ARG0: x9 RSTR: h12 BODY: h13 ] >
+  HCONS: < h0 qeq h3 h10 qeq h1 h12 qeq h5 > ]
+
+===== relative-clause:a18f653fa092f700 rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _the_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ _dog_n_1<4:7> LBL: h7 ARG0: x3 ]
+          [ _chase_v_1<13:19> LBL: h7 ARG0: e8 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ARG1: x3 ARG2: x9 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _the_q<20:23> LBL: h10 ARG0: x9 RSTR: h11 BODY: h12 ]
+          [ _cat_n_1<24:27> LBL: h13 ARG0: x9 ]
+          [ _bark_v_1<28:35> LBL: h1 ARG0: e2 ARG1: x3 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 h11 qeq h13 > ]
+
+===== relative-clause:a18f653fa092f700 rank=1 / EDS =====
+{e2:
+ _1:_the_q<0:3>[BV x3]
+ x3:_dog_n_1<4:7>{x PERS 3, NUM sg, IND +}[]
+ e8:_chase_v_1<13:19>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x9]
+ _2:_the_q<20:23>[BV x9]
+ x9:_cat_n_1<24:27>{x PERS 3, NUM sg, IND +}[]
+ e2:_bark_v_1<28:35>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+}
+
+===== relative-clause:a18f653fa092f700 rank=1 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "_1": {
+      "label": "_the_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "_dog_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 4,
+        "to": 7
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e8": {
+      "label": "_chase_v_1",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x9"
+      },
+      "lnk": {
+        "from": 13,
+        "to": 19
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_2": {
+      "label": "_the_q",
+      "edges": {
+        "BV": "x9"
+      },
+      "lnk": {
+        "from": 20,
+        "to": 23
+      }
+    },
+    "x9": {
+      "label": "_cat_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 24,
+        "to": 27
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "_bark_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 28,
+        "to": 35
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    }
+  }
+}
+
+===== relative-clause:a18f653fa092f700 rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "_the_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_dog_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 7
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_chase_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 13,
+        "to": 19
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_the_q",
+      "lnk": {
+        "from": 20,
+        "to": 23
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_cat_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 24,
+        "to": 27
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_bark_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 28,
+        "to": 35
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10002,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10005,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    }
+  ],
+  "top": 10005,
+  "index": 10005
+}
+
+===== relative-clause:a18f653fa092f700 rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e9 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ _the_q<0:3> LBL: h1 ARG0: x2 [ x PERS: 3 NUM: sg IND: + ] RSTR: h10 BODY: h11 ]
+          [ _dog_n_1<4:7> LBL: h3 ARG0: x2 ]
+          [ _chase_v_1<13:19> LBL: h3 ARG0: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ARG1: x2 ARG2: x8 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _the_q<20:23> LBL: h4 ARG0: x8 RSTR: h12 BODY: h13 ]
+          [ _cat_n_1<24:27> LBL: h5 ARG0: x8 ]
+          [ _bark_v_1<28:35> LBL: h6 ARG0: e9 ARG1: x2 ] >
+  HCONS: < h0 qeq h6 h10 qeq h3 h12 qeq h5 > ]
+
+===== relative-clause:90bb79cf24db85ca rank=2 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ appos<0:27> LBL: h1 ARG0: e4 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x3 [ x PERS: 3 NUM: sg IND: + ] ARG2: x5 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _the_q<0:3> LBL: h6 ARG0: x3 RSTR: h7 BODY: h8 ]
+          [ _dog_n_1<4:7> LBL: h9 ARG0: x3 ]
+          [ generic_entity<8:12> LBL: h10 ARG0: x11 [ x PERS: 3 NUM: sg GEND: n ] ]
+          [ _that_q_dem<8:12> LBL: h12 ARG0: x11 RSTR: h13 BODY: h14 ]
+          [ _chase_v_1<13:19> LBL: h9 ARG0: e15 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ARG1: x11 ARG2: x3 ]
+          [ _the_q<20:23> LBL: h16 ARG0: x5 RSTR: h17 BODY: h18 ]
+          [ _cat_n_1<24:27> LBL: h19 ARG0: x5 ]
+          [ _bark_v_1<28:35> LBL: h1 ARG0: e2 ARG1: x3 ] >
+  HCONS: < h0 qeq h1 h7 qeq h9 h13 qeq h10 h17 qeq h19 > ]
+
+===== relative-clause:90bb79cf24db85ca rank=2 / EDS =====
+{e2:
+ e4:appos<0:27>{e SF prop, TENSE untensed, MOOD indicative, PROG -, PERF -}[ARG1 x3, ARG2 x5]
+ _1:_the_q<0:3>[BV x3]
+ x3:_dog_n_1<4:7>{x PERS 3, NUM sg, IND +}[]
+ x11:generic_entity<8:12>{x PERS 3, NUM sg, GEND n}[]
+ _2:_that_q_dem<8:12>[BV x11]
+ e15:_chase_v_1<13:19>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x11, ARG2 x3]
+ _3:_the_q<20:23>[BV x5]
+ x5:_cat_n_1<24:27>{x PERS 3, NUM sg, IND +}[]
+ e2:_bark_v_1<28:35>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+}
+
+===== relative-clause:90bb79cf24db85ca rank=2 / EDS JSON =====
+{
+  "top": "e2",
+  "nodes": {
+    "e4": {
+      "label": "appos",
+      "edges": {
+        "ARG1": "x3",
+        "ARG2": "x5"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 27
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_1": {
+      "label": "_the_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "_dog_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 4,
+        "to": 7
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "x11": {
+      "label": "generic_entity",
+      "edges": {},
+      "lnk": {
+        "from": 8,
+        "to": 12
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "n"
+      }
+    },
+    "_2": {
+      "label": "_that_q_dem",
+      "edges": {
+        "BV": "x11"
+      },
+      "lnk": {
+        "from": 8,
+        "to": 12
+      }
+    },
+    "e15": {
+      "label": "_chase_v_1",
+      "edges": {
+        "ARG1": "x11",
+        "ARG2": "x3"
+      },
+      "lnk": {
+        "from": 13,
+        "to": 19
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "_3": {
+      "label": "_the_q",
+      "edges": {
+        "BV": "x5"
+      },
+      "lnk": {
+        "from": 20,
+        "to": 23
+      }
+    },
+    "x5": {
+      "label": "_cat_n_1",
+      "edges": {},
+      "lnk": {
+        "from": 24,
+        "to": 27
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      }
+    },
+    "e2": {
+      "label": "_bark_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 28,
+        "to": 35
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    }
+  }
+}
+
+===== relative-clause:90bb79cf24db85ca rank=2 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "appos",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "untensed",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 27
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "_the_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_dog_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 7
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "generic_entity",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "GEND": "n",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 8,
+        "to": 12
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_that_q_dem",
+      "lnk": {
+        "from": 8,
+        "to": 12
+      }
+    },
+    {
+      "nodeid": 10005,
+      "predicate": "_chase_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 13,
+        "to": 19
+      }
+    },
+    {
+      "nodeid": 10006,
+      "predicate": "_the_q",
+      "lnk": {
+        "from": 20,
+        "to": 23
+      }
+    },
+    {
+      "nodeid": 10007,
+      "predicate": "_cat_n_1",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "lnk": {
+        "from": 24,
+        "to": 27
+      }
+    },
+    {
+      "nodeid": 10008,
+      "predicate": "_bark_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 28,
+        "to": 35
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10000,
+      "to": 10007,
+      "rargname": "ARG2",
+      "post": "NEQ"
+    },
+    {
+      "from": 10001,
+      "to": 10002,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10004,
+      "to": 10003,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10005,
+      "to": 10003,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10005,
+      "to": 10002,
+      "rargname": "ARG2",
+      "post": "EQ"
+    },
+    {
+      "from": 10006,
+      "to": 10007,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10008,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10000,
+      "to": 10008,
+      "rargname": "MOD",
+      "post": "EQ"
+    }
+  ],
+  "top": 10008,
+  "index": 10008
+}
+
+===== relative-clause:90bb79cf24db85ca rank=2 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e13 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ appos<0:27> LBL: h9 ARG0: e1 [ e SF: prop TENSE: untensed MOOD: indicative PROG: - PERF: - ] ARG1: x6 [ x PERS: 3 NUM: sg IND: + ] ARG2: x12 [ x PERS: 3 NUM: sg IND: + ] ]
+          [ _the_q<0:3> LBL: h2 ARG0: x6 RSTR: h14 BODY: h15 ]
+          [ _dog_n_1<4:7> LBL: h3 ARG0: x6 ]
+          [ generic_entity<8:12> LBL: h4 ARG0: x10 [ x PERS: 3 NUM: sg GEND: n ] ]
+          [ _that_q_dem<8:12> LBL: h5 ARG0: x10 RSTR: h16 BODY: h17 ]
+          [ _chase_v_1<13:19> LBL: h3 ARG0: e11 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ARG1: x10 ARG2: x6 ]
+          [ _the_q<20:23> LBL: h7 ARG0: x12 RSTR: h18 BODY: h19 ]
+          [ _cat_n_1<24:27> LBL: h8 ARG0: x12 ]
+          [ _bark_v_1<28:35> LBL: h9 ARG0: e13 ARG1: x6 ] >
+  HCONS: < h0 qeq h9 h14 qeq h3 h16 qeq h4 h18 qeq h8 > ]
+
+===== coordination:35fdd712ab8c3164 rank=1 / MRS =====
+[ TOP: h0
+  INDEX: e2 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h4 ARG0: x3 [ x PERS: 3 NUM: sg IND: + ] RSTR: h5 BODY: h6 ]
+          [ named<0:3> LBL: h7 ARG0: x3 CARG: "Kim" ]
+          [ _sing_v_1<4:8> LBL: h1 ARG0: e9 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ARG1: x3 ARG2: i10 ]
+          [ _and_c<9:12> LBL: h1 ARG0: e2 ARG1: e9 ARG2: e11 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ]
+          [ _dance_v_1<13:20> LBL: h1 ARG0: e11 ARG1: x3 ARG2: i12 ] >
+  HCONS: < h0 qeq h1 h5 qeq h7 > ]
+
+===== coordination:35fdd712ab8c3164 rank=1 / EDS =====
+{e9:
+ _1:proper_q<0:3>[BV x3]
+ x3:named<0:3>("Kim"){x PERS 3, NUM sg, IND +}[]
+ e9:_sing_v_1<4:8>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+ e2:_and_c<9:12>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 e9, ARG2 e11]
+ e11:_dance_v_1<13:20>{e SF prop, TENSE past, MOOD indicative, PROG -, PERF -}[ARG1 x3]
+}
+
+===== coordination:35fdd712ab8c3164 rank=1 / EDS JSON =====
+{
+  "top": "e9",
+  "nodes": {
+    "_1": {
+      "label": "proper_q",
+      "edges": {
+        "BV": "x3"
+      },
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    "x3": {
+      "label": "named",
+      "edges": {},
+      "lnk": {
+        "from": 0,
+        "to": 3
+      },
+      "type": "x",
+      "properties": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+"
+      },
+      "carg": "Kim"
+    },
+    "e9": {
+      "label": "_sing_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e2": {
+      "label": "_and_c",
+      "edges": {
+        "ARG1": "e9",
+        "ARG2": "e11"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 12
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    },
+    "e11": {
+      "label": "_dance_v_1",
+      "edges": {
+        "ARG1": "x3"
+      },
+      "lnk": {
+        "from": 13,
+        "to": 20
+      },
+      "type": "e",
+      "properties": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-"
+      }
+    }
+  }
+}
+
+===== coordination:35fdd712ab8c3164 rank=1 / DMRS JSON =====
+{
+  "nodes": [
+    {
+      "nodeid": 10000,
+      "predicate": "proper_q",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10001,
+      "predicate": "named",
+      "sortinfo": {
+        "PERS": "3",
+        "NUM": "sg",
+        "IND": "+",
+        "cvarsort": "x"
+      },
+      "carg": "Kim",
+      "lnk": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "nodeid": 10002,
+      "predicate": "_sing_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 4,
+        "to": 8
+      }
+    },
+    {
+      "nodeid": 10003,
+      "predicate": "_and_c",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 9,
+        "to": 12
+      }
+    },
+    {
+      "nodeid": 10004,
+      "predicate": "_dance_v_1",
+      "sortinfo": {
+        "SF": "prop",
+        "TENSE": "past",
+        "MOOD": "indicative",
+        "PROG": "-",
+        "PERF": "-",
+        "cvarsort": "e"
+      },
+      "lnk": {
+        "from": 13,
+        "to": 20
+      }
+    }
+  ],
+  "links": [
+    {
+      "from": 10000,
+      "to": 10001,
+      "rargname": "RSTR",
+      "post": "H"
+    },
+    {
+      "from": 10002,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10003,
+      "to": 10002,
+      "rargname": "ARG1",
+      "post": "EQ"
+    },
+    {
+      "from": 10003,
+      "to": 10004,
+      "rargname": "ARG2",
+      "post": "EQ"
+    },
+    {
+      "from": 10004,
+      "to": 10001,
+      "rargname": "ARG1",
+      "post": "NEQ"
+    },
+    {
+      "from": 10004,
+      "to": 10002,
+      "rargname": "MOD",
+      "post": "EQ"
+    }
+  ],
+  "top": 10002,
+  "index": 10003
+}
+
+===== coordination:35fdd712ab8c3164 rank=1 / MRS RECONSTRUCTED FROM DMRS =====
+[ TOP: h0
+  INDEX: e6 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ]
+  RELS: < [ proper_q<0:3> LBL: h1 ARG0: x4 [ x PERS: 3 NUM: sg IND: + ] RSTR: h8 BODY: h9 ]
+          [ named<0:3> LBL: h2 ARG0: x4 CARG: "Kim" ]
+          [ _sing_v_1<4:8> LBL: h3 ARG0: e5 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ARG1: x4 ]
+          [ _and_c<9:12> LBL: h3 ARG0: e6 ARG1: e5 ARG2: e7 [ e SF: prop TENSE: past MOOD: indicative PROG: - PERF: - ] ]
+          [ _dance_v_1<13:20> LBL: h3 ARG0: e7 ARG1: x4 ] >
+  HCONS: < h0 qeq h3 h8 qeq h2 > ]

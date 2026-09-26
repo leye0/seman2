@@ -1,0 +1,52 @@
+[
+  {
+    "capability": "source-anchored tokens",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": true
+  },
+  {
+    "capability": "alternative analyses",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": true
+  },
+  {
+    "capability": "constituent syntax",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": true
+  },
+  {
+    "capability": "rank or cost information",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": true
+  },
+  {
+    "capability": "HPSG derivation",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": false
+  },
+  {
+    "capability": "MRS, EDS and DMRS semantics",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": false
+  },
+  {
+    "capability": "scope handles and constraints",
+    "ERG_ACE_PyDelphin": true,
+    "Link_Grammar": false
+  },
+  {
+    "capability": "direct typed word-to-word connector links",
+    "ERG_ACE_PyDelphin": false,
+    "Link_Grammar": true
+  },
+  {
+    "capability": "per-word disjuncts",
+    "ERG_ACE_PyDelphin": false,
+    "Link_Grammar": true
+  },
+  {
+    "capability": "explicit null-link recovery cost",
+    "ERG_ACE_PyDelphin": false,
+    "Link_Grammar": true
+  }
+]

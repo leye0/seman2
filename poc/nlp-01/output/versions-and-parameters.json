@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-09-26T00:28:32.880261+00:00",
+  "host_platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+  "ace": "ACE version 0.9.34\ncompiled at 18:11:19 on Jan 21 2021",
+  "erg": {
+    "image": ".local/share/erg/erg-2018-x86-64-0.9.34.dat",
+    "sha256": "13870866ea8497b90299a22a5df20402f82b9d498194d1e1fd60c3d077d31942",
+    "label_reported_by_ace": "ERG (2018)"
+  },
+  "pydelphin": "1.11.0",
+  "parameters": {
+    "max_results": 10,
+    "ace_arguments": [
+      "-n",
+      "10",
+      "--tsdb-notes",
+      "--tsdb-stdout",
+      "--report-labels"
+    ]
+  }
+}

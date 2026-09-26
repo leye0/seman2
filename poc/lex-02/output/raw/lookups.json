@@ -1,0 +1,51 @@
+[
+  {
+    "fixture": "polyclass-run",
+    "lemma": "run",
+    "api_call": "vn.classids('run')",
+    "returned_class_ids": [
+      "meander-47.7",
+      "preparing-26.3-1",
+      "run-51.3.2",
+      "swarm-47.5.1-1"
+    ]
+  },
+  {
+    "fixture": "polyclass-break",
+    "lemma": "break",
+    "api_call": "vn.classids('break')",
+    "returned_class_ids": [
+      "appear-48.1.1",
+      "break-45.1",
+      "cheat-10.6",
+      "hurt-40.8.3-1-1",
+      "split-23.2"
+    ]
+  },
+  {
+    "fixture": "hierarchical-give",
+    "lemma": "give",
+    "api_call": "vn.classids('give')",
+    "returned_class_ids": [
+      "give-13.1-1"
+    ]
+  },
+  {
+    "fixture": "polyclass-leave",
+    "lemma": "leave",
+    "api_call": "vn.classids('leave')",
+    "returned_class_ids": [
+      "escape-51.1-1",
+      "fulfilling-13.4.1",
+      "future_having-13.3",
+      "keep-15.2",
+      "leave-51.2-1"
+    ]
+  },
+  {
+    "fixture": "absent-verb",
+    "lemma": "florpulate",
+    "api_call": "vn.classids('florpulate')",
+    "returned_class_ids": []
+  }
+]

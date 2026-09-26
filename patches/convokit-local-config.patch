@@ -1,0 +1,43 @@
+diff --git a/convokit/convokitConfig.py b/convokit/convokitConfig.py
+index 56b64c4..8555da8 100644
+--- a/convokit/convokitConfig.py
++++ b/convokit/convokitConfig.py
+@@ -11,7 +11,12 @@ DEFAULT_CONFIG_CONTENTS = (
+     "default_backend: mem"
+ )
+ 
+-ENV_VARS = {"db_host": "CONVOKIT_DB_HOST", "default_backend": "CONVOKIT_BACKEND"}
++ENV_VARS = {
++    "db_host": "CONVOKIT_DB_HOST",
++    "default_backend": "CONVOKIT_BACKEND",
++    "data_directory": "CONVOKIT_DATA_DIR",
++    "model_directory": "CONVOKIT_MODEL_DIR",
++}
+ 
+ 
+ class ConvoKitConfig:
+@@ -22,7 +27,9 @@ class ConvoKitConfig:
+ 
+     def __init__(self, filename: Optional[str] = None):
+         if filename is None:
+-            filename = os.path.expanduser("~/.convokit/config.yml")
++            filename = os.environ.get(
++                "CONVOKIT_CONFIG", os.path.expanduser("~/.convokit/config.yml")
++            )
+ 
+         if not os.path.isfile(filename):
+             convo_dir = os.path.dirname(filename)
+@@ -46,11 +53,11 @@ class ConvoKitConfig:
+ 
+     @property
+     def data_directory(self):
+-        return self.config_contents.get("data_directory", "~/.convokit/saved-corpora")
++        return self._get_config_from_env_or_file("data_directory", "~/.convokit/saved-corpora")
+ 
+     @property
+     def model_directory(self):
+-        return self.config_contents.get("model_directory", "~/.convokit/saved-models")
++        return self._get_config_from_env_or_file("model_directory", "~/.convokit/saved-models")
+ 
+     @property
+     def default_backend(self):

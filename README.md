@@ -1,7 +1,7 @@
 # seman2
 
 Environnement local pour le système cognitif symbolique décrit dans
-`plans/architecture_systeme_cognitif_symbolique_v2.md`.
+`plans/architecture_systeme_cognitif_symbolique.md`.
 
 ## Réinstaller un clone — aucune activation manuelle
 
@@ -22,8 +22,8 @@ grammaires, ontologies, corpus linguistiques et modèles sous `.venv*` et
 
 L’installateur cible actuellement Linux x86_64. Il requiert seulement les
 outils de construction usuels déjà fournis par le système : `curl`, `git`,
-`tar`, `unzip`, `make`, `gcc`, `g++`, `cmake`, `pkg-config`, `gzip`, `bzip2` et
-`xz`.
+`tar`, `unzip`, `make`, `gcc`, `g++`, `cmake`, `pkg-config`, `gzip`, `bzip2`,
+`xz` et `timeout`.
 
 La deuxième commande lit les manifestes versionnés, récupère les fragments
 sources de Reddit et Stack Overflow, vérifie leurs empreintes SHA-256, puis les
@@ -73,7 +73,7 @@ virtuel ou d’installer quoi que ce soit globalement.
 
 Cette commande vérifie notamment ACE + ERG, Link Grammar, les corpus NLTK,
 SemLink, SUMO, TreeTagger, HeidelTime, SimpleNLG, Soar, SWI-Prolog, Popper,
-IsaNLP RST et le service HTTP Duckling en français.
+NuWLS-c, IsaNLP RST et le service HTTP Duckling en français.
 
 ### Construire les données Parquet canoniques
 

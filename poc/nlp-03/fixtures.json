@@ -1,0 +1,66 @@
+[
+  {
+    "id": "attachment",
+    "ambiguity": "prepositional-phrase attachment",
+    "sentence": "Kim saw the man with the telescope.",
+    "human_readings_are_test_oracle": [
+      "Kim used the telescope to see the man.",
+      "Kim saw the man who had the telescope."
+    ]
+  },
+  {
+    "id": "structural",
+    "ambiguity": "structural category and interpretation",
+    "sentence": "Flying planes can be dangerous.",
+    "human_readings_are_test_oracle": [
+      "The activity of flying planes can be dangerous.",
+      "Planes that are flying can be dangerous."
+    ]
+  },
+  {
+    "id": "scope",
+    "ambiguity": "quantifier scope",
+    "sentence": "Every dog chased a cat.",
+    "scope_readings_are_test_oracle": [
+      {
+        "quantifier_order": ["_every_q", "_a_q"],
+        "reading": "For each dog, there may be a different cat that it chased."
+      },
+      {
+        "quantifier_order": ["_a_q", "_every_q"],
+        "reading": "There is one particular cat that every dog chased."
+      }
+    ]
+  },
+  {
+    "id": "scope-three-quantifiers",
+    "ambiguity": "three-way quantifier scope",
+    "sentence": "Every student gave a teacher a book.",
+    "scope_readings_are_test_oracle": [
+      {
+        "quantifier_keys": ["_every_q@_student_n_of", "_a_q@_teacher_n_of", "_a_q@_book_n_of"],
+        "reading": "Every student has widest scope, then a teacher, then a book."
+      },
+      {
+        "quantifier_keys": ["_every_q@_student_n_of", "_a_q@_book_n_of", "_a_q@_teacher_n_of"],
+        "reading": "Every student has widest scope, then a book, then a teacher."
+      },
+      {
+        "quantifier_keys": ["_a_q@_teacher_n_of", "_every_q@_student_n_of", "_a_q@_book_n_of"],
+        "reading": "A teacher has widest scope, then every student, then a book."
+      },
+      {
+        "quantifier_keys": ["_a_q@_teacher_n_of", "_a_q@_book_n_of", "_every_q@_student_n_of"],
+        "reading": "A teacher has widest scope, then a book, then every student."
+      },
+      {
+        "quantifier_keys": ["_a_q@_book_n_of", "_every_q@_student_n_of", "_a_q@_teacher_n_of"],
+        "reading": "A book has widest scope, then every student, then a teacher."
+      },
+      {
+        "quantifier_keys": ["_a_q@_book_n_of", "_a_q@_teacher_n_of", "_every_q@_student_n_of"],
+        "reading": "A book has widest scope, then a teacher, then every student."
+      }
+    ]
+  }
+]

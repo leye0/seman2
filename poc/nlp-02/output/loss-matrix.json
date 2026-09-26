@@ -1,0 +1,57 @@
+[
+  {
+    "information": "predicate occurrences",
+    "mrs_to_eds": "preserved",
+    "mrs_to_dmrs": "preserved"
+  },
+  {
+    "information": "predicate lnk anchors",
+    "mrs_to_eds": "preserved",
+    "mrs_to_dmrs": "preserved"
+  },
+  {
+    "information": "intrinsic variable types and properties",
+    "mrs_to_eds": "preserved on nodes",
+    "mrs_to_dmrs": "preserved on nodes"
+  },
+  {
+    "information": "non-scopal roles",
+    "mrs_to_eds": "projected when the target becomes an EDS node; otherwise lost",
+    "mrs_to_dmrs": "projected when the target becomes a DMRS node; otherwise lost"
+  },
+  {
+    "information": "quantifier binding",
+    "mrs_to_eds": "reformulated as BV edge",
+    "mrs_to_dmrs": "reformulated as RSTR/H link"
+  },
+  {
+    "information": "TOP and INDEX",
+    "mrs_to_eds": "TOP only; no distinct INDEX",
+    "mrs_to_dmrs": "both represented, but this alone does not guarantee lossless roundtrip"
+  },
+  {
+    "information": "raw variable and handle identifiers",
+    "mrs_to_eds": "lost or reassigned",
+    "mrs_to_dmrs": "replaced by numeric node IDs"
+  },
+  {
+    "information": "labels and raw HCONS",
+    "mrs_to_eds": "lost",
+    "mrs_to_dmrs": "raw form lost; useful scope projected to H/HEQ links"
+  },
+  {
+    "information": "scope underspecification",
+    "mrs_to_eds": "lost",
+    "mrs_to_dmrs": "encoded by scopal links; raw HCONS identities are lost"
+  },
+  {
+    "information": "ICONS",
+    "mrs_to_eds": "not represented",
+    "mrs_to_dmrs": "not represented"
+  },
+  {
+    "information": "unresolved handle arguments such as BODY",
+    "mrs_to_eds": "not represented as such",
+    "mrs_to_dmrs": "no explicit link when there is no target"
+  }
+]

@@ -25,7 +25,7 @@ if [[ "$(uname -s)" != "Linux" || "$(uname -m)" != "x86_64" ]]; then
   exit 1
 fi
 
-for command_name in curl git tar unzip make gcc g++ cmake pkg-config gzip bzip2 xz; do
+for command_name in curl git tar unzip make gcc g++ cmake pkg-config gzip bzip2 xz timeout sha256sum; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     printf 'Prérequis système absent: %s\n' "$command_name" >&2
     exit 1
@@ -98,13 +98,63 @@ fi
 if [[ ! -x "$SEMAN2_ROOT/.venv-rst/bin/python" ]]; then
   "$BIN/uv" venv --python 3.12 "$SEMAN2_ROOT/.venv-rst"
 fi
+if [[ ! -x "$SEMAN2_ROOT/.venv-conversation/bin/python" ]]; then
+  "$BIN/uv" venv --python 3.12 "$SEMAN2_ROOT/.venv-conversation"
+fi
 "$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv/bin/python" \
   -r "$SEMAN2_ROOT/requirements-cognitive.txt"
 
 log "corpus NLTK"
 NLTK_DATA="$LOCAL/share/nltk_data" "$SEMAN2_ROOT/.venv/bin/python" \
   -m nltk.downloader -d "$LOCAL/share/nltk_data" \
-  wordnet verbnet propbank treebank framenet_v17
+  wordnet verbnet propbank treebank framenet_v17 stopwords punkt punkt_tab
+
+log "ConvoKit et corpus Switchboard"
+clone_at "https://github.com/CornellNLP/ConvoKit.git" \
+  "7825beeca5ce43b00a9402d9a6773514613eb923" "$SRC/convokit"
+if ! grep -q 'CONVOKIT_CONFIG' "$SRC/convokit/convokit/convokitConfig.py"; then
+  git -C "$SRC/convokit" apply "$SEMAN2_ROOT/patches/convokit-local-config.patch"
+fi
+if grep -q '^        "sentence-transformers",$' "$SRC/convokit/setup.py"; then
+  git -C "$SRC/convokit" apply \
+    "$SEMAN2_ROOT/patches/convokit-optional-embeddings.patch"
+fi
+"$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-conversation/bin/python" \
+  -r "$SEMAN2_ROOT/requirements-conversation.txt"
+"$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-conversation/bin/python" \
+  --no-deps -e "$SRC/convokit"
+"$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-conversation/bin/python" \
+  "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"
+"$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-conversation/bin/python" \
+  "https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0-py3-none-any.whl"
+
+coreferee_en_archive="$DOWNLOADS/coreferee-model-en-1.5.0.zip"
+coreferee_fr_archive="$DOWNLOADS/coreferee-model-fr-1.5.0.zip"
+download \
+  "https://raw.githubusercontent.com/richardpaulhudson/coreferee/588bdb47b02ce7d0edf9a7880e91e272d296ac85/models/coreferee_model_en.zip" \
+  "$coreferee_en_archive"
+download \
+  "https://raw.githubusercontent.com/richardpaulhudson/coreferee/588bdb47b02ce7d0edf9a7880e91e272d296ac85/models/coreferee_model_fr.zip" \
+  "$coreferee_fr_archive"
+printf '%s  %s\n%s  %s\n' \
+  '2051bb27b40c6b047c7a985fa9cc0de44d058b2c271db8d5c02898fff447a2a5' \
+  "$coreferee_en_archive" \
+  'e9ff267c03c33463f85d0053d9c39fd4d2983c4ee49d94d94f6e96b6db4de771' \
+  "$coreferee_fr_archive" | sha256sum -c -
+"$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-conversation/bin/python" \
+  --no-deps "$coreferee_en_archive" "$coreferee_fr_archive"
+
+mkdir -p "$LOCAL/share/convokit/corpora" "$LOCAL/share/convokit/models"
+switchboard_archive="$DOWNLOADS/switchboard-corpus-v1.zip"
+download \
+  "https://zissou.infosci.cornell.edu/convokit/datasets/switchboard-corpus/switchboard-corpus.zip" \
+  "$switchboard_archive"
+printf '%s  %s\n' \
+  'c903ef6542a9838d23fe5cf00c4cfc4727ca54cadb55c61916f090498141c817' \
+  "$switchboard_archive" | sha256sum -c -
+if [[ ! -s "$LOCAL/share/convokit/corpora/switchboard-corpus/utterances.jsonl" ]]; then
+  unzip -q "$switchboard_archive" -d "$LOCAL/share/convokit/corpora"
+fi
 
 log "Java Temurin local"
 if [[ ! -x "$OPT/jre/bin/java" ]]; then
@@ -114,6 +164,29 @@ if [[ ! -x "$OPT/jre/bin/java" ]]; then
     "$jre_archive"
   extract_tar "$jre_archive" "$OPT/jre"
 fi
+
+log "Stanford CoreNLP et modèles anglais/français"
+corenlp_archive="$DOWNLOADS/stanford-corenlp-4.5.10.zip"
+corenlp_french_models="$DOWNLOADS/stanford-corenlp-4.5.10-models-french.jar"
+download \
+  "https://nlp.stanford.edu/software/stanford-corenlp-4.5.10.zip" \
+  "$corenlp_archive"
+download \
+  "https://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/4.5.10/stanford-corenlp-4.5.10-models-french.jar" \
+  "$corenlp_french_models"
+printf '%s  %s\n%s  %s\n' \
+  '76a04089069dad21176c02881f46e07c19ca148b71c8581de2b5b2e2855e042e' \
+  "$corenlp_archive" \
+  '1172d4339c0abef30789a9ca541ecd3b3308dd3aa9f60760c581070a07da6ea3' \
+  "$corenlp_french_models" | sha256sum -c -
+if [[ ! -s "$OPT/stanford-corenlp/stanford-corenlp-4.5.10.jar" ]]; then
+  mkdir -p "$temp_root/corenlp" "$OPT/stanford-corenlp"
+  unzip -q "$corenlp_archive" -d "$temp_root/corenlp"
+  cp -a "$temp_root/corenlp/stanford-corenlp-4.5.10/." \
+    "$OPT/stanford-corenlp/"
+fi
+install -m 0644 "$corenlp_french_models" \
+  "$OPT/stanford-corenlp/stanford-corenlp-4.5.10-models-french.jar"
 
 log "ACE et ERG"
 if [[ ! -x "$OPT/ace/ace" ]]; then
@@ -279,7 +352,7 @@ if [[ ! -x "$OPT/duckling/bin/duckling-example-exe" ]]; then
 fi
 ln -sfn ../opt/duckling/bin/duckling-example-exe "$BIN/duckling"
 
-log "SWI-Prolog et Popper"
+log "SWI-Prolog, Popper et NuWLS-c"
 if [[ ! -x "$OPT/swipl/bin/swipl" ]]; then
   swipl_archive="$DOWNLOADS/swipl-9.2.9.tar.gz"
   download \
@@ -304,6 +377,19 @@ env PATH="$BIN:$PATH" PKG_CONFIG_PATH="$OPT/swipl/share/pkgconfig" \
   LD_LIBRARY_PATH="$OPT/swipl/lib/swipl/lib/x86_64-linux:$OPT/swipl/lib" \
   "$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-popper/bin/python" \
   -e "$SRC/popper"
+
+if [[ ! -x "$OPT/nuwls/bin/NuWLS-c" ]]; then
+  nuwls_archive="$DOWNLOADS/NuWLS-c-2023.zip"
+  download \
+    "https://maxsat-evaluations.github.io/2023/mse23-solver-src/anytime/NuWLS-c-2023.zip" \
+    "$nuwls_archive"
+  mkdir -p "$temp_root/nuwls" "$OPT/nuwls/bin"
+  unzip -q -j "$nuwls_archive" \
+    "NuWLS-c-2023/bin/NuWLS-c_static" -d "$temp_root/nuwls"
+  install -m 0755 "$temp_root/nuwls/NuWLS-c_static" \
+    "$OPT/nuwls/bin/NuWLS-c"
+fi
+ln -sfn ../opt/nuwls/bin/NuWLS-c "$BIN/NuWLS-c"
 
 log "IsaNLP RST et modèle gumrrg"
 clone_at "https://github.com/tchewik/isanlp_rst.git" \
@@ -332,4 +418,3 @@ log "Installation terminée"
 if [[ "$SKIP_VERIFY" == false ]]; then
   "$SEMAN2_ROOT/scripts/verify_local_dependencies.sh"
 fi
-

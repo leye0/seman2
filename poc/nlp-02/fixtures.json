@@ -1,0 +1,45 @@
+[
+  {
+    "id": "multiple-predicates",
+    "phenomenon": "multiple predicates",
+    "sentence": "Kim gave Sandy a book."
+  },
+  {
+    "id": "quantifiers",
+    "phenomenon": "quantifiers",
+    "sentence": "Every dog chased a cat.",
+    "human_scope_readings_for_test_oracle": [
+      "For each dog, there may be a different cat that it chased.",
+      "There is one particular cat that every dog chased."
+    ]
+  },
+  {
+    "id": "negation",
+    "phenomenon": "negation",
+    "sentence": "Kim did not leave."
+  },
+  {
+    "id": "scope-ambiguity",
+    "phenomenon": "scope ambiguity",
+    "sentence": "Every student read a book.",
+    "human_scope_readings_for_test_oracle": [
+      "For each student, there may be a different book that they read.",
+      "There is one particular book that every student read."
+    ]
+  },
+  {
+    "id": "pronouns",
+    "phenomenon": "pronouns",
+    "sentence": "She sees herself."
+  },
+  {
+    "id": "relative-clause",
+    "phenomenon": "relative clause",
+    "sentence": "The dog that chased the cat barked."
+  },
+  {
+    "id": "coordination",
+    "phenomenon": "coordination",
+    "sentence": "Kim sang and danced."
+  }
+]

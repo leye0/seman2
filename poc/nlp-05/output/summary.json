@@ -1,0 +1,40 @@
+{
+  "fixture_count": 5,
+  "strict_parse_successes": 4,
+  "strict_parse_failures": 1,
+  "strict_linkage_count": 25,
+  "recovery_linkage_count": 2,
+  "fixtures_hitting_linkage_limit": 0,
+  "typed_link_count": 225,
+  "strict_linkages_with_constituents": 25,
+  "strict_linkages_with_costs": 25,
+  "strict_linkages_preserving_source": 25,
+  "ambiguous_fixture_distinct_constituent_trees": 8,
+  "by_fixture": {
+    "simple-declarative": {
+      "status": "parsed",
+      "found": 2,
+      "valid_returned": 2
+    },
+    "pp-attachment-ambiguity": {
+      "status": "parsed",
+      "found": 16,
+      "valid_returned": 16
+    },
+    "coordination": {
+      "status": "parsed",
+      "found": 6,
+      "valid_returned": 6
+    },
+    "fragment": {
+      "status": "parsed",
+      "found": 1,
+      "valid_returned": 1
+    },
+    "ungrammatical": {
+      "status": "strict_parse_failure",
+      "found": 0,
+      "valid_returned": 0
+    }
+  }
+}

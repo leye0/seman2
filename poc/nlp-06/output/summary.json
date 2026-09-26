@@ -1,0 +1,24 @@
+{
+  "fixture_count": 9,
+  "coverage": {
+    "both": 5,
+    "erg_only": 1,
+    "link_grammar_only": 2,
+    "neither": 1
+  },
+  "erg_candidate_count": 68,
+  "erg_well_formed_mrs_count": 66,
+  "erg_non_well_formed_mrs_count": 2,
+  "link_grammar_valid_linkage_count": 85,
+  "both_parsed_top_token_span_exact_matches": 5,
+  "both_parsed_fixture_count": 5,
+  "erg_exclusive_capability_count": 3,
+  "link_grammar_exclusive_capability_count": 3,
+  "decision": "KEEP_LINK_GRAMMAR_AS_ATTRIBUTED_SECONDARY_ANALYZER",
+  "decision_conditions": [
+    "ERG remains the primary deep semantic analyzer.",
+    "Link Grammar output is never promoted to truth or used as an automatic fallback.",
+    "Coverage gains and overgeneration remain distinguishable by provenance.",
+    "Equivalent alternatives may be grouped but original candidates remain available."
+  ]
+}

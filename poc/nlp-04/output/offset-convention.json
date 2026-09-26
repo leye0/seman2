@@ -1,0 +1,789 @@
+{
+  "observed": "Unicode code points, zero-based, end-exclusive",
+  "code_points_match_all": true,
+  "utf8_bytes_matches_all": false,
+  "utf16_code_units_matches_all": false,
+  "display_units_match_all": false,
+  "evidence": [
+    {
+      "fixture": "punctuation",
+      "rows": [
+        {
+          "surface": "Wait",
+          "observed": [
+            0,
+            4
+          ],
+          "observed_source_slice": "Wait",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            0,
+            4
+          ],
+          "utf8_bytes": [
+            0,
+            4
+          ],
+          "utf16_code_units": [
+            0,
+            4
+          ],
+          "base_plus_combining_display_units": [
+            0,
+            4
+          ]
+        },
+        {
+          "surface": ",",
+          "observed": [
+            4,
+            5
+          ],
+          "observed_source_slice": ",",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            4,
+            5
+          ],
+          "utf8_bytes": [
+            4,
+            5
+          ],
+          "utf16_code_units": [
+            4,
+            5
+          ],
+          "base_plus_combining_display_units": [
+            4,
+            5
+          ]
+        },
+        {
+          "surface": "Kim",
+          "observed": [
+            6,
+            9
+          ],
+          "observed_source_slice": "Kim",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            6,
+            9
+          ],
+          "utf8_bytes": [
+            6,
+            9
+          ],
+          "utf16_code_units": [
+            6,
+            9
+          ],
+          "base_plus_combining_display_units": [
+            6,
+            9
+          ]
+        },
+        {
+          "surface": ",",
+          "observed": [
+            9,
+            10
+          ],
+          "observed_source_slice": ",",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            9,
+            10
+          ],
+          "utf8_bytes": [
+            9,
+            10
+          ],
+          "utf16_code_units": [
+            9,
+            10
+          ],
+          "base_plus_combining_display_units": [
+            9,
+            10
+          ]
+        },
+        {
+          "surface": "really",
+          "observed": [
+            11,
+            17
+          ],
+          "observed_source_slice": "really",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            11,
+            17
+          ],
+          "utf8_bytes": [
+            11,
+            17
+          ],
+          "utf16_code_units": [
+            11,
+            17
+          ],
+          "base_plus_combining_display_units": [
+            11,
+            17
+          ]
+        },
+        {
+          "surface": "?",
+          "observed": [
+            17,
+            18
+          ],
+          "observed_source_slice": "?",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            17,
+            18
+          ],
+          "utf8_bytes": [
+            17,
+            18
+          ],
+          "utf16_code_units": [
+            17,
+            18
+          ],
+          "base_plus_combining_display_units": [
+            17,
+            18
+          ]
+        }
+      ],
+      "all_match_code_points": true,
+      "all_match_utf8_bytes": true,
+      "all_match_utf16_code_units": true,
+      "all_match_base_plus_combining_display_units": true
+    },
+    {
+      "fixture": "contraction",
+      "rows": [
+        {
+          "surface": "Kim",
+          "observed": [
+            0,
+            3
+          ],
+          "observed_source_slice": "Kim",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            0,
+            3
+          ],
+          "utf8_bytes": [
+            0,
+            3
+          ],
+          "utf16_code_units": [
+            0,
+            3
+          ],
+          "base_plus_combining_display_units": [
+            0,
+            3
+          ]
+        },
+        {
+          "surface": "ca",
+          "observed": [
+            4,
+            6
+          ],
+          "observed_source_slice": "ca",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            4,
+            6
+          ],
+          "utf8_bytes": [
+            4,
+            6
+          ],
+          "utf16_code_units": [
+            4,
+            6
+          ],
+          "base_plus_combining_display_units": [
+            4,
+            6
+          ]
+        },
+        {
+          "surface": "n't",
+          "observed": [
+            6,
+            9
+          ],
+          "observed_source_slice": "n't",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            6,
+            9
+          ],
+          "utf8_bytes": [
+            6,
+            9
+          ],
+          "utf16_code_units": [
+            6,
+            9
+          ],
+          "base_plus_combining_display_units": [
+            6,
+            9
+          ]
+        },
+        {
+          "surface": "leave",
+          "observed": [
+            10,
+            15
+          ],
+          "observed_source_slice": "leave",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            10,
+            15
+          ],
+          "utf8_bytes": [
+            10,
+            15
+          ],
+          "utf16_code_units": [
+            10,
+            15
+          ],
+          "base_plus_combining_display_units": [
+            10,
+            15
+          ]
+        },
+        {
+          "surface": ".",
+          "observed": [
+            15,
+            16
+          ],
+          "observed_source_slice": ".",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            15,
+            16
+          ],
+          "utf8_bytes": [
+            15,
+            16
+          ],
+          "utf16_code_units": [
+            15,
+            16
+          ],
+          "base_plus_combining_display_units": [
+            15,
+            16
+          ]
+        }
+      ],
+      "all_match_code_points": true,
+      "all_match_utf8_bytes": true,
+      "all_match_utf16_code_units": true,
+      "all_match_base_plus_combining_display_units": true
+    },
+    {
+      "fixture": "unicode-non-bmp",
+      "rows": [
+        {
+          "surface": "🙂",
+          "observed": [
+            0,
+            1
+          ],
+          "observed_source_slice": "🙂",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            0,
+            1
+          ],
+          "utf8_bytes": [
+            0,
+            4
+          ],
+          "utf16_code_units": [
+            0,
+            2
+          ],
+          "base_plus_combining_display_units": [
+            0,
+            1
+          ]
+        },
+        {
+          "surface": "Kim",
+          "observed": [
+            2,
+            5
+          ],
+          "observed_source_slice": "Kim",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            2,
+            5
+          ],
+          "utf8_bytes": [
+            5,
+            8
+          ],
+          "utf16_code_units": [
+            3,
+            6
+          ],
+          "base_plus_combining_display_units": [
+            2,
+            5
+          ]
+        },
+        {
+          "surface": "smiled",
+          "observed": [
+            6,
+            12
+          ],
+          "observed_source_slice": "smiled",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            6,
+            12
+          ],
+          "utf8_bytes": [
+            9,
+            15
+          ],
+          "utf16_code_units": [
+            7,
+            13
+          ],
+          "base_plus_combining_display_units": [
+            6,
+            12
+          ]
+        },
+        {
+          "surface": ".",
+          "observed": [
+            12,
+            13
+          ],
+          "observed_source_slice": ".",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            12,
+            13
+          ],
+          "utf8_bytes": [
+            15,
+            16
+          ],
+          "utf16_code_units": [
+            13,
+            14
+          ],
+          "base_plus_combining_display_units": [
+            12,
+            13
+          ]
+        }
+      ],
+      "all_match_code_points": true,
+      "all_match_utf8_bytes": false,
+      "all_match_utf16_code_units": false,
+      "all_match_base_plus_combining_display_units": true
+    },
+    {
+      "fixture": "unicode-combining",
+      "rows": [
+        {
+          "surface": "Café",
+          "observed": [
+            0,
+            5
+          ],
+          "observed_source_slice": "Café",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            0,
+            5
+          ],
+          "utf8_bytes": [
+            0,
+            6
+          ],
+          "utf16_code_units": [
+            0,
+            5
+          ],
+          "base_plus_combining_display_units": [
+            0,
+            4
+          ]
+        },
+        {
+          "surface": "owners",
+          "observed": [
+            6,
+            12
+          ],
+          "observed_source_slice": "owners",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            6,
+            12
+          ],
+          "utf8_bytes": [
+            7,
+            13
+          ],
+          "utf16_code_units": [
+            6,
+            12
+          ],
+          "base_plus_combining_display_units": [
+            5,
+            11
+          ]
+        },
+        {
+          "surface": "smiled",
+          "observed": [
+            13,
+            19
+          ],
+          "observed_source_slice": "smiled",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            13,
+            19
+          ],
+          "utf8_bytes": [
+            14,
+            20
+          ],
+          "utf16_code_units": [
+            13,
+            19
+          ],
+          "base_plus_combining_display_units": [
+            12,
+            18
+          ]
+        },
+        {
+          "surface": ".",
+          "observed": [
+            19,
+            20
+          ],
+          "observed_source_slice": ".",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            19,
+            20
+          ],
+          "utf8_bytes": [
+            20,
+            21
+          ],
+          "utf16_code_units": [
+            19,
+            20
+          ],
+          "base_plus_combining_display_units": [
+            18,
+            19
+          ]
+        }
+      ],
+      "all_match_code_points": true,
+      "all_match_utf8_bytes": false,
+      "all_match_utf16_code_units": true,
+      "all_match_base_plus_combining_display_units": false
+    },
+    {
+      "fixture": "multiple-spaces",
+      "rows": [
+        {
+          "surface": "Kim",
+          "observed": [
+            0,
+            3
+          ],
+          "observed_source_slice": "Kim",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            0,
+            3
+          ],
+          "utf8_bytes": [
+            0,
+            3
+          ],
+          "utf16_code_units": [
+            0,
+            3
+          ],
+          "base_plus_combining_display_units": [
+            0,
+            3
+          ]
+        },
+        {
+          "surface": "saw",
+          "observed": [
+            6,
+            9
+          ],
+          "observed_source_slice": "saw",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            6,
+            9
+          ],
+          "utf8_bytes": [
+            6,
+            9
+          ],
+          "utf16_code_units": [
+            6,
+            9
+          ],
+          "base_plus_combining_display_units": [
+            6,
+            9
+          ]
+        },
+        {
+          "surface": "Sandy",
+          "observed": [
+            11,
+            16
+          ],
+          "observed_source_slice": "Sandy",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            11,
+            16
+          ],
+          "utf8_bytes": [
+            11,
+            16
+          ],
+          "utf16_code_units": [
+            11,
+            16
+          ],
+          "base_plus_combining_display_units": [
+            11,
+            16
+          ]
+        },
+        {
+          "surface": ".",
+          "observed": [
+            16,
+            17
+          ],
+          "observed_source_slice": ".",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            16,
+            17
+          ],
+          "utf8_bytes": [
+            16,
+            17
+          ],
+          "utf16_code_units": [
+            16,
+            17
+          ],
+          "base_plus_combining_display_units": [
+            16,
+            17
+          ]
+        }
+      ],
+      "all_match_code_points": true,
+      "all_match_utf8_bytes": true,
+      "all_match_utf16_code_units": true,
+      "all_match_base_plus_combining_display_units": true
+    },
+    {
+      "fixture": "repeated-tokens",
+      "rows": [
+        {
+          "surface": "The",
+          "observed": [
+            0,
+            3
+          ],
+          "observed_source_slice": "The",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            0,
+            3
+          ],
+          "utf8_bytes": [
+            0,
+            3
+          ],
+          "utf16_code_units": [
+            0,
+            3
+          ],
+          "base_plus_combining_display_units": [
+            0,
+            3
+          ]
+        },
+        {
+          "surface": "dog",
+          "observed": [
+            4,
+            7
+          ],
+          "observed_source_slice": "dog",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            4,
+            7
+          ],
+          "utf8_bytes": [
+            4,
+            7
+          ],
+          "utf16_code_units": [
+            4,
+            7
+          ],
+          "base_plus_combining_display_units": [
+            4,
+            7
+          ]
+        },
+        {
+          "surface": "chased",
+          "observed": [
+            8,
+            14
+          ],
+          "observed_source_slice": "chased",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            8,
+            14
+          ],
+          "utf8_bytes": [
+            8,
+            14
+          ],
+          "utf16_code_units": [
+            8,
+            14
+          ],
+          "base_plus_combining_display_units": [
+            8,
+            14
+          ]
+        },
+        {
+          "surface": "the",
+          "observed": [
+            15,
+            18
+          ],
+          "observed_source_slice": "the",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            15,
+            18
+          ],
+          "utf8_bytes": [
+            15,
+            18
+          ],
+          "utf16_code_units": [
+            15,
+            18
+          ],
+          "base_plus_combining_display_units": [
+            15,
+            18
+          ]
+        },
+        {
+          "surface": "dog",
+          "observed": [
+            19,
+            22
+          ],
+          "observed_source_slice": "dog",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            19,
+            22
+          ],
+          "utf8_bytes": [
+            19,
+            22
+          ],
+          "utf16_code_units": [
+            19,
+            22
+          ],
+          "base_plus_combining_display_units": [
+            19,
+            22
+          ]
+        },
+        {
+          "surface": ".",
+          "observed": [
+            22,
+            23
+          ],
+          "observed_source_slice": ".",
+          "source_slice_matches_expected": true,
+          "code_points": [
+            22,
+            23
+          ],
+          "utf8_bytes": [
+            22,
+            23
+          ],
+          "utf16_code_units": [
+            22,
+            23
+          ],
+          "base_plus_combining_display_units": [
+            22,
+            23
+          ]
+        }
+      ],
+      "all_match_code_points": true,
+      "all_match_utf8_bytes": true,
+      "all_match_utf16_code_units": true,
+      "all_match_base_plus_combining_display_units": true
+    }
+  ],
+  "important_distinction": "Token forms may be normalized and differ from the exact source slice; the charspan always addresses the original source text."
+}
