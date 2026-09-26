@@ -52,5 +52,26 @@
     "instance": {"fileid": "wsj_0003.mrg", "sentnum": 2, "wordnum": 16},
     "expected_arguments": ["ARG0", "ARG1", "ARGM-TMP"],
     "expected_pointer_kinds": ["tree", "split"]
+  },
+  {
+    "id": "nested-chain-expose",
+    "phenomenon": "chain pointer containing a split pointer and a suffixed core argument label",
+    "lemma": "expose",
+    "roleset_id": "expose.01",
+    "instance": {"fileid": "wsj_0003.mrg", "sentnum": 0, "wordnum": 26},
+    "expected_arguments": ["ARG1", "ARG2-to", "ARGM-TMP"],
+    "expected_pointer_kinds": ["tree", "chain"],
+    "expected_pointer_shapes": ["chain(split(tree,tree,tree),tree)"],
+    "expected_normalized_argument": {"label": "ARG2-to", "base_label": "ARG2", "suffix": "to"}
+  },
+  {
+    "id": "unresolved-note",
+    "phenomenon": "gold corpus annotation whose roleset remains explicitly unresolved",
+    "lemma": "note",
+    "roleset_id": "note.XX",
+    "instance": {"fileid": "wsj_0013.mrg", "sentnum": 8, "wordnum": 3},
+    "expected_arguments": ["ARG0", "ARG1", "ARGM-DIS"],
+    "expected_pointer_kinds": ["tree"],
+    "expected_roleset_definition": false
   }
 ]

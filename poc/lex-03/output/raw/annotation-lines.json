@@ -22,5 +22,13 @@
   {
     "fixture": "split-stop",
     "line": "wsj/00/wsj_0003.mrg 2 16 gold stop.01 vp--a 0:2-ARG0 16:0-rel 17:0,18:1,19:1-ARG1 24:1-ARGM-TMP"
+  },
+  {
+    "fixture": "nested-chain-expose",
+    "line": "wsj/00/wsj_0003.mrg 0 26 gold expose.01 p---p 26:0-rel 28:1-ARG2-to 30:3-ARGM-TMP 22:1,24:0,25:1*27:0-ARG1"
+  },
+  {
+    "fixture": "unresolved-note",
+    "line": "wsj/00/wsj_0013.mrg 8 3 gold note.XX vp--a 0:1-ARG0 2:1-ARGM-DIS 3:0-rel 4:1-ARG1"
   }
 ]

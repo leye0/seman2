@@ -17,6 +17,8 @@ Le script régénère :
 - `output/results.json`, les rolesets et instances structurés ;
 - `output/resource-vs-annotation.json`, la frontière entre consultation de la
   ressource, annotation existante et analyse d'une nouvelle phrase ;
+- `output/corpus-inventory.json`, l'inventaire exhaustif des labels, types de
+  pointeurs, formes imbriquées et rolesets non résolus ;
 - `output/raw/annotation-lines.json`, les lignes natives de `prop.txt` ;
 - `output/raw/frame-xml.json`, les fichiers de frames natifs concernés ;
 - `output/raw/parse-trees.json`, les arbres Penn Treebank des fixtures ;
@@ -26,9 +28,10 @@ Le script régénère :
 
 **PARTIEL comme lecteur de corpus, avec inventaire lexical exploitable.** NLTK
 expose les rolesets, leurs arguments, leurs correspondances VerbNet et les
-112 917 annotations PropBank. Les six fixtures démontrent des arguments
-`ARG0`–`ARG2`, des modificateurs `ARGM-*` ainsi que des pointeurs simples,
-scindés et chaînés résolus en positions d'arbre et terminaux.
+112 917 annotations PropBank. Les huit fixtures démontrent des arguments
+`ARG0`–`ARG2`, des modificateurs `ARGM-*`, un label suffixé, un roleset `.XX`
+non résolu ainsi que des pointeurs simples, scindés, chaînés et imbriqués,
+résolus en positions d'arbre et terminaux.
 
 Le Treebank installé avec NLTK ne contient toutefois que 199 fichiers : les
 arbres sont disponibles pour 9 353 des 112 917 annotations PropBank. Le paquet
@@ -38,7 +41,8 @@ restent lisibles, mais `instance.tree` vaut `None` sans une copie licenciée du
 Penn Treebank complet ajoutée à ce paquet.
 
 PropBank n'est pas un analyseur automatique. Un lookup par lemme énumère les
-rolesets possibles ; le roleset d'une fixture vient de l'annotation existante
-dans `prop.txt`, et non d'une décision prise sur une phrase nouvelle.
+rolesets possibles avec leurs définitions complètes et sans en sélectionner un ;
+le roleset d'une fixture vient de l'annotation existante dans `prop.txt`, et non
+d'une décision prise sur une phrase nouvelle.
 
 Voir `verdict.md` pour les exemples, les limites et l'impact architectural.

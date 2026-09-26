@@ -24,6 +24,8 @@ from nltk.corpus.reader.propbank import (
 
 POC_DIR = Path(__file__).resolve().parent
 PROPBANK_VERSION = "1.0"
+ADAPTER_VERSION = "2"
+SCHEMA_VERSION = "seman2.lexical-propbank-poc.v2"
 
 
 def stable_id(prefix: str, payload: Any) -> str:
@@ -31,6 +33,14 @@ def stable_id(prefix: str, payload: Any) -> str:
         payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
     )
     return prefix + hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def normalized_text(value: str | None) -> str | None:
@@ -48,7 +58,9 @@ def serialize_example_node(node: Any) -> dict[str, Any]:
     }
 
 
-def serialize_roleset(lemma: str, roleset_id: str) -> dict[str, Any]:
+def serialize_roleset(
+    lemma: str, roleset_id: str, resource_sha256: str
+) -> dict[str, Any]:
     roleset = propbank.roleset(roleset_id)
     roles = []
     for role in roleset.findall("roles/role"):
@@ -62,11 +74,27 @@ def serialize_roleset(lemma: str, roleset_id: str) -> dict[str, Any]:
             }
         )
     return {
+        "resource_id": stable_id(
+            "propbank-roleset:",
+            {"resource_version": PROPBANK_VERSION, "roleset_id": roleset_id},
+        ),
         "roleset_id": roleset_id,
+        "analysis_type": "propbank_lexical_roleset_candidate",
         "lemma": lemma,
         "name": roleset.get("name"),
         "verbnet_class_ids": roleset.get("vncls", "").split(),
         "attributes": dict(roleset.attrib),
+        "selected_by_lemma_lookup": False,
+        "score": None,
+        "score_status": "not provided by the lexical resource",
+        "producer": {
+            "interface": "NLTK PropBankCorpusReader",
+            "resource": "UPenn PropBank",
+            "resource_version": PROPBANK_VERSION,
+            "resource_sha256": resource_sha256,
+            "adapter_version": ADAPTER_VERSION,
+            "schema_version": SCHEMA_VERSION,
+        },
         "roles": roles,
         "examples": [
             {
@@ -101,6 +129,13 @@ def pointer_kind(pointer: Any) -> str:
     raise TypeError(f"Unsupported PropBank pointer: {type(pointer)!r}")
 
 
+def pointer_shape(pointer: Any) -> str:
+    kind = pointer_kind(pointer)
+    if kind == "tree":
+        return kind
+    return f"{kind}({','.join(pointer_shape(piece) for piece in pointer.pieces)})"
+
+
 def serialize_pointer(pointer: Any, tree: Tree) -> dict[str, Any]:
     kind = pointer_kind(pointer)
     selected = pointer.select(tree)
@@ -117,6 +152,7 @@ def serialize_pointer(pointer: Any, tree: Tree) -> dict[str, Any]:
     tokens = tree.leaves()
     return {
         "kind": kind,
+        "shape": pointer_shape(pointer),
         "native_type": type(pointer).__name__,
         "notation": str(pointer),
         "word_number": getattr(pointer, "wordnum", None),
@@ -130,17 +166,44 @@ def serialize_pointer(pointer: Any, tree: Tree) -> dict[str, Any]:
             if isinstance(selected, Tree)
             else str(selected)
         ),
+        "source_charspan": None,
+        "source_charspan_status": (
+            "unavailable: Penn Treebank preserves terminal positions but not "
+            "the exact original character offsets"
+        ),
         "pieces": pieces,
     }
 
 
-def role_definition(
-    argument_label: str, roleset: dict[str, Any]
-) -> dict[str, Any] | None:
-    match = re.fullmatch(r"(?:[CR]-)?ARG([0-9]+)", argument_label)
+def analyze_argument_label(argument_label: str) -> dict[str, Any]:
+    match = re.fullmatch(
+        r"(?:(?P<reference_prefix>[CR])-)?ARG(?P<number>[0-9])(?:-(?P<suffix>.+))?",
+        argument_label,
+    )
     if match is None:
+        return {
+            "original_label": argument_label,
+            "base_label": argument_label,
+            "numbered_role": None,
+            "reference_prefix": None,
+            "suffix": None,
+        }
+    number = match.group("number")
+    return {
+        "original_label": argument_label,
+        "base_label": f"ARG{number}",
+        "numbered_role": number,
+        "reference_prefix": match.group("reference_prefix"),
+        "suffix": match.group("suffix"),
+    }
+
+
+def role_definition(
+    label_analysis: dict[str, Any], roleset: dict[str, Any] | None
+) -> dict[str, Any] | None:
+    number = label_analysis["numbered_role"]
+    if number is None or roleset is None:
         return None
-    number = match.group(1)
     return next(
         (role for role in roleset["roles"] if role["number"] == number), None
     )
@@ -190,8 +253,9 @@ def raw_annotation_index() -> dict[tuple[str, int, int], str]:
 def serialize_instance(
     fixture: dict[str, Any],
     instance: Any,
-    roleset: dict[str, Any],
+    roleset: dict[str, Any] | None,
     raw_line: str,
+    resource_fingerprints: dict[str, str],
 ) -> dict[str, Any]:
     tree = instance.tree
     if tree is None:
@@ -199,10 +263,14 @@ def serialize_instance(
     predicate = serialize_pointer(instance.predicate, tree)
     arguments = []
     for pointer, label in instance.arguments:
+        label_analysis = analyze_argument_label(label)
         arguments.append(
             {
                 "label": label,
-                "roleset_role_definition": role_definition(label, roleset),
+                "label_analysis": label_analysis,
+                "roleset_role_definition": role_definition(
+                    label_analysis, roleset
+                ),
                 "pointer": serialize_pointer(pointer, tree),
             }
         )
@@ -219,21 +287,40 @@ def serialize_instance(
     )
     return {
         "analysis_id": analysis_id,
+        "analysis_type": "propbank_corpus_predicate_argument_annotation",
         "producer": {
             "interface": "NLTK PropBankCorpusReader",
             "resource": "UPenn PropBank",
             "resource_version": PROPBANK_VERSION,
+            "resource_sha256": resource_fingerprints["propbank.zip"],
+            "adapter": "poc/lex-03/run.py",
+            "adapter_version": ADAPTER_VERSION,
+            "schema_version": SCHEMA_VERSION,
+            "nltk_version": nltk.__version__,
+            "parameters": {
+                "terminal_numbering": "zero-based, including empty categories",
+                "character_offsets": "not supplied by Penn Treebank",
+            },
         },
         "support": {
             "annotation_file": "prop.txt",
             "treebank_fileid": instance.fileid,
             "sentence_number": instance.sentnum,
             "predicate_terminal_number": instance.wordnum,
+            "source_charspan": None,
+            "source_charspan_status": (
+                "unavailable from PropBank 1.0 and Penn Treebank"
+            ),
         },
         "annotation_status": instance.tagger,
+        "score": None,
+        "score_status": "not provided for gold PropBank corpus annotations",
         "lemma": instance.baseform,
         "sense_number": instance.sensenumber,
         "roleset_id": instance.roleset,
+        "roleset_definition_status": (
+            "resolved" if roleset is not None else "unresolved_in_corpus_annotation"
+        ),
         "roleset_assignment_source": "existing PropBank corpus annotation",
         "automatically_assigned_to_new_text": False,
         "inflection": {
@@ -270,12 +357,39 @@ def validate(fixtures: list[dict[str, Any]], results: list[dict[str, Any]]) -> N
         }
         if not set(fixture["expected_pointer_kinds"]).issubset(kinds):
             raise RuntimeError(f"Missing pointer kind: {fixture['id']}")
+        shapes = {
+            argument["pointer"]["shape"] for argument in annotation["arguments"]
+        }
+        if not set(fixture.get("expected_pointer_shapes", [])).issubset(shapes):
+            raise RuntimeError(f"Missing pointer shape: {fixture['id']}")
         if not annotation["predicate"]["terminal_indices"]:
             raise RuntimeError(f"Predicate is not anchored: {fixture['id']}")
-        if not result["roleset_definition"]["roles"]:
-            raise RuntimeError(f"Roleset has no argument definitions: {fixture['id']}")
-        if fixture["roleset_id"] not in result["available_roleset_ids_for_lemma"]:
-            raise RuntimeError(f"Roleset absent from lemma inventory: {fixture['id']}")
+        definition_expected = fixture.get("expected_roleset_definition", True)
+        if definition_expected:
+            if not result["roleset_definition"]["roles"]:
+                raise RuntimeError(
+                    f"Roleset has no argument definitions: {fixture['id']}"
+                )
+            if fixture["roleset_id"] not in result["available_roleset_ids_for_lemma"]:
+                raise RuntimeError(
+                    f"Roleset absent from lemma inventory: {fixture['id']}"
+                )
+        elif result["roleset_definition"] is not None:
+            raise RuntimeError(f"Unresolved roleset was resolved: {fixture['id']}")
+        expected_normalized = fixture.get("expected_normalized_argument")
+        if expected_normalized:
+            argument = next(
+                item
+                for item in annotation["arguments"]
+                if item["label"] == expected_normalized["label"]
+            )
+            analysis = argument["label_analysis"]
+            if analysis["base_label"] != expected_normalized["base_label"]:
+                raise RuntimeError(f"Bad normalized label: {fixture['id']}")
+            if analysis["suffix"] != expected_normalized["suffix"]:
+                raise RuntimeError(f"Bad argument suffix: {fixture['id']}")
+            if argument["roleset_role_definition"] is None:
+                raise RuntimeError(f"Suffixed role was not linked: {fixture['id']}")
     run_results = [result for result in results if result["lemma"] == "run"]
     if {result["roleset_definition"]["roleset_id"] for result in run_results} != {
         "run.01",
@@ -287,6 +401,21 @@ def validate(fixtures: list[dict[str, Any]], results: list[dict[str, Any]]) -> N
         for result in results
     ):
         raise RuntimeError("Corpus annotations were mislabeled as automatic SRL")
+    if not any(
+        result["instance_annotation"]["roleset_definition_status"]
+        == "unresolved_in_corpus_annotation"
+        for result in results
+    ):
+        raise RuntimeError("Unresolved corpus rolesets are not represented")
+    if not all(
+        result["available_rolesets_for_lemma"]
+        and all(
+            not candidate["selected_by_lemma_lookup"]
+            for candidate in result["available_rolesets_for_lemma"]
+        )
+        for result in results
+    ):
+        raise RuntimeError("Lemma candidates are incomplete or prematurely selected")
 
 
 def main() -> None:
@@ -296,13 +425,33 @@ def main() -> None:
     ptb_catalog_path = Path(str(nltk.data.find("corpora/ptb/allcats.txt")))
     ptb_catalog_entry_count = len(ptb_catalog_path.read_text().splitlines())
     licensed_ptb_files = set(ptb.fileids())
+    archive_paths = {
+        "propbank.zip": Path(str(nltk.data.find("corpora/propbank.zip"))),
+        "treebank.zip": Path(str(nltk.data.find("corpora/treebank.zip"))),
+        "ptb.zip": Path(str(nltk.data.find("corpora/ptb.zip"))),
+    }
+    resource_fingerprints = {
+        name: sha256_file(path) for name, path in archive_paths.items()
+    }
     selected_instances: dict[tuple[str, int, int], Any] = {}
     total_instances = 0
     tree_available_instances = 0
     roleset_counts: Counter[str] = Counter()
+    argument_label_counts: Counter[str] = Counter()
+    pointer_type_counts: Counter[str] = Counter()
+    pointer_shape_counts: Counter[str] = Counter()
+    unresolved_roleset_counts: Counter[str] = Counter()
+    annotation_status_counts: Counter[str] = Counter()
     for instance in propbank.instances():
         total_instances += 1
         roleset_counts[instance.roleset] += 1
+        annotation_status_counts[instance.tagger] += 1
+        if instance.roleset.endswith(".XX"):
+            unresolved_roleset_counts[instance.roleset] += 1
+        for pointer, label in instance.arguments:
+            argument_label_counts[label] += 1
+            pointer_type_counts[type(pointer).__name__] += 1
+            pointer_shape_counts[pointer_shape(pointer)] += 1
         if instance.fileid in available_tree_files:
             tree_available_instances += 1
         key = instance_key(instance)
@@ -322,19 +471,40 @@ def main() -> None:
     for fixture in fixtures:
         key = requested_key(fixture)
         instance = selected_instances[key]
-        roleset = serialize_roleset(fixture["lemma"], fixture["roleset_id"])
         available_rolesets = [
-            serialize_roleset(fixture["lemma"], item.get("id"))
+            serialize_roleset(
+                fixture["lemma"],
+                item.get("id"),
+                resource_fingerprints["propbank.zip"],
+            )
             for item in propbank.rolesets(fixture["lemma"])
         ]
+        candidate_ids = [item["resource_id"] for item in available_rolesets]
+        for candidate in available_rolesets:
+            candidate["support"] = {
+                "lookup_operation": "propbank.rolesets(lemma)",
+                "lookup_lemma": fixture["lemma"],
+            }
+            candidate["competes_with"] = [
+                candidate_id
+                for candidate_id in candidate_ids
+                if candidate_id != candidate["resource_id"]
+            ]
+        available_by_id = {
+            item["roleset_id"]: item for item in available_rolesets
+        }
+        roleset = available_by_id.get(fixture["roleset_id"])
         raw_line = raw_annotations[key]
-        annotation = serialize_instance(fixture, instance, roleset, raw_line)
+        annotation = serialize_instance(
+            fixture, instance, roleset, raw_line, resource_fingerprints
+        )
         results.append(
             {
                 **fixture,
                 "available_roleset_ids_for_lemma": [
                     item["roleset_id"] for item in available_rolesets
                 ],
+                "available_rolesets_for_lemma": available_rolesets,
                 "lemma_lookup_selects_a_roleset": False,
                 "roleset_definition": roleset,
                 "instance_annotation": annotation,
@@ -354,16 +524,27 @@ def main() -> None:
     ]
     pointer_counts = Counter(argument["pointer"]["kind"] for argument in arguments)
     unique_lemmas = sorted({fixture["lemma"] for fixture in fixtures})
+    candidate_roleset_ids = {
+        candidate["resource_id"]
+        for result in results
+        for candidate in result["available_rolesets_for_lemma"]
+    }
     all_rolesets = list(propbank.rolesets())
     summary = {
         "fixture_count": len(fixtures),
         "selected_lemma_count": len(unique_lemmas),
-        "selected_roleset_count": len(
+        "selected_annotation_roleset_id_count": len(
             {fixture["roleset_id"] for fixture in fixtures}
         ),
+        "candidate_roleset_definition_count": len(candidate_roleset_ids),
         "selected_instance_count": len(results),
         "selected_argument_count": len(arguments),
         "selected_pointer_counts": dict(sorted(pointer_counts.items())),
+        "selected_nested_pointer_shape_count": sum(
+            argument["pointer"]["shape"].startswith("chain(")
+            and "split(" in argument["pointer"]["shape"]
+            for argument in arguments
+        ),
         "corpus_verb_count": len(propbank.verbs()),
         "corpus_roleset_count": len(all_rolesets),
         "corpus_instance_count": total_instances,
@@ -374,16 +555,34 @@ def main() -> None:
         "instances_without_installed_tree_count": (
             total_instances - tree_available_instances
         ),
+        "unresolved_roleset_instance_count": sum(
+            unresolved_roleset_counts.values()
+        ),
+        "unresolved_roleset_id_count": len(unresolved_roleset_counts),
+        "distinct_argument_label_count": len(argument_label_counts),
         "installed_tree_coverage_ratio": (
             tree_available_instances / total_instances
         ),
         "new_sentence_annotation_performed": False,
         "verdict": "PARTIAL_CORPUS_READER_WITH_COMPLETE_FRAME_INVENTORY",
     }
+    corpus_inventory = {
+        "annotation_status_counts": dict(sorted(annotation_status_counts.items())),
+        "roleset_counts": dict(sorted(roleset_counts.items())),
+        "unresolved_roleset_counts": dict(
+            sorted(unresolved_roleset_counts.items())
+        ),
+        "argument_label_counts": dict(sorted(argument_label_counts.items())),
+        "pointer_native_type_counts": dict(sorted(pointer_type_counts.items())),
+        "pointer_shape_counts": dict(sorted(pointer_shape_counts.items())),
+    }
     resource_boundary = {
         "lemma_lookup": {
             "input": "lemma",
-            "output": "all roleset definitions stored for that lemma",
+            "output": (
+                "all structured roleset definitions stored for that lemma, "
+                "with stable IDs and explicit competition links"
+            ),
             "selects_sense_for_occurrence": False,
         },
         "corpus_annotation_lookup": {
@@ -396,6 +595,14 @@ def main() -> None:
             "required_additional_component": (
                 "a semantic role labeler or a project adapter combining syntax, "
                 "lexical candidates, and context"
+            ),
+        },
+        "text_anchoring": {
+            "tree_positions_and_terminal_indices_available": True,
+            "original_character_spans_available": False,
+            "representation": (
+                "source_charspan is null with an explicit status; reconstructed "
+                "Treebank text is never presented as the exact source string"
             ),
         },
         "tree_availability": {
@@ -425,6 +632,7 @@ def main() -> None:
         ("results.json", results),
         ("summary.json", summary),
         ("resource-vs-annotation.json", resource_boundary),
+        ("corpus-inventory.json", corpus_inventory),
         ("raw/annotation-lines.json", selected_raw_lines),
         ("raw/frame-xml.json", raw_frame_xml),
         ("raw/parse-trees.json", raw_parse_trees),
@@ -436,10 +644,16 @@ def main() -> None:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "host_platform": platform.platform(),
         "nltk_version": nltk.__version__,
+        "adapter_version": ADAPTER_VERSION,
+        "schema_version": SCHEMA_VERSION,
         "propbank_version": PROPBANK_VERSION,
         "propbank_root": str(propbank.root),
         "treebank_root": str(treebank.root),
         "ptb_root": str(ptb.root),
+        "resource_archives": {
+            name: {"path": str(path), "sha256": resource_fingerprints[name]}
+            for name, path in archive_paths.items()
+        },
         "parameters": {
             "rolesets": "propbank.rolesets(lemma) and propbank.roleset(id)",
             "instances": "propbank.instances()",

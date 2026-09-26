@@ -28,11 +28,14 @@ La ressource installée contient :
 - 112 917 instances annotées ;
 - 199 fichiers Treebank installés ;
 - 2 504 entrées dans le catalogue du paquet NLTK `ptb`, mais zéro `.MRG` ;
-- 9 353 instances dont l'arbre est localement résoluble.
+- 9 353 instances dont l'arbre est localement résoluble ;
+- 1 485 annotations portant l'un des 101 identifiants `.XX` non résolus ;
+- 251 formes de labels d'arguments dans les annotations natives.
 
-Les six fixtures retiennent cinq lemmes, six rolesets, 20 arguments et trois
-formes de pointeurs : simples, scindés et chaînés. Les numéros de terminaux sont
-indexés à partir de zéro et comptent les catégories vides et les traces.
+Les huit fixtures retiennent sept lemmes, huit identifiants de rolesets et 26
+arguments. Elles couvrent les pointeurs simples, scindés, chaînés et une chaîne
+contenant elle-même un pointeur scindé. Les numéros de terminaux sont indexés à
+partir de zéro et comptent les catégories vides et les traces.
 
 ## Exemples en langage humain
 
@@ -71,6 +74,18 @@ positions NLTK dans l'arbre, les indices de terminaux et le sous-arbre
 sélectionné. Aplatir ces objets en un seul intervalle textuel ferait perdre les
 traces, discontinuités et relations syntaxiques.
 
+L'instance `expose.01` vérifie en plus la forme imbriquée
+`chain(split(tree,tree,tree),tree)`. Son label natif `ARG2-to` est conservé tel
+quel, tout en exposant séparément le rôle numéroté `ARG2` et le suffixe `to`.
+
+### Les rolesets `.XX` restent explicitement non résolus
+
+PropBank contient 1 485 annotations gold dont le roleset se termine par `.XX`.
+Dans la fixture `note.XX`, la POC ne fabrique aucune définition : elle conserve
+l'identifiant annoté avec `roleset_definition_status =
+unresolved_in_corpus_annotation`, tout en présentant `note.01` et `note.02`
+comme candidats lexicaux complets et non sélectionnés.
+
 ## Frontière entre ressource et analyse automatique
 
 Trois opérations doivent rester distinctes :
@@ -84,6 +99,11 @@ Trois opérations doivent rester distinctes :
 
 Cette POC réalise les deux premières opérations seulement. Elle ne doit pas
 être présentée comme une capacité de semantic role labeling automatique.
+
+Chaque candidat lexical possède un identifiant stable, son producteur, la
+version et l'empreinte SHA-256 de la ressource, ainsi que des liens explicites
+vers les autres candidats du même lookup. Les annotations portent aussi la
+version de l'adaptateur et du schéma.
 
 ## Rapport à l'architecture
 
@@ -104,7 +124,8 @@ provenance. L'alignement d'une occurrence nouvelle relève de LEX-07.
 - Les arbres disponibles proviennent de l'échantillon Penn Treebank de NLTK.
 - Les textes reconstruits depuis les feuilles d'arbre ne restituent pas la
   typographie originale et incluent explicitement les traces dans la vue
-  structurelle.
+  structurelle. Les charspans originaux sont donc `null` avec une raison
+  explicite ; ils ne sont jamais inventés depuis ce texte reconstruit.
 - Les descriptions d'arguments dépendent du roleset ; les `ARGM-*` sont des
   modificateurs généraux et n'ont pas une description numérotée locale.
 - La désambiguïsation du roleset et l'étiquetage d'une phrase nouvelle ne sont
