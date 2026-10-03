@@ -709,6 +709,7 @@ def main() -> None:
     validate(results, args.max_results, args.max_scope_results)
     all_candidates = [candidate for result in results for candidate in result["analyses"]]
     summary = {
+        "verdict": "GO_CONCURRENT_PARSE_AND_SCOPE_CANDIDATES_RETAINED",
         "fixture_count": len(results),
         "candidate_count": len(all_candidates),
         "by_fixture": {

@@ -1104,7 +1104,77 @@ temporel cognitif et ne peuvent pas remplacer les relations entre événements,
   niveau 1, occurrences originales et gain de description mesuré.
 - **Qualification :** **OUTIL À DÉVELOPPER**, cœur propre de l'architecture.
 
-## 15. Soar
+## 15. Runtime durable et Soar
+
+### RUN-01 — Graphe runtime durable sur données réelles
+
+- **POC à faire :** exécuter une époque où chaque composant haut niveau consomme
+  uniquement des identifiants d'artefacts effectivement produits par les
+  composants bas niveau autorisés dans le graphe runtime.
+- **Données à utiliser :** échantillon déterministe tiré des Parquet canoniques
+  Stack Overflow, analyses ACE/ERG et Dynamic Syntax exécutées pendant la POC.
+- **Tools à utiliser :** `runtime_service_graph.json`, SQLite/WAL, services
+  d'analyse vivants, adaptateur MRS, gestionnaire d'hypothèses et Soar/SML.
+- **Résultat à obtenir :** chemin durable source → observation → analyse →
+  représentation → temporalité → hypothèse → état → épisode → retrieval → beam
+  → décision Soar; une transaction et un événement par artefact, ascendance
+  interrogeable, idempotence et rejet des parents absents ou raccourcis entre
+  niveaux.
+- **Qualification :** **NOYAU À DÉVELOPPER** ; les dossiers de sortie d'autres
+  POC sont interdits comme bus runtime.
+
+### RUN-02 — Checkpoint coordonné et reprise équivalente
+
+- **POC à faire :** arrêter puis reconstruire le runtime à une barrière stable,
+  sans prétendre qu'un fichier Soar sauvegarde à lui seul toute la working
+  memory.
+- **Données à utiliser :** base runtime et contexte actif produits par RUN-01,
+  beam de trois observations et décisions Soar correspondantes.
+- **Tools à utiliser :** copie cohérente SQLite, `save agent`, `smem --backup`,
+  `epmem --backup`, snapshot Active Context et reconstruction SML.
+- **Résultat à obtenir :** empreintes des artefacts, watermarks, bases Soar,
+  agent et contexte; nouveau noyau Soar, WM reconstruite, décisions strictement
+  identiques; corruption du contexte ou de la base détectable avant reprise.
+- **Qualification :** **COORDINATEUR À DÉVELOPPER** ; la mémoire persistante
+  externe reste distincte des mémoires natives de Soar.
+
+### RUN-03 — Boucle question-réponse inter-époques
+
+- **POC à faire :** partir d'une décision Soar demandant une réponse, résoudre
+  cette requête vers un vrai enregistrement Parquet, faire de la réponse une
+  nouvelle observation à l'époque suivante et propager ses artefacts jusqu'à
+  une nouvelle décision Soar.
+- **Données à utiliser :** les trois questions réelles de RUN-01 et, pour
+  chacune, la réponse Stack Overflow classée première parmi les trois références
+  récupérées; HTML brut, empreinte et coordonnées sources doivent être conservés.
+- **Tools à utiliser :** store durable RUN-01, graphe runtime, segmentation
+  phrastique attribuée, ACE/ERG, Dynamic Syntax, adaptateurs MRS, états et
+  épisodes chaînés, Soar/SML et checkpoint coordonné.
+- **Résultat à obtenir :** deux époques durables; la décision
+  `retrieve-answer` est un ancêtre de la source réponse; chaque nouvel état et
+  épisode dépend de son prédécesseur; les sorties basses alimentent réellement
+  les niveaux hauts; Soar produit `assess-answer`; arrêt/reprise équivalents.
+- **Qualification :** **NOYAU À DÉVELOPPER** ; cette preuve valide la boucle
+  dynamique, pas encore le jugement de pertinence ni la réponse générée.
+
+### RUN-04 — Opérateurs Soar et transformation d'état
+
+- **POC à faire :** convertir chaque décision `assess-answer` en transformations
+  d'état concurrentes, les exposer à Soar comme opérateurs et appliquer le choix
+  dans un nouvel état sans confondre rattachement, pertinence et vérité.
+- **Données à utiliser :** les états, épisodes, décisions et fragments MRS des
+  trois séquences question-réponse produites par RUN-03.
+- **Tools à utiliser :** gestionnaire de transformations, préférences et
+  opérateurs Soar/SML, store durable, liens inter-époques et checkpoints par
+  contexte conversationnel indépendant.
+- **Résultat à obtenir :** candidats `attach-answer-candidate`, `keep-qud-open`
+  et `reject-answer`; sélection du premier uniquement lorsque provenance directe
+  et contenu parsé sont présents; impasse sans support attribué; état d'époque 2
+  gardant le QUD ouvert et n'affirmant pas la vérité de la réponse.
+- **Qualification :** **NOYAU À DÉVELOPPER** ; le rattachement prudent est
+  démontré, l'évaluation sémantique de pertinence reste une frontière suivante.
+
+## 15.1 Soar
 
 ### SOAR-01 — Working memory et contexte actif
 
@@ -1399,8 +1469,9 @@ temporel cognitif et ne peuvent pas remplacer les relations entre événements,
 11. IND-01 à IND-06, SEM-06, CULT-01 et CULT-05 : valider les outils choisis,
    développer le cœur inductif et démontrer l’émergence de relations sémiotiques,
    concepts et scripts sans taxonomie culturelle ou humoristique imposée.
-12. SOAR-01 à SOAR-05 avec HYP-07 : valider le beam borné et diversifié, les
-   données runtime et le bridge vers les alternatives persistantes externes.
+12. RUN-01/02/03/04, SOAR-01 à SOAR-05 avec HYP-07 : valider le graphe runtime
+   durable, la reprise, le beam borné et diversifié, les données actives et le
+   bridge vers les alternatives persistantes externes.
 13. COMM-01 à COMM-03, puis GEN-01 à GEN-04 : séparer planification
     communicative et réalisation linguistique.
 14. CULT-02 à CULT-04, CULT-06, DLG-14 et X-01 à X-07 : confirmer

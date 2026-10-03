@@ -608,6 +608,7 @@ def main() -> None:
         for category in ("both", "erg_only", "link_grammar_only", "neither")
     }
     summary = {
+        "verdict": "GO_KEEP_LINK_GRAMMAR_AS_ATTRIBUTED_SECONDARY_ANALYZER",
         "fixture_count": len(fixtures),
         "coverage": coverage_counts,
         "erg_candidate_count": sum(

@@ -32,3 +32,41 @@ Passe 3 — Architecture et intégration systémique
 Objectif : démontrer que les capacités peuvent réellement fonctionner ensemble.
 Définir les proto-services, les contrats, les dépendances et les frontières. Puis construire progressivement les chaînes intégrées et procéder aux validations GO/NO-GO.
 Livrable : architecture exécutable, documentée et testée de bout en bout.
+
+État : chaîne intégrée initiale exécutable. Dix proto-services couvrent
+observation, analyses externes, projection sémantique non destructive,
+relations temporelles formelles E/R/S, état de dialogue, hypothèses, retrieval
+borné, décision, planification et réalisation.
+Les contrats refusent les entrées incompatibles, propagent causalité,
+provenance et pertes, et produisent explicitement GO ou NO-GO. Commande :
+`./scripts/seman2 phase3`. Spécification et limites :
+`plans/phase_3_architecture_integration.md`.
+
+Extension sur matière réelle : `sample-corpus` sélectionne de façon
+déterministe trois cas de couverture dans dix vrais shards Parquet sous un
+plafond DuckDB de 256 Mo. `plan-services` exécute ACE/ERG et Dynamic Syntax,
+conserve les échecs dans un ledger et transforme neuf MRS réelles en fragments
+génériques. Résultat observé : ERG couvre les trois titres; Dynamic Syntax n'en
+complète aucun; trois candidats temporels E/R/S sont explicites et six restent
+sous-spécifiés. Neuf hypothèses persistantes sont maintenant créées sans
+sélection prématurée et sans matérialiser le produit inter-observations 3×3×3.
+La séquence question-réponse est maintenant traversée sur deux époques : une
+décision Soar récupère une vraie réponse Parquet, celle-ci repasse par les
+analyses basses, puis alimente état, épisode, beam et une décision
+`assess-answer`. RUN-04 matérialise ensuite trois transformations concurrentes,
+les soumet comme vrais opérateurs Soar et applique le rattachement prudent dans
+un état d'époque 2 sans fermer le QUD ni affirmer la vérité. La prochaine
+frontière est une sélection de pertinence fondée sur le contenu, suivie de
+planification communicative réelle sur plusieurs tours.
+
+Correction de portée : les chaînes actuelles sont des échafaudages. Le runtime
+cible est maintenant décrit dans `plans/runtime_service_graph.json` comme un
+graphe événementiel de 20 services, avec chemins data/control séparés, boucles
+inter-époques, mémoire globale durable, contexte Soar borné et checkpoint
+coordonné. Les sorties `poc/*/output` et OpenRouter sont explicitement hors du
+chemin cognitif. RUN-01/02/03/04 couvrent maintenant le chemin durable, la
+reprise équivalente, la première boucle causale inter-époques et la sélection
+d'une transformation d'état par opérateurs/préférences Soar. Prochaine preuve
+obligatoire : évaluer la pertinence sur justifications sémantiques et
+discursives, puis laisser Soar choisir entre intégration, réparation et demande
+de clarification.

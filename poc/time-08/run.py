@@ -51,8 +51,8 @@ def main():
     relation_hash_after = digest(integrated["cognitive_relations"])
     assert relation_hash_before == relation_hash_after
     assert all(not analysis["selected_as_cognitive_truth"] and not analysis["may_create_cognitive_relation"] for analysis in external)
-    old_summary = load(LEGACY / "coexistence/output/summary.json")
-    assert old_summary["arbitrary_truth_selection_performed"] is False
+    coexistence_summary = load(LEGACY / "coexistence/output/summary.json")
+    assert coexistence_summary["arbitrary_truth_selection_performed"] is False
     gaps = [
         {"phenomenon": "reference_time_and_reported_speech", "represented_by_surface_normalization": False, "covered_by": "TIME-03"},
         {"phenomenon": "state_persistence_and_inertia", "represented_by_surface_normalization": False, "covered_by": "TIME-04"},
@@ -69,6 +69,13 @@ def main():
         "relational_hash_before_external_analyses": relation_hash_before,
         "relational_hash_after_external_analyses": relation_hash_after,
         "removing_external_analyses_preserves_cognitive_relations": True,
+        "validations": {
+            "external_analyses_never_selected": all(not item["selected_as_cognitive_truth"] for item in external),
+            "external_analyses_cannot_create_cognitive_relations": all(not item["may_create_cognitive_relation"] for item in external),
+            "addition_preserves_relational_hash": relation_hash_before == relation_hash_after,
+            "removal_preserves_relational_hash": digest(cognitive_relations) == relation_hash_after,
+            "coexistence_made_no_arbitrary_selection": coexistence_summary["arbitrary_truth_selection_performed"] is False,
+        },
     }
     summary = {
         "external_analysis_count": len(external),
@@ -78,7 +85,8 @@ def main():
         "verdict": "GO_EXTERNAL_TEMPORAL_ANALYZERS_QUARANTINED",
     }
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    for name, value in (("results.json", result), ("summary.json", summary), ("surface-capability-gaps.json", gaps), ("versions-and-parameters.json", {"generated_at": datetime.now(timezone.utc).isoformat(), "platform": platform.platform(), "legacy_sources": ["TIME-01 HeidelTime legacy", "TIME-02 Duckling legacy", "TIME-03 coexistence legacy"], "policy": "external attributed annotations only"})):
+    assert all(result["validations"].values())
+    for name, value in (("results.json", result), ("summary.json", summary), ("surface-capability-gaps.json", gaps), ("versions-and-parameters.json", {"generated_at": datetime.now(timezone.utc).isoformat(), "platform": platform.platform(), "legacy_sources": ["HeidelTime extraction fixture", "Duckling extraction fixture", "analyzer coexistence fixture"], "policy": "external attributed annotations only"})):
         (OUTPUT / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"TIME-08: {len(external)} quarantined analyses; 0 cognitive relation mutation; {len(gaps)} documented gaps")
 

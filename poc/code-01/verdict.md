@@ -1,5 +1,8 @@
 # Verdict CODE-01
 
+Le contrôle négatif est porté explicitement par CODE-02 : code incomplet ou
+invalide, nœuds `ERROR`/`MISSING` et conservation du matériau non analysé.
+
 **GO — CST sans perte sur les sept grammaires.**
 
 Chaque racine couvre tous les octets UTF‑8 et reconstruit exactement la source.

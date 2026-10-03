@@ -16,7 +16,7 @@ from typing import Any
 
 
 POC_DIR = Path(__file__).resolve().parent
-ROOT = POC_DIR.parent.parent
+ROOT = POC_DIR.parents[3]
 HEIDEL_DIR = ROOT / ".local" / "opt" / "heideltime"
 JAR = HEIDEL_DIR / "de.unihd.dbs.heideltime.standalone.jar"
 CONFIG = HEIDEL_DIR / "config.props"

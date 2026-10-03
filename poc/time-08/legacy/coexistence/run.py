@@ -14,9 +14,9 @@ from typing import Any
 
 
 POC_DIR = Path(__file__).resolve().parent
-ROOT = POC_DIR.parent.parent
-TIME01 = ROOT / "poc" / "time-01" / "output"
-TIME02 = ROOT / "poc" / "time-02" / "output"
+ROOT = POC_DIR.parents[3]
+TIME01 = POC_DIR.parent / "heideltime" / "output"
+TIME02 = POC_DIR.parent / "duckling" / "output"
 OUTPUT = POC_DIR / "output"
 
 

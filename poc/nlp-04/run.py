@@ -712,6 +712,7 @@ def main() -> None:
         analysis["dmrs_anchoring"]["coverage"] for analysis in all_analyses
     ]
     summary = {
+        "verdict": "GO_EXACT_SOURCE_ANCHORING_AND_RECONSTRUCTION",
         "fixture_count": len(results),
         "analysis_count": len(all_analyses),
         "analysis_limit_per_fixture": args.max_results,

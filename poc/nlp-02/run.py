@@ -607,6 +607,7 @@ def main() -> None:
     validate(results, args.max_results)
     all_analyses = [analysis for result in results for analysis in result["analyses"]]
     summary = {
+        "verdict": "GO_MRS_EDS_DMRS_WITH_DOCUMENTED_CONVERSION_LOSSES",
         "fixture_count": len(results),
         "candidate_count": len(all_analyses),
         "quality": {

@@ -1,0 +1,86 @@
+{
+  "evaluation_id": "phase3-corpus-plan",
+  "subject": "output/phase3/proto-service-plan.json",
+  "claim": "Les vrais enregistrements Parquet traversent ingestion, analyses externes, ledger, MRS, temporalité et hypothèses sans perte, faux succès ni explosion cartésienne.",
+  "deterministic_expectations": [
+    {
+      "id": "command-completed",
+      "pointer": "/status",
+      "operator": "equals",
+      "expected": "GO"
+    },
+    {
+      "id": "qualified-integration-status",
+      "pointer": "/plan/payload/status",
+      "operator": "equals",
+      "expected": "GO-INGESTION-ERG-MRS-HYPOTHESES; NO-GO-DYNAMIC-SYNTAX-COVERAGE"
+    },
+    {
+      "id": "real-question-count",
+      "pointer": "/trace/1/payload/samples",
+      "operator": "length_equals",
+      "expected": 3
+    },
+    {
+      "id": "dynamic-syntax-failures-preserved",
+      "pointer": "/trace/4/payload/failure_count",
+      "operator": "equals",
+      "expected": 3
+    },
+    {
+      "id": "all-mrs-alternatives-preserved",
+      "pointer": "/trace/5/payload/fragments",
+      "operator": "length_equals",
+      "expected": 9
+    },
+    {
+      "id": "temporal-unknowns-preserved",
+      "pointer": "/trace/6/payload/temporal_unresolved",
+      "operator": "length_equals",
+      "expected": 6
+    },
+    {
+      "id": "persistent-hypothesis-count",
+      "pointer": "/trace/7/payload/persistent_count",
+      "operator": "equals",
+      "expected": 9
+    },
+    {
+      "id": "no-joint-product-materialized",
+      "pointer": "/trace/7/payload/materialized_joint_interpretations",
+      "operator": "equals",
+      "expected": 0
+    },
+    {
+      "id": "theoretical-product-recorded",
+      "pointer": "/trace/7/payload/theoretical_cross_observation_product",
+      "operator": "equals",
+      "expected": 27
+    },
+    {
+      "id": "no-premature-selection",
+      "pointer": "/trace/7/payload/selection_events",
+      "operator": "length_equals",
+      "expected": 0
+    }
+  ],
+  "semantic_projection": "phase3-corpus-plan",
+  "semantic_expectations": [
+    {
+      "id": "question-force-adequacy",
+      "expectation": "Pour chaque titre interrogatif, au moins un candidat MRS doit conserver une force interrogative ou explicitement ambiguë entre proposition et question."
+    },
+    {
+      "id": "main-content-coverage",
+      "expectation": "Pour chaque titre, au moins un ensemble de prédicats MRS doit représenter l'opération ou relation principalement demandée et ses principaux concepts, sans exiger une interprétation unique."
+    },
+    {
+      "id": "temporal-restraint",
+      "expectation": "Une contrainte temporelle formelle ne doit être produite que lorsqu'un temps est présent dans le MRS; les temps absents ou untensed doivent rester sous-spécifiés et aucune date absolue ne doit être inventée."
+    },
+    {
+      "id": "producer-failure-honesty",
+      "expectation": "Les échecs Dynamic Syntax doivent rester des échecs attribués et ne doivent pas être présentés comme une corroboration de la sémantique ERG."
+    }
+  ]
+}

@@ -3503,6 +3503,68 @@ La mémoire globale externe fournit à Soar uniquement les éléments actifs né
 
 Pour l’incertitude, cette frontière est stricte : Soar reçoit uniquement un **beam actif borné** d’hypothèses ou d’interprétations matérialisées, accompagné des contraintes et justifications nécessaires au raisonnement courant. Les alternatives persistantes non actives restent dans le gestionnaire d’hypothèses externe.
 
+## 19.1 Runtime continu, graphe de services et reprise
+
+Le runtime n'est ni la suite des scripts de POC, ni une chaîne qui relit leurs
+répertoires `output`. Les POC testent les composants; en exécution, les services
+échangent directement des identifiants d'observations, d'analyses, de fragments,
+d'hypothèses, d'états et d'épisodes selon le graphe machine-readable
+`plans/runtime_service_graph.json`.
+
+Dans une époque de traitement, les données montent effectivement des niveaux
+bas vers les niveaux hauts : source → observation immuable → analyses natives
+attribuées → adaptateurs → correspondances → temporalité et hypothèses → état
+et mémoire épisodique → retrieval → beam actif → working memory Soar →
+transformations → planification → réalisation. Soar forme en plus des boucles
+de contrôle bornées avec le retrieval et le générateur de transformations. Les
+sorties du système redeviennent des observations attribuées à l'époque suivante.
+
+Une donnée retrouvée suit la même discipline. Une décision Soar ne livre pas
+directement du texte à un composant haut niveau : elle émet une requête vers le
+retrieval structurel. La référence résolue matérialise, à l'époque suivante,
+un nouvel artefact source immuable. Celui-ci repasse par le ledger
+d'observations, les analyseurs, les adaptateurs et le gestionnaire d'hypothèses.
+Le nouvel état de situation et le nouvel épisode dépendent à la fois de ces
+résultats bas niveau et de leur état/épisode prédécesseur. Cette boucle rend la
+progression conversationnelle causale et empêche qu'un niveau haut lise
+directement les Parquet ou saute les transformations intermédiaires.
+
+Une demande d'évaluation n'est pas encore une mise à jour d'état. Le runtime
+matérialise d'abord plusieurs transformations inspectables — par exemple
+rattacher une réponse comme candidat d'évidence, garder la question ouverte ou
+rejeter le tour — avec préconditions, effets et justifications. Soar les reçoit
+comme de vrais opérateurs concurrents et ses préférences sélectionnent une
+transformation. L'application se fait dans une époque ultérieure et produit un
+nouvel état réversible. Rattacher une réponse ne signifie ni qu'elle est
+pertinente, ni qu'elle est vraie, ni que la question est résolue; ces décisions
+exigent leurs propres preuves. Des conversations indépendantes possèdent des
+contextes de décision indépendants : leurs opérateurs ne doivent jamais être
+mis artificiellement en compétition dans un unique état Soar.
+
+Le processus peut conserver un contexte chaud important en mémoire, mais les
+responsabilités restent séparées : corpus et mémoire globale disk-backed,
+caches bornés par service, hypothèses persistantes factorisées, Active Context
+borné et working memory Soar limitée à ce qui est pertinent pour les cycles
+courants. Charger tout le corpus ou toutes les alternatives dans Soar violerait
+l'architecture.
+
+La reprise après arrêt est un **checkpoint coordonné du système**, pas seulement
+un fichier Soar. Sur l'installation retenue, `save agent` couvre les productions,
+la mémoire sémantique et des réglages; les mémoires sémantique et épisodique ont
+aussi leurs sauvegardes de base. Cette capacité ne suffit pas à affirmer que la
+working memory courante est restaurée intégralement. Le checkpoint doit donc
+conserver également Active Context, beam, buts et opérateurs exposés, références
+externes, watermarks des stores, travaux en vol, offset du journal d'entrée et
+graine aléatoire. La restauration recharge les stores et l'état Soar
+sauvegardable, reconstruit la WM depuis l'Active Context attribué, rejoue
+uniquement les événements postérieurs au watermark, puis compare l'état et la
+décision obtenus à ceux précédant l'arrêt.
+
+OpenRouter et les manifestes d'attentes appartiennent exclusivement au plan
+d'évaluation des POC. Ils peuvent comparer une trace produite à une attente
+sémantique difficile à formaliser, mais leur verdict n'entre jamais dans la
+mémoire cognitive, le ranking, Soar ou le chemin de production.
+
 ---
 
 # 20. Grand Contexte Global

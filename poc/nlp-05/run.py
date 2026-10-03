@@ -539,6 +539,7 @@ def main() -> None:
         for linkage in result["null_link_recovery"]["linkages"]
     ]
     summary = {
+        "verdict": "GO_ATTRIBUTED_LINK_GRAMMAR_ALTERNATIVES_AND_FAILURES",
         "fixture_count": len(results),
         "strict_parse_successes": sum(
             result["strict_parse"]["status"] == "parsed" for result in results

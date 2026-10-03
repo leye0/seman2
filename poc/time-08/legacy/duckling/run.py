@@ -20,7 +20,7 @@ from typing import Any
 
 
 POC_DIR = Path(__file__).resolve().parent
-ROOT = POC_DIR.parent.parent
+ROOT = POC_DIR.parents[3]
 DUCKLING = ROOT / ".local" / "opt" / "duckling" / "bin" / "duckling-example-exe"
 OUTPUT = POC_DIR / "output"
 

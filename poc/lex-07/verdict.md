@@ -2,6 +2,8 @@
 
 ## Décision
 
+**GO — bundle de candidats attribués, sans désambiguïsation implicite.**
+
 La pile convient pour construire un ensemble de candidats traçable lié à une
 occurrence. Elle ne fournit pas, par simple composition des ressources, un
 désambiguïsateur lexical ou un détecteur de frame.

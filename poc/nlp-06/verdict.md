@@ -2,6 +2,8 @@
 
 ## Décision
 
+**GO — complémentarité démontrée ; conserver Link Grammar comme analyseur secondaire attribué.**
+
 **CONSERVER LINK GRAMMAR COMME ANALYSEUR SECONDAIRE ATTRIBUÉ.**
 
 Il ne remplace pas ERG et ne doit pas devenir un fallback considéré comme vrai

@@ -394,6 +394,11 @@ ln -sfn ../opt/nuwls/bin/NuWLS-c "$BIN/NuWLS-c"
 log "IsaNLP RST et modèle gumrrg"
 clone_at "https://github.com/tchewik/isanlp_rst.git" \
   "cc8789f44c1341c3e7752b472634d75e81b62518" "$SRC/isanlp_rst"
+if ! git -C "$SRC/isanlp_rst" apply --check --reverse \
+  "$SEMAN2_ROOT/patches/isanlp-rst-memory-efficient-load.patch" 2>/dev/null; then
+  git -C "$SRC/isanlp_rst" apply \
+    "$SEMAN2_ROOT/patches/isanlp-rst-memory-efficient-load.patch"
+fi
 "$BIN/uv" pip install --python "$SEMAN2_ROOT/.venv-rst/bin/python" \
   "isanlp @ git+https://github.com/iinemo/isanlp.git@2a102e59f9718acc7fe259dd8d83c66d5da39794" \
   -e "$SRC/isanlp_rst" "torch==2.14.0" "transformers==5.17.0"

@@ -75,6 +75,54 @@ Cette commande vérifie notamment ACE + ERG, Link Grammar, les corpus NLTK,
 SemLink, SUMO, TreeTagger, HeidelTime, SimpleNLG, Soar, SWI-Prolog, Popper,
 NuWLS-c, IsaNLP RST et le service HTTP Duckling en français.
 
+### Rejouer et auditer toutes les POCs
+
+```bash
+./scripts/seman2 audit-pocs
+```
+
+Cette commande lit les 93 POCs déclarées dans `plans/required_poc.md`, calcule
+leur ordre de dépendances, reconstruit les résultats ignorés par Git et vérifie
+les codes de sortie, timeouts, JSON, artefacts obligatoires, verdicts et oracles
+exécutables. Les journaux et le rapport machine-readable sont conservés sous
+`.local/state/poc-audit/`.
+
+Pour contrôler seulement la structure ou cibler quelques POCs :
+
+```bash
+./scripts/seman2 audit-pocs --static
+./scripts/seman2 audit-pocs --only TIME-08 --only NLP-03
+```
+
+### Exécuter l'intégration des proto-services
+
+```bash
+./scripts/seman2 phase3
+```
+
+Cette commande fait traverser une observation réelle aux dix proto-services,
+depuis le contrat d'entrée jusqu'à SimpleNLG. Elle utilise les sorties natives
+ACE/ERG et Dynamic Syntax de DLG-03, conserve leurs limites et divergences,
+borne seulement le jeu de travail des hypothèses et produit une trace causale
+complète sous `output/phase3/`. Une frontière incompatible termine en
+`NO-GO`, sans valeur par défaut silencieuse.
+
+Pour construire la planification suivante depuis de vrais enregistrements des
+Parquet canoniques :
+
+```bash
+./scripts/seman2 sample-corpus
+./scripts/seman2 plan-services
+```
+
+L'échantillonnage est déterministe, limité à cinq couples de shards espacés,
+exécuté avec un seul thread et un plafond DuckDB de 256 Mo. `plan-services`
+projette trois titres sourcés, exécute réellement ACE/ERG et Dynamic Syntax,
+conserve tous les succès et échecs dans un ledger, puis adapte chaque MRS en
+fragment générique sans sélectionner prématurément une analyse. Les neuf
+candidats deviennent ensuite neuf hypothèses persistantes indépendantes, sans
+matérialiser leur produit cartésien.
+
 ### Construire les données Parquet canoniques
 
 ```bash
