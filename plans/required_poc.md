@@ -1,4 +1,4 @@
-# POC requises pour les outils et contrats de l'architecture
+# POC requises pour les hypothèses, outils et contrats de l'architecture
 
 ## 1. But et périmètre
 
@@ -8,10 +8,12 @@ dans `plans/required_libraries.md`.
 
 Il répond aux questions suivantes :
 
-> Les outils et bibliothèques retenus produisent-ils les données structurées
-> dont l'architecture cognitive a besoin ? Les adaptateurs et composants propres
-> au projet peuvent-ils les conserver, les combiner et mettre à jour le contexte
-> de dialogue sans perte, vérité imposée ni transition opaque ?
+> Les hypothèses structurantes de l’architecture résistent-elles à des cas
+> positifs, négatifs et adversariaux ? Les outils et bibliothèques retenus
+> produisent-ils les données structurées nécessaires ? Les adaptateurs et
+> composants propres au projet peuvent-ils les conserver, les combiner et mettre
+> à jour le contexte sans perte, vérité imposée, explosion combinatoire ni
+> transition opaque ?
 
 Ce document ne couvre pas l'ingestion massive des corpus, dumps ou autres
 sources. Il couvre toutefois l'import de petits extraits annotés de DialogBank,
@@ -22,7 +24,8 @@ sorties des outils et les transitions du runtime.
 
 Verdicts possibles :
 
-- **GO** : l'outil fournit les données attendues ;
+- **GO** : l’hypothèse testée tient dans le périmètre et sous les seuils annoncés,
+  et l’outil fournit les données attendues lorsqu’un outil externe est impliqué ;
 - **PARTIEL** : l'outil ne couvre qu'une partie des données, langues ou cas ;
 - **ADAPTATEUR À DÉVELOPPER** : les données existent, mais leur conversion vers
   la représentation commune doit être développée ;
@@ -35,6 +38,13 @@ Pour les POC multi-tours, conserver aussi l'état avant, tous les candidats de
 mise à jour, la décision, l'état après, les supports linguistiques et les raisons
 de rejet. Une annotation ISO, SDRT, KoS/TTR ou ISU reste une analyse attribuée :
 elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
+
+Un POC ne reçoit un verdict **GO** que s’il teste l’hypothèse architecturale
+sous-jacente avec un oracle explicite et au moins un cas négatif ou adversarial.
+Un import réussi ou un paquet importable ne suffit pas. Pour les POC portant sur
+l’incertitude, mesurer séparément le nombre d’hypothèses locales persistantes, le
+nombre de compositions globales réellement matérialisées, la mémoire, la latence
+et les éléments nécessaires à une reconstruction ultérieure.
 
 ## 2. ERG, ACE et PyDelphin
 
@@ -197,40 +207,262 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   obtenues par lookup, par mapping et celles qui exigent une décision du moteur
   cognitif.
 
-## 5. Temps et valeurs structurées
+## 5. Temporalité relationnelle et valeurs temporelles externes
 
-### TIME-01 — HeidelTime
+Les POC temporelles testent d'abord le sous-système relationnel du cœur. Les
+dates et heures produites par une source, HeidelTime ou Duckling restent des
+ancres ou analyses externes attribuées. Elles ne constituent jamais l'état
+temporel cognitif et ne peuvent pas remplacer les relations entre événements,
+états, observations, épisodes et contextes.
 
-- **POC à faire :** vérifier extraction et normalisation des expressions
-  temporelles.
-- **Données à utiliser :** dates absolues et relatives, heures, durées,
-  fréquences, intervalles et expressions ambiguës en anglais et français, avec
-  différentes dates de document.
-- **Tools à utiliser :** HeidelTime, TreeTagger.
-- **Résultat à obtenir :** annotations TIMEX3, type, valeur normalisée, span et
-  dépendance à la date de document ; matrice de couverture anglais/français.
+### TIME-01 — Ordre observable et ancres externes séparées
 
-### TIME-02 — Duckling
+- **Hypothèse testée :** l'ordre directement observable peut être conservé sans
+  être converti en chronologie absolue, tandis que les timestamps de source
+  restent des objets de provenance séparés.
+- **POC à faire :** construire un graphe d'observations, messages, tours et
+  épisodes à partir d'ordres de source complets et partiels, avec et sans
+  timestamps, puis vérifier ses invariants.
+- **Données à utiliser :** séquences linéaires, messages `reply_to` reçus dans
+  le désordre, événements simultanés ou non ordonnés, timestamps égaux,
+  contradictoires et absents.
+- **Tools à utiliser :** NetworkX ou rustworkx ; schéma explicite des
+  `ExternalClockAnchor`, `ExternalCalendarAnchor` et `SourceTimestamp`.
+- **Résultat à obtenir :** relations observables typées, ordre partiel,
+  composantes incomparables, cycles ou contradictions signalés, et ancres
+  externes reliées par provenance sans arête temporelle cognitive implicite.
+  Retirer toutes les ancres doit laisser intact l'ordre relationnel disponible.
+- **Qualification :** **OUTIL À DÉVELOPPER** pour le contrat du sous-système
+  Temporal / Episodic Relation.
 
-- **POC à faire :** établir les dimensions structurées réellement produites.
-- **Données à utiliser :** temps, nombres, ordinaux, quantités, monnaies,
-  mesures, durées et intervalles en anglais et français.
-- **Tools à utiliser :** Duckling.
-- **Résultat à obtenir :** dimension, valeur, unité, grain, intervalle, statut
-  latent, alternatives et spans ; matrice dimensions × locales.
+### TIME-02 — Algèbre d'intervalles et propagation de contraintes
 
-### TIME-03 — Coexistence HeidelTime / Duckling
+- **Hypothèse testée :** des relations temporelles candidates peuvent être
+  composées et vérifiées avec un formalisme reconnu sans devenir une ontologie
+  cognitive fermée.
+- **POC à faire :** implémenter un réseau de contraintes sur l'algèbre
+  d'intervalles d'Allen, incluant converse, composition, fermeture de chemin et
+  détection d'incohérence ; conserver les ensembles disjonctifs de relations.
+- **Données à utiliser :** treize relations de base, compositions canoniques,
+  relations ambiguës, réseau cohérent à ordre partiel et réseau contradictoire
+  avec oracle explicite.
+- **Tools à utiliser :** tables publiées de l'algèbre d'Allen, bitsets ou
+  ensembles immuables, NetworkX ; Z3 seulement comme oracle indépendant sur un
+  sous-ensemble.
+- **Résultat à obtenir :** contraintes initiales et déduites séparées,
+  provenance de chaque raffinement, fermeture sans choix arbitraire d'une
+  relation atomique, cycle incohérent expliqué et correspondance avec l'oracle.
+  Les noms Allen restent `formalism = AllenIntervalAlgebra`, jamais des
+  primitives apprises du Learned Graph.
 
-- **POC à faire :** vérifier que leurs résultats peuvent être alignés et
-  conservés comme analyses attribuées distinctes.
-- **Données à utiliser :** expressions pour lesquelles les outils s'accordent,
-  divergent ou dont un seul fournit une analyse.
-- **Tools à utiliser :** HeidelTime, Duckling.
-- **Résultat à obtenir :** comparaison sur les mêmes spans, formats normalisés,
-  divergences explicites et aucune sélection arbitraire d'une « vérité ».
-- **Qualification :** **ADAPTATEUR À DÉVELOPPER** pour le schéma commun.
+### TIME-03 — Temps d'événement, de référence et d'énonciation
 
-## 6. Discours
+- **Hypothèse testée :** le triplet de Reichenbach permet de distinguer temps de
+  l'événement, temps de référence et temps d'énonciation, notamment dans les
+  temps relatifs, sans rabattre l'analyse sur une date.
+- **POC à faire :** représenter et résoudre des contraintes E/R/S produites par
+  des analyses contrôlées, y compris dans le discours rapporté.
+- **Données à utiliser :** présent, passé simple, plus-que-parfait, futur,
+  futur antérieur et « Hier, Julie m'a dit que Paul partirait demain », en
+  français et en anglais lorsque les constructions sont comparables.
+- **Tools à utiliser :** modèle de Reichenbach, contraintes d'ordre de TIME-02,
+  structures candidates inspirées de DRT/Temporal DRT.
+- **Résultat à obtenir :** nœuds E/R/S distincts, contraintes et portée de
+  chaque contexte d'énonciation, lectures concurrentes lorsque nécessaire,
+  absence de date inventée et contre-exemple montrant qu'une unique valeur
+  normalisée perd une relation essentielle.
+
+### TIME-04 — Événements, états, aspect et persistance
+
+- **Hypothèse testée :** une sémantique événementielle et un calcul explicite
+  de persistance permettent de reconstruire des états successifs sans supposer
+  qu'ils persistent tous indéfiniment.
+- **POC à faire :** relier événements, états et transformations dans un petit
+  moteur inspiré de l'Event Calculus, avec initiation, terminaison, inertie et
+  requêtes à une position relationnelle.
+- **Données à utiliser :** lampe allumée puis éteinte, état laissé inchangé,
+  événement sans effet, événements concurrents contradictoires, activité en
+  cours et état borné par une durée.
+- **Tools à utiliser :** Event Calculus comme formalisme externe de référence,
+  TIME-02, contraintes et moteur d'état CORE-01A.
+- **Résultat à obtenir :** état initial, événements ordonnés, fluents initiés ou
+  terminés, preuve de persistance, état final et contradictions explicites. Les
+  états intermédiaires restent interrogeables et aucune heure absolue n'est
+  requise.
+
+### TIME-05 — Anaphore et relations temporelles du discours
+
+- **Hypothèse testée :** DRT/Temporal DRT et SDRT peuvent fournir des
+  structures candidates pour les anaphores et relations temporelles
+  interphrastiques sans imposer une lecture unique au cœur.
+- **POC à faire :** adapter des analyses contrôlées en référents discursifs,
+  événements, temps de référence, relations SDRT et ensembles de candidats.
+- **Données à utiliser :** `then/puis`, `before/avant`, `after/après`,
+  `still/encore`, `already/déjà`, discours rapporté, antécédents multiples et
+  cas sans antécédent résoluble.
+- **Tools à utiliser :** DRT/Temporal DRT, SDRT, TIME-02/03 et gestionnaire
+  d'hypothèses factorisées.
+- **Résultat à obtenir :** antécédents candidats, contraintes de portée et de
+  discours, supports textuels, ambiguïtés conservées, échec explicite et aucun
+  branchement lexical ad hoc servant de vérité cognitive.
+- **Qualification :** **ADAPTATEUR À DÉVELOPPER** au-dessus des formalismes.
+
+### TIME-06 — Contexte épisodique et rappel temporel relationnel
+
+- **Hypothèse testée :** une position temporelle peut être reconstruite à
+  partir de l'organisation des épisodes et contextes avant de consulter une
+  ancre calendaire facultative.
+- **POC à faire :** indexer une séquence d'épisodes avec frontières, contenus,
+  transmissions et relations partielles, puis répondre à « quand ai-je entendu
+  P ? ».
+- **Données à utiliser :** discussion avec Julie, transmission de P, départ au
+  travail, épisode chevauchant, distracteur sémantique et ancre externe
+  facultative attachée à la transmission.
+- **Tools à utiliser :** graphe épisodique, TIME-01/02, retrieval structurel et
+  Source/Transmission Graph.
+- **Résultat à obtenir :** chemin P → TransmissionOccurrence → Episode,
+  réponse relationnelle minimale (« après A et avant C »), degré d'incertitude,
+  puis enrichissement calendaire seulement si demandé et disponible. La réponse
+  relationnelle doit rester identique lorsque l'ancre est retirée.
+
+### TIME-07 — Ambiguïté et révision temporelles non destructives
+
+- **Hypothèse testée :** l'arrivée de nouvelles relations peut raffiner ou
+  invalider une reconstruction courante sans réécrire les observations,
+  analyses ni sélections historiques.
+- **POC à faire :** exécuter un scénario en plusieurs temps comportant deux
+  ordres possibles, une sélection initiale, une contradiction tardive et un
+  nouveau classement.
+- **Données à utiliser :** relations disjonctives Allen, anaphore ambiguë,
+  correction explicite, timestamp de source contradictoire et observation
+  ultérieure décisive.
+- **Tools à utiliser :** TIME-02/05, HYP-01 à HYP-05 et Evidence Ledger.
+- **Résultat à obtenir :** hypothèses factorisées, snapshots de sélection,
+  supports et contradictions datés, nouvelle sélection, ancien état toujours
+  reconstructible et aucune mutation rétroactive.
+- **Qualification :** **OUTIL À DÉVELOPPER**.
+
+### TIME-08 — Analyseurs temporels de surface en quarantaine
+
+- **Hypothèse testée :** HeidelTime et Duckling restent utiles comme producteurs
+  externes de spans, valeurs et durées sans contaminer la représentation
+  temporelle relationnelle.
+- **POC à faire :** reprendre les expériences historiques d'extraction et de
+  coexistence, mais injecter leurs sorties uniquement via le contrat
+  d'annotation externe et tester les barrières de non-collapse.
+- **Données à utiliser :** accords, divergences, dates relatives dépendant de la
+  date du document, intervalles, expressions ambiguës et expressions
+  aspectuo-temporelles que les normaliseurs représentent mal ou pas du tout.
+- **Tools à utiliser :** HeidelTime, TreeTagger, Duckling, GRAPH-02 et sorties
+  TIME-01 à TIME-07.
+- **Résultat à obtenir :** analyses attribuées distinctes, valeurs natives et
+  alternatives, ancres externes facultatives, aucune sélection arbitraire,
+  aucune modification des relations cognitives lors de l'ajout ou du retrait
+  des normalisations et rapport explicite de ce que ces outils ne modélisent pas.
+- **Qualification :** **ADAPTATEUR À DÉVELOPPER** ; les anciens POC
+  HeidelTime/Duckling deviennent des fixtures de régression de TIME-08.
+
+## 6. Acquisition sémiotique ouverte
+
+### SEM-01 — Transcription phonologique attribuée et non destructive
+
+- **Hypothèse testée :** une forme écrite peut recevoir une analyse phonologique
+  exploitable sans être remplacée par une forme corrigée ou canonique et sans que
+  cette analyse soit confondue avec une observation audio.
+- **POC à faire :** encapsuler les sorties Epitran comme analyses externes
+  reliées aux spans sources.
+- **Données à utiliser :** mots réguliers français et anglais, homographes,
+  ponctuation, Unicode, noms propres, néologismes et formes atypiques dont `io` ;
+  inclure des entrées non couvertes ou donnant une sortie partielle.
+- **Tools à utiliser :** Epitran, Flite/`lex_lookup` pour l’anglais, contrat
+  GRAPH-02.
+- **Résultat à obtenir :** forme brute reconstructible, code langue-script,
+  transcription IPA, alignements disponibles, avertissements/échecs, producteur
+  et version. Aucun champ ne doit transformer la transcription en observation
+  acoustique ni réécrire la source.
+
+### SEM-02 — Traits phonologiques et voisinage explicable
+
+- **Hypothèse testée :** une proximité sonore utile peut être calculée sur des
+  traits phonologiques plutôt que sur la seule distance entre chaînes.
+- **POC à faire :** comparer les voisinages produits par distance graphique,
+  distance IPA simple et distance PanPhon fondée sur les traits.
+- **Données à utiliser :** paires minimales, homophones, graphies proches mais
+  phonologiquement éloignées, graphies éloignées mais phonologiquement proches,
+  segments inconnus et diacritiques.
+- **Tools à utiliser :** PanPhon, sorties SEM-01, métrique graphique témoin.
+- **Résultat à obtenir :** segments alignés, traits responsables du coût,
+  distance paramétrée et classement des voisins. Le POC doit montrer au moins un
+  cas où la structure phonologique apporte une information distincte de la
+  similarité graphique, ainsi qu’un contre-exemple empêchant d’en déduire une
+  identité sémantique.
+
+### SEM-03 — Transformations de forme par WFST
+
+- **Hypothèse testée :** des relations graphiques, de segmentation,
+  translittération ou G2P peuvent être représentées comme transformations
+  formelles explicites et composables.
+- **POC à faire :** compiler puis composer de petites grammaires de réécriture
+  produisant plusieurs chemins pondérés.
+- **Données à utiliser :** `io ↔ i/o`, `gr8 ↔ great`, élisions, ponctuation,
+  abréviations, translittérations et distracteurs ne devant produire aucun lien.
+- **Tools à utiliser :** Pynini et son runtime OpenFst compatible.
+- **Résultat à obtenir :** FST sérialisé, tables de symboles, chemins, poids,
+  règles déclenchées, composition et spans concernés. Chaque résultat porte le
+  type de transformation ; aucun chemin formel ne devient automatiquement un
+  synonyme ou une correction.
+
+### SEM-04 — G2P entraînable et candidats multiples
+
+- **Hypothèse testée :** un G2P peut exposer plusieurs prononciations candidates
+  et leurs structures intermédiaires au lieu d’un unique résultat opaque.
+- **POC à faire :** qualifier Phonetisaurus ou une alternative comparable sur un
+  petit lexique reproductible, sans l’intégrer au chemin principal avant verdict.
+- **Données à utiliser :** partition entraînement/test d’un lexique de
+  prononciation, mots hors vocabulaire, formes atypiques et cas à plusieurs
+  prononciations.
+- **Tools à utiliser :** Phonetisaurus ou G2P comparable, OpenFst si requis.
+- **Résultat à obtenir :** candidats n-best, scores ou coûts, alignements,
+  lattice lorsque disponible, temps et mémoire. Le verdict doit distinguer
+  capacité réelle, compatibilité technique et valeur ajoutée par rapport à
+  Epitran/Pynini.
+
+### SEM-05 — Retrieval cross-représentation sans collapse
+
+- **Hypothèse testée :** une même observation peut déclencher indépendamment des
+  recherches graphiques, phonologiques, symboliques et contextuelles sans qu’un
+  nearest-neighbour unique impose son interprétation.
+- **POC à faire :** construire un index multi-plan minimal et exécuter les
+  recherches depuis une forme atypique.
+- **Données à utiliser :** occurrences de `io` reliées séparément à `yo`, `I/O`,
+  `Io`, à des contextes de salutation et à des contextes informatiques, plus des
+  distracteurs contrôlés.
+- **Tools à utiliser :** sorties SEM-01 à SEM-03, DuckDB/Parquet,
+  NetworkX/rustworkx et RET-02.
+- **Résultat à obtenir :** résultats par plan, chemin typé de récupération,
+  score expliqué, provenance et bundle conservant simultanément les candidats.
+  Une transitivité entre proximité de forme et identité sémantique doit être
+  explicitement rejetée.
+
+### SEM-06 — Acquisition progressive d’une relation sémiotique
+
+- **Hypothèse testée :** des occurrences répétées et leurs conséquences peuvent
+  faire émerger une relation réutilisable entre forme, phonologie, contexte et
+  effet conversationnel sans entrée lexicale ni catégorie culturelle imposée.
+- **POC à faire :** injecter chronologiquement des épisodes contrôlés, induire un
+  prototype partagé, puis évaluer une occurrence tenue à l’écart.
+- **Données à utiliser :** usages cohérents et contradictoires de formes
+  nouvelles par plusieurs locuteurs et domaines, avec corrections et outcomes.
+- **Tools à utiliser :** SEM-05, IND-03 à IND-06, statistiques, provenance et
+  gestionnaire d’hypothèses HYP-01 à HYP-06.
+- **Résultat à obtenir :** relation apprise conditionnelle, supports,
+  contradictions, distribution contextuelle, exceptions et prédiction sur la
+  fixture réservée. Les observations historiques restent inchangées et aucun
+  label tel que `SLANG`, `TYPO` ou `GREETING` n’est requis dans le moteur.
+- **Qualification :** **OUTIL À DÉVELOPPER** au-dessus des analyseurs et du
+  moteur d’induction.
+
+## 7. Discours
 
 ### DISC-01 — Sortie IsaNLP RST
 
@@ -254,7 +486,7 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   labels, nuclearité, signaux, liens secondaires, graphe non arborescent. Les
   propriétés non émises sont simplement hors couverture de l'outil retenu.
 
-## 7. Dialogue formel, pragmatique et culture apprise
+## 8. Dialogue formel, pragmatique et culture apprise
 
 ### DLG-01 — Observation conversationnelle sans interprétation prématurée
 
@@ -430,18 +662,27 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 
 - **POC à faire :** valider ensemble les structures de DLG-01 à DLG-13 sur des
   phénomènes dont l'interprétation exige plusieurs tours.
-- **Données à utiliser :** les onze scénarios minimaux de la v4 : question dont
-  la réponse lie une variable ouverte ; réponse elliptique reliée au bon contexte ;
-  référence ambiguë gardée jusqu'à clarification ; correction traçable ;
-  digression puis retour ; réponse indirecte séparant contenu littéral et
-  implicature ; plan communicatif inspectable ; plusieurs réalisations du même
-  plan ; fragment dépendant d'un QUD/DGB ; complémentarité ERG/DS ; mise à jour
-  ISU entièrement traçable.
+- **Données à utiliser :** les scénarios minimaux de l’architecture : question
+  dont la réponse lie une variable ouverte ; réponse elliptique reliée au bon
+  contexte ; référence ambiguë gardée jusqu'à clarification ; correction
+  traçable ; digression puis retour ; réponse indirecte séparant contenu littéral
+  et implicature ; plan communicatif inspectable ; plusieurs réalisations du
+  même plan ; fragment dépendant d'un QUD/DGB ; complémentarité ERG/DS ; mise à
+  jour ISU entièrement traçable ; forme inconnue conservée avec hypothèses
+  graphiques, phonologiques et contextuelles ; proximité phonologique sans fusion
+  sémantique ; récupération simultanée de `yo` et `I/O` depuis `io` ; exceptions
+  produisant une spécialisation ; relation sémiotique apprise et traçable ;
+  mauvaise sélection initiale corrigée ultérieurement sans réécriture ;
+  ambiguïtés locales sans produit cartésien ; candidat structurellement distinct
+  conservé par le beam ; mille supports partageant un prototype ; hypothèse
+  archivée puis reconstruite.
 - **Tools à utiliser :** bundle d'analyses ERG/DS, ISO/DiAML et SDRT disponibles,
-  DGB/QUD, ISU, grounding, obligations et graphe de provenance.
+  DGB/QUD, ISU, grounding, obligations, SEM-01 à SEM-06, HYP-01 à HYP-08 et
+  graphe de provenance.
 - **Résultat à obtenir :** pour chaque tour, observation, analyses externes,
   état public avant, candidats de mise à jour, décision, état public après,
-  hypothèses cognitives séparées et explication complète des ruptures éventuelles.
+  hypothèses cognitives séparées, composition matérialisée, snapshot du beam,
+  ledger d’évidence et explication complète des ruptures éventuelles.
 
 ### CULT-01 — Concepts, scripts et attentes de haut niveau appris
 
@@ -534,7 +775,7 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   pattern concerné. L'incertitude et le désaccord culturel doivent rester
   représentables sans forcer un consensus artificiel.
 
-## 8. Code
+## 9. Code
 
 ### CODE-01 — Structures Tree-sitter
 
@@ -556,20 +797,21 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Résultat à obtenir :** nœuds `ERROR`/`MISSING`, spans couverts/non couverts
   et arbre partiel exploitable, sans suppression du texte résiduel.
 
-## 9. Encapsulation commune des analyses
+## 10. Encapsulation commune des analyses
 
 ### GRAPH-01 — Représentation de toutes les sorties
 
 - **POC à faire :** vérifier que les structures produites par les analyseurs
   peuvent coexister sans perte dans le modèle de graphe retenu.
-- **Données à utiliser :** sorties brutes représentatives de NLP-01 à DLG-14 et
-  CODE-01/02, avec analyses concurrentes, dépendances inter-tours et spans
-  chevauchants.
+- **Données à utiliser :** sorties brutes représentatives de NLP-01 à SEM-05,
+  DLG-01 à DLG-14 et CODE-01/02, avec analyses concurrentes, dépendances
+  inter-tours, relations cross-représentation et spans chevauchants.
 - **Tools à utiliser :** NetworkX, rustworkx, PyArrow/Parquet.
 - **Résultat à obtenir :** nœuds et arêtes préservant identités, multi-arêtes,
   ordre, attributs structurés, alternatives, spans, états temporels, candidats
-  de mise à jour, plans communicatifs et liens vers le producteur. Lister toute
-  information impossible à représenter directement.
+  de mise à jour, plans communicatifs, types de relations sémiotiques et liens
+  vers le producteur. Lister toute information impossible à représenter
+  directement.
 
 ### GRAPH-02 — Contrat d'annotation externe
 
@@ -578,8 +820,9 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Données à utiliser :** une sortie de chacun des outils analytiques.
 - **Tools à utiliser :** Protobuf ou Arrow pour le contrat ; adaptateurs Python.
 - **Résultat à obtenir :** pour chaque annotation : ID, producteur, version,
-  paramètres/modèle, type, valeur brute ou structurée, spans, alternatives et
-  score lorsque fourni.
+  paramètres/modèle, formalisme, type, valeur brute ou structurée, spans,
+  alternatives, contraintes et score lorsque fourni. Une sortie dérivée du
+  texte doit indiquer explicitement qu’elle n’est pas une observation audio.
 - **Qualification :** **ADAPTATEURS À DÉVELOPPER** à partir de sorties qui
   existent déjà.
 
@@ -588,12 +831,139 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **POC à faire :** vérifier que le modèle commun conserve simultanément les
   hypothèses incompatibles et leurs supports analytiques.
 - **Données à utiliser :** analyses ambiguës issues d'ERG, Dynamic Syntax, Link
-  Grammar, Duckling, ISO/DiAML, SDRT et RST, ainsi que plusieurs candidats ISU.
+  Grammar, TIME-02 à TIME-08, ISO/DiAML, SDRT, RST et SEM-01 à SEM-05, ainsi que plusieurs
+  candidats ISU.
 - **Tools à utiliser :** NetworkX/rustworkx, Arrow/Parquet.
 - **Résultat à obtenir :** candidats séparés, liens vers leurs producteurs,
-  contraintes, contradictions et scores éventuels, sans `argmax` destructif.
+  contraintes, dépendances, contradictions et scores éventuels, sans `argmax`
+  destructif ni matérialisation automatique de leur produit cartésien.
 
-## 10. Stockage et récupération structurelle
+## 11. Gestion factorisée des hypothèses
+
+### HYP-01 — Séparation observation, hypothèse et sélection
+
+- **Hypothèse testée :** une observation, une analyse candidate et la décision
+  temporaire du runtime sont trois objets distincts pouvant évoluer selon des
+  temporalités différentes.
+- **POC à faire :** définir puis sérialiser le cycle complet d’une occurrence
+  ambiguë avec plusieurs candidats et une sélection datée.
+- **Données à utiliser :** première occurrence de `io`, quatre hypothèses
+  locales et un contexte conduisant initialement à sélectionner la mauvaise.
+- **Tools à utiliser :** modèle de graphe commun, Arrow/Parquet, DuckDB.
+- **Résultat à obtenir :** `Observation`, `Hypothesis`, `SelectionEvent` et
+  snapshot d’évidence munis d’identifiants séparés ; la modification ultérieure
+  d’une hypothèse ne modifie ni l’observation ni la sélection historique.
+- **Qualification :** **OUTIL À DÉVELOPPER**.
+
+### HYP-02 — Justifications, dépendances et contradictions
+
+- **Hypothèse testée :** un graphe de justifications explicite permet de partager
+  des sous-résultats et de représenter les conflits sans maintenir des copies de
+  mondes complets.
+- **POC à faire :** construire des hypothèses partageant supports et conclusions,
+  avec dépendances, conflits et `nogoods`, puis interroger leurs explications.
+- **Données à utiliser :** graphe synthétique comprenant supports communs,
+  dépendances transitives, cycles interdits, contradiction locale et plusieurs
+  ensembles compatibles.
+- **Tools à utiliser :** NetworkX/rustworkx, Z3 pour les combinaisons demandées.
+- **Résultat à obtenir :** chemins de justification, dépendances minimales,
+  conflits explicites, modèles compatibles et unsat cores reliés aux hypothèses.
+  Le POC doit mesurer le partage obtenu par rapport à une copie naïve.
+- **Qualification :** **OUTIL À DÉVELOPPER** ; Z3 n’est pas le store persistant.
+
+### HYP-03 — Révision temporelle non destructive
+
+- **Hypothèse testée :** de nouvelles observations peuvent inverser le ranking
+  courant sans falsifier ce que le système avait observé, envisagé ou sélectionné.
+- **POC à faire :** rejouer le lifecycle en deux temps décrit par l’architecture.
+- **Données à utiliser :** `io` à `t1`, sélection initiale H1, épisodes
+  intermédiaires soutenant H2/H3, correction explicite et nouvelle occurrence à
+  `t2`.
+- **Tools à utiliser :** HYP-01/02, Evidence Ledger de HYP-04, provenance et
+  stockage épisodique.
+- **Résultat à obtenir :** H1 toujours accessible comme sélection de `t1`,
+  supports et contradictions ajoutés avec leur date, ranking différent à `t2`,
+  liens rétrospectifs clairement postérieurs et aucune mutation des snapshots.
+- **Qualification :** **OUTIL À DÉVELOPPER**.
+
+### HYP-04 — Evidence Ledger et ranking contextuel
+
+- **Hypothèse testée :** une décision runtime peut combiner plusieurs familles
+  d’évidence sans réduire durablement une hypothèse à une probabilité globale.
+- **POC à faire :** calculer des rankings dans plusieurs contextes à partir du
+  même ledger inspectable.
+- **Données à utiliser :** supports directs et contextuels, contradictions,
+  adéquations phonologique/sémantique/discursive, provenance, outcomes, récence
+  et coût descriptif contrôlés.
+- **Tools à utiliser :** DuckDB/Polars/NumPy, graphe de justifications.
+- **Résultat à obtenir :** contributions séparées, paramètres du ranking,
+  classement par contexte et explication de chaque changement. Deux contextes
+  doivent pouvoir préférer des hypothèses différentes sans réécrire le ledger.
+- **Qualification :** **OUTIL À DÉVELOPPER** pour le ranking et son apprentissage.
+
+### HYP-05 — Composition paresseuse sans produit cartésien
+
+- **Hypothèse testée :** le coût peut suivre principalement les hypothèses
+  locales et les compositions demandées plutôt que le produit cartésien de toutes
+  les ambiguïtés.
+- **POC à faire :** comparer une représentation factorisée à une baseline
+  matérialisant toutes les combinaisons, puis demander quelques assemblages sous
+  contraintes.
+- **Données à utiliser :** dimensions synthétiques de tailles croissantes, dont
+  le cas `3 × 4 × 3 × 2`, avec compatibilités, conflits et solutions connues.
+- **Tools à utiliser :** gestionnaire interne, Z3, mesures de mémoire et temps.
+- **Résultat à obtenir :** nombre d’objets persistants, compositions créées,
+  requêtes au solveur, mémoire et latence pour les deux stratégies. Le chemin
+  factorisé ne doit jamais matérialiser les combinaisons non demandées.
+- **Qualification :** **OUTIL À DÉVELOPPER** ; échec si le coût observé suit le
+  produit cartésien sans nécessité explicite.
+
+### HYP-06 — Partage structurel et déduplication
+
+- **Hypothèse testée :** de nombreuses occurrences soutenant une même relation
+  peuvent partager un prototype et des sous-graphes au lieu de les recopier.
+- **POC à faire :** ingérer progressivement mille occurrences synthétiques avec
+  variantes et exceptions contrôlées.
+- **Données à utiliser :** supports répétés d’une même hypothèse, quelques
+  contextes nouveaux, contradictions et cas exigeant un split.
+- **Tools à utiliser :** DuckDB/Parquet, graphes, `zstandard`, index de postings.
+- **Résultat à obtenir :** croissance des prototypes, références, agrégats et
+  octets stockés ; accès aux épisodes détaillés ; ratio face à une copie naïve ;
+  absence de fusion entre variantes structurellement incompatibles.
+- **Qualification :** **OUTIL À DÉVELOPPER**.
+
+### HYP-07 — Beam borné avec diversité structurelle
+
+- **Hypothèse testée :** un beam borné peut préserver une famille moins bien
+  classée mais structurellement distincte, là où un top-k scalaire la perdrait.
+- **POC à faire :** comparer top-k, sélection diversifiée et oracle sur des
+  familles déséquilibrées, puis exposer seulement le beam retenu à Soar.
+- **Données à utiliser :** nombreux quasi-doublons fortement classés, candidat
+  outlier plus faible devenant correct après contexte, et bruit sans utilité.
+- **Tools à utiliser :** HYP-04, métriques structurelles, Soar/SML.
+- **Résultat à obtenir :** couverture des familles, candidats retenus/écartés,
+  mémoire active, regret après révélation du contexte et WMEs réellement transmis
+  à Soar. Les alternatives persistantes hors beam restent récupérables.
+- **Qualification :** **OUTIL À DÉVELOPPER**.
+
+### HYP-08 — Stockage froid et pruning réversible
+
+- **Hypothèse testée :** une hypothèse peut quitter les index actifs et être
+  reconstruite ultérieurement sans perte des observations ni de ses justifications.
+- **POC à faire :** faire passer des hypothèses par les états hot, warm et cold,
+  supprimer leurs structures dérivées reconstructibles, puis en réactiver une.
+- **Données à utiliser :** hypothèses variant en support, contradiction, récence,
+  redondance et coût d’indexation ; inclure une hypothèse froide rendue pertinente
+  par un nouveau contexte.
+- **Tools à utiliser :** DuckDB, Parquet/Arrow, `zstandard`, système de fichiers
+  local et index actifs.
+- **Résultat à obtenir :** manifeste d’archive, données conservées/supprimées,
+  baisse mesurée des index chauds, reconstruction bit-à-bit ou sémantiquement
+  équivalente, provenance complète et latence de réactivation.
+- **Qualification :** **OUTIL À DÉVELOPPER** ; échec si le pruning détruit une
+  observation ou empêche l’audit historique.
+
+## 12. Stockage et récupération structurelle
 
 ### RET-01 — Exact subgraph matching
 
@@ -638,7 +1008,7 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Résultat à obtenir :** plan de requête, IDs candidats, fragments chargés,
   latence et mémoire ; preuve que toute la collection n'est pas matérialisée.
 
-## 11. Statistiques et contraintes
+## 13. Statistiques et contraintes
 
 ### STAT-01 — Statistiques attendues par l'induction
 
@@ -661,7 +1031,7 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Résultat à obtenir :** SAT/UNSAT/UNKNOWN, modèles, bindings, modèles
   alternatifs lorsque demandés et unsat cores lorsque configurables.
 
-## 12. Induction
+## 14. Induction
 
 ### IND-01 — Formal Concept Analysis
 
@@ -734,18 +1104,22 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   niveau 1, occurrences originales et gain de description mesuré.
 - **Qualification :** **OUTIL À DÉVELOPPER**, cœur propre de l'architecture.
 
-## 13. Soar
+## 15. Soar
 
 ### SOAR-01 — Working memory et contexte actif
 
 - **POC à faire :** vérifier que Soar expose les données nécessaires pour
   représenter fragments de graphe, variables, contraintes, hypothèses,
-  structures récupérées, buts et provenance.
-- **Données à utiliser :** petit contexte symbolique contrôlé avec deux
-  hypothèses concurrentes.
+  structures récupérées, fragments de justification, buts et provenance, sans
+  recevoir tout le dépôt persistant d’alternatives.
+- **Données à utiliser :** petit contexte symbolique contrôlé avec un beam borné
+  d’hypothèses concurrentes et des alternatives persistantes volontairement non
+  activées.
 - **Tools à utiliser :** Soar 9.6.5, API SML Python.
 - **Résultat à obtenir :** WMEs créés et lus via SML, identités, attributs,
-  relations, modifications au fil des cycles et coexistence des hypothèses.
+  relations, modifications au fil des cycles et coexistence des hypothèses ;
+  preuve que seules les hypothèses du beam et leurs justifications nécessaires
+  entrent en working memory.
 
 ### SOAR-02 — Buts, impasses, opérateurs et préférences
 
@@ -784,11 +1158,13 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   candidates.
 - **Tools à utiliser :** Soar SML, DuckDB/Parquet, moteur RET-03.
 - **Résultat à obtenir :** requête, top-k reçu, WMEs créés puis retirés et liens
-  vers les objets externes.
+  vers les objets externes. Les hypothèses hors beam doivent rester dans le store
+  externe et pouvoir être réactivées par une requête ultérieure sans copie
+  persistante dans Soar.
 - **Qualification :** **ADAPTATEUR À DÉVELOPPER** entre deux outils déjà
   retenus.
 
-## 14. Planification communicative
+## 16. Planification communicative
 
 ### COMM-01 — Plan communicatif inspectable
 
@@ -830,7 +1206,7 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   plan, couverture de chaque élément planifié, absence de contenu ajouté et
   différences de surface explicitement attribuées.
 
-## 15. Réalisation linguistique
+## 17. Réalisation linguistique
 
 ### GEN-01 — Capacités de SimpleNLG
 
@@ -877,16 +1253,17 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Qualification :** **OUTIL À DÉVELOPPER** pour l'apprentissage, en réutilisant
   les outils d'analyse retenus.
 
-## 16. POC transversales décisives
+## 18. POC transversales décisives
 
 ### X-01 — Matrice réelle des capacités NLP annoncées
 
 - **POC à faire :** vérifier systématiquement la phrase du plan selon laquelle
   la pile peut fournir segmentation, morphologie, syntaxe, HPSG, MRS/EDS/DMRS,
   rôles, relations lexicales, temps, coréférence, quantification, portée,
-  connecteurs, progression incrémentale, fonctions communicatives, relations
-  discursives inter-tours, contexte dialogique formalisé et patterns culturels
-  de haut niveau appris.
+  connecteurs, transcription IPA, traits phonologiques, transformations WFST,
+  G2P à candidats multiples, retrieval cross-représentation, progression
+  incrémentale, fonctions communicatives, relations discursives inter-tours,
+  contexte dialogique formalisé et patterns culturels de haut niveau appris.
 - **Données à utiliser :** une fixture dédiée par capacité, avec cas positif,
   négatif et ambigu.
 - **Tools à utiliser :** ensemble des outils NLP retenus dans ce document.
@@ -900,10 +1277,13 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **POC à faire :** vérifier que les données émises par les outils suffisent à
   relier une structure induite à ses analyses et spans supports.
 - **Données à utiliser :** petit motif induit à partir d'analyses produites par
-  au moins deux outils différents.
-- **Tools à utiliser :** contrat GRAPH-02, graphes/stores, moteur IND-03.
+  au moins deux outils différents, dont une relation cross-représentation et une
+  occurrence ayant changé de ranking au fil du temps.
+- **Tools à utiliser :** contrat GRAPH-02, graphes/stores, HYP-01 à HYP-04,
+  moteur IND-03.
 - **Résultat à obtenir :** chemin inspectable `Pattern → occurrences → analyses
-  externes → spans`, incluant producteurs, versions et alternatives.
+  externes → spans`, incluant producteurs, versions, alternatives,
+  justifications, contradictions et événements de sélection datés.
 - **Qualification :** **OUTIL À DÉVELOPPER** pour l'induction et
   **ADAPTATEURS À DÉVELOPPER** pour les sorties externes.
 
@@ -915,10 +1295,12 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Données à utiliser :** échange contrôlé de plusieurs tours dont les
   structures, mises à jour et réponse symbolique attendues sont connues.
 - **Tools à utiliser :** ERG/PyDelphin, Dynamic Syntax, DLG-04 à DLG-11,
-  GRAPH-02, RET-03, Soar SML, COMM-01 et SimpleNLG.
+  SEM-01 à SEM-05, GRAPH-02, HYP-01 à HYP-07, RET-03, Soar SML, COMM-01 et
+  SimpleNLG.
 - **Résultat à obtenir :** un objet traçable à chaque frontière, sans conversion
   implicite ni perte des identifiants, ambiguïtés, états antérieurs, candidats
-  rejetés, contenu planifié ou provenance.
+  rejetés, chemins cross-représentation, justifications, snapshot du beam,
+  contenu planifié ou provenance.
 - **Qualification :** **ADAPTATEURS À DÉVELOPPER** entre les composants.
 
 ### X-04 — Benchmark de cohérence multi-tours
@@ -933,7 +1315,9 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
 - **Résultat à obtenir :** nombre de tours avant rupture, catégorie de rupture,
   premier delta fautif et chemin explicatif jusqu'aux observations et décisions.
   Mesurer notamment référence erronée, QUD perdu, grounding surévalué, obligation
-  oubliée, réparation destructive et contenu ajouté par la réalisation.
+  oubliée, réparation destructive, normalisation destructive, collapse prématuré
+  entre forme/phonologie/sémantique, beam sans diversité, réécriture historique
+  et contenu ajouté par la réalisation.
 
 ### X-05 — Test de générativité de la couche dialogue
 
@@ -948,26 +1332,81 @@ elle ne devient jamais automatiquement une croyance ou une primitive cognitive.
   provenance des patterns réutilisés, contraintes satisfaites et échecs propres
   lorsque les supports sont insuffisants.
 
-## 17. Ordre recommandé
+### X-06 — Lifecycle intégré d’une forme inconnue
 
-1. NLP-01 à DISC-02 et CODE-01/02 : établir exactement les sorties des outils
-   analytiques déjà disponibles.
-2. DLG-01 à DLG-05 : valider Dynamic Syntax et les imports formels
+- **Hypothèse testée :** la chaîne complète peut conserver une forme inconnue,
+  activer plusieurs plans, prendre une décision révisable, apprendre de nouveaux
+  épisodes et mieux interpréter une occurrence future sans réécrire le passé.
+- **POC à faire :** exécuter de bout en bout le scénario `io` de `t1` à `t2`, y
+  compris une réponse produite et son outcome.
+- **Données à utiliser :** observation initiale ambiguë, contextes de salutation
+  et d’informatique, répétitions par locuteur, correction explicite, distracteurs
+  et seconde occurrence réservée.
+- **Tools à utiliser :** SEM-01 à SEM-06, HYP-01 à HYP-07, DLG-06 à DLG-12,
+  Soar, planificateur communicatif et stockage épisodique.
+- **Résultat à obtenir :** trace continue de la source brute aux analyses,
+  retrievals, hypothèses, ledger, beam, sélection, réponse et outcome ; changement
+  justifié entre `t1` et `t2` ; observation et événement de sélection de `t1`
+  strictement inchangés.
+- **Qualification :** **OUTILS ET ADAPTATEURS À DÉVELOPPER** ; ce POC constitue
+  le test d’intégration principal de l’acquisition sémiotique ouverte.
+
+### X-07 — Scalabilité de l’incertitude factorisée
+
+- **Hypothèse testée :** le système peut augmenter le nombre d’ambiguïtés et de
+  supports sans explosion cartésienne, duplication linéaire des sous-graphes ni
+  croissance non bornée du contexte Soar.
+- **POC à faire :** exécuter conjointement composition paresseuse, partage de
+  prototypes, beam diversifié et archivage sur des tailles croissantes.
+- **Données à utiliser :** ambiguïtés locales synthétiques indépendantes et
+  corrélées, mille occurrences par prototype, familles quasi dupliquées,
+  contradictions et hypothèses réactivées depuis le stockage froid.
+- **Tools à utiliser :** HYP-02, HYP-05 à HYP-08, RET-04, Soar/SML et métriques
+  système.
+- **Résultat à obtenir :** courbes du nombre d’objets, compositions, octets,
+  latence et WMEs ; comparaison aux baselines naïves ; seuils d’échec explicites
+  et reconstruction auditée après archivage.
+- **Qualification :** **OUTIL À DÉVELOPPER** ; aucun verdict GO sans mesures de
+  croissance et baseline comparative.
+
+## 19. Ordre recommandé
+
+1. NLP-01 à DISC-02 et CODE-01/02 : établir exactement les sorties des
+   analyseurs, y compris leurs échecs.
+2. TIME-01 à TIME-04 : fixer le socle temporel relationnel, la propagation de
+   contraintes, les structures E/R/S et la persistance d'état avant de réutiliser
+   les normaliseurs de surface.
+3. SEM-01 à SEM-04 : qualifier phonologie, traits, transformations de forme et
+   G2P à candidats multiples avant toute intégration.
+4. DLG-01 à DLG-05 : valider Dynamic Syntax et les imports formels
    ISO/DiAML/SDRT comme analyses externes attribuées.
-3. GRAPH-01 à GRAPH-03 : fixer une représentation commune capable de conserver
-   analyses concurrentes, temporalité et provenance sans perte.
-4. DLG-06 à DLG-13 : développer et valider DGB/TTR, ISU, QUD, grounding,
+5. GRAPH-01 à GRAPH-03 : fixer une représentation commune capable de conserver
+   analyses concurrentes, relations cross-représentation, temporalité et
+   provenance sans perte ni produit cartésien implicite.
+6. HYP-01 à HYP-05 : valider la séparation observation/hypothèse/sélection, les
+   justifications, la révision temporelle, l’Evidence Ledger et la composition
+   paresseuse sur de petites fixtures à oracle exact.
+7. TIME-05 à TIME-08 : valider discours temporel, rappel épisodique, révision
+   non destructive et quarantaine de HeidelTime/Duckling au-dessus du contrat
+   de graphe et du gestionnaire d'hypothèses.
+8. SEM-05, RET-01 à RET-04, STAT-01 et CONS-01 : valider le retrieval
+   cross-représentation, la récupération structurelle disk-backed, les signaux
+   quantitatifs et les contraintes locales.
+9. HYP-06 et HYP-08 : valider partage structurel, déduplication, index
+   chaud/froid et reconstruction avant de faire dépendre le runtime de ces stores.
+10. DLG-06 à DLG-13 : développer et valider DGB/TTR, ISU, QUD, grounding,
    réparations et obligations, puis borner explicitement les baselines.
-5. RET-01 à CONS-01 : valider recherche, statistiques et contraintes.
-6. IND-01 à IND-06, puis CULT-01 et CULT-05 : valider les outils choisis,
-   développer le cœur inductif et démontrer l'émergence de concepts/scripts de
-   haut niveau sans taxonomie culturelle ou humoristique imposée.
-7. SOAR-01 à SOAR-05 : valider les données runtime et le bridge externe.
-8. COMM-01 à COMM-03, puis GEN-01 à GEN-04 : séparer planification
-   communicative et réalisation linguistique.
-9. CULT-02 à CULT-04, CULT-06, DLG-14 et X-01 à X-05 : confirmer
-   l'interprétation non littérale et culturellement située, la cohérence
-   multi-tours, la générativité et la compatibilité de bout en bout.
+11. IND-01 à IND-06, SEM-06, CULT-01 et CULT-05 : valider les outils choisis,
+   développer le cœur inductif et démontrer l’émergence de relations sémiotiques,
+   concepts et scripts sans taxonomie culturelle ou humoristique imposée.
+12. SOAR-01 à SOAR-05 avec HYP-07 : valider le beam borné et diversifié, les
+   données runtime et le bridge vers les alternatives persistantes externes.
+13. COMM-01 à COMM-03, puis GEN-01 à GEN-04 : séparer planification
+    communicative et réalisation linguistique.
+14. CULT-02 à CULT-04, CULT-06, DLG-14 et X-01 à X-07 : confirmer
+    l’interprétation non littérale et culturellement située, la cohérence
+    multi-tours, la générativité, la révision non destructive et les propriétés
+    de scalabilité de bout en bout.
 
 `scripts/seman2 verify` vérifie l'installation. Les POC ci-dessus vérifient les
 données et capacités réellement utilisables par l'architecture.

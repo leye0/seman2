@@ -1,0 +1,46 @@
+[
+  {
+    "id": "before-then-meets",
+    "nodes": ["a", "b", "c"],
+    "constraints": [
+      {"left": "a", "right": "b", "relations": ["before"], "source": "fixture"},
+      {"left": "b", "right": "c", "relations": ["meets"], "source": "fixture"}
+    ],
+    "oracle": {"consistent": true, "queries": [{"left": "a", "right": "c", "relations": ["before"]}]}
+  },
+  {
+    "id": "ambiguous-chain-refines",
+    "nodes": ["a", "b", "c"],
+    "constraints": [
+      {"left": "a", "right": "b", "relations": ["before", "meets"], "source": "ambiguous_analysis_1"},
+      {"left": "b", "right": "c", "relations": ["before", "meets"], "source": "ambiguous_analysis_2"}
+    ],
+    "oracle": {"consistent": true, "queries": [{"left": "a", "right": "b", "relations": ["before", "meets"]}, {"left": "a", "right": "c", "relations": ["before"]}]}
+  },
+  {
+    "id": "partial-network-preserves-disjunction",
+    "nodes": ["a", "b", "unconnected"],
+    "constraints": [
+      {"left": "a", "right": "b", "relations": ["overlaps", "during"], "source": "underspecified_formal_analysis"}
+    ],
+    "oracle": {"consistent": true, "queries": [{"left": "a", "right": "b", "relations": ["overlaps", "during"]}, {"left": "a", "right": "unconnected", "relations": "ALL"}]}
+  },
+  {
+    "id": "contradictory-cycle",
+    "nodes": ["a", "b"],
+    "constraints": [
+      {"left": "a", "right": "b", "relations": ["before"], "source": "observation_1"},
+      {"left": "b", "right": "a", "relations": ["before"], "source": "observation_2"}
+    ],
+    "oracle": {"consistent": false, "queries": []}
+  },
+  {
+    "id": "equality-propagation",
+    "nodes": ["a", "alias-a", "b"],
+    "constraints": [
+      {"left": "a", "right": "alias-a", "relations": ["equals"], "source": "coreference_candidate"},
+      {"left": "alias-a", "right": "b", "relations": ["finishes"], "source": "interval_analysis"}
+    ],
+    "oracle": {"consistent": true, "queries": [{"left": "a", "right": "b", "relations": ["finishes"]}]}
+  }
+]

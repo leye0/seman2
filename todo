@@ -1,0 +1,34 @@
+LAST:
+En train de repasser dans CULT-01.
+Beaucoup de POCs ont été faites rapidement, dans l'objectif de repasser dessus après.
+Il faudrait passer sur CULT-01 en EXIGEANT que la POC soit un vrai test d'intégration et non un test abstrait.
+En fait: on pourrait peut-être construire toutes les POCs, puis y aller à l'envers.
+En gros: On exige qu'une POC high level utilise de la matière qui fonctionne, quitte à devoir refaire les POCs précédentes pour qu'elles fonctionnent pour vrai.
+Cela dit, on modifierait simplement la POC pour indiquer ce qu'elle nécessite comme VRAIE matière.
+Puis on aurait besoin de redescendre low level jusqu'aux POCs initiales, pour ensuite repartir dans le bon sens avec des POCs
+qui produisent la bonne matière, ce qui permettrait en même temps d'écrire des (proto)service pour chaque POC.
+
+
+
+-=-=-=-=- Important pour la suite -=-=-=-=-
+
+Voici les prochaines étapes:
+
+https://chatgpt.com/c/6abf056b-d8b8-83ea-926f-09b44c96a329
+https://chatgpt.com/share/6abff2b4-742c-83e9-9c32-0588ce7bf288
+
+Passe 1 — Exploration des outils
+Objectif : documenter ce qui existe réellement.
+Terminer les POC actuelles en conservant les sorties brutes, les capacités observées, les lacunes et les limites des bibliothèques.
+Livrable : inventaire technique vérifié des capacités disponibles et manquantes.
+
+Passe 2 — Validation locale approfondie
+Objectif : confirmer que chaque POC couvre ses exigences.
+Reprendre les résultats de la première passe, combler les lacunes, introduire des cas adversariaux et vérifier les hypothèses avec des oracles explicites.
+À cette étape, un prototype peut utiliser des fixtures synthétiques et fonctionner indépendamment des autres composants.
+Livrable : catalogue de composants dont les capacités et les limites locales sont établies.
+
+Passe 3 — Architecture et intégration systémique
+Objectif : démontrer que les capacités peuvent réellement fonctionner ensemble.
+Définir les proto-services, les contrats, les dépendances et les frontières. Puis construire progressivement les chaînes intégrées et procéder aux validations GO/NO-GO.
+Livrable : architecture exécutable, documentée et testée de bout en bout.

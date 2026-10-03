@@ -1,4 +1,5 @@
 .venv/
+.venv-*/
 .venv-popper/
 .venv-rst/
 .local/
@@ -6,6 +7,11 @@
 log/
 __pycache__/
 *.pyc
+*.class
+
+# Les résultats des POC sont reconstruits par leur run.sh et ne sont pas des sources.
+poc/**/output/
+poc/**/output.pre-v7/
 
 # Les manifestes JSON et le schéma restent versionnés; les données se recréent
 # avec ./scripts/seman2 fetch-corpus.

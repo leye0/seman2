@@ -1,0 +1,9 @@
+[
+ {"id":"python","language":"python","text":"# café\ndef greet(name: str):\n    message = f\"Salut, {name}!\"\n    return message\n"},
+ {"id":"javascript","language":"javascript","text":"// greeting\nconst greet = (name) => `Hello, ${name}!`;\nconsole.log(greet('Ada'));\n"},
+ {"id":"typescript","language":"typescript","text":"interface User { name: string }\n// typed greeting\nconst greet = (u: User): string => `Hi ${u.name}`;\n"},
+ {"id":"java","language":"java","text":"class Main { // entry\n  static String greet(String name) { return \"Hi \" + name; }\n}\n"},
+ {"id":"c","language":"c","text":"#include <stdio.h>\n/* entry */\nint main(void) { printf(\"hi\\n\"); return 0; }\n"},
+ {"id":"cpp","language":"cpp","text":"#include <string>\n// greeting\nstd::string greet(const std::string& n) { return \"Hi \" + n; }\n"},
+ {"id":"sql","language":"sql","text":"-- active users\nSELECT id, name FROM users WHERE active = TRUE ORDER BY name;\n"}
+]

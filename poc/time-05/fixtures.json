@@ -1,0 +1,37 @@
+[
+  {
+    "id": "then-single-antecedent",
+    "text": "Julie entered. Then she switched on the lamp.",
+    "events": ["enter", "switch-on"],
+    "analysis": {"marker_span": [15, 19], "producer": "controlled_Temporal_DRT_adapter", "candidates": [{"antecedent": "enter", "target": "switch-on", "relations": ["before"], "support": "discourse_sequence"}]},
+    "oracle": {"status": "resolved_candidate_set", "candidate_count": 1}
+  },
+  {
+    "id": "puis-ambiguous-antecedent",
+    "text": "Paul a appelé. Marie est sortie. Puis la lumière s'est éteinte.",
+    "events": ["call", "leave", "light-off"],
+    "analysis": {"marker_span": [34, 38], "producer": "controlled_SDRT_adapter", "candidates": [{"antecedent": "call", "target": "light-off", "relations": ["before"], "support": "available_discourse_referent"}, {"antecedent": "leave", "target": "light-off", "relations": ["before"], "support": "last_event_salience"}]},
+    "oracle": {"status": "ambiguous", "candidate_count": 2}
+  },
+  {
+    "id": "still-state-persistence",
+    "text": "The lamp was on. It was still on.",
+    "events": ["lamp-on-state-1", "lamp-on-state-2"],
+    "analysis": {"marker_span": [24, 29], "producer": "controlled_Temporal_DRT_adapter", "candidates": [{"antecedent": "lamp-on-state-1", "target": "lamp-on-state-2", "relations": ["overlaps", "contains"], "support": "state_anaphora_candidate"}]},
+    "oracle": {"status": "resolved_candidate_set", "candidate_count": 1, "preserve_disjunction": true}
+  },
+  {
+    "id": "reported-speech-reference",
+    "text": "Julie said Paul would leave later.",
+    "events": ["say", "leave"],
+    "analysis": {"marker_span": [27, 32], "producer": "controlled_Temporal_DRT_adapter", "candidates": [{"antecedent": "say", "target": "leave", "relations": ["before"], "support": "embedded_reference_time"}]},
+    "oracle": {"status": "resolved_candidate_set", "candidate_count": 1}
+  },
+  {
+    "id": "unresolved-anaphora",
+    "text": "Later, it happened.",
+    "events": ["happen"],
+    "analysis": {"marker_span": [0, 5], "producer": "controlled_Temporal_DRT_adapter", "candidates": []},
+    "oracle": {"status": "unresolved", "candidate_count": 0}
+  }
+]

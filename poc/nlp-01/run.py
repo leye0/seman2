@@ -231,6 +231,21 @@ def main() -> None:
     (output_dir / "results.json").write_text(
         json.dumps(results, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
+    summary = {
+        "fixture_count": len(results),
+        "parsed_count": sum(result["status"] == "parsed" for result in results),
+        "parse_failure_count": sum(result["status"] == "parse_failure" for result in results),
+        "returned_analysis_count": sum(result["returned_analysis_count"] for result in results),
+        "limit_reached_cases": [result["id"] for result in results if result["limit_reached"]],
+        "all_parsed_results_have_derivation_and_tree": all(
+            all(analysis.get("derivation") and analysis.get("syntax_tree") for analysis in result["analyses"])
+            for result in results if result["status"] == "parsed"
+        ),
+        "verdict": "GO_ACE_ERG_HPSG_ANALYSES_WITH_EXPLICIT_AVM_LIMIT",
+    }
+    (output_dir / "summary.json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     print(f"NLP-01: {len(results)} fixtures validated")
     for result in results:

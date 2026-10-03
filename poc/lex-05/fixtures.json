@@ -1,0 +1,61 @@
+[
+  {
+    "id": "join-full-multiple-framenet",
+    "phenomenon": "complete instance mapping with one PB-VN edge, WordNet senses, role links, and multiple FrameNet candidates",
+    "propbank_roleset": "join.01",
+    "instance": {"source_file": "wsj_0001.parse", "sentence_number": 0, "token_number": 8},
+    "expected_verbnet_classes": ["22.1-2-1"],
+    "expected_framenet_frames": ["Attaching", "Cause_to_amalgamate"],
+    "expected_instance_frame": "Cause_to_amalgamate",
+    "expected_wordnet_key_minimum": 1,
+    "expected_installed_propbank_resolution": true,
+    "expected_mapping_present": true,
+    "expected_multiple_framenet_candidates": true
+  },
+  {
+    "id": "buy-complete-chain",
+    "phenomenon": "unambiguous PB-VN-FN lexical chain with resolvable VerbNet WordNet keys and mapped instance roles",
+    "propbank_roleset": "buy.01",
+    "instance": {"source_file": "wsj_0029.parse", "sentence_number": 12, "token_number": 14},
+    "expected_verbnet_classes": ["13.5.1"],
+    "expected_framenet_frames": ["Commerce_buy"],
+    "expected_instance_frame": "Commerce_buy",
+    "expected_wordnet_key_minimum": 1,
+    "expected_installed_propbank_resolution": true,
+    "expected_mapping_present": true,
+    "expected_multiple_framenet_candidates": false
+  },
+  {
+    "id": "accept-multiple-and-version-gap",
+    "phenomenon": "one roleset with three VerbNet candidates, partial NLTK resolution, and an IN instance marker for multiple FN mappings",
+    "propbank_roleset": "accept.01",
+    "instance": {"source_file": "wsj_0051.parse", "sentence_number": 15, "token_number": 18},
+    "expected_verbnet_classes": ["13.5.2", "29.2-1-1", "77.1"],
+    "expected_framenet_frames": ["Receiving", "Respond_to_proposal"],
+    "expected_instance_frame_status": "IN",
+    "expected_installed_propbank_resolution": true,
+    "expected_mapping_present": true,
+    "expected_unresolved_verbnet_class": "77.1",
+    "expected_multiple_verbnet_candidates": true
+  },
+  {
+    "id": "publish-absent-lexical-mapping",
+    "phenomenon": "SemLink instance annotations exist but the current PB-VN and VN-FN lexical tables contain no corresponding key",
+    "propbank_roleset": "publish.01",
+    "instance": {"source_file": "wsj_0001.parse", "sentence_number": 1, "token_number": 10},
+    "expected_instance_verbnet_class": "26.4",
+    "expected_instance_frame_status": "None",
+    "expected_installed_propbank_resolution": true,
+    "expected_mapping_present": false
+  },
+  {
+    "id": "adjoin-missing-installed-propbank-key",
+    "phenomenon": "SemLink lexical chain whose Unified PropBank roleset is absent from installed NLTK PropBank 1.0",
+    "propbank_roleset": "adjoin.01",
+    "expected_verbnet_classes": ["47.8-1"],
+    "expected_framenet_frames": ["Adjacency"],
+    "expected_wordnet_key_minimum": 1,
+    "expected_installed_propbank_resolution": false,
+    "expected_mapping_present": true
+  }
+]

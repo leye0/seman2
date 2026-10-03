@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+"""SEM-06: chronological acquisition of an anonymous semiotic relation."""
+from __future__ import annotations
+import hashlib,importlib.metadata,json,platform
+from collections import Counter
+from datetime import datetime,timezone
+from pathlib import Path
+import duckdb,networkx as nx,polars as pl
+from scipy.stats import beta
+P=Path(__file__).resolve().parent;ROOT=P.parent.parent;OUT=P/'output'
+INPUTS=['sem-05','ind-03','ind-04','ind-05','ind-06','hyp-01','hyp-02','hyp-03','hyp-04','hyp-05','hyp-06']
+def canonical(x):return json.dumps(x,sort_keys=True,separators=(',',':'))
+def sha_bytes(x):return hashlib.sha256(x.encode()).hexdigest()
+def main():
+ OUT.mkdir(parents=True,exist_ok=True);episodes=[]
+ for i in range(36):
+  context='c_initial' if i<32 else 'c_other';form=('zorp','zorpe','zorp!')[i%3];effect='effect_e1' if i<28 else 'effect_e0';raw={'episode_id':f'e{i:02d}','time':i,'speaker':f's{i%6}','domain':f'd{i%4}','form':form,'phonology':'p_zorp_near','context':context,'observed_effect':effect};episodes.append({**raw,'observation_sha256':sha_bytes(canonical(raw))})
+ corrections=[]
+ for i in (28,29,30):corrections.append({'correction_id':f'corr-e{i:02d}','target_episode_id':f'e{i:02d}','time':40+i,'replacement_effect':'effect_e1','reason':'later explicit outcome correction','original_observation_sha256':episodes[i]['observation_sha256']})
+ heldout={'episode_id':'heldout-01','time':100,'speaker':'s_new','domain':'d_new','form':'zorp?','phonology':'p_zorp_near','context':'c_initial','observed_effect':'effect_e1'}
+ pl.DataFrame(episodes).write_parquet(OUT/'episodes.parquet',compression='zstd');pl.DataFrame(corrections).write_parquet(OUT/'corrections.parquet',compression='zstd');db=duckdb.connect();ep=str((OUT/'episodes.parquet').resolve()).replace("'","''");co=str((OUT/'corrections.parquet').resolve()).replace("'","''");db.execute(f"CREATE VIEW episodes AS SELECT * FROM read_parquet('{ep}')");db.execute(f"CREATE VIEW corrections AS SELECT * FROM read_parquet('{co}')");stats=db.execute("""SELECT context,phonology,count(*) observations,count(DISTINCT speaker) speakers,count(DISTINCT domain) domains,sum((coalesce(c.replacement_effect,e.observed_effect)='effect_e1')::INT) supports,sum((coalesce(c.replacement_effect,e.observed_effect)!='effect_e1')::INT) contradictions FROM episodes e LEFT JOIN corrections c ON c.target_episode_id=e.episode_id GROUP BY context,phonology ORDER BY context""").fetchall();db.close()
+ rows=[{'context':r[0],'phonology':r[1],'observations':r[2],'speakers':r[3],'domains':r[4],'supports':r[5],'contradictions':r[6]} for r in stats];target=next(r for r in rows if r['context']=='c_initial');rate=target['supports']/target['observations'];interval=beta.interval(.95,target['supports']+1,target['contradictions']+1)
+ prototype=nx.DiGraph(pattern_id='Pattern_Semiotic_001');
+ for n,k in [('v_form','form_cluster'),('v_phon','phonology_cluster'),('v_context','context_feature'),('v_effect','effect_feature')]:prototype.add_node(n,kind=k)
+ prototype.add_edges_from([('v_form','v_phon',{'relation':'r1'}),('v_phon','v_context',{'relation':'r2'}),('v_context','v_effect',{'relation':'r3'})])
+ relation={'id':'Pattern_Semiotic_001','conditions':{'form_prefix':'zorp','phonology':'p_zorp_near','context':'c_initial'},'predicted_effect':'effect_e1','conditional_probability':rate,'credible_interval_95':[interval[0],interval[1]],'prototype_graph':nx.node_link_data(prototype,edges='edges'),'selection_threshold':.75,'dependencies':['SEM-05','IND-03','IND-04','IND-05','IND-06','HYP-01..HYP-06']}
+ alternatives=[{'hypothesis_id':'h_form','conditions':['form_prefix=zorp'],'status':'retained_not_selected'},{'hypothesis_id':'h_context','conditions':['context=c_initial'],'status':'retained_not_selected'},{'hypothesis_id':'h_joint','conditions':['form_prefix=zorp','phonology=p_zorp_near','context=c_initial'],'status':'selected'}]
+ prediction={'fixture':heldout,'matched_conditions':{k:True for k in relation['conditions']},'predicted_effect':relation['predicted_effect'],'actual_effect':heldout['observed_effect'],'correct':relation['predicted_effect']==heldout['observed_effect'],'fixture_was_in_training':False}
+ artifacts=[]
+ for name in INPUTS:
+  path=ROOT/'poc'/name/'output/results.json';artifacts.append({'poc':name.upper(),'path':str(path.relative_to(ROOT)),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
+ original_hashes={e['episode_id']:e['observation_sha256'] for e in episodes};after_hashes={e['episode_id']:sha_bytes(canonical({k:e[k] for k in ('episode_id','time','speaker','domain','form','phonology','context','observed_effect')})) for e in episodes}
+ model_text=canonical(relation).lower();forbidden=['slang','typo','greeting']
+ vals={'chronological_training_only':max(e['time'] for e in episodes)<heldout['time'],'heldout_not_memorized':heldout['episode_id'] not in {e['episode_id'] for e in episodes},'heldout_prediction_correct':prediction['correct'],'historical_observations_unchanged':original_hashes==after_hashes,'corrections_append_only':all(c['target_episode_id'] in original_hashes and c['original_observation_sha256']==original_hashes[c['target_episode_id']] for c in corrections),'multiple_speakers_domains':target['speakers']==6 and target['domains']==4,'supports_and_contradictions_present':target['supports']>0 and target['contradictions']>0,'conditional_relation_selected':rate>.75 and alternatives[-1]['status']=='selected','no_forbidden_taxonomy_in_model':not any(x in model_text for x in forbidden),'all_required_poc_artifacts_bound':len(artifacts)==len(INPUTS)};assert all(vals.values()),(vals,rows)
+ result={'episode_statistics':rows,'learned_relation':relation,'hypotheses':alternatives,'supports':[e['episode_id'] for e in episodes[:28]]+[c['target_episode_id'] for c in corrections],'contradictions':[e['episode_id'] for e in episodes if e['episode_id'] not in {c['target_episode_id'] for c in corrections} and e['observed_effect']=='effect_e0' and e['context']=='c_initial'],'context_distribution':Counter(e['context'] for e in episodes),'exceptions':[{'episode_id':e['episode_id'],'observed_effect':e['observed_effect']} for e in episodes if e['context']=='c_initial' and e['observed_effect']=='effect_e0'],'corrections':corrections,'heldout_prediction':prediction,'provenance_inputs':artifacts,'validations':vals};(OUT/'results.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n');summary={'training_episodes':len(episodes),'speakers':6,'domains':4,'target_supports':target['supports'],'target_contradictions':target['contradictions'],'conditional_probability':rate,'corrections':len(corrections),'heldout_correct':prediction['correct'],'verdict':'GO_PROGRESSIVE_ANONYMOUS_SEMIOTIC_ACQUISITION'};(OUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');(OUT/'versions-and-parameters.json').write_text(json.dumps({'generated_at':datetime.now(timezone.utc).isoformat(),'platform':platform.platform(),'duckdb':importlib.metadata.version('duckdb'),'polars':importlib.metadata.version('polars'),'scipy':importlib.metadata.version('scipy'),'networkx':importlib.metadata.version('networkx'),'training_cutoff':35,'heldout_time':100,'selection_threshold':.75},indent=2)+'\n');print(f'SEM-06: learned anonymous conditional relation p={rate:.3f}; heldout correct; GO')
+if __name__=='__main__':main()

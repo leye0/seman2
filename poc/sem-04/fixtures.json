@@ -1,0 +1,5 @@
+{
+  "training_entry_limit": 1200,
+  "held_out_words": ["read", "about", "zog", "blorp", "phrame", "io"],
+  "nbest": 5
+}

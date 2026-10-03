@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {"id": "segment-io", "input": "io", "output": "i/o", "weight": 0.2, "type": "segmentation"},
+    {"id": "phonographic-io", "input": "io", "output": "yo", "weight": 0.8, "type": "phonographic_candidate"},
+    {"id": "expand-io", "input": "i/o", "output": "input/output", "weight": 0.3, "type": "abbreviation_expansion"},
+    {"id": "rebus-gr8", "input": "gr8", "output": "great", "weight": 0.4, "type": "rebus_expansion"},
+    {"id": "elision-fr", "input": "l'homme", "output": "le homme", "weight": 0.6, "type": "elision_expansion"},
+    {"id": "punctuation-fold", "input": "hello!!!", "output": "hello!", "weight": 0.1, "type": "punctuation_relation"},
+    {"id": "transliterate-moskva", "input": "Moskva", "output": "Москва", "weight": 0.5, "type": "transliteration"}
+  ],
+  "queries": [
+    {"input": "io", "minimum_paths": 2},
+    {"input": "gr8", "minimum_paths": 1},
+    {"input": "l'homme", "minimum_paths": 1},
+    {"input": "hello!!!", "minimum_paths": 1},
+    {"input": "Moskva", "minimum_paths": 1},
+    {"input": "distractor", "minimum_paths": 0, "maximum_paths": 0}
+  ],
+  "composition": {"input": "io", "first_rule": "segment-io", "second_rule": "expand-io", "expected_output": "input/output", "expected_weight": 0.5}
+}

@@ -1,0 +1,5 @@
+[
+ {"id":"en-overlap","language":"en","channel":"voice_transcript","participants":["alice","bob","cara"],"turns":[{"id":"t1","speaker":"alice","text":"I think we should—","span":[0,18]},{"id":"t2","speaker":"bob","text":"Wait.","span":[19,24],"overlaps":["t1"]},{"id":"t3","speaker":"cara","text":"Alice, continue.","span":[25,41],"reply_to":"t1"}],"source":"I think we should—\nWait.\nAlice, continue."},
+ {"id":"fr-delayed","language":"fr","channel":"chat","participants":["alice","bob"],"turns":[{"id":"m1","speaker":"alice","text":"Tu viens ?","span":[0,10]},{"id":"m2","speaker":"alice","text":"Je pars à huit heures.","span":[11,33]},{"id":"m3","speaker":"bob","text":"Oui, je viens.","span":[34,48],"reply_to":"m1"}],"source":"Tu viens ?\nJe pars à huit heures.\nOui, je viens."},
+ {"id":"en-quote-fragment","language":"en","channel":"chat","participants":["dan","eve"],"turns":[{"id":"q1","speaker":"dan","text":"Eve wrote: ‘maybe’. Why?","span":[0,24]},{"id":"q2","speaker":"eve","text":"Because…","span":[25,33],"reply_to":"q1"}],"source":"Eve wrote: ‘maybe’. Why?\nBecause…"}
+]

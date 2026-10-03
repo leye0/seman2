@@ -1,0 +1,8 @@
+[
+ {"id":"complete","language":"en","text":"john likes mary","speaker":"A","phenomenon":"complete"},
+ {"id":"nominal-fragment","language":"en","text":"john","speaker":"A","phenomenon":"fragment"},
+ {"id":"incomplete-transitive","language":"en","text":"john likes","speaker":"A","phenomenon":"extension_point"},
+ {"id":"hesitation","language":"en","text":"john uh likes mary","speaker":"A","phenomenon":"hesitation"},
+ {"id":"cross-speaker-prefix","language":"en","text":"A: john snores","speaker":"A","phenomenon":"speaker_prefix"},
+ {"id":"french-uncovered","language":"fr","text":"jean aime marie","speaker":"A","phenomenon":"unsupported_language"}
+]

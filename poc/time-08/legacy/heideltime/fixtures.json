@@ -1,0 +1,20 @@
+[
+  {"id":"en-absolute","language":"english","locale":"en","category":"absolute_date","dct":"2026-09-26","text":"The deadline is March 5, 2027."},
+  {"id":"en-relative-a","language":"english","locale":"en","category":"relative_date","dct":"2026-09-26","dct_group":"en-tomorrow","text":"The deadline is tomorrow."},
+  {"id":"en-relative-b","language":"english","locale":"en","category":"relative_date","dct":"2027-01-10","dct_group":"en-tomorrow","text":"The deadline is tomorrow."},
+  {"id":"en-time","language":"english","locale":"en","category":"time","dct":"2026-09-26","text":"Meet me at 8:30 pm."},
+  {"id":"en-duration","language":"english","locale":"en","category":"duration","dct":"2026-09-26","text":"The outage lasted two hours."},
+  {"id":"en-frequency","language":"english","locale":"en","category":"frequency","dct":"2026-09-26","text":"The train leaves every Monday."},
+  {"id":"en-interval","language":"english","locale":"en","category":"interval","dct":"2026-09-26","text":"The office is closed from Monday to Wednesday."},
+  {"id":"en-ambiguous","language":"english","locale":"en","category":"ambiguous","dct":"2026-09-26","text":"May can be rainy."},
+  {"id":"en-duckling-only","language":"english","locale":"en","category":"tool_specific","dct":"2026-09-26","text":"It costs 12 dollars."},
+  {"id":"fr-absolute","language":"french","locale":"fr","category":"absolute_date","dct":"2026-09-26","text":"La date limite est le 5 mars 2027."},
+  {"id":"fr-relative-a","language":"french","locale":"fr","category":"relative_date","dct":"2026-09-26","dct_group":"fr-demain","text":"La date limite est demain."},
+  {"id":"fr-relative-b","language":"french","locale":"fr","category":"relative_date","dct":"2027-01-10","dct_group":"fr-demain","text":"La date limite est demain."},
+  {"id":"fr-time","language":"french","locale":"fr","category":"time","dct":"2026-09-26","text":"Rendez-vous à 20 h 30."},
+  {"id":"fr-duration","language":"french","locale":"fr","category":"duration","dct":"2026-09-26","text":"La panne a duré deux heures."},
+  {"id":"fr-frequency","language":"french","locale":"fr","category":"frequency","dct":"2026-09-26","text":"Le train part chaque lundi."},
+  {"id":"fr-interval","language":"french","locale":"fr","category":"interval","dct":"2026-09-26","text":"Le bureau ferme de lundi à mercredi."},
+  {"id":"fr-ambiguous","language":"french","locale":"fr","category":"ambiguous","dct":"2026-09-26","text":"Mai peut être pluvieux."},
+  {"id":"fr-duckling-only","language":"french","locale":"fr","category":"tool_specific","dct":"2026-09-26","text":"Cela coûte 12 euros."}
+]

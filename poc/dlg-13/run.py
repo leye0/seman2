@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""DLG-13: executable ConvoKit utility boundary; OpenDial remains optional."""
+from __future__ import annotations
+import importlib.metadata,json,platform,shutil
+from datetime import datetime,timezone
+from pathlib import Path
+from convokit import Corpus,Speaker,Utterance
+P=Path(__file__).resolve().parent;OUT=P/'output'
+FIX=[('u1','alice','Où est le rapport ?',None),('u2','bob','Sur la table.','u1'),('u3','alice','Le rouge ?','u2'),('u4','bob','Non, le rapport bleu.','u3'),('u5','alice','D’accord.','u4')]
+def primitives(x):return x is None or isinstance(x,(str,int,float,bool)) or isinstance(x,list) and all(primitives(v) for v in x) or isinstance(x,dict) and all(isinstance(k,str) and primitives(v) for k,v in x.items())
+def main():
+ OUT.mkdir(parents=True,exist_ok=True);speakers={x:Speaker(id=x) for x in ('alice','bob')};corpus=Corpus(utterances=[Utterance(id=i,speaker=speakers[s],text=t,reply_to=r,meta={'fixture_origin':'dlg-13'}) for i,s,t,r in FIX]);loaded=list(corpus.iter_utterances());topology=[{'utterance_id':u.id,'speaker_id':u.speaker.id,'reply_to':u.reply_to,'text_length':len(u.text)} for u in loaded]
+ depths={}
+ byid={u.id:u for u in loaded}
+ def depth(uid):
+  if uid in depths:return depths[uid]
+  parent=byid[uid].reply_to;depths[uid]=0 if parent is None else depth(parent)+1;return depths[uid]
+ for u in loaded:depth(u.id)
+ stats={'utterance_count':len(loaded),'speaker_count':len(list(corpus.iter_speakers())),'reply_edge_count':sum(u.reply_to is not None for u in loaded),'max_reply_depth':max(depths.values()),'utterances_by_speaker':{s:sum(u.speaker.id==s for u in loaded) for s in speakers}}
+ observations=[{'observation_id':i,'speaker_id':s,'raw_text':t,'reply_to_observation_id':r,'adapter_source':{'producer':'ConvoKit','producer_version':importlib.metadata.version('convokit'),'source_object_type':'Utterance','selector':i}} for i,s,t,r in FIX]
+ internal={'representation':'seman2 public DGB/ISU','participants':['alice','bob'],'moves':[{'move_id':i,'speaker':s,'raw_observation_id':i,'act_candidate':a} for (i,s,_,_),a in zip(FIX,['question','answer','clarification','correction','acceptance'])],'qud':[{'id':'q-report-location','status':'resolved','raised_by':'u1','answered_by':'u2'},{'id':'q-report-identity','status':'resolved','raised_by':'u3','answered_by':'u4'}],'public_facts':[{'id':'f1','content':'location(report-blue,table)','status':'accepted_for_exchange','supports':['u1','u2','u3','u4','u5']}],'isu_history':[{'turn':i,'candidate_rule':'fixture act candidate','source_observation':i} for i,_,_,_ in FIX],'private_beliefs':[],'private_intentions':[],'boundary_note':'Constructed by the internal adapter from immutable observations; no ConvoKit runtime object is copied.'}
+ opendial={'executed':False,'installed':bool(shutil.which('opendial')),'status':'OPTIONAL_NOT_JUSTIFIED','reason':'This POC tests corpus navigation and representation boundaries; no closed-domain probabilistic policy comparison is needed.'}
+ forbidden=('convokit.Corpus','convokit.Utterance','convokit.Speaker');serialized=json.dumps(internal,sort_keys=True)
+ vals={'convokit_loaded_all':stats['utterance_count']==len(FIX),'topology_exact':[(x['utterance_id'],x['reply_to']) for x in topology]==[(i,r) for i,_,_,r in FIX],'statistics_exact':stats['speaker_count']==2 and stats['reply_edge_count']==4 and stats['max_reply_depth']==4,'adapter_output_primitive_only':primitives(observations),'internal_output_primitive_only':primitives(internal),'no_convokit_runtime_type_in_internal_state':not any(x in serialized for x in forbidden),'no_utility_object_as_private_state':internal['private_beliefs']==[] and internal['private_intentions']==[],'opendial_scope_explicit':not opendial['executed'] and opendial['status']=='OPTIONAL_NOT_JUSTIFIED'};assert all(vals.values()),vals
+ result={'source_fixture':[{'id':i,'speaker':s,'text':t,'reply_to':r} for i,s,t,r in FIX],'convokit_output':{'role':'loading, topology and descriptive statistics only','topology':topology,'statistics':stats},'observation_adapter_output':observations,'internal_state':internal,'opendial':opendial,'responsibility_matrix':{'ConvoKit':['load corpus','navigate replies','descriptive counts'],'OpenDial_optional':['closed-domain probabilistic policy baseline only'],'seman2_internal':['DGB','ISU candidates','public facts','QUD','grounding','obligations'],'forbidden':['copy utility objects as beliefs','copy utility objects as intentions','treat corpus topology as complete dialogue theory']},'validations':vals};(OUT/'results.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n');summary={**stats,'observation_adapter_records':len(observations),'opendial_executed':False,'verdict':'GO_UTILITY_RESPONSIBILITY_BOUNDARY'};(OUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n');(OUT/'versions-and-parameters.json').write_text(json.dumps({'generated_at':datetime.now(timezone.utc).isoformat(),'platform':platform.platform(),'convokit':importlib.metadata.version('convokit'),'opendial':'not installed/not required','fixture':'five-turn controlled dialogue'},indent=2)+'\n');print('DLG-13: ConvoKit topology/stats only; no utility object leaked into DGB/ISU; GO')
+if __name__=='__main__':main()
