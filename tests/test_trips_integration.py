@@ -17,14 +17,16 @@ class LocalTripsIntegrationTests(unittest.TestCase):
     def test_real_local_parser_returns_native_dual_hypotheses(self) -> None:
         with TemporaryDirectory() as directory:
             store = EvidenceStore(Path(directory) / "evidence.sqlite")
-            evidence = store.append("The dog runs.", stream_id="integration")
+            evidence = store.append(
+                "I saw the man with the telescope.", stream_id="integration"
+            )
             bundle = TripsAdapter(number_parses_desired=2).interpret(evidence)
             store.close()
 
         self.assertEqual(bundle.request_metadata["endpoint"], "kqml://127.0.0.1:6200")
         self.assertEqual(bundle.raw_content_type, "application/kqml; charset=utf-8")
         self.assertTrue(bundle.raw_payload.startswith(b"(TELL :CONTENT"))
-        self.assertGreaterEqual(len(bundle.hypotheses), 1)
+        self.assertEqual(len(bundle.hypotheses), 2)
         primary = bundle.hypotheses[0]
         self.assertGreater(len(primary.semantic.nodes), 0)
         self.assertGreater(len(primary.structural.nodes), 0)

@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import ipaddress
 import os
 import socket
+import threading
 import time
 from typing import Any, Mapping, Sequence
 
@@ -232,6 +233,10 @@ class LocalKqmlResult:
 class LocalTripsTransport:
     """Talk to a TRIPS Facilitator on loopback; remote hosts are rejected."""
 
+    # NUMBER-INTERPS-DESIRED changes parser-global state.  Keep configuration
+    # and parsing atomic for callers sharing one local TRIPS process.
+    _parser_configuration_lock = threading.Lock()
+
     def __init__(
         self,
         host: str = "127.0.0.1",
@@ -256,16 +261,27 @@ class LocalTripsTransport:
         self._request_counter = 0
 
     def parse(self, input_text: str, parameters: Mapping[str, str]) -> LocalKqmlResult:
+        with self._parser_configuration_lock:
+            return self._parse_locked(input_text, parameters)
+
+    def _parse_locked(
+        self, input_text: str, parameters: Mapping[str, str]
+    ) -> LocalKqmlResult:
         self._request_counter += 1
         uttnum = os.getpid() * 1_000_000 + self._request_counter
         name = f"SEMAN2-{os.getpid()}-{self._request_counter}"
         desired = int(parameters.get("number-parses-desired", "2"))
+        if not 1 <= desired <= 10:
+            raise ValueError("TRIPS accepts between 1 and 10 parses")
         messages = (
             f"(register :name {name})",
             "(subscribe :content (tell &key :content (new-speech-act . *)))",
             "(subscribe :content (tell &key :content (new-speech-act-hyps . *)))",
             "(subscribe :content (tell &key :content (failed-to-parse . *)))",
-            f"(request :receiver PARSER :content (eval (parser::set-number-of-interps-desired {desired})))",
+            # The Parser has a dedicated, validated message for this setting;
+            # arbitrary EVAL is unnecessary and can terminate the Lisp image
+            # on a reader error before its normal error handler is installed.
+            f"(tell :receiver PARSER :content (number-interps-desired {desired}))",
             # Cogent is configured to accept parser input from TextTagger.  We
             # deliberately impersonate that local module so it does not tag
             # the same utterance a second time after seeing our final TELL.
@@ -308,6 +324,43 @@ class LocalTripsTransport:
         except (OSError, TimeoutError, ConnectionError) as exc:
             raise ConnectionError(f"local TRIPS unavailable at {self.endpoint}: {exc}") from exc
         raise ConnectionError(f"local TRIPS timed out at {self.endpoint}")
+
+
+def probe_local_trips(
+    host: str = "127.0.0.1", port: int = 6200, *, timeout_seconds: float = 2.0
+) -> bool:
+    """Confirm that the local Parser is registered without parsing user text."""
+    transport = LocalTripsTransport(host, port, timeout_seconds=timeout_seconds)
+    tag = f"SEMAN2-HEALTH-{os.getpid()}-{time.time_ns()}"
+    name = f"{tag}-CLIENT"
+    messages = (
+        f"(register :name {name})",
+        f"(request :receiver PARSER :reply-with {tag} :content (seman2-health))",
+    )
+    deadline = time.monotonic() + timeout_seconds
+    buffer = bytearray()
+    try:
+        with socket.create_connection((host, port), timeout=timeout_seconds) as connection:
+            connection.sendall(("\n".join(messages) + "\n").encode("utf-8"))
+            while time.monotonic() < deadline:
+                while (expression := _complete_expression(buffer)) is not None:
+                    message = parse_kqml(expression)
+                    consumed = buffer.find(expression) + len(expression)
+                    del buffer[:consumed]
+                    if (
+                        _same(_get(message, ":IN-REPLY-TO"), tag)
+                        and _same(_get(message, ":SENDER"), "PARSER")
+                        and any(_same(message[0], verb) for verb in ("SORRY", "ERROR"))
+                    ):
+                        return True
+                connection.settimeout(max(0.1, deadline - time.monotonic()))
+                chunk = connection.recv(8192)
+                if not chunk:
+                    return False
+                buffer.extend(chunk)
+    except (OSError, TimeoutError, ConnectionError, KqmlProtocolError):
+        return False
+    return False
 
 
 def _source_span(start: int, end: int, input_spans: Sequence[SourceSpan]) -> SourceSpan:
@@ -441,6 +494,21 @@ def _tree_children(tree: Any) -> list[Any]:
     return children if isinstance(children, list) else []
 
 
+def _tree_lexeme(tree: Any) -> str:
+    """Return the native W::LEX value carried by a tree node, if present."""
+    features = _get(tree, ":FEATS", [])
+    if not isinstance(features, list):
+        return ""
+    for feature in features:
+        if (
+            isinstance(feature, list)
+            and len(feature) > 1
+            and _same(feature[0], "W::LEX")
+        ):
+            return _atom(feature[1])
+    return ""
+
+
 def _structural_projection(
     utterance: list[Any], prefix: str, input_text: str, input_spans: Sequence[SourceSpan]
 ) -> Projection:
@@ -450,15 +518,20 @@ def _structural_projection(
     nodes: list[ProjectionNode] = []
     edges: list[ProjectionEdge] = []
     word_ids: list[str] = []
+    word_spans: list[SourceSpan | None] = []
+    word_natives: list[str] = []
     for index, (native, start, end) in enumerate(aligned):
         node_id = f"{prefix}:word:{index}"
         word_ids.append(node_id)
+        word_natives.append(native)
+        span = _source_span(start, end, input_spans) if start is not None and end is not None else None
+        word_spans.append(span)
         nodes.append(
             ProjectionNode(
                 node_id=node_id,
                 category="parser-word",
                 attributes={"native_word": native, "surface": _surface_token(native), "position": index},
-                span=_source_span(start, end, input_spans) if start is not None and end is not None else None,
+                span=span,
                 native_path=f":WORDS/{index}",
             )
         )
@@ -467,17 +540,65 @@ def _structural_projection(
     roots = tree if isinstance(tree, list) and tree and isinstance(tree[0], list) else [tree]
     root_ids: list[str] = []
     leaf_cursor = [0]
+    source_cursor = [0]
+    synthetic_words = [0]
+
+    def add_tree_word(native: str, path: tuple[int, ...]) -> int:
+        """Anchor a lexical tree leaf omitted from the native :WORDS list."""
+        surface = _surface_token(native)
+        start = input_text.casefold().find(surface.casefold(), source_cursor[0])
+        end = start + len(surface) if start >= 0 else None
+        span = (
+            _source_span(start, end, input_spans)
+            if start >= 0 and end is not None
+            else None
+        )
+        index = len(word_ids)
+        word_ids.append(f"{prefix}:word:{index}")
+        word_natives.append(native)
+        word_spans.append(span)
+        nodes.append(
+            ProjectionNode(
+                node_id=word_ids[-1],
+                category="parser-word",
+                attributes={
+                    "native_word": native,
+                    "surface": surface,
+                    "position": index,
+                    "inferred_from_tree": True,
+                },
+                span=span,
+                native_path=":TREE/" + "/".join(map(str, path)) + "/:FEATS/W::LEX",
+            )
+        )
+        synthetic_words[0] += 1
+        return index
 
     def walk(item: Any, path: tuple[int, ...]) -> tuple[str, SourceSpan | None]:
         node_id = f"{prefix}:tree:" + ".".join(map(str, path))
         children = _tree_children(item)
         child_rows = [walk(child, (*path, index)) for index, child in enumerate(children)]
         if not children:
-            word_index = leaf_cursor[0]
-            leaf_cursor[0] += 1
-            span = nodes[word_index].span if word_index < len(word_ids) else None
-            if word_index < len(word_ids):
+            native_lexeme = _tree_lexeme(item)
+            word_index: int | None = None
+            if native_lexeme:
+                for candidate in range(leaf_cursor[0], len(word_ids)):
+                    if _same(word_natives[candidate], native_lexeme):
+                        word_index = candidate
+                        break
+                if word_index is None and _surface_token(native_lexeme) in _PUNCTUATION.values():
+                    word_index = add_tree_word(native_lexeme, path)
+            elif leaf_cursor[0] < len(word_ids):
+                # Older TRIPS trees sometimes omit W::LEX on their leaves.
+                word_index = leaf_cursor[0]
+            if word_index is not None:
+                leaf_cursor[0] = max(leaf_cursor[0], word_index + 1)
+                span = word_spans[word_index]
+                if span is not None:
+                    source_cursor[0] = max(source_cursor[0], span.end)
                 edges.append(ProjectionEdge(node_id, word_ids[word_index], "realizes-token", {"position": word_index}))
+            else:
+                span = None
         else:
             span = _cover([row[1] for row in child_rows if row[1] is not None], input_spans)
             for position, (child_id, _) in enumerate(child_rows):
@@ -506,7 +627,11 @@ def _structural_projection(
         nodes=tuple(nodes),
         edges=tuple(edges),
         roots=tuple(root_ids),
-        metadata={"native_words": native_words, "native_tree_present": bool(tree)},
+        metadata={
+            "native_words": native_words,
+            "native_tree_present": bool(tree),
+            "tree_lexemes_added": synthetic_words[0],
+        },
     )
 
 

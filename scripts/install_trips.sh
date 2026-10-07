@@ -10,6 +10,8 @@ perl_root="$SEMAN2_ROOT/.local/opt/perl"
 sqlite_root="$SEMAN2_ROOT/.local/opt/sqlite"
 xslt_root="$SEMAN2_ROOT/.local/opt/xslt"
 commit="7f80f44977f533138737c1858fd1a1e0f942acfe"
+runtime_patch="$SEMAN2_ROOT/patches/cogent/seman2-runtime.patch"
+host_javac="$(command -v javac)"
 
 for command in apt-get curl dpkg-deb git make gcc g++ java perl pkg-config; do
   command -v "$command" >/dev/null || {
@@ -56,6 +58,12 @@ if [[ ! -d "$TRIPS_BASE/.git" ]]; then
   git clone https://github.com/wdebeaum/cogent.git "$TRIPS_BASE"
 fi
 git -C "$TRIPS_BASE" checkout --detach "$commit"
+if git -C "$TRIPS_BASE" apply --reverse --check "$runtime_patch" 2>/dev/null; then
+  printf 'Patch runtime Seman2 déjà appliqué à TRIPS/Cogent.\n'
+else
+  git -C "$TRIPS_BASE" apply --check "$runtime_patch"
+  git -C "$TRIPS_BASE" apply "$runtime_patch"
+fi
 
 export TRIPS_BASE TRIPS_SYSNAME=cogent
 export SBCL_HOME="$sbcl_root/usr/lib/sbcl"
@@ -71,7 +79,13 @@ export PATH="$sbcl_root/usr/bin:$sqlite_root/usr/bin:$xslt_root/usr/bin:$PATH"
     --with-wordnet="$wordnet_root/WordNet-3.0/dict/" \
     --without-corenlp \
     --without-ruby
-  make -j"$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf 2)"
+  # The host compiler may be newer than the repository-local Java runtime.
+  # A command-line Make variable propagates through recursive builds without
+  # replacing package-specific JFLAGS such as CollaborativeStateManager's
+  # classpath.
+  make -j"$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf 2)" \
+    JAVAC="$host_javac --release 17" \
+    NONTRIPS_JAVAC="$host_javac --release 17"
   make install
 )
 

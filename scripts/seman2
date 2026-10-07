@@ -14,7 +14,8 @@ Commandes actives :
   trips [port]              Lance TRIPS local au premier plan
   trips-start [port]        Lance le service TRIPS local en arrière-plan
   trips-stop                Arrête le service TRIPS lancé par Seman2
-  trips-status              Affiche l'état du service TRIPS local
+  trips-status              Vérifie le processus et le Parser TRIPS local
+  trips-health [port]       Sonde le Parser TRIPS sans analyser de texte
   install-tools [args]      Installe les outils localement dans le dépôt
   fetch-corpus [args]       Récupère les sources de corpus configurées
   verify                    Vérifie les dépendances locales installées
@@ -35,6 +36,14 @@ command_name="${1:-help}"
 if [[ $# -gt 0 ]]; then
   shift
 fi
+
+trips_health() {
+  local health_port="$1" health_timeout="${2:-2.0}"
+  PYTHONPATH="$SEMAN2_ROOT/src${PYTHONPATH:+:$PYTHONPATH}" \
+    "$SEMAN2_ROOT/.venv/bin/python" -c \
+    'import sys; from seman2.interpretation.kqml import probe_local_trips; sys.exit(0 if probe_local_trips(port=int(sys.argv[1]), timeout_seconds=float(sys.argv[2])) else 1)' \
+    "$health_port" "$health_timeout"
+}
 
 case "$command_name" in
   runtime)
@@ -68,8 +77,8 @@ case "$command_name" in
         printf 'TRIPS local a quitté pendant le démarrage; voir %s\n' "$trips_state/service.log" >&2
         exit 1
       fi
-      if (exec 3<>"/dev/tcp/127.0.0.1/$trips_port") 2>/dev/null; then
-        printf 'TRIPS local écoute sur 127.0.0.1:%s (pid %s).\n' "$trips_port" "$trips_pid"
+      if trips_health "$trips_port" 2.0; then
+        printf 'TRIPS local prêt sur 127.0.0.1:%s (pid %s, Parser vérifié).\n' "$trips_port" "$trips_pid"
         exit 0
       fi
       sleep 1
@@ -96,10 +105,24 @@ case "$command_name" in
     ;;
   trips-status)
     trips_pidfile="$SEMAN2_ROOT/.local/var/trips/seman2.pid"
-    if [[ -f "$trips_pidfile" ]] && kill -0 "$(<"$trips_pidfile")" 2>/dev/null; then
-      printf 'TRIPS local actif (pid %s).\n' "$(<"$trips_pidfile")"
+    trips_port="${1:-6200}"
+    if trips_health "$trips_port" 2.0; then
+      if [[ -f "$trips_pidfile" ]] && kill -0 "$(<"$trips_pidfile")" 2>/dev/null; then
+        printf 'TRIPS local actif (pid %s, Parser prêt).\n' "$(<"$trips_pidfile")"
+      else
+        printf 'TRIPS local actif sur le port %s (Parser prêt, processus non géré par Seman2).\n' "$trips_port"
+      fi
     else
-      printf 'TRIPS local inactif.\n'
+      printf 'TRIPS local inactif ou Parser non prêt sur le port %s.\n' "$trips_port"
+      exit 1
+    fi
+    ;;
+  trips-health)
+    trips_port="${1:-6200}"
+    if trips_health "$trips_port" 2.0; then
+      printf 'Parser TRIPS prêt sur 127.0.0.1:%s.\n' "$trips_port"
+    else
+      printf 'Parser TRIPS indisponible sur 127.0.0.1:%s.\n' "$trips_port" >&2
       exit 1
     fi
     ;;

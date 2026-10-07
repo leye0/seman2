@@ -20,4 +20,4 @@ fi
 log_dir="$SEMAN2_ROOT/.local/var/trips/$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir -p "$log_dir"
 exec "$TRIPS_BASE/bin/trips-cogent" \
-  -nouser -nocsm -nochat -port "$port" -logdir "$log_dir"
+  -nouser -nocsm -nochat -nolog -port "$port" -logdir "$log_dir"

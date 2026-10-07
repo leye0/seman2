@@ -253,3 +253,43 @@ le transport (KQML sur socket locale, pas d'HTTP) ni la persistance.
 | `scripts/seman2` | `test-trips` via `discover` (conflit `tests.py` disco-dop) |
 | `.local/src/cogent-v3/src/Systems/cogent/params.lisp` | profil rapide TRIPS |
 | `.local/src/cogent-v3/etc/java/*.jar` | recompilation `--release 17` |
+
+---
+
+## 7. Vague d'optimisation du chart TRIPS — 2026-10-07
+
+Un profil statistique SBCL sur une phrase complexe a montré que le coût
+restant était dominé par les listes d'association, la substitution et les
+recherches répétées dans le chart, et non par KQML/TCP.
+
+Modifications appliquées dans `patches/cogent/seman2-runtime.patch` :
+
+- le contrôle `check-for-common-vars`, décrit par TRIPS comme une vérification
+  de débogage, est désactivé par défaut mais reste activable ;
+- les constituants ont un index par nom et un cache exact par
+  `(position, catégorie)`, mis à jour sans changer leur ordre historique ;
+- les messages de pruning ne sont plus imprimés hors mode trace ;
+- les loggers Lisp et le journal exhaustif du Facilitator sont effectivement
+  désactivables ;
+- `number-interps-desired` possède maintenant un handler borné, qui règle à
+  la fois le nombre d'analyses recherchées et retournées ;
+- le client Seman2 n'envoie plus d'expression Lisp arbitraire avec `eval` ;
+- le build Java force du bytecode Java 17 même avec un compilateur hôte plus
+  récent ;
+- `trips-start` attend désormais une réponse réelle du Parser, et non la
+  simple ouverture du port du Facilitator.
+
+La projection structurelle rattache aussi aux offsets source les ponctuations
+présentes uniquement dans l'arbre TRIPS. Par exemple, les trois virgules et le
+point final de la phrase de contrôle sont tous conservés avec leurs spans ; le
+payload KQML natif demeure inchangé.
+
+Sur les 15 premières phrases du même roman, le temps TRIPS observé est passé
+de **908 ms/phrase** dans le profil précédent à **609 ms/phrase** (médiane
+330 ms), soit environ **33 % de moins** sur cet échantillon. Sur les trois
+phrases complexes utilisées pendant l'audit, la moyenne est passée d'environ
+1,90 s à 1,35 s.
+
+Validation : 35 tests unitaires, le test d'intégration TRIPS local avec deux
+hypothèses, la sonde de santé Parser et l'application inverse du patch Cogent
+réussissent.
