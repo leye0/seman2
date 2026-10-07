@@ -9,12 +9,17 @@ usage() {
 Usage : ./scripts/seman2 COMMANDE [ARGUMENTS]
 
 Commandes actives :
+  runtime [args]            Lance le runtime V3 (ingest/run/replay/trace)
+  install-trips             Construit TRIPS/Cogent, SBCL et WordNet en local
+  trips [port]              Lance TRIPS local au premier plan
+  trips-start [port]        Lance le service TRIPS local en arrière-plan
+  trips-stop                Arrête le service TRIPS lancé par Seman2
+  trips-status              Affiche l'état du service TRIPS local
   install-tools [args]      Installe les outils localement dans le dépôt
   fetch-corpus [args]       Récupère les sources de corpus configurées
   verify                    Vérifie les dépendances locales installées
-  validate-architecture     Valide le graphe du système actif
-  test-unit [args]          Exécute les tests unitaires des primitives candidates
-  audit-pocs [args]         Audite seulement les POC verticales SYS-*
+  test-unit [args]          Exécute les tests du runtime V3
+  test-trips                Exécute le test d'intégration contre TRIPS local
   build-data [args]         Construit les Parquet canoniques
   python [args]             Lance le Python principal local
   duckling [args]           Lance le service Duckling local non admis
@@ -32,8 +37,71 @@ if [[ $# -gt 0 ]]; then
 fi
 
 case "$command_name" in
+  runtime)
+    export PYTHONPATH="$SEMAN2_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+    exec "$SEMAN2_ROOT/.venv/bin/python" -m seman2 "$@"
+    ;;
   install-tools)
     exec "$SEMAN2_ROOT/scripts/install_tools.sh" "$@"
+    ;;
+  install-trips)
+    exec "$SEMAN2_ROOT/scripts/install_trips.sh" "$@"
+    ;;
+  trips)
+    exec "$SEMAN2_ROOT/scripts/trips_local.sh" "$@"
+    ;;
+  trips-start)
+    trips_port="${1:-6200}"
+    trips_state="$SEMAN2_ROOT/.local/var/trips"
+    trips_pidfile="$trips_state/seman2.pid"
+    mkdir -p "$trips_state"
+    if [[ -f "$trips_pidfile" ]] && kill -0 "$(<"$trips_pidfile")" 2>/dev/null; then
+      printf 'TRIPS local est déjà lancé (pid %s).\n' "$(<"$trips_pidfile")"
+      exit 0
+    fi
+    nohup "$SEMAN2_ROOT/scripts/trips_local.sh" "$trips_port" \
+      >"$trips_state/service.log" 2>&1 &
+    trips_pid=$!
+    printf '%s\n' "$trips_pid" >"$trips_pidfile"
+    for _attempt in $(seq 1 60); do
+      if ! kill -0 "$trips_pid" 2>/dev/null; then
+        printf 'TRIPS local a quitté pendant le démarrage; voir %s\n' "$trips_state/service.log" >&2
+        exit 1
+      fi
+      if (exec 3<>"/dev/tcp/127.0.0.1/$trips_port") 2>/dev/null; then
+        printf 'TRIPS local écoute sur 127.0.0.1:%s (pid %s).\n' "$trips_port" "$trips_pid"
+        exit 0
+      fi
+      sleep 1
+    done
+    printf 'Délai de démarrage TRIPS dépassé; voir %s\n' "$trips_state/service.log" >&2
+    exit 1
+    ;;
+  trips-stop)
+    trips_pidfile="$SEMAN2_ROOT/.local/var/trips/seman2.pid"
+    if [[ ! -f "$trips_pidfile" ]]; then
+      printf 'Aucun service TRIPS géré par Seman2.\n'
+      exit 0
+    fi
+    trips_pid="$(<"$trips_pidfile")"
+    if [[ "$trips_pid" =~ ^[0-9]+$ ]] && kill -0 "$trips_pid" 2>/dev/null; then
+      kill "$trips_pid"
+      for _attempt in $(seq 1 20); do
+        kill -0 "$trips_pid" 2>/dev/null || break
+        sleep 1
+      done
+    fi
+    rm -f "$trips_pidfile"
+    printf 'Service TRIPS local arrêté.\n'
+    ;;
+  trips-status)
+    trips_pidfile="$SEMAN2_ROOT/.local/var/trips/seman2.pid"
+    if [[ -f "$trips_pidfile" ]] && kill -0 "$(<"$trips_pidfile")" 2>/dev/null; then
+      printf 'TRIPS local actif (pid %s).\n' "$(<"$trips_pidfile")"
+    else
+      printf 'TRIPS local inactif.\n'
+      exit 1
+    fi
     ;;
   fetch-corpus|corpus)
     exec "$SEMAN2_ROOT/scripts/fetch_corpus.py" "$@"
@@ -41,16 +109,14 @@ case "$command_name" in
   verify)
     exec "$SEMAN2_ROOT/scripts/verify_local_dependencies.sh" "$@"
     ;;
-  validate-architecture)
-    exec "$SEMAN2_ROOT/.venv/bin/python" \
-      "$SEMAN2_ROOT/scripts/validate_system_architecture.py" "$@"
-    ;;
   test-unit)
+    export PYTHONPATH="$SEMAN2_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
     exec "$SEMAN2_ROOT/.venv/bin/python" -m unittest discover -s tests "$@"
     ;;
-  audit-pocs)
-    exec "$SEMAN2_ROOT/.venv/bin/python" \
-      "$SEMAN2_ROOT/scripts/audit_pocs.py" "$@"
+  test-trips)
+    export PYTHONPATH="$SEMAN2_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+    export SEMAN2_TRIPS_INTEGRATION=1
+    exec "$SEMAN2_ROOT/.venv/bin/python" -m unittest -v tests.test_trips_integration
     ;;
   build-data)
     exec "$SEMAN2_ROOT/.venv/bin/python" \

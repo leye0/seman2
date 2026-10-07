@@ -8,7 +8,7 @@ export SEMAN2_ROOT
 
 export VIRTUAL_ENV="$SEMAN2_ROOT/.venv"
 export JAVA_HOME="$SEMAN2_ROOT/.local/opt/jre"
-export PATH="$SEMAN2_ROOT/.venv/bin:$JAVA_HOME/bin:$SEMAN2_ROOT/.local/bin:$SEMAN2_ROOT/.local/opt/flite/bin:$SEMAN2_ROOT/.local/opt/duckling/bin:$SEMAN2_ROOT/.local/opt/treetagger/bin:$SEMAN2_ROOT/.local/opt/treetagger/cmd:$SEMAN2_ROOT/.local/opt/pcre/bin:$PATH"
+export PATH="$SEMAN2_ROOT/.venv/bin:$JAVA_HOME/bin:$SEMAN2_ROOT/.local/bin:$SEMAN2_ROOT/.local/opt/sbcl/usr/bin:$SEMAN2_ROOT/.local/opt/sqlite/usr/bin:$SEMAN2_ROOT/.local/opt/xslt/usr/bin:$SEMAN2_ROOT/.local/opt/flite/bin:$SEMAN2_ROOT/.local/opt/duckling/bin:$SEMAN2_ROOT/.local/opt/treetagger/bin:$SEMAN2_ROOT/.local/opt/treetagger/cmd:$SEMAN2_ROOT/.local/opt/pcre/bin:$PATH"
 
 export NLTK_DATA="$SEMAN2_ROOT/.local/share/nltk_data"
 export HF_HOME="$SEMAN2_ROOT/.local/share/huggingface"
@@ -34,6 +34,10 @@ export SEMIOTIC_PYTHON="$SEMAN2_ROOT/.venv-semiotic/bin/python"
 export FLITE_HOME="$SEMAN2_ROOT/.local/opt/flite"
 export DIALOGUE_PYTHON="$SEMAN2_ROOT/.venv-dialogue/bin/python"
 export DYLAN_HOME="$SEMAN2_ROOT/.local/src/dylan"
+export TRIPS_BASE="$SEMAN2_ROOT/.local/src/cogent-v3"
+export TRIPS_SYSNAME="cogent"
+export SBCL_HOME="$SEMAN2_ROOT/.local/opt/sbcl/usr/lib/sbcl"
+export PERL5LIB="$SEMAN2_ROOT/.local/opt/perl/usr/lib/x86_64-linux-gnu/perl5/5.38${PERL5LIB:+:$PERL5LIB}"
 
 export PYTHONPATH="$SOAR_BIN${PYTHONPATH:+:$PYTHONPATH}"
 export CLASSPATH="$SIMPLENLG_JAR:$CORENLP_HOME/*${CLASSPATH:+:$CLASSPATH}"

@@ -20,5 +20,8 @@ output/
 # avec ./scripts/seman2 fetch-corpus.
 data/**/*.parquet
 data/*.bz2
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
 data/reddit-arctic-2018-05/
 data/stackoverflow/
