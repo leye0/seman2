@@ -1,0 +1,5 @@
+Apples grow on trees.
+Pears grow on trees.
+The lantern is in the barn.
+The lantern is in the shed.
+The farmer carries a basket.

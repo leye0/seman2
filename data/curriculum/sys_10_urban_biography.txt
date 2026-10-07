@@ -1,0 +1,5 @@
+Trains stop at stations.
+Buses stop at stations.
+The lantern is in the barn.
+The lantern is in the shed.
+The driver carries a pass.

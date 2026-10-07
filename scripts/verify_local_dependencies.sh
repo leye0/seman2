@@ -76,7 +76,7 @@ pass "SemLink + SUMO"
 pass "TreeTagger français"
 
 java -jar "$HEIDELTIME_HOME/de.unihd.dbs.heideltime.standalone.jar" \
-  plans/architecture_systeme_cognitif_symbolique.md -l french -t narratives \
+  plans/architecture_cognitive_developpementale.md -l french -t narratives \
   -c "$HEIDELTIME_HOME/config.props" >/dev/null
 pass "HeidelTime"
 

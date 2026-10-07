@@ -1,0 +1,13 @@
+narrator	Maya carried a red notebook.
+narrator	Amira carried a blue notebook.
+narrator	Maya put the red notebook on the table.
+narrator	Amira put the blue notebook in the bag.
+user	Which notebook did Amira carry?
+tutor	The blue notebook.
+user	Yes.
+user	Where is the red notebook?
+tutor	On the table.
+user	No, the blue notebook.
+tutor	Is it in the bag?
+user	Yes.
+user	Where is Maya?

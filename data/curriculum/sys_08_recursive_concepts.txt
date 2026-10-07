@@ -1,0 +1,21 @@
+The wooden box was closed.
+Maya opened the wooden box.
+The wooden box was open.
+The metal door was closed.
+Jonah opened the metal door.
+The metal door was open.
+The glass cabinet was closed.
+Amira opened the glass cabinet.
+The glass cabinet was open.
+The chest was heavy.
+Noah opened the chest.
+The chest was closed.
+The drawer was heavy.
+Lina opened the drawer.
+The drawer was closed.
+The garden gate was closed.
+Priya opened the garden gate.
+The safe was heavy.
+Omar opened the safe.
+The garden gate was open.
+The safe was closed.

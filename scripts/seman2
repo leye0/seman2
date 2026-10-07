@@ -8,23 +8,21 @@ usage() {
   cat <<'EOF'
 Usage : ./scripts/seman2 COMMANDE [ARGUMENTS]
 
-Commandes :
-  install-tools [args] Installe tous les outils localement dans le dépôt
-  fetch-corpus [args] Récupère les Parquet canoniques finaux
-  verify              Vérifie toutes les dépendances locales
-  audit-pocs [args]   Exécute et audite toutes les POC requises
-  phase3 [args]       Exécute la chaîne intégrée de proto-services
-  sample-corpus       Échantillonne les Parquet réels à mémoire bornée
-  plan-services       Planifie les services depuis cet échantillon réel
-  evaluate [args]     Compare un artefact à ses attentes explicites
-  validate-runtime-plan Valide le graphe runtime cible et la reprise
-  runtime-once        Exécute une époque Parquet réelle jusqu'à Soar
-  build-data [args]   Construit les Parquet canoniques
-  python [args]       Lance le Python principal local
-  duckling [args]     Lance le service Duckling local
-  popper [args]       Lance Popper dans son environnement isolé
-  rst [args]          Lance Python dans l'environnement IsaNLP RST
-  help                Affiche cette aide
+Commandes actives :
+  install-tools [args]      Installe les outils localement dans le dépôt
+  fetch-corpus [args]       Récupère les sources de corpus configurées
+  verify                    Vérifie les dépendances locales installées
+  validate-architecture     Valide le graphe du système actif
+  test-unit [args]          Exécute les tests unitaires des primitives candidates
+  audit-pocs [args]         Audite seulement les POC verticales SYS-*
+  build-data [args]         Construit les Parquet canoniques
+  python [args]             Lance le Python principal local
+  duckling [args]           Lance le service Duckling local non admis
+  popper [args]             Lance Popper, candidat non admis
+  rst [args]                Lance IsaNLP RST, candidat non admis
+  help                      Affiche cette aide
+
+Les anciennes commandes d'intégration sont archivées et ne sont plus actives.
 EOF
 }
 
@@ -43,27 +41,16 @@ case "$command_name" in
   verify)
     exec "$SEMAN2_ROOT/scripts/verify_local_dependencies.sh" "$@"
     ;;
+  validate-architecture)
+    exec "$SEMAN2_ROOT/.venv/bin/python" \
+      "$SEMAN2_ROOT/scripts/validate_system_architecture.py" "$@"
+    ;;
+  test-unit)
+    exec "$SEMAN2_ROOT/.venv/bin/python" -m unittest discover -s tests "$@"
+    ;;
   audit-pocs)
     exec "$SEMAN2_ROOT/.venv/bin/python" \
       "$SEMAN2_ROOT/scripts/audit_pocs.py" "$@"
-    ;;
-  phase3)
-    exec "$SEMAN2_ROOT/.venv/bin/python" -m seman2_runtime.cli "$@"
-    ;;
-  sample-corpus)
-    exec "$SEMAN2_ROOT/.venv/bin/python" -m seman2_runtime.corpus_cli "$@"
-    ;;
-  plan-services)
-    exec "$SEMAN2_ROOT/.venv/bin/python" -m seman2_runtime.planning_cli "$@"
-    ;;
-  evaluate)
-    exec "$SEMAN2_ROOT/.venv/bin/python" "$SEMAN2_ROOT/scripts/evaluate_poc.py" "$@"
-    ;;
-  validate-runtime-plan)
-    exec "$SEMAN2_ROOT/.venv/bin/python" "$SEMAN2_ROOT/scripts/validate_runtime_plan.py" "$@"
-    ;;
-  runtime-once)
-    exec "$SEMAN2_ROOT/.venv/bin/python" -m seman2_runtime.runtime_cli "$@"
     ;;
   build-data)
     exec "$SEMAN2_ROOT/.venv/bin/python" \

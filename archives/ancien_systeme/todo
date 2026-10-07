@@ -1,0 +1,178 @@
+NOTE DE LEON:
+C'est étrange lire le dernier output. On parle déjà de la référence à "Omar m'a tuer" alors que 
+ceci ne devrait émerger que d'une analyse haut niveau suffisamment complexe pour intégrer des références culturelles.
+C'est réel ce test?
+
+Aussi je m'inquiète: as-tu entretenu pour rien des POCs qui ne serviront jamais dans la nouvelle architecture. Si c'est le cas
+ce serait une erreur très très grave puisque l'ancienne architecture a été archivée.
+
+Je trouve étrangement optimiste cette partie: "La frontière chatbot structurée passe : deux modèles ayant des biographies différentes répondent différemment; une hypothèse est formulée comme telle; un contenu oublié ne réapparaît pas depuis l’univers d’audit; et chaque réponse garde son chemin de preuve"
+Et j'aimerais bien avoir des preuves ou exemples.
+
+LAST (modifié par GPT):
+Cible normative actuelle : `plans/architecture_cognitive_developpementale.md`.
+La priorité n'est plus d'ajouter directement des POC culturelles au pipeline
+existant. Il faut construire dans l'ordre les étapes A à D du nouveau cœur,
+puis faire passer ses gates 1 à 6 avant de reprendre le curriculum, le chatbot
+et la culture. Les résultats ci-dessous sont conservés comme historique de
+l'ancien échafaudage et comme inventaire de briques réutilisables.
+
+Avancement du nouveau cœur : CORE-01 à CORE-05 passent. Le runtime possède
+maintenant la double représentation, la mémoire bornée, l'induction anonyme,
+le vocabulaire ouvert, le retrieval progressif, le curriculum gardé,
+l'admission épistémique et un pont d'ingestion réel avec reprise exacte. Deux
+expériences ACE/ERG de « An apple is a fruit. » suffisent à consolider une
+relation grammaticale `kind-of` et à répondre depuis la mémoire interne; le
+même patron passe sur `wug`/`dax`.
+
+Prochaine frontière du nouveau cœur : continuité d'identité entre observations,
+composition générique des propriétés/états et induction des transformations de
+verbes, puis projection de la situation active vers Soar. Ne pas reprendre les
+POC culturelles avant que ces relations et deltas réels alimentent la mémoire
+développementale.
+
+Passe 3 historique, dans l'ordre bottom-up de l'ancien plan révisé.
+
+Les chaînes SEM-03 à SEM-06, DISC-02, DLG-01 à DLG-05, GRAPH-01 à GRAPH-03,
+HYP-01 à HYP-05, RET-01 à RET-04, STAT-01 et CONS-01 ont été refaites comme
+intégrations causales réelles plutôt que comme démonstrations isolées. Les
+frontières conservent les artefacts complets, leurs identifiants et hashes,
+font circuler la matière low level vers le high level et gardent les
+alternatives factorisées. STAT-01 recalcule les signaux de la relation apprise
+par SEM-06; CONS-01 rejoue sous Z3 les vrais contrats émis par HYP-02/HYP-05 et
+retrouvés par RET-03. Les audits ciblés passent sans avertissement.
+
+HYP-06 et HYP-08 valident maintenant partage structurel, déduplication,
+stockage froid et reconstruction sur leurs oracles de croissance et sur les
+artefacts HYP réels. DLG-06 à DLG-13 sont aussi raccordées en série : DGB,
+candidats ISU, grounding, QUD/ellipses, réparation, obligations, références et
+frontière ConvoKit. Les POC rejettent les promotions sans preuve et conservent
+les indécisions. DLG-09 contenait une désindentation qui ne gardait qu'un cas;
+elle est corrigée et exécute désormais les cinq cas annoncés.
+
+IND-01 à IND-06 sont désormais causalement branchées : FCA sur les évidences
+HYP-04, ILP Popper sur un concept anonyme, motif récurrent sur les justifications
+HYP-02, transformation récurrente sur les deltas DLG-07, politique prudente de
+lifecycle et hiérarchie de patterns. Deux oracles ont empêché des faux GO : le
+mode Popper bruité surestimait une couverture sur le minuscule contexte intégré,
+et le niveau 2 réel augmente la description d'une unité; le premier trajet est
+donc contre-vérifié en mode exact, le second reste non promu.
+
+SEM-06 et ses consommateurs ont été régénérés sur les nouveaux hashes
+d'induction. CULT-01 sépare maintenant une vraie induction non supervisée sur
+texte Switchboard brut de sa baseline SWDA externe; CULT-05 conserve deux
+familles Reddit réelles comme candidates non promues puisque leur gain outcome
+est faible et leur stabilité temporelle absente.
+
+RUN-01/02 combinent maintenant la preuve SQLite/Soar existante et le cœur
+cognitif complet sur le vrai roman léger. Après un record, 52 artefacts ont été
+produits par les 28 modules requis et l'état terminal possède une ascendance de
+51 artefacts jusqu'à la source. RUN-02 restaure le checkpoint à mi-source,
+traite le second record et obtient exactement le même snapshot SHA-256 et les
+mêmes 104 artefacts qu'une exécution continue. Les corruptions et permutations
+de source sont réellement refusées.
+
+HYP-07 et SOAR-01 à SOAR-05 sont maintenant raccordées à la matière cognitive
+courante. Le runtime projette dans Soar un contexte borné riche — sémantique,
+temps, référence, contraintes, observations et justifications — avec réserve de
+diversité, puis les transformations avec épisodes et préconditions. Les POC
+vérifient aussi SMem/Epmem et leurs backups sur un vrai épisode, le chunking sur
+les transformations RUN-01 et un cycle de retrieval issu d'une vraie clé
+interne. Les choix restent opérationnels, jamais promus en vérités.
+
+Frontière historique : auditer cette chaîne SOAR complète, puis poursuivre avec
+COMM-01 à COMM-03 et GEN-01 à GEN-04. La sortie IsaNLP DISC-01 existante reste
+réutilisable par hash; ne pas recharger son modèle lourd sur cette machine.
+
+Audit réalisé : SOAR-01 à SOAR-05 passent 5/5 et COMM-01 à COMM-03 plus GEN-01
+à GEN-04 passent 7/7, sans avertissement. La suite complète du runtime passe
+également 52/52 après correction de l'ancien pipeline phase 3, qui consomme
+désormais les identifiants cognitifs DLG-03 plutôt qu'un champ `analysis_id`
+obsolète. Cette ancienne frontière CULT-02 à CULT-04, CULT-06, DLG-14 et X-01 à
+X-07 est suspendue jusqu'à la mise en œuvre du nouveau noyau représentationnel.
+
+
+
+-=-=-=-=- Important pour la suite -=-=-=-=-
+
+Voici les prochaines étapes:
+
+https://chatgpt.com/c/6abf056b-d8b8-83ea-926f-09b44c96a329
+https://chatgpt.com/share/6abff2b4-742c-83e9-9c32-0588ce7bf288
+
+Passe 1 — Exploration des outils
+Objectif : documenter ce qui existe réellement.
+Terminer les POC actuelles en conservant les sorties brutes, les capacités observées, les lacunes et les limites des bibliothèques.
+Livrable : inventaire technique vérifié des capacités disponibles et manquantes.
+
+Passe 2 — Validation locale approfondie
+Objectif : confirmer que chaque POC couvre ses exigences.
+Reprendre les résultats de la première passe, combler les lacunes, introduire des cas adversariaux et vérifier les hypothèses avec des oracles explicites.
+À cette étape, un prototype peut utiliser des fixtures synthétiques et fonctionner indépendamment des autres composants.
+Livrable : catalogue de composants dont les capacités et les limites locales sont établies.
+
+Passe 3 — Architecture et intégration systémique
+Objectif : démontrer que les capacités peuvent réellement fonctionner ensemble.
+Définir les proto-services, les contrats, les dépendances et les frontières. Puis construire progressivement les chaînes intégrées et procéder aux validations GO/NO-GO.
+Livrable : architecture exécutable, documentée et testée de bout en bout.
+
+État : verticale d'ingestion bottom-up exécutable sur matière réelle. La
+commande `./scripts/seman2 cognitive-system-ingest` lit le roman ou le
+dictionnaire en flux borné, stabilise chaque observation avant la suivante et
+rapporte les modules qui ont réellement participé. La chaîne va de Source et
+Observation jusqu'au ledger, aux alignements, à la sémantique, au temps formel,
+à Z3, aux hypothèses, à Soar, au discours, au dialogue formel, aux épisodes,
+au retrieval, aux
+statistiques, à l'induction et à l'état culturel. Les sorties high level ont la
+matière low level comme ascendance causale vérifiée par test.
+
+Extension sur matière réelle : `sample-corpus` sélectionne de façon
+déterministe trois cas de couverture dans dix vrais shards Parquet sous un
+plafond DuckDB de 256 Mo. `plan-services` exécute ACE/ERG et Dynamic Syntax,
+conserve les échecs dans un ledger et transforme neuf MRS réelles en fragments
+génériques. Résultat observé : ERG couvre les trois titres; Dynamic Syntax n'en
+complète aucun; trois candidats temporels E/R/S sont explicites et six restent
+sous-spécifiés. Neuf hypothèses persistantes sont maintenant créées sans
+sélection prématurée et sans matérialiser le produit inter-observations 3×3×3.
+Le blueprint d'exécution est maintenant défini dans
+`plans/archives/architecture_runtime_cognitif.md` et
+`plans/archives/cognitive_system_architecture.json`. Cet ancien échafaudage sépare les modes ingestion et
+chatbot tout en leur donnant le même cœur bottom-up, décrit l'Artifact Arena en
+RAM, les mémoires propriétaires, le scheduler en vagues, le Control State, les
+analyseurs parallèles et les couches allant jusqu'à l'induction culturelle.
+
+Le fan-out textuel utilise réellement ACE/ERG, Link Grammar, Dynamic Syntax,
+WordNet, VerbNet, PropBank, FrameNet, SemLink, SUMO, Epitran, PanPhon et
+CMUdict, sous timeouts, plafond mémoire et quatre workers concurrents maximum.
+Tree-sitter est testé sur une observation de code et les décisions de routage
+indiquent explicitement pourquoi un analyseur est appliqué ou non. Les sorties
+`poc/*/output`, les labels de corpus et OpenRouter restent strictement hors du
+chemin cognitif.
+
+La reprise de session a été exécutée : arrêt après le premier enregistrement,
+checkpoint atomique, restauration du curseur et traitement du second sans
+divergence ni tâche pendante. La pression de mémoire de travail rétrograde les
+artefacts anciens en latent sans les supprimer. Sur deux phrases réelles liées
+par « Maya », le système conserve les identités comme candidates, compte le
+support une fois par épisode et peut produire un candidat conceptuel anonyme au
+seuil configuré sans lui inventer un sens culturel.
+
+RUN-03 et RUN-04 ont été réimplémentées sur le même flow : ingestion séquentielle
+d'une vraie question et de sa réponse sans retrieval Parquet, équivalence après
+checkpoint, transformations concurrentes issues de la matière émergente,
+sélection opérationnelle par Soar et impasse explicite sans opérateur admissible.
+
+Suite de la passe 3 : brancher les routes qui exigent une autre modalité ou un
+contexte absent de la phrase légère — span multi-EDU pour RST, calendrier
+attribué pour Duckling/HeidelTime, blocs de code extraits des Parquet — puis
+construire la verticale du mode chatbot (planification communicative,
+réalisation et réingestion des sorties) sur le même cœur. Le dialogue formel et
+les transformations mémoire font déjà partie du mode ingestion.
+
+
+-=-=-=-
+
+Il serait intéressant de réussir à construire une sorte de corpus minimal pour les POCs.
+Ce corpus possèderait disons 80% du langage humain, tout ce qu'il faut en terme de verbe,
+et passerait bien par tout le système, mais on aurait limité son univers connu à disons ce
+qu'une personne de 8-10 ans connaîtrait de l'univers.

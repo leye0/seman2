@@ -1,0 +1,12 @@
+The wooden box was closed.
+Maya carefully opened the wooden box.
+The wooden box was open.
+The metal door was closed.
+Jonah opens the metal door.
+The metal door was open.
+The automatic door was closed.
+Maya opened the automatic door.
+The automatic door was closed.
+The garden gate was closed.
+Amira opened the garden gate.
+The garden gate was open.

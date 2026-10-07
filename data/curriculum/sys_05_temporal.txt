@@ -1,0 +1,8 @@
+Maya had closed the wooden box.
+The wooden box was closed.
+Then Maya opened the wooden box.
+The wooden box was open.
+Later Maya closed the wooden box.
+The wooden box was closed.
+Before that, Amira entered the room.
+Maya opened the gate before Jonah closed the door and Maya opened the gate after Jonah closed the door.

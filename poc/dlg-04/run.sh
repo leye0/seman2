@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-cd "$(dirname "$0")/../.."
-exec python3 poc/dlg-04/run.py

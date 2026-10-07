@@ -1,242 +1,237 @@
 #!/usr/bin/env python3
-"""Execute and audit every POC declared in plans/required_poc.md."""
+"""Audit only the active SYS-* vertical integration POCs."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
-import os
+from pathlib import Path
 import re
-import signal
+import shutil
 import subprocess
 import sys
-import time
-from dataclasses import asdict, dataclass
-from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REQUIRED = ROOT / "plans" / "required_poc.md"
+PLAN = ROOT / "plans" / "required_poc.md"
 POC_ROOT = ROOT / "poc"
-STATE_ROOT = ROOT / ".local" / "state" / "poc-audit"
-POC_HEADING = re.compile(r"^###\s+([A-Z]+-\d+)\s+—\s+(.+?)\s*$", re.MULTILINE)
+STATE = ROOT / ".local" / "state" / "poc-audit"
+HEADING = re.compile(r"^###\s+(SYS-\d+)\s+—\s+(.+)$", re.MULTILINE)
 
 
-@dataclass
-class Result:
-    poc_id: str
-    title: str
-    status: str
-    seconds: float
-    errors: list[str]
-    warnings: list[str]
-    log: str | None
+def planned() -> list[tuple[str, str]]:
+    rows = HEADING.findall(PLAN.read_text(encoding="utf-8"))
+    if len(rows) != len({identifier for identifier, _ in rows}):
+        raise SystemExit("duplicate SYS POC identifier")
+    return rows
 
 
-def declared_pocs() -> list[tuple[str, str]]:
-    text = REQUIRED.read_text(encoding="utf-8")
-    found = POC_HEADING.findall(text)
-    duplicates = sorted({poc_id for poc_id, _ in found if [x[0] for x in found].count(poc_id) > 1})
-    if duplicates:
-        raise SystemExit(f"Identifiants dupliques dans {REQUIRED}: {', '.join(duplicates)}")
-    return found
+def file_digest(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-def dependency_order(items: list[tuple[str, str]]) -> list[tuple[str, str]]:
-    """Order the full suite so generated cross-POC inputs exist on a clean clone.
-
-    POC identifiers mentioned by a runner are treated conservatively as
-    dependencies.  This slightly over-orders provenance-only references, but it
-    prevents an ignored output directory from accidentally acting as a cache.
-    """
-    by_id = {poc_id: title for poc_id, title in items}
-    slugs = {poc_id.lower(): poc_id for poc_id in by_id}
-    dependencies: dict[str, set[str]] = {}
-    for poc_id in by_id:
-        source = (POC_ROOT / poc_id.lower() / "run.py").read_text(encoding="utf-8")
-        mentioned = set(re.findall(r"[a-z]+-\d+", source)) & set(slugs)
-        dependencies[poc_id] = {slugs[slug] for slug in mentioned if slugs[slug] != poc_id}
-
-    remaining = set(by_id)
-    ordered: list[str] = []
-    while remaining:
-        ready = sorted(poc_id for poc_id in remaining if not (dependencies[poc_id] & remaining))
-        if not ready:
-            cycle = {poc_id: sorted(dependencies[poc_id] & remaining) for poc_id in sorted(remaining)}
-            raise SystemExit(f"Cycle de dependances entre POC: {cycle}")
-        ordered.extend(ready)
-        remaining.difference_update(ready)
-    return [(poc_id, by_id[poc_id]) for poc_id in ordered]
-
-
-def json_files(output: Path) -> tuple[list[Path], list[str]]:
-    files = sorted(output.rglob("*.json")) if output.is_dir() else []
+def static_errors(identifier: str) -> list[str]:
+    directory = POC_ROOT / identifier.lower()
     errors: list[str] = []
-    for path in files:
-        try:
-            json.loads(path.read_text(encoding="utf-8"))
-        except Exception as exc:  # pragma: no cover - only exercised on broken artifacts
-            errors.append(f"JSON invalide: {path.relative_to(ROOT)}: {exc}")
-    return files, errors
-
-
-def audit_one(poc_id: str, title: str, execute: bool, timeout: int) -> Result:
-    slug = poc_id.lower()
-    directory = POC_ROOT / slug
-    errors: list[str] = []
-    warnings: list[str] = []
-    log_path: Path | None = None
-    elapsed = 0.0
-
-    for name in ("README.md", "verdict.md", "run.py", "run.sh"):
+    for name in ("README.md", "run.py", "run.sh"):
         path = directory / name
-        if not path.is_file() or path.stat().st_size == 0:
-            errors.append(f"fichier absent ou vide: poc/{slug}/{name}")
-
+        if not path.is_file() or not path.stat().st_size:
+            errors.append(f"missing {path.relative_to(ROOT)}")
     if errors:
-        return Result(poc_id, title, "FAIL", elapsed, errors, warnings, None)
-
+        return errors
+    runner = (directory / "run.py").read_text(encoding="utf-8")
     readme = (directory / "README.md").read_text(encoding="utf-8")
-    verdict = (directory / "verdict.md").read_text(encoding="utf-8")
-    source = (directory / "run.py").read_text(encoding="utf-8")
-    if poc_id not in readme.splitlines()[0]:
-        errors.append("README: identifiant absent du titre")
-    if poc_id not in verdict.splitlines()[0]:
-        errors.append("verdict: identifiant absent du titre")
-    if not re.search(r"(?<![A-Z])(GO(?:_|\b)|PARTIEL\b|ADAPTATEUR\b|OUTIL\b)", verdict, re.IGNORECASE):
-        warnings.append("verdict non qualifie")
-    if not re.search(r"assert|raise\s+(?:AssertionError|RuntimeError|SystemExit)|validations?|checks?|oracle", source, re.IGNORECASE):
-        errors.append("aucun oracle executable detectable")
-    oracle_markers = re.findall(
-        r"assert|raise\s+(?:AssertionError|RuntimeError|SystemExit)|validations?|checks?|oracle",
-        source,
-        re.IGNORECASE,
-    )
-    if len(oracle_markers) < 2 and not re.search(
-        r"negati|advers|invalid|contradi|conflit|ambigu|echec|failure|fail|reject|absent|unknown|unresolved|partial|empty|silence",
-        readme + verdict + source,
-        re.IGNORECASE,
-    ):
-        warnings.append("cas negatif/adversarial non identifiable")
+    if "tests." in runner or "unittest" in runner:
+        errors.append("runner invokes unit tests instead of production components")
+    for phrase in ("Entrée réelle", "Stock consommé", "Stock produit", "Lignée"):
+        if phrase not in readme:
+            errors.append(f"README missing contract section: {phrase}")
+    if not re.search(r"data/|source réelle|source reelle", readme, re.IGNORECASE):
+        errors.append("README does not name a real source")
+    return errors
 
-    if execute and not errors:
-        STATE_ROOT.mkdir(parents=True, exist_ok=True)
-        log_path = STATE_ROOT / f"{slug}.log"
-        start = time.monotonic()
-        process = subprocess.Popen(
-                [str(directory / "run.sh")],
-                cwd=ROOT,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                start_new_session=True,
-            )
+
+def output_errors(identifier: str) -> list[str]:
+    output = POC_ROOT / identifier.lower() / "output"
+    errors: list[str] = []
+    required = ("results.json", "summary.json", "lineage.json")
+    payloads: dict[str, object] = {}
+    for name in required:
+        path = output / name
+        if not path.is_file():
+            errors.append(f"missing {path.relative_to(ROOT)}")
+            continue
         try:
-            output, _ = process.communicate(timeout=timeout)
-            elapsed = time.monotonic() - start
-            log_path.write_text(output, encoding="utf-8")
-            if process.returncode:
-                errors.append(f"execution terminee avec le code {process.returncode}")
-        except subprocess.TimeoutExpired as exc:
-            os.killpg(process.pid, signal.SIGTERM)
-            try:
-                trailing, _ = process.communicate(timeout=5)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGKILL)
-                trailing, _ = process.communicate()
-            elapsed = time.monotonic() - start
-            parts = []
-            for chunk in (exc.stdout, trailing):
-                if isinstance(chunk, bytes):
-                    chunk = chunk.decode(errors="replace")
-                if chunk:
-                    parts.append(chunk)
-            output = "".join(parts)
-            log_path.write_text(output, encoding="utf-8")
-            errors.append(f"timeout apres {timeout}s")
-
-    if execute:
-        output = directory / "output"
-        files, json_errors = json_files(output)
-        errors.extend(json_errors)
-        if not output.is_dir() or not any(p.is_file() for p in output.rglob("*")):
-            errors.append("aucun artefact produit dans output/")
-        if not (output / "results.json").is_file():
-            errors.append("output/results.json absent")
-        if not (output / "versions-and-parameters.json").is_file():
-            errors.append("output/versions-and-parameters.json absent")
-        if not files:
-            errors.append("aucun artefact JSON audit-able")
-        summary_path = output / "summary.json"
-        if not summary_path.is_file():
-            errors.append("output/summary.json absent")
+            payloads[name] = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as exc:
+            errors.append(f"invalid {path.relative_to(ROOT)}: {exc}")
+    results = payloads.get("results.json")
+    if isinstance(results, dict) and results.get("verdict") != "GO":
+        errors.append("results verdict is not GO")
+    if isinstance(results, dict):
+        checks = results.get("checks")
+        if not isinstance(checks, dict) or not checks:
+            errors.append("results has no executable checks")
+        elif any(value is not True for value in checks.values()):
+            errors.append("one or more executable checks did not pass")
+    lineage = payloads.get("lineage.json")
+    if isinstance(lineage, dict):
+        artifacts = lineage.get("artifacts")
+        if not isinstance(artifacts, list) or not artifacts:
+            errors.append("lineage has no artifacts")
         else:
-            try:
-                summary = json.loads(summary_path.read_text(encoding="utf-8"))
-                if not isinstance(summary, dict) or not summary.get("verdict"):
-                    errors.append("summary.json ne contient pas de verdict")
-            except Exception:
-                pass  # The generic JSON validator already reports the parse error.
-
-    return Result(
-        poc_id,
-        title,
-        "PASS" if not errors else "FAIL",
-        round(elapsed, 3),
-        errors,
-        warnings,
-        str(log_path.relative_to(ROOT)) if log_path else None,
-    )
+            ids = {row.get("artifact_id") for row in artifacts if isinstance(row, dict)}
+            for row in artifacts:
+                if not isinstance(row, dict):
+                    errors.append("lineage artifact is not an object")
+                    continue
+                for field in (
+                    "artifact_id",
+                    "artifact_type",
+                    "producer_id",
+                    "producer_revision",
+                    "content_digest",
+                    "parent_artifact_refs",
+                    "context_refs",
+                    "resource_cost",
+                ):
+                    if field not in row:
+                        errors.append(f"lineage artifact missing {field}")
+                for parent in row.get("parent_artifact_refs", []):
+                    if parent not in ids:
+                        errors.append(f"lineage references missing parent {parent}")
+                for anchor in row.get("source_anchors", []):
+                    if Path(anchor.get("source_path", "/")).is_absolute():
+                        errors.append("lineage contains an absolute source path")
+        if not lineage.get("real_source_refs"):
+            errors.append("lineage has no real_source_refs")
+        effects = lineage.get("causal_effects")
+        if not effects:
+            errors.append("lineage has no causal_effects")
+        elif isinstance(effects, list):
+            required_effect_fields = {
+                "consumer_artifact_ref",
+                "input_factor_ref",
+                "producer_artifact_ref",
+                "operation",
+                "effect_on_output",
+                "activation_or_weight_change",
+                "context_ref",
+                "reason_if_ignored",
+            }
+            for effect in effects:
+                if not isinstance(effect, dict):
+                    errors.append("causal effect is not an object")
+                    continue
+                missing = sorted(required_effect_fields - set(effect))
+                if missing:
+                    errors.append(f"causal effect missing fields {missing}")
+    return errors
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--static", action="store_true", help="auditer sans executer les POCs")
-    parser.add_argument("--timeout", type=int, default=900, help="timeout par POC en secondes")
-    parser.add_argument("--only", action="append", default=[], help="identifiant a auditer (repetable)")
+    parser.add_argument("--plan", action="store_true", help="validate the active plan without requiring implementation")
+    parser.add_argument("--only", action="append", default=[], help="SYS identifier to audit")
+    parser.add_argument("--timeout", type=int, default=180, help="runner timeout in seconds")
     args = parser.parse_args()
 
-    declared = declared_pocs()
-    declared_ids = {poc_id.lower() for poc_id, _ in declared}
-    directory_ids = {p.name for p in POC_ROOT.iterdir() if p.is_dir() and re.fullmatch(r"[a-z]+-\d+", p.name)}
-    topology_errors = [f"POC declare sans dossier: {x}" for x in sorted(declared_ids - directory_ids)]
-    topology_errors += [f"dossier sans POC declare: {x}" for x in sorted(directory_ids - declared_ids)]
-
+    rows = planned()
     selected = {value.upper() for value in args.only}
+    known = {identifier for identifier, _ in rows}
+    if selected - known:
+        parser.error(f"unknown POC: {', '.join(sorted(selected - known))}")
     if selected:
-        unknown = selected - {poc_id for poc_id, _ in declared}
-        if unknown:
-            parser.error(f"POC inconnue(s): {', '.join(sorted(unknown))}")
-        declared = [item for item in declared if item[0] in selected]
-    else:
-        declared = dependency_order(declared)
+        # Une demande ciblée inclut toujours tous ses prérequis. Cela empêche
+        # d'auditer artificiellement SYS-03 tout en contournant SYS-01.
+        highest = max(
+            index for index, row in enumerate(rows) if row[0] in selected
+        )
+        rows = rows[: highest + 1]
 
-    results: list[Result] = []
-    for index, (poc_id, title) in enumerate(declared, 1):
-        print(f"[{index:02d}/{len(declared):02d}] {poc_id}", flush=True)
-        result = audit_one(poc_id, title, not args.static, args.timeout)
-        results.append(result)
-        details = "; ".join(result.errors or result.warnings)
-        print(f"  {result.status} {result.seconds:.3f}s" + (f" — {details}" if details else ""), flush=True)
-
-    report = {
-        "declared_count": len(declared_pocs()),
-        "audited_count": len(results),
-        "executed": not args.static,
-        "passed": sum(r.status == "PASS" for r in results),
-        "failed": sum(r.status == "FAIL" for r in results),
-        "warnings": sum(len(r.warnings) for r in results),
-        "topology_errors": topology_errors,
-        "results": [asdict(r) for r in results],
+    active_directories = {
+        path.name
+        for path in POC_ROOT.iterdir()
+        if path.is_dir() and re.fullmatch(r"sys-\d+", path.name)
     }
-    STATE_ROOT.mkdir(parents=True, exist_ok=True)
-    report_path = STATE_ROOT / "report.json"
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(
-        f"\nBilan: {report['passed']}/{len(results)} PASS, {report['failed']} FAIL, "
-        f"{report['warnings']} avertissement(s). Rapport: {report_path.relative_to(ROOT)}"
+    undeclared = active_directories - {identifier.lower() for identifier, _ in planned()}
+    report = {"planned": len(planned()), "implemented": 0, "go": 0, "blocked": 0, "not_implemented": 0, "failed": 0, "pocs": []}
+    if undeclared:
+        report["failed"] += len(undeclared)
+        report["undeclared_directories"] = sorted(undeclared)
+
+    first_blocker: str | None = None
+    for identifier, title in rows:
+        directory = POC_ROOT / identifier.lower()
+        item = {"id": identifier, "title": title}
+        if first_blocker is not None:
+            item["status"] = "BLOCKED_BY_PREREQUISITE"
+            item["blocked_by"] = first_blocker
+            report["blocked"] += 1
+            report["pocs"].append(item)
+            continue
+        if not directory.is_dir():
+            item["status"] = "NOT_IMPLEMENTED"
+            report["not_implemented"] += 1
+            report["pocs"].append(item)
+            first_blocker = identifier
+            continue
+        report["implemented"] += 1
+        errors = static_errors(identifier)
+        if not errors and not args.plan:
+            shutil.rmtree(directory / "output", ignore_errors=True)
+            completed = subprocess.run(
+                [str(directory / "run.sh")],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                timeout=args.timeout,
+                check=False,
+            )
+            STATE.mkdir(parents=True, exist_ok=True)
+            log = STATE / f"{identifier.lower()}.log"
+            log.write_text(completed.stdout, encoding="utf-8")
+            item["runner_sha256"] = file_digest(directory / "run.py")
+            item["log"] = str(log.relative_to(ROOT))
+            if completed.returncode:
+                errors.append(f"runner exited {completed.returncode}")
+            errors.extend(output_errors(identifier))
+        if errors:
+            declared_verdict = None
+            result_path = directory / "output" / "results.json"
+            if result_path.is_file():
+                try:
+                    declared_verdict = json.loads(
+                        result_path.read_text(encoding="utf-8")
+                    ).get("verdict")
+                except (json.JSONDecodeError, OSError, AttributeError):
+                    pass
+            status = "INCOMPLETE" if declared_verdict == "INCOMPLETE" else "FAIL"
+            item.update(status=status, errors=errors)
+            report["failed"] += 1
+            first_blocker = identifier
+        else:
+            item["status"] = "STRUCTURALLY_READY" if args.plan else "GO"
+            if not args.plan:
+                report["go"] += 1
+        report["pocs"].append(item)
+
+    STATE.mkdir(parents=True, exist_ok=True)
+    (STATE / "report.json").write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    return 1 if topology_errors or report["failed"] else 0
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    if report["failed"]:
+        return 1
+    if not args.plan and report["not_implemented"]:
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

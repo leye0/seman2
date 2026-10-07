@@ -1,0 +1,125 @@
+{
+  "purpose": "Transitional durable-transport scaffold retained for RUN-01/02 mechanics. The canonical cognitive architecture is plans/cognitive_system_architecture.json.",
+  "status": "transitional-non-canonical",
+  "execution_model": {
+    "kind": "event-driven epochs",
+    "within_epoch_edges_must_be_acyclic": true,
+    "feedback_edges_advance_epoch": true,
+    "high_level_consumes_low_level_artifact_ids": true,
+    "poc_output_directories_are_forbidden_as_runtime_inputs": true
+  },
+  "memory_policy": {
+    "source_corpus": "disk-backed external experience",
+    "cognitive_memories": "primarily RAM with coordinated checkpoint and reversible cold spill",
+    "service_hot_state": "owner-specific live memories, bounded activation and indexes",
+    "soar_working_memory": "bounded active context only",
+    "full_corpus_in_active_memory": false
+  },
+  "nodes": [
+    {"id": "source-reader", "level": 0, "state": "stream-cursor", "memory": "bounded-buffer"},
+    {"id": "observation-ledger", "level": 1, "state": "immutable-observations", "memory": "durable-append"},
+    {"id": "analysis-dispatch", "level": 2, "state": "in-flight-analysis-jobs", "memory": "bounded-queue"},
+    {"id": "native-analysis-ledger", "level": 3, "state": "attributed-native-results-and-failures", "memory": "durable-append"},
+    {"id": "representation-adapters", "level": 4, "state": "attributed-graph-fragments", "memory": "durable-append"},
+    {"id": "cross-representation-linker", "level": 5, "state": "candidate-correspondences", "memory": "durable-append"},
+    {"id": "temporal-relation-manager", "level": 6, "state": "constraints-and-unknowns", "memory": "durable-indexed"},
+    {"id": "hypothesis-manager", "level": 6, "state": "factorized-hypotheses-and-evidence", "memory": "durable-indexed"},
+    {"id": "situation-state", "level": 7, "state": "particular-entities-deltas-and-snapshots", "memory": "durable-indexed"},
+    {"id": "episodic-store", "level": 7, "state": "episodes-selection-events-and-outcomes", "memory": "durable-append"},
+    {"id": "structural-retrieval", "level": 8, "state": "ranked-references-to-persistent-objects", "memory": "bounded-cache"},
+    {"id": "active-beam", "level": 9, "state": "bounded-diverse-materialized-interpretations", "memory": "bounded-hot"},
+    {
+      "id": "soar-runtime",
+      "level": 10,
+      "state": "goals-operators-active-context-and-learned-productions",
+      "memory": "soar-working-memory",
+      "control_scope": [
+        "interpretation-selection",
+        "retrieval-control",
+        "state-transformation-selection",
+        "dialogue-goals-and-repair",
+        "communicative-plan-selection"
+      ],
+      "working_memory_partitions": [
+        "current-observation-refs",
+        "active-analysis-fragments",
+        "bounded-hypothesis-beam",
+        "active-situation-projection",
+        "retrieved-episode-refs",
+        "goal-and-subgoal-stack",
+        "candidate-transformations",
+        "selected-plan-ref"
+      ]
+    },
+    {"id": "candidate-transformations", "level": 11, "state": "inspectable-proposed-state-transformations", "memory": "bounded-hot"},
+    {"id": "communicative-planning", "level": 12, "state": "selected-content-order-reference-and-initiative", "memory": "bounded-hot"},
+    {"id": "surface-realization", "level": 13, "state": "attributed-output-candidates", "memory": "bounded-buffer"},
+    {"id": "system-output-ledger", "level": 14, "state": "system-produced-observations", "memory": "durable-append"},
+    {"id": "induction-engine", "level": 8, "state": "patterns-transformations-and-support", "memory": "durable-indexed"},
+    {"id": "memory-consolidation", "level": 8, "state": "hot-warm-cold-placement-and-reconstruction-pointers", "memory": "durable-indexed"},
+    {"id": "checkpoint-coordinator", "level": 15, "state": "barriers-watermarks-and-component-snapshots", "memory": "durable-atomic-manifest"}
+  ],
+  "edges": [
+    {"from": "source-reader", "to": "observation-ledger", "kind": "data", "artifact": "raw-observation", "epoch_delta": 0},
+    {"from": "observation-ledger", "to": "analysis-dispatch", "kind": "data", "artifact": "observation-ref", "epoch_delta": 0},
+    {"from": "analysis-dispatch", "to": "native-analysis-ledger", "kind": "data", "artifact": "native-analysis-or-failure", "epoch_delta": 0},
+    {"from": "native-analysis-ledger", "to": "representation-adapters", "kind": "data", "artifact": "attributed-native-analysis-ref", "epoch_delta": 0},
+    {"from": "representation-adapters", "to": "cross-representation-linker", "kind": "data", "artifact": "graph-fragment-ref", "epoch_delta": 0},
+    {"from": "cross-representation-linker", "to": "temporal-relation-manager", "kind": "data", "artifact": "linked-fragment-ref", "epoch_delta": 0},
+    {"from": "cross-representation-linker", "to": "hypothesis-manager", "kind": "data", "artifact": "linked-fragment-ref", "epoch_delta": 0},
+    {"from": "temporal-relation-manager", "to": "hypothesis-manager", "kind": "data", "artifact": "temporal-candidate-ref", "epoch_delta": 0},
+    {"from": "hypothesis-manager", "to": "situation-state", "kind": "data", "artifact": "state-update-candidate-ref", "epoch_delta": 0},
+    {"from": "hypothesis-manager", "to": "episodic-store", "kind": "data", "artifact": "hypothesis-and-evidence-ref", "epoch_delta": 0},
+    {"from": "situation-state", "to": "episodic-store", "kind": "data", "artifact": "state-delta-ref", "epoch_delta": 0},
+    {"from": "episodic-store", "to": "structural-retrieval", "kind": "data", "artifact": "episode-index-ref", "epoch_delta": 0},
+    {"from": "hypothesis-manager", "to": "structural-retrieval", "kind": "data", "artifact": "hypothesis-index-ref", "epoch_delta": 0},
+    {"from": "situation-state", "to": "structural-retrieval", "kind": "data", "artifact": "active-situation-ref", "epoch_delta": 0},
+    {"from": "structural-retrieval", "to": "active-beam", "kind": "data", "artifact": "ranked-candidate-refs", "epoch_delta": 0},
+    {"from": "hypothesis-manager", "to": "active-beam", "kind": "data", "artifact": "factorized-candidate-refs", "epoch_delta": 0},
+    {"from": "active-beam", "to": "soar-runtime", "kind": "data", "artifact": "bounded-context-projection", "epoch_delta": 0},
+    {"from": "situation-state", "to": "soar-runtime", "kind": "data", "artifact": "active-state-projection", "epoch_delta": 0},
+    {"from": "soar-runtime", "to": "structural-retrieval", "kind": "decision-loop", "artifact": "internal-memory-retrieval-request", "epoch_delta": 0},
+    {"from": "soar-runtime", "to": "candidate-transformations", "kind": "decision-loop", "artifact": "goal-and-operator-context", "epoch_delta": 0},
+    {"from": "candidate-transformations", "to": "soar-runtime", "kind": "data", "artifact": "transformation-candidates", "epoch_delta": 0},
+    {"from": "candidate-transformations", "to": "situation-state", "kind": "feedback", "artifact": "selected-state-transformation", "epoch_delta": 1},
+    {"from": "soar-runtime", "to": "situation-state", "kind": "feedback", "artifact": "selected-transformation-ref", "epoch_delta": 1},
+    {"from": "soar-runtime", "to": "communicative-planning", "kind": "control", "artifact": "selected-transformation-ref", "epoch_delta": 0},
+    {"from": "communicative-planning", "to": "surface-realization", "kind": "data", "artifact": "communicative-plan", "epoch_delta": 0},
+    {"from": "surface-realization", "to": "system-output-ledger", "kind": "data", "artifact": "system-output", "epoch_delta": 0},
+    {"from": "system-output-ledger", "to": "observation-ledger", "kind": "feedback", "artifact": "self-produced-observation-ref", "epoch_delta": 1},
+    {"from": "situation-state", "to": "situation-state", "kind": "feedback", "artifact": "previous-state-ref", "epoch_delta": 1},
+    {"from": "episodic-store", "to": "episodic-store", "kind": "feedback", "artifact": "previous-episode-ref", "epoch_delta": 1},
+    {"from": "episodic-store", "to": "induction-engine", "kind": "background", "artifact": "committed-episode-refs", "epoch_delta": 0},
+    {"from": "induction-engine", "to": "hypothesis-manager", "kind": "feedback", "artifact": "learned-pattern-ref", "epoch_delta": 1},
+    {"from": "hypothesis-manager", "to": "memory-consolidation", "kind": "background", "artifact": "placement-candidates", "epoch_delta": 0},
+    {"from": "memory-consolidation", "to": "structural-retrieval", "kind": "feedback", "artifact": "updated-index-ref", "epoch_delta": 1}
+  ],
+  "checkpoint": {
+    "barrier_order": [
+      "pause-source-reader",
+      "finish-or-record-in-flight-analysis",
+      "commit-durable-ledgers-and-index-watermarks",
+      "capture-active-context-and-beam",
+      "save-soar-agent-procedural-and-semantic-state",
+      "backup-soar-episodic-and-semantic-databases",
+      "record-soar-input-replay-offset-and-random-seed",
+      "write-atomic-checkpoint-manifest",
+      "resume-or-stop"
+    ],
+    "restore_order": [
+      "verify-artifact-digests-and-store-watermarks",
+      "restore-durable-stores",
+      "restore-soar-agent-and-native-memory-databases",
+      "rebuild-working-memory-from-active-context-snapshot",
+      "replay-only-events-after-checkpoint-watermark",
+      "verify-equivalent-active-context-before-resume"
+    ],
+    "important_limit": "Soar save agent does not by itself establish restoration of the complete current working-memory state."
+  },
+  "evaluation_plane": {
+    "in_runtime_data_path": false,
+    "deterministic_oracles_required": true,
+    "external_semantic_judge_is_advisory": true,
+    "rule": "POCs inspect runtime traces and compare actual results with expectations; they never feed judge output back into cognition."
+  }
+}
