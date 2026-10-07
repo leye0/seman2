@@ -205,16 +205,19 @@ def _result_content(message: list[Any]) -> list[Any] | None:
 def _matches_uttnum(content: list[Any], uttnum: int) -> bool:
     if _same(content[0], "FAILED-TO-PARSE"):
         return _integer(_get(content, ":UTTNUM")) == uttnum
-    if _same(content[0], "NEW-SPEECH-ACT"):
-        utterances = [content[1]] if len(content) > 1 else []
-    elif _same(content[0], "NEW-SPEECH-ACT-HYPS"):
-        utterances = content[1] if len(content) > 1 and isinstance(content[1], list) else []
-    else:
+    return _contains_uttnum(content, uttnum)
+
+
+def _contains_uttnum(node: Any, uttnum: int) -> bool:
+    """Search the reply tree: COMPOUND-COMMUNICATION-ACT nests UTTNUM in :ACTS."""
+    if not isinstance(node, list) or not node:
         return False
-    return any(
-        isinstance(item, list) and _integer(_get(item, ":UTTNUM")) == uttnum
-        for item in utterances
-    )
+    if _integer(_get(node, ":UTTNUM")) == uttnum:
+        return True
+    for item in node:
+        if _contains_uttnum(item, uttnum):
+            return True
+    return False
 
 
 @dataclass(frozen=True, slots=True)

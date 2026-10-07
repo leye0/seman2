@@ -200,6 +200,12 @@ class Seman2Runtime:
             raise RuntimeError("level-3 learning is disabled")
         return self.learner.reprocess(minimum_similarity=minimum_similarity)
 
+    def retro(self) -> dict[str, Any]:
+        """Renvoie les segments d'arbres appris vers les analyses conservées."""
+        if self.learner is None:
+            raise RuntimeError("level-3 learning is disabled")
+        return self.learner.retro()
+
     def generate(
         self,
         target: Mapping[str, Any],
@@ -207,11 +213,12 @@ class Seman2Runtime:
         context: Mapping[str, Any] | None = None,
         bindings: Mapping[str, Any] | None = None,
         limit: int = 10,
+        modes: Sequence[str] = ("retrieve", "instantiate"),
     ) -> tuple[GenerationCandidate, ...]:
         if self.learner is None:
             raise RuntimeError("level-3 learning is disabled")
         return self.learner.generate(
-            target, context=context, bindings=bindings, limit=limit
+            target, context=context, bindings=bindings, limit=limit, modes=modes
         )
 
     def status(self) -> dict[str, Any]:

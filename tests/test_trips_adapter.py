@@ -71,9 +71,11 @@ class TripsAdapterTests(unittest.TestCase):
         current = self.store.append("A dax moves.", stream_id="fixture")
         bundle = self.adapter.interpret(current, (previous,), request_id="request-2")
 
-        self.assertEqual(self.transport.calls[-1][0], "Earlier text.\nA dax moves.")
+        # Context is preserved as provenance, not concatenated into the chart
+        # input: multi-unit inputs make TRIPS explode into compound parses.
+        self.assertEqual(self.transport.calls[-1][0], "A dax moves.")
         self.assertEqual(bundle.context_evidence_ids, (previous.evidence_id,))
-        self.assertEqual(bundle.input_spans[1].evidence_id, current.evidence_id)
+        self.assertEqual(bundle.input_spans[0].evidence_id, current.evidence_id)
         self.assertEqual(self.store.get(previous.evidence_id).raw, "Earlier text.")
 
     def test_failed_parse_is_a_retained_segment_not_an_exception(self) -> None:

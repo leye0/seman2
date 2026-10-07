@@ -36,6 +36,12 @@ def parser() -> argparse.ArgumentParser:
     root.add_argument("--trips-host", default="127.0.0.1")
     root.add_argument("--trips-port", type=int, default=6200)
     root.add_argument("--context-window", type=int, default=4)
+    root.add_argument(
+        "--parses-desired",
+        type=int,
+        default=1,
+        help="nombre d'analyses TRIPS par phrase (1 = profil rapide)",
+    )
     commands = root.add_subparsers(dest="command", required=True)
 
     commands.add_parser("init", help="initialise le journal SQLite/WAL")
@@ -51,7 +57,7 @@ def parser() -> argparse.ArgumentParser:
     )
     file_command.add_argument("path", type=Path)
     file_command.add_argument("--stream", required=True)
-    file_command.add_argument("--mode", choices=("paragraph", "line", "dialogue-tsv"), default="paragraph")
+    file_command.add_argument("--mode", choices=("paragraph", "line", "sentence", "dialogue-tsv"), default="paragraph")
     file_command.add_argument("--limit", type=int)
     file_command.add_argument("--max-unit-bytes", type=int, default=1_000_000)
     file_command.add_argument("--process", action="store_true")
@@ -82,6 +88,12 @@ def parser() -> argparse.ArgumentParser:
     )
     reprocess.add_argument("--minimum-similarity", type=float, default=0.0)
 
+    retro = commands.add_parser(
+        "retro",
+        help="renvoie les segments d'arbres appris vers les analyses conservées",
+    )
+    retro.add_argument("--evidence-id")
+
     generate = commands.add_parser(
         "generate", help="génère par inversion des alignements appris"
     )
@@ -89,6 +101,11 @@ def parser() -> argparse.ArgumentParser:
     generate.add_argument("--context", type=json_value)
     generate.add_argument("--bindings", type=json_value)
     generate.add_argument("--limit", type=int, default=10)
+    generate.add_argument(
+        "--modes",
+        default="retrieve,instantiate",
+        help="modes de génération séparés par des virgules",
+    )
 
     model_trace = commands.add_parser(
         "model-trace", help="affiche la provenance d'une structure apprise"
@@ -101,7 +118,10 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
-    adapter = TripsAdapter(LocalTripsTransport(args.trips_host, args.trips_port))
+    adapter = TripsAdapter(
+        LocalTripsTransport(args.trips_host, args.trips_port),
+        number_parses_desired=args.parses_desired,
+    )
     with Seman2Runtime.open(
         args.database,
         interpreter=adapter,
@@ -189,6 +209,8 @@ def main(argv: list[str] | None = None) -> int:
             )
         elif args.command == "reprocess":
             emit(runtime.reprocess(minimum_similarity=args.minimum_similarity))
+        elif args.command == "retro":
+            emit(runtime.retro())
         elif args.command == "generate":
             emit(
                 {
@@ -199,6 +221,11 @@ def main(argv: list[str] | None = None) -> int:
                             context=args.context,
                             bindings=args.bindings,
                             limit=args.limit,
+                            modes=tuple(
+                                item.strip()
+                                for item in args.modes.split(",")
+                                if item.strip()
+                            ),
                         )
                     ]
                 }

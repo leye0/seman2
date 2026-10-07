@@ -104,9 +104,10 @@ class TripsAdapter:
         self,
         transport: TripsTransport | None = None,
         *,
-        number_parses_desired: int = 10,
+        number_parses_desired: int = 1,
         output_parts: str = DEFAULT_OUTPUT_PARTS,
         max_input_characters: int = 100_000,
+        sentence_segmentation: bool = True,
     ) -> None:
         if not 1 <= number_parses_desired <= 10:
             raise ValueError("TRIPS accepts between 1 and 10 parses")
@@ -116,6 +117,7 @@ class TripsAdapter:
         self.number_parses_desired = number_parses_desired
         self.output_parts = output_parts
         self.max_input_characters = max_input_characters
+        self.sentence_segmentation = sentence_segmentation
 
     @property
     def configuration(self) -> dict[str, Any]:
@@ -124,6 +126,7 @@ class TripsAdapter:
             "number_parses_desired": self.number_parses_desired,
             "output_parts": self.output_parts,
             "max_input_characters": self.max_input_characters,
+            "sentence_segmentation": self.sentence_segmentation,
         }
 
     @property
@@ -215,26 +218,23 @@ class TripsAdapter:
     def _compose_input(
         units: Sequence[EvidenceUnit],
     ) -> tuple[str, tuple[SourceSpan, ...]]:
-        parts: list[str] = []
-        spans: list[SourceSpan] = []
-        cursor = 0
-        for index, unit in enumerate(units):
-            if index:
-                parts.append("\n")
-                cursor += 1
-            start = cursor
-            parts.append(unit.raw)
-            cursor += len(unit.raw)
-            spans.append(
-                SourceSpan(
-                    start=start,
-                    end=cursor,
-                    evidence_id=unit.evidence_id,
-                    evidence_start=0,
-                    evidence_end=len(unit.raw),
-                )
-            )
-        return "".join(parts), tuple(spans)
+        """Parse only the target unit; context stays as metadata, not input.
+
+        Concatenating context into the chart input turns every request into a
+        multi-sentence compound parse, which is what TRIPS cannot handle at
+        scale.
+        """
+        if not units:
+            return "", ()
+        target = units[-1]
+        span = SourceSpan(
+            start=0,
+            end=len(target.raw),
+            evidence_id=target.evidence_id,
+            evidence_start=0,
+            evidence_end=len(target.raw),
+        )
+        return target.raw, (span,)
 
     @staticmethod
     def _parse_xml(payload: bytes) -> ET.Element:

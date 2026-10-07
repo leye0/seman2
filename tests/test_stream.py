@@ -26,6 +26,21 @@ class StreamTests(unittest.TestCase):
                 end = row.source["byte_end"]
                 self.assertEqual(source[start:end].decode(), row.raw)
 
+    def test_sentence_mode_splits_candidates_without_touching_source(self) -> None:
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "source.txt"
+            path.write_text("One two. Three four? Five!\n", encoding="utf-8")
+            records = tuple(text_blocks(path, mode="sentence"))
+            self.assertEqual(
+                [row.raw for row in records],
+                ["One two. ", "Three four? ", "Five!\n"],
+            )
+            source = path.read_bytes()
+            for row in records:
+                start = row.source["byte_start"]
+                end = row.source["byte_end"]
+                self.assertEqual(source[start:end].decode(), row.raw)
+
     def test_dialogue_keeps_native_row_and_speaker_as_observable_context(self) -> None:
         with TemporaryDirectory() as directory:
             path = Path(directory) / "dialogue.tsv"

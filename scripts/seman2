@@ -116,7 +116,8 @@ case "$command_name" in
   test-trips)
     export PYTHONPATH="$SEMAN2_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
     export SEMAN2_TRIPS_INTEGRATION=1
-    exec "$SEMAN2_ROOT/.venv/bin/python" -m unittest -v tests.test_trips_integration
+    exec "$SEMAN2_ROOT/.venv/bin/python" -m unittest discover \
+      -s tests -p 'test_trips_integration.py' -v "$@"
     ;;
   build-data)
     exec "$SEMAN2_ROOT/.venv/bin/python" \

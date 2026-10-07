@@ -34,6 +34,34 @@ class EvidenceSink(Protocol):
     ) -> EvidenceUnit: ...
 
 
+def _sentence_slices(raw_line: bytes) -> tuple[bytes, ...]:
+    """Candidate sentence boundaries inside one source line.
+
+    Splits after ``.``/``!``/``?`` when the next non-space byte starts a new
+    candidate. Whitespace stays attached to the sentence it follows so the
+    concatenation of all slices equals the original line.
+    """
+    text = raw_line.decode("utf-8", errors="strict")
+    slices: list[bytes] = []
+    start = 0
+    for index, char in enumerate(text):
+        if char not in ".!?":
+            continue
+        end = index + 1
+        while end < len(text) and text[end].isspace():
+            end += 1
+        if end >= len(text) or text[end].isupper() or text[end] in "\"')":
+            chunk = text[start:end]
+            if chunk.strip():
+                slices.append(chunk.encode("utf-8"))
+            start = end
+    if start < len(text):
+        chunk = text[start:]
+        if chunk.strip():
+            slices.append(chunk.encode("utf-8"))
+    return tuple(slices) if slices else (raw_line,)
+
+
 def text_blocks(
     path: str | Path,
     *,
@@ -42,8 +70,8 @@ def text_blocks(
     max_unit_bytes: int = 1_000_000,
 ) -> Iterator[EvidenceRecord]:
     """Yield exact UTF-8 source slices without loading the document as a whole."""
-    if mode not in {"paragraph", "line"}:
-        raise ValueError("text mode must be 'paragraph' or 'line'")
+    if mode not in {"paragraph", "line", "sentence"}:
+        raise ValueError("text mode must be 'paragraph', 'line' or 'sentence'")
     if max_units is not None and max_units < 0:
         raise ValueError("max units cannot be negative")
     if max_unit_bytes < 1:
@@ -89,6 +117,20 @@ def text_blocks(
                 if raw_line.strip():
                     yield make_record(raw_line, byte_cursor, line_number, line_number)
                     emitted += 1
+                byte_cursor += len(raw_line)
+                continue
+
+            if mode == "sentence":
+                if raw_line.strip():
+                    offset = 0
+                    for piece in _sentence_slices(raw_line):
+                        if max_units is not None and emitted >= max_units:
+                            return
+                        yield make_record(
+                            piece, byte_cursor + offset, line_number, line_number
+                        )
+                        offset += len(piece)
+                        emitted += 1
                 byte_cursor += len(raw_line)
                 continue
 

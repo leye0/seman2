@@ -88,12 +88,19 @@ def _edge_position(attributes: Mapping[str, Any]) -> int:
 def structural_fragments(
     projection: Projection,
     *,
-    max_depth: int = 5,
+    max_depth: int = 3,
     include_lexicalized: bool = True,
+    max_fragments: int = 32,
 ) -> tuple[dict[str, Any], ...]:
-    """Enumerate rooted DOP-style subtrees at every observed granularity."""
+    """Enumerate rooted DOP-style subtrees at every observed granularity.
+
+    Bounded on purpose: unbounded depth × lexicalization explodes on real
+    trees and the interesting signal is the repeated shape, not every stub.
+    """
     if max_depth < 1:
         raise ValueError("fragment depth must be positive")
+    if max_fragments < 1:
+        raise ValueError("max_fragments must be positive")
     node_by_id = {node.node_id: node for node in projection.nodes}
     children: dict[str, list[tuple[int, str, str]]] = {}
     for edge in projection.edges:
@@ -153,8 +160,12 @@ def structural_fragments(
                 )
             if not children.get(node.node_id):
                 break
+            if len(fragments) >= max_fragments:
+                break
+        if len(fragments) >= max_fragments:
+            break
     unique = {canonical_json(row): row for row in fragments}
-    return tuple(unique[key] for key in sorted(unique))
+    return tuple(unique[key] for key in sorted(unique)[:max_fragments])
 
 
 def linearized_words(projection: Projection) -> tuple[str, ...]:
@@ -196,19 +207,29 @@ def discodop_tree(projection: Projection) -> tuple[str, tuple[str, ...]] | None:
         raw = node.attributes.get("native_category", node.category)
         return str(raw).replace("(", "[").replace(")", "]").replace(" ", "_")
 
-    def walk(node_id: str) -> str:
+    def walk(node_id: str) -> str | None:
         rows = children.get(node_id, [])
         if not rows:
             token = token_for_leaf.get(node_id)
             if token is None:
-                return f"({label(node_id)} )"
+                # Empty frontier: disco-dop requires every leaf to carry a
+                # sentence index. Drop unanchored leaves rather than emit "".
+                return None
             return f"({label(node_id)} {token})"
-        return f"({label(node_id)} {' '.join(walk(target) for _, target in rows)})"
+        inner = [walk(target) for _, target in rows]
+        kept = [item for item in inner if item is not None]
+        if not kept:
+            return None
+        return f"({label(node_id)} {' '.join(kept)})"
 
     roots = [root for root in projection.roots if root in nodes]
     if not roots:
         return None
-    tree = walk(roots[0]) if len(roots) == 1 else f"(ROOT {' '.join(walk(root) for root in roots)})"
+    subtrees = [walk(root) for root in roots]
+    kept_roots = [item for item in subtrees if item is not None]
+    if not kept_roots:
+        return None
+    tree = kept_roots[0] if len(kept_roots) == 1 else f"(ROOT {' '.join(kept_roots)})"
     return tree, linearized_words(projection)
 
 
