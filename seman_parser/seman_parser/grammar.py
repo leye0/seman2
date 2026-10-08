@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
-from .features import FeatureStructure, Variable
+from .features import Atom, FeatureStructure, Variable
 from .symbols import intern
 
 
@@ -161,12 +161,19 @@ def parse_rule(raw: Mapping[str, Any]) -> GrammarRule:
 class Grammar:
     """Indexed collection of declarative rules."""
 
-    __slots__ = ("rules", "_by_first", "_by_id", "_by_arity")
+    __slots__ = ("rules", "_by_first", "_by_first_atoms", "_by_id", "_by_arity")
 
     def __init__(self, rules: Iterable[GrammarRule] = ()) -> None:
         self.rules: tuple[GrammarRule, ...] = tuple(rules)
         self._by_id: dict[str, GrammarRule] = {}
         self._by_first: dict[int, list[GrammarRule]] = {}
+        # Memoized refinement of ``_by_first`` by the atomic features found
+        # on an item.  The cache is populated alongside parsing, rather than
+        # computing and interning feature-structure keys in the hot path.
+        self._by_first_atoms: dict[
+            tuple[int, tuple[tuple[int, int], ...]],
+            tuple[GrammarRule, ...],
+        ] = {}
         self._by_arity: dict[int, list[GrammarRule]] = {}
         for rule in self.rules:
             self._by_id[rule.rule_id] = rule
@@ -180,9 +187,33 @@ class Grammar:
         except KeyError:
             raise KeyError(f"unknown rule: {rule_id!r}") from None
 
-    def candidates_for_first(self, category: str | int) -> Sequence[GrammarRule]:
+    def candidates_for_first(
+        self,
+        category: str | int,
+        features: FeatureStructure | None = None,
+    ) -> Sequence[GrammarRule]:
         key = intern(category) if isinstance(category, str) else category
-        return self._by_first.get(key, ())
+        candidates = self._by_first.get(key, ())
+        if features is None or not candidates:
+            return candidates
+        atoms = tuple(
+            (feature, value.symbol)
+            for feature, value in features.items()
+            if isinstance(value, Atom)
+        )
+        if not atoms:
+            return candidates
+        cache_key = (key, atoms)
+        cached = self._by_first_atoms.get(cache_key)
+        if cached is not None:
+            return cached
+        compatible = tuple(
+            rule
+            for rule in candidates
+            if not _has_atomic_conflict(rule.rhs[0].features, atoms)
+        )
+        self._by_first_atoms[cache_key] = compatible
+        return compatible
 
     def candidates_for_arity(self, arity: int) -> Sequence[GrammarRule]:
         return self._by_arity.get(arity, ())
@@ -208,6 +239,22 @@ class Grammar:
 
     def __iter__(self):
         return iter(self.rules)
+
+
+def _has_atomic_conflict(
+    constraints: FeatureStructure,
+    item_atoms: tuple[tuple[int, int], ...],
+) -> bool:
+    """Cheap, safe pre-check for first-symbol feature conflicts.
+
+    Only unequal atom/atom pairs are rejected.  Variables, disjunctions and
+    missing values still go through the full unifier.
+    """
+    for feature, item_symbol in item_atoms:
+        constraint = constraints.features.get(feature)
+        if isinstance(constraint, Atom) and constraint.symbol != item_symbol:
+            return True
+    return False
 
 
 def load_grammar(path: str | Path) -> Grammar:

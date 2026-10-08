@@ -101,6 +101,57 @@ class NovelPerfectTests(unittest.TestCase):
         self.assertTrue(parse("They had simply needed different information.").result.completed)
 
 
+class NovelExpandedCoverageTests(unittest.TestCase):
+    """Productive constructions found while profiling corpus failures."""
+
+    def test_hyphenated_modifier(self) -> None:
+        self.assertTrue(
+            parse(
+                "Rivera placed an enormous blank sheet of paper on the third-grade classroom floor."
+            ).result.completed
+        )
+
+    def test_negated_adverbial_adjective(self) -> None:
+        self.assertTrue(
+            parse("The versions were not equally useful for every listener.").result.completed
+        )
+
+    def test_linking_verb_adjective(self) -> None:
+        self.assertTrue(
+            parse(
+                "The difference between a picture, an instruction, and a memory suddenly felt important."
+            ).result.completed
+        )
+
+    def test_zero_complementizer_clause(self) -> None:
+        self.assertTrue(
+            parse(
+                "She knew which door led to the gym, where lost coats ended up, and how the morning announcements sounded through the classroom speaker."
+            ).result.completed
+        )
+
+    def test_comma_coordinated_clauses(self) -> None:
+        self.assertTrue(
+            parse(
+                "They argued, changed their minds, asked questions, and finally left an empty square in the middle for places they had not discovered."
+            ).result.completed
+        )
+
+    def test_trailing_temporal_np(self) -> None:
+        self.assertTrue(
+            parse(
+                "She had seen a small bird carrying dry grass into the old lot that very morning."
+            ).result.completed
+        )
+
+    def test_fronted_temporal_np(self) -> None:
+        self.assertTrue(
+            parse(
+                "The next Monday, the kitchen clock said seven twenty-eight when Mom called Maya to put on her shoes."
+            ).result.completed
+        )
+
+
 class NovelCoordinationTests(unittest.TestCase):
     def test_maya_agreed_and_gave(self) -> None:
         self.assertTrue(parse("Maya agreed and gave him the green marker.").result.completed)

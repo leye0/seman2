@@ -158,6 +158,13 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
                 for candidate in _contraction_candidates(span_start, span_end, surface, lexicon):
                     candidates.append(candidate)
 
+    # Preserve the ordinary word / punctuation path, but also offer one
+    # lexical edge across contiguous hyphenated compounds.  This handles
+    # productive forms absent from WordNet (``third-grade``) without a word
+    # list and without making the hyphen itself a syntactic category.
+    occupied_spans = {(candidate.span_start, candidate.span_end) for candidate in candidates}
+    candidates.extend(_hyphenated_candidates(text, tokens, lexicon, occupied_spans))
+
     # Proper-noun and number heuristics as additional lattice hypotheses.
     # The proper-noun reading is never discarded just because the lexicon
     # also offers a common-noun reading ("Street" in "Maple Street").
@@ -277,6 +284,72 @@ def _candidate_from_sense(
         score=sense.score,
         provenance=dict(sense.provenance),
     )
+
+
+def _hyphenated_candidates(
+    text: str,
+    tokens: Sequence[Token],
+    lexicon: Lexicon,
+    occupied_spans: set[tuple[int, int]],
+) -> Iterable[LexicalCandidate]:
+    open_categories = {"N", "V", "ADJ", "ADV", "NUM"}
+    for start in range(len(tokens) - 2):
+        first = tokens[start]
+        if not first.text.isalpha():
+            continue
+        end = start
+        while end + 2 < len(tokens):
+            hyphen = tokens[end + 1]
+            head = tokens[end + 2]
+            if (
+                hyphen.text != "-"
+                or first.end > hyphen.start
+                or tokens[end].end != hyphen.start
+                or hyphen.end != head.start
+                or not head.text.isalpha()
+            ):
+                break
+            end += 2
+            surface = text[first.start : head.end]
+            matches = lexicon.lookup_morphology(surface)
+            source = "lexicon-hyphen"
+            if matches and (first.start, head.end) in occupied_spans:
+                # The ordinary multiword pass already emitted these senses.
+                continue
+            if not matches:
+                # A productive compound inherits the syntactic readings of
+                # its rightmost head while keeping its full surface span.
+                matches = tuple(
+                    match
+                    for match in lexicon.lookup_morphology(head.text)
+                    if match[1].category in open_categories
+                )
+                source = "hyphen-compound"
+            for _, sense, lemma in matches:
+                candidate = _candidate_from_sense(
+                    span_start=first.start,
+                    span_end=head.end,
+                    surface=surface,
+                    lemma=lemma,
+                    sense=sense,
+                    source=source,
+                )
+                if source == "hyphen-compound":
+                    candidate = LexicalCandidate(
+                        span_start=candidate.span_start,
+                        span_end=candidate.span_end,
+                        surface=candidate.surface,
+                        lemma=candidate.lemma,
+                        category=candidate.category,
+                        features=candidate.features,
+                        sense_id=candidate.sense_id,
+                        semantic_type=candidate.semantic_type,
+                        normalized=surface.lower(),
+                        source=candidate.source,
+                        score=candidate.score - 0.1,
+                        provenance=candidate.provenance,
+                    )
+                yield candidate
 
 
 def _contraction_candidates(

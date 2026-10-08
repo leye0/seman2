@@ -125,7 +125,10 @@ def run_coverage(
     goal_category: str = "CLAUSE",
 ) -> CoverageReport:
     """Parse every sentence case and aggregate statistics."""
-    parser = Parser.from_dir(data_dir, goal_category=goal_category)
+    # Corpus sentences are unique, so retaining every packed forest in the
+    # normal interactive parse cache only grows memory without producing a
+    # cache hit (hundreds of sentences can otherwise consume gigabytes).
+    parser = Parser.from_dir(data_dir, goal_category=goal_category, cache_size=0)
     cases = extract_sentences(corpus_path, limit=limit)
     results: list[CaseResult] = []
     by_rule: dict[str, int] = {}

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from heapq import heappop, heappush
-from typing import Any, Mapping, Sequence
+from typing import Any, Hashable, Mapping, Sequence
 
 from .features import (
     Bindings,
@@ -48,13 +48,16 @@ class ChartItem:
     children: tuple["ChartItem", ...] = ()
     rule_id: str | None = None
     bindings: Bindings = field(default_factory=dict)
-    _sig: tuple | None = field(default=None, repr=False, compare=False)
+    # Chart-local identifier assigned when the analysis is accepted.  Parent
+    # derivations can consequently use a flat tuple of integers instead of a
+    # recursively nested tree signature.
+    _sig: Hashable | None = field(default=None, repr=False, compare=False)
 
     @property
     def key(self) -> tuple[int, int, int]:
         return (self.start, self.end, intern(self.category))
 
-    def signature(self) -> tuple:
+    def signature(self) -> Hashable:
         """Cheap structural signature for duplicate detection.
 
         Computed once and reused; avoids deep tree comparison on every
@@ -120,11 +123,11 @@ class PackedNode:
     category: str
     best: ChartItem
     alternatives: list[ChartItem] = field(default_factory=list)
-    seen_signatures: set = field(default_factory=set)
+    seen_signatures: set[Hashable] = field(default_factory=set)
 
-    def add(self, item: ChartItem) -> None:
+    def add(self, item: ChartItem, signature: Hashable) -> None:
         self.alternatives.append(item)
-        self.seen_signatures.add(item.signature())
+        self.seen_signatures.add(signature)
         if item.score > self.best.score:
             self.best = item
 
@@ -192,10 +195,13 @@ class Chart:
         self._partials: dict[tuple, list[PartialItem]] = {}
         # Index: (wait_position, next_category_id) -> partials waiting
         # exactly there. Avoids scanning every partial on each item.
-        self._partial_by_wait: dict[tuple[int, int], list[PartialItem]] = {}
+        self._partial_by_wait: dict[tuple[int, int], dict[int, PartialItem]] = {}
         self._agenda: list[tuple[float, int, ChartItem]] = []
         self._pushes = 0
         self._expanded = 0
+        self._analysis_ids = 0
+        self._goal_count = 0
+        self._goal_limit: int | None = None
         self._text = ""
         for rule in grammar:
             _RULE_CACHE[rule.rule_id] = rule
@@ -206,23 +212,38 @@ class Chart:
             return False
         return not self._text[left_end:right_start].strip()
 
+    def _is_root_span(self, start: int, end: int) -> bool:
+        if start != 0:
+            return False
+        length = len(self._text)
+        if end == length:
+            return True
+        # Accept a span that stops before trailing punctuation only.
+        return end < length and not self._text[end:].strip().strip(".!?;:,")
+
     # -- item insertion --------------------------------------------------
 
-    def _offer(self, item: ChartItem) -> bool:
+    def _offer(self, item: ChartItem, *, signature: Hashable | None = None) -> bool:
         key = item.key
+        dedupe_key = item.signature() if signature is None else signature
         node = self.packed.get(key)
         if node is None:
             node = PackedNode(start=item.start, end=item.end, category=item.category, best=item)
             self.packed[key] = node
             self._packed_by_start.setdefault((item.start, key[2]), []).append(node)
+            self._analysis_ids += 1
+            object.__setattr__(item, "_sig", self._analysis_ids)
             node.alternatives.append(item)
-            node.seen_signatures.add(item.signature())
+            node.seen_signatures.add(dedupe_key)
+            self._count_goal(item)
             self._push(item)
             return True
-        sig = item.signature()
-        if sig in node.seen_signatures:
+        if dedupe_key in node.seen_signatures:
             return False
-        node.add(item)
+        self._analysis_ids += 1
+        object.__setattr__(item, "_sig", self._analysis_ids)
+        node.add(item, dedupe_key)
+        self._count_goal(item)
         # Expand every distinct analysis up to a per-node cap; extra
         # alternatives stay packed for provenance but do not spend agenda
         # budget. The cap is high enough to keep different constructions.
@@ -230,9 +251,16 @@ class Chart:
             self._push(item)
         return True
 
+    def _count_goal(self, item: ChartItem) -> None:
+        if item.category == self.goal_category and self._is_root_span(item.start, item.end):
+            self._goal_count += 1
+
     def _push(self, item: ChartItem) -> None:
         self._pushes += 1
-        heappush(self._agenda, (-item.score, self._pushes, item))
+        # Reward covered input so positive rule scores cannot indefinitely
+        # prioritize highly composed local ambiguity over broader analyses.
+        priority = item.score + 0.01 * (item.end - item.start)
+        heappush(self._agenda, (-priority, self._pushes, item))
 
     def _offer_partial(self, partial: PartialItem) -> bool:
         # Key on coordinates. Distinct bindings / children are kept as
@@ -243,27 +271,32 @@ class Chart:
             self._partials[key] = [partial]
             self._index_partial(partial)
             return True
-        # Compare against the kept variants via their chart-item signatures.
+        # Compare against the kept variants via their chart-local analysis
+        # ids.  These signatures are flat and therefore cheap to hash.
         child_sig = tuple(c.signature() for c in partial.children)
-        for v in variants:
-            if v.score >= partial.score and tuple(c.signature() for c in v.children) == child_sig:
+        for variant in variants:
+            if tuple(c.signature() for c in variant.children) == child_sig:
+                # The same consumed analyses deterministically produce the
+                # same bindings and score.
                 return False
-        variants.append(partial)
-        if len(variants) > 2:
-            variants.sort(key=lambda p: p.score, reverse=True)
-            del variants[2:]
+        if len(variants) >= 2:
             return False
+        variants.append(partial)
         self._index_partial(partial)
         return True
 
-    def _index_partial(self, partial: PartialItem) -> None:
+    def _partial_wait_key(self, partial: PartialItem) -> tuple[int, int] | None:
         rule = _RULE_CACHE[partial.rule_id]
         if partial.dot >= rule.arity:
+            return None
+        return (partial.end, rule.rhs[partial.dot].category_id)
+
+    def _index_partial(self, partial: PartialItem) -> None:
+        key = self._partial_wait_key(partial)
+        if key is None:
             return
-        next_cat = rule.rhs[partial.dot].category_id
-        # Wait at the position where the next child must start.
-        wait_at = partial.end
-        self._partial_by_wait.setdefault((wait_at, next_cat), []).append(partial)
+        # Identity avoids deep dataclass equality and duplicate list entries.
+        self._partial_by_wait.setdefault(key, {})[id(partial)] = partial
 
     def _partials_waiting(self, position: int, category_id: int) -> Sequence[PartialItem]:
         """Partials that expect this category starting at this position.
@@ -277,7 +310,8 @@ class Chart:
             key = (position - delta, category_id)
             found = self._partial_by_wait.get(key)
             if found:
-                out.extend(found)
+                # Snapshot because advancing a partial can update the index.
+                out.extend(tuple(found.values()))
         return out
 
     # -- main loop -------------------------------------------------------
@@ -291,12 +325,15 @@ class Chart:
         if length > 160:
             self.beam = min(self.beam, 16)
             self.max_items = min(self.max_items, 12_000)
+            self._goal_limit = self.beam
         elif length > 80:
             self.beam = min(self.beam, 24)
             self.max_items = min(self.max_items, 20_000)
+            self._goal_limit = self.beam
         elif length > 40:
             self.beam = min(self.beam, 40)
             self.max_items = min(self.max_items, 30_000)
+            self._goal_limit = self.beam
 
         for candidate in lattice.candidates:
             self._offer(self._item_from_candidate(candidate))
@@ -305,21 +342,15 @@ class Chart:
             _, _, item = heappop(self._agenda)
             self._expanded += 1
             self._advance_with(item)
+            if self._goal_limit is not None and self._goal_count >= self._goal_limit:
+                break
 
         goal_id = intern(self.goal_category)
-
-        def _is_root_span(start: int, end: int) -> bool:
-            if start != 0:
-                return False
-            if end == length:
-                return True
-            # Accept a span that stops before trailing punctuation only.
-            return end < length and not text[end:].strip().strip(".!?;:,") and not text[:start].strip()
 
         root_items = [
             item
             for (start, end, cat_id), node in self.packed.items()
-            if _is_root_span(start, end) and cat_id == goal_id
+            if self._is_root_span(start, end) and cat_id == goal_id
             for item in node.alternatives
         ]
         return ParseResult(
@@ -333,6 +364,7 @@ class Chart:
                 "pushed": self._pushes,
                 "packed_nodes": len(self.packed),
                 "partials": len(self._partials),
+                "goal_saturated": self._goal_limit is not None and self._goal_count >= self._goal_limit,
             },
         )
 
@@ -376,7 +408,7 @@ class Chart:
         self._extend_partials_with(item)
 
     def _start_rules_with(self, item: ChartItem) -> None:
-        for rule in self.grammar.candidates_for_first(item.category):
+        for rule in self.grammar.candidates_for_first(item.category, item.features):
             symbol = rule.rhs[0]
             result = unify(symbol.features, item.features, {})
             if result is None:
@@ -486,6 +518,12 @@ class Chart:
             return
         key = (partial.start, partial.end, intern(rule.lhs.category))
         node = self.packed.get(key)
+        # A rule applied to the same accepted child analyses is the same
+        # derivation.  Reject it before feature substitution, provenance and
+        # semantic graph construction.  Child ids keep this key flat.
+        derivation = (rule.rule_id, *(child.signature() for child in children))
+        if node is not None and derivation in node.seen_signatures:
+            return
         # Safe reject: a full slot whose alternatives already cover several
         # *different* rules, and this one is far below the best.
         if node is not None and len(node.alternatives) >= self.beam:
@@ -524,7 +562,7 @@ class Chart:
             rule_id=rule.rule_id,
             bindings=env,
         )
-        self._offer(item)
+        self._offer(item, signature=derivation)
 
     def _compose_semantics(
         self,
@@ -570,6 +608,7 @@ def _rebind(item: ChartItem, features: FeatureStructure, env: Bindings) -> Chart
         children=item.children,
         rule_id=item.rule_id,
         bindings=env,
+        _sig=item._sig,
     )
 
 

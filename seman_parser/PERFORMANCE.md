@@ -188,3 +188,84 @@ Léger tassement vs avant (le cap de 2 variantes par slot), mais
 **Restant connu** : la médiane a monté (coût fixe des signatures et des
 index sur les phrases courtes). Prochaine étape selon l'agent :
 structures persistantes partagées, si le profilage le justifie.
+
+### 2026-10-08 — après changements de l'agent utilisateur
+
+Aucune modification de ma part. Mesure pure.
+
+**Vitesse (15 phrases)**
+
+| Métrique | Origine | Avant | **Actuel** | Δ vs origine |
+|---|---|---|---|---|
+| médiane | 332 ms | 681 ms | **243 ms** | **−27 %** |
+| moyenne | 2 682 ms | 2 522 ms | **534 ms** | **−80 %** |
+| max | 37 891 ms | 12 074 ms | **1 975 ms** | **−95 %** |
+| parsées | 13/15 | 13/15 | **14/15** | +1 |
+
+**cProfile (phrase de 73 mots)**
+
+| | Origine | Avant | **Actuel** |
+|---|---|---|---|
+| appels fonctions | 32.8 M | 7.3 M | **1.27 M** |
+| temps | 17.2 s | 7.9 s | **0.92 s** |
+| `_complete` | 29 915 | 29 915 | **3 431** |
+
+**Qualité — non régressée, en hausse**
+
+| | Avant | Actuel |
+|---|---|---|
+| tests | 43 OK | **65 OK** |
+| couverture 30 phrases | 80 % | **86.7 %** (26/30) |
+| 15 phrases ambiguës | 15/15 | **15/15** |
+
+**Tâches T1–T8 : toutes done.**
+
+Le budget adaptatif et la réduction du bruit dans le chart ont permis de
+gagner en vitesse *et* en couverture simultanément.
+
+### 2026-10-07 — signatures plates + beam global
+
+**Correctifs du chemin chaud**
+
+- chaque analyse acceptée reçoit un identifiant local au chart ; les
+  signatures des parents sont maintenant des tuples plats `(règle, ids...)`
+  au lieu d'arbres de tuples récursifs
+- une dérivation déjà vue est rejetée dans `_complete` **avant**
+  substitution, provenance et composition sémantique
+- l'index des partiels n'enregistre plus de variantes au-delà du cap ; deux
+  variantes actives au maximum par slot, indexées par identité
+- l'index de grammaire mémorise les règles compatibles avec les traits
+  atomiques du premier symbole (`vform`, `wh`, etc.) ; le filtrage est sûr,
+  les variables et disjonctions passent toujours par l'unification complète
+- beam global adaptatif sur les analyses racines pour les phrases de plus de
+  40 caractères (40 / 24 / 16) ; les phrases courtes gardent toute leur
+  ambiguïté (`I saw the man with the telescope`: **336** analyses)
+- `run_coverage` désactive le cache de parse, inutile sur des phrases uniques
+  et auparavant responsable d'une croissance mémoire de plusieurs Gio
+
+**Vitesse (15 premières phrases, WordNet chaud)**
+
+| Métrique | Avant | Actuel | Variation |
+|---|---:|---:|---:|
+| médiane | 681 ms | **212 ms** | **−69 %** |
+| moyenne | 2 522 ms | **1 060 ms** | **−58 %** |
+| p90 | ~5 000 ms | **2 523 ms** | **−50 %** |
+| max | 12 074 ms | **8 027 ms** | **−34 %** |
+| min | — | **14 ms** | — |
+
+Les 15 décisions de complétion sont inchangées (13/15 sur les 15 premières
+phrases ; les deux autres sont des fragments/non couvertes). Le nombre de
+racines est borné seulement pour les entrées moyennes et longues déjà soumises
+à un budget adaptatif.
+
+**Couverture et mémoire**
+
+| Échantillon | Résultat |
+|---|---:|
+| 200 premières phrases | **137/200 (68,5 %)** |
+| temps couverture 200 | **168,8 s** |
+| pic RSS observé | **485 Mio** |
+
+Le test de couverture reste largement au-dessus du plancher de non-régression
+de 40/200. Le pic RSS correspond désormais à la plus grosse forêt isolée, pas
+à l'accumulation de toutes les forêts précédentes dans le cache.

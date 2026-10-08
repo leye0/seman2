@@ -179,6 +179,6 @@ def filter_lattice_candidates(candidates: list, tokens: list) -> list:
 def _keep_candidate(cand: Any, by_span: dict) -> bool:
     surface = cand.surface
     # Punctuation is never open-class.
-    if not surface.isalpha() and cand.category in {"N", "V", "ADJ", "ADV"}:
+    if not any(char.isalpha() for char in surface) and cand.category in {"N", "V", "ADJ", "ADV"}:
         return False
     return True
