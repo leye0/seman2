@@ -293,3 +293,55 @@ phrases complexes utilisées pendant l'audit, la moyenne est passée d'environ
 Validation : 35 tests unitaires, le test d'intégration TRIPS local avec deux
 hypothèses, la sonde de santé Parser et l'application inverse du patch Cogent
 réussissent.
+
+---
+
+## 8. Mode paragraphe vs mode phrase — 2026-10-07
+
+Avec les optimisations du chart (beam pruning, 1 parse, strict semantics,
+patch `Chart.lisp` de GPT), le mode paragraphe ne casse plus. Avant ces
+changements, un paragraphe de 3 phrases dépassait 150 s de timeout ;
+maintenant le pire observé est 3,3 s.
+
+### Comparaison contrôlée (12 paragraphes du roman, 66 phrases)
+
+| Mode | Total | Par unité | Équivalent / phrase |
+|---|---|---|---|
+| **Paragraphe** | **25,6 s** | 2133 ms | **~388 ms** |
+| Phrase | 51,3 s | 777 ms | 777 ms |
+| Ratio | **paragraphe 2× plus rapide** | | |
+
+### Cohérence (260 paragraphes supplémentaires, run interrompu)
+
+Moyenne stable à ~2100 ms/paragraphe, médiane cohérente, **0 échec**,
+aucun dérapage RAM. L'échantillon est suffisant pour conclure.
+
+### Pourquoi le paragraphe est plus rapide
+
+Le coût fixe par requête KQML est dominant : chaque `parse()` fait
+`register` + 3 `subscribe` + config parser + usurpation TextTagger
+(4 messages) + attente de réponse. En mode phrase ce coût est payé 66 fois ;
+en mode paragraphe, 12 fois. Le chart parser lui-même est plus efficace
+par mot (388 ms pour ~13 mots équivalents vs 777 ms).
+
+### Recommandation
+
+**Revenir au mode paragraphe** pour l'ingestion du roman et des corpus
+similaires. Le mode `sentence` reste utile pour les dialogues et les
+entrées très longues, mais il n'est plus le défaut nécessaire.
+
+Le mode paragraphe produit aussi un `COMPOUND-COMMUNICATION-ACT` unique
+par paragraphe, ce qui préserve mieux les relations inter-phrases
+(ponctuation, coordination, subordination) que des analyses isolées.
+
+### Impact pour 12M de phrases
+
+| Hypothèse | Débit | Durée estimée (1 worker) |
+|---|---|---|
+| phrase (777 ms) | 1,3 phrase/s | ~9 200 h |
+| paragraphe (388 ms équiv.) | 2,6 phrase/s | ~4 600 h |
+| paragraphe, 8 workers | ~20 phrase/s | **~580 h** |
+| paragraphe, 16 workers | ~40 phrase/s | **~290 h** |
+
+Le parallélisme reste indispensable, mais le mode paragraphe divise déjà
+par 2 le travail par unité.
