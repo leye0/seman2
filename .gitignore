@@ -1,23 +1,28 @@
+# Venvs et installs locaux (libs — ne pas versionner)
 .venv/
 .venv-*/
-.venv-popper/
-.venv-rst/
 .local/
 .deps/
+
+# Runtime
 log/
+
+# Python
 __pycache__/
 *.pyc
 *.class
+
+# Secrets
 .env
 .env.*
 !.env.example
 
-# Les résultats des POC sont reconstruits par leur run.sh et ne sont pas des sources.
-poc/**/output/
+# Sorties générées (reconstruites par les runs)
 output/
+archives/output/
+poc/**/output/
 
-# Les manifestes JSON et le schéma restent versionnés; les données se recréent
-# avec ./scripts/seman2 fetch-corpus.
+# Données lourdes / reconstruites — ne pas versionner
 data/**/*.parquet
 data/*.bz2
 data/*.sqlite
@@ -25,3 +30,9 @@ data/*.sqlite-shm
 data/*.sqlite-wal
 data/reddit-arctic-2018-05/
 data/stackoverflow/
+superparser/**/*.sqlite
+superparser/**/*.sqlite-shm
+superparser/**/*.sqlite-wal
+
+# Outiling
+.mimocode/

@@ -1,7 +1,11 @@
-"""Sentence-reader pipeline: parse, extract mentions, resolve coreference.
+"""Sentence-reader pipeline: parse, extract mentions, commit reference links.
+
+Base contract: ``plans/coreference-guide.md``. Identity comes only from
+``SAME_REF`` / ``ASSERTED_IDENTITY`` links. ``MAYBE_REF`` stays open;
+``DIFFERENT_REF`` blocks a pair; structural kinds do not merge individuals.
 
 Parse stays local to the sentence; discourse context is global and
-persistent. Coreference decisions are ranked hypotheses, not verdicts.
+persistent. Decisions are reference links, not verdicts.
 """
 
 from __future__ import annotations
@@ -10,21 +14,23 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from .coref import CoreferenceResolver, ResolverConfig, link_best
-from .discourse import CoreferenceHypothesis, DiscourseState, Mention
+from .coref import commit_links, introduce
+from .discourse import DiscourseState, Mention
 from .engine import Parser, ParseReport
 from .mentions import extract_event_mentions, extract_mentions
+from .refdetect import detect_all
+from .reference import ReferenceLink
 
 
 @dataclass
 class SentenceAnalysis:
-    """One sentence: parse report, mentions, coreference hypotheses."""
+    """One sentence: parse report, mentions, reference links."""
 
     index: int
     text: str
     report: ParseReport
     mentions: tuple[Mention, ...]
-    hypotheses: Mapping[str, tuple[CoreferenceHypothesis, ...]]
+    reference_links: tuple[ReferenceLink, ...] = ()
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -32,9 +38,7 @@ class SentenceAnalysis:
             "text": self.text,
             "parse": self.report.as_dict(),
             "mentions": [m.as_dict() for m in self.mentions],
-            "coreference": {
-                mid: [h.as_dict() for h in hyps] for mid, hyps in self.hypotheses.items()
-            },
+            "reference_links": [lk.as_dict() for lk in self.reference_links],
         }
 
 
@@ -66,14 +70,13 @@ class DiscourseProcessor:
         self,
         parser: Parser,
         *,
-        resolver_config: ResolverConfig | None = None,
+        speaker_id: str | None = None,
+        addressee_id: str | None = None,
     ) -> None:
         self.parser = parser
         self.state = DiscourseState()
-        self.resolver = CoreferenceResolver(
-            types=parser.resources.types,
-            config=resolver_config or ResolverConfig(),
-        )
+        self.speaker_id = speaker_id
+        self.addressee_id = addressee_id
         self._sentence_index = 0
 
     @classmethod
@@ -81,22 +84,41 @@ class DiscourseProcessor:
         return cls(Parser.from_dir(Path(directory)), **kwargs)
 
     def read(self, text: str) -> SentenceAnalysis:
-        """Parse one sentence, extract mentions, resolve and commit."""
+        """Parse one sentence, extract mentions, detect and commit links."""
         report = self.parser.parse(text)
         best = report.result.best()
         mentions: tuple[Mention, ...] = ()
-        hypotheses: dict[str, tuple[CoreferenceHypothesis, ...]] = {}
+        ref_links: tuple[ReferenceLink, ...] = ()
 
         if best is not None:
             mentions = tuple(
                 extract_mentions(best, self._sentence_index)
                 + extract_event_mentions(best, self._sentence_index)
             )
+            # Register every mention; open entities for referential ones.
             for mention in mentions:
-                self.state.mentions[mention.mention_id] = mention
-                ranked = self.resolver.resolve(mention, self.state)
-                hypotheses[mention.mention_id] = ranked
-                link_best(mention, self.state, self.resolver)
+                introduce(mention, self.state)
+
+            # Grammar-only reference links (plans/coreference-guide.md).
+            prior = [
+                m
+                for m in self.state.mentions.values()
+                if m.sentence_index < self._sentence_index
+            ]
+            ref_links = tuple(
+                detect_all(
+                    best,
+                    mentions,
+                    sentence_index=self._sentence_index,
+                    parse_id=text[:40],
+                    antecedents=prior,
+                    speaker_id=self.speaker_id,
+                    addressee_id=self.addressee_id,
+                    text=text,
+                ).links
+            )
+            commit_links(ref_links, self.state)
+
             # Fold the sentence semantics into the persistent graph.
             self.state.graph = self.state.graph.merge(best.semantic.graph)
 
@@ -105,7 +127,7 @@ class DiscourseProcessor:
             text=text,
             report=report,
             mentions=mentions,
-            hypotheses=hypotheses,
+            reference_links=ref_links,
         )
         self._sentence_index += 1
         self.state.sentence_count = self._sentence_index

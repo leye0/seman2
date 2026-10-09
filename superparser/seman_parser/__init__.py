@@ -8,9 +8,8 @@ dispatches on linguistic content.
 from __future__ import annotations
 
 from .chart import Chart, ChartItem, ParseResult, PackedNode, Provenance
-from .coref import CoreferenceResolver, ResolverConfig, link_best
+from .coref import commit_link, commit_links, introduce, is_blocked, open_candidates
 from .discourse import (
-    CoreferenceHypothesis,
     DiscourseEntity,
     DiscourseState,
     Mention,
@@ -36,6 +35,7 @@ from .lexicon import (
 )
 from .mentions import extract_mentions, mention_from_item
 from .reader import DiscourseProcessor, DiscourseReport, SentenceAnalysis
+from .reference import ReferenceKind, ReferenceLink
 from .segmentation import LexicalCandidate, LexicalLattice, build_lattice, tokenize
 from .semantics import (
     SemanticGraph,
@@ -51,8 +51,6 @@ __all__ = [
     "Atom",
     "Chart",
     "ChartItem",
-    "CoreferenceHypothesis",
-    "CoreferenceResolver",
     "Disjunction",
     "DiscourseEntity",
     "DiscourseProcessor",
@@ -73,7 +71,8 @@ __all__ = [
     "Parser",
     "ParserResources",
     "Provenance",
-    "ResolverConfig",
+    "ReferenceKind",
+    "ReferenceLink",
     "RuleSymbol",
     "SemanticAction",
     "SemanticGraph",
@@ -87,12 +86,16 @@ __all__ = [
     "UnificationFailure",
     "Variable",
     "build_lattice",
+    "commit_link",
+    "commit_links",
     "extract_mentions",
-    "link_best",
+    "introduce",
+    "is_blocked",
     "load_grammar",
     "load_lexicon",
     "load_types",
     "mention_from_item",
+    "open_candidates",
     "substitute_structure",
     "tokenize",
     "unify",

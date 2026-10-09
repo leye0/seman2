@@ -7,9 +7,13 @@ sur `data/the_map_of_everything_nlp_novel.txt` (3348 phrases extraites).
 
 | Échantillon | Parsées | Taux | Date |
 |---|---|---|---|
-| 200 premières phrases | 17 | 8.5 % | 2026-10-07 |
-| 1000 premières | 25 | 2.5 % | 2026-10-07 |
-| Roman complet (3348) | 46 | 1.4 % | 2026-10-07 |
+| 30 premières phrases | 26 | **86.7 %** | 2026-10-08 |
+| 200 premières | 150 | ~75 % | 2026-10-08 |
+| 300 premières | 224 | **74.7 %** | 2026-10-08 |
+| 500 phrases (perf) | — | 368 ms médiane | 2026-10-08 |
+
+Perf parse : médiane 243–368 ms, max ~2 s (12 s sur les pires phrases
+ambiguës). Mémoire stable ~450 MB sur 500 phrases.
 
 **Règle :** la baseline est figée dans `tests/test_novel_corpus.py`
 (`test_coverage_baseline_is_recorded`). Sous le plancher → régression.
@@ -201,7 +205,10 @@ Au-delà de TRIPS, à tester explicitement :
 - [x] possessifs (`his/her`)
 - [x] démonstratifs (`this/that` → entité ou événement)
 - [x] descriptions définies (`the box`)
-- [x] noms propres
+- [x] noms propres (nouvelle entité)
+- [ ] **noms propres distincts ne fusionnent pas** ← bug: Mary→E1(John)
+- [ ] **genre départage les pronoms** ← bug: him→E2(box) au lieu de John
+- [ ] **événements = entités distinctes** ← bug: tous les verbes fusionnent
 - [ ] réfléchis longue distance
 - [ ] relatifs comme anaphores
 - [ ] ensembles / séquences (`John and Mary arrived. They…`)
@@ -225,8 +232,11 @@ Au-delà de TRIPS, à tester explicitement :
 - [ ] score : mieux calibrer règle vs. enfants vs. lexique
 - [ ] `goal_category` dynamique (CLAUSE | NP | FRAG)
 - [ ] tests négatifs / paires minimales pour chaque construction
-- [ ] oracle de régression TRIPS (§34)
+- [ ] suite de conformité massive (paires minimales, adverses)
 - [ ] génération de cas adverses par LLM (§33)
+- [x] budget / beam adaptatif
+- [x] cache lexical & morphologique (WordNet + LRU)
+- [x] provenance complète des alternatives packées
 
 ---
 
@@ -235,16 +245,16 @@ Au-delà de TRIPS, à tester explicitement :
 Itération par **famille de constructions**, chaque famille = lexique +
 règles + tests réels du roman + baseline mise à jour.
 
-| Itération | Contenu | Cible baseline |
-|---|---|---|
-| **I1** | Lexique massif (500 mots) + possessif `'s` + quantifieurs | 200→30 % |
-| **I2** | Relatives étendues (whose, PP-gap, sans pronom) + participles | 200→40 % |
-| **I3** | Complétives `that` / `whether` / questions indirectes | 200→50 % |
-| **I4** | Complexes verbaux (modaux, perfect, progressif, passif étendu) | 200→60 % |
-| **I5** | Coordination asymétrique, gapping, conditionnels | 200→70 % |
-| **I6** | Temporel, nominalisations, comparaison | 200→75 % |
-| **I7** | Coréférence avancée + bridging + cataphora | chaînes justes |
-| **I8** | Oracle TRIPS + suite de conformité massive | régression |
+| Itération | Contenu | Cible | État |
+|---|---|---|---|
+| **I1** | Lexique WordNet exhaustif + possessif `'s` + quantifieurs | 30 % | ✅ fait |
+| **I2** | Relatives étendues + participles | 40 % | ✅ fait |
+| **I3** | Complétives `that`/`whether` + questions indirectes | 50 % | ✅ fait |
+| **I4** | TMA, passif étendu, longues phrases | 60 % | ✅ fait |
+| **I5** | Coordination asymétrique, gapping, conditionnels | 75 % | **à faire** |
+| **I6** | Temporel, nominalisations, comparaison | 85 % | **à faire** |
+| **I7** | Coréférence : noms propres distincts, genre, événements, bridging | chaînes justes | **à faire** |
+| **I8** | Suite de conformité + paires minimales + perf corpus | non-régression | **à faire** |
 
 ---
 

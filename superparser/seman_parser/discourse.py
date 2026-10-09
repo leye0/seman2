@@ -7,7 +7,7 @@ decision is a ranked hypothesis that can be revised later.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Mapping
 
 from .features import Atom, FeatureStructure
 from .semantics import SemanticGraph
@@ -100,41 +100,29 @@ class DiscourseEntity:
         }
 
 
-@dataclass(frozen=True, slots=True)
-class CoreferenceHypothesis:
-    """One ranked candidate link between a mention and an entity (or new)."""
-
-    mention_id: str
-    entity_id: str | None
-    score: float
-    factors: Mapping[str, float] = field(default_factory=dict)
-    rank: int = 0
-
-    @property
-    def is_new(self) -> bool:
-        return self.entity_id is None
-
-    def as_dict(self) -> dict[str, Any]:
-        return {
-            "mention": self.mention_id,
-            "entity": self.entity_id,
-            "score": self.score,
-            "rank": self.rank,
-            "factors": dict(self.factors),
-            "is_new": self.is_new,
-        }
-
-
 @dataclass
 class DiscourseState:
-    """Full memory of a session: entities, mentions, decisions, graph."""
+    """Full memory of a session: entities, mentions, reference links, graph.
+
+    Identity comes only from ``SAME_REF`` / ``ASSERTED_IDENTITY`` links
+    (plans/coreference-guide.md). ``MAYBE_REF`` stays open; ``DIFFERENT_REF``
+    blocks a pair; structural kinds do not merge individuals.
+    """
 
     entities: dict[str, DiscourseEntity] = field(default_factory=dict)
     mentions: dict[str, Mention] = field(default_factory=dict)
-    # mention_id -> ranked hypotheses (best first). Decisions are revisable.
-    decisions: dict[str, tuple[CoreferenceHypothesis, ...]] = field(default_factory=dict)
-    # committed link: mention_id -> entity_id
+    # committed identity: mention_id -> entity_id (or SPEAKER/ADDRESSEE)
     links: dict[str, str] = field(default_factory=dict)
+    # every ReferenceLink seen this session
+    reference_links: list = field(default_factory=list)
+    # open candidates (MAYBE_REF) — never committed
+    maybe_links: list = field(default_factory=list)
+    # non-identity pairs (DIFFERENT_REF)
+    different_pairs: set = field(default_factory=set)
+    # structural / non-individual kinds
+    bound_variables: list = field(default_factory=list)
+    shared_arguments: list = field(default_factory=list)
+    type_anaphora: list = field(default_factory=list)
     sentence_count: int = 0
     graph: SemanticGraph = field(default_factory=SemanticGraph)
 
@@ -151,9 +139,22 @@ class DiscourseState:
         return {
             "entities": [entity.as_dict() for entity in self.entities.values()],
             "mentions": [m.as_dict() for m in self.mentions.values()],
-            "decisions": {
-                mid: [h.as_dict() for h in hyps] for mid, hyps in self.decisions.items()
-            },
             "links": dict(self.links),
+            "reference_links": [
+                lk.as_dict() if hasattr(lk, "as_dict") else lk for lk in self.reference_links
+            ],
+            "maybe_links": [
+                lk.as_dict() if hasattr(lk, "as_dict") else lk for lk in self.maybe_links
+            ],
+            "different_pairs": [sorted(p) for p in self.different_pairs],
+            "bound_variables": [
+                lk.as_dict() if hasattr(lk, "as_dict") else lk for lk in self.bound_variables
+            ],
+            "shared_arguments": [
+                lk.as_dict() if hasattr(lk, "as_dict") else lk for lk in self.shared_arguments
+            ],
+            "type_anaphora": [
+                lk.as_dict() if hasattr(lk, "as_dict") else lk for lk in self.type_anaphora
+            ],
             "sentences": self.sentence_count,
         }

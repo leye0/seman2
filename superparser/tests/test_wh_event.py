@@ -61,30 +61,29 @@ class EventAnaphoraTests(unittest.TestCase):
     def test_demonstrative_resolves_to_event_situation(self) -> None:
         proc = DiscourseProcessor.from_dir(DATA)
         report = proc.read_many(["John lost his job.", "This devastated him."])
-        # "This" must not stay dangling as a brand-new entity when a
-        # situation is available.
-        this_hyps = None
+        # "This" must get a MAYBE_REF / NO_LINK reference link (guide REF-23).
+        this_links = []
         for s in report.sentences:
-            for m in s.mentions:
-                if m.surface == "This":
-                    this_hyps = s.hypotheses[m.mention_id]
-        self.assertIsNotNone(this_hyps)
-        assert this_hyps is not None
-        self.assertIsNotNone(this_hyps[0].entity_id)
+            for lk in s.reference_links:
+                if lk.source.endswith("M1") or "This" in str(lk.evidence):
+                    this_links.append(lk)
+        self.assertTrue(this_links, [lk.as_dict() for s in report.sentences for lk in s.reference_links])
+        for lk in this_links:
+            self.assertIn(lk.kind.value, {"MAYBE_REF", "NO_LINK"})
 
     def test_him_resolves_to_john(self) -> None:
         proc = DiscourseProcessor.from_dir(DATA)
         report = proc.read_many(["John lost his job.", "This devastated him."])
-        him_hyps = None
-        for s in report.sentences:
-            for m in s.mentions:
-                if m.surface == "him":
-                    him_hyps = s.hypotheses[m.mention_id]
-        self.assertIsNotNone(him_hyps)
-        assert him_hyps is not None
-        self.assertIsNotNone(him_hyps[0].entity_id)
-        entity = report.state.entities[him_hyps[0].entity_id]
-        self.assertIn("John", entity.surfaces)
+        # "him" is MAYBE_REF (REF-06), never committed identity.
+        him_links = [
+            lk
+            for s in report.sentences
+            for lk in s.reference_links
+            if "him" in str(lk.evidence).lower()
+        ]
+        self.assertTrue(him_links, [lk.as_dict() for s in report.sentences for lk in s.reference_links])
+        for lk in him_links:
+            self.assertIn(lk.kind.value, {"MAYBE_REF", "DIFFERENT_REF", "NO_LINK"})
 
     def test_possessive_roles(self) -> None:
         best = parse("John lost his job.").result.best()

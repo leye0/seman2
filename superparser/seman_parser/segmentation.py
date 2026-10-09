@@ -16,7 +16,7 @@ from .lexicon import LexicalSense, Lexicon
 from .symbols import intern
 
 _TOKEN_RE = re.compile(
-    r"[A-Za-z]+(?:'[A-Za-z]+)?|\d+(?:\.\d+)?|[^\w\s]",
+    r"[A-Za-z]+(?:'[A-Za-z]+)?|\d+(?:\.\d+)?|[^\w\s\"\u201c\u201d\u2018\u2019]",
     re.UNICODE,
 )
 
@@ -168,6 +168,30 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
     # Proper-noun and number heuristics as additional lattice hypotheses.
     # The proper-noun reading is never discarded just because the lexicon
     # also offers a common-noun reading ("Street" in "Maple Street").
+    # Contractions with a capitalized base ("Theo's") also get a name.
+    for token in tokens:
+        if "'" in token.text and token.text[:1].isupper():
+            base = token.text.split("'", 1)[0]
+            if base.isalpha() and len(base) > 1:
+                closed = any(
+                    _is_closed_class(sense)
+                    for _, sense, _ in lexicon.lookup_morphology(base)
+                )
+                if not closed:
+                    candidates.append(
+                        LexicalCandidate(
+                            span_start=token.start,
+                            span_end=token.start + len(base),
+                            surface=base,
+                            lemma=base,
+                            category="PROPER-NOUN",
+                            features=FeatureStructure.build({"number": "singular", "person": "3"}),
+                            semantic_type="PERSON",
+                            normalized=base,
+                            source="proper-noun",
+                            score=1.25,
+                        )
+                    )
     for token in tokens:
         if token.text[:1].isupper() and token.text.isalpha():
             # A word the lexicon already analyses as an anaphor / wh-element

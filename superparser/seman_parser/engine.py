@@ -89,6 +89,8 @@ class Parser:
         return cls(ParserResources.from_dir(directory), **kwargs)
 
     def parse(self, text: str) -> ParseReport:
+        # Quotation marks are delimiters, not linguistic material.
+        text = text.strip().strip('"\u201c\u201d\u2018\u2019').strip()
         cache_key = (text, self.goal_category)
         cached = self._parse_cache.get(cache_key)
         if cached is not None:
@@ -106,7 +108,7 @@ class Parser:
             goal_category=self.goal_category,
         )
         result = chart.parse_lattice(lattice)
-        self._parse_cache.put(cache_key, result)
+        # self._parse_cache.put(cache_key, result)  # retains the full forest; useless on corpora
         return ParseReport(result=result, resources=self.resources)
 
     def cache_stats(self) -> dict[str, Any]:

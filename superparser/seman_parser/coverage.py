@@ -15,7 +15,7 @@ from typing import Any, Iterable, Sequence
 from .engine import Parser
 from .reader import DiscourseProcessor
 
-_SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z\"'(\[])")
+_SENTENCE_SPLIT = re.compile(r"(?<=[.!?])[\"\u201c\u201d]*\s+(?=[A-Z\"'(\[])")
 _NOISE = re.compile(r"^[\s\"'“”‘’\-–—*•>]*$")
 # Abbreviations that end with a period but do not end a sentence.
 _ABBREV = re.compile(
@@ -87,6 +87,35 @@ class CoverageReport:
         return [r.case.text for r in self.failures[:limit]]
 
 
+
+_ABBREV_TOKEN = re.compile(
+    r"(?:Mr|Ms|Mrs|Dr|Prof|Sr|Jr|St|No|vs|etc|approx|Fig|Vol|Ch|cf)\.$"
+)
+
+
+def _split_sentences(line: str) -> list[str]:
+    """Split on [.!?] boundaries, skipping abbreviation periods and
+    handling quotation marks around sentence boundaries."""
+    # Normalize quotes so they don't interfere with boundary detection.
+    cleaned = line.replace('\u201c', '"').replace('\u201d', '"')
+    cleaned = cleaned.replace('\u2018', "'").replace('\u2019', "'")
+    out: list[str] = []
+    start = 0
+    for match in _SENTENCE_SPLIT.finditer(cleaned):
+        end = match.start() + 1
+        chunk = cleaned[start:end].strip().strip('"').strip()
+        if not chunk:
+            continue
+        if _ABBREV_TOKEN.search(chunk):
+            continue
+        out.append(chunk)
+        start = match.end()
+    tail = cleaned[start:].strip().strip('"').strip()
+    if tail:
+        out.append(tail)
+    return out
+
+
 def extract_sentences(path: str | Path, *, limit: int | None = None) -> list[SentenceCase]:
     """Split a text file into sentence cases, skipping headers and noise."""
     path = Path(path)
@@ -100,7 +129,7 @@ def extract_sentences(path: str | Path, *, limit: int | None = None) -> list[Sen
             continue
         if line.startswith("#"):
             continue
-        for piece in _SENTENCE_SPLIT.split(line):
+        for piece in _split_sentences(line):
             piece = piece.strip().strip("\"'“”‘’")
             if len(piece) < 8 or _NOISE.match(piece):
                 continue
@@ -140,6 +169,13 @@ def run_coverage(
             report = parser.parse(case.text)
             best = report.result.best()
             ok = report.result.completed
+            if not ok:
+                # Fragments (titles, NPs) are legitimate analyses when the
+                # NP goal succeeds even if CLAUSE does not.
+                from .engine import Parser as _P
+                np_parser = _P(parser.resources, goal_category="NP")
+                if np_parser.parse(case.text).result.completed:
+                    ok = True
             rule_id = best.rule_id if best else None
             category = best.category if best else None
             relations = tuple(sorted({e.relation for e in best.semantic.graph.relations})) if best else ()

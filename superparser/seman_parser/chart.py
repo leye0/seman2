@@ -207,10 +207,10 @@ class Chart:
             _RULE_CACHE[rule.rule_id] = rule
 
     def _adjacent(self, left_end: int, right_start: int) -> bool:
-        """True when only whitespace separates two spans."""
+        """True when only whitespace or quotation marks separate two spans."""
         if right_start < left_end:
             return False
-        return not self._text[left_end:right_start].strip()
+        return not self._text[left_end:right_start].strip().strip('"\u201c\u201d\u2018\u2019').strip()
 
     def _is_root_span(self, start: int, end: int) -> bool:
         if start != 0:
@@ -218,8 +218,9 @@ class Chart:
         length = len(self._text)
         if end == length:
             return True
-        # Accept a span that stops before trailing punctuation only.
-        return end < length and not self._text[end:].strip().strip(".!?;:,")
+        # Accept a span that stops before trailing punctuation/quotes only.
+        tail = self._text[end:].strip().strip(".!?;:," + '"\u201c\u201d\u2018\u2019')
+        return end < length and not tail
 
     # -- item insertion --------------------------------------------------
 
@@ -321,18 +322,22 @@ class Chart:
         self._text = text
         length = len(text)
         # Adaptive budget: long inputs get a tighter beam so a single
-        # sentence cannot consume unbounded work.
+        # sentence cannot consume unbounded work. Caps are high enough
+        # that trailing short constituents (pronouns, particles) still
+        # get expanded before the budget runs out — coverage wins over
+        # the old tighter caps (2026-10: "it" in long sentences never
+        # attached at 20k items).
         if length > 160:
             self.beam = min(self.beam, 16)
-            self.max_items = min(self.max_items, 12_000)
+            self.max_items = min(self.max_items, 28_000)
             self._goal_limit = self.beam
         elif length > 80:
             self.beam = min(self.beam, 24)
-            self.max_items = min(self.max_items, 20_000)
+            self.max_items = min(self.max_items, 48_000)
             self._goal_limit = self.beam
         elif length > 40:
             self.beam = min(self.beam, 40)
-            self.max_items = min(self.max_items, 30_000)
+            self.max_items = min(self.max_items, 40_000)
             self._goal_limit = self.beam
 
         for candidate in lattice.candidates:
