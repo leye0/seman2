@@ -1,0 +1,22 @@
+{
+  "schema_version": "poc04-fixtures/0.1",
+  "seed": 7404,
+  "base_depth": 5,
+  "middle_contexts": 3,
+  "top_contexts": 6,
+  "training_per_top": 400,
+  "heldout_per_top": 100,
+  "policy": {
+    "min_support": 4,
+    "min_gain_bits": 1,
+    "max_depth": 8
+  },
+  "thresholds": {
+    "reconstruction_rate": 1.0,
+    "minimum_real_depth": 3,
+    "hierarchy_must_beat_flat_training": true,
+    "hierarchy_must_beat_flat_heldout": false,
+    "single_use_must_not_promote": true,
+    "cycle_must_be_rejected": true
+  }
+}

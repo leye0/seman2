@@ -1,0 +1,24 @@
+{
+  "schema_version": "poc09-controlled/0.1",
+  "status": "temporary-controlled-data",
+  "sentence_templates": {
+    "before": "{a} had {object}.",
+    "event": "{a} gave {b} {object}.",
+    "after": "{b} had {object}.",
+    "control": "{a} saw {b}."
+  },
+  "positive_training": 80,
+  "counterexamples": 10,
+  "control_training": 90,
+  "heldout": 30,
+  "policy": {
+    "min_support": 20,
+    "min_confidence": 0.85,
+    "min_coverage": 0.8,
+    "min_lift": 1.5
+  },
+  "thresholds": {
+    "minimum_heldout_f1": 0.99,
+    "minimum_control_abstention": 1.0
+  }
+}

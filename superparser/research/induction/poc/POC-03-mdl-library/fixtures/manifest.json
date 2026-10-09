@@ -1,0 +1,43 @@
+{
+  "schema_version": "poc03-fixtures/0.1",
+  "seed": 7303,
+  "library_policy": {
+    "min_support": 8,
+    "min_gain_bits": 1,
+    "seed_window": 8,
+    "max_variable_ratio": 0.65
+  },
+  "datasets": [
+    {
+      "id": "repetitive-with-exceptions",
+      "kind": "repetitive",
+      "training_per_family": 1200,
+      "family_count": 2,
+      "training_exceptions": 100,
+      "heldout_per_family": 300,
+      "expected_positive_gain": true,
+      "minimum_heldout_component_rate": 0.95,
+      "expected_component_count": 2
+    },
+    {
+      "id": "unique-structures",
+      "kind": "unique",
+      "training_count": 1000,
+      "expected_positive_gain": false,
+      "expected_component_count": 0
+    },
+    {
+      "id": "variables-everywhere",
+      "kind": "variable_heavy",
+      "training_count": 1000,
+      "open_feature_count": 40,
+      "expected_positive_gain": false,
+      "expected_component_count": 0
+    }
+  ],
+  "thresholds": {
+    "reconstruction_rate": 1.0,
+    "repetitive_must_beat": ["B0", "B1", "B2"],
+    "noncompressible_must_not_promote": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "family_count": 5,
+  "manifest_sha256": "857cbc45380b5536e1c75b380ecf06782937bbc0f4c9ed4bcb82b998e96d2b24",
+  "observation_count": 849,
+  "passed": true,
+  "poc": "POC-06",
+  "selected_policy": {
+    "context_similarity": 0.1,
+    "membership_ratio": 0.75
+  },
+  "substitutions": {
+    "test": 591,
+    "training": 2756,
+    "validation": 623
+  },
+  "test": {
+    "covered_contexts": 10,
+    "eligible_contexts": 23,
+    "f1": 0.3064182194616977,
+    "noun_baseline_f1": 0.052191284804594826,
+    "precision": 0.27007299270072993,
+    "recall": 0.35406698564593303
+  },
+  "validation": {
+    "covered_contexts": 10,
+    "eligible_contexts": 25,
+    "f1": 0.2441860465116279,
+    "noun_baseline_f1": 0.06018403382243223,
+    "precision": 0.22992700729927007,
+    "recall": 0.2603305785123967
+  }
+}

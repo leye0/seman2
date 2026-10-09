@@ -1,0 +1,22 @@
+{
+  "controlled": {
+    "alignment_count": 3,
+    "precision": 1.0,
+    "profile_count": 3,
+    "recall": 1.0,
+    "residual_preservation": 1.0,
+    "without_delta_alignment_count": 0
+  },
+  "manifest_sha256": "61b301a2f61b9056e871748d34fc335c322863c570054819fd1e7b7312f596c0",
+  "passed": true,
+  "poc": "POC-11",
+  "real_audit": {
+    "alignment_count": 3,
+    "evidence_count": 712,
+    "heldout_matched_episodes": 9,
+    "heldout_precision": 0.6666666666666666,
+    "heldout_recall": 0.6666666666666666,
+    "observation_count": 849,
+    "profile_count": 3
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "poc11-dual/0.1",
+  "controlled_training_per_construction": 40,
+  "controlled_heldout_per_construction": 20,
+  "min_support": 4,
+  "real_corpus_observations": 849,
+  "real_training_end": 600,
+  "thresholds": {
+    "controlled_precision": 1.0,
+    "controlled_recall": 1.0,
+    "residual_preservation": 1.0
+  }
+}

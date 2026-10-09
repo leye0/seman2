@@ -1,0 +1,12 @@
+{
+  "schema_version": "poc12-real-corpus/0.1",
+  "required_observations": 849,
+  "seeds": [1, 7, 31],
+  "prefixes": [100, 300, 849],
+  "min_support": 4,
+  "thresholds": {
+    "batch_signature_recall": 1.0,
+    "maximum_order_component_delta": 0,
+    "maximum_comparison_fraction": 0.5
+  }
+}

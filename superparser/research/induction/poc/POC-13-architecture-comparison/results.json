@@ -1,0 +1,166 @@
+{
+  "ablations": {
+    "composition": {
+      "evidence": "temporary_controlled",
+      "heldout_loss_without_composition_bits": 0,
+      "training_loss_without_composition_bits": 13862
+    },
+    "deltas": {
+      "alignments_with_deltas": 3,
+      "alignments_without_deltas": 0,
+      "evidence": "temporary_controlled"
+    },
+    "mdl": {
+      "evidence": "temporary_controlled",
+      "library_compression_ratio": 0.14439744255835946,
+      "loss_without_library_bits": 7830573
+    },
+    "variable_constraints": {
+      "evidence": "temporary_controlled",
+      "polarity_mismatch_accepted_without_constraints": true,
+      "polarity_mismatch_rejected_with_constraints": true
+    }
+  },
+  "comparison": {
+    "candidates": [
+      {
+        "candidate": "A",
+        "engines": [
+          "unified"
+        ],
+        "label": "moteur unique multimode",
+        "measurements": {
+          "compact_graph_validation_rate": 1.0,
+          "incremental_comparison_fraction": 0.0007250483365557704,
+          "incremental_component_count": 4,
+          "incremental_max_p99_ms": 0.639291,
+          "real_observation_count": 849,
+          "referent_test_f1": 0.3064182194616977,
+          "relation_test_precision": 0.0,
+          "relation_test_predictions": 0,
+          "revision_controlled_error_reduction": 1.0,
+          "transfer_real_precision": 0.6666666666666666,
+          "transfer_real_recall": 0.6666666666666666,
+          "transition_controlled_f1": 1.0,
+          "transition_real_precision": 0.4090909090909091,
+          "transition_real_recall": 0.013782542113323124
+        },
+        "rationale": "Une seule fronti\u00e8re d'ex\u00e9cution pour tous les modes.",
+        "topology": {
+          "cross_engine_dependencies": [],
+          "cross_engine_dependency_count": 0,
+          "duplicated_primitive_count": 0,
+          "engine_count": 1,
+          "failed_engine_count": 1,
+          "maximum_failure_blast_radius": 11,
+          "primitive_implementation_count": 11,
+          "shared_service_count": 0
+        }
+      },
+      {
+        "candidate": "B",
+        "engines": [
+          "structural",
+          "inferential"
+        ],
+        "label": "deux moteurs",
+        "measurements": {
+          "compact_graph_validation_rate": 1.0,
+          "incremental_comparison_fraction": 0.0007250483365557704,
+          "incremental_component_count": 4,
+          "incremental_max_p99_ms": 0.639291,
+          "real_observation_count": 849,
+          "referent_test_f1": 0.3064182194616977,
+          "relation_test_precision": 0.0,
+          "relation_test_predictions": 0,
+          "revision_controlled_error_reduction": 1.0,
+          "transfer_real_precision": 0.6666666666666666,
+          "transfer_real_recall": 0.6666666666666666,
+          "transition_controlled_f1": 1.0,
+          "transition_real_precision": 0.4090909090909091,
+          "transition_real_recall": 0.013782542113323124
+        },
+        "rationale": "Structure/compression s\u00e9par\u00e9es des hypoth\u00e8ses relationnelles et de changement.",
+        "topology": {
+          "cross_engine_dependencies": [
+            [
+              "abstraction",
+              "referents"
+            ]
+          ],
+          "cross_engine_dependency_count": 1,
+          "duplicated_primitive_count": 0,
+          "engine_count": 2,
+          "failed_engine_count": 1,
+          "maximum_failure_blast_radius": 6,
+          "primitive_implementation_count": 11,
+          "shared_service_count": 0
+        }
+      },
+      {
+        "candidate": "C",
+        "engines": [
+          "category",
+          "relation",
+          "transformation"
+        ],
+        "label": "trois moteurs",
+        "measurements": {
+          "compact_graph_validation_rate": 1.0,
+          "incremental_comparison_fraction": 0.0007250483365557704,
+          "incremental_component_count": 4,
+          "incremental_max_p99_ms": 0.639291,
+          "real_observation_count": 849,
+          "referent_test_f1": 0.3064182194616977,
+          "relation_test_precision": 0.0,
+          "relation_test_predictions": 0,
+          "revision_controlled_error_reduction": 1.0,
+          "transfer_real_precision": 0.6666666666666666,
+          "transfer_real_recall": 0.6666666666666666,
+          "transition_controlled_f1": 1.0,
+          "transition_real_precision": 0.4090909090909091,
+          "transition_real_recall": 0.013782542113323124
+        },
+        "rationale": "Cat\u00e9gories, relations et transformations s\u00e9par\u00e9es autour d'une biblioth\u00e8que commune.",
+        "topology": {
+          "cross_engine_dependencies": [
+            [
+              "abstraction",
+              "referents"
+            ],
+            [
+              "referents",
+              "relations"
+            ],
+            [
+              "relations",
+              "deltas"
+            ]
+          ],
+          "cross_engine_dependency_count": 3,
+          "duplicated_primitive_count": 0,
+          "engine_count": 3,
+          "failed_engine_count": 2,
+          "maximum_failure_blast_radius": 4,
+          "primitive_implementation_count": 11,
+          "shared_service_count": 1
+        }
+      }
+    ],
+    "decision_rule": "choose the smallest boundary split that isolates the real-corpus relation/transition failures from the stable structural path, without duplicating primitives",
+    "provisional_choice": "B"
+  },
+  "manifest_sha256": "57c930c6d40c37dd50cb1827d1978b6340c1fb06ce545ebd285738c9c265b943",
+  "passed": true,
+  "poc": "POC-13",
+  "real_observation_counts": {
+    "POC-06": 849,
+    "POC-07": 849,
+    "POC-08": 849,
+    "POC-09": 849,
+    "POC-10": 849,
+    "POC-11": 849,
+    "POC-12": 849
+  },
+  "same_empirical_evidence_for_all_candidates": true
+}

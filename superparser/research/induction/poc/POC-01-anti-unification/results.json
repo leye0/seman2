@@ -1,0 +1,29 @@
+{
+  "poc": "POC-01",
+  "revision": "f982ba9dbb5857744d3248aeac9384ea432acc38",
+  "parser_version": "0.1.0",
+  "data_manifest": "49f7cab8667febd880cbb841cc58f502b975aed534833d030a75c82473b69897",
+  "seed": 0,
+  "baseline": "B0",
+  "metrics": {
+    "roundtrip_exact_rate": 1.0,
+    "description_length_bits": null,
+    "heldout_description_length_bits": null,
+    "heldout_inference_precision": null,
+    "heldout_inference_recall": null,
+    "abstention_accuracy": null,
+    "median_latency_ms": 95.708,
+    "p95_latency_ms": 1473.428,
+    "peak_memory_mb": 6.315,
+    "case_expectation_rate": 1.0,
+    "case_count": 4
+  },
+  "verdict": "GO",
+  "notes": [
+    "Targeted POC-01 suite: 10 tests passed.",
+    "Benchmark candidate counts are capped at 50 per pair.",
+    "Estimated two-example encoding gains are negative; MDL promotion is deferred to POC-03.",
+    "Benchmark executed on a dirty working tree based on the recorded revision."
+  ]
+}
+

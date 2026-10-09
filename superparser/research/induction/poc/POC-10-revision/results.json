@@ -1,0 +1,24 @@
+{
+  "controlled": {
+    "active_contexts": [
+      "idiom"
+    ],
+    "after_errors": 0,
+    "before_errors": 10,
+    "error_reduction": 1.0,
+    "lineage_completeness": 1.0,
+    "lineage_versions": 3,
+    "parent_status": "retired"
+  },
+  "manifest_sha256": "b1fa37ce4c3aef0f68eb3580f027ce56999f8b234e42e2e5318b594ffb6cf092",
+  "passed": true,
+  "poc": "POC-10",
+  "real_audit": {
+    "new_counterexamples": 0,
+    "new_support": 6,
+    "observation_count": 849,
+    "retired": 0,
+    "seed_hypotheses": 6,
+    "specializations": 0
+  }
+}

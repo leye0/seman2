@@ -1,0 +1,33 @@
+{
+  "episodes": {
+    "all": 2633,
+    "test": 398,
+    "training": 1826
+  },
+  "frequency_baseline": {
+    "correct": 0,
+    "f1": 0.0,
+    "precision": 0.0,
+    "predictions": 0,
+    "recall": 0.0
+  },
+  "hypothesis_count": 6,
+  "learned": {
+    "correct": 9,
+    "f1": 0.026666666666666665,
+    "precision": 0.4090909090909091,
+    "predictions": 22,
+    "recall": 0.013782542113323124
+  },
+  "manifest_sha256": "3fecc46a938e367bca450fa70306fc1ce822f9a84c416980dcedd0cead318e1f",
+  "observation_count": 849,
+  "passed": false,
+  "poc": "POC-09",
+  "syntax_baseline": {
+    "correct": 0,
+    "f1": 0.0,
+    "precision": 0.0,
+    "predictions": 13,
+    "recall": 0.0
+  }
+}

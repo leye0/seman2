@@ -1,28 +1,4 @@
-Pour améliorer la performance on pourrait aussi faire de l’induction stochastique bornée.
-
-En gros, on choisit au hasard un échantillon borné, et c'est la répétition à long-terme de
-pattern qui fera apparaître des patterns.
-
-Cet échantillonnage ralentit la solidification mais permet de donner de l'air au système pour le reste.
-
-
--=-=-=-=-=-=-=-
-
-Bon, j'ai une nouvelle stratégie meilleure pour l'optimisation au lieu du randomness stochastique borné:
-. Version simple :
-1. On extrait les structures/fragments observés.
-2. On ne garde comme candidats que ceux qui reviennent assez souvent pour mériter d’être examinés.
-3. On fait croître seulement les candidats prometteurs en leur ajoutant des morceaux réellement connectés dans les données.
-4. On coupe vite les branches faibles : si un motif devient rare, redondant ou inutile, on arrête de l’étendre.
-5. On ne classe pas par fréquence brute. On favorise les motifs qui :
-   - compressent bien plusieurs observations ;
-   - apportent quelque chose de non redondant ;
-   - prédisent bien d’autres structures ;
-   - s’alignent de façon stable avec la sémantique.
-6. Les bons motifs deviennent des objets abstraits, qui peuvent ensuite être recombinés comme de nouveaux atomes.
-7. Un petit peu de random peut rester pour explorer des pistes inhabituelles, mais pas comme moteur principal.
-En une ligne :
-Récurrence pour sélectionner, croissance locale pour explorer, compression/non-redondance/prédiction pour décider quoi solidifier.
-
-Et surtout : pas “toutes les combinaisons possibles”. On ne développe que les structures qui ont déjà donné une raison empirique d’être développées.
-
+LAST:
+On veut comprendre pourquoi un parsing de une seule phrase (i.e. #1 de the map of everythings) passe par 217 analyses.
+On veut que le parseur retourne simplement la forme finale choisie.
+On veut challenger un peu les résultats avec gpt.

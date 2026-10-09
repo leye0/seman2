@@ -1,0 +1,65 @@
+{
+  "schema_version": "poc00-fixtures/0.1",
+  "description": "Corpus diagnostique minimal; aucune étiquette sémantique n'est fournie à l'adaptateur.",
+  "cases": [
+    {
+      "id": "simple-transitive",
+      "text": "John opened the box.",
+      "phenomena": ["constituency", "lexical-alternatives"],
+      "expected_completed": true
+    },
+    {
+      "id": "explicit-negation",
+      "text": "John did not open the box.",
+      "phenomena": ["negation", "scope"],
+      "expected_completed": true
+    },
+    {
+      "id": "modal-clause",
+      "text": "John might open the box.",
+      "phenomena": ["modality", "scope"],
+      "expected_completed": true
+    },
+    {
+      "id": "wh-question",
+      "text": "What did John open?",
+      "phenomena": ["interrogation", "wh-gap"],
+      "expected_completed": true
+    },
+    {
+      "id": "embedded-clause",
+      "text": "Mary believes that John left.",
+      "phenomena": ["embedding", "scope"],
+      "expected_completed": true
+    },
+    {
+      "id": "coordination",
+      "text": "John left and Mary stayed.",
+      "phenomena": ["coordination", "multiple-events"],
+      "expected_completed": true
+    },
+    {
+      "id": "attachment-ambiguity",
+      "text": "John saw the man with the telescope.",
+      "phenomena": ["ambiguity", "attachment"],
+      "expected_completed": true
+    },
+    {
+      "id": "cross-sentence-anaphora-1",
+      "text": "John found a box.",
+      "phenomena": ["anaphora", "antecedent"],
+      "expected_completed": true,
+      "discourse_group": "anaphora-sequence",
+      "expected_reference_min": 0
+    },
+    {
+      "id": "cross-sentence-anaphora-2",
+      "text": "He opened it.",
+      "phenomena": ["anaphora", "reference-candidate"],
+      "expected_completed": true,
+      "discourse_group": "anaphora-sequence",
+      "expected_reference_min": 1
+    }
+  ]
+}
+

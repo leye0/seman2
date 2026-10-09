@@ -1,0 +1,45 @@
+{
+  "poc": "POC-04",
+  "revision": "f982ba9dbb5857744d3248aeac9384ea432acc38",
+  "schema_version": "poc04-fixtures/0.1",
+  "seed": 7404,
+  "data_manifest": "ab9fb3ed57d196330f1d14285108436bd0f14862c3ec7c6e1ae82b9127df2d1e",
+  "atomic_component_count": 1,
+  "middle_component_count": 3,
+  "top_component_count": 6,
+  "shared_definition_count": 10,
+  "maximum_depth": 3,
+  "flat_model_bits": 25661,
+  "recursive_model_bits": 11799,
+  "training": {
+    "observation_count": 2400,
+    "flat_data_bits": 1157303,
+    "recursive_data_bits": 1157303,
+    "flat_total_bits": 1182964,
+    "recursive_total_bits": 1169102,
+    "gain_bits": 13862,
+    "compression_ratio_vs_flat": 0.9882819764591315,
+    "reconstruction_rate": 1.0
+  },
+  "heldout": {
+    "observation_count": 600,
+    "flat_data_bits": 316219,
+    "recursive_data_bits": 316219,
+    "gain_bits": 0,
+    "compression_ratio_vs_flat": 1.0,
+    "reconstruction_rate": 1.0
+  },
+  "roots_promotable": true,
+  "single_use_rejected": true,
+  "cycle_rejected": true,
+  "expectation_met": true,
+  "evaluation_ms": 3432.599,
+  "peak_memory_mb": 0.126,
+  "verdict": "GO",
+  "notes": [
+    "The hierarchy has two actual call layers above the atomic component.",
+    "Held-out marginal instance cost equals the frozen flat baseline.",
+    "The result demonstrates structural model factorization, not semantic inference.",
+    "Benchmark executed on a dirty working tree based on the recorded revision."
+  ]
+}

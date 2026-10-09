@@ -96,6 +96,7 @@ class PartialItem:
     children: tuple[ChartItem, ...]
     bindings: Bindings
     score: float
+    _sig: tuple[Hashable, ...] | None = field(default=None, repr=False, compare=False)
 
     @property
     def next_category(self) -> str | None:
@@ -108,6 +109,14 @@ class PartialItem:
     def complete(self) -> bool:
         rule = _RULE_CACHE[self.rule_id]
         return self.dot >= rule.arity
+
+    def signature(self) -> tuple[Hashable, ...]:
+        """Chart-local ids of the analyses consumed by this partial."""
+        sig = self._sig
+        if sig is None:
+            sig = tuple(child.signature() for child in self.children)
+            object.__setattr__(self, "_sig", sig)
+        return sig
 
 
 # Populated by Chart so PartialItem can resolve its rule without a backref.
@@ -124,10 +133,12 @@ class PackedNode:
     best: ChartItem
     alternatives: list[ChartItem] = field(default_factory=list)
     seen_signatures: set[Hashable] = field(default_factory=set)
+    rule_ids: set[str | None] = field(default_factory=set)
 
     def add(self, item: ChartItem, signature: Hashable) -> None:
         self.alternatives.append(item)
         self.seen_signatures.add(signature)
+        self.rule_ids.add(item.rule_id)
         if item.score > self.best.score:
             self.best = item
 
@@ -236,6 +247,7 @@ class Chart:
             object.__setattr__(item, "_sig", self._analysis_ids)
             node.alternatives.append(item)
             node.seen_signatures.add(dedupe_key)
+            node.rule_ids.add(item.rule_id)
             self._count_goal(item)
             self._push(item)
             return True
@@ -272,16 +284,18 @@ class Chart:
             self._partials[key] = [partial]
             self._index_partial(partial)
             return True
+        # Once the slot is full every further variant is rejected, duplicate
+        # or not.  Do this before constructing and comparing signatures.
+        if len(variants) >= 2:
+            return False
         # Compare against the kept variants via their chart-local analysis
         # ids.  These signatures are flat and therefore cheap to hash.
-        child_sig = tuple(c.signature() for c in partial.children)
+        child_sig = partial.signature()
         for variant in variants:
-            if tuple(c.signature() for c in variant.children) == child_sig:
+            if variant.signature() == child_sig:
                 # The same consumed analyses deterministically produce the
                 # same bindings and score.
                 return False
-        if len(variants) >= 2:
-            return False
         variants.append(partial)
         self._index_partial(partial)
         return True
@@ -312,7 +326,7 @@ class Chart:
             found = self._partial_by_wait.get(key)
             if found:
                 # Snapshot because advancing a partial can update the index.
-                out.extend(tuple(found.values()))
+                out.extend(found.values())
         return out
 
     # -- main loop -------------------------------------------------------
@@ -414,8 +428,15 @@ class Chart:
 
     def _start_rules_with(self, item: ChartItem) -> None:
         for rule in self.grammar.candidates_for_first(item.category, item.features):
+            # A full partial slot rejects every additional analysis.  Check
+            # before unification, rebinding and handle export: on ambiguous
+            # inputs this avoids most of the work in this method.
+            if rule.arity > 1:
+                variants = self._partials.get((rule.rule_id, 1, item.start, item.end))
+                if variants is not None and len(variants) >= 2:
+                    continue
             symbol = rule.rhs[0]
-            result = unify(symbol.features, item.features, {})
+            result = unify(symbol.features, item.features)
             if result is None:
                 continue
             merged, env = result
@@ -449,7 +470,14 @@ class Chart:
             symbol = rule.rhs[partial.dot]
             if symbol.category_id != cat_id:
                 continue
-            result = unify(symbol.features, item.features, dict(partial.bindings))
+            next_dot = partial.dot + 1
+            if next_dot < rule.arity:
+                variants = self._partials.get(
+                    (rule_id, next_dot, partial.start, item.end)
+                )
+                if variants is not None and len(variants) >= 2:
+                    continue
+            result = unify(symbol.features, item.features, partial.bindings)
             if result is None:
                 continue
             merged, env = result
@@ -492,7 +520,14 @@ class Chart:
                     if not self._adjacent(current.end, node.start):
                         continue
                     for item in node.alternatives[-self.beam :]:
-                        result = unify(symbol.features, item.features, dict(current.bindings))
+                        next_dot = current.dot + 1
+                        if next_dot < rule.arity:
+                            variants = self._partials.get(
+                                (current.rule_id, next_dot, current.start, item.end)
+                            )
+                            if variants is not None and len(variants) >= 2:
+                                continue
+                        result = unify(symbol.features, item.features, current.bindings)
                         if result is None:
                             continue
                         merged, env = result
@@ -532,14 +567,13 @@ class Chart:
         # Safe reject: a full slot whose alternatives already cover several
         # *different* rules, and this one is far below the best.
         if node is not None and len(node.alternatives) >= self.beam:
-            distinct_rules = {a.rule_id for a in node.alternatives}
-            if len(distinct_rules) >= 4 and score < node.best.score - 2.0:
+            if len(node.rule_ids) >= 4 and score < node.best.score - 2.0:
                 return
-        unified = unify(rule.lhs.features, FeatureStructure.empty(), dict(partial.bindings))
-        if unified is None:
-            return
-        lhs_features, env = unified
-        lhs_features = substitute_structure(lhs_features, env)
+        # Unifying against an empty structure cannot fail or add bindings.
+        # Applying the existing environment directly is equivalent and
+        # avoids two dictionary/feature-structure allocations.
+        env = dict(partial.bindings)
+        lhs_features = substitute_structure(rule.lhs.features, env)
         # Only pay for semantic composition when this item will actually be
         # expanded (pushed to the agenda). Packed-only items get a cheap
         # placeholder and lose no linguistic distinction at the tree level.

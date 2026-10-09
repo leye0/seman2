@@ -1,0 +1,9 @@
+{
+  "schema_version": "poc08-real-corpus/0.2",
+  "corpus": "The Map of Everything",
+  "required_observations": 849,
+  "thresholds": {
+    "required_comparable_pairs": 848,
+    "maximum_false_disappearances": 0
+  }
+}

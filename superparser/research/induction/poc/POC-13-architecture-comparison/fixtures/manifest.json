@@ -1,0 +1,6 @@
+{
+  "schema_version": "poc13-dual/0.1",
+  "required_observations": 849,
+  "failed_real_capabilities": ["relations", "transitions"],
+  "expected_provisional_choice": "B"
+}
