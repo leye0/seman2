@@ -272,3 +272,35 @@ Les 14 timeouts finaux se répartissent en 11 extractions et 3 reconnaissances.
 Les 42 tests ciblés du moteur vectoriel, des traits, de la couverture et de la
 grammaire générique passent.
 
+## Cache des compatibilités utilisées par les bornes
+
+Un profil de 30 phrases préchauffées a montré que 54 % à 89 % des tests
+d'unification sans bindings utilisés pour calculer les bornes répétaient la
+même paire `(contrainte, interface)`. L'extracteur mémorise désormais leur
+résultat booléen pendant la durée de la forêt. Les unifications contextuelles,
+leurs bindings, les scores et les dérivations ne sont pas mis en cache par ce
+mécanisme.
+
+Sur les mêmes 30 phrases, en alternant avant/après :
+
+| Mesure | Avant | Après |
+|---|---:|---:|
+| Latence médiane | 122,9 ms | **115,6 ms** |
+| Latence p90 | 467,1 ms | **445,9 ms** |
+| Extraction médiane | 43,0 ms | **35,9 ms** |
+| Extraction p90 | 245,0 ms | **221,0 ms** |
+| Reconnaissance médiane | 81,8 ms | 82,6 ms |
+
+Les 30 meilleures analyses, leurs traits, scores et relations sont identiques.
+Les nombres de combinaisons et d'unifications logiques sont également
+identiques ; **138 338 appels physiques à `unify`** ont été évités. La
+matérialisation finale des arbres, graphes et provenances ne représente que
+0,61 ms à la médiane et 0,98 ms au p90 : ce n'est pas le goulet suivant.
+
+Sur le corpus complet avec plafond d'une seconde : 3 291 analyses complètes,
+31 incomplètes, 4 timeouts d'extraction et aucune erreur, soit **98,95 %** de
+couverture complète. La médiane est de **87,6 ms**, p90 de 564,5 ms, p95 de
+642,7 ms et p99 de 805,3 ms. Le p90 de ce run est plus élevé que le précédent
+malgré le gain contrôlé sur l'échantillon ; il n'est donc pas revendiqué comme
+une amélioration. Le cache a évité **7 659 088 appels physiques** sur le corpus.
+

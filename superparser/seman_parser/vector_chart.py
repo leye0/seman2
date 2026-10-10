@@ -52,6 +52,7 @@ class ForestNode:
     category_id: int
     category: str
     mask: int
+    waiting_cutoff: int = 0
     derivations: list[Derivation] = field(default_factory=list)
     seen: set[Hashable] = field(default_factory=set)
 
@@ -295,11 +296,15 @@ class VectorGrammar:
             "structural_derivations": forest.derivation_count,
             "partial_states": len(forest.partials),
             "partial_derivations": forest.partial_derivation_count,
+            "partial_proposals": forest.partial_proposals,
+            "duplicate_partial_proposals": forest.duplicate_partial_proposals,
+            "duplicate_transitions_avoided": forest.duplicate_transitions_avoided,
             "recognition_operations": forest.operations,
             "unification_attempts": 0,
             "unification_rejections": 0,
             "hint_unification_attempts": 0,
             "hint_unification_rejections": 0,
+            "hint_compatibility_cache_hits": 0,
             "unification_cache_hits": 0,
             "constraint_context_cache_hits": 0,
             "failed_continuation_cache_hits": 0,
@@ -357,6 +362,9 @@ class _VectorForest:
         self.operations = 0
         self.derivation_count = 0
         self.partial_derivation_count = 0
+        self.partial_proposals = 0
+        self.duplicate_partial_proposals = 0
+        self.duplicate_transitions_avoided = 0
         self.lexical_spans = 0
         self.budget_exceeded = False
 
@@ -387,7 +395,14 @@ class _VectorForest:
         key = (start, end, category_id)
         node = self.by_key.get(key)
         if node is None:
-            node = ForestNode(len(self.nodes), start, end, category_id, category, mask)
+            # Partials already waiting when the node appears have not seen
+            # it.  Later entries necessarily advance eagerly over this
+            # visible node, so only this prefix must run on the agenda turn.
+            waiting_cutoff = len(self.waiting.get((start, category_id), ()))
+            node = ForestNode(
+                len(self.nodes), start, end, category_id, category, mask,
+                waiting_cutoff=waiting_cutoff,
+            )
             self.nodes.append(node)
             self.by_key[key] = node
             self.by_start_category.setdefault((start, category_id), []).append(node)
@@ -428,6 +443,7 @@ class _VectorForest:
         previous_id: int | None,
         child_id: int,
     ) -> None:
+        self.partial_proposals += 1
         key = (rule_index, dot, start, end)
         partial = self.partial_by_key.get(key)
         is_new = partial is None
@@ -444,6 +460,8 @@ class _VectorForest:
             partial.seen.add(signature)
             partial.derivations.append(PartialDerivation(previous_id, child_id))
             self.partial_derivation_count += 1
+        else:
+            self.duplicate_partial_proposals += 1
         if not is_new:
             return
         rule = self.compiled.rules[rule_index]
@@ -480,7 +498,9 @@ class _VectorForest:
                 rule = self.compiled.rules[rule_index]
                 if node.mask & rule.rhs_masks[0]:
                     self._add_partial(rule_index, 1, node.start, node.end, None, node.node_id)
-            for partial_id in tuple(self.waiting.get((node.start, node.category_id), ())):
+            waiting = self.waiting.get((node.start, node.category_id), ())
+            self.duplicate_transitions_avoided += len(waiting) - node.waiting_cutoff
+            for partial_id in tuple(waiting[:node.waiting_cutoff]):
                 self._advance(self.partials[partial_id], node)
         goal_id = intern(goal_category)
         return tuple(
@@ -537,6 +557,7 @@ class _LazyMaterializer:
         self.hint_unification_attempts = 0
         self.hint_unification_rejections = 0
         self.unification_cache_hits = 0
+        self.hint_compatibility_cache_hits = 0
         self.context_cache_hits = 0
         self.failed_continuation_cache_hits = 0
         self.projected_bindings = 0
@@ -550,6 +571,26 @@ class _LazyMaterializer:
         self._hint_nodes_active: set[int] = set()
         self._hint_partials_active: set[int] = set()
         self._active_contexts: set[tuple[int, Hashable]] = set()
+        # Bound computation asks the same static grammar constraint about
+        # the same lexical/rule interface many times.  These objects remain
+        # alive with this materializer, so their identities form a safe,
+        # allocation-free key.  Cache only the boolean answer: contextual
+        # unification and its bindings still happen on the real path.
+        self._hint_compatibility: dict[tuple[int, int], bool] = {}
+
+    def _hint_compatible(
+        self,
+        constraint: FeatureStructure,
+        features: FeatureStructure,
+    ) -> bool:
+        key = (id(constraint), id(features))
+        cached = self._hint_compatibility.get(key)
+        if cached is not None:
+            self.hint_compatibility_cache_hits += 1
+            return cached
+        compatible = unify(constraint, features) is not None
+        self._hint_compatibility[key] = compatible
+        return compatible
 
     def get(
         self,
@@ -948,14 +989,14 @@ class _LazyMaterializer:
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
                     self.hint_unification_attempts += 1
-                    if unify(constraint, candidate.features) is not None:
+                    if self._hint_compatible(constraint, candidate.features):
                         best = max(best, candidate.score)
                     else:
                         self.hint_unification_rejections += 1
             else:
                 rule = self.compiled.rules[derivation.rule_index].rule
                 self.hint_unification_attempts += 1
-                if unify(constraint, rule.lhs.features) is None:
+                if not self._hint_compatible(constraint, rule.lhs.features):
                     self.hint_unification_rejections += 1
                     continue
                 best = max(
@@ -1253,6 +1294,7 @@ class _LazyRoots:
         self.stats["unification_rejections"] = materializer.unification_rejections + offset.get("unification_rejections", 0)
         self.stats["hint_unification_attempts"] = materializer.hint_unification_attempts + offset.get("hint_unification_attempts", 0)
         self.stats["hint_unification_rejections"] = materializer.hint_unification_rejections + offset.get("hint_unification_rejections", 0)
+        self.stats["hint_compatibility_cache_hits"] = materializer.hint_compatibility_cache_hits + offset.get("hint_compatibility_cache_hits", 0)
         self.stats["unification_cache_hits"] = materializer.unification_cache_hits
         self.stats["constraint_context_cache_hits"] = materializer.context_cache_hits
         self.stats["failed_continuation_cache_hits"] = materializer.failed_continuation_cache_hits + offset.get("failed_continuation_cache_hits", 0)

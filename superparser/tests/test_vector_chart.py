@@ -20,6 +20,8 @@ class VectorChartTests(unittest.TestCase):
         self.assertEqual(result.stats["engine"], "vector-lazy-kbest")
         self.assertIsNotNone(result.shared_forest)
         self.assertGreater(result.stats["structural_derivations"], 1)
+        self.assertEqual(result.stats["duplicate_partial_proposals"], 0)
+        self.assertGreater(result.stats["duplicate_transitions_avoided"], 0)
         self.assertEqual(result.stats["kbest_ms"], 0.0)
 
     def test_ambiguity_is_packed_before_feature_unification(self) -> None:
@@ -28,6 +30,7 @@ class VectorChartTests(unittest.TestCase):
         best_attempts = result.stats["unification_attempts"]
         self.assertGreaterEqual(len(result.alternatives(limit=2)), 2)
         self.assertGreaterEqual(result.stats["unification_attempts"], best_attempts)
+        self.assertGreater(result.stats["hint_compatibility_cache_hits"], 0)
         self.assertGreater(result.stats["kbest_ms"], 0.0)
 
     def test_semantic_roles_survive_delayed_materialization(self) -> None:
