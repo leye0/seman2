@@ -10,14 +10,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from time import perf_counter
 from typing import Any, Mapping, Sequence
 
-from .chart import Chart, ParseResult
+from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
 from .perf import LRU
 from .segmentation import build_lattice
 from .types import TypeHierarchy, load_types
+from .vector_chart import VectorGrammar
 
 
 @dataclass
@@ -83,6 +85,9 @@ class Parser:
         self.goal_category = goal_category
         self._lattice_cache: LRU[str, Any] = LRU(cache_size)
         self._parse_cache: LRU[tuple[str, str], ParseResult] = LRU(cache_size)
+        # Grammar masks and transition indexes are immutable and shared by
+        # every sentence parsed by this instance.
+        self._vector_grammar = VectorGrammar(resources.grammar)
 
     @classmethod
     def from_dir(cls, directory: str | Path, **kwargs: Any) -> "Parser":
@@ -96,18 +101,21 @@ class Parser:
         if cached is not None:
             return ParseReport(result=cached, resources=self.resources)
 
+        lexical_start = perf_counter()
         lattice = self._lattice_cache.get(text)
         if lattice is None:
             lattice = build_lattice(text, self.resources.lexicon)
             self._lattice_cache.put(text, lattice)
+        lexical_ms = (perf_counter() - lexical_start) * 1000
 
-        chart = Chart(
-            self.resources.grammar,
+        result = self._vector_grammar.parse_lattice(
+            lattice,
             beam=self.beam,
             max_items=self.max_items,
             goal_category=self.goal_category,
         )
-        result = chart.parse_lattice(lattice)
+        if isinstance(result.stats, dict):
+            result.stats["lexical_ms"] = round(lexical_ms, 4)
         # self._parse_cache.put(cache_key, result)  # retains the full forest; useless on corpora
         return ParseReport(result=result, resources=self.resources)
 

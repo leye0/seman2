@@ -31,7 +31,11 @@ class Provenance:
     detail: Mapping[str, Any] = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
-        return {"source": self.source, "detail": dict(self.detail)}
+        detail = dict(self.detail)
+        children = detail.get("children")
+        if isinstance(children, tuple) and all(isinstance(child, Provenance) for child in children):
+            detail["children"] = [child.as_dict() for child in children]
+        return {"source": self.source, "detail": detail}
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,16 +162,25 @@ class ParseResult:
     text: str
     lattice: LexicalLattice
     packed: dict[tuple[int, int, int], PackedNode]
-    roots: tuple[ChartItem, ...]
+    roots: Sequence[ChartItem]
     completed: bool
     stats: Mapping[str, Any] = field(default_factory=dict)
+    # All category-level alternatives remain available as compact references;
+    # ``roots`` is only the k-best materialized view.
+    shared_forest: Any | None = field(default=None, repr=False)
 
     def best(self) -> ChartItem | None:
+        lazy_best = getattr(self.roots, "best", None)
+        if callable(lazy_best):
+            return lazy_best()
         if not self.roots:
             return None
         return max(self.roots, key=lambda item: item.score)
 
     def alternatives(self, *, limit: int | None = None) -> Sequence[ChartItem]:
+        lazy_take = getattr(self.roots, "take", None)
+        if callable(lazy_take) and limit is not None:
+            return lazy_take(limit)
         ordered = sorted(self.roots, key=lambda item: item.score, reverse=True)
         return ordered if limit is None else ordered[:limit]
 

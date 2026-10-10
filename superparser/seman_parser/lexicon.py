@@ -221,9 +221,9 @@ class Lexicon:
     def lookup_surface(self, surface: str) -> Sequence[LexicalEntry]:
         key = surface.lower()
         found = list(self._by_surface.get(key, ()))
-        if found:
-            return found
-        # The surface may itself be a lemma (man, run, happy).
+        # Merge local entries with every WordNet POS.  A local spelling must
+        # not hide an additional open-class category needed by the lexical
+        # bit vector (for example N|V).
         for entry in self.entries_for_lemma(key):
             if entry not in found:
                 found.append(entry)
