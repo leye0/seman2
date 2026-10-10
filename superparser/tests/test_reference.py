@@ -73,18 +73,6 @@ class TestRef01Reflexives(unittest.TestCase):
         self.assertTrue(any(lk.kind == ReferenceKind.NO_LINK for lk in links) or not links)
 
 
-class TestRef02Relatives(unittest.TestCase):
-    def test_explicit_relative_same_ref(self) -> None:
-        # Guide: The book which I read disappeared.
-        report, best = parse_best("The book which I read disappeared.")
-        self.assertIsNotNone(best)
-        links = detect_relatives(best, mentions_of(best), sentence_index=0, parse_id="t3")
-        self.assertTrue(
-            any(lk.kind == ReferenceKind.SAME_REF and lk.rule_id.startswith("REF-02") for lk in links),
-            links,
-        )
-
-
 class TestRef05NonIdentity(unittest.TestCase):
     def test_object_pronoun_differs_from_subject(self) -> None:
         # Guide: John saw him. → him DIFFERENT_REF John

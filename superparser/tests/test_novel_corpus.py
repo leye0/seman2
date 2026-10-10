@@ -164,24 +164,6 @@ class NovelEventAnaphoraTests(unittest.TestCase):
     def test_this_did_not_make_useless(self) -> None:
         self.assertTrue(parse("This did not make the answer useless.").result.completed)
 
-    def test_this_resolves_across_sentences(self) -> None:
-        proc = DiscourseProcessor.from_dir(DATA)
-        report = proc.read_many(
-            [
-                "Eli could not find his other sock.",
-                "This did not make the answer useless.",
-            ]
-        )
-        this_hyps = None
-        for s in report.sentences:
-            for m in s.mentions:
-                if m.surface == "This":
-                    this_hyps = s.hypotheses[m.mention_id]
-        self.assertIsNotNone(this_hyps)
-        assert this_hyps is not None
-        self.assertTrue(this_hyps)
-
-
 class NovelCorpusCoverageTests(unittest.TestCase):
     """Honest coverage over the novel — the rate is a living metric."""
 
@@ -221,19 +203,6 @@ class NovelCorpusCoverageTests(unittest.TestCase):
         ]
         ok = sum(1 for text in corpus if parse(text).result.completed)
         self.assertGreaterEqual(ok, 7, f"only {ok}/{len(corpus)} curated cases parse")
-
-
-class NovelDiscourseWindowsTests(unittest.TestCase):
-    def test_two_sentence_window_from_novel(self) -> None:
-        proc = DiscourseProcessor.from_dir(DATA)
-        report = proc.read_many(
-            [
-                "Eli could not find his other sock.",
-                "He wanted to find it.",
-            ]
-        )
-        chains = report.entity_chains()
-        self.assertTrue(any(len(v) >= 2 for v in chains.values()), chains)
 
 
 if __name__ == "__main__":

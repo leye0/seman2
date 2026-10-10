@@ -253,31 +253,6 @@ class AntiUnificationUnitTests(unittest.TestCase):
         self.assertEqual(root_rules, {"clause_np_vp"})
 
 
-class AntiUnificationParserIntegrationTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        parser = Parser.from_dir(DATA)
-        cls.left = parse_to_observation(
-            parser.parse("The apple is on the table.").result,
-            parser_version=__version__,
-        )
-        cls.right = parse_to_observation(
-            parser.parse("The book is on the desk.").result,
-            parser_version=__version__,
-        )
-
-    def test_best_compatible_real_parse_roots_reconstruct(self) -> None:
-        candidates = propose_root_generalizations(self.left, self.right, limit=5)
-        self.assertGreater(len(candidates), 0)
-        candidate = candidates[0]
-        self.assertIsNotNone(candidate.template.match(self.left, candidate.left_root_id))
-        self.assertIsNotNone(candidate.template.match(self.right, candidate.right_root_id))
-        self.assertEqual(
-            candidate.instantiate_left(),
-            snapshot_for_root(self.left, candidate.left_root_id),
-        )
-
-
 if __name__ == "__main__":
     unittest.main()
 

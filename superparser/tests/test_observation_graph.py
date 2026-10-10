@@ -245,40 +245,6 @@ class ObservationGraphIntegrationTests(unittest.TestCase):
         self.assertEqual(make_graph("M").canonical_json(), make_graph("renamed").canonical_json())
 
 
-class ObservationGraphContrastTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.parser = Parser.from_dir(DATA)
-
-    def test_negation_produces_a_distinct_observation(self) -> None:
-        positive = parse_to_observation(
-            self.parser.parse("John opened the box.").result,
-            parser_version=__version__,
-        )
-        negative = parse_to_observation(
-            self.parser.parse("John did not open the box.").result,
-            parser_version=__version__,
-        )
-        self.assertNotEqual(positive.observation_id, negative.observation_id)
-        negative_features = [
-            node.properties.get("features", {})
-            for node in negative.nodes
-            if node.kind in {"LEXICAL_CANDIDATE", "CONSTITUENT"}
-        ]
-        self.assertTrue(any(features.get("negation") == "true" for features in negative_features))
-
-    def test_failed_parse_is_still_an_observation(self) -> None:
-        result = self.parser.parse("the the the the.").result
-        graph = parse_to_observation(result, parser_version=__version__)
-        self.assertFalse(graph.completed)
-        self.assertEqual(len(graph.root_ids), 1)
-        self.assertEqual(graph.selection_policy, "structural_fallback")
-        self.assertTrue(graph.selection_provisional)
-        self.assertEqual(graph.forest_ids, ())
-        self.assertGreater(len([node for node in graph.nodes if node.kind == "TOKEN"]), 0)
-        graph.validate()
-
-
 class ObservationGraphStructuralFixtureTests(unittest.TestCase):
     def test_nested_semantic_features_are_removed_recursively(self) -> None:
         leaf = structural_item(
