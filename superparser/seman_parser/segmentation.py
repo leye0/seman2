@@ -37,6 +37,10 @@ class LexicalCandidate:
     source: str = "lexicon"
     score: float = 0.0
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    # Optional opaque reference used by the hierarchical parser.  Ordinary
+    # lexical candidates leave it empty; a clause interface points at the
+    # clause's existing lazy ParseResult instead of copying its derivations.
+    interface: Any | None = field(default=None, repr=False, compare=False)
 
     @property
     def span(self) -> tuple[int, int]:

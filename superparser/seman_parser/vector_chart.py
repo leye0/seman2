@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from heapq import heappop, heappush
 from itertools import count
 from time import perf_counter
@@ -16,7 +16,7 @@ from .features import (
 )
 from .grammar import Grammar, GrammarRule
 from .segmentation import LexicalCandidate, LexicalLattice
-from .semantics import SemanticGraph, SemanticPackage, apply_action
+from .semantics import SemanticGraph, SemanticNode, SemanticPackage, apply_action
 from .symbols import intern
 
 
@@ -80,6 +80,65 @@ class AnalysisUse:
     bindings: Bindings
 
 
+@dataclass(slots=True)
+class SegmentInterface:
+    """Lazy grammatical view of one independently recognized clause."""
+
+    result: ParseResult
+    offset: int
+    start: int
+    end: int
+    _items: dict[int, ChartItem] = field(default_factory=dict, repr=False)
+
+    def get(self, rank: int) -> ChartItem | None:
+        cached = self._items.get(rank)
+        if cached is not None:
+            return cached
+        alternatives = self.result.alternatives(limit=rank + 1)
+        if rank >= len(alternatives):
+            return None
+        shifted = _shift_chart_item(alternatives[rank], self.offset)
+        if shifted.category == "CLAUSE" and "event" not in shifted.semantic.handles:
+            handles = dict(shifted.semantic.handles)
+            event_id = next(
+                (
+                    handles[name] for name in ("main", "predicate", "sub")
+                    if name in handles
+                    and handles[name] in shifted.semantic.graph.nodes
+                    and shifted.semantic.graph.nodes[handles[name]].kind == "event"
+                ),
+                None,
+            )
+            if event_id is None:
+                event_id = next(
+                    (node.node_id for node in shifted.semantic.graph.nodes.values() if node.kind == "event"),
+                    None,
+                )
+            graph = shifted.semantic.graph
+            if event_id is None:
+                # Some permissive internal analyses expose only nominal
+                # handles even though their root is a CLAUSE.  The interface
+                # still needs a stable proposition anchor for coordination;
+                # add one without changing the internal tree or its score.
+                graph = graph.copy()
+                event_id = graph.add_node(
+                    kind="event",
+                    type_name="CLAUSE",
+                    span=(shifted.start, shifted.end),
+                    surface=self.result.text,
+                ).node_id
+            handles["event"] = event_id
+            shifted = ChartItem(
+                shifted.start, shifted.end, shifted.category, shifted.features,
+                SemanticPackage(graph, handles), shifted.score,
+                shifted.provenance, children=shifted.children,
+                rule_id=shifted.rule_id, bindings=shifted.bindings,
+                _sig=shifted.signature(),
+            )
+        self._items[rank] = shifted
+        return shifted
+
+
 @dataclass(frozen=True, slots=True)
 class CompactAnalysis:
     analysis_id: int
@@ -88,6 +147,7 @@ class CompactAnalysis:
     score: float
     bindings: Bindings
     candidate: LexicalCandidate | None = None
+    interface_item: ChartItem | None = None
     rule_index: int | None = None
     children: tuple[AnalysisUse, ...] = ()
 
@@ -114,6 +174,43 @@ def _feature_key(features: FeatureStructure) -> Hashable:
 
 def _bindings_key(bindings: Bindings) -> Hashable:
     return tuple(sorted((name, _value_key(value)) for name, value in bindings.items()))
+
+
+def _variable_names(value: object) -> set[str]:
+    if isinstance(value, Variable):
+        return {value.name}
+    if isinstance(value, FeatureStructure):
+        names: set[str] = set()
+        for _, child in value.items():
+            names.update(_variable_names(child))
+        return names
+    if isinstance(value, Disjunction):
+        names = set()
+        for child in value.options:
+            names.update(_variable_names(child))
+        return names
+    return set()
+
+
+def _project_bindings(
+    constraint: FeatureStructure,
+    bindings: Bindings,
+) -> tuple[Bindings, frozenset[str]]:
+    """Keep only inherited variables reachable from the child interface."""
+    relevant = _variable_names(constraint)
+    pending = list(relevant)
+    while pending:
+        name = pending.pop()
+        bound = bindings.get(name)
+        if bound is None:
+            continue
+        for dependency in _variable_names(bound) - relevant:
+            relevant.add(dependency)
+            pending.append(dependency)
+    return (
+        {name: value for name, value in bindings.items() if name in relevant},
+        frozenset(relevant),
+    )
 
 
 class VectorGrammar:
@@ -200,8 +297,14 @@ class VectorGrammar:
             "partial_derivations": forest.partial_derivation_count,
             "recognition_operations": forest.operations,
             "unification_attempts": 0,
+            "unification_rejections": 0,
+            "hint_unification_attempts": 0,
+            "hint_unification_rejections": 0,
             "unification_cache_hits": 0,
             "constraint_context_cache_hits": 0,
+            "failed_continuation_cache_hits": 0,
+            "projected_bindings": 0,
+            "projected_context_cache_hits": 0,
             "compact_analyses": 0,
             "materialized_items": 0,
             "nodes_visited_for_best": 0,
@@ -407,6 +510,7 @@ class _NodeState:
     heap: list[tuple[float, int, str, Any]] = field(default_factory=list)
     pushed_rules: set[tuple[int, int, tuple[int, ...]]] = field(default_factory=set)
     scheduled_rules: set[tuple[int, int, tuple[int, ...]]] = field(default_factory=set)
+    failed_continuations: set[Hashable] = field(default_factory=set)
     seen_results: set[Hashable] = field(default_factory=set)
 
 
@@ -429,8 +533,14 @@ class _LazyMaterializer:
         self._analysis_ids = count(1)
         self.analysis_count = 0
         self.unification_attempts = 0
+        self.unification_rejections = 0
+        self.hint_unification_attempts = 0
+        self.hint_unification_rejections = 0
         self.unification_cache_hits = 0
         self.context_cache_hits = 0
+        self.failed_continuation_cache_hits = 0
+        self.projected_bindings = 0
+        self.projected_context_cache_hits = 0
         self.nodes_initialized = 0
         self.combinations_visited = 0
         self._node_hints: dict[int, float] = {}
@@ -450,7 +560,11 @@ class _LazyMaterializer:
     ) -> CompactAnalysis | None:
         required = constraint if constraint is not None else FeatureStructure.empty()
         inherited = dict(bindings or {})
-        context_key = (_feature_key(required), _bindings_key(inherited))
+        projected, relevant_names = _project_bindings(required, inherited)
+        self.projected_bindings += len(inherited) - len(projected)
+        context_key = (_feature_key(required), _bindings_key(projected))
+        if len(projected) != len(inherited) and (node_id, context_key) in self.node_states:
+            self.projected_context_cache_hits += 1
         active_key = (node_id, context_key)
         # Only the exact same constrained subproblem is cyclic.  The same
         # span/category may legitimately reappear after a unary rule changes
@@ -459,9 +573,18 @@ class _LazyMaterializer:
             return None
         self._active_contexts.add(active_key)
         try:
-            return self._get_contextual(
-                node_id, rank, required, inherited, context_key,
+            analysis = self._get_contextual(
+                node_id, rank, required, projected, context_key,
             )
+            if analysis is None or len(projected) == len(inherited):
+                return analysis
+            # The cached child calculation is independent of unrelated
+            # bindings, but its caller must retain them for later siblings.
+            merged_bindings = dict(analysis.bindings)
+            for name, value in inherited.items():
+                if name not in relevant_names:
+                    merged_bindings[name] = value
+            return replace(analysis, bindings=merged_bindings)
         finally:
             self._active_contexts.remove(active_key)
 
@@ -495,6 +618,31 @@ class _LazyMaterializer:
                 analysis = CompactAnalysis(
                     next(self._analysis_ids), node_id, merged,
                     candidate.score, env, candidate=candidate,
+                )
+            elif kind == "interface":
+                candidate, interface_rank, interface_item, merged, env = payload
+                signature = ("interface", id(candidate), interface_rank)
+                if signature in state.seen_results:
+                    continue
+                state.seen_results.add(signature)
+                interface = candidate.interface
+                assert isinstance(interface, SegmentInterface)
+                following = interface.get(interface_rank + 1)
+                if following is not None:
+                    self.unification_attempts += 1
+                    following_result = unify(state.constraint, following.features, state.bindings)
+                    if following_result is not None:
+                        following_features, following_env = following_result
+                        heappush(state.heap, (
+                            -following.score, next(self._serial), "interface",
+                            (candidate, interface_rank + 1, following, following_features, following_env),
+                        ))
+                    else:
+                        self.unification_rejections += 1
+                analysis = CompactAnalysis(
+                    next(self._analysis_ids), node_id, merged,
+                    interface_item.score, env, candidate=candidate,
+                    interface_item=interface_item,
                 )
             elif kind in {"rule_seed", "rule_retry"}:
                 derivation_index, path_rank, ranks = payload
@@ -542,9 +690,25 @@ class _LazyMaterializer:
         for derivation_index, derivation in enumerate(node.derivations):
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
+                    if isinstance(candidate.interface, SegmentInterface):
+                        interface_item = candidate.interface.get(0)
+                        if interface_item is None:
+                            continue
+                        self.unification_attempts += 1
+                        result = unify(state.constraint, interface_item.features, state.bindings)
+                        if result is None:
+                            self.unification_rejections += 1
+                            continue
+                        merged, env = result
+                        heappush(state.heap, (
+                            -interface_item.score, next(self._serial), "interface",
+                            (candidate, 0, interface_item, merged, env),
+                        ))
+                        continue
                     self.unification_attempts += 1
                     result = unify(state.constraint, candidate.features, state.bindings)
                     if result is None:
+                        self.unification_rejections += 1
                         continue
                     merged, env = result
                     heappush(state.heap, (
@@ -554,6 +718,7 @@ class _LazyMaterializer:
                 rule = self.compiled.rules[derivation.rule_index].rule
                 self.unification_attempts += 1
                 if unify(state.constraint, rule.lhs.features, state.bindings) is None:
+                    self.unification_rejections += 1
                     continue
                 bound = (
                     self._constrained_partial_hint(derivation.partial_id)
@@ -606,11 +771,28 @@ class _LazyMaterializer:
         self.unification_attempts += 1
         lhs_result = unify(state.constraint, rule.lhs.features, state.bindings)
         if lhs_result is None:
+            self.unification_rejections += 1
             return
         _lhs_merged, env = lhs_result
         for index, (child_id, rank) in enumerate(zip(path, ranks)):
-            child = self.get(child_id, rank, rule.rhs[index].features, env)
+            child_constraint = rule.rhs[index].features
+            child = self.get(child_id, rank, child_constraint, env)
             if child is None:
+                child_bindings, _ = _project_bindings(child_constraint, env)
+                child_context = (_feature_key(child_constraint), _bindings_key(child_bindings))
+                child_state = self.node_states.get((child_id, child_context))
+                failure_key = (
+                    derivation.rule_index, index, child_id,
+                    _feature_key(child_constraint), _bindings_key(child_bindings),
+                )
+                # Only memoize a genuinely exhausted constrained stream.  A
+                # transient exact-context cycle also returns None, but may
+                # become productive after its active caller unwinds.
+                if child_state is not None and child_state.exhausted:
+                    if failure_key in state.failed_continuations:
+                        self.failed_continuation_cache_hits += 1
+                        return
+                    state.failed_continuations.add(failure_key)
                 # A later child can reject bindings chosen by an earlier one.
                 # Continue lazily with the next earlier alternative.
                 for axis in range(index):
@@ -765,11 +947,16 @@ class _LazyMaterializer:
         for derivation in self.forest.nodes[node_id].derivations:
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
+                    self.hint_unification_attempts += 1
                     if unify(constraint, candidate.features) is not None:
                         best = max(best, candidate.score)
+                    else:
+                        self.hint_unification_rejections += 1
             else:
                 rule = self.compiled.rules[derivation.rule_index].rule
+                self.hint_unification_attempts += 1
                 if unify(constraint, rule.lhs.features) is None:
+                    self.hint_unification_rejections += 1
                     continue
                 best = max(
                     best,
@@ -854,6 +1041,22 @@ class _LazyMaterializer:
         cache_key: tuple[str, int],
     ) -> ChartItem:
         node = self.forest.nodes[analysis.node_id]
+        if analysis.interface_item is not None:
+            source = analysis.interface_item
+            item = ChartItem(
+                node.start, node.end, node.category, features,
+                source.semantic, analysis.score,
+                Provenance("segment-interface", {
+                    "children": (source.provenance,),
+                    "local_rule_id": source.rule_id,
+                }),
+                children=(source,),
+                rule_id="segment_interface",
+                bindings=bindings,
+                _sig=analysis.analysis_id,
+            )
+            self.item_cache[cache_key] = item
+            return item
         if analysis.candidate is not None:
             candidate = analysis.candidate
             graph = SemanticGraph()
@@ -934,6 +1137,48 @@ class _LazyMaterializer:
         return package
 
 
+def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
+    """Translate a local clause tree and its semantic spans to source offsets."""
+    if offset == 0:
+        return item
+    memo: dict[int, ChartItem] = {}
+
+    def shift(current: ChartItem) -> ChartItem:
+        cached = memo.get(id(current))
+        if cached is not None:
+            return cached
+        children = tuple(shift(child) for child in current.children)
+        graph = SemanticGraph()
+        for node_id, node in current.semantic.graph.nodes.items():
+            span = None if node.span is None else (node.span[0] + offset, node.span[1] + offset)
+            graph.nodes[node_id] = SemanticNode(
+                node_id=node.node_id,
+                kind=node.kind,
+                type_name=node.type_name,
+                span=span,
+                surface=node.surface,
+                attributes=dict(node.attributes),
+            )
+        graph.relations.extend(current.semantic.graph.relations)
+        shifted = ChartItem(
+            current.start + offset,
+            current.end + offset,
+            current.category,
+            current.features,
+            SemanticPackage(graph, dict(current.semantic.handles)),
+            current.score,
+            current.provenance,
+            children=children,
+            rule_id=current.rule_id,
+            bindings=dict(current.bindings),
+            _sig=("shift", offset, current.signature()),
+        )
+        memo[id(current)] = shifted
+        return shifted
+
+    return shift(item)
+
+
 class _LazyRoots:
     def __init__(
         self,
@@ -953,6 +1198,10 @@ class _LazyRoots:
         self.heap: list[tuple[float, int, int, CompactAnalysis]] = []
         self._serial = count()
         self.initialized = False
+        self.stat_offsets: dict[str, int] = {}
+        self.next_rank: dict[int, int] = {}
+        self.pending_nodes: set[int] = set()
+        self.yielded_nodes: set[int] = set()
 
     def _initialize(self) -> None:
         if self.initialized:
@@ -962,18 +1211,34 @@ class _LazyRoots:
             analysis = self.materializer.get(node.node_id, 0)
             if analysis is not None:
                 heappush(self.heap, (-analysis.score, next(self._serial), 0, analysis))
+                self.pending_nodes.add(node.node_id)
+                self.next_rank[node.node_id] = 1
+
+    def _schedule_following(self, node_id: int) -> None:
+        if node_id in self.pending_nodes:
+            return
+        rank = self.next_rank.get(node_id, 0)
+        following = self.materializer.get(node_id, rank)
+        self.next_rank[node_id] = rank + 1
+        if following is not None:
+            heappush(self.heap, (-following.score, next(self._serial), rank, following))
+            self.pending_nodes.add(node_id)
 
     def ensure(self, amount: int, *, charge_kbest: bool = True) -> None:
         start = perf_counter()
         self._initialize()
+        if len(self.items) < amount:
+            for node_id in tuple(self.yielded_nodes):
+                self._schedule_following(node_id)
         while len(self.items) < amount and self.heap:
             _, _, rank, analysis = heappop(self.heap)
+            self.pending_nodes.discard(analysis.node_id)
+            self.yielded_nodes.add(analysis.node_id)
             item = self.materializer.item(analysis)
             self.items.append(item)
             self.pack(item)
-            following = self.materializer.get(analysis.node_id, rank + 1)
-            if following is not None:
-                heappush(self.heap, (-following.score, next(self._serial), rank + 1, following))
+            if len(self.items) < amount:
+                self._schedule_following(analysis.node_id)
         if charge_kbest:
             self.stats["kbest_ms"] = round(
                 float(self.stats["kbest_ms"]) + (perf_counter() - start) * 1000,
@@ -983,13 +1248,20 @@ class _LazyRoots:
 
     def refresh_stats(self) -> None:
         materializer = self.materializer
-        self.stats["unification_attempts"] = materializer.unification_attempts
+        offset = self.stat_offsets
+        self.stats["unification_attempts"] = materializer.unification_attempts + offset.get("unification_attempts", 0)
+        self.stats["unification_rejections"] = materializer.unification_rejections + offset.get("unification_rejections", 0)
+        self.stats["hint_unification_attempts"] = materializer.hint_unification_attempts + offset.get("hint_unification_attempts", 0)
+        self.stats["hint_unification_rejections"] = materializer.hint_unification_rejections + offset.get("hint_unification_rejections", 0)
         self.stats["unification_cache_hits"] = materializer.unification_cache_hits
         self.stats["constraint_context_cache_hits"] = materializer.context_cache_hits
+        self.stats["failed_continuation_cache_hits"] = materializer.failed_continuation_cache_hits + offset.get("failed_continuation_cache_hits", 0)
+        self.stats["projected_bindings"] = materializer.projected_bindings + offset.get("projected_bindings", 0)
+        self.stats["projected_context_cache_hits"] = materializer.projected_context_cache_hits + offset.get("projected_context_cache_hits", 0)
         self.stats["compact_analyses"] = materializer.analysis_count
         self.stats["materialized_items"] = len(materializer.item_cache)
-        self.stats["nodes_visited_total"] = materializer.nodes_initialized
-        self.stats["combinations_visited_total"] = materializer.combinations_visited
+        self.stats["nodes_visited_total"] = materializer.nodes_initialized + offset.get("nodes_visited_total", 0)
+        self.stats["combinations_visited_total"] = materializer.combinations_visited + offset.get("combinations_visited_total", 0)
         self.stats["packed_nodes"] = len({item.key for item in materializer.item_cache.values()})
         self.stats["goal_saturated"] = len(self.items) >= self.requested_k
 
