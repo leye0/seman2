@@ -1,0 +1,407 @@
+{
+  "schema_version": "grammar-induction-experiment/0.1",
+  "grammar_rule_count": 366,
+  "train_count": 500,
+  "validation_count": 200,
+  "completed": {
+    "train": 498,
+    "validation": 199
+  },
+  "elapsed_seconds": 101.226,
+  "parse_ms": {
+    "train": {
+      "median": 74.991,
+      "p90": 401.749
+    },
+    "validation": {
+      "median": 86.803,
+      "p90": 437.673
+    }
+  },
+  "ingestion_ms": {
+    "train": {
+      "total": 78.131,
+      "median": 0.1563,
+      "p90": 0.2238
+    },
+    "validation": {
+      "total": 319.556,
+      "median": 1.6111,
+      "p90": 2.2778
+    }
+  },
+  "observation_totals": {
+    "forest_nodes": 184662,
+    "forest_derivations": 875362,
+    "gaps": 2
+  },
+  "registry_bytes": 1067860,
+  "hypothesis_count": 362,
+  "classification_counts": {
+    "potential-new": 0,
+    "macro": 267,
+    "known-construction": 95
+  },
+  "top_hypotheses": [
+    {
+      "hypothesis_id": "grammar-hypothesis_baaee98c8ecffb2bb755",
+      "lhs": {
+        "category": "CLAUSE",
+        "features": {}
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "V"
+        },
+        {
+          "category": "NP"
+        }
+      ],
+      "classification": "macro",
+      "support": 307,
+      "validation_support": 127,
+      "examples": [
+        "She knew which door led to the gym, where lost coats ended up, and how the morning announcements sounded through the classroom speaker.",
+        "Still, third grade had a different teacher, new classmates, new books, and a desk that belonged to her only for the year.",
+        "Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late.",
+        "Maya had chores: putting away clean laundry, feeding the family cat when an adult reminded her, and clearing her part of the table.",
+        "Some days she wanted to be treated as grown up."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "clause_np_vp",
+        "vp_transitive"
+      ],
+      "estimated_compression_gain": 609
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_683a2c31c58cd07703b5",
+      "lhs": {
+        "category": "CLAUSE",
+        "features": {
+          "voice": "passive"
+        }
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "V"
+        },
+        {
+          "category": "PP"
+        }
+      ],
+      "classification": "macro",
+      "support": 224,
+      "validation_support": 95,
+      "examples": [
+        "September began with labels on folders, sharp pencils in boxes, and the strange feeling that a familiar school had become new again.",
+        "She knew which door led to the gym, where lost coats ended up, and how the morning announcements sounded through the classroom speaker.",
+        "Still, third grade had a different teacher, new classmates, new books, and a desk that belonged to her only for the year.",
+        "A place could stay the same while everything about a person's experience of it changed.",
+        "At home, routines resumed in untidy pieces."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "clause_passive",
+        "vp_part_pp"
+      ],
+      "estimated_compression_gain": 443
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_0a595592e47333be39b7",
+      "lhs": {
+        "category": "VP",
+        "features": {
+          "vform": "ed",
+          "voice": "passive"
+        }
+      },
+      "rhs": [
+        {
+          "category": "V"
+        },
+        {
+          "category": "PREP"
+        },
+        {
+          "category": "NP"
+        }
+      ],
+      "classification": "macro",
+      "support": 211,
+      "validation_support": 91,
+      "examples": [
+        "September began with labels on folders, sharp pencils in boxes, and the strange feeling that a familiar school had become new again.",
+        "She knew which door led to the gym, where lost coats ended up, and how the morning announcements sounded through the classroom speaker.",
+        "Still, third grade had a different teacher, new classmates, new books, and a desk that belonged to her only for the year.",
+        "A place could stay the same while everything about a person's experience of it changed.",
+        "At home, routines resumed in untidy pieces."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "pp_prep_np",
+        "vp_part_pp"
+      ],
+      "estimated_compression_gain": 417
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_97813dde5c6e1de89d5d",
+      "lhs": {
+        "category": "NP",
+        "features": {}
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "NP"
+        },
+        {
+          "category": "VP-GAP"
+        }
+      ],
+      "classification": "macro",
+      "support": 196,
+      "validation_support": 73,
+      "examples": [
+        "Maya could find the cafeteria without looking at a sign.",
+        "A place could stay the same while everything about a person's experience of it changed.",
+        "Some days she wanted to be treated as grown up.",
+        "Other days she wanted an adult to find her missing shoes.",
+        "The year would give her plenty of chances to try both."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "np_relative_obj",
+        "wh_bare"
+      ],
+      "estimated_compression_gain": 387
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_fa8ece71fc0df5c32f5c",
+      "lhs": {
+        "category": "NP",
+        "features": {}
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "VP"
+        }
+      ],
+      "classification": "macro",
+      "support": 373,
+      "validation_support": 138,
+      "examples": [
+        "September began with labels on folders, sharp pencils in boxes, and the strange feeling that a familiar school had become new again.",
+        "She knew which door led to the gym, where lost coats ended up, and how the morning announcements sounded through the classroom speaker.",
+        "Still, third grade had a different teacher, new classmates, new books, and a desk that belonged to her only for the year.",
+        "A place could stay the same while everything about a person's experience of it changed.",
+        "Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late."
+      ],
+      "counterexamples": [
+        "During art, Ms. Rivera discussed planning, drafts, revision, and the difference between copying another person's idea and building something together with permission.",
+        "Maya noticed that the solution had depended on more than one thing.",
+        "The place mattered.",
+        "The order of events mattered.",
+        "So did what she had brought with her, how much time was available, and what she was allowed to do."
+      ],
+      "source_rule_ids": [
+        "clause_np_vp",
+        "clause_passive",
+        "np_quote"
+      ],
+      "estimated_compression_gain": 370
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_e6c9ebad1833a819b667",
+      "lhs": {
+        "category": "CLAUSE",
+        "features": {}
+      },
+      "rhs": [
+        {
+          "category": "DET"
+        },
+        {
+          "category": "N"
+        },
+        {
+          "category": "VP"
+        }
+      ],
+      "classification": "macro",
+      "support": 144,
+      "validation_support": 54,
+      "examples": [
+        "Maya had chores: putting away clean laundry, feeding the family cat when an adult reminded her, and clearing her part of the table.",
+        "The year would give her plenty of chances to try both.",
+        "The sheet was nearly as long as the reading rug.",
+        "Everyone was allowed to draw one place that mattered, but no one could write a name yet.",
+        "Maya drew the old lot beside the apartment building, where weeds pushed through the fence."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "clause_np_vp",
+        "clause_passive",
+        "np_det_n"
+      ],
+      "estimated_compression_gain": 283
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_53bd193459042761dd10",
+      "lhs": {
+        "category": "CLAUSE",
+        "features": {
+          "voice": "passive"
+        }
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "V"
+        },
+        {
+          "category": "COMMA"
+        },
+        {
+          "category": "CLAUSE"
+        }
+      ],
+      "classification": "macro",
+      "support": 95,
+      "validation_support": 45,
+      "examples": [
+        "She knew which door led to the gym, where lost coats ended up, and how the morning announcements sounded through the classroom speaker.",
+        "At home, routines resumed in untidy pieces.",
+        "Everyone was allowed to draw one place that mattered, but no one could write a name yet.",
+        "Maya drew the old lot beside the apartment building, where weeds pushed through the fence.",
+        "Someone walking a dog would notice the curb, the trees, and which gates opened easily."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "clause_passive",
+        "vp_colon_question"
+      ],
+      "estimated_compression_gain": 278
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_b64ca1196841af0af3d5",
+      "lhs": {
+        "category": "CLAUSE",
+        "features": {
+          "voice": "passive"
+        }
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "VP"
+        },
+        {
+          "category": "ADVP"
+        }
+      ],
+      "classification": "macro",
+      "support": 124,
+      "validation_support": 52,
+      "examples": [
+        "September began with labels on folders, sharp pencils in boxes, and the strange feeling that a familiar school had become new again.",
+        "Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late.",
+        "Maya had chores: putting away clean laundry, feeding the family cat when an adult reminded her, and clearing her part of the table.",
+        "Maya did not know that she would spend almost a whole year learning how difficult it could be to change one small place.",
+        "The sheet was nearly as long as the reading rug."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "clause_passive",
+        "vp_adv_adj"
+      ],
+      "estimated_compression_gain": 243
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_f927f6bd1828001f1d12",
+      "lhs": {
+        "category": "NP",
+        "features": {}
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "PREP"
+        },
+        {
+          "category": "NP"
+        }
+      ],
+      "classification": "macro",
+      "support": 123,
+      "validation_support": 40,
+      "examples": [
+        "September began with labels on folders, sharp pencils in boxes, and the strange feeling that a familiar school had become new again.",
+        "Maya could find the cafeteria without looking at a sign.",
+        "A place could stay the same while everything about a person's experience of it changed.",
+        "Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late.",
+        "The year would give her plenty of chances to try both."
+      ],
+      "counterexamples": [],
+      "source_rule_ids": [
+        "np_pp_mod",
+        "pp_prep_np"
+      ],
+      "estimated_compression_gain": 241
+    },
+    {
+      "hypothesis_id": "grammar-hypothesis_d455f0ace96a6fa3d501",
+      "lhs": {
+        "category": "CLAUSE",
+        "features": {}
+      },
+      "rhs": [
+        {
+          "category": "NP"
+        },
+        {
+          "category": "V"
+        }
+      ],
+      "classification": "macro",
+      "support": 219,
+      "validation_support": 87,
+      "examples": [
+        "September began with labels on folders, sharp pencils in boxes, and the strange feeling that a familiar school had become new again.",
+        "Still, third grade had a different teacher, new classmates, new books, and a desk that belonged to her only for the year.",
+        "A place could stay the same while everything about a person's experience of it changed.",
+        "Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late.",
+        "Some days she wanted to be treated as grown up."
+      ],
+      "counterexamples": [
+        "At home, Eli made a cardboard moon.",
+        "Maya tried to put the lesson into her own words.",
+        "She also remembered the part of her first explanation that had not held up.",
+        "Maya confused sharing every object equally with sharing what each person needed to complete a different task.",
+        "A useful answer did not need to survive every imaginary possibility, but it had to fit the evidence she actually had."
+      ],
+      "source_rule_ids": [
+        "clause_np_vp",
+        "vp_intransitive"
+      ],
+      "estimated_compression_gain": 216
+    }
+  ]
+}
