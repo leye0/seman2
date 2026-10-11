@@ -82,17 +82,19 @@ VERB_FRAME_SLOTS: Mapping[int, tuple[tuple[str, str], ...]] = {
     2: (("subject", "AGENT"), ("object", "THEME")),
     3: (("subject", "AGENT"),),
     4: (("subject", "AGENT"), ("object", "THEME")),
-    5: (("subject", "AGENT"), ("object", "THEME")),
-    6: (("subject", "AGENT"), ("object", "THEME")),
-    7: (("subject", "EXPERIENCER"),),
+    5: (("subject", "AGENT"), ("object", "THEME"), ("predicate", "ATTRIBUTE")),
+    6: (("subject", "AGENT"), ("predicate", "ATTRIBUTE")),
+    7: (("subject", "EXPERIENCER"), ("predicate", "ATTRIBUTE")),
     8: (("subject", "EXPERIENCER"), ("object", "THEME")),
     9: (("subject", "AGENT"), ("object", "THEME")),
     10: (("subject", "EXPERIENCER"),),
     11: (("subject", "AGENT"), ("object", "THEME")),
     12: (("subject", "AGENT"), ("object", "AFFECTED")),
     13: (("subject", "AGENT"), ("object", "AFFECTED")),
-    14: (("subject", "AGENT"), ("object", "AFFECTED")),
-    15: (("subject", "AGENT"), ("iobj", "RECIPIENT"), ("object", "THEME")),
+    # frames.vrb: 14 = "Somebody ----s somebody something"; 15 instead
+    # contains a prepositional recipient ("something to somebody").
+    14: (("subject", "AGENT"), ("iobj", "RECIPIENT"), ("object", "THEME")),
+    15: (("subject", "AGENT"), ("object", "THEME"), ("prep_object", "RECIPIENT")),
     16: (("subject", "AGENT"), ("object", "THEME")),
     17: (("subject", "AGENT"), ("object", "THEME")),
     18: (("subject", "AGENT"),),
@@ -103,7 +105,7 @@ VERB_FRAME_SLOTS: Mapping[int, tuple[tuple[str, str], ...]] = {
     23: (("subject", "AGENT"), ("object", "THEME")),
     24: (("subject", "AGENT"), ("object", "THEME")),
     25: (("subject", "EXPERIENCER"), ("object", "THEME")),
-    26: (("subject", "EXPERIENCER"), ("object", "THEME")),
+    26: (("subject", "EXPERIENCER"), ("clause", "COMPLEMENT")),
     27: (("subject", "AGENT"), ("object", "THEME")),
     28: (("subject", "AGENT"), ("object", "THEME")),
     29: (("subject", "AGENT"), ("object", "THEME")),
@@ -111,7 +113,7 @@ VERB_FRAME_SLOTS: Mapping[int, tuple[tuple[str, str], ...]] = {
     31: (("subject", "AGENT"),),
     32: (("subject", "AGENT"),),
     33: (("subject", "AGENT"),),
-    34: (("subject", "AGENT"), ("object", "THEME")),
+    34: (("subject", "AGENT"), ("clause", "COMPLEMENT")),
     35: (("subject", "AGENT"), ("object", "THEME")),
     36: (("subject", "AGENT"),),
     37: (("subject", "AGENT"),),
@@ -176,7 +178,7 @@ def wordnet_entry(
     senses: list[dict[str, Any]] = []
     for index, synset in enumerate(synsets):
         semantic_type = LEXNAME_TO_TYPE.get(synset.lex_file, "REFERENTIAL")
-        frames = _slots_from_frames(synset)
+        frames = _frames_from_synset(synset)
         score = round(1.0 - index * 0.05, 3)
         provenance = {
             "source": "wordnet",
@@ -193,7 +195,7 @@ def wordnet_entry(
                         "category": category,
                         "features": feature_map,
                         "semantic_type": semantic_type,
-                        "frames": [{"id": f"wn-{synset.offset}", "slots": frames}] if frames else [],
+                        "frames": frames,
                         "score": round(score * vform_score, 3),
                         "provenance": provenance,
                     }
@@ -347,17 +349,24 @@ def _needs_doubling(word: str) -> bool:
     return vowel_groups == 1
 
 
-def _slots_from_frames(synset: WordNetSynset) -> list[dict[str, Any]]:
-    seen: set[tuple[str, str]] = set()
-    slots: list[dict[str, Any]] = []
+def _frames_from_synset(synset: WordNetSynset) -> list[dict[str, Any]]:
+    """Keep WordNet sentence frames as alternatives, never one union."""
+    frames: list[dict[str, Any]] = []
+    seen_frames: set[int] = set()
     for frame in synset.frames:
-        for syntactic, role in VERB_FRAME_SLOTS.get(frame.frame_number, ()):
-            key = (syntactic, role)
-            if key in seen:
-                continue
-            seen.add(key)
-            slots.append({"syntactic": syntactic, "semantic_role": role})
-    return slots
+        if frame.frame_number in seen_frames:
+            continue
+        seen_frames.add(frame.frame_number)
+        slots = [
+            {"syntactic": syntactic, "semantic_role": role}
+            for syntactic, role in VERB_FRAME_SLOTS.get(frame.frame_number, ())
+        ]
+        if slots:
+            frames.append({
+                "id": f"wn-{synset.offset}-frame-{frame.frame_number}",
+                "slots": slots,
+            })
+    return frames
 
 
 def import_words(

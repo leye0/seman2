@@ -16,7 +16,7 @@ from .features import (
 )
 from .grammar import Grammar, GrammarRule
 from .segmentation import LexicalCandidate, LexicalLattice
-from .syntax import SyntacticPackage
+from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern
 
 
@@ -124,10 +124,45 @@ class CompactAnalysis:
     features: FeatureStructure
     score: float
     bindings: Bindings
+    evidence: frozenset[int] = frozenset()
     candidate: LexicalCandidate | None = None
     interface_item: ChartItem | None = None
     rule_index: int | None = None
     children: tuple[AnalysisUse, ...] = ()
+
+
+def _feature_evidence(features: FeatureStructure) -> frozenset[int]:
+    """Features intrinsically asserted by a lexical or interface item."""
+    return frozenset(
+        name for name, value in features.items()
+        if value is not TOP and not isinstance(value, Variable)
+    )
+
+
+def _rule_evidence(
+    rule: GrammarRule,
+    children: Sequence[CompactAnalysis],
+) -> frozenset[int]:
+    """Features asserted by a rule or positively propagated from children."""
+    evidence: set[int] = set()
+    for lhs_name, lhs_value in rule.lhs.features.items():
+        if lhs_value is TOP:
+            continue
+        if not isinstance(lhs_value, Variable):
+            evidence.add(lhs_name)
+            continue
+        for symbol, child in zip(rule.rhs, children):
+            for rhs_name, rhs_value in symbol.features.items():
+                if (
+                    isinstance(rhs_value, Variable)
+                    and rhs_value.name == lhs_value.name
+                    and rhs_name in child.evidence
+                ):
+                    evidence.add(lhs_name)
+                    break
+            if lhs_name in evidence:
+                break
+    return frozenset(evidence)
 
 
 def _value_key(value: object) -> Hashable:
@@ -503,6 +538,7 @@ class _PathState:
 class _NodeState:
     constraint: FeatureStructure
     bindings: Bindings
+    required_features: tuple[int, ...] = ()
     initialized: bool = False
     initializing: bool = False
     exhausted: bool = False
@@ -517,7 +553,13 @@ class _NodeState:
 class _LazyMaterializer:
     """Demand-driven k-best extraction with feature-aware failure recovery."""
 
-    RULE_COST = 0.5
+    # Grammar scores are preferences relative to an ordinary construction,
+    # not a reward paid once for every node in the tree.  Most core rules in
+    # the shipped grammar have weight 2.0, so using that value as the neutral
+    # construction cost removes the former bias toward needlessly deep trees.
+    # Rules above 2.0 remain preferred; exceptional/conversion rules below it
+    # must earn their place through lexical and structural evidence.
+    RULE_COST = 2.0
 
     def __init__(self, compiled: VectorGrammar, forest: _VectorForest) -> None:
         self.compiled = compiled
@@ -578,12 +620,16 @@ class _LazyMaterializer:
         rank: int,
         constraint: FeatureStructure | None = None,
         bindings: Bindings | None = None,
+        required_features: Sequence[str | int] = (),
     ) -> CompactAnalysis | None:
         required = constraint if constraint is not None else FeatureStructure.empty()
+        required_ids = tuple(sorted(
+            intern(name) if isinstance(name, str) else name for name in required_features
+        ))
         inherited = dict(bindings or {})
         projected, relevant_names = _project_bindings(required, inherited)
         self.projected_bindings += len(inherited) - len(projected)
-        context_key = (_feature_key(required), _bindings_key(projected))
+        context_key = (_feature_key(required), _bindings_key(projected), required_ids)
         if len(projected) != len(inherited) and (node_id, context_key) in self.node_states:
             self.projected_context_cache_hits += 1
         active_key = (node_id, context_key)
@@ -595,7 +641,7 @@ class _LazyMaterializer:
         self._active_contexts.add(active_key)
         try:
             analysis = self._get_contextual(
-                node_id, rank, required, projected, context_key,
+                node_id, rank, required, projected, required_ids, context_key,
             )
             if analysis is None or len(projected) == len(inherited):
                 return analysis
@@ -615,12 +661,13 @@ class _LazyMaterializer:
         rank: int,
         required: FeatureStructure,
         inherited: Bindings,
+        required_ids: tuple[int, ...],
         context_key: Hashable,
     ) -> CompactAnalysis | None:
         cache_key = (node_id, context_key)
         state = self.node_states.get(cache_key)
         if state is None:
-            state = _NodeState(required, inherited)
+            state = _NodeState(required, inherited, required_ids)
             self.node_states[cache_key] = state
         else:
             self.context_cache_hits += 1
@@ -638,7 +685,7 @@ class _LazyMaterializer:
                 state.seen_results.add(signature)
                 analysis = CompactAnalysis(
                     next(self._analysis_ids), node_id, merged,
-                    candidate.score, env, candidate=candidate,
+                    candidate.score, env, _feature_evidence(candidate.features), candidate=candidate,
                 )
             elif kind == "interface":
                 candidate, interface_rank, interface_item, merged, env = payload
@@ -662,7 +709,7 @@ class _LazyMaterializer:
                         self.unification_rejections += 1
                 analysis = CompactAnalysis(
                     next(self._analysis_ids), node_id, merged,
-                    interface_item.score, env, candidate=candidate,
+                    interface_item.score, env, _feature_evidence(interface_item.features), candidate=candidate,
                     interface_item=interface_item,
                 )
             elif kind in {"rule_seed", "rule_retry"}:
@@ -693,8 +740,11 @@ class _LazyMaterializer:
                 analysis = CompactAnalysis(
                     next(self._analysis_ids), node_id, lhs_features,
                     sum(child.score for child in combo) + rule.score - self.RULE_COST,
-                    env, rule_index=derivation.rule_index, children=uses,
+                    env, _rule_evidence(rule, combo),
+                    rule_index=derivation.rule_index, children=uses,
                 )
+            if not set(state.required_features).issubset(analysis.evidence):
+                continue
             state.results.append(analysis)
             self.analysis_count += 1
         if len(state.results) <= rank:
@@ -714,6 +764,10 @@ class _LazyMaterializer:
                     if isinstance(candidate.interface, SegmentInterface):
                         interface_item = candidate.interface.get(0)
                         if interface_item is None:
+                            continue
+                        if not set(state.required_features).issubset(
+                            _feature_evidence(interface_item.features)
+                        ):
                             continue
                         self.unification_attempts += 1
                         result = unify(state.constraint, interface_item.features, state.bindings)
@@ -797,7 +851,10 @@ class _LazyMaterializer:
         _lhs_merged, env = lhs_result
         for index, (child_id, rank) in enumerate(zip(path, ranks)):
             child_constraint = rule.rhs[index].features
-            child = self.get(child_id, rank, child_constraint, env)
+            child = self.get(
+                child_id, rank, child_constraint, env,
+                required_features=rule.rhs[index].requires,
+            )
             if child is None:
                 child_bindings, _ = _project_bindings(child_constraint, env)
                 child_context = (_feature_key(child_constraint), _bindings_key(child_bindings))
@@ -1122,11 +1179,38 @@ def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
         return item
     memo: dict[int, ChartItem] = {}
 
+    def shift_anchor(anchor: str) -> str:
+        if not anchor.startswith("lex:"):
+            return anchor
+        fields = anchor.split(":", 4)
+        if len(fields) != 5:
+            return anchor
+        try:
+            start = int(fields[1]) + offset
+            end = int(fields[2]) + offset
+        except ValueError:
+            return anchor
+        return f"lex:{start}:{end}:{fields[3]}:{fields[4]}"
+
     def shift(current: ChartItem) -> ChartItem:
         cached = memo.get(id(current))
         if cached is not None:
             return cached
         children = tuple(shift(child) for child in current.children)
+        syntax = SyntacticPackage(
+            {name: shift_anchor(anchor) for name, anchor in current.syntax.anchors.items()},
+            tuple(
+                SyntacticLink(link.relation, shift_anchor(link.target), link.child_index)
+                for link in current.syntax.links
+            ),
+        )
+        candidate = current.lexical_candidate
+        if candidate is not None:
+            candidate = replace(
+                candidate,
+                span_start=candidate.span_start + offset,
+                span_end=candidate.span_end + offset,
+            )
         shifted = ChartItem(
             current.start + offset,
             current.end + offset,
@@ -1138,8 +1222,8 @@ def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
             children=children,
             rule_id=current.rule_id,
             bindings=dict(current.bindings),
-            syntax=current.syntax,
-            lexical_candidate=current.lexical_candidate,
+            syntax=syntax,
+            lexical_candidate=candidate,
             _sig=("shift", offset, current.signature()),
         )
         memo[id(current)] = shifted

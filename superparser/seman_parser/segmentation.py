@@ -8,10 +8,10 @@ available to the chart.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Iterable, Mapping, Sequence
 
-from .features import TOP, Atom, Disjunction, FeatureStructure, Variable
+from .features import TOP, Atom, Disjunction, FeatureStructure, Variable, coerce
 from .lexicon import LexicalSense, Lexicon
 from .symbols import intern
 
@@ -188,6 +188,8 @@ def build_lattice(
             if not matches and width > 1:
                 continue
             for entry, sense, lemma in matches:
+                if not _surface_matches_morphology(surface, entry, sense, lemma):
+                    continue
                 candidates.append(
                     _candidate_from_sense(
                         span_start=span_start,
@@ -310,6 +312,8 @@ def build_lattice(
                     )
                 )
 
+    candidates = _apply_lexical_priors(candidates, tokens)
+
     from .perf import filter_lattice_candidates
 
     kept = filter_lattice_candidates(candidates, tokens)
@@ -332,6 +336,84 @@ def _filter_by_position(candidates: list, tokens: list) -> list:
     return candidates
 
 
+def _surface_matches_morphology(
+    surface: str,
+    entry: Any,
+    sense: LexicalSense,
+    lemma: str,
+) -> bool:
+    """Reject WordNet feature variants contradicted by the written form."""
+    if entry.provenance.get("source") != "wordnet":
+        return True
+    written = surface.casefold()
+    base = lemma.replace("_", " ").casefold()
+    features = sense.features
+    vform = features.get("vform")
+    if isinstance(vform, Atom):
+        if written == base:
+            return vform.name in {"base", "finite"}
+        if written.endswith("ing"):
+            return vform.name == "ing"
+        if written.endswith(("ed", "ied")):
+            return vform.name in {"finite", "ed"}
+        if written.endswith("s"):
+            return vform.name == "finite"
+        # Irregular non-lemma forms (went, taken, ...): retain finite and
+        # participial readings, but never an impossible base/gerund reading.
+        return vform.name in {"finite", "ed"}
+    number = features.get("number")
+    if isinstance(number, Atom):
+        if written == base:
+            return number.name == "singular"
+        return number.name == "plural"
+    return True
+
+
+def _apply_lexical_priors(
+    candidates: Sequence[LexicalCandidate],
+    tokens: Sequence[Token],
+) -> list[LexicalCandidate]:
+    """Apply grammatical priors without deleting genuine homographs."""
+    by_span: dict[tuple[int, int], list[LexicalCandidate]] = {}
+    for candidate in candidates:
+        by_span.setdefault(candidate.span, []).append(candidate)
+    first_word_start = next((token.start for token in tokens if token.text.isalpha()), None)
+    closed = {
+        "DET", "PRONOUN", "POSS", "PREP", "PREP-BY", "COORD", "CONJ",
+        "NEG", "AUX", "AUX-BE", "MODAL", "COPULA", "WH-PRONOUN",
+        "WH-NOM", "COMP-THAT", "TO", "PARTICLE", "DEGREE", "EXPL", "NUM",
+    }
+    open_class = {"N", "V", "ADJ", "ADV"}
+    adjusted: list[LexicalCandidate] = []
+    for candidate in candidates:
+        peers = by_span[candidate.span]
+        score = candidate.score
+        if candidate.category in open_class and candidate.provenance.get("source") == "wordnet":
+            if any(peer.category in closed and peer.source == "lexicon" for peer in peers):
+                score -= 0.6
+        if candidate.category == "PROPER-NOUN" and candidate.span_start == first_word_start:
+            written = candidate.surface.casefold()
+            morphologically_common = any(
+                peer.category == "ADJ"
+                or peer.category == "ADV"
+                or (
+                    peer.category == "N"
+                    and written.endswith("s")
+                    and peer.features.as_dict().get("number") == "plural"
+                )
+                or (
+                    peer.category == "V"
+                    and written.endswith("ing")
+                    and peer.features.as_dict().get("vform") == "ing"
+                )
+                for peer in peers
+            )
+            if morphologically_common:
+                score -= 0.7
+        adjusted.append(candidate if score == candidate.score else replace(candidate, score=score))
+    return adjusted
+
+
 def _candidate_from_sense(
     *,
     span_start: int,
@@ -342,6 +424,7 @@ def _candidate_from_sense(
     source: str,
 ) -> LexicalCandidate:
     constraints = _sense_syntactic_constraints(sense)
+    features = _project_syntactic_features(sense)
     interpretation = LexicalInterpretation(
         sense_id=sense.sense_id,
         lemma=lemma,
@@ -354,7 +437,7 @@ def _candidate_from_sense(
         surface=surface,
         lemma=lemma,
         category=sense.category,
-        features=sense.features,
+        features=features,
         normalized=lemma,
         source=source,
         score=sense.score,
@@ -407,6 +490,41 @@ def _sense_syntactic_constraints(sense: LexicalSense) -> tuple[Any, ...]:
     result = (sense.particle, tuple(sorted(frames, key=repr)))
     _SYNTACTIC_CONSTRAINT_CACHE[id(sense)] = (sense, result)
     return result
+
+
+def _project_syntactic_features(sense: LexicalSense) -> FeatureStructure:
+    """Project valency alternatives from lexical frames into syntax."""
+    if sense.category != "V" or not sense.frames:
+        return sense.features
+    valencies: list[str] = []
+    frame_ids = {frame.frame_id.rsplit("-", 1)[-1] for frame in sense.frames}
+    for frame in sense.frames:
+        slots = {slot.syntactic for slot in frame.required_slots()}
+        if "prep_object" in slots and "object" in slots:
+            valency = "prep_ditransitive"
+        elif "predicate" in slots and "object" in slots:
+            valency = "complex_transitive"
+        elif "predicate" in slots:
+            valency = "linking"
+        elif "clause" in slots:
+            valency = "clausal"
+        elif "iobj" in slots and "object" in slots:
+            valency = "ditransitive"
+        elif "object" in slots:
+            valency = "transitive"
+        else:
+            valency = "intransitive"
+        if valency not in valencies:
+            valencies.append(valency)
+    # WordNet sometimes expresses the two realizations of the same transfer
+    # alternation as separate frames: person object (9) and theme-to-person
+    # (15), without repeating the double-object frame 14.
+    if {"9", "15"}.issubset(frame_ids) and "ditransitive" not in valencies:
+        valencies.append("ditransitive")
+    if not valencies:
+        return sense.features
+    value: object = valencies[0] if len(valencies) == 1 else valencies
+    return sense.features.with_feature("subcat", coerce(value))
 
 
 def deduplicate_syntactic_candidates(

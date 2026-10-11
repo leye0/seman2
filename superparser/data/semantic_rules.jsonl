@@ -3,6 +3,7 @@
 {"id":"np_pronoun","semantic":[{"copy":{}}]}
 {"id":"vp_transitive","semantic":[{"link":{"relation":"AFFECTED","source":"event","target":"object"}}]}
 {"id":"vp_ditransitive","semantic":[{"compose":{"links":[{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
+{"id":"vp_prep_ditransitive","semantic":[{"compose":{"links":[{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
 {"id":"vp_intransitive","semantic":[{"copy":{}}]}
 {"id":"vp_copula_adj","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
 {"id":"clause_np_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}

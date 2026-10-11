@@ -84,6 +84,7 @@ class ParserResources:
             lexicon=load_lexicon(
                 directory / "function_words.jsonl",
                 wordnet_dict=wordnet_dict or discover_wordnet(directory),
+                max_senses=2,
             ),
             types=_LazyTypes(directory / "types.json"),
             metadata={

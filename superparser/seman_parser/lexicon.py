@@ -229,28 +229,36 @@ class Lexicon:
         for entry in self.entries_for_lemma(key):
             if entry not in found:
                 found.append(entry)
-        for entry, _lemma in self._resolve_lemma_candidates(key):
+        for entry, _lemma, _category in self._resolve_lemma_candidates(key):
             if entry not in found:
                 found.append(entry)
         return found
 
-    def _resolve_lemma_candidates(self, surface: str) -> list[tuple[LexicalEntry, str]]:
-        """Map a surface to (entry, lemma) via lexicon + WordNet exceptions."""
-        out: list[tuple[LexicalEntry, str]] = []
+    def _resolve_lemma_candidates(self, surface: str) -> list[tuple[LexicalEntry, str, str | None]]:
+        """Map a surface to (entry, lemma, category) morphology triples.
+
+        WordNet exception tables are POS-specific.  Keeping that POS is
+        essential: the verb exception ``said -> say`` must not manufacture
+        the unrelated noun reading of ``say``.
+        """
+        out: list[tuple[LexicalEntry, str, str | None]] = []
         for entry, lemma in self._by_morph.get(surface, ()):
-            out.append((entry, lemma))
+            out.append((entry, lemma, None))
         if out:
             return out
         if self._wordnet is not None:
             from .wordnet import POS_ADJ, POS_ADV, POS_NOUN, POS_VERB
 
+            categories = {
+                POS_NOUN: "N", POS_VERB: "V", POS_ADJ: "ADJ", POS_ADV: "ADV",
+            }
             for pos in (POS_NOUN, POS_VERB, POS_ADJ, POS_ADV):
                 exceptions = self._wordnet.exceptions(pos)
                 lemma = exceptions.get(surface)
                 if lemma is None:
                     continue
                 for entry in self.entries_for_lemma(lemma):
-                    out.append((entry, lemma))
+                    out.append((entry, lemma, categories[pos]))
         return out
 
     def lookup_morphology(self, surface: str) -> Sequence[tuple[LexicalEntry, LexicalSense, str]]:
@@ -261,20 +269,29 @@ class Lexicon:
         """
         out: list[tuple[LexicalEntry, LexicalSense, str]] = []
         lowered = surface.lower()
-        seen: set[tuple[str, str]] = set()
+        seen: set[tuple[int, str, str | None]] = set()
 
-        def _add(entry: LexicalEntry, lemma: str) -> None:
-            key = (id(entry), lemma)
+        def _add(entry: LexicalEntry, lemma: str, category: str | None = None) -> None:
+            key = (id(entry), lemma, category)
             if key in seen:
                 return
             seen.add(key)
             for sense in entry.senses:
-                out.append((entry, sense, lemma))
+                if category is None or sense.category == category:
+                    out.append((entry, sense, lemma))
 
-        for entry in self.lookup_surface(lowered):
+        # Exact spellings first.  Do not call ``lookup_surface`` here: that
+        # convenience API also resolves morphological lemmas but returns
+        # whole entries, which erases the POS attached to a WordNet exception.
+        # The POS-preserving resolution immediately below handles inflections.
+        exact = list(self._by_surface.get(lowered, ()))
+        for entry in self.entries_for_lemma(lowered):
+            if lowered in {surface.casefold() for surface in entry.surfaces} and entry not in exact:
+                exact.append(entry)
+        for entry in exact:
             _add(entry, entry.lemma)
-        for entry, lemma in self._resolve_lemma_candidates(lowered):
-            _add(entry, lemma)
+        for entry, lemma, category in self._resolve_lemma_candidates(lowered):
+            _add(entry, lemma, category)
 
         # Regular suffix stripping merges additional readings even when the
         # surface is already a lemma ("opened" is also a participle of "open").
@@ -285,7 +302,16 @@ class Lexicon:
                 if len(lowered) <= len(suffix) + 1 or not lowered.endswith(suffix):
                     continue
                 stem = lowered[: len(lowered) - cut]
-                for candidate in (stem, stem + "e", stem[:-1] if len(stem) > 1 else stem):
+                candidates = [stem, stem + "e"]
+                # Only undo consonant doubling when doubling is actually
+                # visible (``stopped -> stop``).  The old unconditional
+                # truncation made ``asked`` generate the unrelated lemma
+                # ``as`` and introduced spurious lexical paths.
+                if len(stem) > 1 and stem[-1] == stem[-2]:
+                    candidates.append(stem[:-1])
+                if tag == "ed" and stem.endswith("i"):
+                    candidates.append(stem[:-1] + "y")
+                for candidate in candidates:
                     if candidate == lowered:
                         continue
                     for entry in self.entries_for_lemma(candidate):
@@ -303,17 +329,29 @@ class Lexicon:
 
 def _suffix_compatible(sense: LexicalSense, tag: str) -> bool:
     vform = sense.features.get("vform")
-    if vform is None:
-        return True
-    name = getattr(vform, "name", None)
-    if name is None:
-        return True
-    return name == tag or name in {"base", "finite"}
+    if vform is not None:
+        name = getattr(vform, "name", None)
+        if name is None:
+            return True
+        if tag == "ing":
+            return name == "ing"
+        if tag == "ed":
+            return name in {"finite", "ed"}
+        if tag == "s":
+            return name == "finite"
+        return False
+    number = sense.features.get("number")
+    if number is not None:
+        return tag == "s" and getattr(number, "name", None) == "plural"
+    # Productive -ed/-ing stripping is verbal and productive -s stripping is
+    # verbal or nominal.  It must not project every unrelated POS belonging
+    # to the recovered lemma onto the inflected surface.
+    return False
 
 
 _CLOSED_CATEGORIES = {
     "DET", "PRONOUN", "POSS", "PREP", "PREP-BY", "COORD", "CONJ", "NEG",
-    "AUX", "AUX-BE", "MODAL", "COPULA", "WH-PRONOUN", "WH-NOM", "COMP-THAT",
+    "AUX", "AUX-BE", "MODAL", "WH-PRONOUN", "WH-NOM", "COMP-THAT",
     "TO", "PARTICLE", "DEGREE", "EXPL", "NUM",
 }
 

@@ -77,6 +77,20 @@ class VectorChartTests(unittest.TestCase):
         self.assertIsInstance(result.shared_forest, dict)
         self.assertEqual(len(result.shared_forest["segments"]), 4)
 
+        agenda = [best]
+        while agenda:
+            item = agenda.pop()
+            for anchor in item.syntax.anchors.values():
+                if not anchor.startswith("lex:"):
+                    continue
+                _prefix, start, end, _category, _lemma = anchor.split(":", 4)
+                self.assertGreaterEqual(int(start), item.start)
+                self.assertLessEqual(int(end), item.end)
+            if item.lexical_candidate is not None:
+                candidate = item.lexical_candidate
+                self.assertEqual(text[candidate.span_start:candidate.span_end], candidate.surface)
+            agenda.extend(item.children)
+
     def test_comma_delimited_relative_falls_back_to_global_parse(self) -> None:
         result = self.parser.parse("John, who left, opened the box.").result
         self.assertTrue(result.completed)

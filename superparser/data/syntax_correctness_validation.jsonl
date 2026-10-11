@@ -1,0 +1,120 @@
+{"id":"d001","split":"dev","text":"John opened the door.","voice":"active","predicate":"open","pos":{"opened":"V"},"constituents":[["NP","John"],["NP","the door"]],"forbidden":["clause_passive"]}
+{"id":"d002","split":"dev","text":"The door was opened by John.","voice":"passive","predicate":"open","pos":{"opened":"V"},"required":["clause_passive"]}
+{"id":"d003","split":"dev","text":"Mary gave John a book.","voice":"active","predicate":"give","pos":{"gave":"V"},"required":["vp_ditransitive"]}
+{"id":"d004","split":"dev","text":"Mary remembered the book.","voice":"active","predicate":"remember","forbidden":["vp_ditransitive"]}
+{"id":"d005","split":"dev","text":"They remembered the event differently.","voice":"active","predicate":"remember","constituents":[["NP","the event"]],"required":["vp_adv"],"forbidden":["np_reflexive_adv","np_det_n_adv"]}
+{"id":"d006","split":"dev","text":"A classroom project could encourage kindness.","voice":"active","predicate":"encourage","constituents":[["NP","A classroom project"]],"forbidden":["np_relative_obj","wh_bare"]}
+{"id":"d007","split":"dev","text":"Jonah asked whether they could remember the same event differently.","voice":"active","predicate":"ask","constituents":[["NP","Jonah"],["NP","the same event"]],"forbidden":["clause_passive","np_quote","vp_ditransitive"]}
+{"id":"d008","split":"dev","text":"He said the picture mattered because he could not read every word yet.","voice":"active","predicate":"say","constituents":[["NP","He"],["NP","the picture"],["NP","every word"]],"required":["vp_zero_clause"],"forbidden":["np_quote"]}
+{"id":"d009","split":"dev","text":"The child watched the man with a telescope.","voice":"active","predicate":"watch","constituents":[["NP","The child"],["NP","the man with a telescope"]]}
+{"id":"d010","split":"dev","text":"John left.","voice":"active","predicate":"leave","required":["vp_intransitive"]}
+{"id":"d011","split":"dev","text":"The baby slept quietly.","voice":"active","predicate":"sleep","required":["vp_adv"]}
+{"id":"d012","split":"dev","text":"The workers carried the boxes.","voice":"active","predicate":"carry","pos":{"workers":"N","carried":"V","boxes":"N"}}
+{"id":"d013","split":"dev","text":"She can read the letter.","voice":"active","predicate":"read","pos":{"can":"MODAL","read":"V"},"required":["vp_modal"]}
+{"id":"d014","split":"dev","text":"She did not open the window.","voice":"active","predicate":"open","pos":{"not":"NEG"}}
+{"id":"d015","split":"dev","text":"The window was broken.","voice":"passive","predicate":"break","required":["clause_passive"]}
+{"id":"d016","split":"dev","text":"The teacher praised the student.","voice":"active","predicate":"praise","constituents":[["NP","The teacher"],["NP","the student"]]}
+{"id":"d017","split":"dev","text":"The student was praised by the teacher.","voice":"passive","predicate":"praise","required":["clause_passive"]}
+{"id":"d018","split":"dev","text":"The red car stopped suddenly.","voice":"active","predicate":"stop","constituents":[["NP","The red car"]],"required":["vp_adv"]}
+{"id":"d019","split":"dev","text":"Our old dog chased a squirrel.","voice":"active","predicate":"chase","constituents":[["NP","Our old dog"],["NP","a squirrel"]]}
+{"id":"d020","split":"dev","text":"Peter sent Susan a message.","voice":"active","predicate":"send","required":["vp_ditransitive"]}
+{"id":"d021","split":"dev","text":"Peter sent a message to Susan.","voice":"active","predicate":"send","constituents":[["NP","a message"],["NP","Susan"]]}
+{"id":"d022","split":"dev","text":"The scientist examined the sample carefully.","voice":"active","predicate":"examine","required":["vp_adv"],"forbidden":["np_det_n_adv"]}
+{"id":"d023","split":"dev","text":"The sample was examined carefully.","voice":"passive","predicate":"examine","required":["clause_passive"]}
+{"id":"d024","split":"dev","text":"The man who called left early.","voice":"active","predicate":"leave","constituents":[["NP","The man who called"]],"required":["np_relative_subj"]}
+{"id":"d025","split":"dev","text":"The book that Mary bought disappeared.","voice":"active","predicate":"disappear","constituents":[["NP","The book that Mary bought"]]}
+{"id":"d026","split":"dev","text":"Mary believes that John left.","voice":"active","predicate":"believe","required":["vp_that"]}
+{"id":"d027","split":"dev","text":"Mary believes John left.","voice":"active","predicate":"believe","required":["vp_zero_clause"]}
+{"id":"d028","split":"dev","text":"To learn a language takes time.","voice":"active","predicate":"take","constituents":[["NP","time"]]}
+{"id":"d029","split":"dev","text":"John wants to read the book.","voice":"active","predicate":"want","pos":{"read":"V"}}
+{"id":"d030","split":"dev","text":"Walking home, Mary saw a fox.","voice":"active","predicate":"saw","constituents":[["NP","Mary"],["NP","a fox"]]}
+{"id":"d031","split":"dev","text":"John and Mary opened the box.","voice":"active","predicate":"open","constituents":[["NP","John and Mary"],["NP","the box"]]}
+{"id":"d032","split":"dev","text":"John opened the box and closed the door.","voice":"active","predicate":"open","pos":{"closed":"V"}}
+{"id":"d033","split":"dev","text":"Although it rained, the children played outside.","voice":"active","predicate":"play","constituents":[["NP","the children"]]}
+{"id":"d034","split":"dev","text":"If it rains, we will stay inside.","voice":"active","predicate":"stay","pos":{"If":"CONJ","will":"MODAL"}}
+{"id":"d035","split":"dev","text":"When the bell rang, the students stood.","voice":"active","predicate":"stand","constituents":[["NP","the students"]]}
+{"id":"d036","split":"dev","text":"The cat slept on the sofa.","voice":"active","predicate":"sleep","constituents":[["PP","on the sofa"]]}
+{"id":"d037","split":"dev","text":"The cat on the sofa slept.","voice":"active","predicate":"sleep","constituents":[["NP","The cat on the sofa"]]}
+{"id":"d038","split":"dev","text":"She is very happy.","voice":"active","predicate":"be","pos":{"happy":"ADJ"}}
+{"id":"d039","split":"dev","text":"The soup tastes good.","voice":"active","predicate":"taste","pos":{"good":"ADJ"}}
+{"id":"d040","split":"dev","text":"Those two large houses collapsed.","voice":"active","predicate":"collapse","constituents":[["NP","Those two large houses"]]}
+{"id":"d041","split":"dev","text":"Neither answer seems correct.","voice":"active","predicate":"seem","pos":{"correct":"ADJ"}}
+{"id":"d042","split":"dev","text":"Someone has eaten the cake.","voice":"active","predicate":"eat","pos":{"has":"HAVE"}}
+{"id":"d043","split":"dev","text":"Someone had been waiting outside.","voice":"active","predicate":"wait","pos":{"waiting":"V"}}
+{"id":"d044","split":"dev","text":"The results may have changed.","voice":"active","predicate":"change","pos":{"may":"MODAL"}}
+{"id":"d045","split":"dev","text":"What did Mary buy?","voice":"active","predicate":"buy","pos":{"What":"WH-NOM"}}
+{"id":"d046","split":"dev","text":"Who opened the gate?","voice":"active","predicate":"open","pos":{"Who":"WH-NOM"}}
+{"id":"d047","split":"dev","text":"Mary asked what John bought.","voice":"active","predicate":"ask","pos":{"what":"WH-NOM"}}
+{"id":"d048","split":"dev","text":"The taller child won.","voice":"active","predicate":"win","constituents":[["NP","The taller child"]]}
+{"id":"d049","split":"dev","text":"This road is longer than that road.","voice":"active","predicate":"be","constituents":[["NP","This road"],["NP","that road"]]}
+{"id":"d050","split":"dev","text":"There are three books on the table.","voice":"active","predicate":"be","pos":{"There":"EXPL"}}
+{"id":"v001","split":"validation","text":"Alice closed the heavy door.","voice":"active","predicate":"close","constituents":[["NP","Alice"],["NP","the heavy door"]],"forbidden":["clause_passive"]}
+{"id":"v002","split":"validation","text":"The heavy door was closed by Alice.","voice":"passive","predicate":"close","required":["clause_passive"]}
+{"id":"v003","split":"validation","text":"Robert handed Julia the keys.","voice":"active","predicate":"hand","required":["vp_ditransitive"]}
+{"id":"v004","split":"validation","text":"Robert noticed the keys.","voice":"active","predicate":"notice","forbidden":["vp_ditransitive"]}
+{"id":"v005","split":"validation","text":"We described the accident clearly.","voice":"active","predicate":"describe","constituents":[["NP","the accident"]],"required":["vp_adv"]}
+{"id":"v006","split":"validation","text":"A community garden could improve health.","voice":"active","predicate":"improve","constituents":[["NP","A community garden"]],"forbidden":["np_relative_obj","wh_bare"]}
+{"id":"v007","split":"validation","text":"Lena wondered whether they would arrive tomorrow.","voice":"active","predicate":"wonder","forbidden":["clause_passive","np_quote"]}
+{"id":"v008","split":"validation","text":"She knew the engine worked because the light was green.","voice":"active","predicate":"know","constituents":[["NP","She"],["NP","the engine"]],"required":["vp_zero_clause"]}
+{"id":"v009","split":"validation","text":"The tourist photographed the statue near the fountain.","voice":"active","predicate":"photograph","constituents":[["NP","The tourist"]]}
+{"id":"v010","split":"validation","text":"The audience laughed.","voice":"active","predicate":"laugh","required":["vp_intransitive"]}
+{"id":"v011","split":"validation","text":"The horse ran quickly.","voice":"active","predicate":"run","required":["vp_adv"]}
+{"id":"v012","split":"validation","text":"The nurses moved the beds.","voice":"active","predicate":"move","pos":{"nurses":"N","moved":"V","beds":"N"}}
+{"id":"v013","split":"validation","text":"They might solve the puzzle.","voice":"active","predicate":"solve","pos":{"might":"MODAL","solve":"V"},"required":["vp_modal"]}
+{"id":"v014","split":"validation","text":"They did not solve the puzzle.","voice":"active","predicate":"solve","pos":{"not":"NEG"}}
+{"id":"v015","split":"validation","text":"The puzzle was solved.","voice":"passive","predicate":"solve","required":["clause_passive"]}
+{"id":"v016","split":"validation","text":"The manager thanked the assistant.","voice":"active","predicate":"thank","constituents":[["NP","The manager"],["NP","the assistant"]]}
+{"id":"v017","split":"validation","text":"The assistant was thanked by the manager.","voice":"passive","predicate":"thank","required":["clause_passive"]}
+{"id":"v018","split":"validation","text":"The blue truck stopped abruptly.","voice":"active","predicate":"stop","constituents":[["NP","The blue truck"]],"required":["vp_adv"]}
+{"id":"v019","split":"validation","text":"Their young daughter found a shell.","voice":"active","predicate":"found","constituents":[["NP","Their young daughter"],["NP","a shell"]]}
+{"id":"v020","split":"validation","text":"Anna taught the children a song.","voice":"active","predicate":"teach","required":["vp_ditransitive"]}
+{"id":"v021","split":"validation","text":"Anna taught a song to the children.","voice":"active","predicate":"teach","constituents":[["NP","a song"],["NP","the children"]]}
+{"id":"v022","split":"validation","text":"The doctor reviewed the chart thoroughly.","voice":"active","predicate":"review","required":["vp_adv"],"forbidden":["np_det_n_adv"]}
+{"id":"v023","split":"validation","text":"The chart was reviewed thoroughly.","voice":"passive","predicate":"review","required":["clause_passive"]}
+{"id":"v024","split":"validation","text":"The woman who smiled waved.","voice":"active","predicate":"wave","constituents":[["NP","The woman who smiled"]],"required":["np_relative_subj"]}
+{"id":"v025","split":"validation","text":"The song that everyone liked ended.","voice":"active","predicate":"end","constituents":[["NP","The song that everyone liked"]]}
+{"id":"v026","split":"validation","text":"David claims that the plan works.","voice":"active","predicate":"claim","required":["vp_that"]}
+{"id":"v027","split":"validation","text":"David claims the plan works.","voice":"active","predicate":"claim","required":["vp_zero_clause"]}
+{"id":"v028","split":"validation","text":"To cross the river requires courage.","voice":"active","predicate":"require","constituents":[["NP","courage"]]}
+{"id":"v029","split":"validation","text":"Laura hopes to visit the museum.","voice":"active","predicate":"hope","pos":{"visit":"V"}}
+{"id":"v030","split":"validation","text":"Driving home, Robert heard the news.","voice":"active","predicate":"hear","constituents":[["NP","Robert"],["NP","the news"]]}
+{"id":"v031","split":"validation","text":"Alice and Robert repaired the fence.","voice":"active","predicate":"repair","constituents":[["NP","Alice and Robert"],["NP","the fence"]]}
+{"id":"v032","split":"validation","text":"Alice repaired the fence and painted the gate.","voice":"active","predicate":"repair","pos":{"painted":"V"}}
+{"id":"v033","split":"validation","text":"Although the wind rose, the boat continued.","voice":"active","predicate":"continue","constituents":[["NP","the boat"]]}
+{"id":"v034","split":"validation","text":"If the alarm rings, everyone will leave.","voice":"active","predicate":"leave","pos":{"If":"CONJ","will":"MODAL"}}
+{"id":"v035","split":"validation","text":"When the sun appeared, the crowd cheered.","voice":"active","predicate":"cheer","constituents":[["NP","the crowd"]]}
+{"id":"v036","split":"validation","text":"The dog waited beside the gate.","voice":"active","predicate":"wait","constituents":[["PP","beside the gate"]]}
+{"id":"v037","split":"validation","text":"The dog beside the gate waited.","voice":"active","predicate":"wait","constituents":[["NP","The dog beside the gate"]]}
+{"id":"v038","split":"validation","text":"He is remarkably calm.","voice":"active","predicate":"be","pos":{"calm":"ADJ"}}
+{"id":"v039","split":"validation","text":"The flowers smell wonderful.","voice":"active","predicate":"smell","pos":{"wonderful":"ADJ"}}
+{"id":"v040","split":"validation","text":"These four small boats sank.","voice":"active","predicate":"sink","constituents":[["NP","These four small boats"]]}
+{"id":"v041","split":"validation","text":"Either route seems safe.","voice":"active","predicate":"seem","pos":{"safe":"ADJ"}}
+{"id":"v042","split":"validation","text":"Nobody has finished the work.","voice":"active","predicate":"finish","pos":{"has":"HAVE"}}
+{"id":"v043","split":"validation","text":"Nobody had been sleeping upstairs.","voice":"active","predicate":"sleep","pos":{"sleeping":"V"}}
+{"id":"v044","split":"validation","text":"The figures might have fallen.","voice":"active","predicate":"fall","pos":{"might":"MODAL"}}
+{"id":"v045","split":"validation","text":"Which book did Laura choose?","voice":"active","predicate":"choose","pos":{"Which":"WH-PRONOUN"}}
+{"id":"v046","split":"validation","text":"Who repaired the bicycle?","voice":"active","predicate":"repair","pos":{"Who":"WH-NOM"}}
+{"id":"v047","split":"validation","text":"Laura asked which route David chose.","voice":"active","predicate":"ask","pos":{"which":"WH-NOM"}}
+{"id":"v048","split":"validation","text":"The younger runner won.","voice":"active","predicate":"win","constituents":[["NP","The younger runner"]]}
+{"id":"v049","split":"validation","text":"That bridge is wider than this bridge.","voice":"active","predicate":"be","constituents":[["NP","That bridge"],["NP","this bridge"]]}
+{"id":"v050","split":"validation","text":"There were several chairs in the room.","voice":"active","predicate":"be","pos":{"There":"EXPL"}}
+{"id":"h001","split":"holdout","text":"Emma unlocked the wooden gate.","voice":"active","predicate":"unlock","constituents":[["NP","Emma"],["NP","the wooden gate"]],"forbidden":["clause_passive"]}
+{"id":"h002","split":"holdout","text":"The wooden gate was unlocked by Emma.","voice":"passive","predicate":"unlock","required":["clause_passive"]}
+{"id":"h003","split":"holdout","text":"Thomas offered Rachel a seat.","voice":"active","predicate":"offer","required":["vp_ditransitive"]}
+{"id":"h004","split":"holdout","text":"Thomas recognized the visitor.","voice":"active","predicate":"recognize","forbidden":["vp_ditransitive"]}
+{"id":"h005","split":"holdout","text":"The witness described the scene accurately.","voice":"active","predicate":"describe","required":["vp_adv"],"forbidden":["np_det_n_adv"]}
+{"id":"h006","split":"holdout","text":"A neighborhood library can support learning.","voice":"active","predicate":"support","constituents":[["NP","A neighborhood library"]],"forbidden":["np_relative_obj","wh_bare"]}
+{"id":"h007","split":"holdout","text":"Nora suspected the machine failed overnight.","voice":"active","predicate":"suspect","required":["vp_zero_clause"]}
+{"id":"h008","split":"holdout","text":"The machine was inspected yesterday.","voice":"passive","predicate":"inspect","required":["clause_passive"]}
+{"id":"h009","split":"holdout","text":"The musician who arrived early performed.","voice":"active","predicate":"perform","constituents":[["NP","The musician who arrived early"]],"required":["np_relative_subj"]}
+{"id":"h010","split":"holdout","text":"The report that Nora wrote vanished.","voice":"active","predicate":"vanish","constituents":[["NP","The report that Nora wrote"]]}
+{"id":"h011","split":"holdout","text":"Nora thinks that the answer matters.","voice":"active","predicate":"think","required":["vp_that"]}
+{"id":"h012","split":"holdout","text":"To protect the forest demands patience.","voice":"active","predicate":"demand","required":["clause_infinitive_subject"]}
+{"id":"h013","split":"holdout","text":"Crossing the street, Emma noticed a bicycle.","voice":"active","predicate":"notice","required":["clause_participial_front_obj"]}
+{"id":"h014","split":"holdout","text":"Emma and Thomas cleaned the kitchen.","voice":"active","predicate":"clean","constituents":[["NP","Emma and Thomas"],["NP","the kitchen"]]}
+{"id":"h015","split":"holdout","text":"If the weather improves, the team will practice outside.","voice":"active","predicate":"practice","pos":{"will":"MODAL"}}
+{"id":"h016","split":"holdout","text":"When the music stopped, everyone became silent.","voice":"active","predicate":"become","pos":{"silent":"ADJ"}}
+{"id":"h017","split":"holdout","text":"The children waited near the entrance.","voice":"active","predicate":"wait","constituents":[["PP","near the entrance"]]}
+{"id":"h018","split":"holdout","text":"The coffee smells excellent.","voice":"active","predicate":"smell","pos":{"excellent":"ADJ"},"required":["vp_linking_adj"]}
+{"id":"h019","split":"holdout","text":"Which route did Thomas select?","voice":"active","predicate":"select","pos":{"Which":"WH-PRONOUN"},"required":["clause_wh_obj"]}
+{"id":"h020","split":"holdout","text":"This tunnel is narrower than that tunnel.","voice":"active","predicate":"be","constituents":[["NP","This tunnel"],["NP","that tunnel"]],"required":["vp_cop_comparative_adj"]}

@@ -24,6 +24,10 @@ class RuleSymbol:
     features: FeatureStructure = field(default_factory=FeatureStructure.empty)
     # child handle name -> rule-level name used by semantic actions
     exports: Mapping[str, str] = field(default_factory=dict)
+    # Features listed here must be positively established by the child
+    # derivation.  Ordinary feature constraints remain open-world and may be
+    # instantiated through unification.
+    requires: tuple[str, ...] = ()
 
     @property
     def category_id(self) -> int:
@@ -34,6 +38,7 @@ class RuleSymbol:
             "category": self.category,
             "features": self.features.as_dict(),
             "exports": dict(self.exports),
+            "requires": list(self.requires),
         }
 
 
@@ -90,6 +95,7 @@ def _parse_symbol(raw: Mapping[str, Any]) -> RuleSymbol:
         category=str(raw["category"]),
         features=FeatureStructure.build(features_raw),
         exports=exports,
+        requires=tuple(str(name) for name in raw.get("requires", ())),
     )
 
 
