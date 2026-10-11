@@ -1,7 +1,9 @@
-"""Rich lexical entries: lemma, senses, frames and role mappings.
+"""Source lexical catalog: morphology plus separately projected sense data.
 
-The engine reads frames as data. Adding a verb means adding a lexicon row,
-never touching the runtime.
+The syntax layer consumes only category/features and the syntactic projection
+of frames. Semantic types and role mappings stay in this catalog so the
+post-parse interpreter can resolve stable sense ids; they are never copied
+into parser hypotheses.
 
 Content words (N/V/ADJ/ADV) are served by WordNet: exhaustive coverage of
 the English open class, no hand-made word lists. Closed-class function

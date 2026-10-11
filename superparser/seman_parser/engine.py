@@ -17,9 +17,35 @@ from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
 from .perf import LRU
-from .segmentation import LexicalCandidate, LexicalLattice, Token, build_lattice, tokenize
-from .types import TypeHierarchy, load_types
+from .segmentation import (
+    LexicalCandidate, LexicalLattice, Token, _candidate_from_sense,
+    build_lattice, tokenize,
+)
 from .vector_chart import SegmentInterface, VectorGrammar
+
+
+class _LazyTypes:
+    """Compatibility proxy: semantic ontology is not loaded by parsing."""
+
+    def __init__(self, path: Path) -> None:
+        self.path = path
+        self._value = None
+
+    def _load(self):
+        if self._value is None:
+            from .types import load_types
+
+            self._value = load_types(_read_json_rows(self.path))
+        return self._value
+
+    def __getattr__(self, name: str):
+        return getattr(self._load(), name)
+
+    def __len__(self) -> int:
+        return len(self._load())
+
+    def __iter__(self):
+        return iter(self._load())
 
 
 @dataclass
@@ -28,8 +54,17 @@ class ParserResources:
 
     grammar: Grammar
     lexicon: Lexicon
-    types: TypeHierarchy
+    types: Any
     metadata: Mapping[str, Any] = field(default_factory=dict)
+    _semantic_rules_cache: Mapping[str, Any] | None = field(default=None, init=False, repr=False)
+
+    def semantic_rules(self) -> Mapping[str, Any]:
+        if self._semantic_rules_cache is None:
+            from .semantic_rules import load_semantic_rules
+
+            path = self.metadata.get("semantic_rules")
+            self._semantic_rules_cache = load_semantic_rules(path) if path else {}
+        return self._semantic_rules_cache
 
     @classmethod
     def from_dir(
@@ -39,14 +74,22 @@ class ParserResources:
         wordnet_dict: str | Path | None = None,
     ) -> "ParserResources":
         directory = Path(directory)
+        semantic_path = directory / "semantic_rules.jsonl"
+        if not semantic_path.exists():
+            # Read-only migration path for older resource directories whose
+            # recipes are still embedded in grammar.jsonl.
+            semantic_path = directory / "grammar.jsonl"
         return cls(
             grammar=load_grammar(directory / "grammar.jsonl"),
             lexicon=load_lexicon(
                 directory / "function_words.jsonl",
                 wordnet_dict=wordnet_dict or discover_wordnet(directory),
             ),
-            types=load_types(_read_json_rows(directory / "types.json")),
-            metadata={"source": str(directory)},
+            types=_LazyTypes(directory / "types.json"),
+            metadata={
+                "source": str(directory),
+                "semantic_rules": str(semantic_path),
+            },
         )
 
 
@@ -59,12 +102,26 @@ class ParseReport:
 
     def best_semantic_graph(self) -> dict[str, Any] | None:
         best = self.result.best()
-        return best.semantic.as_dict() if best else None
+        return self.interpret(best).as_dict() if best else None
+
+    def interpret(
+        self,
+        item: Any | None = None,
+        *,
+        sense_selection: Mapping[str, str] | None = None,
+    ):
+        """Run optional semantic interpretation after syntax has completed."""
+        from .semantics import SemanticInterpreter
+
+        selected = item if item is not None else self.result.best()
+        if selected is None:
+            return None
+        return SemanticInterpreter(
+            self.resources.grammar, self.resources.semantic_rules(), self.resources.lexicon,
+        ).interpret(selected, sense_selection=sense_selection)
 
     def as_dict(self) -> dict[str, Any]:
-        payload = self.result.as_dict()
-        payload["semantic"] = self.best_semantic_graph()
-        return payload
+        return self.result.as_dict()
 
 
 class Parser:
@@ -78,11 +135,13 @@ class Parser:
         max_items: int = 50_000,
         goal_category: str = "CLAUSE",
         cache_size: int = 2048,
+        deduplicate_lexical: bool = True,
     ) -> None:
         self.resources = resources
         self.beam = beam
         self.max_items = max_items
         self.goal_category = goal_category
+        self.deduplicate_lexical = deduplicate_lexical
         self._lattice_cache: LRU[str, Any] = LRU(cache_size)
         self._parse_cache: LRU[tuple[str, str], ParseResult] = LRU(cache_size)
         # Grammar masks and transition indexes are immutable and shared by
@@ -136,7 +195,10 @@ class Parser:
         lexical_start = perf_counter()
         lattice = self._lattice_cache.get(text)
         if lattice is None:
-            lattice = build_lattice(text, self.resources.lexicon)
+            lattice = build_lattice(
+                text, self.resources.lexicon,
+                deduplicate=self.deduplicate_lexical,
+            )
             self._lattice_cache.put(text, lattice)
         lexical_ms = (perf_counter() - lexical_start) * 1000
 
@@ -299,19 +361,13 @@ class Parser:
             for sense in entry.senses:
                 if sense.category not in {"COMMA", "COORD"}:
                     continue
-                rows.append(LexicalCandidate(
+                rows.append(_candidate_from_sense(
                     span_start=token.start,
                     span_end=token.end,
                     surface=token.text,
                     lemma=entry.lemma,
-                    category=sense.category,
-                    features=sense.features,
-                    sense_id=sense.sense_id,
-                    semantic_type=sense.semantic_type,
-                    normalized=entry.lemma,
+                    sense=sense,
                     source="function-inventory",
-                    score=sense.score,
-                    provenance=dict(sense.provenance),
                 ))
         return rows
 

@@ -55,7 +55,8 @@ class ChartParserTests(unittest.TestCase):
         report = self.parser.parse("John opened the box.")
         best = report.result.best()
         assert best is not None
-        relations = {edge.relation for edge in best.semantic.graph.relations}
+        semantic = report.interpret(best)
+        relations = {edge.relation for edge in semantic.graph.relations}
         self.assertIn("AGENT", relations)
         # Object role name comes from the WordNet verb frame mapping
         # (THEME or AFFECTED depending on the frame).
@@ -66,7 +67,8 @@ class ChartParserTests(unittest.TestCase):
         self.assertTrue(report.result.completed, report.result.stats)
         best = report.result.best()
         assert best is not None
-        relations = {edge.relation for edge in best.semantic.graph.relations}
+        semantic = report.interpret(best)
+        relations = {edge.relation for edge in semantic.graph.relations}
         self.assertIn("RECIPIENT", relations)
         self.assertIn("THEME", relations)
 

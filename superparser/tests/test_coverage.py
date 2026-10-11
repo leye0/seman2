@@ -16,9 +16,10 @@ def parse(text: str, *, goal: str = "CLAUSE"):
 
 
 def relations(text: str, *, goal: str = "CLAUSE") -> set[str]:
-    best = parse(text, goal=goal).result.best()
+    report = parse(text, goal=goal)
+    best = report.result.best()
     assert best is not None, text
-    return {edge.relation for edge in best.semantic.graph.relations}
+    return {edge.relation for edge in report.interpret(best).graph.relations}
 
 
 class PassiveTests(unittest.TestCase):
@@ -39,10 +40,11 @@ class PassiveTests(unittest.TestCase):
         self.assertEqual(best.rule_id, "clause_passive")
 
     def test_active_still_active(self) -> None:
-        best = parse("John opened the box.").result.best()
+        report = parse("John opened the box.")
+        best = report.result.best()
         assert best is not None
         self.assertEqual(best.rule_id, "clause_np_vp")
-        rels = {edge.relation for edge in best.semantic.graph.relations}
+        rels = {edge.relation for edge in report.interpret(best).graph.relations}
         self.assertIn("AGENT", rels)
         self.assertTrue(rels & {"AFFECTED", "THEME"}, rels)
 

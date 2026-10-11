@@ -8,12 +8,6 @@ dispatches on linguistic content.
 from __future__ import annotations
 
 from .chart import Chart, ChartItem, ParseResult, PackedNode, Provenance
-from .coref import commit_link, commit_links, introduce, is_blocked, open_candidates
-from .discourse import (
-    DiscourseEntity,
-    DiscourseState,
-    Mention,
-)
 from .engine import Parser, ParserResources, ParseReport
 from .features import (
     Atom,
@@ -24,7 +18,7 @@ from .features import (
     substitute_structure,
     unify,
 )
-from .grammar import Grammar, GrammarRule, RuleSymbol, SemanticAction, load_grammar
+from .grammar import Grammar, GrammarRule, RuleSymbol, load_grammar
 from .lexicon import (
     ArgumentSlot,
     LexicalEntry,
@@ -33,18 +27,10 @@ from .lexicon import (
     SenseFrame,
     load_lexicon,
 )
-from .mentions import extract_mentions, mention_from_item
-from .reader import DiscourseProcessor, DiscourseReport, SentenceAnalysis
 from .reference import ReferenceKind, ReferenceLink
 from .segmentation import LexicalCandidate, LexicalLattice, build_lattice, tokenize
-from .semantics import (
-    SemanticGraph,
-    SemanticNode,
-    SemanticPackage,
-    SemanticRelation,
-)
 from .symbols import SymbolTable
-from .types import TypeHierarchy, load_types
+from .syntax import SyntacticLink, SyntacticPackage
 
 __all__ = [
     "ArgumentSlot",
@@ -79,6 +65,8 @@ __all__ = [
     "SemanticNode",
     "SemanticPackage",
     "SemanticRelation",
+    "SyntacticLink",
+    "SyntacticPackage",
     "SenseFrame",
     "SentenceAnalysis",
     "SymbolTable",
@@ -102,3 +90,39 @@ __all__ = [
 ]
 
 __version__ = "0.1.0"
+
+
+_LAZY_EXPORTS = {
+    "SemanticAction": ("semantic_rules", "SemanticAction"),
+    "SemanticGraph": ("semantics", "SemanticGraph"),
+    "SemanticNode": ("semantics", "SemanticNode"),
+    "SemanticPackage": ("semantics", "SemanticPackage"),
+    "SemanticRelation": ("semantics", "SemanticRelation"),
+    "DiscourseEntity": ("discourse", "DiscourseEntity"),
+    "DiscourseState": ("discourse", "DiscourseState"),
+    "Mention": ("discourse", "Mention"),
+    "DiscourseProcessor": ("reader", "DiscourseProcessor"),
+    "DiscourseReport": ("reader", "DiscourseReport"),
+    "SentenceAnalysis": ("reader", "SentenceAnalysis"),
+    "extract_mentions": ("mentions", "extract_mentions"),
+    "mention_from_item": ("mentions", "mention_from_item"),
+    "commit_link": ("coref", "commit_link"),
+    "commit_links": ("coref", "commit_links"),
+    "introduce": ("coref", "introduce"),
+    "is_blocked": ("coref", "is_blocked"),
+    "open_candidates": ("coref", "open_candidates"),
+    "TypeHierarchy": ("types", "TypeHierarchy"),
+    "load_types": ("types", "load_types"),
+}
+
+
+def __getattr__(name: str):
+    target = _LAZY_EXPORTS.get(name)
+    if target is None:
+        raise AttributeError(name)
+    from importlib import import_module
+
+    module_name, attribute = target
+    value = getattr(import_module(f"{__name__}.{module_name}"), attribute)
+    globals()[name] = value
+    return value

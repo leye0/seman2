@@ -79,10 +79,11 @@ class NovelPossessiveTests(unittest.TestCase):
         self.assertTrue(parse("Eli wanted the largest slice.").result.completed)
 
     def test_possessor_role(self) -> None:
-        best = parse("Eli could not find his other sock.").result.best()
+        report = parse("Eli could not find his other sock.")
+        best = report.result.best()
         self.assertIsNotNone(best)
         assert best is not None
-        self.assertIn("POSSESSOR", {e.relation for e in best.semantic.graph.relations})
+        self.assertIn("POSSESSOR", {e.relation for e in report.interpret(best).graph.relations})
 
 
 class NovelModalTests(unittest.TestCase):

@@ -91,9 +91,10 @@ class DiscourseProcessor:
         ref_links: tuple[ReferenceLink, ...] = ()
 
         if best is not None:
+            semantic = report.interpret(best)
             mentions = tuple(
-                extract_mentions(best, self._sentence_index)
-                + extract_event_mentions(best, self._sentence_index)
+                extract_mentions(best, self._sentence_index, semantic=semantic)
+                + extract_event_mentions(best, self._sentence_index, semantic=semantic)
             )
             # Register every mention; open entities for referential ones.
             for mention in mentions:
@@ -119,8 +120,9 @@ class DiscourseProcessor:
             )
             commit_links(ref_links, self.state)
 
-            # Fold the sentence semantics into the persistent graph.
-            self.state.graph = self.state.graph.merge(best.semantic.graph)
+            # Semantic interpretation is explicitly post-syntactic.
+            if semantic is not None:
+                self.state.graph = self.state.graph.merge(semantic.graph)
 
         analysis = SentenceAnalysis(
             index=self._sentence_index,

@@ -19,7 +19,7 @@ from .features import (
 )
 from .grammar import Grammar, GrammarRule, RuleSymbol
 from .segmentation import LexicalCandidate, LexicalLattice
-from .semantics import SemanticGraph, SemanticPackage, apply_action
+from .syntax import EMPTY_SYNTAX, SyntacticLink, SyntacticPackage
 from .symbols import intern
 
 
@@ -46,12 +46,17 @@ class ChartItem:
     end: int
     category: str
     features: FeatureStructure
-    semantic: SemanticPackage
+    # Deprecated compatibility slot for manually constructed legacy items.
+    # Parser-produced items always leave it at None; semantics are returned
+    # by SemanticInterpreter after parsing.
+    semantic: Any | None
     score: float
     provenance: Provenance
     children: tuple["ChartItem", ...] = ()
     rule_id: str | None = None
     bindings: Bindings = field(default_factory=dict)
+    syntax: SyntacticPackage = EMPTY_SYNTAX
+    lexical_candidate: LexicalCandidate | None = field(default=None, repr=False, compare=False)
     # Chart-local identifier assigned when the analysis is accepted.  Parent
     # derivations can consequently use a flat tuple of integers instead of a
     # recursively nested tree signature.
@@ -71,8 +76,8 @@ class ChartItem:
         if sig is not None:
             return sig
         child_sigs = tuple(child.signature() for child in self.children)
-        handle_sig = tuple(sorted(self.semantic.handles.items()))
-        sig = (self.rule_id, self.category, self.start, self.end, handle_sig, child_sigs)
+        anchor_sig = tuple(sorted(self.syntax.anchors.items()))
+        sig = (self.rule_id, self.category, self.start, self.end, anchor_sig, child_sigs)
         object.__setattr__(self, "_sig", sig)
         return sig
 
@@ -81,7 +86,7 @@ class ChartItem:
             "span": [self.start, self.end],
             "category": self.category,
             "features": self.features.as_dict(),
-            "semantic": self.semantic.as_dict(),
+            "syntax": self.syntax.as_dict(),
             "score": self.score,
             "provenance": self.provenance.as_dict(),
             "rule_id": self.rule_id,
@@ -189,6 +194,7 @@ class ParseResult:
         return {
             "text": self.text,
             "completed": self.completed,
+            "lattice": self.lattice.as_dict(),
             "best": best.as_dict() if best else None,
             "alternatives": [item.as_dict() for item in self.alternatives()],
             "stats": dict(self.stats),
@@ -392,6 +398,9 @@ class Chart:
             roots=tuple(root_items),
             completed=bool(root_items),
             stats={
+                "semantic_graphs": 0,
+                "semantic_operations": 0,
+                "lexical_candidates": len(lattice.candidates),
                 "expanded": self._expanded,
                 "pushed": self._pushes,
                 "packed_nodes": len(self.packed),
@@ -401,25 +410,13 @@ class Chart:
         )
 
     def _item_from_candidate(self, candidate: LexicalCandidate) -> ChartItem:
-        graph = SemanticGraph()
-        kind = "event" if candidate.category.upper().startswith("V") else "entity"
-        node = graph.add_node(
-            kind=kind,
-            type_name=candidate.semantic_type or candidate.lemma.upper(),
-            span=candidate.span,
-            surface=candidate.surface,
-            lemma=candidate.lemma,
-        )
-        handles = {"head": node.node_id, "referent": node.node_id}
-        if kind == "event":
-            handles["event"] = node.node_id
-        package = SemanticPackage(graph=graph, handles=handles)
+        syntax = _lexical_syntax(candidate)
         return ChartItem(
             start=candidate.span_start,
             end=candidate.span_end,
             category=candidate.category,
             features=candidate.features,
-            semantic=package,
+            semantic=None,
             score=candidate.score,
             provenance=Provenance(
                 source=candidate.source,
@@ -430,6 +427,8 @@ class Chart:
                 },
             ),
             children=(),
+            syntax=syntax,
+            lexical_candidate=candidate,
         )
 
     # -- rule advance ----------------------------------------------------
@@ -592,16 +591,15 @@ class Chart:
         # placeholder and lose no linguistic distinction at the tree level.
         will_expand = node is None or score >= node.best.score or len(node.alternatives) < self.beam
         if will_expand:
-            semantic = self._compose_semantics(rule, children, partial.bindings)
+            syntax = _compose_syntax(rule, children)
         else:
-            handles = {k: v for k, v in partial.bindings.items() if isinstance(v, str)}
-            semantic = SemanticPackage(graph=SemanticGraph(), handles=handles)
+            syntax = _compose_syntax(rule, children)
         item = ChartItem(
             start=partial.start,
             end=partial.end,
             category=rule.lhs.category,
             features=lhs_features,
-            semantic=semantic,
+            semantic=None,
             score=score,
             provenance=Provenance(
                 source="rule",
@@ -613,40 +611,9 @@ class Chart:
             children=children,
             rule_id=rule.rule_id,
             bindings=env,
+            syntax=syntax,
         )
         self._offer(item, signature=derivation)
-
-    def _compose_semantics(
-        self,
-        rule: GrammarRule,
-        children: tuple[ChartItem, ...],
-        aliases: Bindings,
-    ) -> SemanticPackage:
-        child_graphs = [child.semantic.graph for child in children]
-        child_handles = [child.semantic.handles for child in children]
-        handle_aliases = {k: v for k, v in aliases.items() if isinstance(v, str) and v}
-        if not rule.semantic:
-            graph = SemanticGraph.merge_all(child_graphs)
-            handles: dict[str, str] = dict(handle_aliases)
-            for child in children:
-                for key, value in child.semantic.handles.items():
-                    handles.setdefault(key, value)
-            return SemanticPackage(graph=graph, handles=handles)
-
-        package = SemanticPackage(
-            graph=SemanticGraph.merge_all(child_graphs),
-            handles=dict(handle_aliases),
-        )
-        for action in rule.semantic:
-            package = apply_action(
-                action,
-                package=package,
-                child_handles=child_handles,
-                child_graphs=child_graphs,
-                aliases=handle_aliases,
-            )
-        return package
-
 
 def _rebind(item: ChartItem, features: FeatureStructure, env: Bindings) -> ChartItem:
     return ChartItem(
@@ -660,6 +627,8 @@ def _rebind(item: ChartItem, features: FeatureStructure, env: Bindings) -> Chart
         children=item.children,
         rule_id=item.rule_id,
         bindings=env,
+        syntax=item.syntax,
+        lexical_candidate=item.lexical_candidate,
         _sig=item._sig,
     )
 
@@ -667,17 +636,41 @@ def _rebind(item: ChartItem, features: FeatureStructure, env: Bindings) -> Chart
 def _export_handles(symbol: RuleSymbol, item: ChartItem) -> dict[str, str]:
     exports: dict[str, str] = {}
     for child_name, rule_name in symbol.exports.items():
-        resolved = item.semantic.handles.get(child_name)
+        resolved = item.syntax.anchors.get(child_name)
         if resolved:
             exports[rule_name] = resolved
     # Always expose stable defaults so semantic actions can use them.
-    if "referent" in item.semantic.handles:
-        exports.setdefault("referent", item.semantic.handles["referent"])
-    if "event" in item.semantic.handles:
-        exports.setdefault("event", item.semantic.handles["event"])
-    if "head" in item.semantic.handles:
-        exports.setdefault("head", item.semantic.handles["head"])
+    for name in ("referent", "event", "head"):
+        if name in item.syntax.anchors:
+            exports.setdefault(name, item.syntax.anchors[name])
     return exports
+
+
+def _lexical_syntax(candidate: LexicalCandidate) -> SyntacticPackage:
+    anchor = f"lex:{candidate.span_start}:{candidate.span_end}:{candidate.category}:{candidate.lemma}"
+    anchors = {"head": anchor, "referent": anchor}
+    if candidate.category.upper().startswith("V") or candidate.category in {"AUX", "AUX-BE", "COPULA", "MODAL"}:
+        anchors["event"] = anchor
+    return SyntacticPackage(anchors)
+
+
+def _compose_syntax(rule: GrammarRule, children: tuple[ChartItem, ...]) -> SyntacticPackage:
+    anchors: dict[str, str] = {}
+    links: list[SyntacticLink] = []
+    for index, (symbol, child) in enumerate(zip(rule.rhs, children)):
+        for child_name, rule_name in symbol.exports.items():
+            target = child.syntax.anchors.get(child_name)
+            if target:
+                anchors[rule_name] = target
+                links.append(SyntacticLink(rule_name, target, index))
+        for name in ("referent", "event", "head"):
+            target = child.syntax.anchors.get(name)
+            if target:
+                anchors.setdefault(name, target)
+    # A grammar-declared head outranks incidental closed-class defaults.
+    if any("head" in symbol.exports.values() for symbol in rule.rhs) and "head" in anchors:
+        anchors["referent"] = anchors["head"]
+    return SyntacticPackage(anchors, tuple(links))
 
 
 def _same_analysis(left: ChartItem, right: ChartItem) -> bool:

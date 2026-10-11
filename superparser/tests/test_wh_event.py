@@ -23,9 +23,10 @@ class WHGapTests(unittest.TestCase):
         self.assertEqual(best.rule_id, "clause_wh_obj")
 
     def test_object_gap_roles(self) -> None:
-        best = parse("Who did John see?").result.best()
+        report = parse("Who did John see?")
+        best = report.result.best()
         assert best is not None
-        rels = {edge.relation for edge in best.semantic.graph.relations}
+        rels = {edge.relation for edge in report.interpret(best).graph.relations}
         self.assertIn("AGENT", rels)
         self.assertIn("AFFECTED", rels)
 
@@ -45,8 +46,8 @@ class EventAnaphoraTests(unittest.TestCase):
         events = extract_event_mentions(best, 0)
         self.assertGreaterEqual(len(events), 1)
         self.assertEqual(events[0].kind, "event")
-        # Type name is resource-driven (WordNet lexicographer file).
-        self.assertIsNotNone(events[0].semantic_type)
+        # Event detection is syntax-only; semantic typing is optional later.
+        self.assertIsNone(events[0].semantic_type)
 
     def test_event_mentions_deduplicated(self) -> None:
         from seman_parser.mentions import extract_event_mentions
@@ -86,9 +87,10 @@ class EventAnaphoraTests(unittest.TestCase):
             self.assertIn(lk.kind.value, {"MAYBE_REF", "DIFFERENT_REF", "NO_LINK"})
 
     def test_possessive_roles(self) -> None:
-        best = parse("John lost his job.").result.best()
+        report = parse("John lost his job.")
+        best = report.result.best()
         assert best is not None
-        rels = {edge.relation for edge in best.semantic.graph.relations}
+        rels = {edge.relation for edge in report.interpret(best).graph.relations}
         self.assertIn("POSSESSOR", rels)
 
     def test_unbound_variables_do_not_look_like_features(self) -> None:

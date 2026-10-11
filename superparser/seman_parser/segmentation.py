@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
 
-from .features import FeatureStructure
+from .features import TOP, Atom, Disjunction, FeatureStructure, Variable
 from .lexicon import LexicalSense, Lexicon
 from .symbols import intern
 
@@ -19,6 +19,16 @@ _TOKEN_RE = re.compile(
     r"[A-Za-z]+(?:'[A-Za-z]+)?|\d+(?:\.\d+)?|[^\w\s\"\u201c\u201d\u2018\u2019]",
     re.UNICODE,
 )
+
+
+@dataclass(frozen=True, slots=True)
+class LexicalInterpretation:
+    """Stable reference to a lexical sense; no meaning is copied here."""
+
+    sense_id: str | None
+    lemma: str
+    score: float = 0.0
+    provenance: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,12 +41,14 @@ class LexicalCandidate:
     lemma: str
     category: str
     features: FeatureStructure
-    sense_id: str | None = None
-    semantic_type: str | None = None
     normalized: str | None = None
     source: str = "lexicon"
     score: float = 0.0
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    # Constraints that can change grammatical behaviour. Semantic role
+    # labels are deliberately excluded from this signature.
+    syntactic_constraints: tuple[Any, ...] = ()
+    interpretations: tuple[LexicalInterpretation, ...] = ()
     # Optional opaque reference used by the hierarchical parser.  Ordinary
     # lexical candidates leave it empty; a clause interface points at the
     # clause's existing lazy ParseResult instead of copying its derivations.
@@ -53,13 +65,36 @@ class LexicalCandidate:
             "lemma": self.lemma,
             "category": self.category,
             "features": self.features.as_dict(),
-            "sense_id": self.sense_id,
-            "semantic_type": self.semantic_type,
+            "sense_ids": list(self.sense_ids),
             "normalized": self.normalized,
             "source": self.source,
             "score": self.score,
             "provenance": dict(self.provenance),
+            "syntactic_constraints": list(self.syntactic_constraints),
         }
+
+    @property
+    def sense_ids(self) -> tuple[str, ...]:
+        ids = tuple(option.sense_id for option in self.interpretations if option.sense_id)
+        if ids:
+            return ids
+        return ()
+
+    @property
+    def sense_id(self) -> str | None:
+        return self.interpretations[0].sense_id if self.interpretations else None
+
+    def syntactic_signature(self) -> tuple[Any, ...]:
+        """Explicit equivalence key for parser-visible lexical behaviour."""
+        return (
+            self.span_start,
+            self.span_end,
+            self.category,
+            _feature_signature(self.features),
+            self.normalized,
+            self.syntactic_constraints,
+            id(self.interface) if self.interface is not None else None,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,7 +164,13 @@ def _is_closed_class(sense: Any) -> bool:
     return False
 
 
-def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> LexicalLattice:
+def build_lattice(
+    text: str,
+    lexicon: Lexicon,
+    *,
+    multiword_max: int = 4,
+    deduplicate: bool = True,
+) -> LexicalLattice:
     """Build an overlapping lexical lattice from tokens and the lexicon."""
     tokens = tokenize(text)
     candidates: list[LexicalCandidate] = []
@@ -190,7 +231,7 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
                             lemma=base,
                             category="PROPER-NOUN",
                             features=FeatureStructure.build({"number": "singular", "person": "3"}),
-                            semantic_type="PERSON",
+                            interpretations=(LexicalInterpretation(None, base),),
                             normalized=base,
                             source="proper-noun",
                             score=1.25,
@@ -217,7 +258,7 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
                         lemma=token.text,
                         category="PROPER-NOUN",
                         features=FeatureStructure.build({"number": "singular", "person": "3"}),
-                        semantic_type="PERSON" if _looks_like_person_name(token.text) else "REFERENTIAL",
+                        interpretations=(LexicalInterpretation(None, token.text),),
                         normalized=token.text,
                         source="proper-noun",
                         # Names beat ordinary WordNet noun readings (e.g.
@@ -234,7 +275,7 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
                     lemma=token.text,
                     category="NUM",
                     features=FeatureStructure.build({}),
-                    semantic_type="NUMBER",
+                    interpretations=(LexicalInterpretation(None, token.text),),
                     normalized=token.text,
                     source="number",
                     score=0.5,
@@ -262,7 +303,7 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
                         lemma=token.text,
                         category=category,
                         features=FeatureStructure.build(features),
-                        semantic_type="REFERENTIAL",
+                        interpretations=(LexicalInterpretation(None, token.text),),
                         normalized=token.text.lower(),
                         source="unknown",
                         score=score,
@@ -273,6 +314,8 @@ def build_lattice(text: str, lexicon: Lexicon, *, multiword_max: int = 4) -> Lex
 
     kept = filter_lattice_candidates(candidates, tokens)
     kept = _filter_by_position(kept, tokens)
+    if deduplicate:
+        kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(
         text=text,
         tokens=tokens,
@@ -298,6 +341,13 @@ def _candidate_from_sense(
     sense: LexicalSense,
     source: str,
 ) -> LexicalCandidate:
+    constraints = _sense_syntactic_constraints(sense)
+    interpretation = LexicalInterpretation(
+        sense_id=sense.sense_id,
+        lemma=lemma,
+        score=sense.score,
+        provenance=dict(sense.provenance),
+    )
     return LexicalCandidate(
         span_start=span_start,
         span_end=span_end,
@@ -305,13 +355,95 @@ def _candidate_from_sense(
         lemma=lemma,
         category=sense.category,
         features=sense.features,
-        sense_id=sense.sense_id,
-        semantic_type=sense.semantic_type,
         normalized=lemma,
         source=source,
         score=sense.score,
         provenance=dict(sense.provenance),
+        syntactic_constraints=constraints,
+        interpretations=(interpretation,),
     )
+
+
+def _freeze(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return tuple(sorted((str(key), _freeze(child)) for key, child in value.items()))
+    if isinstance(value, (list, tuple)):
+        return tuple(_freeze(child) for child in value)
+    return value
+
+
+def _feature_signature(features: FeatureStructure) -> tuple[Any, ...]:
+    """Hashable signature using already-interned ids (no string conversion)."""
+    def value_key(value: Any) -> Any:
+        if value is TOP:
+            return ("top",)
+        if isinstance(value, Atom):
+            return ("atom", value.symbol)
+        if isinstance(value, Variable):
+            return ("var", value.name)
+        if isinstance(value, Disjunction):
+            return ("or", tuple(value_key(option) for option in value.options))
+        if isinstance(value, FeatureStructure):
+            return _feature_signature(value)
+        return value
+
+    return tuple(sorted((name, value_key(value)) for name, value in features.items()))
+
+
+_SYNTACTIC_CONSTRAINT_CACHE: dict[int, tuple[LexicalSense, tuple[Any, ...]]] = {}
+
+
+def _sense_syntactic_constraints(sense: LexicalSense) -> tuple[Any, ...]:
+    cached = _SYNTACTIC_CONSTRAINT_CACHE.get(id(sense))
+    if cached is not None and cached[0] is sense:
+        return cached[1]
+    frames = []
+    for frame in sense.frames:
+        slots = tuple(
+            (slot.syntactic, slot.optional, _freeze(slot.features.as_dict()))
+            for slot in frame.slots
+        )
+        frames.append(slots)
+    result = (sense.particle, tuple(sorted(frames, key=repr)))
+    _SYNTACTIC_CONSTRAINT_CACHE[id(sense)] = (sense, result)
+    return result
+
+
+def deduplicate_syntactic_candidates(
+    candidates: Sequence[LexicalCandidate],
+) -> list[LexicalCandidate]:
+    """Collapse sense-only duplicates while preserving every interpretation."""
+    grouped: dict[tuple[Any, ...], LexicalCandidate] = {}
+    order: list[tuple[Any, ...]] = []
+    for candidate in candidates:
+        key = candidate.syntactic_signature()
+        previous = grouped.get(key)
+        if previous is None:
+            grouped[key] = candidate
+            order.append(key)
+            continue
+        options = previous.interpretations + tuple(
+            option for option in candidate.interpretations
+            if option.sense_id not in {row.sense_id for row in previous.interpretations}
+        )
+        # The syntax score is one score for this grammatical hypothesis, not
+        # a sum or multiplicity bonus for the number of WordNet senses.
+        grouped[key] = LexicalCandidate(
+            span_start=previous.span_start,
+            span_end=previous.span_end,
+            surface=previous.surface,
+            lemma=previous.lemma,
+            category=previous.category,
+            features=previous.features,
+            normalized=previous.normalized,
+            source=previous.source,
+            score=max(previous.score, candidate.score),
+            provenance={"sources": tuple(filter(None, (previous.provenance, candidate.provenance)))},
+            syntactic_constraints=previous.syntactic_constraints,
+            interpretations=options,
+            interface=previous.interface,
+        )
+    return [grouped[key] for key in order]
 
 
 def _hyphenated_candidates(
@@ -370,12 +502,12 @@ def _hyphenated_candidates(
                         lemma=candidate.lemma,
                         category=candidate.category,
                         features=candidate.features,
-                        sense_id=candidate.sense_id,
-                        semantic_type=candidate.semantic_type,
                         normalized=surface.lower(),
                         source=candidate.source,
                         score=candidate.score - 0.1,
                         provenance=candidate.provenance,
+                        syntactic_constraints=candidate.syntactic_constraints,
+                        interpretations=candidate.interpretations,
                     )
                 yield candidate
 

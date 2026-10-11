@@ -1,8 +1,9 @@
-"""Type DAG: a linguistic constraint ontology, not a world model.
+"""Optional semantic type DAG, loaded outside the syntax path.
 
-Types form a multiple-inheritance hierarchy used to constrain role
-compatibility, filter analyses and score hypotheses. Subtype tests are
-precomputed bitset lookups so ``is_subtype`` is effectively constant time.
+Types form a multiple-inheritance hierarchy available to interpretation and
+discourse clients. They do not filter or score parser hypotheses. Subtype
+tests are precomputed bitset lookups so ``is_subtype`` is effectively
+constant time.
 """
 
 from __future__ import annotations

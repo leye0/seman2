@@ -13,49 +13,54 @@ from .discourse import Mention
 from .features import Atom, FeatureStructure
 
 
-def extract_mentions(item: ChartItem, sentence_index: int, counter: list[int] | None = None) -> list[Mention]:
+def extract_mentions(
+    item: ChartItem,
+    sentence_index: int,
+    counter: list[int] | None = None,
+    *,
+    semantic: Any | None = None,
+) -> list[Mention]:
     """Collect NP-level mentions from one analysis tree."""
     counter = counter if counter is not None else [0]
     found: list[Mention] = []
     if item.category == "NP":
-        found.append(mention_from_item(item, sentence_index, counter))
+        found.append(mention_from_item(item, sentence_index, counter, semantic=semantic))
     for child in item.children:
-        found.extend(extract_mentions(child, sentence_index, counter))
+        found.extend(extract_mentions(child, sentence_index, counter, semantic=semantic))
     return found
 
 
-def extract_event_mentions(item: ChartItem, sentence_index: int, counter: list[int] | None = None) -> list[Mention]:
-    """Event-level mentions (blueprint §19: anaphora to whole situations).
-
-    One event mention per semantic event node, so ``This`` can later refer
-    to a previous clause's event, not only to an object.
-    """
+def extract_event_mentions(
+    item: ChartItem,
+    sentence_index: int,
+    counter: list[int] | None = None,
+    *,
+    semantic: Any | None = None,
+) -> list[Mention]:
+    """Event mentions identified from syntax, before semantic graphs exist."""
     counter = counter if counter is not None else [0]
     found: list[Mention] = []
     seen: set[str] = set()
 
     def walk(node: ChartItem) -> None:
-        node_id = node.semantic.handles.get("event")
-        if node_id and node_id not in seen and node_id in node.semantic.graph.nodes:
-            event_node = node.semantic.graph.nodes[node_id]
-            if event_node.kind == "event":
-                seen.add(node_id)
-                counter[0] += 1
-                found.append(
-                    Mention(
-                        mention_id=f"S{sentence_index}-EVT{counter[0]}",
-                        surface=event_node.surface or _surface(node) or event_node.type_name or "event",
-                        span=event_node.span or (node.start, node.end),
-                        kind="event",
-                        sentence_index=sentence_index,
-                        features=FeatureStructure.empty(),
-                        semantic_type=event_node.type_name,
-                        node_id=node_id,
-                        head_lemma=event_node.attributes.get("lemma") if isinstance(event_node.attributes, dict) else None,
-                        score=node.score,
-                        provenance={"category": node.category, "rule_id": node.rule_id},
-                    )
-                )
+        candidate = node.lexical_candidate
+        node_id = node.syntax.anchors.get("event")
+        if candidate is not None and node_id and node_id not in seen:
+            semantic_node = _matching_node(semantic, node, kind="event")
+            seen.add(node_id)
+            counter[0] += 1
+            found.append(Mention(
+                mention_id=f"S{sentence_index}-EVT{counter[0]}",
+                surface=candidate.surface or _surface(node) or "event",
+                span=(node.start, node.end), kind="event",
+                sentence_index=sentence_index,
+                features=FeatureStructure.empty(),
+                semantic_type=semantic_node.type_name if semantic_node is not None else None,
+                node_id=semantic_node.node_id if semantic_node is not None else node_id,
+                head_lemma=candidate.lemma,
+                score=node.score,
+                provenance={"category": node.category, "rule_id": node.rule_id},
+            ))
         for child in node.children:
             walk(child)
 
@@ -63,13 +68,22 @@ def extract_event_mentions(item: ChartItem, sentence_index: int, counter: list[i
     return found
 
 
-def mention_from_item(item: ChartItem, sentence_index: int, counter: list[int] | None = None) -> Mention:
+def mention_from_item(
+    item: ChartItem,
+    sentence_index: int,
+    counter: list[int] | None = None,
+    *,
+    semantic: Any | None = None,
+) -> Mention:
     counter = counter if counter is not None else [0]
     counter[0] += 1
     mention_id = f"S{sentence_index}-M{counter[0]}"
     kind = classify_kind(item)
-    semantic_type = _semantic_type(item)
-    node_id = item.semantic.handles.get("referent") or item.semantic.handles.get("head")
+    semantic_node = _matching_node(semantic, item, lemma=_head_lemma(item))
+    semantic_type = semantic_node.type_name if semantic_node is not None else _semantic_type(item)
+    node_id = item.syntax.anchors.get("referent") or item.syntax.anchors.get("head")
+    if semantic_node is not None:
+        node_id = semantic_node.node_id
     surface = _surface(item)
     head = _head_lemma(item)
     return Mention(
@@ -156,12 +170,41 @@ def _head_lemma(item: ChartItem) -> str | None:
 
 
 def _semantic_type(item: ChartItem) -> str | None:
-    handles = item.semantic.handles
-    node_id = handles.get("referent") or handles.get("head") or handles.get("event")
-    if node_id and node_id in item.semantic.graph.nodes:
-        return item.semantic.graph.nodes[node_id].type_name
+    anchor = item.syntax.anchors.get("referent") or item.syntax.anchors.get("head")
+    for leaf in _leaves(item):
+        candidate = leaf.lexical_candidate
+        if candidate is not None and anchor in leaf.syntax.anchors.values():
+            return None
     for child in item.children:
         found = _semantic_type(child)
         if found:
             return found
+    return None
+
+
+def _leaves(item: ChartItem):
+    if not item.children:
+        yield item
+    for child in item.children:
+        yield from _leaves(child)
+
+
+def _matching_node(
+    semantic: Any | None,
+    item: ChartItem,
+    *,
+    kind: str | None = None,
+    lemma: str | None = None,
+):
+    if semantic is None:
+        return None
+    nodes = getattr(getattr(semantic, "graph", None), "nodes", {}).values()
+    for node in nodes:
+        if kind is not None and node.kind != kind:
+            continue
+        if node.span is None or not (item.start <= node.span[0] and node.span[1] <= item.end):
+            continue
+        if lemma is not None and node.attributes.get("lemma") != lemma:
+            continue
+        return node
     return None

@@ -34,10 +34,11 @@ class VectorChartTests(unittest.TestCase):
         self.assertGreater(result.stats["kbest_ms"], 0.0)
 
     def test_semantic_roles_survive_delayed_materialization(self) -> None:
-        best = self.parser.parse("John gave Mary the box.").result.best()
+        report = self.parser.parse("John gave Mary the box.")
+        best = report.result.best()
         self.assertIsNotNone(best)
         assert best is not None
-        relations = {edge.relation for edge in best.semantic.graph.relations}
+        relations = {edge.relation for edge in report.interpret(best).graph.relations}
         self.assertIn("RECIPIENT", relations)
         self.assertIn("THEME", relations)
 
@@ -64,12 +65,12 @@ class VectorChartTests(unittest.TestCase):
                 interfaces.append(item)
             agenda.extend(item.children)
         self.assertEqual(len(interfaces), 4)
-        self.assertTrue(all("event" in item.semantic.handles for item in interfaces))
+        self.assertTrue(all("event" in item.syntax.anchors for item in interfaces))
         self.assertEqual(
             sorted((item.start, item.end) for item in interfaces),
             [(0, 25), (27, 57), (59, 100), (106, 169)],
         )
-        relations = [edge.relation for edge in best.semantic.graph.relations]
+        relations = [edge.relation for edge in self.parser.parse(text).interpret(best).graph.relations]
         self.assertEqual(relations.count("CONJUNCT"), 3)
         self.assertIn("TEMPORAL", relations)
         self.assertLess(result.stats["combinations_visited_for_best"], 1_000)
@@ -83,13 +84,14 @@ class VectorChartTests(unittest.TestCase):
         self.assertTrue(result.stats["segmentation_fallback"])
 
     def test_nominal_enumeration_falls_back_to_global_parse(self) -> None:
-        result = self.parser.parse("John bought apples, oranges, and pears.").result
+        report = self.parser.parse("John bought apples, oranges, and pears.")
+        result = report.result
         self.assertTrue(result.completed)
         self.assertNotEqual(result.stats["engine"], "vector-hierarchical-lazy-kbest")
         self.assertTrue(result.stats["segmentation_fallback"])
         best = result.best()
         assert best is not None
-        relations = [edge.relation for edge in best.semantic.graph.relations]
+        relations = [edge.relation for edge in report.interpret(best).graph.relations]
         self.assertGreaterEqual(relations.count("CONJUNCT"), 2)
 
 

@@ -178,7 +178,8 @@ def run_coverage(
                     ok = True
             rule_id = best.rule_id if best else None
             category = best.category if best else None
-            relations = tuple(sorted({e.relation for e in best.semantic.graph.relations})) if best else ()
+            semantic = report.interpret(best) if best else None
+            relations = tuple(sorted({e.relation for e in semantic.graph.relations})) if semantic else ()
             mentions = 0
             if best is not None:
                 from .mentions import extract_event_mentions, extract_mentions

@@ -9,14 +9,14 @@ from itertools import count
 from time import perf_counter
 from typing import Any, Hashable, Sequence
 
-from .chart import ChartItem, PackedNode, ParseResult, Provenance
+from .chart import ChartItem, PackedNode, ParseResult, Provenance, _compose_syntax, _lexical_syntax
 from .features import (
     TOP, Atom, Bindings, Disjunction, FeatureStructure, Variable,
     substitute_structure, unify,
 )
 from .grammar import Grammar, GrammarRule
 from .segmentation import LexicalCandidate, LexicalLattice
-from .semantics import SemanticGraph, SemanticNode, SemanticPackage, apply_action
+from .syntax import SyntacticPackage
 from .symbols import intern
 
 
@@ -99,41 +99,18 @@ class SegmentInterface:
         if rank >= len(alternatives):
             return None
         shifted = _shift_chart_item(alternatives[rank], self.offset)
-        if shifted.category == "CLAUSE" and "event" not in shifted.semantic.handles:
-            handles = dict(shifted.semantic.handles)
-            event_id = next(
-                (
-                    handles[name] for name in ("main", "predicate", "sub")
-                    if name in handles
-                    and handles[name] in shifted.semantic.graph.nodes
-                    and shifted.semantic.graph.nodes[handles[name]].kind == "event"
-                ),
-                None,
-            )
+        if shifted.category == "CLAUSE" and "event" not in shifted.syntax.anchors:
+            handles = dict(shifted.syntax.anchors)
+            event_id = next((handles[name] for name in ("main", "predicate", "sub") if name in handles), None)
             if event_id is None:
-                event_id = next(
-                    (node.node_id for node in shifted.semantic.graph.nodes.values() if node.kind == "event"),
-                    None,
-                )
-            graph = shifted.semantic.graph
-            if event_id is None:
-                # Some permissive internal analyses expose only nominal
-                # handles even though their root is a CLAUSE.  The interface
-                # still needs a stable proposition anchor for coordination;
-                # add one without changing the internal tree or its score.
-                graph = graph.copy()
-                event_id = graph.add_node(
-                    kind="event",
-                    type_name="CLAUSE",
-                    span=(shifted.start, shifted.end),
-                    surface=self.result.text,
-                ).node_id
+                event_id = f"clause:{shifted.start}:{shifted.end}"
             handles["event"] = event_id
             shifted = ChartItem(
                 shifted.start, shifted.end, shifted.category, shifted.features,
-                SemanticPackage(graph, handles), shifted.score,
+                None, shifted.score,
                 shifted.provenance, children=shifted.children,
                 rule_id=shifted.rule_id, bindings=shifted.bindings,
+                syntax=SyntacticPackage(handles, shifted.syntax.links),
                 _sig=shifted.signature(),
             )
         self._items[rank] = shifted
@@ -287,6 +264,9 @@ class VectorGrammar:
 
         stats: dict[str, Any] = {
             "engine": "vector-lazy-kbest",
+            "semantic_graphs": 0,
+            "semantic_operations": 0,
+            "lexical_candidates": len(lattice.candidates),
             "recognition_ms": round(recognition_ms, 4),
             "best_ms": 0.0,
             "kbest_ms": 0.0,
@@ -1086,7 +1066,7 @@ class _LazyMaterializer:
             source = analysis.interface_item
             item = ChartItem(
                 node.start, node.end, node.category, features,
-                source.semantic, analysis.score,
+                None, analysis.score,
                 Provenance("segment-interface", {
                     "children": (source.provenance,),
                     "local_rule_id": source.rule_id,
@@ -1094,33 +1074,24 @@ class _LazyMaterializer:
                 children=(source,),
                 rule_id="segment_interface",
                 bindings=bindings,
+                syntax=source.syntax,
                 _sig=analysis.analysis_id,
             )
             self.item_cache[cache_key] = item
             return item
         if analysis.candidate is not None:
             candidate = analysis.candidate
-            graph = SemanticGraph()
-            kind = "event" if candidate.category.upper().startswith("V") else "entity"
-            semantic_node = graph.add_node(
-                kind=kind,
-                type_name=candidate.semantic_type or candidate.lemma.upper(),
-                span=candidate.span,
-                surface=candidate.surface,
-                lemma=candidate.lemma,
-            )
-            handles = {"head": semantic_node.node_id, "referent": semantic_node.node_id}
-            if kind == "event":
-                handles["event"] = semantic_node.node_id
             item = ChartItem(
                 node.start, node.end, node.category, features,
-                SemanticPackage(graph, handles), analysis.score,
+                None, analysis.score,
                 Provenance(candidate.source, {
                     "surface": candidate.surface,
                     "lemma": candidate.lemma,
                     "sense_id": candidate.sense_id,
                 }),
                 bindings=bindings,
+                syntax=_lexical_syntax(candidate),
+                lexical_candidate=candidate,
                 _sig=analysis.analysis_id,
             )
             self.item_cache[cache_key] = item
@@ -1129,57 +1100,24 @@ class _LazyMaterializer:
         assert analysis.rule_index is not None
         rule = self.compiled.rules[analysis.rule_index].rule
         children = tuple(self._item_for_use(use) for use in analysis.children)
-        aliases: Bindings = dict(bindings)
-        for symbol, child in zip(rule.rhs, children):
-            for child_name, rule_name in symbol.exports.items():
-                resolved = child.semantic.handles.get(child_name)
-                if resolved:
-                    aliases[rule_name] = resolved
-            for name in ("referent", "event", "head"):
-                resolved = child.semantic.handles.get(name)
-                if resolved:
-                    aliases.setdefault(name, resolved)
-        semantic = self._compose(rule, children, aliases)
+        syntax = _compose_syntax(rule, children)
         item = ChartItem(
-            node.start, node.end, node.category, features, semantic, analysis.score,
+            node.start, node.end, node.category, features, None, analysis.score,
             Provenance("rule", {
                 "rule_id": rule.rule_id,
                 "children": tuple(child.provenance for child in children),
             }),
             children=children,
             rule_id=rule.rule_id,
-            bindings=aliases,
+            bindings=bindings,
+            syntax=syntax,
             _sig=analysis.analysis_id,
         )
         self.item_cache[cache_key] = item
         return item
 
-    @staticmethod
-    def _compose(rule: GrammarRule, children: tuple[ChartItem, ...], aliases: Bindings) -> SemanticPackage:
-        child_graphs = [child.semantic.graph for child in children]
-        child_handles = [child.semantic.handles for child in children]
-        handle_aliases = {key: value for key, value in aliases.items() if isinstance(value, str) and value}
-        graph = SemanticGraph.merge_all(child_graphs)
-        if not rule.semantic:
-            handles: dict[str, str] = dict(handle_aliases)
-            for child in children:
-                for key, value in child.semantic.handles.items():
-                    handles.setdefault(key, value)
-            return SemanticPackage(graph, handles)
-        package = SemanticPackage(graph, dict(handle_aliases))
-        for action in rule.semantic:
-            package = apply_action(
-                action,
-                package=package,
-                child_handles=child_handles,
-                child_graphs=child_graphs,
-                aliases=handle_aliases,
-            )
-        return package
-
-
 def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
-    """Translate a local clause tree and its semantic spans to source offsets."""
+    """Translate a local clause tree to source offsets without semantics."""
     if offset == 0:
         return item
     memo: dict[int, ChartItem] = {}
@@ -1189,29 +1127,19 @@ def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
         if cached is not None:
             return cached
         children = tuple(shift(child) for child in current.children)
-        graph = SemanticGraph()
-        for node_id, node in current.semantic.graph.nodes.items():
-            span = None if node.span is None else (node.span[0] + offset, node.span[1] + offset)
-            graph.nodes[node_id] = SemanticNode(
-                node_id=node.node_id,
-                kind=node.kind,
-                type_name=node.type_name,
-                span=span,
-                surface=node.surface,
-                attributes=dict(node.attributes),
-            )
-        graph.relations.extend(current.semantic.graph.relations)
         shifted = ChartItem(
             current.start + offset,
             current.end + offset,
             current.category,
             current.features,
-            SemanticPackage(graph, dict(current.semantic.handles)),
+            None,
             current.score,
             current.provenance,
             children=children,
             rule_id=current.rule_id,
             bindings=dict(current.bindings),
+            syntax=current.syntax,
+            lexical_candidate=current.lexical_candidate,
             _sig=("shift", offset, current.signature()),
         )
         memo[id(current)] = shifted

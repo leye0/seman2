@@ -1,7 +1,7 @@
 """Declarative grammar rules.
 
-A rule is data: RHS pattern, LHS output, feature constraints, variable
-bindings and a semantic composition recipe. The runtime never special-cases
+A rule is data: RHS pattern, LHS output, feature constraints and variable
+bindings. Semantic recipes are loaded separately by ``semantic_rules``. The runtime never special-cases
 a construction; it matches, unifies and expands whatever rules it is given.
 """
 
@@ -14,21 +14,6 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .features import Atom, FeatureStructure, Variable
 from .symbols import intern
-
-
-@dataclass(frozen=True, slots=True)
-class SemanticAction:
-    """One semantic composition step carried by a rule.
-
-    ``kind`` is a generic operation name loaded from data, not a coded
-    construction: ``link``, ``introduce``, ``copy``, ``compose``.
-    """
-
-    kind: str
-    args: Mapping[str, Any] = field(default_factory=dict)
-
-    def as_dict(self) -> dict[str, Any]:
-        return {"kind": self.kind, **dict(self.args)}
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,7 +44,6 @@ class GrammarRule:
     rule_id: str
     rhs: tuple[RuleSymbol, ...]
     lhs: RuleSymbol
-    semantic: tuple[SemanticAction, ...] = ()
     score: float = 0.0
     provenance: Mapping[str, Any] = field(default_factory=dict)
 
@@ -76,7 +60,6 @@ class GrammarRule:
             "id": self.rule_id,
             "rhs": [symbol.as_dict() for symbol in self.rhs],
             "lhs": self.lhs.as_dict(),
-            "semantic": [action.as_dict() for action in self.semantic],
             "score": self.score,
             "provenance": dict(self.provenance),
         }
@@ -130,29 +113,11 @@ def _looks_like_agreement(name: str) -> bool:
     }
 
 
-def _parse_action(raw: Mapping[str, Any]) -> SemanticAction:
-    payload = dict(raw)
-    # Accept both {kind: link, ...} and the blueprint's nested {link: {...}}.
-    if "kind" in payload:
-        kind = str(payload.pop("kind"))
-        return SemanticAction(kind=kind, args=payload)
-    if "op" in payload:
-        kind = str(payload.pop("op"))
-        return SemanticAction(kind=kind, args=payload)
-    if len(payload) == 1:
-        kind, body = next(iter(payload.items()))
-        if isinstance(body, Mapping):
-            return SemanticAction(kind=str(kind), args=dict(body))
-        return SemanticAction(kind=str(kind), args={"value": body})
-    return SemanticAction(kind="copy", args=payload)
-
-
 def parse_rule(raw: Mapping[str, Any]) -> GrammarRule:
     return GrammarRule(
         rule_id=str(raw["id"]),
         rhs=tuple(_parse_symbol(row) for row in raw.get("rhs", ())),
         lhs=_parse_symbol(raw["lhs"]),
-        semantic=tuple(_parse_action(row) for row in raw.get("semantic", ())),
         score=float(raw.get("score", 0.0)),
         provenance=dict(raw.get("provenance", {})),
     )

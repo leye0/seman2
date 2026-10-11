@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
 
-from .grammar import SemanticAction
+from .semantic_rules import SemanticAction
 from .lexicon import LexicalSense, SenseFrame
 
 
@@ -285,3 +285,131 @@ def bind_frame_roles(
             continue
         graph.add_relation(slot.semantic_role, event_id, target)
     return SemanticPackage(graph=graph, handles=package.handles)
+
+
+class SemanticInterpreter:
+    """Rebuild semantic graphs from one already selected syntax tree."""
+
+    def __init__(
+        self,
+        grammar: Any,
+        actions: Mapping[str, Sequence[SemanticAction]] | None = None,
+        lexicon: Any | None = None,
+    ) -> None:
+        self.grammar = grammar
+        self.actions = actions or {}
+        self.lexicon = lexicon
+
+    def interpret(
+        self,
+        item: Any,
+        *,
+        sense_selection: Mapping[str, str] | None = None,
+    ) -> SemanticPackage:
+        """Interpret ``item`` without changing it or its shared forest."""
+        self.sense_selection = sense_selection or {}
+        return self._walk(item)
+
+    def _walk(self, item: Any) -> SemanticPackage:
+        if not item.children:
+            candidate = getattr(item, "lexical_candidate", None)
+            if candidate is None:
+                # Compatibility for externally constructed syntax fixtures.
+                return SemanticPackage(SemanticGraph(), {})
+            graph = SemanticGraph()
+            anchor = item.syntax.anchors.get("head", "")
+            selected_id = self.sense_selection.get(anchor)
+            options = getattr(candidate, "interpretations", ())
+            selected = next(
+                (option for option in options if option.sense_id == selected_id),
+                options[0] if options else None,
+            )
+            lemma = selected.lemma if selected is not None else candidate.lemma
+            sense = self._resolve_sense(selected) if selected is not None else None
+            semantic_type = sense.semantic_type if sense is not None else self._generated_type(candidate)
+            kind = "event" if candidate.category.upper().startswith("V") else "entity"
+            if candidate.category in {"AUX", "AUX-BE", "COPULA", "MODAL"}:
+                kind = "event"
+            node = graph.add_node(
+                kind=kind,
+                type_name=semantic_type or lemma.upper(),
+                span=(item.start, item.end),
+                surface=candidate.surface,
+                lemma=lemma,
+                sense_ids=list(getattr(candidate, "sense_ids", (candidate.sense_id,) if candidate.sense_id else ())),
+            )
+            handles = {"head": node.node_id, "referent": node.node_id}
+            if kind == "event":
+                handles["event"] = node.node_id
+            return SemanticPackage(graph, handles)
+
+        children = tuple(self._walk(child) for child in item.children)
+        if item.rule_id == "segment_interface" and len(children) == 1:
+            package = children[0]
+            if item.category == "CLAUSE" and "event" not in package.handles:
+                graph = package.graph.copy()
+                node = graph.add_node(
+                    kind="event", type_name="CLAUSE",
+                    span=(item.start, item.end), surface=None,
+                )
+                handles = dict(package.handles)
+                handles["event"] = node.node_id
+                return SemanticPackage(graph, handles)
+            return package
+
+        try:
+            rule = self.grammar.by_id(item.rule_id) if item.rule_id else None
+        except KeyError:
+            rule = None
+        child_graphs = [child.graph for child in children]
+        child_handles = [child.handles for child in children]
+        aliases: dict[str, str] = {}
+        if rule is not None:
+            for symbol, package in zip(rule.rhs, children):
+                for child_name, rule_name in symbol.exports.items():
+                    resolved = package.handles.get(child_name)
+                    if resolved:
+                        aliases[rule_name] = resolved
+                for name in ("referent", "event", "head"):
+                    resolved = package.handles.get(name)
+                    if resolved:
+                        aliases.setdefault(name, resolved)
+            if any("head" in symbol.exports.values() for symbol in rule.rhs) and "head" in aliases:
+                aliases["referent"] = aliases["head"]
+        graph = SemanticGraph.merge_all(child_graphs)
+        actions = self.actions.get(rule.rule_id, ()) if rule is not None else ()
+        if not actions:
+            handles = dict(aliases)
+            for package in children:
+                for key, value in package.handles.items():
+                    handles.setdefault(key, value)
+            return SemanticPackage(graph, handles)
+        package = SemanticPackage(graph, dict(aliases))
+        for action in actions:
+            package = apply_action(
+                action,
+                package=package,
+                child_handles=child_handles,
+                child_graphs=child_graphs,
+                aliases=aliases,
+            )
+        return package
+
+    def _resolve_sense(self, reference: Any) -> Any | None:
+        if self.lexicon is None or reference.sense_id is None:
+            return None
+        for entry in self.lexicon.entries_for_lemma(reference.lemma):
+            for sense in entry.senses:
+                if sense.sense_id == reference.sense_id:
+                    return sense
+        return None
+
+    @staticmethod
+    def _generated_type(candidate: Any) -> str | None:
+        if candidate.source == "proper-noun":
+            return "PERSON"
+        if candidate.source == "number":
+            return "NUMBER"
+        if candidate.source == "unknown":
+            return "REFERENTIAL"
+        return None

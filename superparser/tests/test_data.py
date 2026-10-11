@@ -30,7 +30,8 @@ class GrammarTests(unittest.TestCase):
         self.assertEqual(rule.rhs[0].exports.get("referent"), "subject")
         number = rule.rhs[0].features.get("number")
         self.assertIsInstance(number, Variable)
-        self.assertEqual(rule.semantic[0].kind, "link")
+        # Semantic recipes are intentionally absent from syntax rules.
+        self.assertFalse(hasattr(rule, "semantic"))
 
     def test_index_by_first_category(self) -> None:
         grammar = load_grammar_rows(
