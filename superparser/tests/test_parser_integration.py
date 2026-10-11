@@ -101,6 +101,33 @@ class ChartParserTests(unittest.TestCase):
         self.assertIn("rule_id", payload["detail"])
 
 
+class ParserCacheTests(unittest.TestCase):
+    def test_repeated_parse_reuses_complete_result(self) -> None:
+        parser = Parser.from_dir(DATA, cache_size=4)
+        first = parser.parse("John opened the box.")
+        after_first = parser.cache_stats()
+        second = parser.parse("John opened the box.")
+        after_second = parser.cache_stats()
+
+        self.assertIs(second.result, first.result)
+        self.assertEqual(after_first["parse"]["misses"], 1)
+        self.assertEqual(after_first["parse"]["size"], 1)
+        self.assertEqual(after_second["parse"]["hits"], 1)
+
+    def test_hierarchical_result_is_cached_too(self) -> None:
+        parser = Parser.from_dir(DATA, cache_size=4)
+        text = (
+            "Mom worked during the day, Dad worked from home, "
+            "and Eli learned to read."
+        )
+        first = parser.parse(text)
+        self.assertEqual(first.result.stats.get("engine"), "vector-hierarchical-lazy-kbest")
+        second = parser.parse(text)
+
+        self.assertIs(second.result, first.result)
+        self.assertEqual(parser.cache_stats()["parse"]["hits"], 1)
+
+
 class ConstitutionTests(unittest.TestCase):
     """The engine must not encode domain nouns as dispatch."""
 

@@ -87,14 +87,41 @@ def run(data: Path, *, repeats: int, deduplicate: bool) -> list[dict[str, object
     return output
 
 
+def run_cache_hits(data: Path, *, repeats: int) -> list[dict[str, object]]:
+    """Measure repeated identical calls after one populated-cache miss."""
+    output: list[dict[str, object]] = []
+    for text in DEFAULT_TEXTS:
+        parser = Parser.from_dir(data, cache_size=2048)
+        first = parser.parse(text)
+        rows: list[dict[str, float]] = []
+        gc.collect()
+        gc.disable()
+        try:
+            for _ in range(repeats):
+                started = perf_counter()
+                repeated = parser.parse(text)
+                rows.append({"parse_cache_hit_ms": (perf_counter() - started) * 1000})
+        finally:
+            gc.enable()
+        output.append({
+            "text": text,
+            "timings_ms": distribution(rows, "parse_cache_hit_ms"),
+            "same_result": repeated.result is first.result,
+            "cache": parser.cache_stats()["parse"],
+        })
+    return output
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=Path, default=Path(__file__).resolve().parents[1] / "data")
     parser.add_argument("--repeats", type=int, default=15)
+    parser.add_argument("--cache-repeats", type=int, default=2000)
     args = parser.parse_args()
     payload = {
         "syntax_without_deduplication": run(args.data, repeats=args.repeats, deduplicate=False),
         "syntax_with_deduplication": run(args.data, repeats=args.repeats, deduplicate=True),
+        "parse_cache_hits": run_cache_hits(args.data, repeats=args.cache_repeats),
     }
     print(json.dumps(payload, indent=2))
 

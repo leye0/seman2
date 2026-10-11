@@ -184,11 +184,13 @@ class Parser:
         if plan is not None:
             hierarchical = self._parse_hierarchical(text, light_tokens, plan)
             if hierarchical is not None:
+                self._parse_cache.put(cache_key, hierarchical)
                 return ParseReport(result=hierarchical, resources=self.resources)
 
         result = self._parse_vector_text(text)
         if plan is not None and isinstance(result.stats, dict):
             result.stats["segmentation_fallback"] = True
+        self._parse_cache.put(cache_key, result)
         return ParseReport(result=result, resources=self.resources)
 
     def _parse_vector_text(self, text: str) -> ParseResult:

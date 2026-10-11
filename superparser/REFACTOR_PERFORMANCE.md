@@ -42,3 +42,19 @@ structural analyses. Forest node/derivation counts remain unchanged
 lexical candidates by span/category before feature materialization. Further
 speed claims would therefore require optimizing lexical projection or changing
 the k-best stopping contract, not discarding ambiguity.
+
+## Repeated identical parses
+
+The parser previously looked up `_parse_cache` but never inserted a result.
+After adding writes for both hierarchical and normal parsing, 2,000 cache hits
+per sentence produced:
+
+| sentence | miss p50 | hit p50/p90/p95 | p50 speedup |
+|---|---:|---:|---:|
+| John opened the box. | 6.268 ms | 0.001503/0.001523/0.001533 ms | ~4,170× |
+| John gave Mary the box. | 7.694 ms | 0.001533/0.001603/0.001653 ms | ~5,020× |
+| I saw the man with the telescope. | 14.887 ms | 0.001523/0.001573/0.001593 ms | ~9,775× |
+
+Every run recorded 2,000 hits, one miss, one stored entry, and reuse of the
+exact same `ParseResult`. This applies only to repeated normalized text on the
+same `Parser` instance; first-time sentences still pay the full syntax cost.
