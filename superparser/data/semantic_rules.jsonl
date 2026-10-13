@@ -96,6 +96,7 @@
 {"id":"vp_wh_embed","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"wh_clause_subj","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"wh_clause_obj","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"AFFECTED","source":"event","target":"filler"}]}}]}
+{"id":"wh_clause_obj_embedded","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"AFFECTED","source":"event","target":"filler"}]}}]}
 {"id":"vp_whether","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"wh_adj_clause","semantic":[{"copy":{}}]}
 {"id":"vp_np_that","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}

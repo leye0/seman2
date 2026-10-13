@@ -85,3 +85,78 @@ def test_pp_attachment_alternatives_remain_in_shared_forest() -> None:
     }
     assert "vp_pp" in rule_ids
     assert rule_ids & {"np_pp", "np_pp_mod", "np_rel_pp"}
+
+
+def test_passive_adverb_is_not_misread_as_ditransitive_recipient() -> None:
+    best = parser().parse("The machine was inspected yesterday.").result.best()
+    assert best is not None
+    assert best.rule_id == "clause_passive"
+    assert "vp_adv" in rules(best)
+    assert "clause_passive_ditrans" not in rules(best)
+
+
+def test_prepositional_adjunct_beats_spurious_participial_subject() -> None:
+    text = "The children waited near the entrance."
+    best = parser().parse(text).result.best()
+    assert best is not None
+    assert text[best.children[0].start:best.children[0].end] == "The children"
+    assert "vp_pp" in rules(best)
+    assert "pp_prep_np" in rules(best)
+    assert "np_part_ed" not in rules(best)
+
+
+def test_comma_vp_coordination_requires_actual_comma() -> None:
+    coordinated = parser().parse("John sang, danced.").result.best()
+    uncoordinated = parser().parse("John sang near the entrance.").result.best()
+    assert coordinated is not None and uncoordinated is not None
+    assert "vp_comma_coord" in rules(coordinated)
+    assert "vp_comma_coord" not in rules(uncoordinated)
+
+
+def test_legitimate_passive_ditransitive_remains_available() -> None:
+    best = parser().parse("John was given a book.").result.best()
+    assert best is not None
+    assert best.rule_id == "clause_passive_ditrans"
+
+
+def test_temporal_preposition_and_spelled_numbers_keep_their_categories() -> None:
+    text = "Maya counted the minutes until seven forty and decided twelve minutes was plenty."
+    result = parser().parse(text).result
+    best = result.best()
+    assert best is not None
+    leaves = [node.lexical_candidate for node in nodes(best) if node.lexical_candidate]
+    selected = {(leaf.surface.casefold(), leaf.category) for leaf in leaves}
+    assert ("until", "PREP") in selected
+    assert ("twelve", "NUM") in selected
+    assert "np_n_clause" not in rules(best)
+    assert "vp_coord_finite" in rules(best)
+
+
+def test_bare_noun_cannot_absorb_an_ordinary_finite_clause() -> None:
+    best = parser().parse("Twelve minutes was plenty.").result.best()
+    assert best is not None
+    assert "np_n_clause" not in rules(best)
+    assert best.children[0].category == "NP"
+    assert "Twelve minutes" == "Twelve minutes was plenty."[
+        best.children[0].start:best.children[0].end
+    ]
+
+
+def test_embedded_wh_object_keeps_filler_subject_and_predicate_separate() -> None:
+    text = "Laura asked which route David chose."
+    best = parser().parse(text).result.best()
+    assert best is not None
+    assert "vp_wh_embed" in rules(best)
+    assert "wh_clause_obj_embedded" in rules(best)
+    wh_clause = next(
+        node for node in nodes(best) if node.rule_id == "wh_clause_obj_embedded"
+    )
+    assert [text[child.start:child.end] for child in wh_clause.children] == [
+        "which route", "David", "chose",
+    ]
+
+
+def test_direct_wh_subject_question_remains_available() -> None:
+    best = parser().parse("Who arrived?").result.best()
+    assert best is not None
+    assert best.rule_id == "clause_wh_subj"

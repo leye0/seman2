@@ -64,6 +64,18 @@ def _tokens(result: Any) -> list[dict[str, Any]]:
     ]
 
 
+def _best_analysis(item: Any, *, without_tree: bool) -> dict[str, Any]:
+    analysis = item.as_dict()
+    if without_tree:
+        analysis.pop("children", None)
+        provenance = analysis.get("provenance")
+        if isinstance(provenance, dict):
+            detail = provenance.get("detail")
+            if isinstance(detail, dict):
+                detail.pop("children", None)
+    return analysis
+
+
 def export(args: argparse.Namespace) -> dict[str, Any]:
     cases = extract_sentences(args.corpus)
     parser = Parser.from_dir(args.data, cache_size=0)
@@ -71,21 +83,26 @@ def export(args: argparse.Namespace) -> dict[str, Any]:
     signal.signal(signal.SIGALRM, _alarm)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    temporary = args.output.with_suffix(args.output.suffix + ".tmp")
+    temporary = (
+        args.output
+        if args.stream_output
+        else args.output.with_suffix(args.output.suffix + ".tmp")
+    )
     completed = incomplete = timeouts = 0
     errors: list[dict[str, Any]] = []
     durations: list[float] = []
     run_started = perf_counter()
 
-    with temporary.open("w", encoding="utf-8") as stream:
+    with temporary.open("w", encoding="utf-8", buffering=1) as stream:
         metadata = {
             "record_type": "metadata",
-            "format": "seman2-syntax-jsonl-v1",
+            "format": "seman2-syntax-jsonl-v2" if args.without_tree else "seman2-syntax-jsonl-v1",
             "corpus": str(args.corpus),
             "sentence_count": len(cases),
             "timeout_seconds": args.timeout,
             "parse_cache_enabled": False,
             "semantic_interpretation_requested": False,
+            "trees_included": not args.without_tree,
         }
         stream.write(json.dumps(metadata, ensure_ascii=False) + "\n")
 
@@ -129,7 +146,10 @@ def export(args: argparse.Namespace) -> dict[str, Any]:
                             "budget_exceeded",
                         )
                     },
-                    "best_analysis": best.as_dict() if best is not None else None,
+                    "best_analysis": (
+                        _best_analysis(best, without_tree=args.without_tree)
+                        if best is not None else None
+                    ),
                 }
             except SentenceTimeout:
                 signal.setitimer(signal.ITIMER_REAL, 0)
@@ -180,7 +200,8 @@ def export(args: argparse.Namespace) -> dict[str, Any]:
         }
         stream.write(json.dumps(summary, ensure_ascii=False) + "\n")
 
-    os.replace(temporary, args.output)
+    if temporary != args.output:
+        os.replace(temporary, args.output)
     return summary
 
 
@@ -199,6 +220,16 @@ def main() -> None:
         default=root / "output" / "the_map_of_everything_syntax.jsonl",
     )
     argument_parser.add_argument("--timeout", type=float, default=1.0)
+    argument_parser.add_argument(
+        "--without-tree",
+        action="store_true",
+        help="Keep only the selected root analysis; omit recursive children.",
+    )
+    argument_parser.add_argument(
+        "--stream-output",
+        action="store_true",
+        help="Write directly to the destination so progress is externally visible.",
+    )
     args = argument_parser.parse_args()
     summary = export(args)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
