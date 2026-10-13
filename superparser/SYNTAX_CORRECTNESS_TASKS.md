@@ -38,6 +38,24 @@ code correspondant existe et qu'au moins un test ciblé a été exécuté.
   inversion (`which route David chose`) et préserver ses rôles structurels.
 - [x] Normaliser le bonus excessif de `clause_wh_subj` tout en conservant les
   vraies questions sujet (`Who arrived?`).
+- [x] Réserver `clause_list3`/`clause_list4` à l'assemblage hiérarchique de
+  segments déjà validés comme propositions; les énumérations nominales ne
+  peuvent plus fabriquer des propositions à partir d'homographes.
+- [x] Exiger une preuve positive `comparative=true` dans toutes les variantes
+  comparatives concernées (`np_comparative_than`, sa variante avec PP et
+  `adjp_comparative`).
+- [x] Exiger une vraie preuve de lacune prépositionnelle pour
+  `np_rel_pp_strand`, plutôt que toute proposition compatible par défaut.
+- [x] Empêcher `np_part_ed_obj` d'absorber un triplet sujet-verbe-objet actif;
+  la variante participiale avec objet exige désormais une valence
+  ditransitive attestée.
+- [x] Propager `vform` avec `voice` à travers les ajouts de PP et d'adverbes,
+  afin qu'un participe nu ne devienne pas fini et qu'un vrai passif modifié
+  conserve sa preuve grammaticale.
+- [ ] Représenter explicitement la valence lexicale des contrôles à infinitif
+  nu (`help her remember`, perception/causatif) sans autoriser ce patron à
+  tous les verbes. En attendant, certains cas sont signalés incomplets plutôt
+  que réparés par une fausse relative ou participiale.
 - [ ] Auditer les autres changements de catégorie et règles de complément
   universelles dans la longue traîne de la grammaire.
 
@@ -103,3 +121,21 @@ code correspondant existe et qu'au moins un test ciblé a été exécuté.
 - [ ] Créer `SYNTAX_CORRECTNESS_AUDIT.md`.
 - [ ] Créer `SYNTAX_CORRECTNESS_RESULTS.md`.
 - [ ] Documenter les limitations résiduelles et la prochaine passe.
+
+## Extraction k-best
+
+- [x] Corriger l'incohérence entre la clé de contexte enregistrée par `get()`
+  et celle recherchée par `_push_rule()`; `required_ids` fait désormais partie
+  des deux clés et de la mémoïsation des continuations épuisées.
+- [x] Rendre les bornes lexicales conscientes des preuves positives
+  `requires` sans exclure les dérivations potentiellement valides.
+- [x] Écarter des bornes les règles dont le LHS ne peut ni affirmer ni
+  propager la preuve exigée, selon la même logique que `_rule_evidence`.
+- [x] Ne pas insérer dans la file k-best les dérivations ou chemins dont la
+  borne contrainte vaut `-inf`; cela rend immédiatement les flux à preuve
+  impossible épuisés au lieu d'énumérer leurs combinaisons.
+- [x] Comparer `RULE_COST` à 0.5, 1.0, 1.5 et 2.0 sur les trois sentinelles;
+  conserver 2.0 puisque le coût cesse d'être déterminant après correction
+  des bornes et préserve la politique de classement actuelle.
+- [x] Ajouter un test de non-régression imposant moins de 100 combinaisons sur
+  les deux sentinelles explosives (`8` et `29` observées).

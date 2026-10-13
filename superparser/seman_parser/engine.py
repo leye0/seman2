@@ -147,7 +147,6 @@ class Parser:
         self._parse_cache: LRU[tuple[str, str], ParseResult] = LRU(cache_size)
         # Grammar masks and transition indexes are immutable and shared by
         # every sentence parsed by this instance.
-        self._vector_grammar = VectorGrammar(resources.grammar)
         # The upper layer is deliberately only the coordination fragment of
         # the same declarative grammar.  This prevents permissive NP/quote
         # conversions from reinterpreting clause interfaces as appositions.
@@ -159,12 +158,36 @@ class Parser:
             and all(symbol.category in interface_categories for symbol in rule.rhs)
         )
         self._assembly_vector_grammar = VectorGrammar(Grammar(assembly_rules))
+        # Three/four-clause list rules are valid only after `_clause_plan`
+        # has independently established clause-shaped segments.  Leaving
+        # them in the unrestricted grammar lets comma-delimited NP/VP lists
+        # manufacture finite clauses from lexical homographs (for example
+        # ``a short name`` => subject + verb).  Ordinary binary coordination
+        # remains available in the main grammar.
+        hierarchical_only = {"clause_list3", "clause_list4"}
+        syntax_rules = tuple(
+            rule for rule in resources.grammar
+            if rule.rule_id not in hierarchical_only
+        )
+        self._vector_grammar = VectorGrammar(Grammar(syntax_rules))
         # Derived solely from the static function-word inventory.  Looking
         # for an early boundary must never wake WordNet up.
         self._coord_surfaces = frozenset(
             surface.casefold()
             for entry in resources.lexicon.entries
             if any(sense.category == "COORD" for sense in entry.senses)
+            for surface in entry.surfaces
+        )
+        self._clause_subject_surfaces = frozenset(
+            surface.casefold()
+            for entry in resources.lexicon.entries
+            if any(sense.category in {"PRONOUN", "EXPL"} for sense in entry.senses)
+            for surface in entry.surfaces
+        )
+        self._determiner_surfaces = frozenset(
+            surface.casefold()
+            for entry in resources.lexicon.entries
+            if any(sense.category in {"DET", "POSS"} for sense in entry.senses)
             for surface in entry.surfaces
         )
 
@@ -248,6 +271,22 @@ class Parser:
         spans.append((tokens[cursor].start, tokens[last].end))
         if any(not text[start:end].strip() for start, end in spans):
             return None
+        tokens_by_start = {token.start: token for token in tokens}
+        for start, _end in spans[1:]:
+            first = tokens_by_start.get(start)
+            if first is None:
+                return None
+            surface = first.text.casefold()
+            # This fast path is an optimization for explicit clause lists,
+            # not a license to promote NP/VP enumeration members to clauses.
+            # Ambiguous starts safely fall back to the full shared forest.
+            if surface in self._determiner_surfaces:
+                return None
+            if (
+                surface not in self._clause_subject_surfaces
+                and not first.text[:1].isupper()
+            ):
+                return None
         return tuple(spans), tuple(separators)
 
     def _parse_hierarchical(

@@ -390,7 +390,11 @@ def _apply_lexical_priors(
         score = candidate.score
         if candidate.category in open_class and candidate.provenance.get("source") == "wordnet":
             if any(peer.category in closed and peer.source == "lexicon" for peer in peers):
-                score -= 0.6
+                # Preserve true homographs, but a WordNet open-class sense of
+                # a known function word (there=N, that=N, can=N) must not beat
+                # the explicit grammatical inventory merely because a
+                # shallower tree can consume it.
+                score -= 1.5
         if candidate.category == "PROPER-NOUN" and candidate.span_start == first_word_start:
             written = candidate.surface.casefold()
             morphologically_common = any(
@@ -497,10 +501,23 @@ def _project_syntactic_features(sense: LexicalSense) -> FeatureStructure:
     if sense.category != "V" or not sense.frames:
         return sense.features
     valencies: list[str] = []
-    frame_ids = {frame.frame_id.rsplit("-", 1)[-1] for frame in sense.frames}
     for frame in sense.frames:
         slots = {slot.syntactic for slot in frame.required_slots()}
-        if "prep_object" in slots and "object" in slots:
+        if "bare_inf" in slots and "object" in slots:
+            valency = "bare_control"
+        elif "to_inf" in slots and "object" in slots:
+            valency = "object_control"
+        elif "bare_inf" in slots:
+            valency = "bare_complement"
+        elif "to_inf" in slots:
+            valency = "subject_control"
+        elif "whether_inf" in slots:
+            valency = "whether_clausal"
+        elif "gerund" in slots and "object" in slots:
+            valency = "object_gerund_control"
+        elif "gerund" in slots:
+            valency = "gerund_complement"
+        elif "prep_object" in slots and "object" in slots:
             valency = "prep_ditransitive"
         elif "predicate" in slots and "object" in slots:
             valency = "complex_transitive"
@@ -512,15 +529,12 @@ def _project_syntactic_features(sense: LexicalSense) -> FeatureStructure:
             valency = "ditransitive"
         elif "object" in slots:
             valency = "transitive"
+        elif "prep_object" in slots:
+            valency = "prepositional"
         else:
             valency = "intransitive"
         if valency not in valencies:
             valencies.append(valency)
-    # WordNet sometimes expresses the two realizations of the same transfer
-    # alternation as separate frames: person object (9) and theme-to-person
-    # (15), without repeating the double-object frame 14.
-    if {"9", "15"}.issubset(frame_ids) and "ditransitive" not in valencies:
-        valencies.append("ditransitive")
     if not valencies:
         return sense.features
     value: object = valencies[0] if len(valencies) == 1 else valencies

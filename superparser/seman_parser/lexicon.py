@@ -190,14 +190,18 @@ class Lexicon:
             return cached
         static = list(self._by_lemma.get(lemma, ()))
         built: list[LexicalEntry] = list(static)
+        blockers = [
+            entry for entry in static
+            if not entry.provenance.get("merge_wordnet", False)
+        ]
         if self._wordnet is not None:
             for entry in self._wordnet_entries(lemma):
                 # Don't duplicate a static entry with the same POS.
                 pos = entry.provenance.get("pos")
-                if any(s.provenance.get("pos") == pos for s in static):
+                if any(s.provenance.get("pos") == pos for s in blockers):
                     continue
                 if any(s.lemma == entry.lemma and s.senses and entry.senses
-                       and s.senses[0].category == entry.senses[0].category for s in static):
+                       and s.senses[0].category == entry.senses[0].category for s in blockers):
                     continue
                 built.append(entry)
                 self._index(entry)
@@ -311,6 +315,12 @@ class Lexicon:
                     candidates.append(stem[:-1])
                 if tag == "ed" and stem.endswith("i"):
                     candidates.append(stem[:-1] + "y")
+                if tag == "s" and lowered.endswith("ies"):
+                    candidates.append(lowered[:-3] + "y")
+                if tag == "s" and lowered.endswith("es"):
+                    # buses -> bus, boxes -> box, wishes -> wish.  The
+                    # ordinary one-letter candidate still covers uses -> use.
+                    candidates.append(lowered[:-2])
                 for candidate in candidates:
                     if candidate == lowered:
                         continue

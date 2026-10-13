@@ -165,6 +165,34 @@ def _rule_evidence(
     return frozenset(evidence)
 
 
+def _rule_may_provide_evidence(
+    rule: GrammarRule,
+    required_features: frozenset[int] | set[int],
+) -> bool:
+    """Return whether a rule can possibly establish every required feature.
+
+    This is the static counterpart of :func:`_rule_evidence`.  It deliberately
+    remains optimistic when evidence can be propagated from a child, keeping
+    the hint admissible while excluding rules whose LHS cannot establish the
+    requested proof at all.
+    """
+    lhs_features = dict(rule.lhs.features.items())
+    for required in required_features:
+        value = lhs_features.get(required, TOP)
+        if value is TOP:
+            return False
+        if not isinstance(value, Variable):
+            continue
+        if not any(
+            isinstance(rhs_value, Variable)
+            and rhs_value.name == value.name
+            for symbol in rule.rhs
+            for _rhs_name, rhs_value in symbol.features.items()
+        ):
+            return False
+    return True
+
+
 def _value_key(value: object) -> Hashable:
     if value is TOP:
         return ("top",)
@@ -187,6 +215,20 @@ def _feature_key(features: FeatureStructure) -> Hashable:
 
 def _bindings_key(bindings: Bindings) -> Hashable:
     return tuple(sorted((name, _value_key(value)) for name, value in bindings.items()))
+
+
+def _required_feature_ids(features: Sequence[str | int]) -> tuple[int, ...]:
+    return tuple(sorted(
+        intern(name) if isinstance(name, str) else name for name in features
+    ))
+
+
+def _context_key(
+    constraint: FeatureStructure,
+    bindings: Bindings,
+    required_ids: tuple[int, ...],
+) -> Hashable:
+    return (_feature_key(constraint), _bindings_key(bindings), required_ids)
 
 
 def _variable_names(value: object) -> set[str]:
@@ -553,12 +595,11 @@ class _NodeState:
 class _LazyMaterializer:
     """Demand-driven k-best extraction with feature-aware failure recovery."""
 
-    # Grammar scores are preferences relative to an ordinary construction,
-    # not a reward paid once for every node in the tree.  Most core rules in
-    # the shipped grammar have weight 2.0, so using that value as the neutral
-    # construction cost removes the former bias toward needlessly deep trees.
-    # Rules above 2.0 remain preferred; exceptional/conversion rules below it
-    # must earn their place through lexical and structural evidence.
+    # A non-positive cycle contribution is required by the lazy k-best
+    # search.  Productive ordinary rules carry score 2.0 and are therefore
+    # depth-neutral; marked category conversions stay below this baseline.
+    # This prevents both unlimited profitable cycles and a blanket preference
+    # for shallower, grammatically incoherent trees.
     RULE_COST = 2.0
 
     def __init__(self, compiled: VectorGrammar, forest: _VectorForest) -> None:
@@ -588,7 +629,9 @@ class _LazyMaterializer:
         self.combinations_visited = 0
         self._node_hints: dict[int, float] = {}
         self._partial_hints: dict[int, float] = {}
-        self._constrained_node_hints: dict[tuple[int, Hashable], float] = {}
+        self._constrained_node_hints: dict[
+            tuple[int, Hashable, tuple[int, ...]], float
+        ] = {}
         self._constrained_partial_hints: dict[int, float] = {}
         self._hint_nodes_active: set[int] = set()
         self._hint_partials_active: set[int] = set()
@@ -623,13 +666,11 @@ class _LazyMaterializer:
         required_features: Sequence[str | int] = (),
     ) -> CompactAnalysis | None:
         required = constraint if constraint is not None else FeatureStructure.empty()
-        required_ids = tuple(sorted(
-            intern(name) if isinstance(name, str) else name for name in required_features
-        ))
+        required_ids = _required_feature_ids(required_features)
         inherited = dict(bindings or {})
         projected, relevant_names = _project_bindings(required, inherited)
         self.projected_bindings += len(inherited) - len(projected)
-        context_key = (_feature_key(required), _bindings_key(projected), required_ids)
+        context_key = _context_key(required, projected, required_ids)
         if len(projected) != len(inherited) and (node_id, context_key) in self.node_states:
             self.projected_context_cache_hits += 1
         active_key = (node_id, context_key)
@@ -791,14 +832,24 @@ class _LazyMaterializer:
                     ))
             else:
                 rule = self.compiled.rules[derivation.rule_index].rule
+                # A positive-evidence requirement is stronger than ordinary
+                # open-world unification.  Do not enqueue a derivation whose
+                # rule cannot possibly establish the requested evidence: an
+                # ``-inf`` hint left in the heap would eventually be explored
+                # and can make an impossible constrained stream enumerate a
+                # combinatorial number of children before reporting failure.
+                if state.required_features and not _rule_may_provide_evidence(
+                    rule, set(state.required_features),
+                ):
+                    continue
                 self.unification_attempts += 1
                 if unify(state.constraint, rule.lhs.features, state.bindings) is None:
                     self.unification_rejections += 1
                     continue
-                bound = (
-                    self._constrained_partial_hint(derivation.partial_id)
-                    + rule.score - self.RULE_COST
-                )
+                partial_bound = self._constrained_partial_hint(derivation.partial_id)
+                if partial_bound == float("-inf"):
+                    continue
+                bound = partial_bound + rule.score - self.RULE_COST
                 heappush(state.heap, (
                     -bound, next(self._serial), "rule_seed", (derivation_index, 0, ()),
                 ))
@@ -857,11 +908,17 @@ class _LazyMaterializer:
             )
             if child is None:
                 child_bindings, _ = _project_bindings(child_constraint, env)
-                child_context = (_feature_key(child_constraint), _bindings_key(child_bindings))
+                child_required_ids = _required_feature_ids(
+                    rule.rhs[index].requires
+                )
+                child_context = _context_key(
+                    child_constraint, child_bindings, child_required_ids,
+                )
                 child_state = self.node_states.get((child_id, child_context))
                 failure_key = (
                     derivation.rule_index, index, child_id,
                     _feature_key(child_constraint), _bindings_key(child_bindings),
+                    child_required_ids,
                 )
                 # Only memoize a genuinely exhausted constrained stream.  A
                 # transient exact-context cycle also returns None, but may
@@ -908,7 +965,9 @@ class _LazyMaterializer:
     def _rule_bound(self, path: tuple[int, ...], rule: GrammarRule) -> float:
         return (
             sum(
-                self._constrained_node_hint(child_id, symbol.features)
+                self._constrained_node_hint(
+                    child_id, symbol.features, symbol.requires,
+                )
                 for child_id, symbol in zip(path, rule.rhs)
             )
             + rule.score - self.RULE_COST
@@ -947,9 +1006,12 @@ class _LazyMaterializer:
             return
         derivation = partial.derivations[derivation_index]
         rule = self.compiled.rules[partial.rule_index].rule
+        symbol = rule.rhs[partial.dot - 1]
         child_bound = self._constrained_node_hint(
-            derivation.child_id, rule.rhs[partial.dot - 1].features,
+            derivation.child_id, symbol.features, symbol.requires,
         )
+        if child_bound == float("-inf"):
+            return
         if derivation.previous_id is None:
             if previous_rank:
                 return
@@ -1013,8 +1075,11 @@ class _LazyMaterializer:
         self,
         node_id: int,
         constraint: FeatureStructure,
+        required_features: Sequence[str | int] = (),
     ) -> float:
-        key = (node_id, _feature_key(constraint))
+        required_ids = _required_feature_ids(required_features)
+        required_set = set(required_ids)
+        key = (node_id, _feature_key(constraint), required_ids)
         cached = self._constrained_node_hints.get(key)
         if cached is not None:
             return cached
@@ -1025,6 +1090,13 @@ class _LazyMaterializer:
         for derivation in self.forest.nodes[node_id].derivations:
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
+                    if (
+                        not isinstance(candidate.interface, SegmentInterface)
+                        and not required_set.issubset(
+                            _feature_evidence(candidate.features)
+                        )
+                    ):
+                        continue
                     self.hint_unification_attempts += 1
                     if self._hint_compatible(constraint, candidate.features):
                         best = max(best, candidate.score)
@@ -1032,6 +1104,10 @@ class _LazyMaterializer:
                         self.hint_unification_rejections += 1
             else:
                 rule = self.compiled.rules[derivation.rule_index].rule
+                if required_set and not _rule_may_provide_evidence(
+                    rule, required_set,
+                ):
+                    continue
                 self.hint_unification_attempts += 1
                 if not self._hint_compatible(constraint, rule.lhs.features):
                     self.hint_unification_rejections += 1
@@ -1057,7 +1133,9 @@ class _LazyMaterializer:
         symbol = rule.rhs[partial.dot - 1]
         best = float("-inf")
         for derivation in partial.derivations:
-            child = self._constrained_node_hint(derivation.child_id, symbol.features)
+            child = self._constrained_node_hint(
+                derivation.child_id, symbol.features, symbol.requires,
+            )
             if derivation.previous_id is None:
                 score = child
             else:

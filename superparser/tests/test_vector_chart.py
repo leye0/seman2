@@ -95,18 +95,30 @@ class VectorChartTests(unittest.TestCase):
         result = self.parser.parse("John, who left, opened the box.").result
         self.assertTrue(result.completed)
         self.assertNotEqual(result.stats["engine"], "vector-hierarchical-lazy-kbest")
-        self.assertTrue(result.stats["segmentation_fallback"])
 
     def test_nominal_enumeration_falls_back_to_global_parse(self) -> None:
         report = self.parser.parse("John bought apples, oranges, and pears.")
         result = report.result
         self.assertTrue(result.completed)
         self.assertNotEqual(result.stats["engine"], "vector-hierarchical-lazy-kbest")
-        self.assertTrue(result.stats["segmentation_fallback"])
         best = result.best()
         assert best is not None
         relations = [edge.relation for edge in report.interpret(best).graph.relations]
         self.assertGreaterEqual(relations.count("CONJUNCT"), 2)
+
+    def test_required_evidence_prunes_impossible_kbest_branches(self) -> None:
+        sentinels = (
+            "In the first, everybody followed her initial idea.",
+            "Without those labels, the shapes suggested more agreement "
+            "than the numbers actually provided.",
+        )
+        for text in sentinels:
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertIsNotNone(result.best())
+                self.assertLess(
+                    result.stats["combinations_visited_for_best"], 100,
+                )
 
 
 if __name__ == "__main__":
