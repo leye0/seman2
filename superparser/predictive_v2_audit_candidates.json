@@ -1,0 +1,569 @@
+{
+  "format": "seman2-predictive-v2-plausibility-audit-v1",
+  "selection": "15 lowest normalized F1 plus deterministic spread of remaining divergences",
+  "total_divergences": 116,
+  "cases": [
+    {
+      "id": "SEM-GOLD-228",
+      "text": "The dress Lena bought fit.",
+      "f1": 0.3,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"dress\"), RELCLAUSE(CLAUSE(NP(PROPN(\"Lena\")), VP(V(\"bought\"))))), VP(V(\"fit\")))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), ADJ(\"dress\"), N(\"Lena\")), VP(V(\"bought\"), NP(N(\"fit\"))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_adj_n",
+        "vp_transitive",
+        "np_bare"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-071",
+      "text": "The girl did not answer.",
+      "f1": 0.625,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"girl\")), VP(AUX(\"did\"), PART(\"not\"), V(\"answer\")))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"girl\")), AUX(\"did\")), ADVP(ADV(\"not\"), N(\"answer\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_aux_ellipsis",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-072",
+      "text": "The driver did not stop.",
+      "f1": 0.625,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"driver\")), VP(AUX(\"did\"), PART(\"not\"), V(\"stop\")))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"driver\")), AUX(\"did\")), ADVP(ADV(\"not\"), N(\"stop\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_aux_ellipsis",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-074",
+      "text": "The child did not leave.",
+      "f1": 0.625,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"child\")), VP(AUX(\"did\"), PART(\"not\"), V(\"leave\")))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"child\")), AUX(\"did\")), ADVP(ADV(\"not\"), N(\"leave\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_aux_ellipsis",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-075",
+      "text": "The manager did not reply.",
+      "f1": 0.625,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"manager\")), VP(AUX(\"did\"), PART(\"not\"), V(\"reply\")))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"manager\")), AUX(\"did\")), ADVP(ADV(\"not\"), N(\"reply\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_aux_ellipsis",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-201",
+      "text": "The child counted cats, dogs, and birds.",
+      "f1": 0.625,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"child\")), VP(V(\"counted\"), NP-LIST(NP(N(\"cats\")), PUNCT(\",\"), NP(N(\"dogs\")), PUNCT(\",\"), CCONJ(\"and\"), NP(N(\"birds\")))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"child\")), VP(VP(V(\"counted\"), NP(N(\"cats\"))), COMMA(\",\"), VP(V(\"dogs\")), COMMA(\",\"), COORD(\"and\"), VP(V(\"birds\"))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_list3",
+        "vp_transitive",
+        "np_bare",
+        "vp_intransitive",
+        "vp_intransitive"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-205",
+      "text": "The farmer stored hay, grain, and seeds.",
+      "f1": 0.625,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"farmer\")), VP(V(\"stored\"), NP-LIST(NP(N(\"hay\")), PUNCT(\",\"), NP(N(\"grain\")), PUNCT(\",\"), CCONJ(\"and\"), NP(N(\"seeds\")))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"farmer\")), VP(VP(V(\"stored\"), NP(N(\"hay\"))), COMMA(\",\"), VP(V(\"grain\")), COMMA(\",\"), COORD(\"and\"), VP(V(\"seeds\"))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_list3",
+        "vp_transitive",
+        "np_bare",
+        "vp_intransitive",
+        "vp_intransitive"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-092",
+      "text": "The student finished the homework before dinner.",
+      "f1": 0.692308,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"student\")), VP(V(\"finished\"), NP(DET(\"the\"), N(\"homework\")), PP(ADP(\"before\"), NP(N(\"dinner\")))))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"student\")), VP(V(\"finished\"), NP(DET(\"the\"), N(\"homework\")))), ADVP(ADV(\"before\"), N(\"dinner\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-097",
+      "text": "The chef served the soup before noon.",
+      "f1": 0.692308,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"chef\")), VP(V(\"served\"), NP(DET(\"the\"), N(\"soup\")), PP(ADP(\"before\"), NP(N(\"noon\")))))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"chef\")), VP(V(\"served\"), NP(DET(\"the\"), N(\"soup\")))), ADVP(ADV(\"before\"), N(\"noon\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-099",
+      "text": "The nurse read the chart at dawn.",
+      "f1": 0.692308,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"nurse\")), VP(V(\"read\"), NP(DET(\"the\"), N(\"chart\")), PP(ADP(\"at\"), NP(N(\"dawn\")))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"nurse\")), VP(V(\"read\"), NP(DET(\"the\"), N(N(N(\"chart\"), N(\"at\")), N(\"dawn\")))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "n_compound",
+        "n_compound"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-264",
+      "text": "The driver's license was valid.",
+      "f1": 0.705882,
+      "gold": "CLAUSE(NP(NP(DET(\"The\"), N(\"driver\"), PART(\"'s\")), N(\"license\")), VP(AUX(\"was\"), ADJP(ADJ(\"valid\"))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"driver's license\")), VP(COPULA(\"was\"), ADJ(\"valid\")))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_copula_adj"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-042",
+      "text": "The father sent the daughter a letter.",
+      "f1": 0.72,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"father\")), VP(V(\"sent\"), NP(DET(\"the\"), N(\"daughter\")), NP(DET(\"a\"), N(\"letter\"))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"father\")), VP(V(\"sent\"), NP(DET(\"the\"), N(N(N(\"daughter\"), N(\"a\")), N(\"letter\")))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "n_compound",
+        "n_compound"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-043",
+      "text": "The coach offered the team a break.",
+      "f1": 0.72,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"coach\")), VP(V(\"offered\"), NP(DET(\"the\"), N(\"team\")), NP(DET(\"a\"), N(\"break\"))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"coach\")), VP(V(\"offered\"), NP(DET(\"the\"), N(N(N(\"team\"), N(\"a\")), N(\"break\")))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "n_compound",
+        "n_compound"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-044",
+      "text": "The librarian handed the visitor a map.",
+      "f1": 0.72,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"librarian\")), VP(V(\"handed\"), NP(DET(\"the\"), N(\"visitor\")), NP(DET(\"a\"), N(\"map\"))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"librarian\")), VP(V(\"handed\"), NP(DET(\"the\"), N(N(N(\"visitor\"), N(\"a\")), N(\"map\")))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "n_compound",
+        "n_compound"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-109",
+      "text": "Elias learned that the bridge was closed.",
+      "f1": 0.72,
+      "gold": "CLAUSE(NP(PROPN(\"Elias\")), VP(V(\"learned\"), SBAR(SCONJ(\"that\"), CLAUSE(NP(DET(\"the\"), N(\"bridge\")), VP(AUX(\"was\"), ADJP(ADJ(\"closed\")))))))",
+      "predictive": "CLAUSE(NP(NP(PROPER-NOUN(\"Elias\")), V(\"learned\"), NP(DET(\"that\"), DET(\"the\"), N(\"bridge\"))), VP(COPULA(\"was\"), ADJ(\"closed\")))",
+      "rules": [
+        "clause_np_vp",
+        "np_part_ed_obj",
+        "np_proper",
+        "np_det_det_n",
+        "vp_copula_adj"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-216",
+      "text": "The teacher finished the report in the morning before lunch.",
+      "f1": 0.722222,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"teacher\")), VP(V(\"finished\"), NP(DET(\"the\"), N(\"report\")), PP(ADP(\"in\"), NP(DET(\"the\"), N(\"morning\"))), PP(ADP(\"before\"), NP(N(\"lunch\")))))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"teacher\")), VP(V(\"finished\"), NP(NP(DET(\"the\"), N(\"report\")), PP(PREP(\"in\"), NP(DET(\"the\"), N(\"morning\")))))), ADVP(ADV(\"before\"), N(\"lunch\")))",
+      "rules": [
+        "clause_adv_adjunct",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_pp_mod",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n",
+        "advp_adv_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-136",
+      "text": "The film that Leo watched ended.",
+      "f1": 0.8,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"film\"), RELCLAUSE(REL(\"that\"), CLAUSE(NP(PROPN(\"Leo\")), VP(V(\"watched\"))))), VP(V(\"ended\")))",
+      "predictive": "CLAUSE(NP(NP(DET(\"The\"), N(\"film\")), COMP-THAT(\"that\"), CLAUSE(NP(PROPER-NOUN(\"Leo\")), VP(V(\"watched\")))), VP(V(\"ended\")))",
+      "rules": [
+        "clause_np_vp",
+        "np_comp_clause",
+        "np_det_n",
+        "clause_np_vp",
+        "np_proper",
+        "vp_intransitive",
+        "vp_intransitive"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-297",
+      "text": "Theo packed the supplies inside the truck before the meeting, because the storm arrived without warning.",
+      "f1": 0.806452,
+      "gold": "CLAUSE(NP(PROPN(\"Theo\")), VP(V(\"packed\"), NP(DET(\"the\"), N(\"supplies\")), PP(ADP(\"inside\"), NP(DET(\"the\"), N(\"truck\"))), PP(ADP(\"before\"), NP(DET(\"the\"), N(\"meeting\")))), PUNCT(\",\"), SBAR(SCONJ(\"because\"), CLAUSE(NP(DET(\"the\"), N(\"storm\")), VP(V(\"arrived\"), PP(ADP(\"without\"), NP(N(\"warning\")))))))",
+      "predictive": "CLAUSE(CLAUSE(NP(NP(NP(PROPER-NOUN(\"Theo\")), V(\"packed\")), DET(\"the\")), VP(V(\"supplies\"), PP(PREP(\"inside\"), NP(NP(DET(\"the\"), N(\"truck\")), PP(PREP(\"before\"), NP(DET(\"the\"), N(\"meeting\"))))))), COMMA(\",\"), CONJ(\"because\"), CLAUSE(NP(DET(\"the\"), N(\"storm\")), VP(V(\"arrived\"), PP(PREP(\"without\"), NP(N(\"warning\"))))))",
+      "rules": [
+        "clause_comma_sub",
+        "clause_np_vp",
+        "np_det_post",
+        "np_part_ed",
+        "np_proper",
+        "vp_prepositional",
+        "pp_prep_np",
+        "np_pp_mod",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_prepositional",
+        "pp_prep_np",
+        "np_bare"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-180",
+      "text": "The student brought pens and notebooks.",
+      "f1": 0.833333,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"student\")), VP(V(\"brought\"), NP-COORD(NP(N(\"pens\")), CCONJ(\"and\"), NP(N(\"notebooks\")))))",
+      "predictive": "CLAUSE(CLAUSE(NP(DET(\"The\"), N(\"student\")), VP(V(\"brought\"), NP(N(\"pens\")))), COORD(\"and\"), NP(N(\"notebooks\")))",
+      "rules": [
+        "clause_gapping_np",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_bare",
+        "np_bare"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-291",
+      "text": "After the teacher explained the lesson, Maya understood why the answer was wrong.",
+      "f1": 0.84,
+      "gold": "CLAUSE(SBAR(SCONJ(\"After\"), CLAUSE(NP(DET(\"the\"), N(\"teacher\")), VP(V(\"explained\"), NP(DET(\"the\"), N(\"lesson\"))))), PUNCT(\",\"), NP(PROPN(\"Maya\")), VP(V(\"understood\"), WH-CLAUSE(ADV(\"why\"), CLAUSE(NP(DET(\"the\"), N(\"answer\")), VP(AUX(\"was\"), ADJP(ADJ(\"wrong\")))))))",
+      "predictive": "CLAUSE(CONJ(\"After\"), CLAUSE(NP(DET(\"the\"), N(\"teacher\")), VP(V(\"explained\"), NP(DET(\"the\"), N(\"lesson\")))), COMMA(\",\"), CLAUSE(NP(PROPER-NOUN(\"Maya\")), VP(VP(V(\"understood\"), WH-CLAUSE(WH-NOM(\"why\"), CLAUSE(NP(DET(\"the\"), N(\"answer\")), AUX-BE(\"was\")))), ADV(\"wrong\"))))",
+      "rules": [
+        "clause_cond",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_det_n",
+        "clause_np_vp",
+        "np_proper",
+        "vp_adv",
+        "vp_wh_embed",
+        "wh_nom_clause",
+        "clause_cop_ellipsis",
+        "np_det_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-276",
+      "text": "After the meeting, the teacher that the students trusted explained that the principal approved the plan before the deadline.",
+      "f1": 0.857143,
+      "gold": "CLAUSE(PP(ADP(\"After\"), NP(DET(\"the\"), N(\"meeting\"))), PUNCT(\",\"), NP(DET(\"the\"), N(\"teacher\"), RELCLAUSE(REL(\"that\"), CLAUSE(NP(DET(\"the\"), N(\"students\")), VP(V(\"trusted\"))))), VP(V(\"explained\"), SBAR(SCONJ(\"that\"), CLAUSE(NP(DET(\"the\"), N(\"principal\")), VP(V(\"approved\"), NP(DET(\"the\"), N(\"plan\")), PP(ADP(\"before\"), NP(DET(\"the\"), N(\"deadline\"))))))))",
+      "predictive": "CLAUSE(PP(PREP(\"After\"), NP(DET(\"the\"), N(\"meeting\"))), COMMA(\",\"), CLAUSE(NP(NP(DET(\"the\"), N(\"teacher\")), WH-OBJ(COMP-THAT(\"that\"), NP(DET(\"the\"), N(\"students\")), VP-GAP(V(\"trusted\")))), VP(V(\"explained\"), NP(CLAUSE(COMP-THAT(\"that\"), CLAUSE(NP(DET(\"the\"), N(\"principal\")), VP(VP(V(\"approved\"), NP(DET(\"the\"), N(\"plan\"))), ADV(\"before\"))))), NP(DET(\"the\"), N(\"deadline\")))))",
+      "rules": [
+        "clause_front_pp",
+        "pp_prep_np",
+        "np_det_n",
+        "clause_np_vp",
+        "np_relative_obj",
+        "np_det_n",
+        "wh_obj_clause",
+        "np_det_n",
+        "vp_gap_transitive",
+        "vp_obj_pred",
+        "np_quote",
+        "clause_nominal_that",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_adv",
+        "vp_transitive",
+        "np_det_n",
+        "np_det_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-257",
+      "text": "The student's answer was correct.",
+      "f1": 0.9,
+      "gold": "CLAUSE(NP(NP(DET(\"The\"), N(\"student\"), PART(\"'s\")), N(\"answer\")), VP(AUX(\"was\"), ADJP(ADJ(\"correct\"))))",
+      "predictive": "CLAUSE(NP(NP(DET(\"The\"), N(\"student\")), POSS(\"'s\"), N(\"answer\")), VP(COPULA(\"was\"), ADJ(\"correct\")))",
+      "rules": [
+        "clause_np_vp",
+        "np_genitive",
+        "np_det_n",
+        "vp_copula_adj"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-263",
+      "text": "The neighbor's dog was friendly.",
+      "f1": 0.9,
+      "gold": "CLAUSE(NP(NP(DET(\"The\"), N(\"neighbor\"), PART(\"'s\")), N(\"dog\")), VP(AUX(\"was\"), ADJP(ADJ(\"friendly\"))))",
+      "predictive": "CLAUSE(NP(NP(DET(\"The\"), N(\"neighbor\")), POSS(\"'s\"), N(\"dog\")), VP(COPULA(\"was\"), ADJ(\"friendly\")))",
+      "rules": [
+        "clause_np_vp",
+        "np_genitive",
+        "np_det_n",
+        "vp_copula_adj"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-273",
+      "text": "There were people outside the store.",
+      "f1": 0.909091,
+      "gold": "CLAUSE(PRON(\"There\"), VP(AUX(\"were\"), NP(N(\"people\")), PP(ADP(\"outside\"), NP(DET(\"the\"), N(\"store\")))))",
+      "predictive": "CLAUSE(EXPL(\"There\"), COPULA(\"were\"), NP(NP(N(\"people\")), PP(PREP(\"outside\"), NP(DET(\"the\"), N(\"store\")))))",
+      "rules": [
+        "clause_there",
+        "np_pp_mod",
+        "np_bare",
+        "pp_prep_np",
+        "np_det_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-274",
+      "text": "There was a delay during the trip.",
+      "f1": 0.916667,
+      "gold": "CLAUSE(PRON(\"There\"), VP(AUX(\"was\"), NP(DET(\"a\"), N(\"delay\")), PP(ADP(\"during\"), NP(DET(\"the\"), N(\"trip\")))))",
+      "predictive": "CLAUSE(EXPL(\"There\"), COPULA(\"was\"), NP(NP(DET(\"a\"), N(\"delay\")), PP(PREP(\"during\"), NP(DET(\"the\"), N(\"trip\")))))",
+      "rules": [
+        "clause_there",
+        "np_pp_mod",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-064",
+      "text": "The gardener removed the weeds from the path.",
+      "f1": 0.928571,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"gardener\")), VP(V(\"removed\"), NP(DET(\"the\"), N(\"weeds\"), PP(ADP(\"from\"), NP(DET(\"the\"), N(\"path\"))))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"gardener\")), VP(V(\"removed\"), NP(DET(\"the\"), N(\"weeds\")), PP(PREP(\"from\"), NP(DET(\"the\"), N(\"path\")))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_prep_ditransitive",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-098",
+      "text": "The pilot inspected the plane in the morning.",
+      "f1": 0.928571,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"pilot\")), VP(V(\"inspected\"), NP(DET(\"the\"), N(\"plane\")), PP(ADP(\"in\"), NP(DET(\"the\"), N(\"morning\")))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"pilot\")), VP(V(\"inspected\"), NP(NP(DET(\"the\"), N(\"plane\")), PP(PREP(\"in\"), NP(DET(\"the\"), N(\"morning\"))))))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "vp_transitive",
+        "np_pp_mod",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-056",
+      "text": "The bright lamp shone steadily.",
+      "f1": 0.941176,
+      "gold": "CLAUSE(NP(DET(\"The\"), ADJ(\"bright\"), N(\"lamp\")), VP(V(\"shone\"), ADVP(ADV(\"steadily\"))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(ADJ(\"bright\"), N(\"lamp\"))), VP(VP(V(\"shone\")), ADV(\"steadily\")))",
+      "rules": [
+        "clause_np_vp",
+        "np_det_n",
+        "n_adj_n",
+        "vp_adv",
+        "vp_intransitive"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-080",
+      "text": "The answer was not obvious.",
+      "f1": 0.941176,
+      "gold": "CLAUSE(NP(DET(\"The\"), N(\"answer\")), VP(AUX(\"was\"), PART(\"not\"), ADJP(ADJ(\"obvious\"))))",
+      "predictive": "CLAUSE(NP(DET(\"The\"), N(\"answer\")), VP-NP(COPULA(\"was\"), NP(NEG(\"not\"), ADJ(\"obvious\"))))",
+      "rules": [
+        "clause_np_coord_aux_adv",
+        "np_det_n",
+        "vpnp_cop_any",
+        "np_neg_adj"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    },
+    {
+      "id": "SEM-GOLD-296",
+      "text": "Maya moved the equipment into the shed before the meeting, because the rain started without warning.",
+      "f1": 0.95082,
+      "gold": "CLAUSE(NP(PROPN(\"Maya\")), VP(V(\"moved\"), NP(DET(\"the\"), N(\"equipment\")), PP(ADP(\"into\"), NP(DET(\"the\"), N(\"shed\"))), PP(ADP(\"before\"), NP(DET(\"the\"), N(\"meeting\")))), PUNCT(\",\"), SBAR(SCONJ(\"because\"), CLAUSE(NP(DET(\"the\"), N(\"rain\")), VP(V(\"started\"), PP(ADP(\"without\"), NP(N(\"warning\")))))))",
+      "predictive": "CLAUSE(CLAUSE(NP(PROPER-NOUN(\"Maya\")), VP(V(\"moved\"), NP(NP(NP(DET(\"the\"), N(\"equipment\")), PP(PREP(\"into\"), NP(DET(\"the\"), N(\"shed\")))), PP(PREP(\"before\"), NP(DET(\"the\"), N(\"meeting\")))))), COMMA(\",\"), CONJ(\"because\"), CLAUSE(NP(DET(\"the\"), N(\"rain\")), VP(V(\"started\"), PP(PREP(\"without\"), NP(N(\"warning\"))))))",
+      "rules": [
+        "clause_comma_sub",
+        "clause_np_vp",
+        "np_proper",
+        "vp_transitive",
+        "np_pp_mod",
+        "np_pp_mod",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n",
+        "pp_prep_np",
+        "np_det_n",
+        "clause_np_vp",
+        "np_det_n",
+        "vp_prepositional",
+        "pp_prep_np",
+        "np_bare"
+      ],
+      "finite_clauses": 0,
+      "judgment": "UNREVIEWED",
+      "reason": "manual review pending"
+    }
+  ]
+}

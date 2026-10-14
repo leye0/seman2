@@ -1,0 +1,167 @@
+{
+  "format": "seman2-predictive-benchmark-v2",
+  "protocol": {
+    "corpus": "/mnt/new-home/leon-linux/home/leon/projects/seman2/data/seman2_reference_300_compact.json",
+    "sentences": 300,
+    "warm_wordnet": true,
+    "parser_sentence_cache": false,
+    "memory": "separate tracemalloc pass over first 3 sentences",
+    "reference_exact_is_diagnostic_not_acceptance_contract": true,
+    "cold_probe": "fresh interpreter; operating-system file cache uncontrolled"
+  },
+  "cold_start": {
+    "production": {
+      "construction_ms": 35.6317,
+      "first_parse_ms": 3051.0142,
+      "process_work_ms": 3086.6459
+    },
+    "hybrid": {
+      "construction_ms": 48.5866,
+      "first_parse_ms": 2842.8472,
+      "process_work_ms": 2891.4338
+    }
+  },
+  "grammar_feasibility": {
+    "rules": 385,
+    "categories": 40,
+    "lr0_states": 730,
+    "lr0_items": 124973,
+    "lr0_transitions": 13074,
+    "lr0_shift_reduce_pairs": 16892,
+    "lr0_reduce_reduce_pairs": 842,
+    "lr0_conflict_states": 402,
+    "left_recursive_rules": 78,
+    "unary_rules": 14,
+    "compiled_bytes_estimate": 66984,
+    "compile_ms": 6440.0039
+  },
+  "model_metadata": {
+    "candidate_trees": 75,
+    "candidate_weight": 0.25,
+    "coverage_failures": 0,
+    "policy": "normalized-exact=1.0; complete non-exact=silver candidate",
+    "rejected_non_exact": 75,
+    "sentences": 300,
+    "source": "/mnt/new-home/leon-linux/home/leon/projects/seman2/data/seman2_reference_300_compact.json",
+    "training_seconds": 13.36,
+    "validated_trees": 225
+  },
+  "engines": {
+    "production": {
+      "engine": "production-vector",
+      "sentences": 300,
+      "timings_ms": {
+        "total_wall_ms": {
+          "p50": 14.3621,
+          "p95": 85.8044,
+          "p99": 386.2683,
+          "maximum": 446.7811,
+          "total": 9104.5305
+        },
+        "lexical_ms": {
+          "p50": 3.6685,
+          "p95": 6.646,
+          "p99": 9.2802,
+          "maximum": 255.3538,
+          "total": 1433.9162
+        },
+        "parsing_ms": {
+          "p50": 7.2668,
+          "p95": 56.1495,
+          "p99": 365.0338,
+          "maximum": 405.2458,
+          "total": 6196.0214
+        },
+        "materialization_ms": {
+          "p50": 2.99,
+          "p95": 17.0978,
+          "p99": 27.4729,
+          "maximum": 32.0475,
+          "total": 1433.3098
+        }
+      },
+      "measured_loop_wall_ms": 10052.7197,
+      "counters_total": {
+        "states_created": 29670,
+        "transitions_executed": 957815,
+        "decisions": 0,
+        "backtracks": 0,
+        "ambiguity_points": 300,
+        "configurations_visited": 0,
+        "unique_configurations": 0,
+        "revisited_configurations": 0,
+        "repeated_transitions": 0,
+        "max_backtrack_depth": 0,
+        "shared_nodes": 0,
+        "shared_partials": 0,
+        "feature_rejections": 0,
+        "lookahead_rejections": 0
+      },
+      "memory_peak_bytes": 788849,
+      "coverage": 1.0,
+      "native_successes": 300,
+      "fallbacks": 0,
+      "grammatical_validity": 1.0,
+      "normalized_reference_exact": 0.75,
+      "failures": []
+    },
+    "predictive_v2_hybrid": {
+      "engine": "predictive-v2-hybrid",
+      "sentences": 300,
+      "timings_ms": {
+        "total_wall_ms": {
+          "p50": 20.0496,
+          "p95": 86.3994,
+          "p99": 270.3282,
+          "maximum": 597.8606,
+          "total": 9619.4047
+        },
+        "lexical_ms": {
+          "p50": 3.6775,
+          "p95": 6.7457,
+          "p99": 8.9003,
+          "maximum": 9.8225,
+          "total": 1150.0844
+        },
+        "parsing_ms": {
+          "p50": 16.2692,
+          "p95": 79.1723,
+          "p99": 261.0082,
+          "maximum": 588.7213,
+          "total": 8411.4267
+        },
+        "materialization_ms": {
+          "p50": 0.1344,
+          "p95": 0.3473,
+          "p99": 0.5261,
+          "maximum": 1.9447,
+          "total": 46.7224
+        }
+      },
+      "measured_loop_wall_ms": 9811.0169,
+      "counters_total": {
+        "states_created": 185304,
+        "transitions_executed": 625942,
+        "decisions": 55562,
+        "backtracks": 11461,
+        "ambiguity_points": 1238,
+        "configurations_visited": 30158,
+        "unique_configurations": 168808,
+        "revisited_configurations": 51590,
+        "repeated_transitions": 9869,
+        "max_backtrack_depth": 10,
+        "shared_nodes": 31251,
+        "shared_partials": 18089,
+        "feature_rejections": 246527,
+        "lookahead_rejections": 326295
+      },
+      "memory_peak_bytes": 152784,
+      "coverage": 1.0,
+      "native_successes": 300,
+      "fallbacks": 0,
+      "grammatical_validity": 1.0,
+      "normalized_reference_exact": 0.563333,
+      "failures": []
+    }
+  }
+}
