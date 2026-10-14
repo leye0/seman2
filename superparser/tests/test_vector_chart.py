@@ -33,6 +33,15 @@ class VectorChartTests(unittest.TestCase):
         self.assertGreater(result.stats["hint_compatibility_cache_hits"], 0)
         self.assertGreater(result.stats["kbest_ms"], 0.0)
 
+    def test_diagnostic_mode_exposes_a_wider_root_view(self) -> None:
+        result = self.parser.parse_diagnostic(
+            "I saw the man with the telescope.", alternatives=16,
+        ).result
+        self.assertTrue(result.completed)
+        self.assertTrue(result.stats["diagnostic_mode"])
+        self.assertEqual(result.stats["diagnostic_k"], 16)
+        self.assertGreaterEqual(len(result.alternatives(limit=16)), 2)
+
     def test_semantic_roles_survive_delayed_materialization(self) -> None:
         report = self.parser.parse("John gave Mary the box.")
         best = report.result.best()

@@ -1,0 +1,1505 @@
+SUPERPARSER — BONNE RÉPONSE VS RÉPONSE DU PARSEUR
+Phrases: 300
+Couverture: 300/300
+Arbres exacts normalisés: 225/300
+Notation: CATEGORIE(enfants...) ; les feuilles contiennent le mot.
+
+[SEM-GOLD-001] The child laughed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(V("laughed")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), VP(V("laughed")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-002] The baby slept.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("baby")), VP(V("slept")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("baby")), VP(V("slept")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-003] The birds sang.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("birds")), VP(V("sang")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("birds")), VP(V("sang")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-004] The engine stalled.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("engine")), VP(V("stalled")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("engine")), VP(V("stalled")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-005] The audience cheered.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("audience")), VP(V("cheered")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("audience")), VP(V("cheered")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-006] The river flooded.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("river")), VP(V("flooded")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("river")), VP(V("flooded")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-007] The train arrived.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("train")), VP(V("arrived")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("train")), VP(V("arrived")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-008] The guests waited.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("guests")), VP(V("waited")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("guests")), VP(V("waited")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-009] The window shattered.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("window")), VP(V("shattered")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("window")), VP(V("shattered")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-010] The dog barked.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("dog")), VP(V("barked")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("dog")), VP(V("barked")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-011] The snow fell.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("snow")), VP(V("fell")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("snow")), VP(V("fell")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-012] The fire spread.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("fire")), VP(V("spread")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("fire")), VP(V("spread")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-013] The students listened.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("students")), VP(V("listened")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("students")), VP(V("listened")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-014] The sun rose.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("sun")), VP(V("rose")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("sun")), VP(V("rose")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-015] The meeting ended.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("meeting")), VP(V("ended")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("meeting")), VP(V("ended")))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-016] The gardener watered the roses.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("gardener")), VP(V("watered"), NP(DET("the"), N("roses"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("gardener")), VP(V("watered"), NP(DET("the"), N("roses"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-017] The nurse checked the patient.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse")), VP(V("checked"), NP(DET("the"), N("patient"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("nurse")), VP(V("checked"), NP(DET("the"), N("patient"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-018] The carpenter repaired the chair.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("carpenter")), VP(V("repaired"), NP(DET("the"), N("chair"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("carpenter")), VP(V("repaired"), NP(DET("the"), N("chair"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-019] The student opened the notebook.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("student")), VP(V("opened"), NP(DET("the"), N("notebook"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("student")), VP(V("opened"), NP(DET("the"), N("notebook"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-020] The chef washed the pot.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chef")), VP(V("washed"), NP(DET("the"), N("pot"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("chef")), VP(V("washed"), NP(DET("the"), N("pot"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-021] The driver parked the truck.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("driver")), VP(V("parked"), NP(DET("the"), N("truck"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("driver")), VP(V("parked"), NP(DET("the"), N("truck"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-022] The artist painted the portrait.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("artist")), VP(V("painted"), NP(DET("the"), N("portrait"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("artist")), VP(V("painted"), NP(DET("the"), N("portrait"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-023] The teacher graded the paper.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("graded"), NP(DET("the"), N("paper"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("graded"), NP(DET("the"), N("paper"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-024] The captain steered the boat.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("captain")), VP(V("steered"), NP(DET("the"), N("boat"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("captain")), VP(V("steered"), NP(DET("the"), N("boat"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-025] The mother folded the blanket.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("mother")), VP(V("folded"), NP(DET("the"), N("blanket"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("mother")), VP(V("folded"), NP(DET("the"), N("blanket"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-026] The mechanic tested the engine.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("mechanic")), VP(V("tested"), NP(DET("the"), N("engine"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("mechanic")), VP(V("tested"), NP(DET("the"), N("engine"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-027] The visitor photographed the statue.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("visitor")), VP(V("photographed"), NP(DET("the"), N("statue"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("visitor")), VP(V("photographed"), NP(DET("the"), N("statue"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-028] The editor revised the paragraph.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("editor")), VP(V("revised"), NP(DET("the"), N("paragraph"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("editor")), VP(V("revised"), NP(DET("the"), N("paragraph"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-029] The scientist measured the temperature.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("scientist")), VP(V("measured"), NP(DET("the"), N("temperature"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("scientist")), VP(V("measured"), NP(DET("the"), N("temperature"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-030] The clerk counted the tickets.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("clerk")), VP(V("counted"), NP(DET("the"), N("tickets"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("clerk")), VP(V("counted"), NP(DET("the"), N("tickets"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-031] The room was quiet.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("room")), VP(AUX("was"), ADJP(ADJ("quiet"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("room")), VP(COPULA("was"), ADJ("quiet")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-032] The road was narrow.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("road")), VP(AUX("was"), ADJP(ADJ("narrow"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("road")), VP(COPULA("was"), ADJ("narrow")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-033] The water remained cold.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("water")), VP(V("remained"), ADJP(ADJ("cold"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("water")), VP(V("remained"), ADJ("cold")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-034] The sky became dark.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("sky")), VP(V("became"), ADJP(ADJ("dark"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("sky")), VP(V("became"), ADJ("dark")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-035] The plan seemed reasonable.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("plan")), VP(V("seemed"), ADJP(ADJ("reasonable"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("plan")), VP(V("seemed"), ADJ("reasonable")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-036] The answer was correct.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("answer")), VP(AUX("was"), ADJP(ADJ("correct"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("answer")), VP(COPULA("was"), ADJ("correct")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-037] The weather turned stormy.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("weather")), VP(V("turned"), ADJP(ADJ("stormy"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("weather")), VP(V("turned"), ADJ("stormy")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-038] The problem looked simple.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("problem")), VP(V("looked"), ADJP(ADJ("simple"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("problem")), VP(V("looked"), ADJ("simple")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-039] The door stayed open.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("door")), VP(V("stayed"), ADJP(ADJ("open"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("door")), VP(V("stayed"), ADJ("open")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-040] The garden appeared empty.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("garden")), VP(V("appeared"), ADJP(ADJ("empty"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("garden")), VP(V("appeared"), ADJ("empty")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-041] The teacher gave the class an assignment.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("gave"), NP(DET("the"), N("class")), NP(DET("an"), N("assignment"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("gave"), NP(DET("the"), N("class")), NP(DET("an"), N("assignment"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-042] The father sent the daughter a letter.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("father")), VP(V("sent"), NP(DET("the"), N("daughter")), NP(DET("a"), N("letter"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("father")), VP(V("sent"), NP(DET("the"), N("daughter")), NP(DET("a"), N("letter"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-043] The coach offered the team a break.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("coach")), VP(V("offered"), NP(DET("the"), N("team")), NP(DET("a"), N("break"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("coach")), VP(V("offered"), NP(DET("the"), N("team")), NP(DET("a"), N("break"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-044] The librarian handed the visitor a map.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("librarian")), VP(V("handed"), NP(DET("the"), N("visitor")), NP(DET("a"), N("map"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("librarian")), VP(V("handed"), NP(DET("the"), N("visitor")), NP(DET("a"), N("map"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-045] The grandmother told the child a story.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("grandmother")), VP(V("told"), NP(DET("the"), N("child")), NP(DET("a"), N("story"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("grandmother")), VP(V("told"), NP(DET("the"), N("child")), NP(DET("a"), N("story"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-046] Birds follow rivers.
+BONNE RÉPONSE : CLAUSE(NP(N("Birds")), VP(V("follow"), NP(N("rivers"))))
+SUPERPARSER    : CLAUSE(NP(N("Birds")), VP(V("follow"), NP(N("rivers"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-047] Workers repair sidewalks.
+BONNE RÉPONSE : CLAUSE(NP(N("Workers")), VP(V("repair"), NP(N("sidewalks"))))
+SUPERPARSER    : CLAUSE(NP(N("Workers")), VP(V("repair"), NP(N("sidewalks"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-048] Teachers need calendars.
+BONNE RÉPONSE : CLAUSE(NP(N("Teachers")), VP(V("need"), NP(N("calendars"))))
+SUPERPARSER    : CLAUSE(NP(N("Teachers")), VP(V("need"), NP(N("calendars"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-049] Children collect stones.
+BONNE RÉPONSE : CLAUSE(NP(N("Children")), VP(V("collect"), NP(N("stones"))))
+SUPERPARSER    : CLAUSE(NP(N("Children")), VP(V("collect"), NP(N("stones"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-050] Cats chase shadows.
+BONNE RÉPONSE : CLAUSE(NP(N("Cats")), VP(V("chase"), NP(N("shadows"))))
+SUPERPARSER    : CLAUSE(NP(N("Cats")), VP(V("chase"), NP(N("shadows"))))
+STATUT         : COMPLET | EXACT BRUT: OUI | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-051] The patient doctor answered calmly.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("patient"), N("doctor")), VP(V("answered"), ADVP(ADV("calmly"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("patient"), N("doctor"))), VP(VP(V("answered")), ADV("calmly")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-052] The young musician practiced daily.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("young"), N("musician")), VP(V("practiced"), ADVP(ADV("daily"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("young"), N("musician"))), VP(V("practiced"), NP(N("daily"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.777778
+
+[SEM-GOLD-053] The small bird sang loudly.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("small"), N("bird")), VP(V("sang"), ADVP(ADV("loudly"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("small"), N("bird"))), VP(VP(V("sang")), ADV("loudly")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-054] The tired runner finished slowly.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("tired"), N("runner")), VP(V("finished"), ADVP(ADV("slowly"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("tired"), N("runner"))), VP(VP(V("finished")), ADV("slowly")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-055] The careful student listened closely.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("careful"), N("student")), VP(V("listened"), ADVP(ADV("closely"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("careful"), N("student"))), VP(VP(V("listened")), ADV("closely")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-056] The bright lamp shone steadily.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("bright"), N("lamp")), VP(V("shone"), ADVP(ADV("steadily"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("bright"), N("lamp"))), VP(VP(V("shone")), ADV("steadily")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-057] The old clock ticked quietly.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("old"), N("clock")), VP(V("ticked"), ADVP(ADV("quietly"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("old"), N("clock"))), VP(VP(V("ticked")), ADV("quietly")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-058] The curious child asked politely.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("curious"), N("child")), VP(V("asked"), ADVP(ADV("politely"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("curious"), N("child"))), VP(VP(V("asked")), ADV("politely")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-059] The new engine started smoothly.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("new"), N("engine")), VP(V("started"), ADVP(ADV("smoothly"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("new"), N("engine"))), VP(VP(V("started")), ADV("smoothly")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-060] The friendly neighbor waved cheerfully.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), ADJ("friendly"), N("neighbor")), VP(V("waved"), ADVP(ADV("cheerfully"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("friendly"), N("neighbor"))), VP(VP(V("waved")), ADV("cheerfully")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-061] The tourist visited the museum in the city.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("tourist")), VP(V("visited"), NP(DET("the"), N("museum"), PP(ADP("in"), NP(DET("the"), N("city"))))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("tourist")), VP(V("visited"), NP(DET("the"), N("museum")), PP(PREP("in"), NP(DET("the"), N("city")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-062] The teacher found the book on the shelf.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("found"), NP(DET("the"), N("book"), PP(ADP("on"), NP(DET("the"), N("shelf"))))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("found"), NP(DET("the"), N("book")), PP(PREP("on"), NP(DET("the"), N("shelf")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-063] The inspector examined the crack in the wall.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("inspector")), VP(V("examined"), NP(DET("the"), N("crack"), PP(ADP("in"), NP(DET("the"), N("wall"))))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("inspector")), VP(V("examined"), NP(DET("the"), N("crack")), PP(PREP("in"), NP(DET("the"), N("wall")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-064] The gardener removed the weeds from the path.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("gardener")), VP(V("removed"), NP(DET("the"), N("weeds"), PP(ADP("from"), NP(DET("the"), N("path"))))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("gardener")), VP(V("removed"), NP(DET("the"), N("weeds")), PP(PREP("from"), NP(DET("the"), N("path")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-065] The child noticed the bird under the bridge.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(V("noticed"), NP(DET("the"), N("bird"), PP(ADP("under"), NP(DET("the"), N("bridge"))))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), VP(V("noticed"), NP(NP(DET("the"), N("bird")), PP(PREP("under"), NP(DET("the"), N("bridge"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-066] The woman read the letter in the kitchen.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("woman")), VP(V("read"), NP(DET("the"), N("letter")), PP(ADP("in"), NP(DET("the"), N("kitchen")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("woman")), VP(V("read"), NP(DET("the"), N("letter")), PP(PREP("in"), NP(DET("the"), N("kitchen")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-067] The boy carried the box through the hallway.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("boy")), VP(V("carried"), NP(DET("the"), N("box")), PP(ADP("through"), NP(DET("the"), N("hallway")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("boy")), VP(V("carried"), NP(DET("the"), N("box")), PP(PREP("through"), NP(DET("the"), N("hallway")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-068] The nurse wrote the report after the meeting.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse")), VP(V("wrote"), NP(DET("the"), N("report")), PP(ADP("after"), NP(DET("the"), N("meeting")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("nurse")), VP(V("wrote"), NP(DET("the"), N("report")), PP(PREP("after"), NP(DET("the"), N("meeting")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-069] The visitor sketched the statue beside the fountain.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("visitor")), VP(V("sketched"), NP(DET("the"), N("statue")), PP(ADP("beside"), NP(DET("the"), N("fountain")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("visitor")), VP(V("sketched"), NP(NP(DET("the"), N("statue")), PP(PREP("beside"), NP(DET("the"), N("fountain"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-070] The pilot checked the instruments before the flight.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("pilot")), VP(V("checked"), NP(DET("the"), N("instruments")), PP(ADP("before"), NP(DET("the"), N("flight")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("pilot")), VP(V("checked"), NP(NP(DET("the"), N("instruments")), PP(PREP("before"), NP(DET("the"), N("flight"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-071] The girl did not answer.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("girl")), VP(AUX("did"), PART("not"), V("answer")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("girl")), AUX("did"), NEG("not"), VP(V("answer")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-072] The driver did not stop.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("driver")), VP(AUX("did"), PART("not"), V("stop")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("driver")), AUX("did"), NEG("not"), VP(V("stop")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-073] The scientist did not agree.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("scientist")), VP(AUX("did"), PART("not"), V("agree")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("scientist")), AUX("did"), NEG("not"), VP(V("agree")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-074] The child did not leave.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(AUX("did"), PART("not"), V("leave")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), AUX("did"), NEG("not"), VP(V("leave")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-075] The manager did not reply.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("manager")), VP(AUX("did"), PART("not"), V("reply")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("manager")), AUX("did"), NEG("not"), VP(V("reply")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-076] The room was not ready.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("room")), VP(AUX("was"), PART("not"), ADJP(ADJ("ready"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("room")), VP(COPULA("was"), NEG("not"), ADJ("ready")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-077] The keys were not visible.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("keys")), VP(AUX("were"), PART("not"), ADJP(ADJ("visible"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("keys")), VP(COPULA("were"), NEG("not"), ADJ("visible")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-078] The soup was not hot.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("soup")), VP(AUX("was"), PART("not"), ADJP(ADJ("hot"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("soup")), VP(COPULA("was"), NEG("not"), ADJ("hot")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-079] The windows were not closed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("windows")), VP(AUX("were"), PART("not"), ADJP(ADJ("closed"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("windows")), VP(COPULA("were"), NEG("not"), ADJ("closed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-080] The answer was not obvious.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("answer")), VP(AUX("was"), PART("not"), ADJP(ADJ("obvious"))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("answer")), VP(COPULA("was"), NEG("not"), ADJ("obvious")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-081] The bridge was repaired.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("bridge")), VP(AUX("was"), V("repaired")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("bridge")), VP(AUX-BE("was"), V("repaired")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-082] The package was delivered.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("package")), VP(AUX("was"), V("delivered")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("package")), VP(AUX-BE("was"), V("delivered")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-083] The letter was signed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("letter")), VP(AUX("was"), V("signed")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("letter")), VP(AUX-BE("was"), V("signed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-084] The room was cleaned.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("room")), VP(AUX("was"), V("cleaned")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("room")), VP(AUX-BE("was"), V("cleaned")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-085] The window was opened.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("window")), VP(AUX("was"), V("opened")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("window")), VP(AUX-BE("was"), V("opened")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-086] The documents were reviewed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("documents")), VP(AUX("were"), V("reviewed")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("documents")), VP(AUX-BE("were"), V("reviewed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-087] The road was closed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("road")), VP(AUX("was"), V("closed")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("road")), VP(AUX-BE("was"), V("closed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-088] The mistake was noticed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("mistake")), VP(AUX("was"), V("noticed")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("mistake")), VP(AUX-BE("was"), V("noticed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-089] The painting was restored.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("painting")), VP(AUX("was"), V("restored")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("painting")), VP(AUX-BE("was"), V("restored")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-090] The decision was announced.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("decision")), VP(AUX("was"), V("announced")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("decision")), VP(AUX-BE("was"), V("announced")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-091] The child found the coins near the fence.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(V("found"), NP(DET("the"), N("coins")), PP(ADP("near"), NP(DET("the"), N("fence")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), VP(V("found"), NP(DET("the"), N("coins")), PP(PREP("near"), NP(DET("the"), N("fence")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-092] The student finished the homework before dinner.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("student")), VP(V("finished"), NP(DET("the"), N("homework")), PP(ADP("before"), NP(N("dinner")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("student")), VP(V("finished"), NP(NP(DET("the"), N("homework")), PP(PREP("before"), NP(N("dinner"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.923077
+
+[SEM-GOLD-093] The visitor left the umbrella beside the door.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("visitor")), VP(V("left"), NP(DET("the"), N("umbrella")), PP(ADP("beside"), NP(DET("the"), N("door")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("visitor")), VP(V("left"), NP(DET("the"), N("umbrella")), PP(PREP("beside"), NP(DET("the"), N("door")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-094] The teacher explained the lesson during the class.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson")), PP(ADP("during"), NP(DET("the"), N("class")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("explained"), NP(NP(DET("the"), N("lesson")), PP(PREP("during"), NP(DET("the"), N("class"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-095] The farmer checked the crops after the storm.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("farmer")), VP(V("checked"), NP(DET("the"), N("crops")), PP(ADP("after"), NP(DET("the"), N("storm")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("farmer")), VP(V("checked"), NP(NP(DET("the"), N("crops")), PP(PREP("after"), NP(DET("the"), N("storm"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-096] The writer revised the draft at night.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("writer")), VP(V("revised"), NP(DET("the"), N("draft")), PP(ADP("at"), NP(N("night")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("writer")), VP(V("revised"), NP(NP(DET("the"), N("draft")), PP(PREP("at"), NP(N("night"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.923077
+
+[SEM-GOLD-097] The chef served the soup before noon.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chef")), VP(V("served"), NP(DET("the"), N("soup")), PP(ADP("before"), NP(N("noon")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("chef")), VP(V("served"), NP(NP(DET("the"), N("soup")), PP(PREP("before"), NP(N("noon"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.923077
+
+[SEM-GOLD-098] The pilot inspected the plane in the morning.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("pilot")), VP(V("inspected"), NP(DET("the"), N("plane")), PP(ADP("in"), NP(DET("the"), N("morning")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("pilot")), VP(V("inspected"), NP(NP(DET("the"), N("plane")), PP(PREP("in"), NP(DET("the"), N("morning"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.928571
+
+[SEM-GOLD-099] The nurse read the chart at dawn.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse")), VP(V("read"), NP(DET("the"), N("chart")), PP(ADP("at"), NP(N("dawn")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("nurse")), VP(V("read"), NP(DET("the"), N("chart")), PP(PREP("at"), NP(N("dawn")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-100] The guide showed the map during the tour.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("guide")), VP(V("showed"), NP(DET("the"), N("map")), PP(ADP("during"), NP(DET("the"), N("tour")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("guide")), VP(V("showed"), NP(DET("the"), N("map")), PP(PREP("during"), NP(DET("the"), N("tour")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-101] Maya realized that the garden needed water.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Maya")), VP(V("realized"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("garden")), VP(V("needed"), NP(N("water")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Maya")), VP(V("realized"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("garden")), VP(V("needed"), NP(N("water"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-102] Owen believed that the plan would work.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Owen")), VP(V("believed"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("plan")), VP(MODAL("would"), V("work"))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Owen")), VP(V("believed"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("plan")), VP(MODAL("would"), VP-NP(V("work"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-103] Lena noticed that the door was open.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Lena")), VP(V("noticed"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("door")), VP(AUX("was"), ADJP(ADJ("open")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Lena")), VP(V("noticed"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("door")), VP(COPULA("was"), ADJ("open")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-104] Noah remembered that the meeting had ended.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Noah")), VP(V("remembered"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("meeting")), VP(AUX("had"), V("ended"))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Noah")), VP(V("remembered"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("meeting")), VP(HAVE("had"), V("ended")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-105] Iris hoped that the train would arrive.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Iris")), VP(V("hoped"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("train")), VP(MODAL("would"), V("arrive"))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Iris")), VP(V("hoped"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("train")), VP(MODAL("would"), VP-NP(V("arrive"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-106] Amira understood that the map was accurate.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Amira")), VP(V("understood"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("map")), VP(AUX("was"), ADJP(ADJ("accurate")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Amira")), VP(V("understood"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("map")), VP(COPULA("was"), ADJ("accurate")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-107] Theo suspected that the box contained coins.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Theo")), VP(V("suspected"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("box")), VP(V("contained"), NP(N("coins")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Theo")), VP(V("suspected"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("box")), VP(V("contained"), NP(N("coins"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-108] Nora confirmed that the students were ready.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Nora")), VP(V("confirmed"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("students")), VP(AUX("were"), ADJP(ADJ("ready")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Nora")), VP(V("confirmed"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("students")), VP(COPULA("were"), ADJ("ready")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-109] Elias learned that the bridge was closed.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Elias")), VP(V("learned"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("bridge")), VP(AUX("was"), ADJP(ADJ("closed")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Elias")), VP(V("learned"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("bridge")), VP(AUX-BE("was"), V("closed")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.923077
+
+[SEM-GOLD-110] Sofia discovered that the painting was missing.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Sofia")), VP(V("discovered"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("painting")), VP(AUX("was"), ADJP(ADJ("missing")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Sofia")), VP(V("discovered"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("painting")), VP(COPULA("was"), V("missing")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.923077
+
+[SEM-GOLD-111] Julia explained that the engine needed fuel.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Julia")), VP(V("explained"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("engine")), VP(V("needed"), NP(N("fuel")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Julia")), VP(V("explained"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("engine")), VP(V("needed"), NP(N("fuel"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-112] Oliver predicted that the snow would melt.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Oliver")), VP(V("predicted"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("snow")), VP(MODAL("would"), V("melt"))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Oliver")), VP(V("predicted"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("snow")), VP(MODAL("would"), VP-NP(V("melt"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-113] Emma heard that the alarm was broken.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Emma")), VP(V("heard"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("alarm")), VP(AUX("was"), ADJP(ADJ("broken")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Emma")), VP(V("heard"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("alarm")), VP(AUX-BE("was"), V("broken")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.923077
+
+[SEM-GOLD-114] Leo knew that the answer was correct.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Leo")), VP(V("knew"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("answer")), VP(AUX("was"), ADJP(ADJ("correct")))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Leo")), VP(V("knew"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("answer")), VP(COPULA("was"), ADJ("correct")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-115] Rosa thought that the visitors were waiting.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Rosa")), VP(V("thought"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("visitors")), VP(AUX("were"), V("waiting"))))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Rosa")), VP(V("thought"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("visitors")), VP(COPULA("were"), V("waiting")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-116] The teacher who waited smiled.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher"), RELCLAUSE(REL("who"), CLAUSE(VP(V("waited"))))), VP(V("smiled")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("teacher")), WH-SUBJ(WH-PRONOUN("who"), VP(V("waited")))), VP(V("smiled")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-117] The dog that escaped returned.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("dog"), RELCLAUSE(REL("that"), CLAUSE(VP(V("escaped"))))), VP(V("returned")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("dog")), WH-SUBJ(WH-PRONOUN("that"), VP(V("escaped")))), VP(V("returned")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-118] The child who laughed waved.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child"), RELCLAUSE(REL("who"), CLAUSE(VP(V("laughed"))))), VP(V("waved")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("child")), WH-SUBJ(WH-PRONOUN("who"), VP(V("laughed")))), VP(V("waved")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-119] The car that stalled restarted.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("car"), RELCLAUSE(REL("that"), CLAUSE(VP(V("stalled"))))), VP(V("restarted")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("car")), WH-SUBJ(WH-PRONOUN("that"), VP(V("stalled")))), VP(V("restarted")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-120] The visitor who arrived waited.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("visitor"), RELCLAUSE(REL("who"), CLAUSE(VP(V("arrived"))))), VP(V("waited")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("visitor")), WH-SUBJ(WH-PRONOUN("who"), VP(V("arrived")))), VP(V("waited")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-121] The bird that sang flew.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("bird"), RELCLAUSE(REL("that"), CLAUSE(VP(V("sang"))))), VP(V("flew")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("bird")), WH-SUBJ(WH-PRONOUN("that"), VP(V("sang")))), VP(V("flew")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-122] The student who studied passed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("student"), RELCLAUSE(REL("who"), CLAUSE(VP(V("studied"))))), VP(V("passed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("student")), WH-SUBJ(WH-PRONOUN("who"), VP(V("studied")))), VP(V("passed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-123] The actor who rehearsed performed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("actor"), RELCLAUSE(REL("who"), CLAUSE(VP(V("rehearsed"))))), VP(V("performed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("actor")), WH-SUBJ(WH-PRONOUN("who"), VP(V("rehearsed")))), VP(V("performed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-124] The scientist who visited spoke.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("scientist"), RELCLAUSE(REL("who"), CLAUSE(VP(V("visited"))))), VP(V("spoke")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("scientist")), WH-SUBJ(WH-PRONOUN("who"), VP(V("visited")))), VP(V("spoke")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-125] The neighbor who complained left.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("neighbor"), RELCLAUSE(REL("who"), CLAUSE(VP(V("complained"))))), VP(V("left")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("neighbor")), WH-SUBJ(WH-PRONOUN("who"), VP(V("complained")))), VP(V("left")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-126] The nurse who helped rested.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse"), RELCLAUSE(REL("who"), CLAUSE(VP(V("helped"))))), VP(V("rested")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("nurse")), WH-SUBJ(WH-PRONOUN("who"), VP(V("helped")))), VP(V("rested")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-127] The runner who trained won.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("runner"), RELCLAUSE(REL("who"), CLAUSE(VP(V("trained"))))), VP(V("won")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("runner")), WH-SUBJ(WH-PRONOUN("who"), VP(V("trained")))), VP(V("won")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-128] The pilot who landed cheered.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("pilot"), RELCLAUSE(REL("who"), CLAUSE(VP(V("landed"))))), VP(V("cheered")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("pilot")), WH-SUBJ(WH-PRONOUN("who"), VP(V("landed")))), VP(V("cheered")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-129] The artist who painted rested.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("artist"), RELCLAUSE(REL("who"), CLAUSE(VP(V("painted"))))), VP(V("rested")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("artist")), WH-SUBJ(WH-PRONOUN("who"), VP(V("painted")))), VP(V("rested")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-130] The chef who cooked relaxed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chef"), RELCLAUSE(REL("who"), CLAUSE(VP(V("cooked"))))), VP(V("relaxed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("chef")), WH-SUBJ(WH-PRONOUN("who"), VP(V("cooked")))), VP(V("relaxed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-131] The book that Maya read fell.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("book"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Maya")), VP(V("read"))))), VP(V("fell")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("book")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Maya")), VP-GAP(V("read")))), VP(V("fell")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-132] The song that Lena wrote spread.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("song"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Lena")), VP(V("wrote"))))), VP(V("spread")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("song")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Lena")), VP-GAP(V("wrote")))), VP(V("spread")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-133] The letter that Owen sent arrived.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("letter"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Owen")), VP(V("sent"))))), VP(V("arrived")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("letter")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Owen")), VP-GAP(V("sent")))), VP(V("arrived")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-134] The map that Iris drew helped.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("map"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Iris")), VP(V("drew"))))), VP(V("helped")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("map")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Iris")), VP-GAP(V("drew")))), VP(V("helped")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-135] The recipe that Rosa shared worked.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("recipe"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Rosa")), VP(V("shared"))))), VP(V("worked")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("recipe")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Rosa")), VP-GAP(V("shared")))), VP(V("worked")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-136] The film that Leo watched ended.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("film"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Leo")), VP(V("watched"))))), VP(V("ended")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("film")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Leo")), VP-GAP(V("watched")))), VP(V("ended")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-137] The picture that Nora painted faded.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("picture"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Nora")), VP(V("painted"))))), VP(V("faded")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("picture")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Nora")), VP-GAP(V("painted")))), VP(V("faded")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-138] The story that Theo told changed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("story"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Theo")), VP(V("told"))))), VP(V("changed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("story")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Theo")), VP-GAP(V("told")))), VP(V("changed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-139] The report that Emma prepared circulated.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("report"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Emma")), VP(V("prepared"))))), VP(V("circulated")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("report")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Emma")), VP-GAP(V("prepared")))), VP(V("circulated")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-140] The key that Oliver found disappeared.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("key"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Oliver")), VP(V("found"))))), VP(V("disappeared")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("key")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Oliver")), VP-GAP(V("found")))), VP(V("disappeared")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-141] The ticket that Julia bought expired.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("ticket"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Julia")), VP(V("bought"))))), VP(V("expired")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("ticket")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Julia")), VP-GAP(V("bought")))), VP(V("expired")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-142] The poem that Amira memorized endured.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("poem"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Amira")), VP(V("memorized"))))), VP(V("endured")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("poem")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Amira")), VP-GAP(V("memorized")))), VP(V("endured")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-143] The chair that Elias repaired broke.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chair"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Elias")), VP(V("repaired"))))), VP(V("broke")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("chair")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Elias")), VP-GAP(V("repaired")))), VP(V("broke")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-144] The window that Sofia opened closed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("window"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Sofia")), VP(V("opened"))))), VP(V("closed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("window")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Sofia")), VP-GAP(V("opened")))), VP(V("closed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-145] The tool that Noah borrowed vanished.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("tool"), RELCLAUSE(REL("that"), CLAUSE(NP(PROPN("Noah")), VP(V("borrowed"))))), VP(V("vanished")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("tool")), WH-OBJ(COMP-THAT("that"), NP(PROPER-NOUN("Noah")), VP-GAP(V("borrowed")))), VP(V("vanished")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-146] Maya wanted to visit the museum.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Maya")), VP(V("wanted"), VP-INF(PART("to"), V("visit"), NP(DET("the"), N("museum")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Maya")), VP(V("wanted"), TO("to"), VP-NP(V("visit"), NP(DET("the"), N("museum")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-147] Theo planned to repair the gate.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Theo")), VP(V("planned"), VP-INF(PART("to"), V("repair"), NP(DET("the"), N("gate")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Theo")), VP(V("planned"), TO("to"), VP-NP(V("repair"), NP(DET("the"), N("gate")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-148] Lena decided to read the novel.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Lena")), VP(V("decided"), VP-INF(PART("to"), V("read"), NP(DET("the"), N("novel")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Lena")), VP(V("decided"), TO("to"), VP-NP(V("read"), NP(DET("the"), N("novel")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-149] Owen hoped to finish the project.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Owen")), VP(V("hoped"), VP-INF(PART("to"), V("finish"), NP(DET("the"), N("project")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Owen")), VP(V("hoped"), TO("to"), VP-NP(V("finish"), NP(DET("the"), N("project")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-150] Amira tried to open the door.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Amira")), VP(V("tried"), VP-INF(PART("to"), V("open"), NP(DET("the"), N("door")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Amira")), VP(V("tried"), TO("to"), VP-NP(V("open"), NP(DET("the"), N("door")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-151] Elias promised to deliver the package.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Elias")), VP(V("promised"), VP-INF(PART("to"), V("deliver"), NP(DET("the"), N("package")))))
+SUPERPARSER    : CLAUSE(NP(N("Elias")), VP(V("promised"), TO("to"), VP-NP(V("deliver"), NP(DET("the"), N("package")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.909091
+
+[SEM-GOLD-152] Rosa refused to sign the form.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Rosa")), VP(V("refused"), VP-INF(PART("to"), V("sign"), NP(DET("the"), N("form")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Rosa")), VP(V("refused"), TO("to"), VP-NP(V("sign"), NP(DET("the"), N("form")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-153] Nora learned to draw the portrait.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Nora")), VP(V("learned"), VP-INF(PART("to"), V("draw"), NP(DET("the"), N("portrait")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Nora")), VP(V("learned"), TO("to"), VP-NP(V("draw"), NP(DET("the"), N("portrait")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-154] Leo preferred to walk the route.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Leo")), VP(V("preferred"), VP-INF(PART("to"), V("walk"), NP(DET("the"), N("route")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Leo")), VP(V("preferred"), TO("to"), VP-NP(V("walk"), NP(DET("the"), N("route")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-155] Emma intended to inspect the engine.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Emma")), VP(V("intended"), VP-INF(PART("to"), V("inspect"), NP(DET("the"), N("engine")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Emma")), VP(V("intended"), TO("to"), VP-NP(V("inspect"), NP(DET("the"), N("engine")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-156] Iris agreed to carry the box.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Iris")), VP(V("agreed"), VP-INF(PART("to"), V("carry"), NP(DET("the"), N("box")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Iris")), VP(V("agreed"), TO("to"), VP-NP(V("carry"), NP(DET("the"), N("box")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-157] Julia chose to study the history.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Julia")), VP(V("chose"), VP-INF(PART("to"), V("study"), NP(DET("the"), N("history")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Julia")), VP(V("chose"), TO("to"), VP-NP(V("study"), NP(DET("the"), N("history")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-158] Noah managed to solve the puzzle.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Noah")), VP(V("managed"), VP-INF(PART("to"), V("solve"), NP(DET("the"), N("puzzle")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Noah")), VP(V("managed"), TO("to"), VP-NP(V("solve"), NP(DET("the"), N("puzzle")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-159] Sofia offered to paint the fence.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Sofia")), VP(V("offered"), VP-INF(PART("to"), V("paint"), NP(DET("the"), N("fence")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Sofia")), VP(V("offered"), TO("to"), VP-NP(V("paint"), NP(DET("the"), N("fence")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-160] Oliver attempted to cross the river.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Oliver")), VP(V("attempted"), VP-INF(PART("to"), V("cross"), NP(DET("the"), N("river")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Oliver")), VP(V("attempted"), TO("to"), VP-NP(V("cross"), NP(DET("the"), N("river")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-161] Reading books requires patience.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Reading"), NP(N("books"))), VP(V("requires"), NP(N("patience"))))
+SUPERPARSER    : CLAUSE(NP(V("Reading"), NP(N("books"))), VP(V("requires"), NP(N("patience"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-162] Repairing bikes takes practice.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Repairing"), NP(N("bikes"))), VP(V("takes"), NP(N("practice"))))
+SUPERPARSER    : CLAUSE(NP(V("Repairing"), NP(N("bikes"))), VP(V("takes"), NP(N("practice"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-163] Cooking dinner demands attention.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Cooking"), NP(N("dinner"))), VP(V("demands"), NP(N("attention"))))
+SUPERPARSER    : CLAUSE(NP(V("Cooking"), NP(N("dinner"))), VP(V("demands"), NP(N("attention"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-164] Drawing maps improves memory.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Drawing"), NP(N("maps"))), VP(V("improves"), NP(N("memory"))))
+SUPERPARSER    : CLAUSE(NP(V("Drawing"), NP(N("maps"))), VP(V("improves"), NP(N("memory"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-165] Writing poems builds confidence.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Writing"), NP(N("poems"))), VP(V("builds"), NP(N("confidence"))))
+SUPERPARSER    : CLAUSE(NP(V("Writing"), NP(N("poems"))), VP(V("builds"), NP(N("confidence"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-166] Growing vegetables saves money.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Growing"), NP(N("vegetables"))), VP(V("saves"), NP(N("money"))))
+SUPERPARSER    : CLAUSE(NP(N(ADJ("Growing"), N("vegetables"))), VP(V("saves"), NP(N("money"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.666667
+
+[SEM-GOLD-167] Cleaning windows requires time.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Cleaning"), NP(N("windows"))), VP(V("requires"), NP(N("time"))))
+SUPERPARSER    : CLAUSE(NP(V("Cleaning"), NP(N("windows"))), VP(V("requires"), NP(N("time"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-168] Solving puzzles develops reasoning.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Solving"), NP(N("puzzles"))), VP(V("develops"), NP(N("reasoning"))))
+SUPERPARSER    : CLAUSE(NP(V("Solving"), NP(N("puzzles"))), VP(V("develops"), V("reasoning")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.823529
+
+[SEM-GOLD-169] Studying birds encourages curiosity.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Studying"), NP(N("birds"))), VP(V("encourages"), NP(N("curiosity"))))
+SUPERPARSER    : CLAUSE(NP(V("Studying"), NP(N("birds"))), VP(V("encourages"), NP(N("curiosity"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-170] Making mistakes teaches humility.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Making"), NP(N("mistakes"))), VP(V("teaches"), NP(N("humility"))))
+SUPERPARSER    : CLAUSE(NP(V("Making"), NP(N("mistakes"))), VP(V("teaches"), NP(N("humility"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-171] Learning languages requires effort.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Learning"), NP(N("languages"))), VP(V("requires"), NP(N("effort"))))
+SUPERPARSER    : CLAUSE(NP(V("Learning"), NP(N("languages"))), VP(V("requires"), NP(N("effort"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-172] Building bridges needs planning.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Building"), NP(N("bridges"))), VP(V("needs"), NP(N("planning"))))
+SUPERPARSER    : CLAUSE(NP(V("Building"), NP(N("bridges"))), VP(V("needs"), V("planning")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.823529
+
+[SEM-GOLD-173] Keeping records prevents confusion.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Keeping"), NP(N("records"))), VP(V("prevents"), NP(N("confusion"))))
+SUPERPARSER    : CLAUSE(NP(V("Keeping"), NP(N("records"))), VP(V("prevents"), NP(N("confusion"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-174] Collecting samples takes care.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Collecting"), NP(N("samples"))), VP(V("takes"), NP(N("care"))))
+SUPERPARSER    : CLAUSE(NP(V("Collecting"), NP(N("samples"))), VP(V("takes"), NP(N("care"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-175] Helping neighbors creates trust.
+BONNE RÉPONSE : CLAUSE(NP-GERUND(V("Helping"), NP(N("neighbors"))), VP(V("creates"), NP(N("trust"))))
+SUPERPARSER    : CLAUSE(NP(V("Helping"), NP(N("neighbors"))), VP(V("creates"), NP(N("trust"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-176] The teacher checked books and papers.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("checked"), NP-COORD(NP(N("books")), CCONJ("and"), NP(N("papers")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("checked"), NP(NP(N("books")), COORD("and"), NP(N("papers")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-177] The child collected shells and stones.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(V("collected"), NP-COORD(NP(N("shells")), CCONJ("and"), NP(N("stones")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), VP(V("collected"), NP(NP(N("shells")), COORD("and"), NP(N("stones")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-178] The gardener planted roses and tulips.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("gardener")), VP(V("planted"), NP-COORD(NP(N("roses")), CCONJ("and"), NP(N("tulips")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("gardener")), VP(V("planted"), NP(NP(N("roses")), COORD("and"), NP(N("tulips")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-179] The chef chopped carrots and onions.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chef")), VP(V("chopped"), NP-COORD(NP(N("carrots")), CCONJ("and"), NP(N("onions")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("chef")), VP(V("chopped"), NP(NP(N("carrots")), COORD("and"), NP(N("onions")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-180] The student brought pens and notebooks.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("student")), VP(V("brought"), NP-COORD(NP(N("pens")), CCONJ("and"), NP(N("notebooks")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("student")), VP(V("brought"), NP(NP(N("pens")), COORD("and"), NP(N("notebooks")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-181] The artist sketched houses and bridges.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("artist")), VP(V("sketched"), NP-COORD(NP(N("houses")), CCONJ("and"), NP(N("bridges")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("artist")), VP(V("sketched"), NP(NP(N("houses")), COORD("and"), NP(N("bridges")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-182] The nurse counted pills and bandages.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse")), VP(V("counted"), NP-COORD(NP(N("pills")), CCONJ("and"), NP(N("bandages")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("nurse")), VP(V("counted"), NP(NP(N("pills")), COORD("and"), NP(N("bandages")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-183] The driver loaded boxes and crates.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("driver")), VP(V("loaded"), NP-COORD(NP(N("boxes")), CCONJ("and"), NP(N("crates")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("driver")), VP(V("loaded"), NP(NP(N("boxes")), COORD("and"), NP(N("crates")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-184] The visitor photographed birds and trees.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("visitor")), VP(V("photographed"), NP-COORD(NP(N("birds")), CCONJ("and"), NP(N("trees")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("visitor")), VP(V("photographed"), NP(NP(N("birds")), COORD("and"), NP(N("trees")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-185] The scientist examined cells and tissues.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("scientist")), VP(V("examined"), NP-COORD(NP(N("cells")), CCONJ("and"), NP(N("tissues")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("scientist")), VP(V("examined"), NP(NP(N("cells")), COORD("and"), NP(N("tissues")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-186] Maya opened the window and closed the door.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Maya")), VP-COORD(VP(V("opened"), NP(DET("the"), N("window"))), CCONJ("and"), VP(V("closed"), NP(DET("the"), N("door")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Maya")), VP(VP(V("opened"), NP(DET("the"), N("window"))), COORD("and"), VP(V("closed"), NP(DET("the"), N("door")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-187] Theo washed the plates and dried the cups.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Theo")), VP-COORD(VP(V("washed"), NP(DET("the"), N("plates"))), CCONJ("and"), VP(V("dried"), NP(DET("the"), N("cups")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Theo")), VP(VP(V("washed"), NP(DET("the"), N("plates"))), COORD("and"), VP(V("dried"), NP(DET("the"), N("cups")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-188] Lena read the note and folded the paper.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Lena")), VP-COORD(VP(V("read"), NP(DET("the"), N("note"))), CCONJ("and"), VP(V("folded"), NP(DET("the"), N("paper")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Lena")), VP(VP(V("read"), NP(DET("the"), N("note"))), COORD("and"), VP(V("folded"), NP(DET("the"), N("paper")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-189] Owen found the key and unlocked the gate.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Owen")), VP-COORD(VP(V("found"), NP(DET("the"), N("key"))), CCONJ("and"), VP(V("unlocked"), NP(DET("the"), N("gate")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Owen")), VP(VP(V("found"), NP(DET("the"), N("key"))), COORD("and"), VP(V("unlocked"), NP(DET("the"), N("gate")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-190] Amira painted the wall and cleaned the brush.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Amira")), VP-COORD(VP(V("painted"), NP(DET("the"), N("wall"))), CCONJ("and"), VP(V("cleaned"), NP(DET("the"), N("brush")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Amira")), VP(VP(V("painted"), NP(DET("the"), N("wall"))), COORD("and"), VP(V("cleaned"), NP(DET("the"), N("brush")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-191] Iris checked the schedule and called the office.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Iris")), VP-COORD(VP(V("checked"), NP(DET("the"), N("schedule"))), CCONJ("and"), VP(V("called"), NP(DET("the"), N("office")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Iris")), VP(VP(V("checked"), NP(DET("the"), N("schedule"))), COORD("and"), VP(V("called"), NP(DET("the"), N("office")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-192] Nora packed the lunch and carried the bag.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Nora")), VP-COORD(VP(V("packed"), NP(DET("the"), N("lunch"))), CCONJ("and"), VP(V("carried"), NP(DET("the"), N("bag")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Nora")), VP(VP(V("packed"), NP(DET("the"), N("lunch"))), COORD("and"), VP(V("carried"), NP(DET("the"), N("bag")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-193] Leo sharpened the pencil and signed the form.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Leo")), VP-COORD(VP(V("sharpened"), NP(DET("the"), N("pencil"))), CCONJ("and"), VP(V("signed"), NP(DET("the"), N("form")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Leo")), VP(VP(V("sharpened"), NP(DET("the"), N("pencil"))), COORD("and"), VP(V("signed"), NP(DET("the"), N("form")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-194] Rosa tested the alarm and locked the door.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Rosa")), VP-COORD(VP(V("tested"), NP(DET("the"), N("alarm"))), CCONJ("and"), VP(V("locked"), NP(DET("the"), N("door")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Rosa")), VP(VP(V("tested"), NP(DET("the"), N("alarm"))), COORD("and"), VP(V("locked"), NP(DET("the"), N("door")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-195] Emma measured the table and moved the chair.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Emma")), VP-COORD(VP(V("measured"), NP(DET("the"), N("table"))), CCONJ("and"), VP(V("moved"), NP(DET("the"), N("chair")))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Emma")), VP(VP(V("measured"), NP(DET("the"), N("table"))), COORD("and"), VP(V("moved"), NP(DET("the"), N("chair")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-196] The teacher listed dates, places, and names.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("listed"), NP-LIST(NP(N("dates")), PUNCT(","), NP(N("places")), PUNCT(","), CCONJ("and"), NP(N("names")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("listed"), NP(NP(N("dates")), COMMA(","), NP(N("places")), COMMA(","), COORD("and"), NP(N("names")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-197] The artist painted trees, clouds, and mountains.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("artist")), VP(V("painted"), NP-LIST(NP(N("trees")), PUNCT(","), NP(N("clouds")), PUNCT(","), CCONJ("and"), NP(N("mountains")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("artist")), VP(V("painted"), NP(NP(N("trees")), COMMA(","), NP(N("clouds")), COMMA(","), COORD("and"), NP(N("mountains")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-198] The student packed books, pencils, and erasers.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("student")), VP(V("packed"), NP-LIST(NP(N("books")), PUNCT(","), NP(N("pencils")), PUNCT(","), CCONJ("and"), NP(N("erasers")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("student")), VP(V("packed"), NP(NP(N("books")), COMMA(","), NP(N("pencils")), COMMA(","), COORD("and"), NP(N("erasers")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-199] The chef bought flour, eggs, and butter.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chef")), VP(V("bought"), NP-LIST(NP(N("flour")), PUNCT(","), NP(N("eggs")), PUNCT(","), CCONJ("and"), NP(N("butter")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("chef")), VP(V("bought"), NP(NP(N("flour")), COMMA(","), NP(N("eggs")), COMMA(","), COORD("and"), NP(N("butter")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-200] The guide mentioned rivers, lakes, and forests.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("guide")), VP(V("mentioned"), NP-LIST(NP(N("rivers")), PUNCT(","), NP(N("lakes")), PUNCT(","), CCONJ("and"), NP(N("forests")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("guide")), VP(V("mentioned"), NP(NP(N("rivers")), COMMA(","), NP(N("lakes")), COMMA(","), COORD("and"), NP(N("forests")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-201] The child counted cats, dogs, and birds.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(V("counted"), NP-LIST(NP(N("cats")), PUNCT(","), NP(N("dogs")), PUNCT(","), CCONJ("and"), NP(N("birds")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), VP(V("counted"), NP(NP(N("cats")), COMMA(","), NP(N("dogs")), COMMA(","), COORD("and"), NP(N("birds")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-202] The pilot checked gauges, maps, and radios.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("pilot")), VP(V("checked"), NP-LIST(NP(N("gauges")), PUNCT(","), NP(N("maps")), PUNCT(","), CCONJ("and"), NP(N("radios")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("pilot")), VP(V("checked"), NP(NP(N("gauges")), COMMA(","), NP(N("maps")), COMMA(","), COORD("and"), NP(N("radios")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-203] The nurse prepared water, soap, and towels.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse")), VP(V("prepared"), NP-LIST(NP(N("water")), PUNCT(","), NP(N("soap")), PUNCT(","), CCONJ("and"), NP(N("towels")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("nurse")), VP(V("prepared"), NP(NP(N("water")), COMMA(","), NP(N("soap")), COMMA(","), COORD("and"), NP(N("towels")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-204] The librarian sorted novels, maps, and magazines.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("librarian")), VP(V("sorted"), NP-LIST(NP(N("novels")), PUNCT(","), NP(N("maps")), PUNCT(","), CCONJ("and"), NP(N("magazines")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("librarian")), VP(V("sorted"), NP(NP(N("novels")), COMMA(","), NP(N("maps")), COMMA(","), COORD("and"), NP(N("magazines")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-205] The farmer stored hay, grain, and seeds.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("farmer")), VP(V("stored"), NP-LIST(NP(N("hay")), PUNCT(","), NP(N("grain")), PUNCT(","), CCONJ("and"), NP(N("seeds")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("farmer")), VP(V("stored"), NP(NP(N("hay")), COMMA(","), NP(N("grain")), COMMA(","), COORD("and"), NP(N("seeds")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-206] Maya smiled, laughed, and waved.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Maya")), VP-LIST(VP(V("smiled")), PUNCT(","), VP(V("laughed")), PUNCT(","), CCONJ("and"), VP(V("waved"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Maya")), VP(VP(V("smiled")), COMMA(","), VP(V("laughed")), COMMA(","), COORD("and"), VP(V("waved"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-207] Theo stopped, looked, and listened.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Theo")), VP-LIST(VP(V("stopped")), PUNCT(","), VP(V("looked")), PUNCT(","), CCONJ("and"), VP(V("listened"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Theo")), VP(VP(V("stopped")), COMMA(","), VP(V("looked")), COMMA(","), COORD("and"), VP(V("listened"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-208] Iris stood, waited, and watched.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Iris")), VP-LIST(VP(V("stood")), PUNCT(","), VP(V("waited")), PUNCT(","), CCONJ("and"), VP(V("watched"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Iris")), VP(VP(V("stood")), COMMA(","), VP(V("waited")), COMMA(","), COORD("and"), VP(V("watched"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-209] Amira paused, sighed, and continued.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Amira")), VP-LIST(VP(V("paused")), PUNCT(","), VP(V("sighed")), PUNCT(","), CCONJ("and"), VP(V("continued"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Amira")), VP(VP(V("paused")), COMMA(","), VP(V("sighed")), COMMA(","), COORD("and"), VP(V("continued"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-210] Lena walked, turned, and returned.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Lena")), VP-LIST(VP(V("walked")), PUNCT(","), VP(V("turned")), PUNCT(","), CCONJ("and"), VP(V("returned"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Lena")), VP(VP(V("walked")), COMMA(","), VP(V("turned")), COMMA(","), COORD("and"), VP(V("returned"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-211] Owen sat, rested, and recovered.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Owen")), VP-LIST(VP(V("sat")), PUNCT(","), VP(V("rested")), PUNCT(","), CCONJ("and"), VP(V("recovered"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Owen")), VP(VP(V("sat")), COMMA(","), VP(V("rested")), COMMA(","), COORD("and"), VP(V("recovered"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-212] Rosa spoke, waited, and answered.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Rosa")), VP-LIST(VP(V("spoke")), PUNCT(","), VP(V("waited")), PUNCT(","), CCONJ("and"), VP(V("answered"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Rosa")), VP(VP(V("spoke")), COMMA(","), VP(V("waited")), COMMA(","), COORD("and"), VP(V("answered"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-213] Nora arrived, greeted, and stayed.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Nora")), VP-LIST(VP(V("arrived")), PUNCT(","), VP(V("greeted")), PUNCT(","), CCONJ("and"), VP(V("stayed"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Nora")), VP(VP(V("arrived")), COMMA(","), VP(V("greeted")), COMMA(","), COORD("and"), VP(V("stayed"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-214] Emma stretched, yawned, and slept.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Emma")), VP-LIST(VP(V("stretched")), PUNCT(","), VP(V("yawned")), PUNCT(","), CCONJ("and"), VP(V("slept"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Emma")), VP(VP(V("stretched")), COMMA(","), VP(V("yawned")), COMMA(","), COORD("and"), VP(V("slept"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-215] Leo hurried, slipped, and fell.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Leo")), VP-LIST(VP(V("hurried")), PUNCT(","), VP(V("slipped")), PUNCT(","), CCONJ("and"), VP(V("fell"))))
+SUPERPARSER    : CLAUSE(NP(PROPER-NOUN("Leo")), VP(VP(V("hurried")), COMMA(","), VP(V("slipped")), COMMA(","), COORD("and"), VP(V("fell"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-216] The teacher finished the report in the morning before lunch.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("teacher")), VP(V("finished"), NP(DET("the"), N("report")), PP(ADP("in"), NP(DET("the"), N("morning"))), PP(ADP("before"), NP(N("lunch")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("teacher")), VP(V("finished"), NP(NP(NP(DET("the"), N("report")), PP(PREP("in"), NP(DET("the"), N("morning")))), PP(PREP("before"), NP(N("lunch"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.944444
+
+[SEM-GOLD-217] The artist drew the landscape beside the river under the bridge.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("artist")), VP(V("drew"), NP(DET("the"), N("landscape")), PP(ADP("beside"), NP(DET("the"), N("river"))), PP(ADP("under"), NP(DET("the"), N("bridge")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("artist")), VP(V("drew"), NP(NP(DET("the"), N("landscape")), PP(PREP("beside"), NP(DET("the"), N("river")))), PP(PREP("under"), NP(DET("the"), N("bridge")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.947368
+
+[SEM-GOLD-218] The scientist stored the sample inside the cabinet behind the door.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("scientist")), VP(V("stored"), NP(DET("the"), N("sample")), PP(ADP("inside"), NP(DET("the"), N("cabinet"))), PP(ADP("behind"), NP(DET("the"), N("door")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("scientist")), VP(V("stored"), NP(NP(NP(DET("the"), N("sample")), PP(PREP("inside"), NP(DET("the"), N("cabinet")))), PP(PREP("behind"), NP(DET("the"), N("door"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.947368
+
+[SEM-GOLD-219] The driver left the package near the gate before sunset.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("driver")), VP(V("left"), NP(DET("the"), N("package")), PP(ADP("near"), NP(DET("the"), N("gate"))), PP(ADP("before"), NP(N("sunset")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("driver")), VP(V("left"), NP(NP(DET("the"), N("package")), PP(PREP("near"), NP(DET("the"), N("gate")))), PP(PREP("before"), NP(N("sunset")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.944444
+
+[SEM-GOLD-220] The child played the game with the friend after school.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("child")), VP(V("played"), NP(DET("the"), N("game")), PP(ADP("with"), NP(DET("the"), N("friend"))), PP(ADP("after"), NP(N("school")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("child")), VP(V("played"), NP(NP(NP(DET("the"), N("game")), PP(PREP("with"), NP(DET("the"), N("friend")))), PP(PREP("after"), NP(N("school"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.944444
+
+[SEM-GOLD-221] The gardener planted the tree behind the shed near the pond.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("gardener")), VP(V("planted"), NP(DET("the"), N("tree")), PP(ADP("behind"), NP(DET("the"), N("shed"))), PP(ADP("near"), NP(DET("the"), N("pond")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("gardener")), VP(V("planted"), NP(NP(DET("the"), N("tree")), PP(PREP("behind"), NP(DET("the"), N("shed")))), PP(PREP("near"), NP(DET("the"), N("pond")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.947368
+
+[SEM-GOLD-222] The librarian read the article during the break before closing.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("librarian")), VP(V("read"), NP(DET("the"), N("article")), PP(ADP("during"), NP(DET("the"), N("break"))), PP(ADP("before"), NP(N("closing")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("librarian")), VP(V("read"), NP(NP(DET("the"), N("article")), PP(PREP("during"), NP(DET("the"), N("break")))), PREP("before"), V("closing")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.823529
+
+[SEM-GOLD-223] The nurse checked the patient at dawn after the rounds.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("nurse")), VP(V("checked"), NP(DET("the"), N("patient")), PP(ADP("at"), NP(N("dawn"))), PP(ADP("after"), NP(DET("the"), N("rounds")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("nurse")), VP(V("checked"), CLAUSE(NP(NP(DET("the"), N("patient")), PP(PREP("at"), NP(NP(N("dawn"), CONJ("after")), DET("the")))), VP(V("rounds")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.594595
+
+[SEM-GOLD-224] The visitor left the coat beside the bench under the window.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("visitor")), VP(V("left"), NP(DET("the"), N("coat")), PP(ADP("beside"), NP(DET("the"), N("bench"))), PP(ADP("under"), NP(DET("the"), N("window")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("visitor")), VP(V("left"), NP(DET("the"), N("coat")), PP(PREP("beside"), NP(NP(DET("the"), N("bench")), PP(PREP("under"), NP(DET("the"), N("window")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.894737
+
+[SEM-GOLD-225] The farmer moved the equipment into the barn before rain.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("farmer")), VP(V("moved"), NP(DET("the"), N("equipment")), PP(ADP("into"), NP(DET("the"), N("barn"))), PP(ADP("before"), NP(N("rain")))))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N("farmer")), VP(V("moved"), NP(NP(NP(DET("the"), N("equipment")), PP(PREP("into"), NP(DET("the"), N("barn")))), PP(PREP("before"), NP(N("rain"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.944444
+
+[SEM-GOLD-226] The book Maya borrowed disappeared.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("book"), RELCLAUSE(CLAUSE(NP(PROPN("Maya")), VP(V("borrowed"))))), VP(V("disappeared")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("book")), WH-OBJ(NP(PROPER-NOUN("Maya")), VP-GAP(V("borrowed")))), VP(V("disappeared")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-227] The letter Theo wrote arrived.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("letter"), RELCLAUSE(CLAUSE(NP(PROPN("Theo")), VP(V("wrote"))))), VP(V("arrived")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("letter")), WH-OBJ(NP(PROPER-NOUN("Theo")), VP-GAP(V("wrote")))), VP(V("arrived")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-228] The dress Lena bought fit.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("dress"), RELCLAUSE(CLAUSE(NP(PROPN("Lena")), VP(V("bought"))))), VP(V("fit")))
+SUPERPARSER    : CLAUSE(NP(DET("The"), N(ADJ("dress"), N("Lena"))), VP(V("bought"), NP(N("fit"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.285714
+
+[SEM-GOLD-229] The song Emma recorded spread.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("song"), RELCLAUSE(CLAUSE(NP(PROPN("Emma")), VP(V("recorded"))))), VP(V("spread")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("song")), WH-OBJ(NP(PROPER-NOUN("Emma")), VP-GAP(V("recorded")))), VP(V("spread")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-230] The picture Noah took blurred.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("picture"), RELCLAUSE(CLAUSE(NP(PROPN("Noah")), VP(V("took"))))), VP(V("blurred")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("picture")), WH-OBJ(NP(PROPER-NOUN("Noah")), VP-GAP(V("took")))), VP(V("blurred")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-231] The plan Julia suggested worked.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("plan"), RELCLAUSE(CLAUSE(NP(PROPN("Julia")), VP(V("suggested"))))), VP(V("worked")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("plan")), WH-OBJ(NP(PROPER-NOUN("Julia")), VP-GAP(V("suggested")))), VP(V("worked")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-232] The bridge Owen designed collapsed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("bridge"), RELCLAUSE(CLAUSE(NP(PROPN("Owen")), VP(V("designed"))))), VP(V("collapsed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("bridge")), WH-OBJ(NP(PROPER-NOUN("Owen")), VP-GAP(V("designed")))), VP(V("collapsed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-233] The recipe Rosa followed failed.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("recipe"), RELCLAUSE(CLAUSE(NP(PROPN("Rosa")), VP(V("followed"))))), VP(V("failed")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("recipe")), WH-OBJ(NP(PROPER-NOUN("Rosa")), VP-GAP(V("followed")))), VP(V("failed")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-234] The map Iris used helped.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("map"), RELCLAUSE(CLAUSE(NP(PROPN("Iris")), VP(V("used"))))), VP(V("helped")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("map")), WH-OBJ(NP(PROPER-NOUN("Iris")), VP-GAP(V("used")))), VP(V("helped")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-235] The chair Leo fixed broke.
+BONNE RÉPONSE : CLAUSE(NP(DET("The"), N("chair"), RELCLAUSE(CLAUSE(NP(PROPN("Leo")), VP(V("fixed"))))), VP(V("broke")))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("chair")), WH-OBJ(NP(PROPER-NOUN("Leo")), VP-GAP(V("fixed")))), VP(V("broke")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-236] Is the door behind the curtain?
+BONNE RÉPONSE : CLAUSE(AUX("Is"), NP(DET("the"), N("door")), PP(ADP("behind"), NP(DET("the"), N("curtain"))))
+SUPERPARSER    : CLAUSE(COPULA("Is"), NP(DET("the"), N("door")), PP(PREP("behind"), NP(DET("the"), N("curtain"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-237] Was the book on the table?
+BONNE RÉPONSE : CLAUSE(AUX("Was"), NP(DET("the"), N("book")), PP(ADP("on"), NP(DET("the"), N("table"))))
+SUPERPARSER    : CLAUSE(COPULA("Was"), NP(DET("the"), N("book")), PP(PREP("on"), NP(DET("the"), N("table"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-238] Are the keys inside the box?
+BONNE RÉPONSE : CLAUSE(AUX("Are"), NP(DET("the"), N("keys")), PP(ADP("inside"), NP(DET("the"), N("box"))))
+SUPERPARSER    : CLAUSE(COPULA("Are"), NP(DET("the"), N("keys")), PP(PREP("inside"), NP(DET("the"), N("box"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-239] Were the students in the classroom?
+BONNE RÉPONSE : CLAUSE(AUX("Were"), NP(DET("the"), N("students")), PP(ADP("in"), NP(DET("the"), N("classroom"))))
+SUPERPARSER    : CLAUSE(COPULA("Were"), NP(DET("the"), N("students")), PP(PREP("in"), NP(DET("the"), N("classroom"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-240] Is the cat under the bed?
+BONNE RÉPONSE : CLAUSE(AUX("Is"), NP(DET("the"), N("cat")), PP(ADP("under"), NP(DET("the"), N("bed"))))
+SUPERPARSER    : CLAUSE(COPULA("Is"), NP(DET("the"), N("cat")), PP(PREP("under"), NP(DET("the"), N("bed"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-241] Was the train at the station?
+BONNE RÉPONSE : CLAUSE(AUX("Was"), NP(DET("the"), N("train")), PP(ADP("at"), NP(DET("the"), N("station"))))
+SUPERPARSER    : CLAUSE(COPULA("Was"), NP(DET("the"), N("train")), PP(PREP("at"), NP(DET("the"), N("station"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-242] Are the workers near the bridge?
+BONNE RÉPONSE : CLAUSE(AUX("Are"), NP(DET("the"), N("workers")), PP(ADP("near"), NP(DET("the"), N("bridge"))))
+SUPERPARSER    : CLAUSE(COPULA("Are"), NP(DET("the"), N("workers")), PP(PREP("near"), NP(DET("the"), N("bridge"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-243] Is the teacher beside the window?
+BONNE RÉPONSE : CLAUSE(AUX("Is"), NP(DET("the"), N("teacher")), PP(ADP("beside"), NP(DET("the"), N("window"))))
+SUPERPARSER    : CLAUSE(COPULA("Is"), NP(DET("the"), N("teacher")), PP(PREP("beside"), NP(DET("the"), N("window"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-244] Were the documents in the drawer?
+BONNE RÉPONSE : CLAUSE(AUX("Were"), NP(DET("the"), N("documents")), PP(ADP("in"), NP(DET("the"), N("drawer"))))
+SUPERPARSER    : CLAUSE(COPULA("Were"), NP(DET("the"), N("documents")), PP(PREP("in"), NP(DET("the"), N("drawer"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-245] Are the lights above the door?
+BONNE RÉPONSE : CLAUSE(AUX("Are"), NP(DET("the"), N("lights")), PP(ADP("above"), NP(DET("the"), N("door"))))
+SUPERPARSER    : CLAUSE(COPULA("Are"), NP(DET("the"), N("lights")), PP(PREP("above"), NP(DET("the"), N("door"))), QMARK("?"))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-246] When the rain stopped, Maya called the doctor.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("rain")), VP(V("stopped")))), PUNCT(","), CLAUSE(NP(PROPN("Maya")), VP(V("called"), NP(DET("the"), N("doctor")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("rain")), VP(V("stopped"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Maya")), VP(V("called"), NP(DET("the"), N("doctor")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-247] When the wind rose, Theo closed the window.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("wind")), VP(V("rose")))), PUNCT(","), CLAUSE(NP(PROPN("Theo")), VP(V("closed"), NP(DET("the"), N("window")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("wind")), VP(V("rose"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Theo")), VP(V("closed"), NP(DET("the"), N("window")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-248] When the lights changed, Lena boarded the train.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("lights")), VP(V("changed")))), PUNCT(","), CLAUSE(NP(PROPN("Lena")), VP(V("boarded"), NP(DET("the"), N("train")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("lights")), VP(V("changed"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Lena")), VP(V("boarded"), NP(DET("the"), N("train")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-249] When the storm began, Owen carried the bag.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("storm")), VP(V("began")))), PUNCT(","), CLAUSE(NP(PROPN("Owen")), VP(V("carried"), NP(DET("the"), N("bag")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("storm")), VP(V("began"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Owen")), VP(V("carried"), NP(DET("the"), N("bag")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-250] When the road ended, Iris checked the map.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("road")), VP(V("ended")))), PUNCT(","), CLAUSE(NP(PROPN("Iris")), VP(V("checked"), NP(DET("the"), N("map")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("road")), VP(V("ended"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Iris")), VP(V("checked"), NP(DET("the"), N("map")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-251] When the dog barked, Nora opened the gate.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("dog")), VP(V("barked")))), PUNCT(","), CLAUSE(NP(PROPN("Nora")), VP(V("opened"), NP(DET("the"), N("gate")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("dog")), VP(V("barked"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Nora")), VP(V("opened"), NP(DET("the"), N("gate")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-252] When the baby slept, Amira read the letter.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("baby")), VP(V("slept")))), PUNCT(","), CLAUSE(NP(PROPN("Amira")), VP(V("read"), NP(DET("the"), N("letter")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("baby")), VP(V("slept"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Amira")), VP(V("read"), NP(DET("the"), N("letter")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-253] When the power returned, Julia fixed the lamp.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("power")), VP(V("returned")))), PUNCT(","), CLAUSE(NP(PROPN("Julia")), VP(V("fixed"), NP(DET("the"), N("lamp")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("power")), VP(V("returned"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Julia")), VP(V("fixed"), NP(DET("the"), N("lamp")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-254] When the guests arrived, Leo prepared the meal.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("guests")), VP(V("arrived")))), PUNCT(","), CLAUSE(NP(PROPN("Leo")), VP(V("prepared"), NP(DET("the"), N("meal")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("guests")), VP(V("arrived"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Leo")), VP(V("prepared"), NP(DET("the"), N("meal")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-255] When the music started, Emma moved the chair.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("When"), CLAUSE(NP(DET("the"), N("music")), VP(V("started")))), PUNCT(","), CLAUSE(NP(PROPN("Emma")), VP(V("moved"), NP(DET("the"), N("chair")))))
+SUPERPARSER    : CLAUSE(CONJ("When"), CLAUSE(NP(DET("the"), N("music")), VP(V("started"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Emma")), VP(V("moved"), NP(DET("the"), N("chair")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-256] The teacher's notebook was missing.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("teacher"), PART("'s")), N("notebook")), VP(AUX("was"), ADJP(ADJ("missing"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("teacher")), POSS("'s"), N("notebook")), VP(COPULA("was"), V("missing")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.800000
+
+[SEM-GOLD-257] The student's answer was correct.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("student"), PART("'s")), N("answer")), VP(AUX("was"), ADJP(ADJ("correct"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("student")), POSS("'s"), N("answer")), VP(COPULA("was"), ADJ("correct")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-258] The gardener's tools were ready.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("gardener"), PART("'s")), N("tools")), VP(AUX("were"), ADJP(ADJ("ready"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("gardener")), POSS("'s"), N("tools")), VP(COPULA("were"), ADJ("ready")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-259] The captain's decision was final.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("captain"), PART("'s")), N("decision")), VP(AUX("was"), ADJP(ADJ("final"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("captain")), POSS("'s"), N("decision")), VP(COPULA("was"), ADJ("final")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-260] The author's manuscript was complete.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("author"), PART("'s")), N("manuscript")), VP(AUX("was"), ADJP(ADJ("complete"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("author")), POSS("'s"), N("manuscript")), VP(COPULA("was"), ADJ("complete")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-261] The pilot's map was accurate.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("pilot"), PART("'s")), N("map")), VP(AUX("was"), ADJP(ADJ("accurate"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("pilot")), POSS("'s"), N("map")), VP(COPULA("was"), ADJ("accurate")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-262] The chef's knife was sharp.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("chef"), PART("'s")), N("knife")), VP(AUX("was"), ADJP(ADJ("sharp"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("chef")), POSS("'s"), N("knife")), VP(COPULA("was"), ADJ("sharp")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-263] The neighbor's dog was friendly.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("neighbor"), PART("'s")), N("dog")), VP(AUX("was"), ADJP(ADJ("friendly"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("neighbor")), POSS("'s"), N("dog")), VP(COPULA("was"), ADJ("friendly")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-264] The driver's license was valid.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("driver"), PART("'s")), N("license")), VP(AUX("was"), ADJP(ADJ("valid"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("driver")), POSS("'s"), N("license")), VP(COPULA("was"), ADJ("valid")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-265] The artist's studio was quiet.
+BONNE RÉPONSE : CLAUSE(NP(NP(DET("The"), N("artist"), PART("'s")), N("studio")), VP(AUX("was"), ADJP(ADJ("quiet"))))
+SUPERPARSER    : CLAUSE(NP(NP(DET("The"), N("artist")), POSS("'s"), N("studio")), VP(COPULA("was"), ADJ("quiet")))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.900000
+
+[SEM-GOLD-266] There was a mistake in the report.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("was"), NP(DET("a"), N("mistake")), PP(ADP("in"), NP(DET("the"), N("report")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("was"), NP(DET("a"), N("mistake")), PP(PREP("in"), NP(DET("the"), N("report"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-267] There were birds on the roof.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("were"), NP(N("birds")), PP(ADP("on"), NP(DET("the"), N("roof")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("were"), NP(N("birds")), PP(PREP("on"), NP(DET("the"), N("roof"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-268] There was a problem with the engine.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("was"), NP(DET("a"), N("problem")), PP(ADP("with"), NP(DET("the"), N("engine")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("was"), NP(DET("a"), N("problem")), PP(PREP("with"), NP(DET("the"), N("engine"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-269] There were letters on the desk.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("were"), NP(N("letters")), PP(ADP("on"), NP(DET("the"), N("desk")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("were"), NP(N("letters")), PP(PREP("on"), NP(DET("the"), N("desk"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-270] There was a noise behind the wall.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("was"), NP(DET("a"), N("noise")), PP(ADP("behind"), NP(DET("the"), N("wall")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("was"), NP(DET("a"), N("noise")), PP(PREP("behind"), NP(DET("the"), N("wall"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-271] There were footprints near the door.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("were"), NP(N("footprints")), PP(ADP("near"), NP(DET("the"), N("door")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("were"), NP(N("footprints")), PP(PREP("near"), NP(DET("the"), N("door"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-272] There was a message inside the box.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("was"), NP(DET("a"), N("message")), PP(ADP("inside"), NP(DET("the"), N("box")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("was"), NP(DET("a"), N("message")), PP(PREP("inside"), NP(DET("the"), N("box"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-273] There were people outside the store.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("were"), NP(N("people")), PP(ADP("outside"), NP(DET("the"), N("store")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("were"), NP(N("people")), PP(PREP("outside"), NP(DET("the"), N("store"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-274] There was a delay during the trip.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("was"), NP(DET("a"), N("delay")), PP(ADP("during"), NP(DET("the"), N("trip")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("was"), NP(DET("a"), N("delay")), PP(PREP("during"), NP(DET("the"), N("trip"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-275] There were signs along the road.
+BONNE RÉPONSE : CLAUSE(PRON("There"), VP(AUX("were"), NP(N("signs")), PP(ADP("along"), NP(DET("the"), N("road")))))
+SUPERPARSER    : CLAUSE(EXPL("There"), COPULA("were"), NP(N("signs")), PP(PREP("along"), NP(DET("the"), N("road"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: OUI | F1 NORMALISÉ: 1.000000
+
+[SEM-GOLD-276] After the meeting, the teacher that the students trusted explained that the principal approved the plan before the deadline.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(DET("the"), N("meeting"))), PUNCT(","), NP(DET("the"), N("teacher"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("students")), VP(V("trusted"))))), VP(V("explained"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("principal")), VP(V("approved"), NP(DET("the"), N("plan")), PP(ADP("before"), NP(DET("the"), N("deadline"))))))))
+SUPERPARSER    : CLAUSE(PP(PREP("After"), NP(DET("the"), N("meeting"))), COMMA(","), CLAUSE(NP(NP(DET("the"), N("teacher")), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("students")), VP-GAP(V("trusted")))), VP(V("explained"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("principal")), VP(V("approved"), NP(NP(DET("the"), N("plan")), PP(PREP("before"), NP(DET("the"), N("deadline")))))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.956522
+
+[SEM-GOLD-277] After the meeting, the scientist that the assistants respected reported that the committee reviewed the results before the deadline.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(DET("the"), N("meeting"))), PUNCT(","), NP(DET("the"), N("scientist"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("assistants")), VP(V("respected"))))), VP(V("reported"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("committee")), VP(V("reviewed"), NP(DET("the"), N("results")), PP(ADP("before"), NP(DET("the"), N("deadline"))))))))
+SUPERPARSER    : CLAUSE(PP(PREP("After"), NP(DET("the"), N("meeting"))), COMMA(","), CLAUSE(NP(NP(DET("the"), N("scientist")), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("assistants")), VP-GAP(V("respected")))), VP(V("reported"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("committee")), VP(V("reviewed"), NP(NP(DET("the"), N("results")), PP(PREP("before"), NP(DET("the"), N("deadline")))))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.956522
+
+[SEM-GOLD-278] After the meeting, the guide that the visitors followed announced that the ranger marked the trail before the deadline.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(DET("the"), N("meeting"))), PUNCT(","), NP(DET("the"), N("guide"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("visitors")), VP(V("followed"))))), VP(V("announced"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("ranger")), VP(V("marked"), NP(DET("the"), N("trail")), PP(ADP("before"), NP(DET("the"), N("deadline"))))))))
+SUPERPARSER    : CLAUSE(PP(PREP("After"), NP(DET("the"), N("meeting"))), COMMA(","), CLAUSE(NP(NP(DET("the"), N("guide")), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("visitors")), VP-GAP(V("followed")))), VP(V("announced"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("ranger")), VP(V("marked"), NP(DET("the"), N("trail")), PP(PREP("before"), NP(DET("the"), N("deadline"))))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.985507
+
+[SEM-GOLD-279] After the meeting, the writer that the editors questioned confirmed that the publisher accepted the changes before the deadline.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(DET("the"), N("meeting"))), PUNCT(","), NP(DET("the"), N("writer"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("editors")), VP(V("questioned"))))), VP(V("confirmed"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("publisher")), VP(V("accepted"), NP(DET("the"), N("changes")), PP(ADP("before"), NP(DET("the"), N("deadline"))))))))
+SUPERPARSER    : CLAUSE(PP(PREP("After"), NP(DET("the"), N("meeting"))), COMMA(","), CLAUSE(NP(NP(DET("the"), N("writer")), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("editors")), VP-GAP(V("questioned")))), VP(V("confirmed"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("publisher")), VP(V("accepted"), NP(DET("the"), N("changes")), PP(PREP("before"), NP(DET("the"), N("deadline"))))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.985507
+
+[SEM-GOLD-280] After the meeting, the engineer that the workers consulted revealed that the inspector signed the report before the deadline.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(DET("the"), N("meeting"))), PUNCT(","), NP(DET("the"), N("engineer"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("workers")), VP(V("consulted"))))), VP(V("revealed"), SBAR(SCONJ("that"), CLAUSE(NP(DET("the"), N("inspector")), VP(V("signed"), NP(DET("the"), N("report")), PP(ADP("before"), NP(DET("the"), N("deadline"))))))))
+SUPERPARSER    : CLAUSE(PP(PREP("After"), NP(DET("the"), N("meeting"))), COMMA(","), CLAUSE(NP(NP(DET("the"), N("engineer")), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("workers")), VP-GAP(V("consulted")))), VP(V("revealed"), COMP-THAT("that"), CLAUSE(NP(DET("the"), N("inspector")), VP(V("signed"), NP(NP(DET("the"), N("report")), PP(PREP("before"), NP(DET("the"), N("deadline")))))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.956522
+
+[SEM-GOLD-281] During the discussion, Maya listed oceans, lakes, rivers, and the regions that the children visited for the project.
+BONNE RÉPONSE : CLAUSE(PP(ADP("During"), NP(DET("the"), N("discussion"))), PUNCT(","), NP(PROPN("Maya")), VP(V("listed"), NP-LIST(NP(N("oceans")), PUNCT(","), NP(N("lakes")), PUNCT(","), NP(N("rivers")), PUNCT(","), CCONJ("and"), NP(DET("the"), N("regions"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("children")), VP(V("visited")))))), PP(ADP("for"), NP(DET("the"), N("project")))))
+SUPERPARSER    : CLAUSE(PP(PREP("During"), NP(DET("the"), N("discussion"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Maya")), VP(V("listed"), NP(NP(NP(N("oceans")), COMMA(","), NP(N("lakes")), COMMA(","), NP(N("rivers")), COMMA(","), COORD("and"), NP(NP(DET("the"), N("regions")), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("children")), VP-GAP(V("visited"))))), PP(PREP("for"), NP(DET("the"), N("project")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.960000
+
+[SEM-GOLD-282] During the discussion, Theo identified bridges, roads, paths, and the areas that the teams surveyed for the project.
+BONNE RÉPONSE : CLAUSE(PP(ADP("During"), NP(DET("the"), N("discussion"))), PUNCT(","), NP(PROPN("Theo")), VP(V("identified"), NP-LIST(NP(N("bridges")), PUNCT(","), NP(N("roads")), PUNCT(","), NP(N("paths")), PUNCT(","), CCONJ("and"), NP(DET("the"), N("areas"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("teams")), VP(V("surveyed")))))), PP(ADP("for"), NP(DET("the"), N("project")))))
+SUPERPARSER    : CLAUSE(PP(PREP("During"), NP(DET("the"), N("discussion"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Theo")), VP(V("identified"), NP(NP(NP(N("bridges")), COMMA(","), NP(N("roads")), COMMA(","), NP(N("paths")), COMMA(","), COORD("and"), NP(DET("the"), N("areas"))), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("teams")), VP-GAP(V("surveyed")))), PP(PREP("for"), NP(DET("the"), N("project"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.933333
+
+[SEM-GOLD-283] During the discussion, Lena mentioned poems, songs, stories, and the works that the students studied for the project.
+BONNE RÉPONSE : CLAUSE(PP(ADP("During"), NP(DET("the"), N("discussion"))), PUNCT(","), NP(PROPN("Lena")), VP(V("mentioned"), NP-LIST(NP(N("poems")), PUNCT(","), NP(N("songs")), PUNCT(","), NP(N("stories")), PUNCT(","), CCONJ("and"), NP(DET("the"), N("works"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("students")), VP(V("studied")))))), PP(ADP("for"), NP(DET("the"), N("project")))))
+SUPERPARSER    : CLAUSE(PP(PREP("During"), NP(DET("the"), N("discussion"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Lena")), VP(V("mentioned"), NP(NP(NP(NP(N("poems")), COMMA(","), NP(N("songs")), COMMA(","), NP(N("stories")), COMMA(","), COORD("and"), NP(DET("the"), N("works"))), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("students")), VP-GAP(V("studied")))), PP(PREP("for"), NP(DET("the"), N("project")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.933333
+
+[SEM-GOLD-284] During the discussion, Owen counted birds, frogs, insects, and the species that the scientists recorded for the project.
+BONNE RÉPONSE : CLAUSE(PP(ADP("During"), NP(DET("the"), N("discussion"))), PUNCT(","), NP(PROPN("Owen")), VP(V("counted"), NP-LIST(NP(N("birds")), PUNCT(","), NP(N("frogs")), PUNCT(","), NP(N("insects")), PUNCT(","), CCONJ("and"), NP(DET("the"), N("species"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("scientists")), VP(V("recorded")))))), PP(ADP("for"), NP(DET("the"), N("project")))))
+SUPERPARSER    : CLAUSE(PP(PREP("During"), NP(DET("the"), N("discussion"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Owen")), VP(V("counted"), NP(NP(NP(N("birds")), COMMA(","), NP(N("frogs")), COMMA(","), NP(N("insects")), COMMA(","), COORD("and"), NP(DET("the"), N("species"))), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("scientists")), VP-GAP(V("recorded")))), PP(PREP("for"), NP(DET("the"), N("project"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.933333
+
+[SEM-GOLD-285] During the discussion, Amira described farms, forests, deserts, and the places that the travelers explored for the project.
+BONNE RÉPONSE : CLAUSE(PP(ADP("During"), NP(DET("the"), N("discussion"))), PUNCT(","), NP(PROPN("Amira")), VP(V("described"), NP-LIST(NP(N("farms")), PUNCT(","), NP(N("forests")), PUNCT(","), NP(N("deserts")), PUNCT(","), CCONJ("and"), NP(DET("the"), N("places"), RELCLAUSE(REL("that"), CLAUSE(NP(DET("the"), N("travelers")), VP(V("explored")))))), PP(ADP("for"), NP(DET("the"), N("project")))))
+SUPERPARSER    : CLAUSE(PP(PREP("During"), NP(DET("the"), N("discussion"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Amira")), VP(V("described"), NP(NP(NP(N("farms")), COMMA(","), NP(N("forests")), COMMA(","), NP(N("deserts")), COMMA(","), COORD("and"), NP(DET("the"), N("places"))), WH-OBJ(COMP-THAT("that"), NP(DET("the"), N("travelers")), VP-GAP(V("explored")))), PP(PREP("for"), NP(DET("the"), N("project"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.933333
+
+[SEM-GOLD-286] Before sunrise, Maya checked the map and packed the bag, because the weather improved.
+BONNE RÉPONSE : CLAUSE(PP(ADP("Before"), NP(N("sunrise"))), PUNCT(","), NP(PROPN("Maya")), VP-COORD(VP(V("checked"), NP(DET("the"), N("map"))), CCONJ("and"), VP(V("packed"), NP(DET("the"), N("bag")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+SUPERPARSER    : CLAUSE(PP(PREP("Before"), NP(N("sunrise"))), COMMA(","), CLAUSE(CLAUSE(NP(PROPER-NOUN("Maya")), VP(VP(V("checked"), NP(DET("the"), N("map"))), COORD("and"), VP(V("packed"), NP(DET("the"), N("bag"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.965517
+
+[SEM-GOLD-287] After lunch, Theo washed the dishes and closed the window, because the weather improved.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(N("lunch"))), PUNCT(","), NP(PROPN("Theo")), VP-COORD(VP(V("washed"), NP(DET("the"), N("dishes"))), CCONJ("and"), VP(V("closed"), NP(DET("the"), N("window")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+SUPERPARSER    : CLAUSE(CLAUSE(PP(PREP("After"), NP(N("lunch"))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Theo")), VP(VP(V("washed"), NP(DET("the"), N("dishes"))), COORD("and"), VP(V("closed"), NP(DET("the"), N("window")))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved"))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.965517
+
+[SEM-GOLD-288] During the storm, Lena read the book and wrote the notes, because the weather improved.
+BONNE RÉPONSE : CLAUSE(PP(ADP("During"), NP(DET("the"), N("storm"))), PUNCT(","), NP(PROPN("Lena")), VP-COORD(VP(V("read"), NP(DET("the"), N("book"))), CCONJ("and"), VP(V("wrote"), NP(DET("the"), N("notes")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+SUPERPARSER    : CLAUSE(PP(PREP("During"), NP(DET("the"), N("storm"))), COMMA(","), CLAUSE(CLAUSE(NP(PROPER-NOUN("Lena")), VP(VP(V("read"), NP(DET("the"), N("book"))), COORD("and"), VP(V("wrote"), NP(DET("the"), N("notes"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.966667
+
+[SEM-GOLD-289] Before the meeting, Owen reviewed the agenda and printed the copies, because the weather improved.
+BONNE RÉPONSE : CLAUSE(PP(ADP("Before"), NP(DET("the"), N("meeting"))), PUNCT(","), NP(PROPN("Owen")), VP-COORD(VP(V("reviewed"), NP(DET("the"), N("agenda"))), CCONJ("and"), VP(V("printed"), NP(DET("the"), N("copies")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+SUPERPARSER    : CLAUSE(PP(PREP("Before"), NP(DET("the"), N("meeting"))), COMMA(","), CLAUSE(CLAUSE(NP(PROPER-NOUN("Owen")), VP(VP(V("reviewed"), NP(DET("the"), N("agenda"))), COORD("and"), VP(V("printed"), NP(DET("the"), N("copies"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.966667
+
+[SEM-GOLD-290] After the concert, Iris greeted the musicians and collected the programs, because the weather improved.
+BONNE RÉPONSE : CLAUSE(PP(ADP("After"), NP(DET("the"), N("concert"))), PUNCT(","), NP(PROPN("Iris")), VP-COORD(VP(V("greeted"), NP(DET("the"), N("musicians"))), CCONJ("and"), VP(V("collected"), NP(DET("the"), N("programs")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+SUPERPARSER    : CLAUSE(PP(PREP("After"), NP(DET("the"), N("concert"))), COMMA(","), CLAUSE(CLAUSE(NP(PROPER-NOUN("Iris")), VP(VP(V("greeted"), NP(DET("the"), N("musicians"))), COORD("and"), VP(V("collected"), NP(DET("the"), N("programs"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("weather")), VP(V("improved")))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.966667
+
+[SEM-GOLD-291] After the teacher explained the lesson, Maya understood why the answer was wrong.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson"))))), PUNCT(","), NP(PROPN("Maya")), VP(V("understood"), WH-CLAUSE(ADV("why"), CLAUSE(NP(DET("the"), N("answer")), VP(AUX("was"), ADJP(ADJ("wrong")))))))
+SUPERPARSER    : CLAUSE(CONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson")))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Maya")), VP(V("understood"), WH-CLAUSE(WH-NOM("why"), CLAUSE(NP(DET("the"), N("answer")), VP(COPULA("was"), ADJ("wrong")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.980392
+
+[SEM-GOLD-292] After the teacher explained the lesson, Theo explained where the document was hidden.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson"))))), PUNCT(","), NP(PROPN("Theo")), VP(V("explained"), WH-CLAUSE(ADV("where"), CLAUSE(NP(DET("the"), N("document")), VP(AUX("was"), ADJP(ADJ("hidden")))))))
+SUPERPARSER    : CLAUSE(CONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson")))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Theo")), VP(V("explained"), WH-CLAUSE(WH-NOM("where"), CLAUSE(NP(DET("the"), N("document")), VP(AUX-BE("was"), V("hidden")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.941176
+
+[SEM-GOLD-293] After the teacher explained the lesson, Lena remembered when the library was open.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson"))))), PUNCT(","), NP(PROPN("Lena")), VP(V("remembered"), WH-CLAUSE(ADV("when"), CLAUSE(NP(DET("the"), N("library")), VP(AUX("was"), ADJP(ADJ("open")))))))
+SUPERPARSER    : CLAUSE(CONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson")))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Lena")), VP(V("remembered"), CONJ("when"), CLAUSE(NP(DET("the"), N("library")), VP(COPULA("was"), ADJ("open"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.920000
+
+[SEM-GOLD-294] After the teacher explained the lesson, Owen discovered why the engine was silent.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson"))))), PUNCT(","), NP(PROPN("Owen")), VP(V("discovered"), WH-CLAUSE(ADV("why"), CLAUSE(NP(DET("the"), N("engine")), VP(AUX("was"), ADJP(ADJ("silent")))))))
+SUPERPARSER    : CLAUSE(CONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson")))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Owen")), VP(V("discovered"), WH-CLAUSE(WH-NOM("why"), CLAUSE(NP(DET("the"), N("engine")), VP(COPULA("was"), ADJ("silent")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.980392
+
+[SEM-GOLD-295] After the teacher explained the lesson, Iris noticed how the pattern was different.
+BONNE RÉPONSE : CLAUSE(SBAR(SCONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson"))))), PUNCT(","), NP(PROPN("Iris")), VP(V("noticed"), WH-CLAUSE(ADV("how"), CLAUSE(NP(DET("the"), N("pattern")), VP(AUX("was"), ADJP(ADJ("different")))))))
+SUPERPARSER    : CLAUSE(CONJ("After"), CLAUSE(NP(DET("the"), N("teacher")), VP(V("explained"), NP(DET("the"), N("lesson")))), COMMA(","), CLAUSE(NP(PROPER-NOUN("Iris")), VP(V("noticed"), WH-CLAUSE(WH-NOM("how"), CLAUSE(NP(DET("the"), N("pattern")), VP(COPULA("was"), ADJ("different")))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.980392
+
+[SEM-GOLD-296] Maya moved the equipment into the shed before the meeting, because the rain started without warning.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Maya")), VP(V("moved"), NP(DET("the"), N("equipment")), PP(ADP("into"), NP(DET("the"), N("shed"))), PP(ADP("before"), NP(DET("the"), N("meeting")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("rain")), VP(V("started"), PP(ADP("without"), NP(N("warning")))))))
+SUPERPARSER    : CLAUSE(CLAUSE(NP(PROPER-NOUN("Maya")), VP(V("moved"), NP(NP(NP(DET("the"), N("equipment")), PP(PREP("into"), NP(DET("the"), N("shed")))), PP(PREP("before"), NP(DET("the"), N("meeting")))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("rain")), VP(V("started"), PP(PREP("without"), NP(N("warning"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.950820
+
+[SEM-GOLD-297] Theo packed the supplies inside the truck before the meeting, because the storm arrived without warning.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Theo")), VP(V("packed"), NP(DET("the"), N("supplies")), PP(ADP("inside"), NP(DET("the"), N("truck"))), PP(ADP("before"), NP(DET("the"), N("meeting")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("storm")), VP(V("arrived"), PP(ADP("without"), NP(N("warning")))))))
+SUPERPARSER    : CLAUSE(CLAUSE(NP(PROPER-NOUN("Theo")), VP(V("packed"), NP(NP(DET("the"), N("supplies")), PP(PREP("inside"), NP(DET("the"), N("truck")))), PP(PREP("before"), NP(DET("the"), N("meeting"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("storm")), VP(V("arrived"), PP(PREP("without"), NP(N("warning"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.950820
+
+[SEM-GOLD-298] Lena stored the records under the desk before the meeting, because the lights flickered without warning.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Lena")), VP(V("stored"), NP(DET("the"), N("records")), PP(ADP("under"), NP(DET("the"), N("desk"))), PP(ADP("before"), NP(DET("the"), N("meeting")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("lights")), VP(V("flickered"), PP(ADP("without"), NP(N("warning")))))))
+SUPERPARSER    : CLAUSE(CLAUSE(NP(PROPER-NOUN("Lena")), VP(V("stored"), NP(NP(NP(DET("the"), N("records")), PP(PREP("under"), NP(DET("the"), N("desk")))), PP(PREP("before"), NP(DET("the"), N("meeting")))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("lights")), VP(V("flickered"), PP(PREP("without"), NP(N("warning"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.950820
+
+[SEM-GOLD-299] Owen placed the tools beside the door before the meeting, because the alarm sounded without warning.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Owen")), VP(V("placed"), NP(DET("the"), N("tools")), PP(ADP("beside"), NP(DET("the"), N("door"))), PP(ADP("before"), NP(DET("the"), N("meeting")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("alarm")), VP(V("sounded"), PP(ADP("without"), NP(N("warning")))))))
+SUPERPARSER    : CLAUSE(CLAUSE(NP(PROPER-NOUN("Owen")), VP(V("placed"), NP(NP(DET("the"), N("tools")), PP(PREP("beside"), NP(DET("the"), N("door")))), PP(PREP("before"), NP(DET("the"), N("meeting"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("alarm")), VP(VP(V("sounded")), PP(PREP("without"), NP(N("warning"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.950820
+
+[SEM-GOLD-300] Iris carried the books through the hallway before the meeting, because the bell rang without warning.
+BONNE RÉPONSE : CLAUSE(NP(PROPN("Iris")), VP(V("carried"), NP(DET("the"), N("books")), PP(ADP("through"), NP(DET("the"), N("hallway"))), PP(ADP("before"), NP(DET("the"), N("meeting")))), PUNCT(","), SBAR(SCONJ("because"), CLAUSE(NP(DET("the"), N("bell")), VP(V("rang"), PP(ADP("without"), NP(N("warning")))))))
+SUPERPARSER    : CLAUSE(CLAUSE(NP(PROPER-NOUN("Iris")), VP(V("carried"), NP(NP(DET("the"), N("books")), PP(PREP("through"), NP(DET("the"), N("hallway")))), PP(PREP("before"), NP(DET("the"), N("meeting"))))), COMMA(","), CONJ("because"), CLAUSE(NP(DET("the"), N("bell")), VP(V("rang"), PP(PREP("without"), NP(N("warning"))))))
+STATUT         : COMPLET | EXACT BRUT: NON | EXACT NORMALISÉ: NON | F1 NORMALISÉ: 0.950820

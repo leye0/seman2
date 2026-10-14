@@ -5,6 +5,8 @@
 {"id":"vp_ditransitive","semantic":[{"compose":{"links":[{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
 {"id":"vp_prep_ditransitive","semantic":[{"compose":{"links":[{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
 {"id":"vp_intransitive","semantic":[{"copy":{}}]}
+{"id":"vp_unknown_intransitive","semantic":[{"copy":{}}]}
+{"id":"vp_unknown_transitive","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
 {"id":"vp_copula_adj","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
 {"id":"clause_np_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"adjp_adj","semantic":[{"copy":{}}]}
@@ -51,6 +53,8 @@
 {"id":"np_num_n","semantic":[{"compose":{"links":[{"relation":"QUANTIFIER","source":"head","target":"quant"}]}}]}
 {"id":"vp_that","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"clause_sub","semantic":[{"compose":{"links":[{"relation":"SUBORDINATION","source":"main","target":"sub"}]}}]}
+{"id":"clause_comma_sub","semantic":[{"compose":{"links":[{"relation":"SUBORDINATION","source":"main","target":"sub"}]}}]}
+{"id":"clause_appositive_subject","semantic":[{"compose":{"links":[{"relation":"ASSERTED_IDENTITY","source":"subject","target":"appos"},{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"clause_sub_front","semantic":[{"compose":{"links":[{"relation":"SUBORDINATION","source":"main","target":"sub"}]}}]}
 {"id":"vp_to_inf","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_cop_np","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
@@ -82,7 +86,6 @@
 {"id":"np_part_ing_intrans","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
 {"id":"np_part_ed","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
 {"id":"np_part_ed_obj","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"},{"relation":"THEME","source":"event","target":"object"}]}}]}
-{"id":"np_adj_post","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"head","target":"attr"}]}}]}
 {"id":"wh_obj_intrans","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"wh_obj_pp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"wh_bare","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
@@ -260,7 +263,6 @@
 {"id":"vp_obj_pred","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"ATTRIBUTE","source":"object","target":"predicate"}]}}]}
 {"id":"clause_gapping","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"subject"}]}}]}
 {"id":"clause_pred_ellipsis","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"subject"}]}}]}
-{"id":"vpnp_to_cop_np","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attr"}}]}
 {"id":"clause_there_to_be","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"event","target":"attr"}]}}]}
 {"id":"np_inf_coord2","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"clause_gapping_adv","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"subject"}]}}]}
@@ -280,7 +282,6 @@
 {"id":"np_n_ing_wh","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"comp"}]}}]}
 {"id":"vp_result_enough","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"RESULT","source":"event","target":"attr"}]}}]}
 {"id":"advp_conj_to_inf","semantic":[{"copy":{}}]}
-{"id":"np_det_n_conj","semantic":[{"copy":{}}]}
 {"id":"np_part_ed_name","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
 {"id":"vp_np_whclause","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"n_part_ed_name","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
@@ -299,11 +300,9 @@
 {"id":"conj_to_inf","semantic":[{"copy":{}}]}
 {"id":"np_n_to_inf_pp2","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"inf"},{"relation":"MODIFIER","source":"head","target":"mod"}]}}]}
 {"id":"vp_comma_neg_np","semantic":[{"compose":{"links":[{"relation":"ALTERNATIVE","source":"main","target":"alt"}]}}]}
-{"id":"vpnp_to_inf_pp","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"inf","target":"mod"}]}}]}
 {"id":"wh_conj_clause","semantic":[{"copy":{}}]}
 {"id":"vp_that_list","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"c1"}]}}]}
 {"id":"clause_cop_np_neg2","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"event","target":"attr"}]}}]}
-{"id":"vpnp_to_v_np","semantic":[{"link":{"relation":"AFFECTED","source":"inf","target":"object"}}]}
 {"id":"np_n_to_v_np","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"inf"}]}}]}
 {"id":"np_det_ved_n","semantic":[{"copy":{}}]}
 {"id":"n_ved_n","semantic":[{"copy":{}}]}

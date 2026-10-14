@@ -54,6 +54,84 @@ def test_compound_subject_is_not_reanalyzed_as_a_relative() -> None:
     assert "wh_bare" not in rules(best)
 
 
+def test_sentence_initial_plural_is_not_promoted_to_a_name() -> None:
+    best = parser().parse("Birds follow rivers.").result.best()
+    assert best is not None
+    subject = best.children[0]
+    assert subject.rule_id == "np_bare"
+    assert subject.children[0].category == "N"
+
+
+def test_that_subject_relative_keeps_its_subject_gap() -> None:
+    best = parser().parse("The dog that escaped returned.").result.best()
+    assert best is not None
+    assert "np_relative_subj" in rules(best)
+    assert "wh_subj_clause" in rules(best)
+    assert "np_relative_obj" not in rules(best)
+
+
+def test_common_noun_genitive_is_not_a_compound_with_letter_s() -> None:
+    best = parser().parse("The teacher's notebook was missing.").result.best()
+    assert best is not None
+    assert "np_genitive" in rules(best)
+    leaves = [
+        node.lexical_candidate.category
+        for node in nodes(best) if node.lexical_candidate is not None
+    ]
+    assert "POSS" in leaves
+
+
+def test_comma_delimited_causal_clause_is_licensed_generally() -> None:
+    best = parser().parse(
+        "Maya moved the equipment into the shed, because the rain started."
+    ).result.best()
+    assert best is not None
+    assert best.rule_id == "clause_comma_sub"
+
+
+def test_copular_locative_question_keeps_np_and_pp_separate() -> None:
+    best = parser().parse("Are the keys inside the box?").result.best()
+    assert best is not None
+    assert best.rule_id == "clause_yn_cop_pp"
+    assert [child.category for child in best.children] == ["COPULA", "NP", "PP", "QMARK"]
+
+
+def test_existential_locative_keeps_pivot_and_pp_separate() -> None:
+    best = parser().parse("There was a message inside the box.").result.best()
+    assert best is not None
+    assert best.rule_id == "clause_there_pp"
+    assert [child.category for child in best.children] == ["EXPL", "COPULA", "NP", "PP"]
+
+
+def test_less_frequent_wordnet_frames_remain_available() -> None:
+    flooded = parser().parse("The river flooded.").result.best()
+    visited = parser().parse("The scientist who visited spoke.").result.best()
+    assert flooded is not None
+    assert visited is not None
+    assert "vp_intransitive" in rules(flooded)
+    assert "np_relative_subj" in rules(visited)
+
+
+def test_to_infinitive_cannot_be_reinterpreted_as_an_imperative_clause() -> None:
+    best = parser().parse("Maya wanted to visit the museum.").result.best()
+    assert best is not None
+    assert "vp_to_inf" in rules(best)
+    assert "vp_zero_clause" not in rules(best)
+    assert "clause_imperative" not in rules(best)
+
+
+def test_wordnet_valency_gaps_keep_productive_subject_control() -> None:
+    for text in (
+        "Lena decided to read the novel.",
+        "Owen hoped to finish the project.",
+        "Leo preferred to finish the project.",
+    ):
+        best = parser().parse(text).result.best()
+        assert best is not None, text
+        assert "vp_to_inf" in rules(best), text
+        assert "clause_imperative" not in rules(best), text
+
+
 def test_adverb_modifies_the_predicate_not_the_object_np() -> None:
     best = parser().parse("They remembered the event differently.").result.best()
     assert best is not None
@@ -103,7 +181,9 @@ def test_prepositional_adjunct_beats_spurious_participial_subject() -> None:
     best = parser().parse(text).result.best()
     assert best is not None
     assert text[best.children[0].start:best.children[0].end] == "The children"
-    assert "vp_pp" in rules(best)
+    # A WordNet prepositional frame is more informative than the generic
+    # adjunct rule; both preserve the intended VP attachment.
+    assert {"vp_pp", "vp_prepositional"} & set(rules(best))
     assert "pp_prep_np" in rules(best)
     assert "np_part_ed" not in rules(best)
 

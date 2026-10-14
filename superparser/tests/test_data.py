@@ -141,6 +141,15 @@ class LexiconTests(unittest.TestCase):
         name_score = max(c.score for c in workers if c.category == "PROPER-NOUN")
         self.assertGreater(noun_score, name_score)
 
+    def test_wordnet_adjective_satellites_are_loaded(self) -> None:
+        lexicon = load_lexicon(DATA / "function_words.jsonl", wordnet_dict=WN_DICT)
+        lattice = build_lattice("final hidden", lexicon)
+        for surface in ("final", "hidden"):
+            self.assertTrue(any(
+                candidate.surface == surface and candidate.category == "ADJ"
+                for candidate in lattice.candidates
+            ))
+
 
 if __name__ == "__main__":
     unittest.main()

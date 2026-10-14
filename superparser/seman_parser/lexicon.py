@@ -375,6 +375,7 @@ def load_lexicon(
     *,
     wordnet_dict: str | Path | Any | None = None,
     max_senses: int = 2,
+    supplemental_paths: Sequence[str | Path] = (),
 ) -> Lexicon:
     """Load the closed-class inventory from ``path``.
 
@@ -382,10 +383,12 @@ def load_lexicon(
     open-class words are served live from WordNet so coverage is
     exhaustive — no corpus-filtered word list.
     """
-    path = Path(path)
     entries: list[LexicalEntry] = []
-    if path.exists():
-        with path.open(encoding="utf-8") as handle:
+    paths = (Path(path), *(Path(item) for item in supplemental_paths))
+    for source_path in paths:
+        if not source_path.exists():
+            continue
+        with source_path.open(encoding="utf-8") as handle:
             for line_no, line in enumerate(handle, start=1):
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -393,7 +396,7 @@ def load_lexicon(
                 try:
                     raw = json.loads(line)
                 except json.JSONDecodeError as exc:
-                    raise ValueError(f"{path}:{line_no}: invalid lexicon JSON: {exc}") from exc
+                    raise ValueError(f"{source_path}:{line_no}: invalid lexicon JSON: {exc}") from exc
                 entries.append(parse_entry(raw))
     wordnet = None
     if wordnet_dict is not None:

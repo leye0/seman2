@@ -294,7 +294,7 @@ def build_lattice(
         ):
             for category, features, score in (
                 ("N", {"number": "singular"}, 0.35),
-                ("V", {"vform": "finite"}, 0.3),
+                ("V", {"vform": "finite", "unknown": "true"}, 0.3),
                 ("ADJ", {}, 0.25),
             ):
                 candidates.append(
@@ -394,7 +394,20 @@ def _apply_lexical_priors(
                 # a known function word (there=N, that=N, can=N) must not beat
                 # the explicit grammatical inventory merely because a
                 # shallower tree can consume it.
-                score -= 1.5
+                # A closed-class analysis is overwhelming evidence against
+                # obscure WordNet homographs (e.g. ``who`` as an N).  Keep
+                # the reading in the lattice for diagnostics, but prevent a
+                # cheap compound rule from outranking the WH construction.
+                score -= 3.0
+        if (
+            candidate.category == "ADV"
+            and candidate.surface.casefold().endswith("ly")
+            and any(peer.category != "ADV" for peer in peers)
+        ):
+            # Productive -ly is strong morphological evidence when WordNet
+            # itself supplies the adverb reading.  Homographs remain in the
+            # lattice; this only breaks an otherwise arbitrary tie.
+            score += 0.5
         if candidate.category == "PROPER-NOUN" and candidate.span_start == first_word_start:
             written = candidate.surface.casefold()
             morphologically_common = any(
@@ -402,8 +415,12 @@ def _apply_lexical_priors(
                 or peer.category == "ADV"
                 or (
                     peer.category == "N"
-                    and written.endswith("s")
                     and peer.features.as_dict().get("number") == "plural"
+                    and sum(
+                        other.category == "N"
+                        and other.features.as_dict().get("number") == "plural"
+                        for other in peers
+                    ) > 1
                 )
                 or (
                     peer.category == "V"
@@ -413,7 +430,10 @@ def _apply_lexical_priors(
                 for peer in peers
             )
             if morphologically_common:
-                score -= 0.7
+                # Sentence casing alone must not turn a morphologically clear
+                # plural/participle into a name.  This has to overcome the
+                # intentionally larger structural score of ``np_proper``.
+                score -= 1.5
         adjusted.append(candidate if score == candidate.score else replace(candidate, score=score))
     return adjusted
 

@@ -316,6 +316,7 @@ class VectorGrammar:
         beam: int,
         max_items: int,
         goal_category: str,
+        diagnostic_k: int | None = None,
     ) -> ParseResult:
         recognition_start = perf_counter()
         forest = _VectorForest(self, lattice, max_items=max_items)
@@ -323,7 +324,15 @@ class VectorGrammar:
         recognition_ms = (perf_counter() - recognition_start) * 1000
 
         length = len(lattice.text)
-        requested_k = min(beam, 2 if length > 160 else 4 if length > 80 else 8)
+        # Normal parsing deliberately materializes only a small k-best view
+        # of the complete packed forest.  Audits need a wider view to tell a
+        # missing derivation from a ranking error; recognition remains the
+        # same symbolic exhaustive algorithm in both modes.
+        requested_k = (
+            max(1, diagnostic_k)
+            if diagnostic_k is not None
+            else min(beam, 2 if length > 160 else 4 if length > 80 else 8)
+        )
         materializer = _LazyMaterializer(self, forest)
         packed: dict[tuple[int, int, int], PackedNode] = {}
 

@@ -84,7 +84,13 @@ class ParserResources:
             lexicon=load_lexicon(
                 directory / "function_words.jsonl",
                 wordnet_dict=wordnet_dict or discover_wordnet(directory),
-                max_senses=2,
+                supplemental_paths=(directory / "syntax_lexicon.jsonl",),
+                # Valency-bearing senses are not reliably ordered first in
+                # WordNet.  Two senses lose productive alternations such as
+                # flood/visit/endure (transitive and intransitive), turning
+                # grammatical clauses into coverage failures.  Eight keeps
+                # the lexical search bounded while retaining those frames.
+                max_senses=8,
             ),
             types=_LazyTypes(directory / "types.json"),
             metadata={
@@ -215,6 +221,37 @@ class Parser:
         if plan is not None and isinstance(result.stats, dict):
             result.stats["segmentation_fallback"] = True
         self._parse_cache.put(cache_key, result)
+        return ParseReport(result=result, resources=self.resources)
+
+    def parse_diagnostic(
+        self,
+        text: str,
+        *,
+        alternatives: int = 64,
+        max_items: int = 500_000,
+    ) -> ParseReport:
+        """Parse with a wide materialized root view and a generous budget.
+
+        This mode is intended for grammar audits, not production.  It makes
+        it possible to distinguish absent analyses from correct analyses that
+        merely lose in ranking, without replacing the packed recognizer or
+        changing its grammar.
+        """
+        text = text.strip().strip('"\u201c\u201d\u2018\u2019').strip()
+        lattice = build_lattice(
+            text, self.resources.lexicon,
+            deduplicate=self.deduplicate_lexical,
+        )
+        result = self._vector_grammar.parse_lattice(
+            lattice,
+            beam=max(self.beam, alternatives),
+            max_items=max(max_items, self.max_items),
+            goal_category=self.goal_category,
+            diagnostic_k=alternatives,
+        )
+        if isinstance(result.stats, dict):
+            result.stats["diagnostic_mode"] = True
+            result.stats["diagnostic_k"] = alternatives
         return ParseReport(result=result, resources=self.resources)
 
     def _parse_vector_text(self, text: str) -> ParseResult:

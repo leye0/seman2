@@ -157,14 +157,21 @@ class WordNet:
 
     def synset(self, offset: int, pos: str) -> WordNetSynset | None:
         self.load_data(pos)
-        return self._synsets.get((offset, pos))
+        found = self._synsets.get((offset, pos))
+        # index.adj uses POS ``a`` for both head adjectives and adjective
+        # satellites, while data.adj records satellites as ``s``.  Looking
+        # up only (offset, "a") silently discarded entries such as final and
+        # hidden even though they are present in WordNet.
+        if found is None and pos == POS_ADJ:
+            found = self._synsets.get((offset, POS_SATELLITE))
+        return found
 
     def synsets_for(self, lemma: str, pos: str | None = None) -> Sequence[WordNetSynset]:
         out: list[WordNetSynset] = []
         for entry in self.lookup(lemma, pos):
             self.load_data(entry.pos)
             for offset in entry.synset_offsets:
-                synset = self._synsets.get((offset, entry.pos))
+                synset = self.synset(offset, entry.pos)
                 if synset is not None:
                     out.append(synset)
         return out
