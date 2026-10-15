@@ -1,0 +1,84 @@
+--- a/superparser/seman_parser/reading_kernel_compiled.py
++++ b/superparser/seman_parser/reading_kernel_compiled.py
+@@ -235,6 +235,28 @@
+         self.count['category_checks'] += 1
+         return bool(self.g.first.get(cat, frozenset()) & self._categories(at)) if cat in self.g.nonterminals else cat in self._categories(at)
+ 
++    @staticmethod
++    def _value_compatible(expected, observed):
++        """Check a typed lexical feature against a grammar constraint.
++
++        A disjunctive lexical feature licenses any of its constituent atoms.
++        The final production reduction still uses Seman2's full unifier.
++        """
++        if isinstance(expected, str) and expected.startswith('?'):
++            return True
++        if isinstance(observed, str) and observed.startswith('?'):
++            return True
++        if isinstance(observed, (list, tuple, set, frozenset)):
++            return any(IncrementalReader._value_compatible(expected, one)
++                       for one in observed)
++        if isinstance(expected, (list, tuple, set, frozenset)):
++            return any(IncrementalReader._value_compatible(one, observed)
++                       for one in expected)
++        if isinstance(expected, dict) and isinstance(observed, dict):
++            return all(k not in observed or IncrementalReader._value_compatible(v, observed[k])
++                       for k, v in expected.items())
++        return expected == observed
++
+     def _lexical_compatible(self, category: str, hints=(), *, at=None) -> bool:
+         """Check actual lexical evidence *before* committing to an edge.
+ 
+@@ -252,8 +274,8 @@
+             attrs = self._features(candidate)
+             for _rule, symbol, _remaining in hints:
+                 required = self._features(symbol)
+-                if any(key in attrs and not str(value).startswith('?') and
+-                       attrs[key] != value for key, value in required.items()):
++                if any(key in attrs and not self._value_compatible(value, attrs[key])
++                       for key, value in required.items()):
+                     continue
+                 if any(key not in attrs for key in getattr(symbol, 'requires', ())):
+                     continue
+@@ -340,8 +362,8 @@
+             attrs = self._features(candidate)
+             for rule, symbol, tail in hints:
+                 required = self._features(symbol)
+-                if any(key in attrs and not str(value).startswith('?') and
+-                       attrs[key] != value for key, value in required.items()):
++                if any(key in attrs and not self._value_compatible(value, attrs[key])
++                       for key, value in required.items()):
+                     continue
+                 if any(key not in attrs for key in getattr(symbol, 'requires', ())):
+                     continue
+--- a/superparser/tests/test_reader_disjunctive_lexical.py
++++ b/superparser/tests/test_reader_disjunctive_lexical.py
+@@ -0,0 +1,28 @@
++"""A single WordNet candidate may license multiple syntactic frames."""
++from _reading_kernel_v1_fixture_base import (fixture_grammar, lex, Lex, ReadNode, CompiledGrammar, IncrementalReader)
++
++
++def test_disjunctive_verb_frame_is_usable_without_branching():
++    text = 'The recipe Rosa followed failed.'
++    tokens, original = lex(text)
++    candidates = []
++    for c in original:
++        if c.surface.lower() == 'failed':
++            candidates.append(Lex(c.category, c.span_start, c.span_end,
++                c.surface, c.lemma,
++                {'vform':'finite', 'subcat': ['intransitive','transitive']},c.score))
++        else:
++            candidates.append(c)
++
++    def combine(rule, children):
++        for sym, ch in zip(rule.rhs, children):
++            if sym.features and ch.candidate:
++                for name, value in sym.features.items():
++                    got = ch.candidate.features.get(name)
++                    if got != value and not (isinstance(got,list) and value in got):
++                        return None
++        return ReadNode(rule.lhs.category, children[0].start, children[-1].end,
++                        rule=rule, children=children)
++    result = IncrementalReader(CompiledGrammar(fixture_grammar()), combine, tokens, candidates).read()
++    assert result.complete, (result.reason, [e.as_dict() for e in result.events])
++    assert any(e.action == 'COMPLETE' and e.detail == 'vp_intransitive' for e in result.events)

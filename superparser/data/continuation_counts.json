@@ -1,0 +1,660 @@
+{
+  "alpha": 2.0,
+  "format": "seman2-continuation-counts-v1",
+  "rows": {
+    "CLAUSE|AUX,NEG,VP|$END": {
+      "$DONE": 5.0
+    },
+    "CLAUSE|CLAUSE,COMMA,CLAUSE|$END": {
+      "$DONE": 10.0
+    },
+    "CLAUSE|CONJ,CLAUSE,COMMA|PROPER-NOUN": {
+      "CLAUSE": 10.0
+    },
+    "CLAUSE|CONJ,CLAUSE|COMMA": {
+      "COMMA": 10.0
+    },
+    "CLAUSE|CONJ|DET": {
+      "CLAUSE": 10.0
+    },
+    "CLAUSE|COPULA,NP,PP|$END": {
+      "$DONE": 10.0
+    },
+    "CLAUSE|COPULA,NP,PP|QMARK": {
+      "QMARK": 10.0
+    },
+    "CLAUSE|COPULA,NP|PREP": {
+      "PP": 10.0
+    },
+    "CLAUSE|COPULA|DET": {
+      "NP": 10.0
+    },
+    "CLAUSE|EXPL,COPULA,NP|PREP": {
+      "PP": 10.0
+    },
+    "CLAUSE|EXPL,COPULA|DET": {
+      "NP": 5.0
+    },
+    "CLAUSE|EXPL,COPULA|N": {
+      "NP": 5.0
+    },
+    "CLAUSE|EXPL|COPULA": {
+      "COPULA": 10.0
+    },
+    "CLAUSE|NP,AUX,NEG|V": {
+      "VP": 5.0
+    },
+    "CLAUSE|NP,AUX|NEG": {
+      "NEG": 5.0
+    },
+    "CLAUSE|NP,PP,QMARK|$END": {
+      "$DONE": 10.0
+    },
+    "CLAUSE|NP,VP|$END": {
+      "$DONE": 212.0
+    },
+    "CLAUSE|NP,VP|COMMA": {
+      "$DONE": 10.0
+    },
+    "CLAUSE|NP|AUX": {
+      "AUX": 5.0
+    },
+    "CLAUSE|NP|AUX-BE": {
+      "VP": 10.0
+    },
+    "CLAUSE|NP|COPULA": {
+      "VP": 13.0
+    },
+    "CLAUSE|NP|HAVE": {
+      "VP": 1.0
+    },
+    "CLAUSE|NP|MODAL": {
+      "VP": 3.0
+    },
+    "CLAUSE|NP|V": {
+      "VP": 195.0
+    },
+    "CLAUSE||$END": {
+      "$DONE": 247.0
+    },
+    "CLAUSE||*": {
+      "$DONE": 257.0,
+      "AUX": 5.0,
+      "CLAUSE": 20.0,
+      "COMMA": 10.0,
+      "CONJ": 10.0,
+      "COPULA": 20.0,
+      "EXPL": 10.0,
+      "NEG": 5.0,
+      "NP": 247.0,
+      "PP": 20.0,
+      "QMARK": 10.0,
+      "VP": 227.0
+    },
+    "CLAUSE||AUX": {
+      "AUX": 5.0
+    },
+    "CLAUSE||AUX-BE": {
+      "VP": 10.0
+    },
+    "CLAUSE||COMMA": {
+      "$DONE": 10.0,
+      "COMMA": 10.0
+    },
+    "CLAUSE||CONJ": {
+      "CONJ": 20.0
+    },
+    "CLAUSE||COPULA": {
+      "COPULA": 30.0,
+      "VP": 13.0
+    },
+    "CLAUSE||DET": {
+      "CLAUSE": 10.0,
+      "NP": 323.0
+    },
+    "CLAUSE||EXPL": {
+      "EXPL": 20.0
+    },
+    "CLAUSE||HAVE": {
+      "VP": 1.0
+    },
+    "CLAUSE||MODAL": {
+      "VP": 3.0
+    },
+    "CLAUSE||N": {
+      "NP": 15.0
+    },
+    "CLAUSE||NEG": {
+      "NEG": 5.0
+    },
+    "CLAUSE||PREP": {
+      "PP": 20.0
+    },
+    "CLAUSE||PROPER-NOUN": {
+      "CLAUSE": 10.0,
+      "NP": 112.0
+    },
+    "CLAUSE||QMARK": {
+      "QMARK": 10.0
+    },
+    "CLAUSE||V": {
+      "NP": 24.0,
+      "VP": 200.0
+    },
+    "NP|COMMA,COORD,NP|$END": {
+      "$DONE": 10.0
+    },
+    "NP|COMMA,NP,COMMA|COORD": {
+      "COORD": 10.0
+    },
+    "NP|DET,N|$END": {
+      "$DONE": 71.0
+    },
+    "NP|DET,N|AUX": {
+      "$DONE": 5.0
+    },
+    "NP|DET,N|AUX-BE": {
+      "$DONE": 10.0
+    },
+    "NP|DET,N|COMP-THAT": {
+      "$DONE": 15.0,
+      "$EXTEND": 15.0
+    },
+    "NP|DET,N|COORD": {
+      "$DONE": 10.0
+    },
+    "NP|DET,N|COPULA": {
+      "$DONE": 13.0
+    },
+    "NP|DET,N|DET": {
+      "$DONE": 5.0
+    },
+    "NP|DET,N|HAVE": {
+      "$DONE": 1.0
+    },
+    "NP|DET,N|MODAL": {
+      "$DONE": 3.0
+    },
+    "NP|DET,N|PREP": {
+      "$DONE": 23.0,
+      "$EXTEND": 1.0
+    },
+    "NP|DET,N|PROPER-NOUN": {
+      "$DONE": 9.0,
+      "$EXTEND": 9.0
+    },
+    "NP|DET,N|QMARK": {
+      "$DONE": 10.0
+    },
+    "NP|DET,N|V": {
+      "$DONE": 83.0
+    },
+    "NP|DET,N|WH-PRONOUN": {
+      "$DONE": 15.0,
+      "$EXTEND": 15.0
+    },
+    "NP|DET|N": {
+      "N": 273.0
+    },
+    "NP|NP,COMMA,COORD|N": {
+      "NP": 10.0
+    },
+    "NP|NP,COMMA,NP|COMMA": {
+      "COMMA": 10.0
+    },
+    "NP|NP,COMMA|N": {
+      "NP": 10.0
+    },
+    "NP|NP,COORD,NP|$END": {
+      "$DONE": 10.0
+    },
+    "NP|NP,COORD|N": {
+      "NP": 10.0
+    },
+    "NP|NP,PP|$END": {
+      "$DONE": 1.0
+    },
+    "NP|NP,WH-OBJ|V": {
+      "$DONE": 24.0
+    },
+    "NP|NP,WH-SUBJ|V": {
+      "$DONE": 15.0
+    },
+    "NP|NP|COMMA": {
+      "COMMA": 10.0
+    },
+    "NP|NP|COMP-THAT": {
+      "WH-OBJ": 15.0
+    },
+    "NP|NP|COORD": {
+      "COORD": 10.0
+    },
+    "NP|NP|PREP": {
+      "PP": 1.0
+    },
+    "NP|NP|PROPER-NOUN": {
+      "WH-OBJ": 9.0
+    },
+    "NP|NP|WH-PRONOUN": {
+      "WH-SUBJ": 15.0
+    },
+    "NP|N|$END": {
+      "$DONE": 41.0
+    },
+    "NP|N|COMMA": {
+      "$DONE": 20.0,
+      "$EXTEND": 10.0
+    },
+    "NP|N|COORD": {
+      "$DONE": 10.0,
+      "$EXTEND": 10.0
+    },
+    "NP|N|PREP": {
+      "$DONE": 5.0
+    },
+    "NP|N|V": {
+      "$DONE": 17.0
+    },
+    "NP|PROPER-NOUN|V": {
+      "$DONE": 80.0
+    },
+    "NP|V,NP|V": {
+      "$DONE": 12.0
+    },
+    "NP|V|N": {
+      "NP": 12.0
+    },
+    "NP||$END": {
+      "$DONE": 133.0
+    },
+    "NP||*": {
+      "$DONE": 518.0,
+      "$EXTEND": 60.0,
+      "COMMA": 20.0,
+      "COORD": 20.0,
+      "DET": 273.0,
+      "N": 366.0,
+      "NP": 102.0,
+      "PP": 1.0,
+      "PROPER-NOUN": 80.0,
+      "V": 12.0,
+      "WH-OBJ": 24.0,
+      "WH-SUBJ": 15.0
+    },
+    "NP||AUX": {
+      "$DONE": 5.0
+    },
+    "NP||AUX-BE": {
+      "$DONE": 10.0
+    },
+    "NP||COMMA": {
+      "$DONE": 20.0,
+      "$EXTEND": 10.0,
+      "COMMA": 20.0
+    },
+    "NP||COMP-THAT": {
+      "$DONE": 15.0,
+      "$EXTEND": 15.0,
+      "WH-OBJ": 15.0
+    },
+    "NP||COORD": {
+      "$DONE": 20.0,
+      "$EXTEND": 10.0,
+      "COORD": 20.0
+    },
+    "NP||COPULA": {
+      "$DONE": 13.0
+    },
+    "NP||DET": {
+      "$DONE": 5.0,
+      "DET": 546.0,
+      "NP": 80.0
+    },
+    "NP||HAVE": {
+      "$DONE": 1.0
+    },
+    "NP||MODAL": {
+      "$DONE": 3.0
+    },
+    "NP||N": {
+      "N": 459.0,
+      "NP": 82.0
+    },
+    "NP||PREP": {
+      "$DONE": 28.0,
+      "$EXTEND": 1.0,
+      "PP": 1.0
+    },
+    "NP||PROPER-NOUN": {
+      "$DONE": 9.0,
+      "$EXTEND": 9.0,
+      "PROPER-NOUN": 160.0,
+      "WH-OBJ": 9.0
+    },
+    "NP||QMARK": {
+      "$DONE": 10.0
+    },
+    "NP||V": {
+      "$DONE": 231.0,
+      "V": 24.0
+    },
+    "NP||WH-PRONOUN": {
+      "$DONE": 15.0,
+      "$EXTEND": 15.0,
+      "WH-SUBJ": 15.0
+    },
+    "PP|PREP,NP|$END": {
+      "$DONE": 18.0
+    },
+    "PP|PREP,NP|QMARK": {
+      "$DONE": 10.0
+    },
+    "PP|PREP|DET": {
+      "NP": 27.0
+    },
+    "PP|PREP|N": {
+      "NP": 1.0
+    },
+    "PP||$END": {
+      "$DONE": 18.0
+    },
+    "PP||*": {
+      "$DONE": 28.0,
+      "NP": 28.0,
+      "PREP": 28.0
+    },
+    "PP||DET": {
+      "NP": 27.0
+    },
+    "PP||N": {
+      "NP": 1.0
+    },
+    "PP||PREP": {
+      "PREP": 56.0
+    },
+    "PP||QMARK": {
+      "$DONE": 10.0
+    },
+    "VP-GAP|V|V": {
+      "$DONE": 24.0
+    },
+    "VP-GAP||*": {
+      "$DONE": 24.0,
+      "V": 24.0
+    },
+    "VP-GAP||V": {
+      "$DONE": 24.0,
+      "V": 48.0
+    },
+    "VP-NP|V,NP|$END": {
+      "$DONE": 14.0
+    },
+    "VP-NP|V|$END": {
+      "$DONE": 3.0
+    },
+    "VP-NP|V|DET": {
+      "NP": 14.0
+    },
+    "VP-NP||$END": {
+      "$DONE": 17.0
+    },
+    "VP-NP||*": {
+      "$DONE": 17.0,
+      "NP": 14.0,
+      "V": 17.0
+    },
+    "VP-NP||DET": {
+      "NP": 14.0
+    },
+    "VP-NP||V": {
+      "V": 34.0
+    },
+    "VP|AUX-BE,V|$END": {
+      "$DONE": 10.0
+    },
+    "VP|AUX-BE|V": {
+      "V": 10.0
+    },
+    "VP|COMMA,COORD,VP|$END": {
+      "$DONE": 10.0
+    },
+    "VP|COMMA,VP,COMMA|COORD": {
+      "COORD": 10.0
+    },
+    "VP|COPULA,ADJ|$END": {
+      "$DONE": 7.0
+    },
+    "VP|COPULA,NEG,ADJ|$END": {
+      "$DONE": 5.0
+    },
+    "VP|COPULA,NEG|ADJ": {
+      "ADJ": 5.0
+    },
+    "VP|COPULA,V|$END": {
+      "$DONE": 1.0
+    },
+    "VP|COPULA|ADJ": {
+      "ADJ": 7.0
+    },
+    "VP|COPULA|NEG": {
+      "NEG": 5.0
+    },
+    "VP|COPULA|V": {
+      "V": 1.0
+    },
+    "VP|HAVE,V|$END": {
+      "$DONE": 1.0
+    },
+    "VP|HAVE|V": {
+      "V": 1.0
+    },
+    "VP|MODAL,VP-NP|$END": {
+      "$DONE": 3.0
+    },
+    "VP|MODAL|V": {
+      "VP-NP": 3.0
+    },
+    "VP|V,ADJ|$END": {
+      "$DONE": 7.0
+    },
+    "VP|V,COMP-THAT,CLAUSE|$END": {
+      "$DONE": 12.0
+    },
+    "VP|V,COMP-THAT|DET": {
+      "CLAUSE": 12.0
+    },
+    "VP|V,NP,NP|$END": {
+      "$DONE": 5.0
+    },
+    "VP|V,NP,PP|$END": {
+      "$DONE": 7.0
+    },
+    "VP|V,NP|$END": {
+      "$DONE": 76.0
+    },
+    "VP|V,NP|COORD": {
+      "$DONE": 10.0,
+      "$EXTEND": 10.0
+    },
+    "VP|V,NP|DET": {
+      "NP": 5.0
+    },
+    "VP|V,NP|PREP": {
+      "PP": 7.0
+    },
+    "VP|V,TO,VP-NP|$END": {
+      "$DONE": 14.0
+    },
+    "VP|V,TO|V": {
+      "VP-NP": 14.0
+    },
+    "VP|VP,COMMA,COORD|V": {
+      "VP": 10.0
+    },
+    "VP|VP,COMMA,VP|COMMA": {
+      "COMMA": 10.0
+    },
+    "VP|VP,COMMA|V": {
+      "VP": 10.0
+    },
+    "VP|VP,COORD,VP|$END": {
+      "$DONE": 10.0
+    },
+    "VP|VP,COORD|V": {
+      "VP": 10.0
+    },
+    "VP|VP|COMMA": {
+      "COMMA": 10.0
+    },
+    "VP|VP|COORD": {
+      "COORD": 10.0
+    },
+    "VP|V|$END": {
+      "$DONE": 69.0
+    },
+    "VP|V|ADJ": {
+      "ADJ": 7.0
+    },
+    "VP|V|COMMA": {
+      "$DONE": 30.0,
+      "$EXTEND": 10.0
+    },
+    "VP|V|COMP-THAT": {
+      "COMP-THAT": 12.0
+    },
+    "VP|V|DET": {
+      "NP": 58.0
+    },
+    "VP|V|N": {
+      "NP": 40.0
+    },
+    "VP|V|TO": {
+      "TO": 14.0
+    },
+    "VP|V|V": {
+      "$DONE": 15.0
+    },
+    "VP||$END": {
+      "$DONE": 237.0
+    },
+    "VP||*": {
+      "$DONE": 292.0,
+      "$EXTEND": 20.0,
+      "ADJ": 19.0,
+      "AUX-BE": 10.0,
+      "CLAUSE": 12.0,
+      "COMMA": 20.0,
+      "COMP-THAT": 12.0,
+      "COORD": 20.0,
+      "COPULA": 13.0,
+      "HAVE": 1.0,
+      "MODAL": 3.0,
+      "NEG": 5.0,
+      "NP": 103.0,
+      "PP": 7.0,
+      "TO": 14.0,
+      "V": 257.0,
+      "VP": 50.0,
+      "VP-NP": 17.0
+    },
+    "VP||ADJ": {
+      "ADJ": 19.0
+    },
+    "VP||AUX-BE": {
+      "AUX-BE": 20.0
+    },
+    "VP||COMMA": {
+      "$DONE": 30.0,
+      "$EXTEND": 10.0,
+      "COMMA": 20.0
+    },
+    "VP||COMP-THAT": {
+      "COMP-THAT": 12.0
+    },
+    "VP||COORD": {
+      "$DONE": 10.0,
+      "$EXTEND": 10.0,
+      "COORD": 20.0
+    },
+    "VP||COPULA": {
+      "COPULA": 26.0
+    },
+    "VP||DET": {
+      "CLAUSE": 12.0,
+      "NP": 63.0
+    },
+    "VP||HAVE": {
+      "HAVE": 2.0
+    },
+    "VP||MODAL": {
+      "MODAL": 6.0
+    },
+    "VP||N": {
+      "NP": 40.0
+    },
+    "VP||NEG": {
+      "NEG": 5.0
+    },
+    "VP||PREP": {
+      "PP": 7.0
+    },
+    "VP||TO": {
+      "TO": 14.0
+    },
+    "VP||V": {
+      "$DONE": 15.0,
+      "V": 502.0,
+      "VP": 70.0,
+      "VP-NP": 17.0
+    },
+    "WH-OBJ|COMP-THAT,NP,VP-GAP|V": {
+      "$DONE": 15.0
+    },
+    "WH-OBJ|COMP-THAT,NP|V": {
+      "VP-GAP": 15.0
+    },
+    "WH-OBJ|COMP-THAT|PROPER-NOUN": {
+      "NP": 15.0
+    },
+    "WH-OBJ|NP,VP-GAP|V": {
+      "$DONE": 9.0
+    },
+    "WH-OBJ|NP|V": {
+      "VP-GAP": 9.0
+    },
+    "WH-OBJ||*": {
+      "$DONE": 24.0,
+      "COMP-THAT": 15.0,
+      "NP": 24.0,
+      "VP-GAP": 24.0
+    },
+    "WH-OBJ||COMP-THAT": {
+      "COMP-THAT": 30.0
+    },
+    "WH-OBJ||PROPER-NOUN": {
+      "NP": 33.0
+    },
+    "WH-OBJ||V": {
+      "$DONE": 24.0,
+      "VP-GAP": 24.0
+    },
+    "WH-SUBJ|WH-PRONOUN,VP|V": {
+      "$DONE": 15.0
+    },
+    "WH-SUBJ|WH-PRONOUN|V": {
+      "VP": 15.0
+    },
+    "WH-SUBJ||*": {
+      "$DONE": 15.0,
+      "VP": 15.0,
+      "WH-PRONOUN": 15.0
+    },
+    "WH-SUBJ||V": {
+      "$DONE": 15.0,
+      "VP": 15.0
+    },
+    "WH-SUBJ||WH-PRONOUN": {
+      "WH-PRONOUN": 30.0
+    }
+  }
+}

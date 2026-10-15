@@ -1,0 +1,93 @@
+--- a/superparser/seman_parser/reading_kernel_compiled.py
++++ b/superparser/seman_parser/reading_kernel_compiled.py
+@@ -75,10 +75,11 @@
+         self.extensions: dict[str, State] = {}
+         self.by_signature: dict[tuple[str, tuple[str, ...]], tuple[Any, ...]] = {}
+         self.first: dict[str, frozenset[str]] = {}
++        self.producers: dict[str, list[Any]] = defaultdict(list)
+         self._next_id = 0
+         self.states: list[State] = []
+         signatures: dict[tuple[str, tuple[str, ...]], list[Any]] = defaultdict(list)
+-        initial: dict[str, list[Any]] = defaultdict(list)
++        initial = self.producers
+         ext: dict[str, list[Any]] = defaultdict(list)
+         for rule in rules:
+             rhs = tuple(s.category for s in rule.rhs)
+@@ -115,7 +116,7 @@
+         for node in self.states:
+             dispatch: dict[str, list[str]] = defaultdict(list)
+             for symbol, successor in node.edges.items():
+-                for lexical in (self.first.get(symbol, frozenset()) if symbol in self.nonterminals else (symbol,)):
++                for lexical in self._first_compatible_with_hints(symbol, node.hints.get(symbol, ())):
+                     dispatch[lexical].append(symbol)
+             # A precomputed, compact map; no rule enumeration per input word.
+             node.dispatch = {
+@@ -131,6 +132,34 @@
+             'extendable_categories': len(self.extensions),
+         }
+ 
++    def _first_compatible_with_hints(self, category, hints):
++        """Compile the lexical starts of an RHS slot, including its positive
++        feature requirements. No grammar scan happens during reading.
++        """
++        if category not in self.nonterminals:
++            return frozenset((category,))
++        starts = set()
++        for _, expected, _ in hints:
++            wanted = expected.features.as_dict() if hasattr(expected.features, 'as_dict') else expected.features
++            proof = set(getattr(expected, 'requires', ()))
++            if not proof and not any(not str(v).startswith('?') for v in wanted.values()):
++                starts.update(self.first.get(category, ()))
++                continue
++            # Direct lexical child of this category can still satisfy it;
++            # its actual features are checked when consumed.
++            starts.add(category)
++            for rule in self.producers.get(category, ()):
++                produced = rule.lhs.features.as_dict() if hasattr(rule.lhs.features, 'as_dict') else rule.lhs.features
++                if not proof.issubset(produced):
++                    continue
++                if any(key in produced and not str(value).startswith('?')
++                       and not str(produced[key]).startswith('?')
++                       and produced[key] != value for key, value in wanted.items()):
++                    continue
++                head = rule.rhs[0].category
++                starts.update(self.first.get(head, (head,)))
++        return frozenset(starts)
++
+     def _state(self):
+         obj = State(self._next_id)
+         self._next_id += 1
+--- /dev/null
++++ b/superparser/tests/test_reading_kernel_constraints.py
+@@ -0,0 +1,31 @@
++from _reading_kernel_v1_fixture_base import *
++from dataclasses import dataclass
++
++@dataclass(frozen=True)
++class NeedSym:
++    category: str
++    features: dict
++    requires: tuple[str,...] = ('nominal',)
++
++def grammar_fixture():
++    g = fixture_grammar()
++    g.rules += [
++        Rule('np_det_n_clause', Sym('NP'), (Sym('DET'),Sym('N'), NeedSym('CLAUSE', {'nominal':'true'})), 7.0),
++        Rule('clause_nominal_that', Sym('CLAUSE', {'nominal':'true'}),(Sym('COMP-THAT'),Sym('CLAUSE')), 8.0),
++        Rule('clause_np_vp_shadow', Sym('CLAUSE'),(Sym('NP'),Sym('VP')), 6.0),
++    ]
++    return g
++
++def test_evidence_first_excludes_unlicensed_openings():
++    g=CompiledGrammar(grammar_fixture())
++    state=g.roots['NP'].edges['DET'].edges['N']
++    assert 'CLAUSE' in state.edges
++    assert 'PROPER-NOUN' not in state.dispatch
++    assert 'COMP-THAT' in state.dispatch
++    assert 'CLAUSE' in state.dispatch['COMP-THAT']
++
++def test_relative_not_swallowed_by_clausal_nominal():
++    result=parse('The recipe Rosa followed failed.', grammar_fixture())
++    assert result.complete, (result.reason, [e.as_dict() for e in result.events])
++    assert any(e.detail == 'np_relative_obj' for e in result.events)
++    assert all(not (e.word == 'Rosa' and e.expected == 'CLAUSE' and e.action == 'EXPECT') for e in result.events)
