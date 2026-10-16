@@ -40,7 +40,8 @@ class SemanCompiledReader:
                  construction_guard: bool = False,
                  fast_multiword: bool = False,
                  early_construction_guard: bool = False,
-                 token_only_lattice: bool = False):
+                 token_only_lattice: bool = False,
+                 infer_unary_promotions: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -53,10 +54,16 @@ class SemanCompiledReader:
         self.construction_guard = construction_guard
         self.fast_multiword = fast_multiword
         self.token_only_lattice = token_only_lattice
+        self.infer_unary_promotions = infer_unary_promotions
         if early_construction_guard and not construction_guard:
             raise ValueError("early_construction_guard requires construction_guard")
         self.early_construction_guard = early_construction_guard
-        self.compiled = CompiledGrammar(resources.grammar)
+        grammar = resources.grammar
+        self.unary_promotion_rules = ()
+        if infer_unary_promotions:
+            from research.verbnet_lr.unary_promotions import with_unary_head_promotions
+            grammar, self.unary_promotion_rules = with_unary_head_promotions(grammar)
+        self.compiled = CompiledGrammar(grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
         self.adapter = PredictiveParser(resources)
@@ -86,7 +93,8 @@ class SemanCompiledReader:
                    construction_guard=construction_guard,
                    fast_multiword=fast_multiword,
                    early_construction_guard=early_construction_guard,
-                   token_only_lattice=token_only_lattice)
+                   token_only_lattice=token_only_lattice,
+                   infer_unary_promotions=infer_unary_promotions)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
