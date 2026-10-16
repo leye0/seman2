@@ -179,3 +179,52 @@ Canonical links:
 - [Holdout benchmark report](https://github.com/leye0/seman2/blob/research/verbnet-left-to-right-poc/superparser/research/verbnet_lr/snap_holdout_report.json)
 - [Full integrated CI success](https://github.com/leye0/seman2/actions/runs/38972058379)
 - [Synthetic scale benchmark](https://github.com/leye0/seman2/actions/runs/38970509444)
+
+## Latest: authentic EWT train learning curve and 10% offline sampling
+
+Experiment workflow SUCCESS: [Actions #38974747805](https://github.com/leye0/seman2/actions/runs/38974747805), commit `1c2283b`.
+Separate pinned UD English-EWT **TRAIN** sentences (selection by SHA256
+sentence ID; 4–18 tokenizer tokens; ASCII, de-duplicated; all Seman2
+validation/holdout/negative/contrast texts excluded). 600 **authentic
+sentences** were ingested into two indexes from the same 50 DEV seed:
+one queried bounded Earley on all 600, the other on **60/600 (10%)**
+using the explicit offline sampling queue. Evaluations and negative
+tests were NEVER used as cache training observations.
+
+| Additional external observations | Full teacher cache | 10% teacher cache |
+|---|---:|---:|
+| 0 | 42 whole trees | 41 whole trees |
+| 100 | 54 | 42 |
+| 300 | 77 | 45 |
+| 600 | **106** | **48** |
+| Held-out Seman2 hits / 70 after 600 | **27** | **25** |
+| Positive explicit-gold passes / 70 | 30 | 30 |
+| Grammatical negative false accepts / 24 | **8** | **7** |
+
+The all-sentence teacher found 65 witnesses / 600 (plus 236 UNKNOWN
+and 299 category-rejected under limited grammar/budget). The sampled
+queue verified 60 sentences, found 7 grammar witnesses, and recorded
+53 unknown/rejected; no queue overflow.
+
+**Interpretation:** For this corpus pair, a larger whole-tree dictionary
+barely raises held-out coverage and can amplify existing grammar
+overacceptance. Neither 10% nor 100% external training meets a strict
+zero-new-false-accept safety gate. DO NOT promote these additional
+EWT-derived templates to default parsing, or assert the architecture
+scales to millions of **useful** natural-language patterns. The
+tenth-sentence method reduces teacher executions by 90% but may also
+miss rarer productive forms. The experiment shows no improvement in
+explicit positive-gold accuracy from the EWT extension.
+
+The queue lives in
+`research/verbnet_lr/sampled_teacher.py`.
+`SnappingResearchReader(..., sampler=queue)` only enqueues one of every
+ten incoming parse events; it NEVER runs Earley synchronously. An
+explicit `queue.drain_teacher(index, max_cases=N)` external worker
+does bounded verification, marking successful trees
+`grammar_witness` (NOT gold). Without such a worker, queued observations
+do not improve the cache. The pending queue is memory bounded.
+This is an opt-in research prototype, not an active background task or
+the production Seman2 parser.
+
+Report: [authentic-syntax-learning-report.zip](https://github.com/leye0/seman2/actions/runs/38974747805/artifacts/12078226870).
