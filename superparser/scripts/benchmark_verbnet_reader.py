@@ -226,9 +226,20 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         observations = [(entry, obs)
                         for entry in entries
                         for obs in entry["verbnet_vp_observations"]]
+        per_assertion_family = {
+            family: {
+                "evaluated": sum(family in r["gold"]["checks"] for r in entries),
+                "passed": sum(r["gold"]["checks"].get(family) is True for r in entries),
+            }
+            for family in ("voice", "predicate", "required_rules",
+                           "forbidden_rules", "lexical_pos", "constituents")
+        }
         summary[mode] = {
             "evaluations": len(entries),
             "complete": successes,
+            "complete_but_nonconforming": sum(
+                r["complete"] and r["gold"]["pass"] is False for r in entries),
+            "gold_by_family": per_assertion_family,
             "explicit_gold_assertion_cases": len(gold_entries),
             "explicit_gold_assertion_passed": sum(v["gold"]["pass"] is True for v in gold_entries),
             "verbnet_tree_evidence": {
