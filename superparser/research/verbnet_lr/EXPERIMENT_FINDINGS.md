@@ -61,6 +61,80 @@ La prochaine expérience pertinente devra comparer **plusieurs constructions gra
 
 Il est prématuré d'ajouter une règle pour chaque exemple en échec. En particulier, ne pas modifier `grammar.jsonl` pour forcer les phrases du corpus ni sélectionner une variante grâce aux données holdout.
 
+## POC suivant : continuités grammaticales compactes (checkpoint borné)
+
+**Exécution CI validée :** [suite comparative A–M](https://github.com/leye0/seman2/actions/runs/38851023890).
+Une expérience séparée, **désactivée par défaut**, mémorise les positions
+où plusieurs transitions sont autorisées par le trie grammatical. Lorsqu'une
+lecture échoue ou s'arrête avant d'avoir consommé la phrase, elle peut tester
+une alternative grammaticalement autorisée. Limites rigides : 0 à 6 reprises
+programmables, **un seul arbre actif**, aucun chart, aucune forêt ni
+fabrication de règles, arrêt explicite lorsqu'aucune reprise n'aboutit.
+
+**Distinction importante :** ce POC fait une *relecture bornée depuis le début*
+de la phrase. Il ne maintient pas encore simultanément plusieurs piles
+incrémentales ni ne reprend une pile depuis un snapshot profond. Le coût
+intégral de toutes les tentatives est inclus dans les mesures.
+
+### Résultats des 120 phrases, 2 passages
+
+| Mode | Complétions | Toutes les assertions explicites satisfaites | p50 total | p95 total |
+| --- | ---: | ---: | ---: | ---: |
+| A lecteur d'origine | 44/120 | 35/120 | 3,29 ms | 7,15 ms |
+| K reprise paresseuse ×1 | 55/120 | 43/120 | 4,48 ms | 12,10 ms |
+| M reprise paresseuse ×2 | 59/120 | 46/120 | 4,81 ms | 17,65 ms |
+| L reprise paresseuse ×3 | **64/120** | **49/120** | 5,08 ms | 19,00 ms |
+
+Les assertions sont la vérité terrain **partielle** du corpus : catégories POS,
+constituants et règles explicitement annotés. **Leur satisfaction ne démontre
+pas l'exactitude exhaustive de la structure.** Le corpus compte 50 phrases dev,
+50 validation et 20 holdout. Entre A et L, il y a **14 gains et 0 perte**
+selon ces assertions, avec les gains répartis sur les trois splits :
+dev 12→20, validation 17→22, holdout 6→7.
+
+### Résultat architectural
+
+Contrairement au lookahead glouton, qui améliore la complétion tout en
+détériorant la qualité, quelques reprises grammaticalement **bornées**
+améliorent les deux métriques. VerbNet exact ne change toujours pas les
+résultats : son rôle utile demeure l'attestation positive des cadres.
+
+La variante « lazy » évite de chercher des alternatives pendant une lecture
+qui réussit ; elle conserve les mêmes analyses que la version qui énumère
+les alternatives immédiatement et est légèrement moins coûteuse dans
+l'expérience. Le p95 à trois reprises demeure élevé à **19 ms**, notamment
+parce que les préfixes de phrase sont relus. Le meilleur compromis mesuré pour
+une cible médiane proche de 5 ms est actuellement **M (2 reprises)**, sans
+que cela justifie son activation par défaut.
+
+Des erreurs majeures subsistent, notamment la voix passive : une proposition
+achevée avec un cadre copulatif adjectival peut encore manquer le
+`clause_passive` exigé. Un parse terminé n'est jamais déclaré correct sur
+la seule base de sa complétion.
+
+### Utilisation expérimentale
+
+```python
+from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
+
+reader = SemanCompiledReader.from_dir(
+    "superparser/data",
+    checkpoint_budget=2,
+    lazy_checkpoints=True,
+)
+result = reader.parse("She did not open the window.")
+print(result.complete, result.outcome.counters)
+```
+
+La compilation de la grammaire est faite à la création du lecteur.
+Aucun effet sur `Parser` / `vector_chart.py`. Le paramètre
+`checkpoint_budget=0` préserve le comportement du lecteur de référence.
+
+**Étape suivante justifiée :** remplacer la relecture du préfixe par une
+sauvegarde/restauration légère des continuations locales, en conservant les
+mêmes budgets et assertions. Tester séparément les vraies négatives
+grammaticales ; le corpus courant mesure surtout des phrases positives.
+
 ## Reproduire
 
 Depuis la racine `seman2` :
