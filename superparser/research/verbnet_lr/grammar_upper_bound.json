@@ -22,7 +22,7 @@
       "reason": "",
       "items": 58659,
       "furthest_goal_prefix": 32,
-      "elapsed_ms": 146.876,
+      "elapsed_ms": 156.776,
       "max_chart_items": 3899
     },
     {
@@ -34,7 +34,7 @@
       "reason": "",
       "items": 75827,
       "furthest_goal_prefix": 44,
-      "elapsed_ms": 184.164,
+      "elapsed_ms": 200.551,
       "max_chart_items": 4097
     },
     {
@@ -46,7 +46,7 @@
       "reason": "",
       "items": 108389,
       "furthest_goal_prefix": 45,
-      "elapsed_ms": 418.003,
+      "elapsed_ms": 414.354,
       "max_chart_items": 6403
     },
     {
@@ -58,7 +58,7 @@
       "reason": "",
       "items": 152070,
       "furthest_goal_prefix": 52,
-      "elapsed_ms": 552.728,
+      "elapsed_ms": 622.423,
       "max_chart_items": 6682
     },
     {
@@ -70,7 +70,7 @@
       "reason": "",
       "items": 117797,
       "furthest_goal_prefix": 47,
-      "elapsed_ms": 469.425,
+      "elapsed_ms": 497.933,
       "max_chart_items": 5409
     },
     {
@@ -82,7 +82,7 @@
       "reason": "",
       "items": 187715,
       "furthest_goal_prefix": 58,
-      "elapsed_ms": 700.179,
+      "elapsed_ms": 814.723,
       "max_chart_items": 6910
     },
     {
@@ -94,7 +94,7 @@
       "reason": "",
       "items": 236512,
       "furthest_goal_prefix": 62,
-      "elapsed_ms": 1153.124,
+      "elapsed_ms": 1365.284,
       "max_chart_items": 9044
     },
     {
@@ -106,7 +106,7 @@
       "reason": "",
       "items": 284415,
       "furthest_goal_prefix": 67,
-      "elapsed_ms": 1405.505,
+      "elapsed_ms": 1632.12,
       "max_chart_items": 9324
     }
   ]

@@ -37,24 +37,24 @@
   },
   "latency": {
     "snap_recognition_warmed_lattice": {
-      "p50_ms": 0.03096,
-      "p95_ms": 0.90953,
-      "p99_ms": 1.1739
+      "p50_ms": 0.02957,
+      "p95_ms": 0.96978,
+      "p99_ms": 1.3259
     },
     "snap_including_lexical_lattice": {
-      "p50_ms": 1.31473,
-      "p95_ms": 2.33642,
-      "p99_ms": 2.8468
+      "p50_ms": 1.39165,
+      "p95_ms": 2.47085,
+      "p99_ms": 3.09542
     },
     "lr_baseline_including_lattice": {
-      "p50_ms": 4.21023,
-      "p95_ms": 8.58356,
-      "p99_ms": 9.56945
+      "p50_ms": 4.50681,
+      "p95_ms": 9.45066,
+      "p99_ms": 10.11695
     },
     "hybrid_snap_then_lr_fallback": {
-      "p50_ms": 2.31628,
-      "p95_ms": 8.21967,
-      "p99_ms": 9.4098
+      "p50_ms": 2.47869,
+      "p95_ms": 8.71947,
+      "p99_ms": 9.83457
     }
   },
   "cases": [
@@ -71,6 +71,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -89,6 +90,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -107,6 +109,44 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 2,
+      "match_details": [
+        {
+          "template_id": 2,
+          "root_rule": "clause_np_vp",
+          "score": 15.95,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        },
+        {
+          "template_id": 15,
+          "root_rule": "clause_np_vp",
+          "score": 12.95,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": false,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": [
+            "vp_ditransitive"
+          ]
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -127,6 +167,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 2,
+      "match_details": [
+        {
+          "template_id": 0,
+          "root_rule": "clause_np_vp",
+          "score": 12.2,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -147,6 +206,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 5,
+          "root_rule": "clause_np_vp",
+          "score": 12.85,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -167,6 +245,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -185,6 +264,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -203,6 +283,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -221,6 +302,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -239,6 +321,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -257,6 +340,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 7,
+          "root_rule": "clause_np_vp",
+          "score": 9.4,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -277,6 +379,42 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 2,
+      "match_details": [
+        {
+          "template_id": 11,
+          "root_rule": "clause_np_vp",
+          "score": 12.85,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        },
+        {
+          "template_id": 8,
+          "root_rule": "clause_np_vp",
+          "score": 10.85,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -297,6 +435,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -315,6 +454,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 9,
+          "root_rule": "clause_neg",
+          "score": 10.27,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -335,6 +493,27 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 10,
+          "root_rule": "clause_np_vp",
+          "score": 8.7,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": false,
+            "predicate": false,
+            "required_rules": false,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": [
+            "clause_passive"
+          ]
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -355,6 +534,42 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 2,
+      "match_details": [
+        {
+          "template_id": 11,
+          "root_rule": "clause_np_vp",
+          "score": 13.0,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        },
+        {
+          "template_id": 8,
+          "root_rule": "clause_np_vp",
+          "score": 11.0,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -375,6 +590,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -393,6 +609,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 12,
+          "root_rule": "clause_np_vp",
+          "score": 9.5,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -413,6 +648,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -431,6 +667,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -449,6 +686,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -467,6 +705,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 18,
+          "root_rule": "clause_np_vp",
+          "score": 14.85,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -487,6 +744,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -505,6 +763,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -523,6 +782,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -541,6 +801,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -559,6 +820,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -577,6 +839,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -595,6 +858,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 24,
+          "root_rule": "clause_np_vp",
+          "score": 13.47,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -615,6 +897,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -633,6 +916,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 26,
+          "root_rule": "clause_np_coord_aux_adv",
+          "score": 12.27,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": false,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": false
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -653,6 +955,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -671,6 +974,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -689,6 +993,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -707,6 +1012,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 28,
+          "root_rule": "clause_np_vp",
+          "score": 18.2,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -727,6 +1051,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -745,6 +1070,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 29,
+          "root_rule": "clause_np_vp",
+          "score": 14.7,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -765,6 +1109,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -783,6 +1128,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 31,
+          "root_rule": "clause_np_vp",
+          "score": 9.9,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -803,6 +1167,42 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 2,
+      "match_details": [
+        {
+          "template_id": 33,
+          "root_rule": "clause_np_vp",
+          "score": 14.85,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        },
+        {
+          "template_id": 32,
+          "root_rule": "clause_np_vp",
+          "score": 15.0,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -823,6 +1223,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -841,6 +1242,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -859,6 +1261,42 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 2,
+      "match_details": [
+        {
+          "template_id": 36,
+          "root_rule": "clause_np_vp",
+          "score": 8.15,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": false,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": false,
+            "constituents": true
+          },
+          "missing_required": []
+        },
+        {
+          "template_id": 35,
+          "root_rule": "clause_np_vp",
+          "score": 12.15,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": false,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": false,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -879,6 +1317,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 37,
+          "root_rule": "clause_np_coord_aux_adv",
+          "score": 9.65,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -899,6 +1356,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -917,6 +1375,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -935,6 +1394,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -953,6 +1413,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 39,
+          "root_rule": "clause_np_vp",
+          "score": 7.65,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -973,6 +1452,25 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 40,
+          "root_rule": "clause_np_vp",
+          "score": 15.05,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": false
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -993,6 +1491,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -1011,6 +1510,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -1029,6 +1529,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1047,6 +1548,63 @@
       "snap_incomplete": true,
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 3,
+      "match_details": [
+        {
+          "template_id": 3,
+          "root_rule": "clause_np_coord_aux_adv",
+          "score": 8.02,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": false,
+            "required_rules": false,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": [
+            "vp_ditransitive"
+          ]
+        },
+        {
+          "template_id": 2,
+          "root_rule": "clause_np_vp",
+          "score": 16.0,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        },
+        {
+          "template_id": 15,
+          "root_rule": "clause_np_vp",
+          "score": 13.0,
+          "grammar_witness": false,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": false,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": [
+            "vp_ditransitive"
+          ]
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -1068,6 +1626,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 0,
+          "root_rule": "clause_np_vp",
+          "score": 12.25,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -1088,6 +1665,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 18,
+          "root_rule": "clause_np_vp",
+          "score": 14.85,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -1108,6 +1704,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -1126,6 +1723,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1144,6 +1742,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1162,6 +1761,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1180,6 +1780,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1198,6 +1799,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1216,6 +1818,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1234,6 +1837,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -1252,6 +1856,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1270,6 +1875,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1288,6 +1894,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1306,6 +1913,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": true,
       "hybrid_path": "left_to_right",
       "hybrid_complete": true,
@@ -1324,6 +1932,25 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 31,
+          "root_rule": "clause_np_vp",
+          "score": 9.95,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": true,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": true,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": []
+        }
+      ],
       "lr_complete": true,
       "hybrid_path": "snap",
       "hybrid_complete": true,
@@ -1344,6 +1971,7 @@
       "snap_incomplete": false,
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
+      "match_details": [],
       "lr_complete": false,
       "hybrid_path": "left_to_right",
       "hybrid_complete": false,
@@ -1362,6 +1990,27 @@
       "snap_incomplete": false,
       "snap_reason": "matched",
       "candidate_templates": 1,
+      "match_details": [
+        {
+          "template_id": 40,
+          "root_rule": "clause_np_vp",
+          "score": 15.05,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": true,
+            "required_rules": false,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": false
+          },
+          "missing_required": [
+            "vp_cop_comparative_adj"
+          ]
+        }
+      ],
       "lr_complete": false,
       "hybrid_path": "snap",
       "hybrid_complete": true,
