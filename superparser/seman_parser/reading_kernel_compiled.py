@@ -436,7 +436,7 @@ class IncrementalReader:
                     return 1
         return 0
 
-    def _select(self, state: State, live=None):
+    def _select(self, state: State, live=None, *, excluded=frozenset()):
         self.count['dispatches'] += 1
         # Dispatch only by *observed lexical categories*. No rule listing,
         # no DFS, and at most one next-token check per distinct transition.
@@ -444,7 +444,7 @@ class IncrementalReader:
         seen = set()
         for category in self._categories():
             for symbol in state.dispatch.get(category, ()):
-                if symbol not in seen:
+                if symbol not in seen and symbol not in excluded:
                     seen.add(symbol)
                     paths.append(symbol)
         self.count['eligible_transitions'] += len(paths)
