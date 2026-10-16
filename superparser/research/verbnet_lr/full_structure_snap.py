@@ -359,7 +359,14 @@ class SnappingResearchReader:
             # answer. Incomplete means OTHER plausible trees remain deferred,
             # not that this matched tree is invalid. Layer 2 can page them.
             return snapped, "snap"
-        fallback = self.fallback.parse(text)
+        if (isinstance(self.fallback, SemanCompiledReader)
+                and self.fallback.token_only_lattice
+                and not self.fallback.fast_multiword):
+            # These two readers use the identical one-token lexicon lattice.
+            # Avoid rebuilding it after a cache miss; no grammar is bypassed.
+            fallback = self.fallback.parse(text, lattice=lattice)
+        else:
+            fallback = self.fallback.parse(text)
         if learn_candidate and fallback.complete:
             try:
                 self.index.observe(fallback.item, lattice=lattice,

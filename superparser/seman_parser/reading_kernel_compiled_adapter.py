@@ -155,21 +155,25 @@ class SemanCompiledReader:
                                      if not isinstance(v, Variable)),
                            cand.score, candidate=cand)
 
-    def parse(self, text: str, *, diagnose: bool = False) -> CompiledKernelReport:
+    def parse(self, text: str, *, diagnose: bool = False,
+              lattice: Any | None = None) -> CompiledKernelReport:
         t0 = perf_counter()
-        if self.fast_multiword:
-            from research.verbnet_lr.fast_lattice import FastMultiwordLexicon
-            lexical_view = FastMultiwordLexicon(self.resources.lexicon)
+        if lattice is not None:
+            # Opt-in reuse of an already constructed lexical lattice for the
+            # EXACT same input; the caller owns its construction cost.
+            if lattice.text != text:
+                raise ValueError("Prepared lattice text does not match input")
         else:
-            lexical_view = self.resources.lexicon
-        # The compiled single-token reader indexes candidates only when they
-        # cover one token exactly. All multi-token entries are silently
-        # ignored by IncrementalReader, so creating them is wasted work.
-        # This research-only ablation leaves the default lattice unchanged.
-        lattice = build_lattice(
-            text, lexical_view,
-            multiword_max=1 if self.token_only_lattice else 4,
-        )
+            if self.fast_multiword:
+                from research.verbnet_lr.fast_lattice import FastMultiwordLexicon
+                lexical_view = FastMultiwordLexicon(self.resources.lexicon)
+            else:
+                lexical_view = self.resources.lexicon
+            # The compiled reader consumes exact one-token lexical spans.
+            lattice = build_lattice(
+                text, lexical_view,
+                multiword_max=1 if self.token_only_lattice else 4,
+            )
         t1 = perf_counter()
         # Keep each ReadNode alive for the duration of this parse.
         # A failed checkpoint may discard an entire derivation. If memo is

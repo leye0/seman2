@@ -115,7 +115,14 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
         hybrid_result,hybrid_path=hybrid.parse(case["text"])
         totals["hybrid_including_lattice"].append((perf_counter()-t)*1000)
         gold_scores=[snapped_gold(case,m.item) for m in hit.matches]
+        baseline_gold=syntax_assertions(case,baseline)["pass"]
+        hybrid_gold=(snapped_gold(case,hybrid_result.item)["pass"]
+                     if hybrid_path=="snap" else
+                     syntax_assertions(case,hybrid_result)["pass"])
         case_results.append({
+            "baseline_gold_pass":baseline_gold,
+            "hybrid_gold_pass":hybrid_gold,
+            "first_snap_gold_pass":gold_scores[0]["pass"] if gold_scores else None,
             "id":case["id"],"split":case.get("split"),
             "any_explicit_gold_pass":any(g["pass"] is True for g in gold_scores),
             "all_explicit_gold_pass":bool(gold_scores) and all(
@@ -129,6 +136,23 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "hybrid_path":hybrid_path,
             "hybrid_complete":hybrid_result.complete,
             "snap_rule_ids":sorted({m.item.rule_id for m in hit.matches}),
+        })
+    # Grammatical negatives remain completely disjoint from training.
+    negatives=ROOT/"research/verbnet_lr/negative_minimal_pairs.jsonl"
+    negative_rows=[json.loads(x) for x in negatives.read_text().splitlines()
+                   if x.strip()]
+    neg_results=[]
+    for row in negative_rows:
+        control=lr.parse(row["text"])
+        experimental,route=hybrid.parse(row["text"])
+        contrast,contrast_route=hybrid.parse(row["contrast"])
+        neg_results.append({
+            "id":row["id"],"family":row["family"],
+            "baseline_false_accept":control.complete,
+            "hybrid_false_accept":experimental.complete,
+            "hybrid_route":route,
+            "contrast_completes":contrast.complete,
+            "contrast_route":contrast_route,
         })
     def metrics(seq):
         return {"p50_ms":quantile(seq[:],.5),"p95_ms":quantile(seq[:],.95),
@@ -153,6 +177,18 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
                            r["hybrid_path"] == "snap" for r in case_results),
                        "hybrid_lr_fallback":sum(
                            r["hybrid_path"] == "left_to_right" for r in case_results),
+                       "baseline_explicit_gold_pass":sum(
+                           r["baseline_gold_pass"] is True for r in case_results),
+                       "hybrid_explicit_gold_pass":sum(
+                           r["hybrid_gold_pass"] is True for r in case_results),
+                       "new_gold_passes":sum(
+                           r["hybrid_gold_pass"] is True and
+                           r["baseline_gold_pass"] is not True
+                           for r in case_results),
+                       "lost_gold_passes":sum(
+                           r["baseline_gold_pass"] is True and
+                           r["hybrid_gold_pass"] is not True
+                           for r in case_results),
                        "multi_structure_hits":sum(r["snap_matches"]>1 for r in case_results),
                        "incomplete":sum(r["snap_incomplete"] for r in case_results),
                        "no_hit":sum(not r["snap_matches"] for r in case_results)},
@@ -163,6 +199,19 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "hybrid_snap_then_lr_fallback":metrics(totals["hybrid_including_lattice"]),
         },
         "cases":case_results,
+        "negative_probe":{
+            "cases":len(neg_results),
+            "baseline_false_accepts":sum(
+                r["baseline_false_accept"] for r in neg_results),
+            "hybrid_false_accepts":sum(
+                r["hybrid_false_accept"] for r in neg_results),
+            "new_false_accepts":sum(
+                r["hybrid_false_accept"] and not r["baseline_false_accept"]
+                for r in neg_results),
+            "contrast_completes":sum(
+                r["contrast_completes"] for r in neg_results),
+            "details":neg_results,
+        },
         "limitations":[
             "Only previously observed full trees are indexed; zero hits do not disprove grammaticality.",
             "One-token lexical slots; trailing period and exclamation are excluded like current L-R.",
@@ -170,7 +219,8 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "The teacher tests only dev. UNKNOWN from its budgets is not evidence of invalid grammar.",
             "Only one lexical derivation is materialized per matched whole-tree template.",
             "Hard budgets can truncate lookup; such cases are marked incomplete; a valid match still takes fast path.",
-            "Hybrid fallback currently repeats lexical lattice construction on misses; this overhead is included.",
+            "Hybrid miss reuses the same one-token lexical lattice when the fallback reader uses the same lexical options.",
+            "The corpus explicit syntax assertions test only annotated constraints, not complete linguistic correctness.",
             "No 20-million-template memory or on-disk index performance has been claimed.",
         ]
     }

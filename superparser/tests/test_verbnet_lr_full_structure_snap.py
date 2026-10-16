@@ -6,6 +6,7 @@ from seman_parser.features import FeatureStructure, Variable
 from seman_parser.grammar import Grammar, GrammarRule, RuleSymbol
 from seman_parser.segmentation import LexicalCandidate, LexicalLattice, Token
 from seman_parser.predictive import CompactNode, PredictiveParser
+from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 from seman_parser.symbols import intern
 from research.verbnet_lr.full_structure_snap import (
     FullStructureSnapIndex, SnappingResearchReader)
@@ -169,6 +170,25 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertEqual(path,"snap")
         self.assertTrue(snapped.incomplete)
         self.assertTrue(snapped.complete)
+
+    def test_prebuilt_lattice_reused_by_l_r_after_snap_miss(self):
+        from unittest.mock import patch
+        cases=[[("PRON",None,1)], [("V",None,1)], [("N","sg",1)]]
+        lattice=self.lattice(["I","saw","girl"],cases)
+        fallback=SemanCompiledReader(self.resources,token_only_lattice=True)
+        # Resources have no lexicon in this fixture: this MUST use the
+        # supplied candidate lattice rather than calling build_lattice again.
+        parsed=fallback.parse(lattice.text,lattice=lattice)
+        self.assertTrue(parsed.complete,parsed.outcome.reason)
+        with self.assertRaises(ValueError):
+            fallback.parse("different text",lattice=lattice)
+        wrapper=SnappingResearchReader(self.resources,index=self.index,
+                                       fallback=fallback)
+        with patch("seman_parser.segmentation.build_lattice",return_value=lattice):
+            wrapped,path=wrapper.parse(lattice.text)
+        self.assertEqual(path,"left_to_right")
+        self.assertTrue(wrapped.complete,wrapped.outcome.reason)
+        self.assertEqual(wrapped.item.rule_id,parsed.item.rule_id)
 
     def test_unknown_and_explicit_budgets(self):
         cats = [[("PRON",None,1)], [("V",None,1)],
