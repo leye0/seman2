@@ -38,7 +38,8 @@ class SemanCompiledReader:
                  lazy_checkpoints: bool = False,
                  stack_checkpoints: bool = False,
                  construction_guard: bool = False,
-                 fast_multiword: bool = False):
+                 fast_multiword: bool = False,
+                 early_construction_guard: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -50,6 +51,9 @@ class SemanCompiledReader:
         self.stack_checkpoints = stack_checkpoints
         self.construction_guard = construction_guard
         self.fast_multiword = fast_multiword
+        if early_construction_guard and not construction_guard:
+            raise ValueError("early_construction_guard requires construction_guard")
+        self.early_construction_guard = early_construction_guard
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
@@ -75,7 +79,8 @@ class SemanCompiledReader:
                    lazy_checkpoints=lazy_checkpoints,
                    stack_checkpoints=stack_checkpoints,
                    construction_guard=construction_guard,
-                   fast_multiword=fast_multiword)
+                   fast_multiword=fast_multiword,
+                   early_construction_guard=early_construction_guard)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -131,12 +136,24 @@ class SemanCompiledReader:
         else:
             reader_base = IncrementalReader
 
+        self_outer = self
+        if self.early_construction_guard:
+            from .reading_kernel_compiled import Stop
         class _TracedReader(reader_base):
             def _validate_completed(self, root):
-                if guard is None:
+                if guard is None or self_outer.early_construction_guard:
                     return True, ""
                 verdict = guard.validate(root)
                 return verdict.acceptable, verdict.reason
+
+            def _reduce(self, category, children, rules):
+                node = super()._reduce(category, children, rules)
+                if guard is not None and self_outer.early_construction_guard:
+                    verdict = guard.validate(node)
+                    if not verdict.acceptable:
+                        self.count["construction_early_rejections"] += 1
+                        raise Stop("construction_guard_" + verdict.reason)
+                return node
 
             def _lexical_rank_bonus(self, candidate, category: str) -> int:
                 if ranker is None or category != 'V' or ranker.mode == 'zero':
