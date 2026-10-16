@@ -152,3 +152,65 @@ PYTHONPATH=superparser .venv-popper/bin/python superparser/scripts/benchmark_ver
 Le runner CI extrait WordNet 3.0 explicitement ; sur une autre machine, utiliser `--wordnet-dir /chemin/vers/dict` si `wordnet_path` est absent.
 
 Toutes les options VerbNet et lookahead sont **désactivées par défaut** dans le lecteur expérimental ; le parseur de production `engine.py`/`vector_chart.py` est resté inchangé.
+
+## Conformité grammaticale et objectif de latence (contrôle supplémentaire)
+
+**Important : cette section remplace les interprétations optimistes plus haut.**
+Les premières ablations ne vérifiaient pas la voix et le prédicat principal.
+Les dernières mesures incluent désormais **voix, prédicat, règles requises et
+interdites, parties du discours et constituants**, ainsi qu'un corpus de
+**24 minimal pairs négatives**, séparé du corpus des 120 phrases positives.
+
+**Exécution CI :** [analyse positive + négative validée](https://github.com/leye0/seman2/actions/runs/38852751384).
+**Rapports :** [grammar_quality_gate.json](grammar_quality_gate.json),
+[negative_report.json](negative_report.json),
+[reader_ablation.json](reader_ablation.json).
+
+| Mode | Conformités positives / 120 | Acceptations négatives / 24 | Médiane positives |
+| --- | ---: | ---: | ---: |
+| A — initial | 34 | 6 | 3,26 ms |
+| N — 1 restauration locale | 41 | 9 | 3,79 ms |
+| O — 2 restaurations locales | 44 | 13 | 4,03 ms |
+| P — 3 restaurations locales | 45 | 16 | 4,20 ms |
+
+**Décision : NE PAS ACTIVER N/O/P.** La médiane reste sous le **plafond
+expérimental ciblé de 5 ms**, mais la qualité mesurée *sur les phrases négatives*
+se dégrade fortement. Un test unitaire vert signifie que le banc d'essai
+fonctionne ; il ne signifie pas que la variante franchit le **quality_gate**
+du rapport. Les analyses acceptées mais non conformes passent de **10/120**
+dans A à **23/120** dans P. Ces mesures tiennent compte de la lecture
+complète et de la matérialisation, à chaud, sur runner GitHub ; ne pas
+extrapoler à toutes les machines.
+
+### Causes déjà observées dans les véritables arbres sélectionnés
+
+1. `The boy are happy.` : le lexème `are` de catégorie `COPULA` peut
+   être associé au trait **number=singular** dans les données lexicales.
+   L'incompatibilité *surface ↔ traits* n'est pas suffisamment interdite.
+2. `The books is heavy.` : un chemin `np_quant_n` laisse coexister
+   `DET` singulier et nom pluriel sans propagation suffisante ;
+   la tête `heavy` est en outre interprétée comme `ADV`.
+3. `She should goes home.` : une construction modale sélectionnée
+   n'exige pas suffisamment la morphologie **base** du verbe principal.
+4. `She did not opened the door.` : la règle `clause_neg_vp` accepte
+   un verbe au trait **finite** là où l'auxiliaire `did` requiert
+   une base verbale.
+5. `They donated John a book.` : un cadre `vp_obj_pred` reste
+   licencié sans vérifier que cette alternance ditransitive est
+   autorisée par le sens verbal correspondant. L'absence d'un cadre
+   VerbNet ne constitue toutefois **pas** une preuve négative suffisante.
+
+Le même problème ne se résout pas en accumulant des listes de phrases
+exceptionnelles. **Prochaine étape architecturale :** une couche déclarative
+de **contraintes obligatoires de construction**, alimentée par les traits
+morphologiques corrects et appliquée avant l'acceptation finale ;
+puis A/B sur les **120 positives + 24 négatives**, avec seuil de
+**médiane ≤ 5 ms**, **aucune nouvelle acceptation négative**, et **aucune
+régression d'assertion positive**. Les erreurs grammaticales du corpus
+holdout ne doivent pas servir à choisir des règles ajustées à ces phrases.
+
+Le lecteur à restaurations locales reste un excellent mécanisme de
+**recherche bornée**, mais il ne doit pas servir de substitut aux contraintes
+linguistiques. Les négatives mal classées ne sont pas déclarées
+« grammaticales » ; une lecture incomplète ne prouve pas non plus
+l'agrammaticalité.
