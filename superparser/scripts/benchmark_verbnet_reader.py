@@ -104,6 +104,9 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "D_structural2": SemanCompiledReader(resources, structural_lookahead=2),
         "E_structural2_sense": SemanCompiledReader(
             resources, verbnet_index=index, verbnet_mode="exact", structural_lookahead=2),
+        "F_structural3": SemanCompiledReader(resources, structural_lookahead=3),
+        "G_structural3_sense": SemanCompiledReader(
+            resources, verbnet_index=index, verbnet_mode="exact", structural_lookahead=3),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -143,6 +146,8 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "two_token_probes": counters.get("two_token_probes", 0),
                     "two_token_witnesses": counters.get("two_token_witnesses", 0),
                     "min_yield_rejections": counters.get("min_yield_rejections", 0),
+                    "edge_witness_hits": counters.get("edge_witness_hits", 0),
+                    "edge_witness_probes": counters.get("edge_witness_probes", 0),
                     "trace": trace(item),
                     "last_events": [event.as_dict() for event in item.outcome.events[-12:]],
                     "gold": syntax_assertions(case, item),
@@ -169,6 +174,8 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             "two_token_probes": sum(v["two_token_probes"] for v in entries),
             "two_token_witnesses": sum(v["two_token_witnesses"] for v in entries),
             "min_yield_rejections": sum(v["min_yield_rejections"] for v in entries),
+            "edge_witness_hits": sum(v["edge_witness_hits"] for v in entries),
+            "edge_witness_probes": sum(v["edge_witness_probes"] for v in entries),
             "stop_reasons": dict(Counter(v["reason"] for v in entries if not v["complete"])),
         }
     diffs = {}
@@ -203,7 +210,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
     return {
         "schema": 1,
         "baseline_failure_diagnostics": failures,
-        "method": "A/B/C/D/E compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
+        "method": "A/B/C/D/E/F/G compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
