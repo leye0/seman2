@@ -1,0 +1,195 @@
+"""Deterministic, auditable novel corpus for Seman2 whole-tree research.
+
+Sources are Project Gutenberg public-domain-in-the-US English classics.
+This loader never commits or publishes book text. The JSON benchmark retains
+only metadata, source URL, file SHA-256, counts and aggregate scores.
+
+Sentence detection is a standard-library HEURISTIC: report discards rather
+than imply it supplies gold sentence boundaries or syntactic annotations.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from hashlib import sha256
+from itertools import zip_longest
+import re
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+
+from seman_parser.segmentation import tokenize
+
+
+@dataclass(frozen=True)
+class Book:
+    ebook_id: int
+    title: str
+    author: str
+    role: str
+
+
+TRAIN_BOOKS = (
+    Book(766, "David Copperfield", "Charles Dickens", "train"),
+    Book(1400, "Great Expectations", "Charles Dickens", "train"),
+    Book(730, "Oliver Twist", "Charles Dickens", "train"),
+    Book(1342, "Pride and Prejudice", "Jane Austen", "train"),
+    Book(158, "Emma", "Jane Austen", "train"),
+    Book(161, "Sense and Sensibility", "Jane Austen", "train"),
+    Book(2701, "Moby Dick", "Herman Melville", "train"),
+    Book(345, "Dracula", "Bram Stoker", "train"),
+    Book(84, "Frankenstein", "Mary Shelley", "train"),
+    Book(514, "Little Women", "Louisa May Alcott", "train"),
+    Book(1661, "The Adventures of Sherlock Holmes", "Arthur Conan Doyle", "train"),
+    Book(120, "Treasure Island", "Robert Louis Stevenson", "train"),
+)
+TEST_BOOKS = (
+    Book(1260, "Jane Eyre", "Charlotte Bronte", "test"),
+    Book(145, "Middlemarch", "George Eliot", "test"),
+)
+
+START = re.compile(r"(?im)^\*{3}\s*START OF (?:THE|THIS) PROJECT GUTENBERG EBOOK.*?\*{3}\s*$")
+END = re.compile(r"(?im)^\*{3}\s*END OF (?:THE|THIS) PROJECT GUTENBERG EBOOK.*?\*{3}\s*$")
+BOUNDARY = re.compile(r'(?<=[.!?])\s+(?=(?:["\x27(]?[A-Z]))')
+CHAPTER = re.compile(r"(?i)^(?:chapter|book|volume|contents|part|preface|illustration|index)\b")
+ABBREVIATIONS = ("Mr.", "Mrs.", "Ms.", "Dr.", "Prof.", "Capt.", "St.", "Rev.", "Gen.")
+NORMALIZE = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"',
+                           "\u201d": '"', "\u2014": " - ", "\u2013": " - ",
+                           "\u2026": "..."})
+
+
+def download(book: Book, *, timeout: int = 75):
+    urls = (
+        f"https://www.gutenberg.org/cache/epub/{book.ebook_id}/pg{book.ebook_id}.txt",
+        f"https://www.gutenberg.org/ebooks/{book.ebook_id}.txt.utf-8",
+        f"https://www.gutenberg.org/files/{book.ebook_id}/{book.ebook_id}-0.txt",
+    )
+    failures = []
+    for url in urls:
+        try:
+            request = Request(url, headers={
+                "User-Agent": "Seman2-research-corpus/0.1 (educational reproducible parser benchmark)",
+                "Accept": "text/plain"})
+            with urlopen(request, timeout=timeout) as reply:
+                raw = reply.read()
+            if not 10_000 < len(raw) < 30_000_000:
+                raise ValueError("unexpected text byte length")
+            text = raw.decode("utf-8-sig")
+            core = strip_gutenberg(text)
+            return core, {"id": book.ebook_id, "title": book.title,
+                          "author": book.author, "role": book.role,
+                          "url": url, "sha256": sha256(raw).hexdigest(),
+                          "raw_bytes": len(raw)}
+        except (HTTPError, URLError, UnicodeError, ValueError) as err:
+            failures.append(f"{url}: {type(err).__name__} {err}")
+    raise RuntimeError(f"Failed downloading book {book.ebook_id}: " + "; ".join(failures))
+
+
+def strip_gutenberg(text: str):
+    start = START.search(text)
+    if start is None:
+        raise ValueError("Gutenberg start marker not found; refusing to read boilerplate")
+    end = END.search(text, start.end())
+    if end is None:
+        raise ValueError("Gutenberg end marker not found; refusing to read license")
+    core = text[start.end():end.start()].strip()
+    if len(core) < 10_000:
+        raise ValueError("Suspiciously short Gutenberg book body")
+    return core
+
+
+def sentences(core: str):
+    # Paragraph separation is important for preserving actual prose.
+    # Gutenberg line wrapping is rejoined, but chapter/title paragraphs,
+    # ASCII-art, tabular material and very short fragments are not trained.
+    for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
+        lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
+        if not lines or CHAPTER.match(lines[0]):
+            continue
+        if len(lines) == 1 and (lines[0].isupper() or len(lines[0]) < 45):
+            continue
+        joined = " ".join(lines).translate(NORMALIZE)
+        joined = re.sub(r"\s+", " ", joined)
+        for abbreviation in ABBREVIATIONS:
+            joined = re.sub(r"(?i)\b" + re.escape(abbreviation),
+                            lambda m: m.group(0).replace(".", "\uFFFF"), joined)
+        for fragment in BOUNDARY.split(joined):
+            fragment = fragment.replace("\uFFFF", ".").strip()
+            fragment = fragment.strip(' "\x27([{')
+            fragment = fragment.strip(' "\x27)]}')
+            if fragment:
+                yield fragment
+
+
+def extract(book: Book, core: str, *, length_min=4, length_max=45):
+    """Return candidates plus UNFILTERED counts; skips are transparent."""
+    counters = {"fragments": 0, "too_short": 0, "too_long": 0,
+                "non_ascii": 0, "non_sentence": 0, "duplicates": 0}
+    eligible = []
+    seen = set()
+    for number, sentence in enumerate(sentences(core)):
+        counters["fragments"] += 1
+        if not sentence.isascii():
+            counters["non_ascii"] += 1
+            continue
+        tokens = tokenize(sentence)
+        if len(tokens) < length_min:
+            counters["too_short"] += 1
+            continue
+        if len(tokens) > length_max:
+            counters["too_long"] += 1
+            continue
+        if not sentence.endswith((".", "!", "?")):
+            counters["non_sentence"] += 1
+            continue
+        normalized = " ".join(sentence.lower().split())
+        if normalized in seen:
+            counters["duplicates"] += 1
+            continue
+        seen.add(normalized)
+        eligible.append({"book_id": book.ebook_id, "author": book.author,
+                         "ordinal": number, "text": sentence,
+                         "tokens": len(tokens)})
+    counters["eligible"] = len(eligible)
+    return eligible, counters
+
+
+def length_band(n):
+    if n <= 12:
+        return "04-12"
+    if n <= 24:
+        return "13-24"
+    if n <= 40:
+        return "25-40"
+    return "41+"
+
+
+def spread_training(books_to_sentences, limit):
+    """Deterministic interleaving across *books and positions*.
+
+    Sorted by fixed SHA-256(book-id, paragraph-ordinal), avoiding a corpus
+    dominated by first chapters or the largest book. No held-out text enters.
+    """
+    order = []
+    for book_id, cases in books_to_sentences.items():
+        ordered = sorted(cases, key=lambda c:
+            sha256(f'{book_id}:{c["ordinal"]}'.encode()).digest())
+        order.append(iter(ordered))
+    selected = []
+    for group in zip_longest(*order):
+        for case in group:
+            if case is not None:
+                selected.append(case)
+                if len(selected) >= limit:
+                    return selected
+    return selected
+
+
+def holdout_stratified(books_to_sentences, *, per_book_per_band=80):
+    """Unseen BOOKS AND AUTHORS; lengths span short through 41+ tokens."""
+    chosen = []
+    for book_id, rows in books_to_sentences.items():
+        for band in ("04-12", "13-24", "25-40", "41+"):
+            subset = [r for r in rows if length_band(r["tokens"]) == band]
+            ordered = sorted(subset, key=lambda c:
+                sha256(f'{book_id}:{c["ordinal"]}'.encode()).digest())
+            chosen.extend(ordered[:per_book_per_band])
+    return chosen
