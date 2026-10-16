@@ -87,6 +87,9 @@ MODES = (
     ("AT_prefix_guard3", 3),
     ("AU_prefix_follow2", 2),
     ("AV_prefix_follow3", 3),
+    ("AW_extension_prefix3", 3),
+    ("AX_extension_follow3", 3),
+    ("AY_extension_follow2", 2),
 )
 
 
@@ -102,19 +105,20 @@ def reader_options(name: str, budget: int) -> dict:
         construction_guard=name.startswith((
             "R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_",
             "AC_", "AD_", "AF_", "AG_", "AH_", "AI_", "AJ_",
-            "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_")),
+            "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_", "AW_", "AX_", "AY_")),
         fast_multiword=name.startswith(("V_", "W_", "X_", "AE_", "AF_", "AG_")),
         early_construction_guard=name.startswith(("Y_", "Z_", "AA_")),
         token_only_lattice=name.startswith((
             "AB_", "AC_", "AD_", "AE_", "AF_", "AG_", "AH_",
-            "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_")),
+            "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_", "AW_", "AX_", "AY_")),
         infer_unary_promotions=name.startswith((
-            "AH_", "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_")),
-        reduce_checkpoints=name.startswith(("AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_")),
+            "AH_", "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_", "AW_", "AX_", "AY_")),
+        reduce_checkpoints=name.startswith(("AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_", "AU_", "AV_", "AW_", "AX_", "AY_")),
         parent_follow_reduce=name.startswith(("AM_", "AN_")),
-        reduce_follow_only=name.startswith(("AO_", "AP_", "AU_", "AV_")),
-        reachable_checkpoints_only=name.startswith(("AQ_", "AR_", "AS_", "AT_", "AU_", "AV_")),
-        terminal_prefix_preference=name.startswith(("AS_", "AT_", "AU_", "AV_")),
+        reduce_follow_only=name.startswith(("AO_", "AP_", "AU_", "AV_", "AX_", "AY_")),
+        reachable_checkpoints_only=name.startswith(("AQ_", "AR_", "AS_", "AT_", "AU_", "AV_", "AW_", "AX_", "AY_")),
+        terminal_prefix_preference=name.startswith(("AS_", "AT_", "AU_", "AV_", "AW_", "AX_", "AY_")),
+        extension_checkpoints=name.startswith(("AW_", "AX_", "AY_")),
     )
 
 

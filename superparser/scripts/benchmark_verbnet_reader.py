@@ -267,6 +267,24 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             infer_unary_promotions=True, reduce_checkpoints=True,
             reduce_follow_only=True, reachable_checkpoints_only=True,
             terminal_prefix_preference=True),
+        "AW_extension_prefix3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            reachable_checkpoints_only=True, terminal_prefix_preference=True,
+            extension_checkpoints=True),
+        "AX_extension_follow3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            reduce_follow_only=True, reachable_checkpoints_only=True,
+            terminal_prefix_preference=True, extension_checkpoints=True),
+        "AY_extension_follow2": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=2,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            reduce_follow_only=True, reachable_checkpoints_only=True,
+            terminal_prefix_preference=True, extension_checkpoints=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
