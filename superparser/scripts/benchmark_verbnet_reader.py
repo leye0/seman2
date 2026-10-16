@@ -112,6 +112,10 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "I_checkpoint3": SemanCompiledReader(resources, checkpoint_budget=3),
         "J_checkpoint3_verbnet": SemanCompiledReader(
             resources, verbnet_index=index, verbnet_mode="exact", checkpoint_budget=3),
+        "K_lazy_checkpoint1": SemanCompiledReader(
+            resources, checkpoint_budget=1, lazy_checkpoints=True),
+        "L_lazy_checkpoint3": SemanCompiledReader(
+            resources, checkpoint_budget=3, lazy_checkpoints=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -272,7 +276,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "per_split": split_metrics,
         "baseline_verbnet_tree_evidence_by_case": baseline_evidence,
         "baseline_failure_diagnostics": failures,
-        "method": "A/B/C/D/E/F/G/H/I/J compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
+        "method": "A/B/C/D/E/F/G/H/I/J/K/L compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
