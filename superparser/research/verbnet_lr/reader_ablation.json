@@ -2524,7 +2524,7 @@
       ]
     }
   ],
-  "method": "A/B/C compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
+  "method": "A/B/C/D/E compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
   "cases": 36,
   "repetitions": 2,
   "splits": {
@@ -2539,19 +2539,22 @@
       "complete": 28,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.28724,
-        "p95": 8.9711,
-        "p99": 10.60653
+        "p50": 5.13216,
+        "p95": 8.72595,
+        "p99": 9.76012
       },
       "reading_ms": {
-        "p50": 3.88744,
-        "p95": 7.21647,
-        "p99": 7.94507
+        "p50": 4.04725,
+        "p95": 7.13484,
+        "p99": 7.71648
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
+      "two_token_probes": 0,
+      "two_token_witnesses": 0,
+      "min_yield_rejections": 0,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -2576,19 +2579,22 @@
       "complete": 28,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.40287,
-        "p95": 9.29655,
-        "p99": 10.50141
+        "p50": 5.63381,
+        "p95": 9.03502,
+        "p99": 10.11776
       },
       "reading_ms": {
-        "p50": 4.00119,
-        "p95": 7.51,
-        "p99": 8.26217
+        "p50": 4.70252,
+        "p95": 7.2483,
+        "p99": 8.10058
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
       "verbnet_scoring_calls": 522,
       "verbnet_positive_hints": 340,
+      "two_token_probes": 0,
+      "two_token_witnesses": 0,
+      "min_yield_rejections": 0,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -2613,19 +2619,22 @@
       "complete": 28,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.41157,
-        "p95": 9.40372,
-        "p99": 10.6321
+        "p50": 5.29381,
+        "p95": 9.02767,
+        "p99": 10.22404
       },
       "reading_ms": {
-        "p50": 4.0783,
-        "p95": 7.60498,
-        "p99": 8.44771
+        "p50": 3.94353,
+        "p95": 7.36396,
+        "p99": 8.1408
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
       "verbnet_scoring_calls": 522,
       "verbnet_positive_hints": 164,
+      "two_token_probes": 0,
+      "two_token_witnesses": 0,
+      "min_yield_rejections": 0,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -2643,6 +2652,78 @@
         "expected_continuation_ADVP_at_3_state_480": 2,
         "expected_continuation_ADJ_at_5_state_446": 2,
         "expected_continuation_PP_at_3_state_387": 2
+      }
+    },
+    "D_structural2": {
+      "evaluations": 72,
+      "complete": 36,
+      "coverage_percent": 50.0,
+      "total_ms": {
+        "p50": 6.27187,
+        "p95": 10.19066,
+        "p99": 10.63417
+      },
+      "reading_ms": {
+        "p50": 4.95347,
+        "p95": 8.39506,
+        "p99": 8.60456
+      },
+      "mean_unifications": 3.528,
+      "mean_events": 14.5,
+      "verbnet_scoring_calls": 0,
+      "verbnet_positive_hints": 0,
+      "two_token_probes": 494,
+      "two_token_witnesses": 220,
+      "min_yield_rejections": 10,
+      "stop_reasons": {
+        "expected_continuation_PP_at_4_state_387": 6,
+        "expected_continuation_PP_at_5_state_387": 2,
+        "expected_continuation_NP_at_3_state_0": 6,
+        "expected_continuation_WH-OBJ_at_9_state_412": 2,
+        "expected_continuation_ADJ_at_4_state_446": 6,
+        "expected_continuation_VP_at_7_state_160": 2,
+        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "nonconsuming_recursive_CLAUSE_at_2": 2,
+        "expected_continuation_PP_at_3_state_387": 2,
+        "expected_continuation_NP_at_1_state_51": 2
+      }
+    },
+    "E_structural2_sense": {
+      "evaluations": 72,
+      "complete": 36,
+      "coverage_percent": 50.0,
+      "total_ms": {
+        "p50": 6.32255,
+        "p95": 10.34691,
+        "p99": 11.3016
+      },
+      "reading_ms": {
+        "p50": 4.9907,
+        "p95": 8.45712,
+        "p99": 9.05003
+      },
+      "mean_unifications": 3.528,
+      "mean_events": 14.5,
+      "verbnet_scoring_calls": 556,
+      "verbnet_positive_hints": 170,
+      "two_token_probes": 494,
+      "two_token_witnesses": 220,
+      "min_yield_rejections": 10,
+      "stop_reasons": {
+        "expected_continuation_PP_at_4_state_387": 6,
+        "expected_continuation_PP_at_5_state_387": 2,
+        "expected_continuation_NP_at_3_state_0": 6,
+        "expected_continuation_WH-OBJ_at_9_state_412": 2,
+        "expected_continuation_ADJ_at_4_state_446": 6,
+        "expected_continuation_VP_at_7_state_160": 2,
+        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "nonconsuming_recursive_CLAUSE_at_2": 2,
+        "expected_continuation_PP_at_3_state_387": 2,
+        "expected_continuation_NP_at_1_state_51": 2
       }
     }
   },
@@ -2654,6 +2735,1936 @@
     "C_sense_hints": {
       "changed_count": 0,
       "changes": []
+    },
+    "D_structural2": {
+      "changed_count": 10,
+      "changes": [
+        {
+          "id": "h001",
+          "split": "holdout",
+          "text": "Emma unlocked the wooden gate.",
+          "baseline_complete": true,
+          "guided_complete": true,
+          "baseline_reason": "",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Emma/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "unlock/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_transitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Emma/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "unlock/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "N",
+              "n_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_transitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "d002",
+          "split": "dev",
+          "text": "The door was opened by John.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_3_opened",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "opened/ADJ"
+            ],
+            [
+              "CONSUME",
+              "PREP",
+              "by/PREP"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "John/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "COMPLETE",
+              "PP",
+              "pp_prep_np"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj_pp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_cop_adjp"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h002",
+          "split": "holdout",
+          "text": "The wooden gate was unlocked by Emma.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_4_unlocked",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "N",
+              "n_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "unlocked/ADJ"
+            ],
+            [
+              "CONSUME",
+              "PREP",
+              "by/PREP"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Emma/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "COMPLETE",
+              "PP",
+              "pp_prep_np"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj_pp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_cop_adjp"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "v002",
+          "split": "validation",
+          "text": "The heavy door was closed by Alice.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_4_closed",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "closed/ADJ"
+            ],
+            [
+              "CONSUME",
+              "PREP",
+              "by/PREP"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Alice/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "COMPLETE",
+              "PP",
+              "pp_prep_np"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj_pp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_cop_adjp"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "d007",
+          "split": "dev",
+          "text": "Jonah asked whether they could remember the same event differently.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_5_remember",
+          "guided_reason": "expected_continuation_WH-OBJ_at_9_state_412",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Jonah/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Jonah/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "remember/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "same/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "event/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ]
+          ]
+        },
+        {
+          "id": "v007",
+          "split": "validation",
+          "text": "Lena wondered whether they would arrive tomorrow.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_5_arrive",
+          "guided_reason": "expected_continuation_VP_at_7_state_160",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "tomorrow/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare_trans"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_modal_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "WH-CLAUSE",
+              "wh_conj_clause"
+            ]
+          ]
+        },
+        {
+          "id": "h008",
+          "split": "holdout",
+          "text": "The machine was inspected yesterday.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_3_inspected",
+          "guided_reason": "expected_continuation_PP_at_4_state_387",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "inspect/V"
+            ]
+          ]
+        },
+        {
+          "id": "h009",
+          "split": "holdout",
+          "text": "The musician who arrived early performed.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "expected_continuation_PP_at_4_state_387",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "early/ADJ"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_linking_adjp"
+            ],
+            [
+              "COMPLETE",
+              "WH-SUBJ",
+              "wh_subj_clause"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_relative_subj"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "perform/V"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_intransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h011",
+          "split": "holdout",
+          "text": "Nora thinks that the answer matters.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "expected_continuation_ADJ_at_5_state_446",
+          "guided_reason": "nonconsuming_recursive_CLAUSE_at_2",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Nora/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "think/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "this/DET"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "answer/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_det_n"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Nora/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "think/V"
+            ]
+          ]
+        },
+        {
+          "id": "h012",
+          "split": "holdout",
+          "text": "To protect the forest demands patience.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "expected_continuation_ADJ_at_4_state_446",
+          "guided_reason": "expected_continuation_NP_at_1_state_51",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "TO",
+              "to/TO"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "protect/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "forest/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "TO",
+              "to/TO"
+            ]
+          ]
+        }
+      ]
+    },
+    "E_structural2_sense": {
+      "changed_count": 10,
+      "changes": [
+        {
+          "id": "h001",
+          "split": "holdout",
+          "text": "Emma unlocked the wooden gate.",
+          "baseline_complete": true,
+          "guided_complete": true,
+          "baseline_reason": "",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Emma/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "unlock/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_transitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Emma/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "unlock/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "N",
+              "n_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_transitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "d002",
+          "split": "dev",
+          "text": "The door was opened by John.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_3_opened",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "opened/ADJ"
+            ],
+            [
+              "CONSUME",
+              "PREP",
+              "by/PREP"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "John/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "COMPLETE",
+              "PP",
+              "pp_prep_np"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj_pp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_cop_adjp"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h002",
+          "split": "holdout",
+          "text": "The wooden gate was unlocked by Emma.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_4_unlocked",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "N",
+              "n_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "unlocked/ADJ"
+            ],
+            [
+              "CONSUME",
+              "PREP",
+              "by/PREP"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Emma/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "COMPLETE",
+              "PP",
+              "pp_prep_np"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj_pp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_cop_adjp"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "v002",
+          "split": "validation",
+          "text": "The heavy door was closed by Alice.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_4_closed",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "closed/ADJ"
+            ],
+            [
+              "CONSUME",
+              "PREP",
+              "by/PREP"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Alice/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "COMPLETE",
+              "PP",
+              "pp_prep_np"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj_pp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_cop_adjp"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "d007",
+          "split": "dev",
+          "text": "Jonah asked whether they could remember the same event differently.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_5_remember",
+          "guided_reason": "expected_continuation_WH-OBJ_at_9_state_412",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Jonah/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Jonah/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "remember/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "same/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "event/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ]
+          ]
+        },
+        {
+          "id": "v007",
+          "split": "validation",
+          "text": "Lena wondered whether they would arrive tomorrow.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_5_arrive",
+          "guided_reason": "expected_continuation_VP_at_7_state_160",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "tomorrow/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare_trans"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_modal_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "WH-CLAUSE",
+              "wh_conj_clause"
+            ]
+          ]
+        },
+        {
+          "id": "h008",
+          "split": "holdout",
+          "text": "The machine was inspected yesterday.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_3_inspected",
+          "guided_reason": "expected_continuation_PP_at_4_state_387",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "inspect/V"
+            ]
+          ]
+        },
+        {
+          "id": "h009",
+          "split": "holdout",
+          "text": "The musician who arrived early performed.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "expected_continuation_PP_at_4_state_387",
+          "guided_reason": "",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "early/ADJ"
+            ],
+            [
+              "COMPLETE",
+              "ADJP",
+              "adjp_adj"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_linking_adjp"
+            ],
+            [
+              "COMPLETE",
+              "WH-SUBJ",
+              "wh_subj_clause"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_relative_subj"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "perform/V"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_intransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h011",
+          "split": "holdout",
+          "text": "Nora thinks that the answer matters.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "expected_continuation_ADJ_at_5_state_446",
+          "guided_reason": "nonconsuming_recursive_CLAUSE_at_2",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Nora/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "think/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "this/DET"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "answer/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_det_n"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Nora/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "think/V"
+            ]
+          ]
+        },
+        {
+          "id": "h012",
+          "split": "holdout",
+          "text": "To protect the forest demands patience.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "expected_continuation_ADJ_at_4_state_446",
+          "guided_reason": "expected_continuation_NP_at_1_state_51",
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "TO",
+              "to/TO"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "protect/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "forest/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "TO",
+              "to/TO"
+            ]
+          ]
+        }
+      ]
     }
   },
   "limits": [
