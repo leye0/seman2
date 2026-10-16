@@ -228,3 +228,48 @@ This is an opt-in research prototype, not an active background task or
 the production Seman2 parser.
 
 Report: [authentic-syntax-learning-report.zip](https://github.com/leye0/seman2/actions/runs/38974747805/artifacts/12078226870).
+
+## Corrected fair-seed learning experiment and h003 structural ranking
+
+The original 10%-sampling experiment seeded one fewer full tree in the
+sampled cache due to re-reading a ranked derivation rather than copying the
+actual teacher witness. Corrected at `2d8ef4e`: both indexes now start
+with exactly **42 identical full structures**, confirmed by an assertion
+against their full derivation maps and provenance counts.
+
+The follow-up syntactic ranking study on h003
+(`Thomas offered Rachel a seat.`) identified THREE complete snapped
+trees. The first was a **bounded Earley witness** with
+`clause_np_coord_aux_adv` at score **8.02**, and it FAILED
+the annotated `vp_ditransitive` requirement. A different complete
+candidate was `clause_np_vp`, scored **16** and PASSED every explicit
+annotation, including `vp_ditransitive`. The teacher therefore proved
+grammatical *existence* without proving the *preferred structure*.
+The index now orders complete matches by the grammar + lexical score
+ahead of mere Earley witness provenance, preserves every alternative,
+and does not look at holdout annotations to rank at runtime.
+Regression tests enforce that a lower-scored witness cannot override a
+higher-scored eligible tree.
+
+With this source-generic ranking rule, the latest independent learning
+curve ([Actions #38975334358](https://github.com/leye0/seman2/actions/runs/38975334358))
+has:
+
+| External real EWT train observations | All-teacher patterns | 10% patterns | Positive syntax assertion passes on 70 | Negative false accepts on 24 (all / 10%) |
+|---|---:|---:|---:|---:|
+| 0 | 42 | 42 | 31 | 6 / 6 |
+| 100 | 53 | 43 | 31 | 7 / 7 |
+| 300 | 76 | 46 | 31 | 7 / 7 |
+| 600 | 106 | 49 | 31 | **8 / 7** |
+
+The syntax assertions are still partial human-provided checks, not
+comprehensive linguistic gold. 600 authentic extra observations yield
+at most **2 extra test hits** (27 vs initial 25), but ZERO additional
+positive syntax assertion passes and 1–2 additional negative false
+accepts. Neither external expansion clears the no-new-negative gate.
+Do NOT turn on expanded EWT-derived patterns by default; first improve
+teacher-side grammatical constraints or require stronger verification.
+
+Only one of ten selected external sentences is sent to Earley in the
+sampling version, with a fixed queue budget and explicit offline drains.
+There is NO implicit background verifier and no production parser change.
