@@ -1,5 +1,2529 @@
 {
   "schema": 1,
+  "baseline_failure_diagnostics": [
+    {
+      "id": "d002",
+      "text": "The door was opened by John.",
+      "reason": "unconsumed_3_opened",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "door",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "door/N"
+        },
+        {
+          "at": 1,
+          "word": "door",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "was",
+          "action": "CONSUME",
+          "expected": "AUX-BE",
+          "detail": "be/AUX-BE"
+        },
+        {
+          "at": 2,
+          "word": "was",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_cop_ellipsis"
+        },
+        {
+          "at": 3,
+          "word": "opened",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "unconsumed_3_opened"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "door/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "AUX-BE",
+          "be/AUX-BE"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_cop_ellipsis"
+        ]
+      ]
+    },
+    {
+      "id": "h002",
+      "text": "The wooden gate was unlocked by Emma.",
+      "reason": "unconsumed_4_unlocked",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "wooden",
+          "action": "CONSUME",
+          "expected": "ADJ",
+          "detail": "wooden/ADJ"
+        },
+        {
+          "at": 2,
+          "word": "gate",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "gate/N"
+        },
+        {
+          "at": 2,
+          "word": "gate",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_adj_n"
+        },
+        {
+          "at": 3,
+          "word": "was",
+          "action": "CONSUME",
+          "expected": "AUX-BE",
+          "detail": "be/AUX-BE"
+        },
+        {
+          "at": 3,
+          "word": "was",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_cop_ellipsis"
+        },
+        {
+          "at": 4,
+          "word": "unlocked",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "unconsumed_4_unlocked"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "ADJ",
+          "wooden/ADJ"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "gate/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_adj_n"
+        ],
+        [
+          "CONSUME",
+          "AUX-BE",
+          "be/AUX-BE"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_cop_ellipsis"
+        ]
+      ]
+    },
+    {
+      "id": "v002",
+      "text": "The heavy door was closed by Alice.",
+      "reason": "unconsumed_4_closed",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "heavy",
+          "action": "CONSUME",
+          "expected": "ADV",
+          "detail": "heavy/ADV"
+        },
+        {
+          "at": 2,
+          "word": "door",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "door/N"
+        },
+        {
+          "at": 2,
+          "word": "door",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_adv_n"
+        },
+        {
+          "at": 3,
+          "word": "was",
+          "action": "CONSUME",
+          "expected": "AUX-BE",
+          "detail": "be/AUX-BE"
+        },
+        {
+          "at": 3,
+          "word": "was",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_cop_ellipsis"
+        },
+        {
+          "at": 4,
+          "word": "closed",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "unconsumed_4_closed"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "ADV",
+          "heavy/ADV"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "door/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_adv_n"
+        ],
+        [
+          "CONSUME",
+          "AUX-BE",
+          "be/AUX-BE"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_cop_ellipsis"
+        ]
+      ]
+    },
+    {
+      "id": "d005",
+      "text": "They remembered the event differently.",
+      "reason": "expected_continuation_PP_at_4_state_387",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "They",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "They",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "They",
+          "action": "CONSUME",
+          "expected": "PRONOUN",
+          "detail": "they/PRONOUN"
+        },
+        {
+          "at": 0,
+          "word": "They",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_indef_pron"
+        },
+        {
+          "at": 1,
+          "word": "remembered",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "remembered",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "remember/V"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 3,
+          "word": "event",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "event/N"
+        },
+        {
+          "at": 3,
+          "word": "event",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 4,
+          "word": "differently",
+          "action": "EXPECT",
+          "expected": "PP",
+          "detail": "compiled state 387"
+        },
+        {
+          "at": 4,
+          "word": "differently",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_PP_at_4_state_387"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PRONOUN",
+          "they/PRONOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_indef_pron"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "remember/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "event/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "h005",
+      "text": "The witness described the scene accurately.",
+      "reason": "expected_continuation_PP_at_5_state_387",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "witness",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "witness/N"
+        },
+        {
+          "at": 1,
+          "word": "witness",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "described",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "described",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "describe/V"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 4,
+          "word": "scene",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "scene/N"
+        },
+        {
+          "at": 4,
+          "word": "scene",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 5,
+          "word": "accurately",
+          "action": "EXPECT",
+          "expected": "PP",
+          "detail": "compiled state 387"
+        },
+        {
+          "at": 5,
+          "word": "accurately",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_PP_at_5_state_387"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "witness/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "describe/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "scene/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "v005",
+      "text": "We described the accident clearly.",
+      "reason": "expected_continuation_PP_at_4_state_387",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "We",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "We",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "We",
+          "action": "CONSUME",
+          "expected": "PRONOUN",
+          "detail": "we/PRONOUN"
+        },
+        {
+          "at": 0,
+          "word": "We",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_indef_pron"
+        },
+        {
+          "at": 1,
+          "word": "described",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "described",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "describe/V"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 3,
+          "word": "accident",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "accident/N"
+        },
+        {
+          "at": 3,
+          "word": "accident",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 4,
+          "word": "clearly",
+          "action": "EXPECT",
+          "expected": "PP",
+          "detail": "compiled state 387"
+        },
+        {
+          "at": 4,
+          "word": "clearly",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_PP_at_4_state_387"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PRONOUN",
+          "we/PRONOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_indef_pron"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "describe/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "accident/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "d006",
+      "text": "A classroom project could encourage kindness.",
+      "reason": "expected_continuation_NP_at_3_state_0",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "A",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "A",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "A",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "a/DET"
+        },
+        {
+          "at": 1,
+          "word": "classroom",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "classroom/N"
+        },
+        {
+          "at": 1,
+          "word": "classroom",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "project",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "project",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "project/V"
+        },
+        {
+          "at": 3,
+          "word": "could",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "could",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_NP_at_3_state_0"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "a/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "classroom/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "project/V"
+        ]
+      ]
+    },
+    {
+      "id": "v006",
+      "text": "A community garden could improve health.",
+      "reason": "expected_continuation_NP_at_3_state_0",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "A",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "A",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "A",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "a/DET"
+        },
+        {
+          "at": 1,
+          "word": "community",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "community/N"
+        },
+        {
+          "at": 1,
+          "word": "community",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "garden",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "garden",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "garden/V"
+        },
+        {
+          "at": 3,
+          "word": "could",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "could",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_NP_at_3_state_0"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "a/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "community/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "garden/V"
+        ]
+      ]
+    },
+    {
+      "id": "d007",
+      "text": "Jonah asked whether they could remember the same event differently.",
+      "reason": "unconsumed_5_remember",
+      "last_events": [
+        {
+          "at": 1,
+          "word": "asked",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "asked",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "ask/V"
+        },
+        {
+          "at": 2,
+          "word": "whether",
+          "action": "CONSUME",
+          "expected": "CONJ",
+          "detail": "whether/CONJ"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "CONSUME",
+          "expected": "PRONOUN",
+          "detail": "they/PRONOUN"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_indef_pron"
+        },
+        {
+          "at": 4,
+          "word": "could",
+          "action": "CONSUME",
+          "expected": "MODAL",
+          "detail": "will/MODAL"
+        },
+        {
+          "at": 4,
+          "word": "could",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_modal_ellipsis"
+        },
+        {
+          "at": 4,
+          "word": "could",
+          "action": "COMPLETE",
+          "expected": "VP",
+          "detail": "vp_whether"
+        },
+        {
+          "at": 4,
+          "word": "could",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_np_vp"
+        },
+        {
+          "at": 5,
+          "word": "remember",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "unconsumed_5_remember"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PROPER-NOUN",
+          "Jonah/PROPER-NOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_proper"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "ask/V"
+        ],
+        [
+          "CONSUME",
+          "CONJ",
+          "whether/CONJ"
+        ],
+        [
+          "CONSUME",
+          "PRONOUN",
+          "they/PRONOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_indef_pron"
+        ],
+        [
+          "CONSUME",
+          "MODAL",
+          "will/MODAL"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_modal_ellipsis"
+        ],
+        [
+          "COMPLETE",
+          "VP",
+          "vp_whether"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_np_vp"
+        ]
+      ]
+    },
+    {
+      "id": "h007",
+      "text": "Nora suspected the machine failed overnight.",
+      "reason": "expected_continuation_ADJ_at_4_state_446",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "CONSUME",
+          "expected": "PROPER-NOUN",
+          "detail": "Nora/PROPER-NOUN"
+        },
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_proper"
+        },
+        {
+          "at": 1,
+          "word": "suspected",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "suspected",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "suspect/V"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 3,
+          "word": "machine",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "machine/N"
+        },
+        {
+          "at": 3,
+          "word": "machine",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 4,
+          "word": "failed",
+          "action": "EXPECT",
+          "expected": "ADJ",
+          "detail": "compiled state 446"
+        },
+        {
+          "at": 4,
+          "word": "failed",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_ADJ_at_4_state_446"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PROPER-NOUN",
+          "Nora/PROPER-NOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_proper"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "suspect/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "machine/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "v007",
+      "text": "Lena wondered whether they would arrive tomorrow.",
+      "reason": "unconsumed_5_arrive",
+      "last_events": [
+        {
+          "at": 1,
+          "word": "wondered",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "wondered",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "wonder/V"
+        },
+        {
+          "at": 2,
+          "word": "whether",
+          "action": "CONSUME",
+          "expected": "CONJ",
+          "detail": "whether/CONJ"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "CONSUME",
+          "expected": "PRONOUN",
+          "detail": "they/PRONOUN"
+        },
+        {
+          "at": 3,
+          "word": "they",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_indef_pron"
+        },
+        {
+          "at": 4,
+          "word": "would",
+          "action": "CONSUME",
+          "expected": "MODAL",
+          "detail": "will/MODAL"
+        },
+        {
+          "at": 4,
+          "word": "would",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_modal_ellipsis"
+        },
+        {
+          "at": 4,
+          "word": "would",
+          "action": "COMPLETE",
+          "expected": "VP",
+          "detail": "vp_whether"
+        },
+        {
+          "at": 4,
+          "word": "would",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_np_vp"
+        },
+        {
+          "at": 5,
+          "word": "arrive",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "unconsumed_5_arrive"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PROPER-NOUN",
+          "Lena/PROPER-NOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_proper"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "wonder/V"
+        ],
+        [
+          "CONSUME",
+          "CONJ",
+          "whether/CONJ"
+        ],
+        [
+          "CONSUME",
+          "PRONOUN",
+          "they/PRONOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_indef_pron"
+        ],
+        [
+          "CONSUME",
+          "MODAL",
+          "will/MODAL"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_modal_ellipsis"
+        ],
+        [
+          "COMPLETE",
+          "VP",
+          "vp_whether"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_np_vp"
+        ]
+      ]
+    },
+    {
+      "id": "d008",
+      "text": "He said the picture mattered because he could not read every word yet.",
+      "reason": "expected_continuation_ADJ_at_4_state_446",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "He",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "He",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "He",
+          "action": "CONSUME",
+          "expected": "PRONOUN",
+          "detail": "he/PRONOUN"
+        },
+        {
+          "at": 0,
+          "word": "He",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_indef_pron"
+        },
+        {
+          "at": 1,
+          "word": "said",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "said",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "say/V"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 3,
+          "word": "picture",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "picture/N"
+        },
+        {
+          "at": 3,
+          "word": "picture",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 4,
+          "word": "mattered",
+          "action": "EXPECT",
+          "expected": "ADJ",
+          "detail": "compiled state 446"
+        },
+        {
+          "at": 4,
+          "word": "mattered",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_ADJ_at_4_state_446"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PRONOUN",
+          "he/PRONOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_indef_pron"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "say/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "picture/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "h008",
+      "text": "The machine was inspected yesterday.",
+      "reason": "unconsumed_3_inspected",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "machine",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "machine/N"
+        },
+        {
+          "at": 1,
+          "word": "machine",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "was",
+          "action": "CONSUME",
+          "expected": "AUX-BE",
+          "detail": "be/AUX-BE"
+        },
+        {
+          "at": 2,
+          "word": "was",
+          "action": "COMPLETE",
+          "expected": "CLAUSE",
+          "detail": "clause_cop_ellipsis"
+        },
+        {
+          "at": 3,
+          "word": "inspected",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "unconsumed_3_inspected"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "machine/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "AUX-BE",
+          "be/AUX-BE"
+        ],
+        [
+          "COMPLETE",
+          "CLAUSE",
+          "clause_cop_ellipsis"
+        ]
+      ]
+    },
+    {
+      "id": "v008",
+      "text": "She knew the engine worked because the light was green.",
+      "reason": "expected_continuation_ADJ_at_4_state_446",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "She",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "She",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "She",
+          "action": "CONSUME",
+          "expected": "PRONOUN",
+          "detail": "she/PRONOUN"
+        },
+        {
+          "at": 0,
+          "word": "She",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_indef_pron"
+        },
+        {
+          "at": 1,
+          "word": "knew",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 1,
+          "word": "knew",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "know/V"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 3,
+          "word": "engine",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "engine/N"
+        },
+        {
+          "at": 3,
+          "word": "engine",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 4,
+          "word": "worked",
+          "action": "EXPECT",
+          "expected": "ADJ",
+          "detail": "compiled state 446"
+        },
+        {
+          "at": 4,
+          "word": "worked",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_ADJ_at_4_state_446"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PRONOUN",
+          "she/PRONOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_indef_pron"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "know/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "engine/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "d009",
+      "text": "The child watched the man with a telescope.",
+      "reason": "expected_continuation_NP_at_5_state_0",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "child",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "child/N"
+        },
+        {
+          "at": 1,
+          "word": "child",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "watched",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "watched",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "watch/V"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 4,
+          "word": "man",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "man/N"
+        },
+        {
+          "at": 4,
+          "word": "man",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 5,
+          "word": "with",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 5,
+          "word": "with",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_NP_at_5_state_0"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "child/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "watch/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "man/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "h009",
+      "text": "The musician who arrived early performed.",
+      "reason": "expected_continuation_PP_at_4_state_387",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "musician",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "musician/N"
+        },
+        {
+          "at": 1,
+          "word": "musician",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "who",
+          "action": "EXTEND",
+          "expected": "NP",
+          "detail": "compiled suffix at 551"
+        },
+        {
+          "at": 2,
+          "word": "who",
+          "action": "EXPECT",
+          "expected": "WH-SUBJ",
+          "detail": "compiled state 405"
+        },
+        {
+          "at": 2,
+          "word": "who",
+          "action": "CONSUME",
+          "expected": "WH-PRONOUN",
+          "detail": "who/WH-PRONOUN"
+        },
+        {
+          "at": 3,
+          "word": "arrived",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 3,
+          "word": "arrived",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "arrive/V"
+        },
+        {
+          "at": 4,
+          "word": "early",
+          "action": "EXPECT",
+          "expected": "PP",
+          "detail": "compiled state 387"
+        },
+        {
+          "at": 4,
+          "word": "early",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_PP_at_4_state_387"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "musician/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "WH-PRONOUN",
+          "who/WH-PRONOUN"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "arrive/V"
+        ]
+      ]
+    },
+    {
+      "id": "v009",
+      "text": "The tourist photographed the statue near the fountain.",
+      "reason": "expected_continuation_VP_at_6_state_147",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "tourist",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "tourist/N"
+        },
+        {
+          "at": 1,
+          "word": "tourist",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "photographed",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "photographed",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "photograph/V"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 4,
+          "word": "statue",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "statue/N"
+        },
+        {
+          "at": 4,
+          "word": "statue",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 5,
+          "word": "near",
+          "action": "CONSUME",
+          "expected": "ADJ",
+          "detail": "near/ADJ"
+        },
+        {
+          "at": 6,
+          "word": "the",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_VP_at_6_state_147"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "tourist/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "photograph/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "statue/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "ADJ",
+          "near/ADJ"
+        ]
+      ]
+    },
+    {
+      "id": "h010",
+      "text": "The report that Nora wrote vanished.",
+      "reason": "expected_continuation_N_at_5_state_438",
+      "last_events": [
+        {
+          "at": 1,
+          "word": "report",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "report/N"
+        },
+        {
+          "at": 2,
+          "word": "that",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 2,
+          "word": "that",
+          "action": "CONSUME",
+          "expected": "COMP-THAT",
+          "detail": "that/COMP-THAT"
+        },
+        {
+          "at": 3,
+          "word": "Nora",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 3,
+          "word": "Nora",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "Nora",
+          "action": "CONSUME",
+          "expected": "PROPER-NOUN",
+          "detail": "Nora/PROPER-NOUN"
+        },
+        {
+          "at": 3,
+          "word": "Nora",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_proper"
+        },
+        {
+          "at": 4,
+          "word": "wrote",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 4,
+          "word": "wrote",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "write/V"
+        },
+        {
+          "at": 5,
+          "word": "vanished",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 5,
+          "word": "vanished",
+          "action": "EXPECT",
+          "expected": "N",
+          "detail": "compiled state 438"
+        },
+        {
+          "at": 5,
+          "word": "vanished",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_N_at_5_state_438"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "report/N"
+        ],
+        [
+          "CONSUME",
+          "COMP-THAT",
+          "that/COMP-THAT"
+        ],
+        [
+          "CONSUME",
+          "PROPER-NOUN",
+          "Nora/PROPER-NOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_proper"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "write/V"
+        ]
+      ]
+    },
+    {
+      "id": "d011",
+      "text": "The baby slept quietly.",
+      "reason": "expected_continuation_ADVP_at_3_state_480",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "baby",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "baby/N"
+        },
+        {
+          "at": 1,
+          "word": "baby",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "slept",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "slept",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "sleep/V"
+        },
+        {
+          "at": 3,
+          "word": "quietly",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 3,
+          "word": "quietly",
+          "action": "EXPECT",
+          "expected": "ADVP",
+          "detail": "compiled state 480"
+        },
+        {
+          "at": 3,
+          "word": "quietly",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_ADVP_at_3_state_480"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "baby/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "sleep/V"
+        ]
+      ]
+    },
+    {
+      "id": "h011",
+      "text": "Nora thinks that the answer matters.",
+      "reason": "expected_continuation_ADJ_at_5_state_446",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "CONSUME",
+          "expected": "PROPER-NOUN",
+          "detail": "Nora/PROPER-NOUN"
+        },
+        {
+          "at": 0,
+          "word": "Nora",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_proper"
+        },
+        {
+          "at": 1,
+          "word": "thinks",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "think/V"
+        },
+        {
+          "at": 2,
+          "word": "that",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "that",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "this/DET"
+        },
+        {
+          "at": 3,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 4,
+          "word": "answer",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "answer/N"
+        },
+        {
+          "at": 4,
+          "word": "answer",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_det_n"
+        },
+        {
+          "at": 5,
+          "word": "matters",
+          "action": "EXPECT",
+          "expected": "ADJP",
+          "detail": "compiled state 355"
+        },
+        {
+          "at": 5,
+          "word": "matters",
+          "action": "EXPECT",
+          "expected": "ADJ",
+          "detail": "compiled state 446"
+        },
+        {
+          "at": 5,
+          "word": "matters",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_ADJ_at_5_state_446"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "PROPER-NOUN",
+          "Nora/PROPER-NOUN"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_proper"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "think/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "this/DET"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "answer/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_det_n"
+        ]
+      ]
+    },
+    {
+      "id": "v011",
+      "text": "The horse ran quickly.",
+      "reason": "expected_continuation_PP_at_3_state_387",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 0,
+          "word": "The",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 1,
+          "word": "horse",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "horse/N"
+        },
+        {
+          "at": 1,
+          "word": "horse",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 2,
+          "word": "ran",
+          "action": "EXPECT",
+          "expected": "VP",
+          "detail": "compiled state 120"
+        },
+        {
+          "at": 2,
+          "word": "ran",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "run/V"
+        },
+        {
+          "at": 3,
+          "word": "quickly",
+          "action": "EXPECT",
+          "expected": "PP",
+          "detail": "compiled state 387"
+        },
+        {
+          "at": 3,
+          "word": "quickly",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_PP_at_3_state_387"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "horse/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "run/V"
+        ]
+      ]
+    },
+    {
+      "id": "h012",
+      "text": "To protect the forest demands patience.",
+      "reason": "expected_continuation_ADJ_at_4_state_446",
+      "last_events": [
+        {
+          "at": 0,
+          "word": "To",
+          "action": "EXPECT",
+          "expected": "CLAUSE",
+          "detail": "compiled state 235"
+        },
+        {
+          "at": 0,
+          "word": "To",
+          "action": "CONSUME",
+          "expected": "TO",
+          "detail": "to/TO"
+        },
+        {
+          "at": 1,
+          "word": "protect",
+          "action": "EXPECT",
+          "expected": "VP-NP",
+          "detail": "compiled state 417"
+        },
+        {
+          "at": 1,
+          "word": "protect",
+          "action": "CONSUME",
+          "expected": "V",
+          "detail": "protect/V"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "EXPECT",
+          "expected": "NP",
+          "detail": "compiled state 0"
+        },
+        {
+          "at": 2,
+          "word": "the",
+          "action": "CONSUME",
+          "expected": "DET",
+          "detail": "the/DET"
+        },
+        {
+          "at": 3,
+          "word": "forest",
+          "action": "CONSUME",
+          "expected": "N",
+          "detail": "forest/N"
+        },
+        {
+          "at": 3,
+          "word": "forest",
+          "action": "COMPLETE",
+          "expected": "NP",
+          "detail": "np_det_n"
+        },
+        {
+          "at": 4,
+          "word": "demands",
+          "action": "EXPECT",
+          "expected": "ADJ",
+          "detail": "compiled state 446"
+        },
+        {
+          "at": 4,
+          "word": "demands",
+          "action": "STOP",
+          "expected": "CLAUSE",
+          "detail": "expected_continuation_ADJ_at_4_state_446"
+        }
+      ],
+      "trace": [
+        [
+          "CONSUME",
+          "TO",
+          "to/TO"
+        ],
+        [
+          "CONSUME",
+          "V",
+          "protect/V"
+        ],
+        [
+          "CONSUME",
+          "DET",
+          "the/DET"
+        ],
+        [
+          "CONSUME",
+          "N",
+          "forest/N"
+        ],
+        [
+          "COMPLETE",
+          "NP",
+          "np_det_n"
+        ]
+      ]
+    }
+  ],
   "method": "A/B/C compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
   "cases": 36,
   "repetitions": 2,
@@ -15,14 +2539,14 @@
       "complete": 28,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.22642,
-        "p95": 10.01637,
-        "p99": 14.00899
+        "p50": 5.28724,
+        "p95": 8.9711,
+        "p99": 10.60653
       },
       "reading_ms": {
-        "p50": 3.86424,
-        "p95": 7.87715,
-        "p99": 9.99735
+        "p50": 3.88744,
+        "p95": 7.21647,
+        "p99": 7.94507
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -52,19 +2576,19 @@
       "complete": 28,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 6.43744,
-        "p95": 13.2598,
-        "p99": 15.51766
+        "p50": 5.40287,
+        "p95": 9.29655,
+        "p99": 10.50141
       },
       "reading_ms": {
-        "p50": 5.38709,
-        "p95": 10.91439,
-        "p99": 12.86063
+        "p50": 4.00119,
+        "p95": 7.51,
+        "p99": 8.26217
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
-      "verbnet_scoring_calls": 7880,
-      "verbnet_positive_hints": 5540,
+      "verbnet_scoring_calls": 522,
+      "verbnet_positive_hints": 340,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -89,19 +2613,19 @@
       "complete": 28,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 7.64005,
-        "p95": 15.79206,
-        "p99": 17.8243
+        "p50": 5.41157,
+        "p95": 9.40372,
+        "p99": 10.6321
       },
       "reading_ms": {
-        "p50": 6.29198,
-        "p95": 13.58158,
-        "p99": 15.06303
+        "p50": 4.0783,
+        "p95": 7.60498,
+        "p99": 8.44771
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
-      "verbnet_scoring_calls": 7880,
-      "verbnet_positive_hints": 2684,
+      "verbnet_scoring_calls": 522,
+      "verbnet_positive_hints": 164,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
