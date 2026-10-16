@@ -1,5 +1,887 @@
 {
   "schema": 1,
+  "per_split": {
+    "A_baseline": {
+      "dev": {
+        "cases": 50,
+        "complete": 16,
+        "explicit_gold_passed": 12,
+        "verbnet_vp_observations": 13,
+        "attested_vp_observations": 12
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 7,
+        "explicit_gold_passed": 6,
+        "verbnet_vp_observations": 6,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 21,
+        "explicit_gold_passed": 17,
+        "verbnet_vp_observations": 19,
+        "attested_vp_observations": 15
+      }
+    },
+    "B_lemma_hints": {
+      "dev": {
+        "cases": 50,
+        "complete": 16,
+        "explicit_gold_passed": 12,
+        "verbnet_vp_observations": 13,
+        "attested_vp_observations": 12
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 7,
+        "explicit_gold_passed": 6,
+        "verbnet_vp_observations": 6,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 21,
+        "explicit_gold_passed": 17,
+        "verbnet_vp_observations": 19,
+        "attested_vp_observations": 15
+      }
+    },
+    "C_sense_hints": {
+      "dev": {
+        "cases": 50,
+        "complete": 16,
+        "explicit_gold_passed": 12,
+        "verbnet_vp_observations": 13,
+        "attested_vp_observations": 12
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 7,
+        "explicit_gold_passed": 6,
+        "verbnet_vp_observations": 6,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 21,
+        "explicit_gold_passed": 17,
+        "verbnet_vp_observations": 19,
+        "attested_vp_observations": 15
+      }
+    },
+    "D_structural2": {
+      "dev": {
+        "cases": 50,
+        "complete": 22,
+        "explicit_gold_passed": 13,
+        "verbnet_vp_observations": 19,
+        "attested_vp_observations": 14
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 8,
+        "explicit_gold_passed": 6,
+        "verbnet_vp_observations": 7,
+        "attested_vp_observations": 4
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 25,
+        "explicit_gold_passed": 15,
+        "verbnet_vp_observations": 17,
+        "attested_vp_observations": 12
+      }
+    },
+    "E_structural2_sense": {
+      "dev": {
+        "cases": 50,
+        "complete": 22,
+        "explicit_gold_passed": 13,
+        "verbnet_vp_observations": 19,
+        "attested_vp_observations": 14
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 8,
+        "explicit_gold_passed": 6,
+        "verbnet_vp_observations": 7,
+        "attested_vp_observations": 4
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 25,
+        "explicit_gold_passed": 15,
+        "verbnet_vp_observations": 17,
+        "attested_vp_observations": 12
+      }
+    },
+    "F_structural3": {
+      "dev": {
+        "cases": 50,
+        "complete": 19,
+        "explicit_gold_passed": 12,
+        "verbnet_vp_observations": 16,
+        "attested_vp_observations": 13
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 6,
+        "explicit_gold_passed": 5,
+        "verbnet_vp_observations": 5,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 21,
+        "explicit_gold_passed": 14,
+        "verbnet_vp_observations": 17,
+        "attested_vp_observations": 12
+      }
+    },
+    "G_structural3_sense": {
+      "dev": {
+        "cases": 50,
+        "complete": 19,
+        "explicit_gold_passed": 12,
+        "verbnet_vp_observations": 16,
+        "attested_vp_observations": 13
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 6,
+        "explicit_gold_passed": 5,
+        "verbnet_vp_observations": 5,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 21,
+        "explicit_gold_passed": 14,
+        "verbnet_vp_observations": 17,
+        "attested_vp_observations": 12
+      }
+    }
+  },
+  "baseline_verbnet_tree_evidence_by_case": [
+    {
+      "id": "d001",
+      "split": "dev",
+      "text": "John opened the door.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "open",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 11
+        }
+      ]
+    },
+    {
+      "id": "h001",
+      "split": "holdout",
+      "text": "Emma unlocked the wooden gate.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "unlock",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "v001",
+      "split": "validation",
+      "text": "Alice closed the heavy door.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "close",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 7
+        }
+      ]
+    },
+    {
+      "id": "d003",
+      "split": "dev",
+      "text": "Mary gave John a book.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "give",
+          "rule": "vp_ditransitive",
+          "events": [
+            "NP",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "h003",
+      "split": "holdout",
+      "text": "Thomas offered Rachel a seat.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "offer",
+          "rule": "vp_ditransitive",
+          "events": [
+            "NP",
+            "NP"
+          ],
+          "status": "UNKNOWN",
+          "confidence": "none",
+          "matching_frames": 0
+        }
+      ]
+    },
+    {
+      "id": "v003",
+      "split": "validation",
+      "text": "Robert handed Julia the keys.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "hand",
+          "rule": "vp_ditransitive",
+          "events": [
+            "NP",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "d004",
+      "split": "dev",
+      "text": "Mary remembered the book.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "remember",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 6
+        }
+      ]
+    },
+    {
+      "id": "h004",
+      "split": "holdout",
+      "text": "Thomas recognized the visitor.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "recognize",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "v004",
+      "split": "validation",
+      "text": "Robert noticed the keys.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "notice",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 5
+        }
+      ]
+    },
+    {
+      "id": "d010",
+      "split": "dev",
+      "text": "John left.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "leave",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 6
+        }
+      ]
+    },
+    {
+      "id": "v010",
+      "split": "validation",
+      "text": "The audience laughed.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "laugh",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 6
+        }
+      ]
+    },
+    {
+      "id": "d012",
+      "split": "dev",
+      "text": "The workers carried the boxes.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "carry",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 5
+        }
+      ]
+    },
+    {
+      "id": "v012",
+      "split": "validation",
+      "text": "The nurses moved the beds.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "move",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 11
+        }
+      ]
+    },
+    {
+      "id": "h013",
+      "split": "holdout",
+      "text": "Crossing the street, Emma noticed a bicycle.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "notice",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 5
+        }
+      ]
+    },
+    {
+      "id": "d016",
+      "split": "dev",
+      "text": "The teacher praised the student.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "praise",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 6
+        }
+      ]
+    },
+    {
+      "id": "v016",
+      "split": "validation",
+      "text": "The manager thanked the assistant.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "thank",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 4
+        }
+      ]
+    },
+    {
+      "id": "h017",
+      "split": "holdout",
+      "text": "The children waited near the entrance.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "wait",
+          "rule": "vp_prepositional",
+          "events": [
+            "PREP:near",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "h018",
+      "split": "holdout",
+      "text": "The coffee smells excellent.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "smell",
+          "rule": "vp_linking_adj",
+          "events": [
+            "ADJ"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "d019",
+      "split": "dev",
+      "text": "Our old dog chased a squirrel.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "chase",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "v019",
+      "split": "validation",
+      "text": "Their young daughter found a shell.",
+      "complete": true,
+      "explicit_gold_pass": false,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "shell",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "UNKNOWN",
+          "confidence": "none",
+          "matching_frames": 0
+        }
+      ]
+    },
+    {
+      "id": "d020",
+      "split": "dev",
+      "text": "Peter sent Susan a message.",
+      "complete": true,
+      "explicit_gold_pass": false,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "send",
+          "rule": "vp_obj_pred",
+          "events": [
+            "NP",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "v020",
+      "split": "validation",
+      "text": "Anna taught the children a song.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "teach",
+          "rule": "vp_ditransitive",
+          "events": [
+            "NP",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 4
+        }
+      ]
+    },
+    {
+      "id": "d021",
+      "split": "dev",
+      "text": "Peter sent a message to Susan.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "send",
+          "rule": "vp_prep_ditransitive",
+          "events": [
+            "NP",
+            "PREP:to",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 4
+        }
+      ]
+    },
+    {
+      "id": "v021",
+      "split": "validation",
+      "text": "Anna taught a song to the children.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "teach",
+          "rule": "vp_prep_ditransitive",
+          "events": [
+            "NP",
+            "PREP:to",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "v026",
+      "split": "validation",
+      "text": "David claims that the plan works.",
+      "complete": true,
+      "explicit_gold_pass": false,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "work",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 15
+        }
+      ]
+    },
+    {
+      "id": "d029",
+      "split": "dev",
+      "text": "John wants to read the book.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "want",
+          "rule": "vp_to_inf",
+          "events": [
+            "TO_INF"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "v029",
+      "split": "validation",
+      "text": "Laura hopes to visit the museum.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "hope",
+          "rule": "vp_to_inf",
+          "events": [
+            "TO_INF"
+          ],
+          "status": "ATTESTED",
+          "confidence": "lemma_only",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "v030",
+      "split": "validation",
+      "text": "Driving home, Robert heard the news.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "hear",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 5
+        }
+      ]
+    },
+    {
+      "id": "v036",
+      "split": "validation",
+      "text": "The dog waited beside the gate.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "wait",
+          "rule": "vp_prepositional",
+          "events": [
+            "PREP:beside",
+            "NP"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 1
+        }
+      ]
+    },
+    {
+      "id": "d039",
+      "split": "dev",
+      "text": "The soup tastes good.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "taste",
+          "rule": "vp_linking_adj",
+          "events": [
+            "ADJ"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "v039",
+      "split": "validation",
+      "text": "The flowers smell wonderful.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "smell",
+          "rule": "vp_linking_adj",
+          "events": [
+            "ADJ"
+          ],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 2
+        }
+      ]
+    },
+    {
+      "id": "d040",
+      "split": "dev",
+      "text": "Those two large houses collapsed.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "collapse",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 5
+        }
+      ]
+    },
+    {
+      "id": "v040",
+      "split": "validation",
+      "text": "These four small boats sank.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "sink",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 5
+        }
+      ]
+    },
+    {
+      "id": "v041",
+      "split": "validation",
+      "text": "Either route seems safe.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "seems",
+          "rule": "vp_linking_adj",
+          "events": [
+            "ADJ"
+          ],
+          "status": "UNKNOWN",
+          "confidence": "none",
+          "matching_frames": 0
+        }
+      ]
+    },
+    {
+      "id": "d043",
+      "split": "dev",
+      "text": "Someone had been waiting outside.",
+      "complete": true,
+      "explicit_gold_pass": false,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "have",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "UNKNOWN",
+          "confidence": "none",
+          "matching_frames": 0
+        }
+      ]
+    },
+    {
+      "id": "v043",
+      "split": "validation",
+      "text": "Nobody had been sleeping upstairs.",
+      "complete": true,
+      "explicit_gold_pass": false,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "have",
+          "rule": "vp_transitive",
+          "events": [
+            "NP"
+          ],
+          "status": "UNKNOWN",
+          "confidence": "none",
+          "matching_frames": 0
+        }
+      ]
+    },
+    {
+      "id": "v047",
+      "split": "validation",
+      "text": "Laura asked which route David chose.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "choose",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "PREFIX",
+          "confidence": "sense_verified",
+          "matching_frames": 7
+        }
+      ]
+    },
+    {
+      "id": "v048",
+      "split": "validation",
+      "text": "The younger runner won.",
+      "complete": true,
+      "explicit_gold_pass": true,
+      "verbnet_vp_observations": [
+        {
+          "lemma": "win",
+          "rule": "vp_intransitive",
+          "events": [],
+          "status": "ATTESTED",
+          "confidence": "sense_verified",
+          "matching_frames": 3
+        }
+      ]
+    }
+  ],
   "baseline_failure_diagnostics": [
     {
       "id": "d002",
@@ -2880,14 +3762,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.31409,
-        "p95": 8.99656,
-        "p99": 10.15812
+        "p50": 3.73163,
+        "p95": 7.75651,
+        "p99": 8.73919
       },
       "reading_ms": {
-        "p50": 3.07748,
-        "p95": 7.52124,
-        "p99": 8.0539
+        "p50": 2.64754,
+        "p95": 6.45532,
+        "p99": 6.84054
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -2968,14 +3850,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.40678,
-        "p95": 9.32457,
-        "p99": 10.49936
+        "p50": 3.80616,
+        "p95": 8.01267,
+        "p99": 9.17421
       },
       "reading_ms": {
-        "p50": 3.08191,
-        "p95": 7.70404,
-        "p99": 8.43752
+        "p50": 2.64518,
+        "p95": 6.55429,
+        "p99": 7.30839
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -3056,14 +3938,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.31885,
-        "p95": 9.38057,
-        "p99": 10.59628
+        "p50": 3.76725,
+        "p95": 8.14903,
+        "p99": 9.40935
       },
       "reading_ms": {
-        "p50": 3.12415,
-        "p95": 7.86054,
-        "p99": 8.49934
+        "p50": 2.66724,
+        "p95": 6.85754,
+        "p99": 7.52999
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -3142,14 +4024,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.85733,
-        "p95": 10.9394,
-        "p99": 12.15763
+        "p50": 5.074,
+        "p95": 9.47223,
+        "p99": 11.18835
       },
       "reading_ms": {
-        "p50": 4.58743,
-        "p95": 9.06113,
-        "p99": 10.68204
+        "p50": 3.94148,
+        "p95": 7.71541,
+        "p99": 9.79819
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -3214,14 +4096,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.00256,
-        "p95": 11.1299,
-        "p99": 12.31833
+        "p50": 5.18974,
+        "p95": 9.5907,
+        "p99": 10.55839
       },
       "reading_ms": {
-        "p50": 4.73253,
-        "p95": 9.3913,
-        "p99": 10.64776
+        "p50": 4.08055,
+        "p95": 7.96956,
+        "p99": 9.19695
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -3288,14 +4170,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.10285,
-        "p95": 10.5419,
-        "p99": 11.35116
+        "p50": 4.45769,
+        "p95": 9.06958,
+        "p99": 9.90528
       },
       "reading_ms": {
-        "p50": 3.97243,
-        "p95": 8.95385,
-        "p99": 9.59274
+        "p50": 3.48163,
+        "p95": 7.59738,
+        "p99": 8.39261
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -3358,14 +4240,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.15636,
-        "p95": 11.06161,
-        "p99": 11.8587
+        "p50": 4.52787,
+        "p95": 9.68698,
+        "p99": 10.45685
       },
       "reading_ms": {
-        "p50": 4.04895,
-        "p95": 9.30246,
-        "p99": 10.1927
+        "p50": 3.5033,
+        "p95": 8.07682,
+        "p99": 8.82552
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
