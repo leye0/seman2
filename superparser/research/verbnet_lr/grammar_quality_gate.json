@@ -16,8 +16,8 @@
       "negative_false_accepts": 6,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.25258,
-      "positive_p95_ms": 9.13065,
+      "positive_median_ms": 4.33885,
+      "positive_p95_ms": 9.19778,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -53,8 +53,8 @@
         "neg016"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.04315,
-      "positive_p95_ms": 9.83673,
+      "positive_median_ms": 5.07939,
+      "positive_p95_ms": 9.79923,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -97,8 +97,8 @@
         "neg016"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.42253,
-      "positive_p95_ms": 10.24312,
+      "positive_median_ms": 5.52949,
+      "positive_p95_ms": 10.29897,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -145,8 +145,8 @@
         "neg017"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.75609,
-      "positive_p95_ms": 10.83946,
+      "positive_median_ms": 5.79397,
+      "positive_p95_ms": 11.18942,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -170,8 +170,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.41626,
-      "positive_p95_ms": 9.37727,
+      "positive_median_ms": 4.48692,
+      "positive_p95_ms": 9.24312,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -203,8 +203,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.00082,
-      "positive_p95_ms": 9.81563,
+      "positive_median_ms": 5.1391,
+      "positive_p95_ms": 10.16465,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -239,8 +239,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.48536,
-      "positive_p95_ms": 10.15672,
+      "positive_median_ms": 5.55498,
+      "positive_p95_ms": 10.35244,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -277,8 +277,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.76,
-      "positive_p95_ms": 10.89163,
+      "positive_median_ms": 5.88721,
+      "positive_p95_ms": 10.97318,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -302,8 +302,8 @@
       "negative_false_accepts": 6,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.31062,
-      "positive_p95_ms": 9.21984,
+      "positive_median_ms": 4.36134,
+      "positive_p95_ms": 9.12643,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -335,8 +335,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.02015,
-      "positive_p95_ms": 9.81094,
+      "positive_median_ms": 5.15478,
+      "positive_p95_ms": 10.08362,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -373,8 +373,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.73398,
-      "positive_p95_ms": 11.0764,
+      "positive_median_ms": 5.80918,
+      "positive_p95_ms": 11.63661,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -406,8 +406,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.0847,
-      "positive_p95_ms": 10.14061,
+      "positive_median_ms": 5.17476,
+      "positive_p95_ms": 10.13732,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -442,8 +442,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.46794,
-      "positive_p95_ms": 10.28116,
+      "positive_median_ms": 5.54604,
+      "positive_p95_ms": 10.57871,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -480,8 +480,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.79956,
-      "positive_p95_ms": 11.00446,
+      "positive_median_ms": 5.88289,
+      "positive_p95_ms": 11.29409,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -505,8 +505,8 @@
       "negative_false_accepts": 6,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.20015,
-      "positive_p95_ms": 8.8406,
+      "positive_median_ms": 4.32112,
+      "positive_p95_ms": 8.91758,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -538,8 +538,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.08143,
-      "positive_p95_ms": 9.605,
+      "positive_median_ms": 5.1331,
+      "positive_p95_ms": 9.80863,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -576,8 +576,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.75306,
-      "positive_p95_ms": 10.76637,
+      "positive_median_ms": 5.80933,
+      "positive_p95_ms": 10.96462,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -601,8 +601,8 @@
       "negative_false_accepts": 6,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.26789,
-      "positive_p95_ms": 8.9599,
+      "positive_median_ms": 4.38027,
+      "positive_p95_ms": 9.04075,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -634,17 +634,17 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.95239,
-      "positive_p95_ms": 9.71357,
+      "positive_median_ms": 5.07062,
+      "positive_p95_ms": 9.83224,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
         "no_new_negative_false_acceptances": true,
-        "median_at_or_below_target": true,
+        "median_at_or_below_target": false,
         "reproducible_across_repetitions": true
       },
       "quality_gate": true,
-      "performance_target_met": true
+      "performance_target_met": false
     },
     "AG_token_cache_guard3": {
       "total_positive_cases": 120,
@@ -672,8 +672,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.7625,
-      "positive_p95_ms": 10.949,
+      "positive_median_ms": 5.8148,
+      "positive_p95_ms": 11.13923,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -697,8 +697,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.29133,
-      "positive_p95_ms": 9.02894,
+      "positive_median_ms": 4.37638,
+      "positive_p95_ms": 9.44392,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -730,17 +730,17 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.9997,
-      "positive_p95_ms": 9.812,
+      "positive_median_ms": 5.05317,
+      "positive_p95_ms": 9.96376,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
         "no_new_negative_false_acceptances": true,
-        "median_at_or_below_target": true,
+        "median_at_or_below_target": false,
         "reproducible_across_repetitions": true
       },
       "quality_gate": true,
-      "performance_target_met": true
+      "performance_target_met": false
     },
     "AJ_promoted_guard3": {
       "total_positive_cases": 120,
@@ -768,8 +768,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.69264,
-      "positive_p95_ms": 10.87421,
+      "positive_median_ms": 5.77069,
+      "positive_p95_ms": 11.1694,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -804,8 +804,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.14872,
-      "positive_p95_ms": 9.74134,
+      "positive_median_ms": 5.31371,
+      "positive_p95_ms": 10.03249,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -851,8 +851,8 @@
         "neg024"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.76657,
-      "positive_p95_ms": 10.62466,
+      "positive_median_ms": 5.79884,
+      "positive_p95_ms": 10.7825,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -889,8 +889,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.16704,
-      "positive_p95_ms": 9.83286,
+      "positive_median_ms": 5.18805,
+      "positive_p95_ms": 10.06149,
       "tests": {
         "nonregression_on_explicit_positive_gold": false,
         "gold_passes_at_least_baseline": true,
@@ -938,8 +938,8 @@
         "neg024"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.6801,
-      "positive_p95_ms": 10.80885,
+      "positive_median_ms": 5.74817,
+      "positive_p95_ms": 10.73983,
       "tests": {
         "nonregression_on_explicit_positive_gold": false,
         "gold_passes_at_least_baseline": true,
@@ -974,8 +974,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.22691,
-      "positive_p95_ms": 9.60217,
+      "positive_median_ms": 5.22545,
+      "positive_p95_ms": 9.91648,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1015,8 +1015,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.78825,
-      "positive_p95_ms": 10.95429,
+      "positive_median_ms": 5.90328,
+      "positive_p95_ms": 10.84902,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1051,8 +1051,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.2276,
-      "positive_p95_ms": 9.6418,
+      "positive_median_ms": 5.23377,
+      "positive_p95_ms": 9.86235,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1098,8 +1098,8 @@
         "neg024"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.65457,
-      "positive_p95_ms": 10.77699,
+      "positive_median_ms": 5.7045,
+      "positive_p95_ms": 10.83043,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1136,8 +1136,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.17056,
-      "positive_p95_ms": 9.99538,
+      "positive_median_ms": 5.29711,
+      "positive_p95_ms": 10.21089,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1187,8 +1187,8 @@
         "neg024"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.84851,
-      "positive_p95_ms": 10.96172,
+      "positive_median_ms": 5.90027,
+      "positive_p95_ms": 11.1457,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1230,8 +1230,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.65698,
-      "positive_p95_ms": 10.40581,
+      "positive_median_ms": 5.75966,
+      "positive_p95_ms": 10.52058,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1275,8 +1275,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 6.07487,
-      "positive_p95_ms": 11.10343,
+      "positive_median_ms": 6.21662,
+      "positive_p95_ms": 11.27553,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1329,8 +1329,8 @@
         "neg024"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.76803,
-      "positive_p95_ms": 11.78635,
+      "positive_median_ms": 5.7989,
+      "positive_p95_ms": 11.96827,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1375,8 +1375,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 6.0197,
-      "positive_p95_ms": 11.04398,
+      "positive_median_ms": 6.16932,
+      "positive_p95_ms": 11.1976,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -1419,8 +1419,8 @@
       "negative_false_accepts": 1,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 5.57688,
-      "positive_p95_ms": 10.27503,
+      "positive_median_ms": 5.66935,
+      "positive_p95_ms": 10.66835,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,

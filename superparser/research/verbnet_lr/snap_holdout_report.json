@@ -27,34 +27,41 @@
     "hits_all_matches_pass_explicit_gold": 18,
     "hybrid_snap_fastpath": 25,
     "hybrid_lr_fallback": 45,
+    "baseline_explicit_gold_pass": 22,
+    "hybrid_explicit_gold_pass": 30,
+    "new_gold_passes": 9,
+    "lost_gold_passes": 1,
     "multi_structure_hits": 6,
     "incomplete": 13,
     "no_hit": 45
   },
   "latency": {
     "snap_recognition_warmed_lattice": {
-      "p50_ms": 0.02951,
-      "p95_ms": 0.90421,
-      "p99_ms": 1.2559
+      "p50_ms": 0.03429,
+      "p95_ms": 0.93997,
+      "p99_ms": 1.37599
     },
     "snap_including_lexical_lattice": {
-      "p50_ms": 1.23154,
-      "p95_ms": 2.26937,
-      "p99_ms": 3.09798
+      "p50_ms": 1.26996,
+      "p95_ms": 2.57003,
+      "p99_ms": 3.11719
     },
     "lr_baseline_including_lattice": {
-      "p50_ms": 4.30737,
-      "p95_ms": 8.63567,
-      "p99_ms": 9.62844
+      "p50_ms": 4.44462,
+      "p95_ms": 9.25492,
+      "p99_ms": 10.19372
     },
     "hybrid_snap_then_lr_fallback": {
-      "p50_ms": 3.34457,
-      "p95_ms": 9.60684,
-      "p99_ms": 10.94655
+      "p50_ms": 2.53903,
+      "p95_ms": 8.47442,
+      "p99_ms": 8.91308
     }
   },
   "cases": [
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v001",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -70,6 +77,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v002",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -85,6 +95,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v003",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -102,6 +115,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v004",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -119,6 +135,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v005",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -136,6 +155,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v006",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -151,6 +173,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v007",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -166,6 +191,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v008",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -181,6 +209,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v009",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -196,6 +227,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v010",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -211,6 +245,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v011",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -228,6 +265,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v012",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -245,6 +285,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v013",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -260,6 +303,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v014",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -277,6 +323,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": false,
       "id": "v015",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -294,6 +343,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v016",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -311,6 +363,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v017",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -326,6 +381,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v018",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -343,6 +401,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v019",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -358,6 +419,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v020",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -373,6 +437,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v021",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -388,6 +455,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v022",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -405,6 +475,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v023",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -420,6 +493,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v024",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -435,6 +511,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v025",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -450,6 +529,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v026",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -465,6 +547,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v027",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -480,6 +565,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v028",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -495,6 +583,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v029",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -512,6 +603,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v030",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -527,6 +621,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": false,
       "id": "v031",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -544,6 +641,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v032",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -559,6 +659,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v033",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -574,6 +677,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v034",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -589,6 +695,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v035",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -606,6 +715,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v036",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -621,6 +733,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v037",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -638,6 +753,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v038",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -653,6 +771,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v039",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -670,6 +791,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v040",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -687,6 +811,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v041",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -702,6 +829,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v042",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -717,6 +847,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": false,
       "id": "v043",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -734,6 +867,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v044",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -751,6 +887,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v045",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -766,6 +905,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "v046",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -781,6 +923,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v047",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -796,6 +941,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "v048",
       "split": "validation",
       "any_explicit_gold_pass": true,
@@ -813,6 +961,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": false,
       "id": "v049",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -830,6 +981,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "v050",
       "split": "validation",
       "any_explicit_gold_pass": false,
@@ -845,6 +999,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "h001",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -860,6 +1017,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h002",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -875,6 +1035,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": false,
       "id": "h003",
       "split": "holdout",
       "any_explicit_gold_pass": true,
@@ -893,6 +1056,9 @@
       ]
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "h004",
       "split": "holdout",
       "any_explicit_gold_pass": true,
@@ -910,6 +1076,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "h005",
       "split": "holdout",
       "any_explicit_gold_pass": true,
@@ -927,6 +1096,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h006",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -942,6 +1114,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h007",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -957,6 +1132,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h008",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -972,6 +1150,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h009",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -987,6 +1168,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h010",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1002,6 +1186,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h011",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1017,6 +1204,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h012",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1032,6 +1222,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "h013",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1047,6 +1240,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h014",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1062,6 +1258,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h015",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1077,6 +1276,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h016",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1092,6 +1294,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": null,
       "id": "h017",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1107,6 +1312,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": true,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "h018",
       "split": "holdout",
       "any_explicit_gold_pass": true,
@@ -1124,6 +1332,9 @@
       ]
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": null,
       "id": "h019",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1139,6 +1350,9 @@
       "snap_rule_ids": []
     },
     {
+      "baseline_gold_pass": false,
+      "hybrid_gold_pass": false,
+      "first_snap_gold_pass": false,
       "id": "h020",
       "split": "holdout",
       "any_explicit_gold_pass": false,
@@ -1156,6 +1370,231 @@
       ]
     }
   ],
+  "negative_probe": {
+    "cases": 24,
+    "baseline_false_accepts": 6,
+    "hybrid_false_accepts": 9,
+    "new_false_accepts": 3,
+    "contrast_completes": 10,
+    "details": [
+      {
+        "id": "neg001",
+        "family": "agreement",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": true,
+        "hybrid_route": "snap",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg002",
+        "family": "agreement",
+        "baseline_false_accept": true,
+        "hybrid_false_accept": true,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": true,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg003",
+        "family": "agreement",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg004",
+        "family": "agreement",
+        "baseline_false_accept": true,
+        "hybrid_false_accept": true,
+        "hybrid_route": "snap",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg005",
+        "family": "agreement",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": true,
+        "hybrid_route": "snap",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg006",
+        "family": "agreement",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": true,
+        "hybrid_route": "snap",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg007",
+        "family": "agreement",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg008",
+        "family": "agreement",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg009",
+        "family": "modal",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg010",
+        "family": "modal",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg011",
+        "family": "modal",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg012",
+        "family": "modal",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg013",
+        "family": "modal",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg014",
+        "family": "auxiliary",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg015",
+        "family": "auxiliary",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg016",
+        "family": "auxiliary",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg017",
+        "family": "auxiliary",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg018",
+        "family": "determiner",
+        "baseline_false_accept": true,
+        "hybrid_false_accept": true,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg019",
+        "family": "determiner",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg020",
+        "family": "valency",
+        "baseline_false_accept": true,
+        "hybrid_false_accept": true,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": true,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg021",
+        "family": "valency",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": true,
+        "contrast_route": "snap"
+      },
+      {
+        "id": "neg022",
+        "family": "valency",
+        "baseline_false_accept": true,
+        "hybrid_false_accept": true,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg023",
+        "family": "valency",
+        "baseline_false_accept": true,
+        "hybrid_false_accept": true,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": true,
+        "contrast_route": "left_to_right"
+      },
+      {
+        "id": "neg024",
+        "family": "valency",
+        "baseline_false_accept": false,
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
+        "contrast_completes": false,
+        "contrast_route": "left_to_right"
+      }
+    ]
+  },
   "limitations": [
     "Only previously observed full trees are indexed; zero hits do not disprove grammaticality.",
     "One-token lexical slots; trailing period and exclamation are excluded like current L-R.",
@@ -1163,7 +1602,8 @@
     "The teacher tests only dev. UNKNOWN from its budgets is not evidence of invalid grammar.",
     "Only one lexical derivation is materialized per matched whole-tree template.",
     "Hard budgets can truncate lookup; such cases are marked incomplete; a valid match still takes fast path.",
-    "Hybrid fallback currently repeats lexical lattice construction on misses; this overhead is included.",
+    "Hybrid miss reuses the same one-token lexical lattice when the fallback reader uses the same lexical options.",
+    "The corpus explicit syntax assertions test only annotated constraints, not complete linguistic correctness.",
     "No 20-million-template memory or on-disk index performance has been claimed."
   ]
 }
