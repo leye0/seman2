@@ -1,5 +1,5 @@
 """Compiled two-token lookahead is a bounded lexical witness, not a forest."""
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import unittest
 
 from seman_parser.reading_kernel_compiled import CompiledGrammar, IncrementalReader, ReadNode
@@ -56,7 +56,7 @@ def grammar():
                     for name, lhs, *rhs in signatures])
 
 
-def reader(sequence, *, lookahead):
+def reader(sequence, *, lookahead, extra_rules=()):
     tokens = []
     candidates = []
     position = 0
@@ -64,9 +64,14 @@ def reader(sequence, *, lookahead):
         t = Tok(word, position, position + len(word))
         tokens.append(t)
         if category:
-            candidates.append(Candidate(category, t.start, t.end, word.lower()))
+            for cat in (category,) if isinstance(category, str) else category:
+                candidates.append(Candidate(cat, t.start, t.end, word.lower()))
         position += len(word) + 1
-    compiled = CompiledGrammar(grammar())
+    g = grammar()
+    if extra_rules:
+        g.rules = [replace(r, score=2.5) if r.rule_id == "vp_passive" else r for r in g.rules]
+        g.rules.extend(extra_rules)
+    compiled = CompiledGrammar(g)
     def combine(rule, children):
         return ReadNode(rule.lhs.category, children[0].start, children[-1].end,
                         rule=rule, children=tuple(children))
@@ -102,6 +107,19 @@ class TestBoundedLookahead(unittest.TestCase):
         r.pos = 1
         self.assertFalse(r._two_token_witness("VP", 1))
         self.assertEqual(r.g.stats["grammar_rules"], 8)
+
+    def test_v3_direct_tail_witness_prefers_passive_over_copula(self):
+        series = [("was", ("AUX-BE", "COPULA")),
+                  ("opened", ("V", "ADJ")), (".", None)]
+        extras = (
+            Rule("vp_cop_adj", Sym("VP"), (Sym("COPULA"), Sym("ADJ")), 1.5),
+            Rule("vp_cop_ellipsis", Sym("VP"), (Sym("COPULA"),), 0.5),
+        )
+        old = reader(series, lookahead=2, extra_rules=extras)
+        new = reader(series, lookahead=3, extra_rules=extras)
+        self.assertEqual(old._select(old.g.roots["VP"]), "COPULA")
+        self.assertEqual(new._select(new.g.roots["VP"]), "AUX-BE")
+        self.assertGreater(new.count["edge_witness_hits"], 0)
 
     def test_opt_in_keeps_original_default(self):
         series = [("The","DET"), ("door","N"), ("was","AUX-BE"), ("opened","V")]
