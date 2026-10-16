@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(*, wordnet_dir=None, corpus=None, max_cases=8, max_items=500_000,
-        max_seconds=3.0, max_expansions=20_000, max_nodes_per_span=6):
+        max_seconds=3.0, max_expansions=100_000, max_nodes_per_span=8):
     path = Path(corpus or ROOT / "research" / "verbnet_lr" /
                 "long_sentence_stress.jsonl")
     cases = [json.loads(line) for line in path.read_text(encoding="utf8").splitlines()
@@ -66,8 +66,8 @@ def main():
     p.add_argument("--max-cases", type=int, default=8)
     p.add_argument("--max-items", type=int, default=500_000)
     p.add_argument("--max-seconds", type=float, default=3.0)
-    p.add_argument("--max-expansions", type=int, default=20_000)
-    p.add_argument("--max-nodes-per-span", type=int, default=6)
+    p.add_argument("--max-expansions", type=int, default=100_000)
+    p.add_argument("--max-nodes-per-span", type=int, default=8)
     p.add_argument("--report", default=str(
         ROOT / "research" / "verbnet_lr" / "feature_witness_report.json"))
     args = p.parse_args()

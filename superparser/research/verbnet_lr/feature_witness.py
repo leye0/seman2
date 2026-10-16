@@ -14,7 +14,7 @@ from collections import defaultdict
 from time import perf_counter
 
 from research.verbnet_lr.upper_bound import recognize_upper_bound
-from seman_parser.features import Variable
+from seman_parser.features import Variable, unify
 from seman_parser.predictive import CompactNode, PredictiveParser
 from seman_parser.symbols import intern
 
@@ -112,6 +112,9 @@ def seek_feature_witness(grammar, lattice, *, goal="CLAUSE",
     expansions = 0
     unifications = 0
     rejected_by_guard = 0
+    partial_unifications = 0
+    partial_rejections = 0
+    duplicate_lexical_skips = 0
     top_reason = ""
 
     def step():
@@ -123,7 +126,7 @@ def seek_feature_witness(grammar, lattice, *, goal="CLAUSE",
             raise _Limit("time_budget")
 
     def options(category, start, end):
-        nonlocal unifications
+        nonlocal unifications, partial_unifications, partial_rejections, duplicate_lexical_skips
         step()
         key = (category, start, end)
         if key in memo:
@@ -139,35 +142,62 @@ def seek_feature_witness(grammar, lattice, *, goal="CLAUSE",
         found = []
         try:
             if end == start + 1:
+                # The lexicon often exposes many WordNet senses with the
+                # same parser-visible morphology. Keeping all of them as
+                # independent parse paths wastes the bounded grammar budget.
+                # Keep the best candidate for each exact grammatical shape.
+                signatures = set()
                 for cand in sorted(candidates.get((category, start), ()),
                                    key=lambda c: -c.score):
                     step()
-                    found.append(_compact(cand))
+                    child = _compact(cand)
+                    signature = (child.grammatical_key(), cand.lemma,
+                                 cand.surface, repr(cand.syntactic_constraints))
+                    if signature in signatures:
+                        duplicate_lexical_skips += 1
+                        continue
+                    signatures.add(signature)
+                    found.append(child)
                     if len(found) >= max_nodes_per_span:
                         cutoffs.add("node_limit_per_span")
                         memo[key] = tuple(found)
                         return memo[key]
 
-            def rhs_sequences(symbols, index, position):
+            def rhs_sequences(symbols, index, position, env):
+                nonlocal partial_unifications, partial_rejections
                 if index == len(symbols):
                     if position == end:
                         yield ()
                     return
-                cat = symbols[index].category
+                slot = symbols[index]
+                cat = slot.category
                 remaining = len(symbols) - index - 1
                 for boundary in ends.get((cat, position), ()):
                     if boundary > end - remaining:
                         break
                     step()
                     for child in options(cat, position, boundary):
-                        for rest in rhs_sequences(symbols, index + 1, boundary):
+                        # Reject only constraints that the real unifier and
+                        # positive-evidence semantics necessarily reject.
+                        # This is a *sound* pruning of partial derivations.
+                        partial_unifications += 1
+                        if any(intern(name) not in child.evidence
+                               for name in slot.requires):
+                            partial_rejections += 1
+                            continue
+                        merged = unify(slot.features, child.features, env)
+                        if merged is None:
+                            partial_rejections += 1
+                            continue
+                        for rest in rhs_sequences(symbols, index + 1, boundary,
+                                                  merged[1]):
                             yield (child,) + rest
 
             for rule in by_head[category]:
                 step()
                 if len(rule.rhs) > end - start:
                     continue
-                for children in rhs_sequences(rule.rhs, 0, start):
+                for children in rhs_sequences(rule.rhs, 0, start, {}):
                     step()
                     unifications += 1
                     node = PredictiveParser._reduce(rule, children)
@@ -207,6 +237,9 @@ def seek_feature_witness(grammar, lattice, *, goal="CLAUSE",
         "feature_expansions": expansions,
         "unifications": unifications,
         "guard_rejections": rejected_by_guard,
+        "partial_unifications": partial_unifications,
+        "partial_rejections": partial_rejections,
+        "duplicate_lexical_skips": duplicate_lexical_skips,
         "feature_ms": round((perf_counter() - started) * 1000
                             - bound["elapsed_ms"], 3),
         "candidate_spans": len(memo),

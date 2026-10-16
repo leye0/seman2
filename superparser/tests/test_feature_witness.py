@@ -92,7 +92,7 @@ class FeatureWitnessTests(unittest.TestCase):
         self.assertEqual(outcome["category_status"], "ACCEPTED")
         self.assertEqual(outcome["status"], "UNKNOWN", outcome)
         self.assertIsNone(outcome["witness"])
-        self.assertGreater(outcome["unifications"], 0)
+        self.assertGreater(outcome["partial_rejections"], 0)
 
     def test_lexical_ambiguity_is_resolved_by_features(self):
         grammar = Grammar((
@@ -103,6 +103,16 @@ class FeatureWitnessTests(unittest.TestCase):
         ])
         answer = seek_feature_witness(gram, lat)
         self.assertEqual(answer["status"], "FOUND", answer)
+
+    def test_duplicate_wordnet_senses_do_not_exhaust_the_node_cap(self):
+        grammar = Grammar((make_rule("clause_v", symbol("CLAUSE"),
+                                    symbol("V", vform="base")),))
+        gram, lat = fixture(grammar, [
+            ("walk", [("V", {"vform": "base"})] * 32),
+        ])
+        answer = seek_feature_witness(gram, lat, max_nodes_per_span=2)
+        self.assertEqual(answer["status"], "FOUND", answer)
+        self.assertGreater(answer["duplicate_lexical_skips"], 0)
 
     def test_budget_is_unknown_not_grammatical_rejection(self):
         grammar = Grammar((make_rule("clause_v", symbol("CLAUSE"),
