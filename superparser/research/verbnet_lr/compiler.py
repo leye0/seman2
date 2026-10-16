@@ -241,21 +241,28 @@ class PrefixIndex:
                 synset_offset: int | None = None) -> Prediction:
         lemma = lemma.casefold().replace("_", " ")
         frames = self._frames.get(lemma, ())
-        state = self._root(lemma)
+        states = (self._root(lemma),)
         for event in observed:
             event = event.strip()
-            new = state.edges.get(event)
-            # PREP:* is a wildcard; the caller should still treat it as weak.
-            if new is None and event.startswith("PREP:"):
-                new = state.edges.get("PREP:*")
-            if new is None:
+            next_states = {}
+            for state in states:
+                # Explicit and wildcard edges are *both* compatible.
+                keys = (event, "PREP:*") if event.startswith("PREP:") and event != "PREP:*" else (event,)
+                for key in keys:
+                    child = state.edges.get(key)
+                    if child is not None:
+                        next_states[id(child)] = child
+            if not next_states:
                 return Prediction("UNKNOWN", (), (), ())
-            state = new
-        ids = sorted(i for i in state.reachable if self._eligible(frames[i], synset_offset))
+            states = tuple(next_states.values())
+        all_ids = set().union(*(state.reachable for state in states))
+        ids = sorted(i for i in all_ids if self._eligible(frames[i], synset_offset))
         if not ids:
             return Prediction("UNKNOWN", (), (), ())
+        eligible = set(ids)
         matches = tuple(frames[i] for i in ids)
-        complete = tuple(frames[i] for i in sorted(state.complete) if i in ids)
-        next_events = tuple(sorted(key for key, node in state.edges.items()
-                                   if node.reachable.intersection(ids)))
+        complete_ids = set().union(*(state.complete for state in states)) & eligible
+        complete = tuple(frames[i] for i in sorted(complete_ids))
+        next_events = tuple(sorted({key for state in states for key, node in state.edges.items()
+                                    if node.reachable & eligible}))
         return Prediction("ATTESTED" if complete else "PREFIX", next_events, matches, complete)
