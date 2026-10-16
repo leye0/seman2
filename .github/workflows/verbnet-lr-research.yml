@@ -108,6 +108,12 @@ jobs:
             --report superparser/research/verbnet_lr/full_corpus_report.json \
             --index-out superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
             --iterations 20000
+      - name: Whole-structure snapping on held-out sentences (research only)
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_snap.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-train 50 --max-eval 70 --repetitions 3 \
+            --out superparser/research/verbnet_lr/snap_holdout_report.json
       - name: A/B/C benchmark on real Seman2 compiled left-to-right reader
         run: |
           PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_reader.py \
@@ -173,7 +179,8 @@ jobs:
                   superparser/research/verbnet_lr/grammar_upper_bound.json \
                   superparser/research/verbnet_lr/feature_witness_report.json \
                   superparser/research/verbnet_lr/packed_witness_report.json \
-                  superparser/research/verbnet_lr/ud_ewt_probe.json
+                  superparser/research/verbnet_lr/ud_ewt_probe.json \
+                  superparser/research/verbnet_lr/snap_holdout_report.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
             # A documentation-only commit might land while this job runs.

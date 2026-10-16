@@ -30,7 +30,7 @@ def quantile(values, fraction):
 
 
 def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3):
-    corpus=ROOT / "research/verbnet_lr/oracle_cases.jsonl"
+    corpus=ROOT / "data/syntax_correctness_validation.jsonl"
     rows=[json.loads(row) for row in corpus.read_text().splitlines() if row.strip()]
     train=[r for r in rows if r.get("split")=="dev"][:max_train]
     evaluation=[r for r in rows if r.get("split")!="dev"][:max_eval]

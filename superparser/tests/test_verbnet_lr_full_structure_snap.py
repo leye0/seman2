@@ -99,7 +99,7 @@ class FullStructureSnapTests(unittest.TestCase):
                 [("N", "pl", 9), ("N", "sg", 1)],
                 [("PREP", None, 1)], [("N", "sg", 1)]]
         lattice = self.lattice(["I", "saw", "girl", "with", "hat"],
-                               [[r[0]] for r in rows])
+                               [[r[-1]] for r in rows])
         self.index.observe(self.two_attached_trees(lattice)[0], lattice=lattice)
         ambiguous = self.lattice(["we", "met", "pilot", "near", "town"], rows)
         result = self.index.match(ambiguous)

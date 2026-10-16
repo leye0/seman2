@@ -113,3 +113,28 @@ mutant discrimination *without hard rejection*, and compare A=baseline,
 B=lemma-only, C=exact WordNet-sense hints on held-out sentences. Then wire the
 hint interface into the existing predictive Left-to-Right research engine,
 not into `vector_chart.py`.
+
+## Whole-structure snapping experiment (opt-in, no production changes)
+
+`full_structure_snap.FullStructureSnapIndex` indexes **entire derivation
+trees**, keyed by each full sequence of lexical categories. Multiple different
+attachments with exactly the same lexical sequence remain separate templates.
+All original lexical alternatives stay in the lattice. For each compatible
+template, the original Seman2 feature unifier checks the grammar and yields a
+materialized tree; no NP/PP subtree *search* runs on this recognition path.
+
+Templates tagged `candidate` originate from an ordinary completed parse and
+are NOT assumed independently correct. Only an external verifier may supply
+`evidence="verified"`. A lexical or structural mismatch means *no recognized
+template*, not an ungrammatical sentence. Explicit budgets mark incomplete
+results, and `SnappingResearchReader` falls back to the unchanged L-R reader
+when a match is missing or the result is incomplete. The initial prototype
+supports single-token lexical slots, not multiword matching, persistence,
+or 20-million-template performance claims.
+
+The GitHub workflow runs
+`superparser/scripts/benchmark_verbnet_snap.py` with 50 DEV sentences as the
+candidate source, then measures syntax recognition and latency on the 70
+unseen VALIDATION/HOLDOUT sentences. It produces
+`snap_holdout_report.json` and reports distinct lattice-building and
+recognition-only timings. No held-out sentence trains the index.
