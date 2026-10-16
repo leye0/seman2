@@ -63,6 +63,9 @@ MODES = (
     ("V_fast_baseline", 0),
     ("W_fast_guard1", 1),
     ("X_fast_guard3", 3),
+    ("Y_early_guard1", 1),
+    ("Z_early_guard2", 2),
+    ("AA_early_guard3", 3),
 )
 
 
@@ -79,8 +82,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=2):
         name: SemanCompiledReader(
             resources, checkpoint_budget=budget,
             stack_checkpoints=bool(budget) or name.endswith("guard0"),
-            construction_guard=name.startswith(("R_", "S_", "T_", "U_", "W_", "X_")),
-            fast_multiword=name.startswith(("V_", "W_", "X_")))
+            construction_guard=name.startswith(("R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_")),
+            fast_multiword=name.startswith(("V_", "W_", "X_")),
+            early_construction_guard=name.startswith(("Y_", "Z_", "AA_")))
         for name, budget in MODES
     }
     # Warm each unique sentence equally for all modes; measure end-to-end
