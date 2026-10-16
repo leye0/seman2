@@ -39,7 +39,8 @@ class SemanCompiledReader:
                  stack_checkpoints: bool = False,
                  construction_guard: bool = False,
                  fast_multiword: bool = False,
-                 early_construction_guard: bool = False):
+                 early_construction_guard: bool = False,
+                 token_only_lattice: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -51,6 +52,7 @@ class SemanCompiledReader:
         self.stack_checkpoints = stack_checkpoints
         self.construction_guard = construction_guard
         self.fast_multiword = fast_multiword
+        self.token_only_lattice = token_only_lattice
         if early_construction_guard and not construction_guard:
             raise ValueError("early_construction_guard requires construction_guard")
         self.early_construction_guard = early_construction_guard
@@ -72,7 +74,10 @@ class SemanCompiledReader:
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
                  structural_lookahead: int = 1, checkpoint_budget: int = 0,
                  lazy_checkpoints: bool = False, stack_checkpoints: bool = False,
-                 construction_guard: bool = False):
+                 construction_guard: bool = False,
+                 fast_multiword: bool = False,
+                 early_construction_guard: bool = False,
+                 token_only_lattice: bool = False):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
@@ -80,7 +85,8 @@ class SemanCompiledReader:
                    stack_checkpoints=stack_checkpoints,
                    construction_guard=construction_guard,
                    fast_multiword=fast_multiword,
-                   early_construction_guard=early_construction_guard)
+                   early_construction_guard=early_construction_guard,
+                   token_only_lattice=token_only_lattice)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -99,7 +105,14 @@ class SemanCompiledReader:
             lexical_view = FastMultiwordLexicon(self.resources.lexicon)
         else:
             lexical_view = self.resources.lexicon
-        lattice = build_lattice(text, lexical_view)
+        # The compiled single-token reader indexes candidates only when they
+        # cover one token exactly. All multi-token entries are silently
+        # ignored by IncrementalReader, so creating them is wasted work.
+        # This research-only ablation leaves the default lattice unchanged.
+        lattice = build_lattice(
+            text, lexical_view,
+            multiword_max=1 if self.token_only_lattice else 4,
+        )
         t1 = perf_counter()
         memo: dict[int, CompactNode] = {}
 
