@@ -14,6 +14,7 @@ on:
       - 'superparser/seman_parser/reading_kernel_compiled_adapter.py'
       - 'superparser/tests/test_verbnet_lr*.py'
       - 'superparser/tests/test_verbnet_guidance.py'
+      - 'superparser/tests/test_verbnet_tree_evidence.py'
       - 'superparser/tests/test_compiled_lookahead2.py'
   workflow_dispatch:
 
@@ -39,6 +40,7 @@ jobs:
         run: |
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_lr*.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_guidance.py' -v
+          PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_tree_evidence.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_compiled_lookahead2.py' -v
       - name: Fetch WordNet 3.0 dictionary and sense index
         run: |
