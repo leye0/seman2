@@ -9,16 +9,18 @@
   "compilation": {
     "xml_files": 329,
     "frames_seen": 1602,
+    "wordnet_keys_total": 7960,
+    "wordnet_keys_matched": 7861,
     "members": 6740,
+    "members_exact": 5407,
     "frames_unsupported": 42,
-    "members_exact": 2,
     "compiled_frames": 28563,
     "lemmas": 4567,
-    "duration_ms": 1011.808,
-    "peak_compilation_plus_warmup_memory_mb": 35.684,
-    "frames_with_exact_link": 5,
+    "duration_ms": 1915.264,
+    "peak_compilation_plus_warmup_memory_mb": 35.949,
+    "frames_with_exact_link": 23441,
     "frames_lemma_only": 4861,
-    "frames_unresolved": 23697
+    "frames_unresolved": 261
   },
   "coverage_on_seman2_validation": {
     "total": 120,
@@ -241,11 +243,11 @@
   "lookup_benchmark": {
     "calls": 20000,
     "distinct_cases": 250,
-    "rate_calls_per_sec": 243093.57,
-    "median_us": 3.766,
-    "p95_us": 5.048,
-    "p99_us": 6.72,
-    "max_us": 200.369,
+    "rate_calls_per_sec": 145670.16,
+    "median_us": 6.226,
+    "p95_us": 9.132,
+    "p99_us": 12.123,
+    "max_us": 166.361,
     "note": "Isolated warmed index.lookup; excludes recognition, morphology and full parsing."
   },
   "limitations": [
