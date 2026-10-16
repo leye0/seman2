@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "mode": "offline_feature_unification_witness_no_runtime_fallback",
+  "parameters": {
+    "max_seconds_per_case": 3.0,
+    "max_items": 500000,
+    "max_expansions": 20000,
+    "max_nodes_per_span": 6
+  },
+  "summary": {
+    "found": 0,
+    "unknown": 8,
+    "category_rejected": 0
+  },
+  "limitations": [
+    "FOUND certifies feature unification and conservative construction checks, not gold syntax.",
+    "UNKNOWN is never grammatical rejection: caps, cyclic spans or incomplete candidate exploration may hide valid paths.",
+    "The permissive CFG step includes every productive lexical category; its acceptance is NOT feature validity.",
+    "No search path, rule, lexical candidate or constraint is injected into the L->R runtime."
+  ],
+  "cases": [
+    {
+      "id": "stress_01",
+      "category_status": "ACCEPTED",
+      "category_items": 58659,
+      "category_ms": 100.763,
+      "tokens": 32,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 3305,
+      "guard_rejections": 0,
+      "feature_ms": 39.271,
+      "candidate_spans": 82,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_02",
+      "category_status": "ACCEPTED",
+      "category_items": 75827,
+      "category_ms": 128.448,
+      "tokens": 44,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 2633,
+      "guard_rejections": 0,
+      "feature_ms": 38.467,
+      "candidate_spans": 80,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_03",
+      "category_status": "ACCEPTED",
+      "category_items": 108389,
+      "category_ms": 252.591,
+      "tokens": 45,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 538,
+      "guard_rejections": 0,
+      "feature_ms": 32.148,
+      "candidate_spans": 120,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_04",
+      "category_status": "ACCEPTED",
+      "category_items": 152070,
+      "category_ms": 359.238,
+      "tokens": 52,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 543,
+      "guard_rejections": 0,
+      "feature_ms": 43.262,
+      "candidate_spans": 116,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_05",
+      "category_status": "ACCEPTED",
+      "category_items": 117797,
+      "category_ms": 269.428,
+      "tokens": 47,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 705,
+      "guard_rejections": 0,
+      "feature_ms": 44.662,
+      "candidate_spans": 110,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_06",
+      "category_status": "ACCEPTED",
+      "category_items": 187715,
+      "category_ms": 467.221,
+      "tokens": 58,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 482,
+      "guard_rejections": 0,
+      "feature_ms": 48.618,
+      "candidate_spans": 111,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_07",
+      "category_status": "ACCEPTED",
+      "category_items": 236512,
+      "category_ms": 815.519,
+      "tokens": 62,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 1087,
+      "guard_rejections": 0,
+      "feature_ms": 69.111,
+      "candidate_spans": 152,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    },
+    {
+      "id": "stress_08",
+      "category_status": "ACCEPTED",
+      "category_items": 284415,
+      "category_ms": 1066.236,
+      "tokens": 67,
+      "status": "UNKNOWN",
+      "reason": "expansion_budget,node_limit_per_span",
+      "feature_expansions": 20001,
+      "unifications": 1799,
+      "guard_rejections": 0,
+      "feature_ms": 77.14,
+      "candidate_spans": 119,
+      "cutoffs": [
+        "expansion_budget",
+        "node_limit_per_span"
+      ],
+      "witness": null
+    }
+  ]
+}
