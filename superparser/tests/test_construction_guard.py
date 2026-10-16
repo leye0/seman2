@@ -88,6 +88,21 @@ class TestConstructionGuard(unittest.TestCase):
         # Without positive lexical MODAL evidence, do not make that inference.
         self.assertTrue(ConstructionGuard().validate(node).acceptable)
 
+    def test_repeated_nested_clauses_keep_auxiliary_order(self):
+        # The same lexical subtree participates in several ancestor checks.
+        # Cache reuse must retain exact leaf order and reject a bad modal
+        # in an embedded clause without leaking a result across sentences.
+        she = Node("NP", (leaf("She", "PRONOUN"),))
+        embedded_bad = Node("CLAUSE", (
+            she, Node("VP", (leaf("should", "MODAL"),
+                              leaf("goes", "V", "go")))))
+        embedded_good = Node("CLAUSE", (
+            she, Node("VP", (leaf("should", "MODAL"),
+                              leaf("go", "V", "go")))))
+        for _ in range(3):
+            self.assertFalse(self.check(Node("CLAUSE", (embedded_bad,))))
+            self.assertTrue(self.check(Node("CLAUSE", (embedded_good,))))
+
     def test_open_class_present_s_vs_plural(self):
         plural = nominal("The", "children", "plural")
         self.assertFalse(self.check(clause(plural, leaf("plays", "V", "play"))))

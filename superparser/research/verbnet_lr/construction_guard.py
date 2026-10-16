@@ -96,6 +96,29 @@ class ConstructionGuard:
 
     def validate(self, root):
         if root is None: return Check(False, "missing_tree")
+        # Clause/VP/NP checks visit overlapping subtrees. Without a cache,
+        # every ancestor flattens the same descendant leaves repeatedly;
+        # nested clauses make those repeated walks quadratic. Cache only
+        # per validation call, keyed by identity (ReadNode is immutable).
+        leaf_cache = {}
+
+        def leaves(node):
+            key = id(node)
+            if key not in leaf_cache:
+                candidate = getattr(node, "candidate", None)
+                if candidate is not None:
+                    leaf_cache[key] = (candidate,)
+                else:
+                    leaf_cache[key] = tuple(
+                        candidate for child in getattr(node, "children", ())
+                        for candidate in leaves(child)
+                    )
+            return leaf_cache[key]
+
+        def head(node):
+            return next((c for c in reversed(leaves(node))
+                         if c.category in {"N", "PROPER-NOUN", "PRONOUN", "PRON"}), None)
+
         for node in _walk(root):
             children = getattr(node, "children", ())
             # Morphology must support the candidate's selected grammatical
@@ -108,19 +131,19 @@ class ConstructionGuard:
                 ):
                     return Check(False, "surface_not_base_verb")
             if node.category == "NP" and children:
-                lex = tuple(_leaves(node))
-                head = _head(node)
-                if lex and head is not None:
+                lex = leaves(node)
+                nominal_head = head(node)
+                if lex and nominal_head is not None:
                     word = lex[0].surface.casefold()
-                    n = _subject(head)[0]
+                    n = _subject(nominal_head)[0]
                     if lex[0].category == "DET" and word in {"a","an","this","that","each","every"} and n == "plural":
                         return Check(False, "singular_determiner_plural_head")
                     if lex[0].category == "DET" and word in {"these","those"} and n == "singular":
                         return Check(False, "plural_determiner_singular_head")
             if node.category == "CLAUSE" and len(children) >= 2 and children[0].category == "NP":
-                subj = _head(children[0])
+                subj = head(children[0])
                 for ch in children[1:]:
-                    verb = next((v for v in _leaves(ch) if v.category in
+                    verb = next((v for v in leaves(ch) if v.category in
                                 {"V","COPULA","AUX-BE","HAVE","AUX","MODAL"}), None)
                     if verb is not None:
                         if verb.category != "MODAL":
@@ -130,13 +153,13 @@ class ConstructionGuard:
             if node.category == "VP" and children:
                 rule = getattr(getattr(node, "rule", None), "rule_id", None)
                 if rule == "vp_obj_pred":
-                    head = next((v for v in _leaves(children[0]) if v.category == "V"),None)
-                    if head is not None:
-                        subcat = _features(head).get("subcat")
+                    lexical_head = next((v for v in leaves(children[0]) if v.category == "V"),None)
+                    if lexical_head is not None:
+                        subcat = _features(lexical_head).get("subcat")
                         if subcat is not None and "complex_transitive" not in str(subcat):
                             return Check(False, "object_predicate_requires_complex_transitive")
             if children:
-                lex = tuple(v for ch in children for v in _leaves(ch))
+                lex = tuple(v for ch in children for v in leaves(ch))
                 for i,v in enumerate(lex):
                     if v.category == "MODAL" or (
                         v.category == "AUX" and v.lemma.casefold() == "do"):
