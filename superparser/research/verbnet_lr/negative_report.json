@@ -34,8 +34,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.1327,
-      "contrast_median_ms": 1.12875,
+      "negative_median_ms": 1.80187,
+      "contrast_median_ms": 1.62134,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -70,8 +70,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.97662,
-      "contrast_median_ms": 2.24714,
+      "negative_median_ms": 3.07862,
+      "contrast_median_ms": 3.48764,
       "new_false_accepts_vs_baseline": [
         "neg012",
         "neg015",
@@ -110,8 +110,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.35742,
-      "contrast_median_ms": 2.31178,
+      "negative_median_ms": 3.55933,
+      "contrast_median_ms": 3.56942,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg008",
@@ -154,8 +154,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.41976,
-      "contrast_median_ms": 2.3057,
+      "negative_median_ms": 3.8647,
+      "contrast_median_ms": 3.72889,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg006",
@@ -201,8 +201,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.08594,
-      "contrast_median_ms": 1.08861,
+      "negative_median_ms": 1.73792,
+      "contrast_median_ms": 1.65861,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -243,8 +243,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.05464,
-      "contrast_median_ms": 2.27731,
+      "negative_median_ms": 3.14473,
+      "contrast_median_ms": 3.60103,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -285,8 +285,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.44337,
-      "contrast_median_ms": 2.36827,
+      "negative_median_ms": 3.6436,
+      "contrast_median_ms": 3.6719,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -327,8 +327,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.54411,
-      "contrast_median_ms": 2.35184,
+      "negative_median_ms": 4.00753,
+      "contrast_median_ms": 3.73141,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -369,8 +369,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.09767,
-      "contrast_median_ms": 1.00975,
+      "negative_median_ms": 1.6679,
+      "contrast_median_ms": 1.64208,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -405,8 +405,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.05168,
-      "contrast_median_ms": 2.23427,
+      "negative_median_ms": 3.24625,
+      "contrast_median_ms": 3.5487,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -447,8 +447,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.78482,
-      "contrast_median_ms": 2.33282,
+      "negative_median_ms": 4.13951,
+      "contrast_median_ms": 3.71219,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -489,8 +489,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.77453,
-      "contrast_median_ms": 2.28578,
+      "negative_median_ms": 3.25789,
+      "contrast_median_ms": 3.6581,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -531,8 +531,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.41875,
-      "contrast_median_ms": 2.31182,
+      "negative_median_ms": 3.75675,
+      "contrast_median_ms": 3.67389,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -573,8 +573,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.6248,
-      "contrast_median_ms": 2.38957,
+      "negative_median_ms": 4.04223,
+      "contrast_median_ms": 3.81451,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -615,8 +615,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.03574,
-      "contrast_median_ms": 0.92754,
+      "negative_median_ms": 1.61016,
+      "contrast_median_ms": 1.52487,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -651,8 +651,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.97981,
-      "contrast_median_ms": 2.24094,
+      "negative_median_ms": 3.15287,
+      "contrast_median_ms": 3.43529,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -693,8 +693,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.48081,
-      "contrast_median_ms": 2.35033,
+      "negative_median_ms": 3.96989,
+      "contrast_median_ms": 3.72364,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -735,8 +735,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.04039,
-      "contrast_median_ms": 1.04302,
+      "negative_median_ms": 1.61178,
+      "contrast_median_ms": 1.61515,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -771,8 +771,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.14457,
-      "contrast_median_ms": 2.24863,
+      "negative_median_ms": 3.2419,
+      "contrast_median_ms": 3.54075,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -813,8 +813,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.57369,
-      "contrast_median_ms": 2.30388,
+      "negative_median_ms": 4.06068,
+      "contrast_median_ms": 3.70457,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -855,8 +855,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.08282,
-      "contrast_median_ms": 1.079,
+      "negative_median_ms": 1.67774,
+      "contrast_median_ms": 1.77185,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -897,8 +897,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.02661,
-      "contrast_median_ms": 2.24191,
+      "negative_median_ms": 3.17988,
+      "contrast_median_ms": 3.48568,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -939,8 +939,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.57286,
-      "contrast_median_ms": 2.30631,
+      "negative_median_ms": 4.08253,
+      "contrast_median_ms": 3.68941,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -981,8 +981,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.08808,
-      "contrast_median_ms": 2.21129,
+      "negative_median_ms": 3.25767,
+      "contrast_median_ms": 3.40118,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -1023,8 +1023,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.49594,
-      "contrast_median_ms": 2.33942,
+      "negative_median_ms": 3.97895,
+      "contrast_median_ms": 3.79821,
       "new_false_accepts_vs_baseline": [
         "neg024"
       ],
@@ -1067,8 +1067,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.06957,
-      "contrast_median_ms": 2.21948,
+      "negative_median_ms": 3.29727,
+      "contrast_median_ms": 3.40135,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -1109,8 +1109,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.57967,
-      "contrast_median_ms": 2.36556,
+      "negative_median_ms": 3.96328,
+      "contrast_median_ms": 3.76215,
       "new_false_accepts_vs_baseline": [
         "neg024"
       ],
@@ -1153,8 +1153,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.05249,
-      "contrast_median_ms": 2.23165,
+      "negative_median_ms": 3.31322,
+      "contrast_median_ms": 3.43185,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -1195,8 +1195,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.60315,
-      "contrast_median_ms": 2.3491,
+      "negative_median_ms": 4.03214,
+      "contrast_median_ms": 3.68405,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -1237,8 +1237,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.08406,
-      "contrast_median_ms": 2.2134,
+      "negative_median_ms": 3.30037,
+      "contrast_median_ms": 3.48414,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -1279,8 +1279,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.47644,
-      "contrast_median_ms": 2.2957,
+      "negative_median_ms": 3.94348,
+      "contrast_median_ms": 3.69341,
       "new_false_accepts_vs_baseline": [
         "neg024"
       ],
@@ -1323,8 +1323,8 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.17416,
-      "contrast_median_ms": 2.27059,
+      "negative_median_ms": 3.43286,
+      "contrast_median_ms": 3.57871,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -1365,11 +1365,95 @@
           "contrast_completes": 4
         }
       },
-      "negative_median_ms": 2.59118,
-      "contrast_median_ms": 2.46013,
+      "negative_median_ms": 4.10684,
+      "contrast_median_ms": 3.87324,
       "new_false_accepts_vs_baseline": [
         "neg024"
       ],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AU_prefix_follow2": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 16,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 5
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 4
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 3.90329,
+      "contrast_median_ms": 3.80429,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AV_prefix_follow3": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 16,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 5
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 4
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 4.33382,
+      "contrast_median_ms": 3.89995,
+      "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
         "neg004",
@@ -11596,6 +11680,464 @@
             }
           ]
         }
+      }
+    },
+    "AU_prefix_follow2": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AV_prefix_follow3": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       }
     }
   },
