@@ -27,6 +27,7 @@ on:
       - 'superparser/tests/test_fast_multiword.py'
       - 'superparser/tests/test_token_only_lattice.py'
       - 'superparser/tests/test_unary_promotions.py'
+      - 'superparser/tests/test_reduce_checkpoints.py'
   workflow_dispatch:
 
 concurrency:
@@ -58,6 +59,7 @@ jobs:
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_fast_multiword.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_token_only_lattice.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_unary_promotions.py' -v
+          PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_reduce_checkpoints.py' -v
       - name: Fetch WordNet 3.0 dictionary and sense index
         run: |
           python - <<'PY'
