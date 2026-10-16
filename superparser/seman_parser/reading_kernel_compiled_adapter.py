@@ -41,7 +41,8 @@ class SemanCompiledReader:
                  fast_multiword: bool = False,
                  early_construction_guard: bool = False,
                  token_only_lattice: bool = False,
-                 infer_unary_promotions: bool = False):
+                 infer_unary_promotions: bool = False,
+                 reduce_checkpoints: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -55,6 +56,9 @@ class SemanCompiledReader:
         self.fast_multiword = fast_multiword
         self.token_only_lattice = token_only_lattice
         self.infer_unary_promotions = infer_unary_promotions
+        if reduce_checkpoints and not stack_checkpoints:
+            raise ValueError("reduce_checkpoints requires stack_checkpoints")
+        self.reduce_checkpoints = reduce_checkpoints
         if early_construction_guard and not construction_guard:
             raise ValueError("early_construction_guard requires construction_guard")
         self.early_construction_guard = early_construction_guard
@@ -94,7 +98,8 @@ class SemanCompiledReader:
                    fast_multiword=fast_multiword,
                    early_construction_guard=early_construction_guard,
                    token_only_lattice=token_only_lattice,
-                   infer_unary_promotions=infer_unary_promotions)
+                   infer_unary_promotions=infer_unary_promotions,
+                   reduce_checkpoints=reduce_checkpoints)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -206,7 +211,11 @@ class SemanCompiledReader:
         machine = _TracedReader(
             self.compiled, combine, lattice.tokens, lattice.candidates,
             compiled_lookahead=self.structural_lookahead,
-            **({'replay_budget': self.checkpoint_budget} if (self.checkpoint_budget or self.stack_checkpoints or self.construction_guard) else {}),
+            **({'replay_budget': self.checkpoint_budget,
+                 'reduce_checkpoints': self.reduce_checkpoints}
+                if self.stack_checkpoints else
+                {'replay_budget': self.checkpoint_budget}
+                if (self.checkpoint_budget or self.construction_guard) else {}),
         )
         outcome = machine.read()
         t2 = perf_counter()
