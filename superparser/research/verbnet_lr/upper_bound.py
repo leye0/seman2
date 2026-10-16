@@ -20,7 +20,8 @@ class _Budget(Exception):
 
 
 def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
-                          max_items=200_000, max_seconds=2.5):
+                          max_items=200_000, max_seconds=2.5,
+                          collect_spans=False):
     """Boolean Earley recognition with no materialized parse trees.
 
     :param rules: iterable of (lhs_category, tuple(rhs_categories)).
@@ -41,6 +42,7 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
     begun = perf_counter()
     count = 0
     furthest_goal = 0
+    completed_spans = set() if collect_spans else None
 
     def add(at, item):
         nonlocal count
@@ -67,6 +69,8 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
                 rule_idx, dot, start = agenda[at].popleft()
                 lhs, rhs = productions[rule_idx]
                 if dot == len(rhs):
+                    if completed_spans is not None:
+                        completed_spans.add((lhs, start, at))
                     if lhs == goal and start == 0:
                         furthest_goal = max(furthest_goal, at)
                         if at == n:
@@ -82,6 +86,8 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
                                 "furthest_goal_prefix": n,
                                 "elapsed_ms": round((perf_counter() - begun) * 1000, 3),
                                 "max_chart_items": max(map(len, chart)),
+                                **({"spans": frozenset(completed_spans)}
+                                   if completed_spans is not None else {}),
                             }
                     for parent_idx, parent_dot, parent_start in waiting[start][lhs]:
                         add(at, (parent_idx, parent_dot + 1, parent_start))
@@ -107,4 +113,6 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
         "furthest_goal_prefix": furthest_goal,
         "elapsed_ms": round((perf_counter() - begun) * 1000, 3),
         "max_chart_items": max(map(len, chart)),
+        **({"spans": frozenset(completed_spans)}
+           if completed_spans is not None else {}),
     }
