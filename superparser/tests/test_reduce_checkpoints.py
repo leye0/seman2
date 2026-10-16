@@ -197,13 +197,15 @@ class ReduceVersusExtendTests(unittest.TestCase):
 
 
     def test_return_instead_of_greedy_extension_is_grammar_licensed(self):
-        # NP -> NP CONJ NP competes with the parent's CLAUSE -> NP CONJ VP.
+        # NP -> NP CONJ NP competes with a GRANDPARENT boundary.
         # NP can BEGIN with V N but cannot finish on the final bare V.
-        # The abandoned extension must not swallow the parent's CONJ.
+        # The intermediate S -> NP has no direct FOLLOW boundary. The
+        # abandoned extension must not swallow the grandparent's CONJ.
         grammar = Grammar([
             Rule(name, Symbol(lhs), tuple(Symbol(cat) for cat in rhs))
             for name, lhs, rhs in (
-                ("clause_np_conj_vp", "CLAUSE", ("NP", "CONJ", "VP")),
+                ("clause_s_conj_vp", "CLAUSE", ("S", "CONJ", "VP")),
+                ("s_np", "S", ("NP",)),
                 ("np_n", "NP", ("N",)),
                 ("np_verb_noun", "NP", ("V", "N")),
                 ("np_coord", "NP", ("NP", "CONJ", "NP")),
@@ -230,7 +232,7 @@ class ReduceVersusExtendTests(unittest.TestCase):
             replay_budget=1, extension_checkpoints=True).read()
         self.assertFalse(baseline.complete)
         self.assertTrue(guided.complete, guided.reason)
-        self.assertEqual(guided.root.rule.rule_id, "clause_np_conj_vp")
+        self.assertEqual(guided.root.rule.rule_id, "clause_s_conj_vp")
         self.assertEqual(guided.counters["checkpoint_restores_total"], 1)
         self.assertGreater(guided.counters["checkpoint_forced_extension_finishes"], 0)
 
