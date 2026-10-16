@@ -158,6 +158,23 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                     "restores":result.outcome.counters.get("checkpoint_restores_total",0),
                     "max_stack_depth":result.outcome.counters.get("max_stack_depth",0),
                 })
+    # Collect active-stack witnesses only after ALL timed repetitions.
+    # A diagnostic retry must not influence measured wall times or count as
+    # an additional repetition; this is a separate non-timed experiment.
+    for case in cases:
+        for mode in sorted(selected_modes - {"baseline"}):
+            probe = modes[mode].parse(case["text"], diagnose=True)
+            target = next(
+                (row for row in diagnostics.get(mode, ()) if row["id"] == case["id"]),
+                None,
+            )
+            if target is not None:
+                target["stack_failures"] = list(probe.failure_sites)
+                target["diagnostic_parse_agreed"] = (
+                    bool(probe.complete) ==
+                    next(row["complete"] for row in records[mode]
+                         if row["id"] == case["id"])
+                )
     return {
         "schema":1,
         "source":"manually composed English stress sentences, WITHOUT annotated gold syntax",

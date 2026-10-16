@@ -135,6 +135,29 @@ class ReduceVersusExtendTests(unittest.TestCase):
         self.assertEqual(recovered.root.children[1].rule.rule_id, "vp_v")
         self.assertGreater(recovered.counters["checkpoint_forced_reductions"], 0)
 
+    def test_failure_stack_probe_preserves_reader_decisions(self):
+        ordinary = make_reader(False, budget=1).read()
+        reader = make_reader(False, budget=1)
+        reader.diagnostic_depth = 12
+        debugged = reader.read()
+        self.assertFalse(debugged.complete)
+        self.assertEqual(debugged.reason, ordinary.reason)
+        self.assertEqual(
+            [(x.action, x.expected) for x in debugged.events],
+            [(x.action, x.expected) for x in ordinary.events],
+        )
+        self.assertTrue(reader.failure_sites)
+        site = reader.failure_sites[0]
+        self.assertIn("at", site)
+        self.assertIn("lexical_categories", site)
+        self.assertTrue(site["frames"])
+        self.assertIn("state_id", site["frames"][-1])
+        self.assertLessEqual(len(site["frames"]), 12)
+        # No diagnostics persist into the following call.
+        reader.diagnostic_depth = 0
+        reader.read()
+        self.assertEqual(reader.failure_sites, [])
+
     def test_checkpoint_peak_is_sentence_local(self):
         reader = make_reader(True, budget=3)
         self.assertTrue(reader.read().complete)

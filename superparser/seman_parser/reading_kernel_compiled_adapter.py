@@ -25,6 +25,7 @@ class CompiledKernelReport:
     lexical_ms: float
     reading_ms: float
     materialization_ms: float
+    failure_sites: tuple[dict, ...] = ()
 
     @property
     def complete(self) -> bool:
@@ -137,7 +138,7 @@ class SemanCompiledReader:
                                      if not isinstance(v, Variable)),
                            cand.score, candidate=cand)
 
-    def parse(self, text: str) -> CompiledKernelReport:
+    def parse(self, text: str, *, diagnose: bool = False) -> CompiledKernelReport:
         t0 = perf_counter()
         if self.fast_multiword:
             from research.verbnet_lr.fast_lattice import FastMultiwordLexicon
@@ -249,7 +250,8 @@ class SemanCompiledReader:
                  'reduce_follow_only': self.reduce_follow_only,
                  'reachable_checkpoints_only': self.reachable_checkpoints_only,
                  'terminal_prefix_preference': self.terminal_prefix_preference,
-                 'extension_checkpoints': self.extension_checkpoints}
+                 'extension_checkpoints': self.extension_checkpoints,
+                 'diagnostic_depth': 12 if diagnose else 0}
                 if self.stack_checkpoints else
                 {'replay_budget': self.checkpoint_budget}
                 if (self.checkpoint_budget or self.construction_guard) else {}),
@@ -258,4 +260,7 @@ class SemanCompiledReader:
         t2 = perf_counter()
         item = self.adapter._materialize(memo[id(outcome.root)][1]) if outcome.root else None
         t3 = perf_counter()
-        return CompiledKernelReport(outcome, item, (t1-t0)*1000, (t2-t1)*1000, (t3-t2)*1000)
+        return CompiledKernelReport(
+            outcome, item, (t1-t0)*1000, (t2-t1)*1000, (t3-t2)*1000,
+            tuple(getattr(machine, "failure_sites", ())),
+        )

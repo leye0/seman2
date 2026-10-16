@@ -61,7 +61,8 @@ class LocalCheckpointReader(IncrementalReader):
                  reduce_follow_only: bool = False,
                  reachable_checkpoints_only: bool = False,
                  terminal_prefix_preference: bool = False,
-                 extension_checkpoints: bool = False, **kwargs):
+                 extension_checkpoints: bool = False,
+                 diagnostic_depth: int = 0, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -79,6 +80,10 @@ class LocalCheckpointReader(IncrementalReader):
         self.reachable_checkpoints_only = reachable_checkpoints_only
         self.terminal_prefix_preference = terminal_prefix_preference
         self.extension_checkpoints = extension_checkpoints
+        if not isinstance(diagnostic_depth, int) or not 0 <= diagnostic_depth <= 24:
+            raise ValueError("diagnostic_depth must be 0..24")
+        self.diagnostic_depth = diagnostic_depth
+        self.failure_sites: list[dict] = []
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -461,6 +466,32 @@ class LocalCheckpointReader(IncrementalReader):
             return True
         return False
 
+    def _record_failure_site(self, reason: str, restores: int):
+        """Capture only the active, abandoned path before any restore.
+
+        Instrumentation is research-only. No alternative is tried and no
+        branch selection is modified by this method.
+        """
+        if not self.diagnostic_depth:
+            return
+        frames = self._stack[-self.diagnostic_depth:]
+        self.failure_sites.append({
+            "reason": reason,
+            "at": self.pos,
+            "attempt": restores,
+            "lexical_categories": sorted(self._categories()),
+            "frames": [{
+                "category": frame.category,
+                "start": frame.start,
+                "phase": frame.phase,
+                "state_id": frame.state.state_id,
+                "pending_next_symbols": sorted({
+                    tail[0] for _, _, tail in frame.pending_hints if tail
+                }),
+                "child_categories": [child.category for child in frame.children],
+            } for frame in frames],
+        })
+
     def _validate_completed(self, root: ReadNode):
         """Optional research hook. Normal reader never imposes constraints."""
         return True, ""
@@ -468,6 +499,7 @@ class LocalCheckpointReader(IncrementalReader):
     def read(self) -> Outcome:
         self._stack = []
         self._snapshots = []
+        self.failure_sites = []
         self._forced = None
         self._peak_checkpoints = 0
         self.active.clear()
@@ -506,12 +538,14 @@ class LocalCheckpointReader(IncrementalReader):
                             True, completed_root, self.events, dict(self.count))
                 except Stop as exc:
                     reason = str(exc)
+                    self._record_failure_site(reason, restores)
                     if restores >= self.replay_budget or not self._restore():
                         break
                     restores += 1
                     completed_root = None
         except Stop as exc:
             reason = str(exc)
+            self._record_failure_site(reason, restores)
         self._emit("STOP", self.goal, reason)
         self.count["checkpoint_restores_total"] = restores
         self.count["checkpoint_peak_saved"] = self._peak_checkpoints
