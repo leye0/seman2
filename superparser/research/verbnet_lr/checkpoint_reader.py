@@ -91,14 +91,14 @@ class BoundedCheckpointReader(IncrementalReader):
             # this dictionary across attempts is safe: candidates and tokens
             # do not change. It avoids repeated sense lookups.
             final = super().read()
-            cumulative.update(self.count)
             peak_stack = max(peak_stack, self.count.get("max_stack_depth", 0))
             decisions += len(self._choices)
-            if final.complete:
-                break
-            if attempt == self.replay_budget:
+            if final.complete or attempt == self.replay_budget:
+                cumulative.update(self.count)
                 break
             next_plan = self._next_plan(self._choices)
+            # Include time spent discovering alternatives as operation count.
+            cumulative.update(self.count)
             if next_plan is None or next_plan == self._forced or next_plan in history:
                 break
             history.append(dict(self._forced))
@@ -113,3 +113,58 @@ class BoundedCheckpointReader(IncrementalReader):
         metrics["checkpoint_budget"] = self.replay_budget
         metrics["checkpoint_failed_attempts"] = replays + int(not final.complete)
         return Outcome(final.complete, final.root, final.events, metrics, final.reason)
+
+
+@dataclass(frozen=True, slots=True)
+class _DeferredChoice:
+    key: tuple[int, int]
+    state: object
+    live: object
+    first: str
+    selected: str
+
+
+class LazyCheckpointReader(BoundedCheckpointReader):
+    """Discover alternates only when a sentence fails, not during success.
+
+    During a successful read this class performs one compiled-edge selection
+    per site. It keeps only compact state and token references; no trees.
+    """
+
+    def _select(self, state, live=None, *, excluded=frozenset()):
+        best = IncrementalReader._select(self, state, live, excluded=excluded)
+        if best is None or self.replay_budget == 0 or len(state.edges) < 2:
+            return best
+        key = (state.state_id, self.pos)
+        selected = self._forced.get(key, best)
+        if selected != best:
+            # Revalidate under the active positive-rule mask and evidence.
+            alternate = IncrementalReader._select(
+                self, state, live, excluded=frozenset((best,)) | excluded)
+            if selected != alternate:
+                selected = best
+        if not any(c.key == key for c in self._choices):
+            self._choices.append(_DeferredChoice(key, state, live, best, selected))
+        return selected
+
+    def _next_plan(self, choices):
+        saved_pos = self.pos
+        try:
+            for i in range(len(choices) - 1, -1, -1):
+                choice = choices[i]
+                if choice.selected != choice.first:
+                    continue
+                self.pos = choice.key[1]
+                # Only find a second licensed edge after failure.
+                second = IncrementalReader._select(
+                    self, choice.state, choice.live,
+                    excluded=frozenset((choice.first,)))
+                if second is None:
+                    continue
+                plan = {c.key: c.selected for c in choices[:i]
+                        if c.selected != c.first}
+                plan[choice.key] = second
+                return plan
+            return None
+        finally:
+            self.pos = saved_pos
