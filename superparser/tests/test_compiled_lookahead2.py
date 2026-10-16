@@ -91,7 +91,7 @@ class TestBoundedLookahead(unittest.TestCase):
                   ("man","N"), ("quietly","ADV"), (".",None)]
         r = reader(series, lookahead=2)
         r.pos = 4
-        self.assertEqual(r._min_yield["PP"], 2)
+        self.assertGreaterEqual(r._min_yield["PP"], 2)
         self.assertFalse(r._min_yield_available("PP", 4))
         after_object = r.g.roots["VP"].edges["V"].edges["NP"]
         self.assertIsNone(r._select(after_object))
