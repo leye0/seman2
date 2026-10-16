@@ -44,6 +44,11 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
         "token_only_guard3": SemanCompiledReader(resources, stack_checkpoints=True,
                                checkpoint_budget=3, construction_guard=True,
                                token_only_lattice=True),
+        "token_cache_baseline": SemanCompiledReader(resources, token_only_lattice=True,
+                                                    fast_multiword=True),
+        "token_cache_guard3": SemanCompiledReader(resources, stack_checkpoints=True,
+                                checkpoint_budget=3, construction_guard=True,
+                                token_only_lattice=True, fast_multiword=True),
     }
     for case in cases:
         for model in modes.values():
@@ -96,6 +101,12 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                      "lexical_p50_ms":quant([x["lexical_ms"] for x in vals if x["id"]==case["id"]],0.5),
                      "reading_p50_ms":quant([x["reading_ms"] for x in vals if x["id"]==case["id"]],0.5),
                      "complete":next(x["complete"] for x in vals if x["id"]==case["id"]),
+                     "first_reason":next(x["reason"] for x in vals if x["id"]==case["id"]),
+                     "failure_mode":(
+                         "early_stop" if max(x["final_token_fraction"] for x in vals
+                                              if x["id"]==case["id"]) < 0.75
+                         else "late_stop_or_complete"
+                     ),
                      "furthest_token_fraction":max(x["furthest_fraction"] for x in vals
                                                    if x["id"]==case["id"]),
                      "final_token_fraction":max(x["final_token_fraction"] for x in vals
