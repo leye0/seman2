@@ -82,11 +82,14 @@ def percentile(values: list[float], q: float) -> float:
 def syntax_validation_coverage(index: PrefixIndex, path: Path) -> dict:
     """Counts verb lemmas in Seman2's validation cases; NOT grammar accuracy."""
     out = {"total": 0, "predicate_present": 0, "predicate_in_verbnet": 0,
+           "unique_predicates": 0, "unique_predicates_in_verbnet": 0,
            "by_split": {}, "missing_predicates": []}
     if not path.exists():
         out["error"] = f"missing {path}"
         return out
     splits = {}
+    unique_predicates = set()
+    unique_covered = set()
     missing = Counter()
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.strip():
@@ -101,11 +104,15 @@ def syntax_validation_coverage(index: PrefixIndex, path: Path) -> dict:
             continue
         d["predicate_present"] += 1
         out["predicate_present"] += 1
+        unique_predicates.add(str(lemma).casefold())
         if str(lemma).casefold() in index._frames:
+            unique_covered.add(str(lemma).casefold())
             d["predicate_in_verbnet"] += 1
             out["predicate_in_verbnet"] += 1
         else:
             missing[str(lemma).casefold()] += 1
+    out["unique_predicates"] = len(unique_predicates)
+    out["unique_predicates_in_verbnet"] = len(unique_covered)
     out["by_split"] = splits
     out["missing_predicates"] = sorted(missing.items(), key=lambda x: (-x[1], x[0]))
     return out
