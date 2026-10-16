@@ -271,6 +271,10 @@ class LocalCheckpointReader(IncrementalReader):
             return True
         return False
 
+    def _validate_completed(self, root: ReadNode):
+        """Optional research hook. Normal reader never imposes constraints."""
+        return True, ""
+
     def read(self) -> Outcome:
         self._stack = []
         self._snapshots = []
@@ -292,6 +296,10 @@ class LocalCheckpointReader(IncrementalReader):
                         if node is not None:
                             completed_root = node
                     if completed_root is not None:
+                        valid, diagnostic = self._validate_completed(completed_root)
+                        if not valid:
+                            self.count["construction_rejections"] += 1
+                            raise Stop("construction_guard_" + diagnostic)
                         while (self.pos < len(self.tokens)
                                and self.tokens[self.pos].text in (".", "!")):
                             self._emit("CLOSE", "punctuation", "sentence end")
