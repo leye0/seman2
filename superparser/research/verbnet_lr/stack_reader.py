@@ -309,18 +309,26 @@ class LocalCheckpointReader(IncrementalReader):
                     or self._select(root) is None):
                 assert frame.result is not None
                 return self._finish(frame.result)
-            if self.extension_checkpoints and self.replay_budget > 0:
-                # A completed constituent may extend OR return to its
-                # parent. The grammar licenses the extension, but this
-                # does not prove the boundary belongs to the child.
-                # Snapshot a single active stack: never a parse forest.
+            # The default choice is EXTEND. A learned FINISH preference
+            # merely reverses the order of these two licensed decisions.
+            # Exactly one snapshot belongs to this ambiguity; recording
+            # both would waste the restore budget and could retry FINISH.
+            forced_extension = self._forced == (
+                len(self._stack), frame.state.state_id, "$EXTEND")
+            if forced_extension:
+                self._forced = None
+            prefer_finish = (
+                not forced_extension and self.extension_checkpoints
+                and self.replay_budget > 0
+                and self._prefer_finish_extension(frame))
+            if (self.extension_checkpoints and self.replay_budget > 0
+                    and not forced_extension):
                 point = _Snapshot(
                     stack=tuple(replace(f) for f in self._stack),
-                    pos=self.pos,
-                    event_len=len(self.events),
+                    pos=self.pos, event_len=len(self.events),
                     state_id=frame.state.state_id,
-                    first_edge="$EXTEND",
-                    tried=("$EXTEND",),
+                    first_edge="$FINISH" if prefer_finish else "$EXTEND",
+                    tried=("$FINISH",) if prefer_finish else ("$EXTEND",),
                 )
                 if len(self._snapshots) >= self.max_checkpoints:
                     self._snapshots.pop(0)
@@ -330,27 +338,7 @@ class LocalCheckpointReader(IncrementalReader):
                     self._peak_checkpoints, len(self._snapshots))
                 self.count["checkpoint_saves"] += 1
                 self.count["checkpoint_extension_saves"] += 1
-            # A weak learned preference may finish this boundary first,
-            # with the grammatically possible extension saved for recovery.
-            forced_extension = self._forced == (
-                len(self._stack), frame.state.state_id, "$EXTEND")
-            if forced_extension:
-                self._forced = None
-            elif (self.extension_checkpoints and self.replay_budget > 0
-                  and self._prefer_finish_extension(frame)):
-                point = _Snapshot(
-                    stack=tuple(replace(f) for f in self._stack),
-                    pos=self.pos, event_len=len(self.events),
-                    state_id=frame.state.state_id,
-                    first_edge="$FINISH", tried=("$FINISH",))
-                if len(self._snapshots) >= self.max_checkpoints:
-                    self._snapshots.pop(0)
-                    self.count["checkpoint_evictions"] += 1
-                self._snapshots.append(point)
-                self._peak_checkpoints = max(
-                    self._peak_checkpoints, len(self._snapshots))
-                self.count["checkpoint_saves"] += 1
-                self.count["checkpoint_extension_saves"] += 1
+            if prefer_finish:
                 assert frame.result is not None
                 return self._finish(frame.result)
             self.count["extensions"] += 1
