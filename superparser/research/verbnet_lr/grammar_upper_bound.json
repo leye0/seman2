@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "mode": "feature_agnostic_CGF_upper_bound",
+  "mode": "feature_agnostic_CFG_upper_bound",
   "limitations": [
     "An ACCEPTED upper bound may fail all feature unifications.",
     "A REJECTED upper bound establishes missing structural/lexical coverage only with the current token-only lattice and entire grammar.",
@@ -8,9 +8,9 @@
     "This offline recognizer has no effect on the runtime or parse rankings."
   ],
   "summary": {
-    "accepted": 6,
+    "accepted": 8,
     "rejected": 0,
-    "unknown": 2
+    "unknown": 0
   },
   "cases": [
     {
@@ -20,9 +20,9 @@
       "status": "ACCEPTED",
       "complete": true,
       "reason": "",
-      "items": 59357,
+      "items": 58659,
       "furthest_goal_prefix": 32,
-      "elapsed_ms": 98.309,
+      "elapsed_ms": 85.438,
       "max_chart_items": 3899
     },
     {
@@ -32,10 +32,10 @@
       "status": "ACCEPTED",
       "complete": true,
       "reason": "",
-      "items": 79197,
+      "items": 75827,
       "furthest_goal_prefix": 44,
-      "elapsed_ms": 125.168,
-      "max_chart_items": 4106
+      "elapsed_ms": 107.68,
+      "max_chart_items": 4097
     },
     {
       "id": "stress_03",
@@ -44,9 +44,9 @@
       "status": "ACCEPTED",
       "complete": true,
       "reason": "",
-      "items": 113594,
+      "items": 108389,
       "furthest_goal_prefix": 45,
-      "elapsed_ms": 248.536,
+      "elapsed_ms": 213.34,
       "max_chart_items": 6403
     },
     {
@@ -56,10 +56,10 @@
       "status": "ACCEPTED",
       "complete": true,
       "reason": "",
-      "items": 153761,
+      "items": 152070,
       "furthest_goal_prefix": 52,
-      "elapsed_ms": 358.82,
-      "max_chart_items": 7360
+      "elapsed_ms": 316.966,
+      "max_chart_items": 6682
     },
     {
       "id": "stress_05",
@@ -68,10 +68,10 @@
       "status": "ACCEPTED",
       "complete": true,
       "reason": "",
-      "items": 119849,
+      "items": 117797,
       "furthest_goal_prefix": 47,
-      "elapsed_ms": 264.395,
-      "max_chart_items": 5784
+      "elapsed_ms": 230.127,
+      "max_chart_items": 5409
     },
     {
       "id": "stress_06",
@@ -80,34 +80,34 @@
       "status": "ACCEPTED",
       "complete": true,
       "reason": "",
-      "items": 190036,
+      "items": 187715,
       "furthest_goal_prefix": 58,
-      "elapsed_ms": 452.904,
-      "max_chart_items": 7138
+      "elapsed_ms": 408.426,
+      "max_chart_items": 6910
     },
     {
       "id": "stress_07",
       "tokens": 62,
       "lexical_gap": [],
-      "status": "UNKNOWN",
-      "complete": null,
-      "reason": "item_budget",
-      "items": 200000,
-      "furthest_goal_prefix": 55,
-      "elapsed_ms": 549.526,
-      "max_chart_items": 7679
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 236512,
+      "furthest_goal_prefix": 62,
+      "elapsed_ms": 654.094,
+      "max_chart_items": 9044
     },
     {
       "id": "stress_08",
       "tokens": 67,
       "lexical_gap": [],
-      "status": "UNKNOWN",
-      "complete": null,
-      "reason": "item_budget",
-      "items": 200000,
-      "furthest_goal_prefix": 57,
-      "elapsed_ms": 508.685,
-      "max_chart_items": 7524
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 284415,
+      "furthest_goal_prefix": 67,
+      "elapsed_ms": 791.045,
+      "max_chart_items": 9324
     }
   ]
 }
