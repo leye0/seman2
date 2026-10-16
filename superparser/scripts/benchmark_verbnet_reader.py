@@ -61,6 +61,38 @@ def trace(result):
             if e.action in {"CONSUME", "COMPLETE"}]
 
 
+def syntax_assertions(case, result):
+    """Score explicit gold assertions; completion alone is not correctness."""
+    required = set(case.get("required", ()))
+    forbidden = set(case.get("forbidden", ()))
+    pos = case.get("pos", {})
+    constituents = case.get("constituents", ())
+    checks = bool(required or forbidden or pos or constituents)
+    if not result.complete:
+        return {"has_assertions": checks, "pass": False if checks else None,
+                "checks": {"complete": False}}
+    completes = {e.detail for e in result.outcome.events if e.action == "COMPLETE"}
+    consumed = {(e.word.casefold(), e.expected)
+                for e in result.outcome.events if e.action == "CONSUME"}
+    tree_spans = set()
+    def visit(item):
+        tree_spans.add((item.category, case["text"][item.start:item.end].casefold()))
+        for child in getattr(item, "children", ()):
+            visit(child)
+    if result.item is not None:
+        visit(result.item)
+    scored = {
+        "required_rules": all(name in completes for name in required),
+        "forbidden_rules": all(name not in completes for name in forbidden),
+        "lexical_pos": all((surface.casefold(), category) in consumed for surface, category in pos.items()),
+        "constituents": all((category, surface.casefold()) in tree_spans
+                            for category, surface in constituents),
+    }
+    return {"has_assertions": checks, "pass": all(scored.values()) if checks else None,
+            "checks": scored, "required_rules": sorted(required),
+            "missing_required": sorted(required - completes)}
+
+
 def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         repetitions: int, corpus: Path) -> dict:
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
@@ -113,6 +145,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "min_yield_rejections": counters.get("min_yield_rejections", 0),
                     "trace": trace(item),
                     "last_events": [event.as_dict() for event in item.outcome.events[-12:]],
+                    "gold": syntax_assertions(case, item),
                 }
                 raw[mode].append(record)
                 if repeat == 0:
@@ -120,9 +153,12 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
     summary = {}
     for mode, entries in raw.items():
         successes = sum(v["complete"] for v in entries)
+        gold_entries = [v for v in entries if v["gold"]["has_assertions"]]
         summary[mode] = {
             "evaluations": len(entries),
             "complete": successes,
+            "explicit_gold_assertion_cases": len(gold_entries),
+            "explicit_gold_assertion_passed": sum(v["gold"]["pass"] is True for v in gold_entries),
             "coverage_percent": round(100 * successes / len(entries), 2),
             "total_ms": quantiles([v["total_ms"] for v in entries]),
             "reading_ms": quantiles([v["reading_ms"] for v in entries]),
@@ -149,6 +185,8 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "guided_complete": guided["complete"],
                     "baseline_reason": baseline["reason"],
                     "guided_reason": guided["reason"],
+                    "baseline_gold": baseline["gold"],
+                    "guided_gold": guided["gold"],
                     "baseline_trace": baseline["trace"],
                     "guided_trace": guided["trace"],
                 })
@@ -159,6 +197,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         if not record["complete"] and len(failures) < 24:
             failures.append({"id": case["id"], "text": case["text"],
                              "reason": record["reason"],
+                             "gold": record["gold"],
                              "last_events": record["last_events"],
                              "trace": record["trace"]})
     return {
