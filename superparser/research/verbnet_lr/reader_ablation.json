@@ -395,10 +395,10 @@
     "R_guard0": {
       "dev": {
         "cases": 50,
-        "complete": 14,
-        "explicit_gold_passed": 11,
-        "verbnet_vp_observations": 11,
-        "attested_vp_observations": 10
+        "complete": 15,
+        "explicit_gold_passed": 12,
+        "verbnet_vp_observations": 12,
+        "attested_vp_observations": 11
       },
       "holdout": {
         "cases": 20,
@@ -409,64 +409,18 @@
       },
       "validation": {
         "cases": 50,
-        "complete": 20,
-        "explicit_gold_passed": 15,
-        "verbnet_vp_observations": 18,
-        "attested_vp_observations": 14
+        "complete": 21,
+        "explicit_gold_passed": 16,
+        "verbnet_vp_observations": 19,
+        "attested_vp_observations": 15
       }
     },
     "S_guard1": {
       "dev": {
         "cases": 50,
-        "complete": 18,
-        "explicit_gold_passed": 14,
-        "verbnet_vp_observations": 14,
-        "attested_vp_observations": 12
-      },
-      "holdout": {
-        "cases": 20,
-        "complete": 8,
-        "explicit_gold_passed": 7,
-        "verbnet_vp_observations": 6,
-        "attested_vp_observations": 5
-      },
-      "validation": {
-        "cases": 50,
-        "complete": 25,
-        "explicit_gold_passed": 18,
-        "verbnet_vp_observations": 20,
-        "attested_vp_observations": 15
-      }
-    },
-    "T_guard2": {
-      "dev": {
-        "cases": 50,
-        "complete": 21,
-        "explicit_gold_passed": 16,
-        "verbnet_vp_observations": 14,
-        "attested_vp_observations": 12
-      },
-      "holdout": {
-        "cases": 20,
-        "complete": 8,
-        "explicit_gold_passed": 7,
-        "verbnet_vp_observations": 6,
-        "attested_vp_observations": 5
-      },
-      "validation": {
-        "cases": 50,
-        "complete": 27,
-        "explicit_gold_passed": 19,
-        "verbnet_vp_observations": 20,
-        "attested_vp_observations": 15
-      }
-    },
-    "U_guard3": {
-      "dev": {
-        "cases": 50,
-        "complete": 25,
-        "explicit_gold_passed": 17,
-        "verbnet_vp_observations": 16,
+        "complete": 19,
+        "explicit_gold_passed": 15,
+        "verbnet_vp_observations": 15,
         "attested_vp_observations": 13
       },
       "holdout": {
@@ -478,10 +432,56 @@
       },
       "validation": {
         "cases": 50,
-        "complete": 31,
+        "complete": 26,
+        "explicit_gold_passed": 19,
+        "verbnet_vp_observations": 21,
+        "attested_vp_observations": 16
+      }
+    },
+    "T_guard2": {
+      "dev": {
+        "cases": 50,
+        "complete": 22,
+        "explicit_gold_passed": 17,
+        "verbnet_vp_observations": 15,
+        "attested_vp_observations": 13
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 8,
+        "explicit_gold_passed": 7,
+        "verbnet_vp_observations": 6,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 28,
         "explicit_gold_passed": 20,
-        "verbnet_vp_observations": 23,
-        "attested_vp_observations": 17
+        "verbnet_vp_observations": 21,
+        "attested_vp_observations": 16
+      }
+    },
+    "U_guard3": {
+      "dev": {
+        "cases": 50,
+        "complete": 26,
+        "explicit_gold_passed": 18,
+        "verbnet_vp_observations": 17,
+        "attested_vp_observations": 14
+      },
+      "holdout": {
+        "cases": 20,
+        "complete": 8,
+        "explicit_gold_passed": 7,
+        "verbnet_vp_observations": 6,
+        "attested_vp_observations": 5
+      },
+      "validation": {
+        "cases": 50,
+        "complete": 32,
+        "explicit_gold_passed": 21,
+        "verbnet_vp_observations": 24,
+        "attested_vp_observations": 18
       }
     }
   },
@@ -4111,14 +4111,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.28603,
-        "p95": 9.39777,
-        "p99": 10.27382
+        "p50": 4.32349,
+        "p95": 9.09674,
+        "p99": 10.27609
       },
       "reading_ms": {
-        "p50": 3.09311,
-        "p95": 7.66171,
-        "p99": 8.17835
+        "p50": 3.15883,
+        "p95": 7.55944,
+        "p99": 8.09204
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4232,14 +4232,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.40467,
-        "p95": 9.41119,
-        "p99": 10.63173
+        "p50": 4.43753,
+        "p95": 9.34165,
+        "p99": 10.61604
       },
       "reading_ms": {
-        "p50": 3.18562,
-        "p95": 7.75121,
-        "p99": 8.51074
+        "p50": 3.19212,
+        "p95": 7.771,
+        "p99": 8.4613
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4353,14 +4353,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.39433,
-        "p95": 9.40881,
-        "p99": 10.80097
+        "p50": 4.47559,
+        "p95": 9.61074,
+        "p99": 10.77321
       },
       "reading_ms": {
-        "p50": 3.12071,
-        "p95": 7.9292,
-        "p99": 8.7087
+        "p50": 3.14971,
+        "p95": 8.02353,
+        "p99": 8.62914
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4472,14 +4472,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.96951,
-        "p95": 11.05305,
-        "p99": 12.3405
+        "p50": 6.11267,
+        "p95": 11.25065,
+        "p99": 12.79734
       },
       "reading_ms": {
-        "p50": 4.65806,
-        "p95": 9.12314,
-        "p99": 10.82014
+        "p50": 4.70672,
+        "p95": 9.25096,
+        "p99": 10.90715
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4577,14 +4577,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.00642,
-        "p95": 11.20622,
-        "p99": 12.45597
+        "p50": 6.09601,
+        "p95": 11.43186,
+        "p99": 12.63154
       },
       "reading_ms": {
-        "p50": 4.75308,
-        "p95": 9.48509,
-        "p99": 10.89881
+        "p50": 4.83527,
+        "p95": 9.54853,
+        "p99": 10.96997
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4684,14 +4684,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.14783,
-        "p95": 10.88106,
-        "p99": 11.41876
+        "p50": 5.28469,
+        "p95": 10.86625,
+        "p99": 11.40863
       },
       "reading_ms": {
-        "p50": 4.05133,
-        "p95": 9.14333,
-        "p99": 9.72441
+        "p50": 4.19098,
+        "p95": 9.03657,
+        "p99": 9.57748
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4787,14 +4787,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.2842,
-        "p95": 11.17146,
-        "p99": 12.03404
+        "p50": 5.57369,
+        "p95": 11.12611,
+        "p99": 11.9175
       },
       "reading_ms": {
-        "p50": 4.11992,
-        "p95": 9.37184,
-        "p99": 10.25156
+        "p50": 4.22808,
+        "p95": 9.4455,
+        "p99": 10.21491
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4890,14 +4890,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.92746,
-        "p95": 15.90176,
-        "p99": 18.69975
+        "p50": 6.06081,
+        "p95": 16.01091,
+        "p99": 18.95366
       },
       "reading_ms": {
-        "p50": 4.64126,
-        "p95": 14.12508,
-        "p99": 16.61065
+        "p50": 4.70423,
+        "p95": 14.33645,
+        "p99": 16.69217
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -4995,14 +4995,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 6.8106,
-        "p95": 27.20709,
-        "p99": 34.8543
+        "p50": 6.85854,
+        "p95": 25.54169,
+        "p99": 35.17739
       },
       "reading_ms": {
-        "p50": 5.449,
-        "p95": 25.26968,
-        "p99": 32.72203
+        "p50": 5.47142,
+        "p95": 23.64532,
+        "p99": 32.84689
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5099,14 +5099,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 7.08779,
-        "p95": 27.69057,
-        "p99": 35.55262
+        "p50": 7.0621,
+        "p95": 26.30834,
+        "p99": 35.67742
       },
       "reading_ms": {
-        "p50": 5.64498,
-        "p95": 24.5987,
-        "p99": 33.38193
+        "p50": 5.72323,
+        "p95": 24.11752,
+        "p99": 33.23814
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5203,14 +5203,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.78988,
-        "p95": 15.69283,
-        "p99": 18.14657
+        "p50": 5.84415,
+        "p95": 15.71169,
+        "p99": 18.4221
       },
       "reading_ms": {
-        "p50": 4.48314,
-        "p95": 13.72215,
-        "p99": 15.97375
+        "p50": 4.52039,
+        "p95": 13.88244,
+        "p99": 16.01651
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -5308,14 +5308,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 6.70891,
-        "p95": 25.07681,
-        "p99": 34.41132
+        "p50": 6.67653,
+        "p95": 25.40763,
+        "p99": 34.87998
       },
       "reading_ms": {
-        "p50": 5.30292,
-        "p95": 23.08836,
-        "p99": 32.29663
+        "p50": 5.3302,
+        "p95": 23.29159,
+        "p99": 32.5252
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5412,14 +5412,14 @@
       },
       "coverage_percent": 49.17,
       "total_ms": {
-        "p50": 6.23779,
-        "p95": 22.84933,
-        "p99": 27.39358
+        "p50": 6.37499,
+        "p95": 23.38177,
+        "p99": 27.31452
       },
       "reading_ms": {
-        "p50": 5.07121,
-        "p95": 21.26198,
-        "p99": 24.72719
+        "p50": 5.1906,
+        "p95": 21.45803,
+        "p99": 24.67793
       },
       "mean_unifications": 5.933,
       "mean_events": 29.142,
@@ -5518,14 +5518,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.0793,
-        "p95": 10.0067,
-        "p99": 10.91051
+        "p50": 5.11703,
+        "p95": 9.97463,
+        "p99": 10.79974
       },
       "reading_ms": {
-        "p50": 3.78083,
-        "p95": 8.14335,
-        "p99": 8.62086
+        "p50": 3.79678,
+        "p95": 8.32738,
+        "p99": 8.58294
       },
       "mean_unifications": 4.108,
       "mean_events": 17.008,
@@ -5623,14 +5623,14 @@
       },
       "coverage_percent": 50.83,
       "total_ms": {
-        "p50": 5.4726,
-        "p95": 10.44111,
-        "p99": 11.93163
+        "p50": 5.53433,
+        "p95": 10.40484,
+        "p99": 12.12714
       },
       "reading_ms": {
-        "p50": 4.09598,
-        "p95": 8.46489,
-        "p99": 10.38858
+        "p50": 4.01743,
+        "p95": 8.53439,
+        "p99": 10.50167
       },
       "mean_unifications": 4.567,
       "mean_events": 19.125,
@@ -5731,14 +5731,14 @@
       },
       "coverage_percent": 56.67,
       "total_ms": {
-        "p50": 5.69436,
-        "p95": 10.9214,
-        "p99": 14.27876
+        "p50": 5.74176,
+        "p95": 11.09063,
+        "p99": 14.34659
       },
       "reading_ms": {
-        "p50": 4.36398,
-        "p95": 9.0068,
-        "p99": 12.05509
+        "p50": 4.39856,
+        "p95": 9.07231,
+        "p99": 11.92205
       },
       "mean_unifications": 5.192,
       "mean_events": 21.133,
@@ -5838,14 +5838,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.36552,
-        "p95": 9.25961,
-        "p99": 10.44353
+        "p50": 4.43619,
+        "p95": 9.21975,
+        "p99": 10.56839
       },
       "reading_ms": {
-        "p50": 3.13798,
-        "p95": 7.7779,
-        "p99": 8.42346
+        "p50": 3.15572,
+        "p95": 7.72248,
+        "p99": 8.20648
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -5912,64 +5912,64 @@
     },
     "R_guard0": {
       "evaluations": 240,
-      "complete": 82,
+      "complete": 86,
       "complete_but_nonconforming": 18,
       "gold_by_family": {
         "voice": {
-          "evaluated": 82,
-          "passed": 82
+          "evaluated": 86,
+          "passed": 86
         },
         "predicate": {
-          "evaluated": 82,
-          "passed": 72
+          "evaluated": 86,
+          "passed": 76
         },
         "required_rules": {
-          "evaluated": 82,
-          "passed": 76
-        },
-        "forbidden_rules": {
-          "evaluated": 82,
+          "evaluated": 86,
           "passed": 80
         },
+        "forbidden_rules": {
+          "evaluated": 86,
+          "passed": 84
+        },
         "lexical_pos": {
-          "evaluated": 82,
-          "passed": 76
+          "evaluated": 86,
+          "passed": 80
         },
         "constituents": {
-          "evaluated": 82,
-          "passed": 78
+          "evaluated": 86,
+          "passed": 82
         }
       },
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 64,
+      "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
-        "vp_observations": 70,
+        "vp_observations": 74,
         "status": {
-          "ATTESTED": 58,
+          "ATTESTED": 62,
           "UNKNOWN": 10,
           "PREFIX": 2
         },
         "confidence": {
-          "sense_verified": 58,
+          "sense_verified": 62,
           "none": 10,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 56,
+        "attested_with_explicit_gold_pass": 60,
         "attested_with_explicit_gold_fail": 2
       },
-      "coverage_percent": 34.17,
+      "coverage_percent": 35.83,
       "total_ms": {
-        "p50": 4.44851,
-        "p95": 9.31129,
-        "p99": 10.6876
+        "p50": 4.49597,
+        "p95": 9.20188,
+        "p99": 10.4107
       },
       "reading_ms": {
-        "p50": 3.18951,
-        "p95": 7.72405,
-        "p99": 8.73878
+        "p50": 3.19451,
+        "p95": 7.87063,
+        "p99": 8.22894
       },
       "mean_unifications": 3.508,
-      "mean_events": 14.208,
+      "mean_events": 14.225,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -5980,7 +5980,7 @@
       "checkpoint_replays": 0,
       "checkpoint_attempts": 240,
       "checkpoint_options_seen": 0,
-      "construction_rejections": 6,
+      "construction_rejections": 2,
       "checkpoint_saves": 0,
       "checkpoint_peak_saved_max": 0,
       "stop_reasons": {
@@ -6025,7 +6025,6 @@
         "expected_continuation_CLAUSE_at_8_state_236": 2,
         "unconsumed_4_the": 2,
         "expected_continuation_VP_at_2_state_120": 2,
-        "construction_guard_plural_determiner_singular_head": 4,
         "expected_continuation_N_at_2_state_438": 2,
         "unconsumed_3_have": 4,
         "unconsumed_4_?": 6,
@@ -6035,61 +6034,61 @@
     },
     "S_guard1": {
       "evaluations": 240,
-      "complete": 102,
+      "complete": 106,
       "complete_but_nonconforming": 24,
       "gold_by_family": {
         "voice": {
-          "evaluated": 102,
-          "passed": 102
+          "evaluated": 106,
+          "passed": 106
         },
         "predicate": {
-          "evaluated": 102,
-          "passed": 88
-        },
-        "required_rules": {
-          "evaluated": 102,
+          "evaluated": 106,
           "passed": 92
         },
+        "required_rules": {
+          "evaluated": 106,
+          "passed": 96
+        },
         "forbidden_rules": {
-          "evaluated": 102,
-          "passed": 100
+          "evaluated": 106,
+          "passed": 104
         },
         "lexical_pos": {
-          "evaluated": 102,
-          "passed": 96
+          "evaluated": 106,
+          "passed": 100
         },
         "constituents": {
-          "evaluated": 102,
-          "passed": 96
+          "evaluated": 106,
+          "passed": 100
         }
       },
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 78,
+      "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
-        "vp_observations": 80,
+        "vp_observations": 84,
         "status": {
-          "ATTESTED": 64,
+          "ATTESTED": 68,
           "UNKNOWN": 14,
           "PREFIX": 2
         },
         "confidence": {
-          "sense_verified": 64,
+          "sense_verified": 68,
           "none": 14,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 62,
+        "attested_with_explicit_gold_pass": 66,
         "attested_with_explicit_gold_fail": 2
       },
-      "coverage_percent": 42.5,
+      "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.1782,
-        "p95": 9.78504,
-        "p99": 10.74879
+        "p50": 5.14356,
+        "p95": 9.85982,
+        "p99": 10.97987
       },
       "reading_ms": {
-        "p50": 3.85435,
-        "p95": 8.1629,
-        "p99": 8.52511
+        "p50": 3.80557,
+        "p95": 8.34813,
+        "p99": 8.67779
       },
       "mean_unifications": 4.108,
       "mean_events": 17,
@@ -6100,10 +6099,10 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 158,
-      "checkpoint_attempts": 398,
+      "checkpoint_replays": 154,
+      "checkpoint_attempts": 394,
       "checkpoint_options_seen": 0,
-      "construction_rejections": 8,
+      "construction_rejections": 4,
       "checkpoint_saves": 2110,
       "checkpoint_peak_saved_max": 19,
       "stop_reasons": {
@@ -6133,72 +6132,72 @@
         "expected_continuation_ADVP_at_7_state_480": 2,
         "expected_continuation_VP-NP_at_7_state_417": 6,
         "expected_continuation_ADJ_at_1_state_446": 2,
-        "expected_continuation_VP-NP_at_4_state_417": 6,
         "unconsumed_3_the": 2,
         "unconsumed_4_?": 2,
+        "expected_continuation_VP-NP_at_4_state_417": 2,
         "expected_continuation_NP_at_5_state_8": 2
       }
     },
     "T_guard2": {
       "evaluations": 240,
-      "complete": 112,
+      "complete": 116,
       "complete_but_nonconforming": 28,
       "gold_by_family": {
         "voice": {
-          "evaluated": 112,
-          "passed": 108
+          "evaluated": 116,
+          "passed": 112
         },
         "predicate": {
-          "evaluated": 112,
-          "passed": 94
-        },
-        "required_rules": {
-          "evaluated": 112,
+          "evaluated": 116,
           "passed": 98
         },
+        "required_rules": {
+          "evaluated": 116,
+          "passed": 102
+        },
         "forbidden_rules": {
-          "evaluated": 112,
-          "passed": 110
+          "evaluated": 116,
+          "passed": 114
         },
         "lexical_pos": {
-          "evaluated": 112,
-          "passed": 106
+          "evaluated": 116,
+          "passed": 110
         },
         "constituents": {
-          "evaluated": 112,
-          "passed": 106
+          "evaluated": 116,
+          "passed": 110
         }
       },
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 84,
+      "explicit_gold_assertion_passed": 88,
       "verbnet_tree_evidence": {
-        "vp_observations": 80,
+        "vp_observations": 84,
         "status": {
-          "ATTESTED": 64,
+          "ATTESTED": 68,
           "UNKNOWN": 14,
           "PREFIX": 2
         },
         "confidence": {
-          "sense_verified": 64,
+          "sense_verified": 68,
           "none": 14,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 62,
+        "attested_with_explicit_gold_pass": 66,
         "attested_with_explicit_gold_fail": 2
       },
-      "coverage_percent": 46.67,
+      "coverage_percent": 48.33,
       "total_ms": {
-        "p50": 5.48556,
-        "p95": 10.49666,
-        "p99": 11.87196
+        "p50": 5.50617,
+        "p95": 10.73243,
+        "p99": 13.69958
       },
       "reading_ms": {
-        "p50": 4.19048,
-        "p95": 8.58587,
-        "p99": 10.33873
+        "p50": 4.08321,
+        "p95": 8.68422,
+        "p99": 11.48225
       },
-      "mean_unifications": 4.65,
-      "mean_events": 19.308,
+      "mean_unifications": 4.583,
+      "mean_events": 19.175,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -6206,10 +6205,10 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 294,
-      "checkpoint_attempts": 534,
+      "checkpoint_replays": 286,
+      "checkpoint_attempts": 526,
       "checkpoint_options_seen": 0,
-      "construction_rejections": 10,
+      "construction_rejections": 6,
       "checkpoint_saves": 2334,
       "checkpoint_peak_saved_max": 21,
       "stop_reasons": {
@@ -6230,7 +6229,7 @@
         "expected_continuation_VP-NP_at_5_state_417": 2,
         "expected_continuation_ADJP_at_3_state_355": 4,
         "expected_continuation_NP_at_1_state_51": 4,
-        "construction_guard_object_predicate_requires_complex_transitive": 2,
+        "construction_guard_modal_homograph_uninflected_lexical_verb": 2,
         "expected_continuation_N_at_7_state_438": 2,
         "expected_continuation_PP_at_4_state_387": 2,
         "expected_continuation_ADJ_at_1_state_446": 8,
@@ -6244,7 +6243,6 @@
         "expected_continuation_VP-NP_at_3_state_417": 2,
         "expected_continuation_ADVP_at_3_state_480": 2,
         "expected_continuation_N_at_3_state_438": 2,
-        "expected_continuation_CLAUSE_at_5_state_236": 4,
         "expected_continuation_N_at_4_state_438": 4,
         "expected_continuation_VP_at_3_state_122": 2,
         "expected_continuation_N_at_1_state_438": 2
@@ -6252,64 +6250,64 @@
     },
     "U_guard3": {
       "evaluations": 240,
-      "complete": 128,
+      "complete": 132,
       "complete_but_nonconforming": 40,
       "gold_by_family": {
         "voice": {
-          "evaluated": 128,
-          "passed": 120
+          "evaluated": 132,
+          "passed": 124
         },
         "predicate": {
-          "evaluated": 128,
-          "passed": 102
+          "evaluated": 132,
+          "passed": 106
         },
         "required_rules": {
-          "evaluated": 128,
-          "passed": 110
+          "evaluated": 132,
+          "passed": 114
         },
         "forbidden_rules": {
-          "evaluated": 128,
-          "passed": 122
+          "evaluated": 132,
+          "passed": 126
         },
         "lexical_pos": {
-          "evaluated": 128,
-          "passed": 122
+          "evaluated": 132,
+          "passed": 126
         },
         "constituents": {
-          "evaluated": 128,
-          "passed": 122
+          "evaluated": 132,
+          "passed": 126
         }
       },
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 88,
+      "explicit_gold_assertion_passed": 92,
       "verbnet_tree_evidence": {
-        "vp_observations": 90,
+        "vp_observations": 94,
         "status": {
-          "ATTESTED": 70,
+          "ATTESTED": 74,
           "UNKNOWN": 18,
           "PREFIX": 2
         },
         "confidence": {
-          "sense_verified": 70,
+          "sense_verified": 74,
           "none": 18,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 68,
+        "attested_with_explicit_gold_pass": 72,
         "attested_with_explicit_gold_fail": 2
       },
-      "coverage_percent": 53.33,
+      "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 5.64684,
-        "p95": 11.04041,
-        "p99": 14.17918
+        "p50": 5.86035,
+        "p95": 11.04527,
+        "p99": 14.39894
       },
       "reading_ms": {
-        "p50": 4.50921,
-        "p95": 9.04411,
-        "p99": 11.95114
+        "p50": 4.56137,
+        "p95": 9.25179,
+        "p99": 12.10521
       },
-      "mean_unifications": 5.333,
-      "mean_events": 21.508,
+      "mean_unifications": 5.25,
+      "mean_events": 21.308,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -6317,11 +6315,11 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 416,
-      "checkpoint_attempts": 656,
+      "checkpoint_replays": 404,
+      "checkpoint_attempts": 644,
       "checkpoint_options_seen": 0,
-      "construction_rejections": 10,
-      "checkpoint_saves": 2536,
+      "construction_rejections": 6,
+      "checkpoint_saves": 2532,
       "checkpoint_peak_saved_max": 21,
       "stop_reasons": {
         "unconsumed_5_John": 2,
@@ -6352,7 +6350,6 @@
         "expected_continuation_VP-NP_at_3_state_417": 4,
         "unification_failed_CLAUSE_at_6": 2,
         "expected_continuation_NP_at_2_state_0": 2,
-        "expected_continuation_PP_at_2_state_387": 4,
         "expected_continuation_VP_at_3_state_122": 2,
         "expected_continuation_CLAUSE_at_7_state_245": 2,
         "expected_continuation_ADJ_at_6_state_446": 2
@@ -91231,7 +91228,7 @@
       "changes": []
     },
     "R_guard0": {
-      "changed_count": 3,
+      "changed_count": 1,
       "changes": [
         {
           "id": "d020",
@@ -91372,323 +91369,11 @@
               "clause_np_vp"
             ]
           ]
-        },
-        {
-          "id": "d040",
-          "split": "dev",
-          "text": "Those two large houses collapsed.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "construction_guard_plural_determiner_singular_head",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "collapse"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "large/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "house/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "collapse/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "large/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "house/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "collapse/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ]
-        },
-        {
-          "id": "v040",
-          "split": "validation",
-          "text": "These four small boats sank.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "construction_guard_plural_determiner_singular_head",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "sink"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "small/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "boat/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "sink/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "small/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "boat/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "sink/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ]
         }
       ]
     },
     "S_guard1": {
-      "changed_count": 62,
+      "changed_count": 60,
       "changes": [
         {
           "id": "d002",
@@ -97024,288 +96709,6 @@
           ]
         },
         {
-          "id": "d040",
-          "split": "dev",
-          "text": "Those two large houses collapsed.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "expected_continuation_VP-NP_at_4_state_417",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "collapse"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "large/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "house/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "collapse/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "large/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "house/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ]
-          ]
-        },
-        {
-          "id": "v040",
-          "split": "validation",
-          "text": "These four small boats sank.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "expected_continuation_VP-NP_at_4_state_417",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "sink"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "small/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "boat/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "sink/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "small/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "boat/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ]
-          ]
-        },
-        {
           "id": "d041",
           "split": "dev",
           "text": "Neither answer seems correct.",
@@ -98181,7 +97584,7 @@
       ]
     },
     "T_guard2": {
-      "changed_count": 72,
+      "changed_count": 70,
       "changes": [
         {
           "id": "d002",
@@ -99644,7 +99047,7 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "unconsumed_2_read",
-          "guided_reason": "construction_guard_object_predicate_requires_complex_transitive",
+          "guided_reason": "construction_guard_modal_homograph_uninflected_lexical_verb",
           "baseline_gold": {
             "has_assertions": true,
             "pass": false,
@@ -103991,298 +103394,6 @@
           ]
         },
         {
-          "id": "d040",
-          "split": "dev",
-          "text": "Those two large houses collapsed.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "expected_continuation_CLAUSE_at_5_state_236",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "collapse"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "large/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "house/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "collapse/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "ADJ",
-              "large/ADJ"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "house/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_quant_adj_n"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "collapse/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ]
-          ]
-        },
-        {
-          "id": "v040",
-          "split": "validation",
-          "text": "These four small boats sank.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "expected_continuation_CLAUSE_at_5_state_236",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "sink"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "small/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "boat/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "sink/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "ADJ",
-              "small/ADJ"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "boat/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_quant_adj_n"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "sink/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ]
-          ]
-        },
-        {
           "id": "d041",
           "split": "dev",
           "text": "Neither answer seems correct.",
@@ -105416,7 +104527,7 @@
       ]
     },
     "U_guard3": {
-      "changed_count": 79,
+      "changed_count": 77,
       "changes": [
         {
           "id": "d002",
@@ -111893,238 +111004,6 @@
               "CONSUME",
               "ADV",
               "very/ADV"
-            ]
-          ]
-        },
-        {
-          "id": "d040",
-          "split": "dev",
-          "text": "Those two large houses collapsed.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "expected_continuation_PP_at_2_state_387",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "collapse"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "large/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "house/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "collapse/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "Those/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "two/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_bare"
-            ]
-          ]
-        },
-        {
-          "id": "v040",
-          "split": "validation",
-          "text": "These four small boats sank.",
-          "baseline_complete": true,
-          "guided_complete": false,
-          "baseline_reason": "",
-          "guided_reason": "expected_continuation_PP_at_2_state_387",
-          "baseline_gold": {
-            "has_assertions": true,
-            "pass": true,
-            "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "sink"
-          },
-          "guided_gold": {
-            "has_assertions": true,
-            "pass": false,
-            "checks": {
-              "complete": false
-            }
-          },
-          "baseline_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "NUM",
-              "one/NUM"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "small/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_num_n_time"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "boat/V"
-            ],
-            [
-              "COMPLETE",
-              "VP-GAP",
-              "vp_gap_transitive"
-            ],
-            [
-              "COMPLETE",
-              "WH-OBJ",
-              "wh_bare"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_relative_obj"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "sink/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ]
-          ],
-          "guided_trace": [
-            [
-              "CONSUME",
-              "PROPER-NOUN",
-              "These/PROPER-NOUN"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_proper"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "four/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_bare"
             ]
           ]
         },

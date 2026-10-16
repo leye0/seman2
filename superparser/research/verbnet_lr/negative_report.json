@@ -34,8 +34,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.89964,
-      "contrast_median_ms": 1.81429,
+      "negative_median_ms": 1.88741,
+      "contrast_median_ms": 1.76856,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -70,8 +70,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.64644,
-      "contrast_median_ms": 3.88087,
+      "negative_median_ms": 3.69271,
+      "contrast_median_ms": 3.8294,
       "new_false_accepts_vs_baseline": [
         "neg012",
         "neg015",
@@ -110,8 +110,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.08573,
-      "contrast_median_ms": 4.08143,
+      "negative_median_ms": 4.02932,
+      "contrast_median_ms": 3.96591,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg008",
@@ -154,8 +154,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.36308,
-      "contrast_median_ms": 4.12602,
+      "negative_median_ms": 4.36114,
+      "contrast_median_ms": 4.05646,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg006",
@@ -201,8 +201,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.84999,
-      "contrast_median_ms": 1.74894,
+      "negative_median_ms": 1.8056,
+      "contrast_median_ms": 1.74503,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -214,8 +214,8 @@
     },
     "S_guard1": {
       "negative_cases": 24,
-      "negative_false_accepts": 2,
-      "positive_contrast_completes": 12,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 11,
       "by_family": {
         "agreement": {
           "cases": 8,
@@ -234,8 +234,8 @@
         },
         "modal": {
           "cases": 5,
-          "negative_false_accepts": 1,
-          "contrast_completes": 4
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
         },
         "valency": {
           "cases": 5,
@@ -243,11 +243,9 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.67294,
-      "contrast_median_ms": 3.93658,
-      "new_false_accepts_vs_baseline": [
-        "neg012"
-      ],
+      "negative_median_ms": 3.57985,
+      "contrast_median_ms": 3.98541,
+      "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
         "neg004",
@@ -258,8 +256,8 @@
     },
     "T_guard2": {
       "negative_cases": 24,
-      "negative_false_accepts": 2,
-      "positive_contrast_completes": 16,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 15,
       "by_family": {
         "agreement": {
           "cases": 8,
@@ -278,8 +276,8 @@
         },
         "modal": {
           "cases": 5,
-          "negative_false_accepts": 1,
-          "contrast_completes": 4
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
         },
         "valency": {
           "cases": 5,
@@ -287,11 +285,9 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.1871,
-      "contrast_median_ms": 4.09183,
-      "new_false_accepts_vs_baseline": [
-        "neg012"
-      ],
+      "negative_median_ms": 4.09992,
+      "contrast_median_ms": 4.0095,
+      "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
         "neg004",
@@ -302,8 +298,8 @@
     },
     "U_guard3": {
       "negative_cases": 24,
-      "negative_false_accepts": 3,
-      "positive_contrast_completes": 17,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 16,
       "by_family": {
         "agreement": {
           "cases": 8,
@@ -312,7 +308,7 @@
         },
         "auxiliary": {
           "cases": 4,
-          "negative_false_accepts": 1,
+          "negative_false_accepts": 0,
           "contrast_completes": 4
         },
         "determiner": {
@@ -322,8 +318,8 @@
         },
         "modal": {
           "cases": 5,
-          "negative_false_accepts": 1,
-          "contrast_completes": 4
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
         },
         "valency": {
           "cases": 5,
@@ -331,12 +327,9 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.50721,
-      "contrast_median_ms": 4.14691,
-      "new_false_accepts_vs_baseline": [
-        "neg012",
-        "neg017"
-      ],
+      "negative_median_ms": 4.44459,
+      "contrast_median_ms": 4.11016,
+      "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
         "neg004",
@@ -3378,52 +3371,9 @@
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
-        "negative_accepts": 2,
-        "contrast_completes": 2,
-        "accepted_negative_analysis": {
-          "rules": [
-            "clause_np_vp",
-            "np_bare",
-            "np_proper",
-            "vp_ditransitive"
-          ],
-          "lexemes": [
-            {
-              "surface": "Mary",
-              "lemma": "Mary",
-              "category": "PROPER-NOUN",
-              "features": {
-                "number": "singular",
-                "person": "3"
-              }
-            },
-            {
-              "surface": "will",
-              "lemma": "will",
-              "category": "V",
-              "features": {
-                "vform": "finite",
-                "subcat": "['ditransitive', 'prep_ditransitive']"
-              }
-            },
-            {
-              "surface": "buys",
-              "lemma": "buy",
-              "category": "N",
-              "features": {
-                "number": "plural"
-              }
-            },
-            {
-              "surface": "milk",
-              "lemma": "milk",
-              "category": "N",
-              "features": {
-                "number": "singular"
-              }
-            }
-          ]
-        }
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg013": {
         "family": "modal",
@@ -3650,52 +3600,9 @@
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
-        "negative_accepts": 2,
-        "contrast_completes": 2,
-        "accepted_negative_analysis": {
-          "rules": [
-            "clause_np_vp",
-            "np_bare",
-            "np_proper",
-            "vp_ditransitive"
-          ],
-          "lexemes": [
-            {
-              "surface": "Mary",
-              "lemma": "Mary",
-              "category": "PROPER-NOUN",
-              "features": {
-                "number": "singular",
-                "person": "3"
-              }
-            },
-            {
-              "surface": "will",
-              "lemma": "will",
-              "category": "V",
-              "features": {
-                "vform": "finite",
-                "subcat": "['ditransitive', 'prep_ditransitive']"
-              }
-            },
-            {
-              "surface": "buys",
-              "lemma": "buy",
-              "category": "N",
-              "features": {
-                "number": "plural"
-              }
-            },
-            {
-              "surface": "milk",
-              "lemma": "milk",
-              "category": "N",
-              "features": {
-                "number": "singular"
-              }
-            }
-          ]
-        }
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg013": {
         "family": "modal",
@@ -3922,52 +3829,9 @@
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
-        "negative_accepts": 2,
-        "contrast_completes": 2,
-        "accepted_negative_analysis": {
-          "rules": [
-            "clause_np_vp",
-            "np_bare",
-            "np_proper",
-            "vp_ditransitive"
-          ],
-          "lexemes": [
-            {
-              "surface": "Mary",
-              "lemma": "Mary",
-              "category": "PROPER-NOUN",
-              "features": {
-                "number": "singular",
-                "person": "3"
-              }
-            },
-            {
-              "surface": "will",
-              "lemma": "will",
-              "category": "V",
-              "features": {
-                "vform": "finite",
-                "subcat": "['ditransitive', 'prep_ditransitive']"
-              }
-            },
-            {
-              "surface": "buys",
-              "lemma": "buy",
-              "category": "N",
-              "features": {
-                "number": "plural"
-              }
-            },
-            {
-              "surface": "milk",
-              "lemma": "milk",
-              "category": "N",
-              "features": {
-                "number": "singular"
-              }
-            }
-          ]
-        }
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg013": {
         "family": "modal",
@@ -4005,43 +3869,9 @@
         "family": "auxiliary",
         "negative": "John did eats.",
         "contrast": "John did eat.",
-        "negative_accepts": 2,
+        "negative_accepts": 0,
         "contrast_completes": 2,
-        "accepted_negative_analysis": {
-          "rules": [
-            "clause_np_coord_aux_adv",
-            "np_bare",
-            "np_proper",
-            "vp_bare_trans"
-          ],
-          "lexemes": [
-            {
-              "surface": "John",
-              "lemma": "John",
-              "category": "PROPER-NOUN",
-              "features": {
-                "number": "singular",
-                "person": "3"
-              }
-            },
-            {
-              "surface": "did",
-              "lemma": "do",
-              "category": "V",
-              "features": {
-                "vform": "base"
-              }
-            },
-            {
-              "surface": "eats",
-              "lemma": "eats",
-              "category": "N",
-              "features": {
-                "number": "singular"
-              }
-            }
-          ]
-        }
+        "accepted_negative_analysis": null
       },
       "neg018": {
         "family": "determiner",
