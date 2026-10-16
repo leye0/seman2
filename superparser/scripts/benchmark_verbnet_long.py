@@ -74,6 +74,12 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
             construction_guard=True, token_only_lattice=True,
             infer_unary_promotions=True, reduce_checkpoints=True,
             reachable_checkpoints_only=True, terminal_prefix_preference=True),
+        "prefix_follow3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            reduce_follow_only=True, reachable_checkpoints_only=True,
+            terminal_prefix_preference=True),
         "token_only_guard6": SemanCompiledReader(resources, stack_checkpoints=True,
                                 checkpoint_budget=6, construction_guard=True,
                                 token_only_lattice=True),
