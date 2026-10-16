@@ -1,0 +1,183 @@
+"""A/B/C: actual Seman2 compiled Left-to-Right reader with optional VerbNet.
+
+No fallback to packed-forest production Parser; these are *single-path*
+completion measurements, not grammatical accuracy or gold syntax judgments.
+Can reuse full_corpus_report + .json.gz index built by benchmark_verbnet_lr.py.
+
+From repo root (WordNet dictionary must be available):
+  PYTHONPATH=superparser .venv-popper/bin/python superparser/scripts/benchmark_verbnet_reader.py \
+      --index superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
+      --wordnet-dir /path/to/WordNet-3.0/dict
+"""
+from __future__ import annotations
+
+import argparse
+from collections import Counter, defaultdict
+import json
+from pathlib import Path
+import statistics
+from time import perf_counter
+
+from research.verbnet_lr import read_index
+from seman_parser.engine import ParserResources
+from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def quantiles(values):
+    values = sorted(values)
+    if not values:
+        return {"p50": None, "p95": None, "p99": None}
+    return {name: round(values[min(len(values) - 1, int((len(values) - 1) * q))], 5)
+            for name, q in (("p50", .50), ("p95", .95), ("p99", .99))}
+
+
+def sentence_cases(corpus: Path, max_cases: int):
+    by_split = defaultdict(list)
+    for line in corpus.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            case = json.loads(line)
+            by_split[str(case.get("split", "other"))].append(case)
+    # Represent dev/validation/holdout without evaluating *only* dev.
+    groups = [iter(by_split[split]) for split in sorted(by_split)]
+    chosen = []
+    while groups and len(chosen) < max_cases:
+        remaining = []
+        for group in groups:
+            try:
+                chosen.append(next(group))
+            except StopIteration:
+                continue
+            remaining.append(group)
+            if len(chosen) >= max_cases:
+                break
+        groups = remaining
+    return chosen
+
+
+def trace(result):
+    return [(e.action, e.expected, e.detail) for e in result.outcome.events
+            if e.action in {"CONSUME", "COMPLETE"}]
+
+
+def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
+        repetitions: int, corpus: Path) -> dict:
+    resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
+    index = read_index(index_file)
+    machines = {
+        "A_baseline": SemanCompiledReader(resources),
+        "B_lemma_hints": SemanCompiledReader(resources, verbnet_index=index, verbnet_mode="lemma"),
+        "C_sense_hints": SemanCompiledReader(resources, verbnet_index=index, verbnet_mode="exact"),
+    }
+    cases = sentence_cases(corpus, max_cases)
+    if not cases:
+        raise RuntimeError("No sentences to benchmark")
+    raw = {key: [] for key in machines}
+    results = {key: {} for key in machines}
+    # Warm the lexical cache and readers with all test sentences, not merely
+    # the first mode. Do not time this. Full parser complexity remains bounded
+    # by compiled reader's own event limits.
+    for case in cases:
+        for machine in machines.values():
+            machine.parse(case["text"])
+    # Rotate mode order to avoid systematic CPU/cache bias.
+    modes = tuple(machines)
+    for repeat in range(repetitions):
+        for i, case in enumerate(cases):
+            ordered = modes[(i + repeat) % 3:] + modes[:(i + repeat) % 3]
+            for mode in ordered:
+                t = perf_counter()
+                item = machines[mode].parse(case["text"])
+                total_ms = (perf_counter() - t) * 1000
+                counters = item.outcome.counters
+                record = {
+                    "id": case["id"], "split": case.get("split", "other"),
+                    "complete": bool(item.complete),
+                    "reason": item.outcome.reason if not item.complete else "",
+                    "total_ms": round(total_ms, 5),
+                    "lexical_ms": round(item.lexical_ms, 5),
+                    "reading_ms": round(item.reading_ms, 5),
+                    "materialize_ms": round(item.materialization_ms, 5),
+                    "consumptions": counters.get("consumptions", 0),
+                    "unifications": counters.get("unifications", 0),
+                    "events": counters.get("events", 0),
+                    "verbnet_scoring_calls": counters.get("verbnet_scoring_calls", 0),
+                    "verbnet_positive_hints": counters.get("verbnet_positive_hints", 0),
+                    "trace": trace(item),
+                }
+                raw[mode].append(record)
+                if repeat == 0:
+                    results[mode][case["id"]] = record
+    summary = {}
+    for mode, entries in raw.items():
+        successes = sum(v["complete"] for v in entries)
+        summary[mode] = {
+            "evaluations": len(entries),
+            "complete": successes,
+            "coverage_percent": round(100 * successes / len(entries), 2),
+            "total_ms": quantiles([v["total_ms"] for v in entries]),
+            "reading_ms": quantiles([v["reading_ms"] for v in entries]),
+            "mean_unifications": round(statistics.mean(v["unifications"] for v in entries), 3),
+            "mean_events": round(statistics.mean(v["events"] for v in entries), 3),
+            "verbnet_scoring_calls": sum(v["verbnet_scoring_calls"] for v in entries),
+            "verbnet_positive_hints": sum(v["verbnet_positive_hints"] for v in entries),
+            "stop_reasons": dict(Counter(v["reason"] for v in entries if not v["complete"])),
+        }
+    diffs = {}
+    for mode in ("B_lemma_hints", "C_sense_hints"):
+        changed = []
+        for case in cases:
+            baseline = results["A_baseline"][case["id"]]
+            guided = results[mode][case["id"]]
+            if baseline["complete"] != guided["complete"] or baseline["trace"] != guided["trace"]:
+                changed.append({
+                    "id": case["id"], "split": case.get("split", "other"),
+                    "text": case["text"],
+                    "baseline_complete": baseline["complete"],
+                    "guided_complete": guided["complete"],
+                    "baseline_reason": baseline["reason"],
+                    "guided_reason": guided["reason"],
+                    "baseline_trace": baseline["trace"],
+                    "guided_trace": guided["trace"],
+                })
+        diffs[mode] = {"changed_count": len(changed), "changes": changed}
+    return {
+        "schema": 1,
+        "method": "A/B/C compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
+        "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
+        "index_lemmas": index.lemmas(),
+        "summary": summary, "diffs": diffs,
+        "limits": [
+            "A path can stop without proving the sentence ungrammatical",
+            "Positive corpus completion is not gold structural accuracy",
+            "The lexical lookahead can only *rank*, never reject",
+            "No production parser or packed forest was invoked",
+            "Full-parser 5 ms target cannot be inferred from trie lookup timings",
+            "Mixed WordNet lexical cache is warmed before A/B/C measurements",
+        ],
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--index", required=True)
+    parser.add_argument("--wordnet-dir")
+    parser.add_argument("--cases", default=str(ROOT / "data" / "syntax_correctness_validation.jsonl"))
+    parser.add_argument("--max-cases", type=int, default=36)
+    parser.add_argument("--repetitions", type=int, default=2)
+    parser.add_argument("--report", default=str(ROOT / "research" / "verbnet_lr" / "reader_ablation.json"))
+    args = parser.parse_args()
+    if args.max_cases < 1 or args.repetitions < 1:
+        parser.error("max-cases and repetitions must be positive")
+    report = run(args.index, wordnet_dir=args.wordnet_dir, max_cases=args.max_cases,
+                 repetitions=args.repetitions, corpus=Path(args.cases))
+    Path(args.report).write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(json.dumps({"report": args.report, "cases": report["cases"],
+                      "summary": report["summary"],
+                      "changes": {k: v["changed_count"] for k, v in report["diffs"].items()}},
+                     indent=2))
+
+
+if __name__ == "__main__":
+    main()
