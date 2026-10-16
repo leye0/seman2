@@ -22,9 +22,10 @@ class TestCorpusInterface(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         root = Path(self.tmp.name)
         (root / "test.xml").write_text(XML, encoding="utf-8")
-        (root / "index.sense").write_text("branch%2:35:00 08123456 1 0\n", encoding="utf-8")
+        (root / "index.sense").write_text("branch%2:35:00:: 08123456 1 0\n", encoding="utf-8")
         self.frames, self.stats = compile_directory(root, root / "index.sense")
         self.index = PrefixIndex(self.frames)
+        self.assertEqual(self.stats["wordnet_keys_matched"], 1)
 
     def test_wildcard_kept_even_with_concrete_preposition(self):
         p = self.index.predict("branch", ("PREP:to", "NP"), synset_offset=8123456)
