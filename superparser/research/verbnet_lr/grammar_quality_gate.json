@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "median_target_ms": 5.0,
+  "focus": "Grammar correctness, false acceptances, then latency",
+  "comparisons": {
+    "A_baseline": {
+      "total_positive_cases": 120,
+      "gold_passed_cases": 34,
+      "completed_positive_cases": 44,
+      "complete_but_nonconforming_cases": 10,
+      "positive_gold_improvements": [],
+      "positive_gold_regressions": [],
+      "negative_cases": 24,
+      "negative_false_accepts": 6,
+      "new_negative_false_acceptances": [],
+      "baseline_negative_false_accepts": 6,
+      "positive_median_ms": 3.25777,
+      "positive_p95_ms": 6.9041,
+      "tests": {
+        "nonregression_on_explicit_positive_gold": true,
+        "gold_passes_at_least_baseline": true,
+        "no_new_negative_false_acceptances": true,
+        "median_at_or_below_target": true
+      },
+      "quality_gate": true,
+      "performance_target_met": true
+    },
+    "N_local_snapshot1": {
+      "total_positive_cases": 120,
+      "gold_passed_cases": 41,
+      "completed_positive_cases": 55,
+      "complete_but_nonconforming_cases": 14,
+      "positive_gold_improvements": [
+        "d014",
+        "d034",
+        "d048",
+        "h015",
+        "v007",
+        "v014",
+        "v034"
+      ],
+      "positive_gold_regressions": [],
+      "negative_cases": 24,
+      "negative_false_accepts": 9,
+      "new_negative_false_acceptances": [
+        "neg012",
+        "neg015",
+        "neg016"
+      ],
+      "baseline_negative_false_accepts": 6,
+      "positive_median_ms": 3.79067,
+      "positive_p95_ms": 7.40454,
+      "tests": {
+        "nonregression_on_explicit_positive_gold": true,
+        "gold_passes_at_least_baseline": true,
+        "no_new_negative_false_acceptances": false,
+        "median_at_or_below_target": true
+      },
+      "quality_gate": false,
+      "performance_target_met": true
+    },
+    "O_local_snapshot2": {
+      "total_positive_cases": 120,
+      "gold_passed_cases": 44,
+      "completed_positive_cases": 61,
+      "complete_but_nonconforming_cases": 17,
+      "positive_gold_improvements": [
+        "d014",
+        "d034",
+        "d042",
+        "d047",
+        "d048",
+        "h015",
+        "v007",
+        "v014",
+        "v034",
+        "v042"
+      ],
+      "positive_gold_regressions": [],
+      "negative_cases": 24,
+      "negative_false_accepts": 13,
+      "new_negative_false_acceptances": [
+        "neg005",
+        "neg008",
+        "neg009",
+        "neg010",
+        "neg012",
+        "neg015",
+        "neg016"
+      ],
+      "baseline_negative_false_accepts": 6,
+      "positive_median_ms": 4.02732,
+      "positive_p95_ms": 7.62781,
+      "tests": {
+        "nonregression_on_explicit_positive_gold": true,
+        "gold_passes_at_least_baseline": true,
+        "no_new_negative_false_acceptances": false,
+        "median_at_or_below_target": true
+      },
+      "quality_gate": false,
+      "performance_target_met": true
+    },
+    "P_local_snapshot3": {
+      "total_positive_cases": 120,
+      "gold_passed_cases": 45,
+      "completed_positive_cases": 68,
+      "complete_but_nonconforming_cases": 23,
+      "positive_gold_improvements": [
+        "d014",
+        "d030",
+        "d034",
+        "d042",
+        "d047",
+        "d048",
+        "h015",
+        "v007",
+        "v014",
+        "v034",
+        "v042"
+      ],
+      "positive_gold_regressions": [],
+      "negative_cases": 24,
+      "negative_false_accepts": 16,
+      "new_negative_false_acceptances": [
+        "neg005",
+        "neg006",
+        "neg008",
+        "neg009",
+        "neg010",
+        "neg011",
+        "neg012",
+        "neg015",
+        "neg016",
+        "neg017"
+      ],
+      "baseline_negative_false_accepts": 6,
+      "positive_median_ms": 4.20451,
+      "positive_p95_ms": 8.22607,
+      "tests": {
+        "nonregression_on_explicit_positive_gold": true,
+        "gold_passes_at_least_baseline": true,
+        "no_new_negative_false_acceptances": false,
+        "median_at_or_below_target": true
+      },
+      "quality_gate": false,
+      "performance_target_met": true
+    }
+  },
+  "warning": [
+    "Gold assertions are incomplete annotations, not independently gold parsed trees.",
+    "Failed negative parsing does not prove grammatical rejection.",
+    "Absolute timings are GitHub runner measurements with machine-to-machine variability.",
+    "The holdout is for reporting only; do not tune parser rules on holdout errors."
+  ]
+}

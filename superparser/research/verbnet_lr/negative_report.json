@@ -1,0 +1,862 @@
+{
+  "schema": 1,
+  "corpus": "/home/runner/work/seman2/seman2/superparser/research/verbnet_lr/negative_minimal_pairs.jsonl",
+  "repetitions": 2,
+  "summary": {
+    "A_baseline": {
+      "negative_cases": 24,
+      "negative_false_accepts": 6,
+      "positive_contrast_completes": 6,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 2,
+          "contrast_completes": 2
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 0
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 1,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 0
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 3,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 1.37532,
+      "contrast_median_ms": 1.3193,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": []
+    },
+    "N_local_snapshot1": {
+      "negative_cases": 24,
+      "negative_false_accepts": 9,
+      "positive_contrast_completes": 12,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 2,
+          "contrast_completes": 2
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 2,
+          "contrast_completes": 2
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 1,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 4
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 3,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 2.55634,
+      "contrast_median_ms": 2.80713,
+      "new_false_accepts_vs_baseline": [
+        "neg012",
+        "neg015",
+        "neg016"
+      ],
+      "lost_false_accepts_vs_baseline": []
+    },
+    "O_local_snapshot2": {
+      "negative_cases": 24,
+      "negative_false_accepts": 13,
+      "positive_contrast_completes": 17,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 4,
+          "contrast_completes": 4
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 2,
+          "contrast_completes": 4
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 1,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 3,
+          "contrast_completes": 5
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 3,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 2.97382,
+      "contrast_median_ms": 2.95223,
+      "new_false_accepts_vs_baseline": [
+        "neg005",
+        "neg008",
+        "neg009",
+        "neg010",
+        "neg012",
+        "neg015",
+        "neg016"
+      ],
+      "lost_false_accepts_vs_baseline": []
+    },
+    "P_local_snapshot3": {
+      "negative_cases": 24,
+      "negative_false_accepts": 16,
+      "positive_contrast_completes": 18,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 5,
+          "contrast_completes": 5
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 3,
+          "contrast_completes": 4
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 1,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 4,
+          "contrast_completes": 5
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 3,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 3.16009,
+      "contrast_median_ms": 3.0529,
+      "new_false_accepts_vs_baseline": [
+        "neg005",
+        "neg006",
+        "neg008",
+        "neg009",
+        "neg010",
+        "neg011",
+        "neg012",
+        "neg015",
+        "neg016",
+        "neg017"
+      ],
+      "lost_false_accepts_vs_baseline": []
+    }
+  },
+  "cases": {
+    "A_baseline": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 0
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      }
+    },
+    "N_local_snapshot1": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 0
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      }
+    },
+    "O_local_snapshot2": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 0
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      }
+    },
+    "P_local_snapshot3": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 0
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0
+      }
+    }
+  },
+  "limitations": [
+    "Hand-curated small standard-written-English negatives, not a representative test set",
+    "Negative failure means incomplete or unsupported, NOT proof of ungrammaticality",
+    "Positive contrast completion is not a checked syntactic tree",
+    "No grammatical gold used during parsing, score ranking or checkpoint selection"
+  ]
+}

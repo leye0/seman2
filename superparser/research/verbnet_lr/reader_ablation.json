@@ -3973,6 +3973,33 @@
     "A_baseline": {
       "evaluations": 240,
       "complete": 88,
+      "complete_but_nonconforming": 20,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 88,
+          "passed": 88
+        },
+        "predicate": {
+          "evaluated": 88,
+          "passed": 78
+        },
+        "required_rules": {
+          "evaluated": 88,
+          "passed": 80
+        },
+        "forbidden_rules": {
+          "evaluated": 88,
+          "passed": 86
+        },
+        "lexical_pos": {
+          "evaluated": 88,
+          "passed": 82
+        },
+        "constituents": {
+          "evaluated": 88,
+          "passed": 84
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
@@ -3992,14 +4019,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 2.43908,
-        "p95": 5.14359,
-        "p99": 5.84772
+        "p50": 3.25777,
+        "p95": 6.9041,
+        "p99": 7.66345
       },
       "reading_ms": {
-        "p50": 1.74403,
-        "p95": 4.26323,
-        "p99": 4.5911
+        "p50": 2.30101,
+        "p95": 5.82375,
+        "p99": 6.077
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4066,6 +4093,33 @@
     "B_lemma_hints": {
       "evaluations": 240,
       "complete": 88,
+      "complete_but_nonconforming": 20,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 88,
+          "passed": 88
+        },
+        "predicate": {
+          "evaluated": 88,
+          "passed": 78
+        },
+        "required_rules": {
+          "evaluated": 88,
+          "passed": 80
+        },
+        "forbidden_rules": {
+          "evaluated": 88,
+          "passed": 86
+        },
+        "lexical_pos": {
+          "evaluated": 88,
+          "passed": 82
+        },
+        "constituents": {
+          "evaluated": 88,
+          "passed": 84
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
@@ -4085,14 +4139,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 2.52074,
-        "p95": 5.25089,
-        "p99": 5.9372
+        "p50": 3.31778,
+        "p95": 7.10412,
+        "p99": 7.88031
       },
       "reading_ms": {
-        "p50": 1.76194,
-        "p95": 4.36554,
-        "p99": 4.75944
+        "p50": 2.32001,
+        "p95": 5.86171,
+        "p99": 6.29647
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4159,6 +4213,33 @@
     "C_sense_hints": {
       "evaluations": 240,
       "complete": 88,
+      "complete_but_nonconforming": 20,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 88,
+          "passed": 88
+        },
+        "predicate": {
+          "evaluated": 88,
+          "passed": 78
+        },
+        "required_rules": {
+          "evaluated": 88,
+          "passed": 80
+        },
+        "forbidden_rules": {
+          "evaluated": 88,
+          "passed": 86
+        },
+        "lexical_pos": {
+          "evaluated": 88,
+          "passed": 82
+        },
+        "constituents": {
+          "evaluated": 88,
+          "passed": 84
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
@@ -4178,14 +4259,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 2.47768,
-        "p95": 5.31062,
-        "p99": 6.00534
+        "p50": 3.24315,
+        "p95": 7.07797,
+        "p99": 7.91623
       },
       "reading_ms": {
-        "p50": 1.78132,
-        "p95": 4.34892,
-        "p99": 4.79055
+        "p50": 2.36987,
+        "p95": 5.912,
+        "p99": 6.34151
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4252,6 +4333,33 @@
     "D_structural2": {
       "evaluations": 240,
       "complete": 110,
+      "complete_but_nonconforming": 48,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 110,
+          "passed": 96
+        },
+        "predicate": {
+          "evaluated": 110,
+          "passed": 76
+        },
+        "required_rules": {
+          "evaluated": 110,
+          "passed": 82
+        },
+        "forbidden_rules": {
+          "evaluated": 110,
+          "passed": 108
+        },
+        "lexical_pos": {
+          "evaluated": 110,
+          "passed": 102
+        },
+        "constituents": {
+          "evaluated": 110,
+          "passed": 98
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 62,
       "verbnet_tree_evidence": {
@@ -4269,14 +4377,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 3.3968,
-        "p95": 6.3301,
-        "p99": 6.99429
+        "p50": 4.43995,
+        "p95": 8.23096,
+        "p99": 9.30531
       },
       "reading_ms": {
-        "p50": 2.62897,
-        "p95": 5.18898,
-        "p99": 6.14782
+        "p50": 3.47427,
+        "p95": 6.89029,
+        "p99": 8.17961
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4329,6 +4437,33 @@
     "E_structural2_sense": {
       "evaluations": 240,
       "complete": 110,
+      "complete_but_nonconforming": 48,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 110,
+          "passed": 96
+        },
+        "predicate": {
+          "evaluated": 110,
+          "passed": 76
+        },
+        "required_rules": {
+          "evaluated": 110,
+          "passed": 82
+        },
+        "forbidden_rules": {
+          "evaluated": 110,
+          "passed": 108
+        },
+        "lexical_pos": {
+          "evaluated": 110,
+          "passed": 102
+        },
+        "constituents": {
+          "evaluated": 110,
+          "passed": 98
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 62,
       "verbnet_tree_evidence": {
@@ -4346,14 +4481,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 3.40939,
-        "p95": 6.45483,
-        "p99": 6.95768
+        "p50": 4.47091,
+        "p95": 8.44658,
+        "p99": 9.38833
       },
       "reading_ms": {
-        "p50": 2.68009,
-        "p95": 5.33462,
-        "p99": 6.11411
+        "p50": 3.56091,
+        "p95": 7.13366,
+        "p99": 8.2623
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4406,6 +4541,33 @@
     "F_structural3": {
       "evaluations": 240,
       "complete": 92,
+      "complete_but_nonconforming": 32,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 92,
+          "passed": 92
+        },
+        "predicate": {
+          "evaluated": 92,
+          "passed": 74
+        },
+        "required_rules": {
+          "evaluated": 92,
+          "passed": 76
+        },
+        "forbidden_rules": {
+          "evaluated": 92,
+          "passed": 90
+        },
+        "lexical_pos": {
+          "evaluated": 92,
+          "passed": 86
+        },
+        "constituents": {
+          "evaluated": 92,
+          "passed": 82
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 60,
       "verbnet_tree_evidence": {
@@ -4425,14 +4587,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 2.89639,
-        "p95": 6.1937,
-        "p99": 6.80596
+        "p50": 3.84501,
+        "p95": 8.0249,
+        "p99": 8.77194
       },
       "reading_ms": {
-        "p50": 2.25105,
-        "p95": 5.14332,
-        "p99": 5.98525
+        "p50": 2.96597,
+        "p95": 6.88543,
+        "p99": 7.18786
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4481,6 +4643,33 @@
     "G_structural3_sense": {
       "evaluations": 240,
       "complete": 92,
+      "complete_but_nonconforming": 32,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 92,
+          "passed": 92
+        },
+        "predicate": {
+          "evaluated": 92,
+          "passed": 74
+        },
+        "required_rules": {
+          "evaluated": 92,
+          "passed": 76
+        },
+        "forbidden_rules": {
+          "evaluated": 92,
+          "passed": 90
+        },
+        "lexical_pos": {
+          "evaluated": 92,
+          "passed": 86
+        },
+        "constituents": {
+          "evaluated": 92,
+          "passed": 82
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 60,
       "verbnet_tree_evidence": {
@@ -4500,14 +4689,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 3.07844,
-        "p95": 6.31202,
-        "p99": 6.83787
+        "p50": 3.90369,
+        "p95": 8.34627,
+        "p99": 8.87972
       },
       "reading_ms": {
-        "p50": 2.38624,
-        "p95": 5.2429,
-        "p99": 5.78086
+        "p50": 3.08812,
+        "p95": 7.04713,
+        "p99": 7.60131
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4556,6 +4745,33 @@
     "H_checkpoint1": {
       "evaluations": 240,
       "complete": 110,
+      "complete_but_nonconforming": 28,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 110,
+          "passed": 110
+        },
+        "predicate": {
+          "evaluated": 110,
+          "passed": 96
+        },
+        "required_rules": {
+          "evaluated": 110,
+          "passed": 96
+        },
+        "forbidden_rules": {
+          "evaluated": 110,
+          "passed": 108
+        },
+        "lexical_pos": {
+          "evaluated": 110,
+          "passed": 104
+        },
+        "constituents": {
+          "evaluated": 110,
+          "passed": 104
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
@@ -4575,14 +4791,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 3.30452,
-        "p95": 8.91917,
-        "p99": 10.46998
+        "p50": 4.37744,
+        "p95": 11.96305,
+        "p99": 14.34351
       },
       "reading_ms": {
-        "p50": 2.63569,
-        "p95": 7.87525,
-        "p99": 9.44219
+        "p50": 3.4499,
+        "p95": 10.62912,
+        "p99": 12.7436
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -4633,6 +4849,33 @@
     "I_checkpoint3": {
       "evaluations": 240,
       "complete": 128,
+      "complete_but_nonconforming": 38,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 128,
+          "passed": 128
+        },
+        "predicate": {
+          "evaluated": 128,
+          "passed": 108
+        },
+        "required_rules": {
+          "evaluated": 128,
+          "passed": 112
+        },
+        "forbidden_rules": {
+          "evaluated": 128,
+          "passed": 122
+        },
+        "lexical_pos": {
+          "evaluated": 128,
+          "passed": 120
+        },
+        "constituents": {
+          "evaluated": 128,
+          "passed": 122
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
@@ -4652,14 +4895,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 3.79033,
-        "p95": 15.10968,
-        "p99": 19.42712
+        "p50": 5.05807,
+        "p95": 20.10193,
+        "p99": 27.23591
       },
       "reading_ms": {
-        "p50": 3.03289,
-        "p95": 14.24779,
-        "p99": 18.23835
+        "p50": 4.09859,
+        "p95": 18.96239,
+        "p99": 25.51776
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -4709,6 +4952,33 @@
     "J_checkpoint3_verbnet": {
       "evaluations": 240,
       "complete": 128,
+      "complete_but_nonconforming": 38,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 128,
+          "passed": 128
+        },
+        "predicate": {
+          "evaluated": 128,
+          "passed": 108
+        },
+        "required_rules": {
+          "evaluated": 128,
+          "passed": 112
+        },
+        "forbidden_rules": {
+          "evaluated": 128,
+          "passed": 122
+        },
+        "lexical_pos": {
+          "evaluated": 128,
+          "passed": 120
+        },
+        "constituents": {
+          "evaluated": 128,
+          "passed": 122
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
@@ -4728,14 +4998,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 3.97225,
-        "p95": 15.51414,
-        "p99": 19.96385
+        "p50": 5.199,
+        "p95": 19.34861,
+        "p99": 26.66736
       },
       "reading_ms": {
-        "p50": 3.10341,
-        "p95": 14.39869,
-        "p99": 18.64191
+        "p50": 4.21431,
+        "p95": 17.99329,
+        "p99": 24.96537
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -4784,37 +5054,64 @@
     },
     "K_lazy_checkpoint1": {
       "evaluations": 240,
-      "complete": 110,
+      "complete": 109,
+      "complete_but_nonconforming": 27,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 109,
+          "passed": 109
+        },
+        "predicate": {
+          "evaluated": 109,
+          "passed": 96
+        },
+        "required_rules": {
+          "evaluated": 109,
+          "passed": 95
+        },
+        "forbidden_rules": {
+          "evaluated": 109,
+          "passed": 107
+        },
+        "lexical_pos": {
+          "evaluated": 109,
+          "passed": 103
+        },
+        "constituents": {
+          "evaluated": 109,
+          "passed": 103
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
-        "vp_observations": 88,
+        "vp_observations": 87,
         "status": {
           "ATTESTED": 70,
-          "UNKNOWN": 16,
+          "UNKNOWN": 15,
           "PREFIX": 2
         },
         "confidence": {
           "sense_verified": 70,
-          "none": 16,
+          "none": 15,
           "lemma_only": 2
         },
         "attested_with_explicit_gold_pass": 66,
         "attested_with_explicit_gold_fail": 4
       },
-      "coverage_percent": 45.83,
+      "coverage_percent": 45.42,
       "total_ms": {
-        "p50": 3.24728,
-        "p95": 8.93498,
-        "p99": 10.39918
+        "p50": 4.33931,
+        "p95": 11.81087,
+        "p99": 13.87249
       },
       "reading_ms": {
-        "p50": 2.5424,
-        "p95": 7.79074,
-        "p99": 9.06166
+        "p50": 3.42366,
+        "p95": 10.32119,
+        "p99": 12.10396
       },
-      "mean_unifications": 5,
-      "mean_events": 22.967,
+      "mean_unifications": 4.996,
+      "mean_events": 22.954,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -4856,12 +5153,40 @@
         "unconsumed_3_the": 2,
         "unconsumed_4_?": 2,
         "expected_continuation_VP-NP_at_4_state_417": 2,
-        "expected_continuation_NP_at_5_state_8": 2
+        "expected_continuation_NP_at_5_state_8": 2,
+        "unification_failed_VP_at_4": 1
       }
     },
     "L_lazy_checkpoint3": {
       "evaluations": 240,
       "complete": 128,
+      "complete_but_nonconforming": 38,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 128,
+          "passed": 128
+        },
+        "predicate": {
+          "evaluated": 128,
+          "passed": 108
+        },
+        "required_rules": {
+          "evaluated": 128,
+          "passed": 112
+        },
+        "forbidden_rules": {
+          "evaluated": 128,
+          "passed": 122
+        },
+        "lexical_pos": {
+          "evaluated": 128,
+          "passed": 120
+        },
+        "constituents": {
+          "evaluated": 128,
+          "passed": 122
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
@@ -4881,14 +5206,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 3.76181,
-        "p95": 14.80057,
-        "p99": 18.96271
+        "p50": 4.91965,
+        "p95": 18.77714,
+        "p99": 26.21392
       },
       "reading_ms": {
-        "p50": 2.97952,
-        "p95": 13.64907,
-        "p99": 17.72832
+        "p50": 4.03062,
+        "p95": 17.4301,
+        "p99": 24.55972
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -4938,6 +5263,33 @@
     "M_lazy_checkpoint2": {
       "evaluations": 240,
       "complete": 118,
+      "complete_but_nonconforming": 30,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 118,
+          "passed": 118
+        },
+        "predicate": {
+          "evaluated": 118,
+          "passed": 102
+        },
+        "required_rules": {
+          "evaluated": 118,
+          "passed": 102
+        },
+        "forbidden_rules": {
+          "evaluated": 118,
+          "passed": 116
+        },
+        "lexical_pos": {
+          "evaluated": 118,
+          "passed": 110
+        },
+        "constituents": {
+          "evaluated": 118,
+          "passed": 112
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 88,
       "verbnet_tree_evidence": {
@@ -4957,14 +5309,14 @@
       },
       "coverage_percent": 49.17,
       "total_ms": {
-        "p50": 3.56103,
-        "p95": 12.93614,
-        "p99": 15.17693
+        "p50": 4.82442,
+        "p95": 16.99546,
+        "p99": 20.17091
       },
       "reading_ms": {
-        "p50": 2.84015,
-        "p95": 11.92186,
-        "p99": 13.70722
+        "p50": 3.73489,
+        "p95": 16.14207,
+        "p99": 18.48179
       },
       "mean_unifications": 5.933,
       "mean_events": 29.142,
@@ -5016,6 +5368,33 @@
     "N_local_snapshot1": {
       "evaluations": 240,
       "complete": 110,
+      "complete_but_nonconforming": 28,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 110,
+          "passed": 110
+        },
+        "predicate": {
+          "evaluated": 110,
+          "passed": 96
+        },
+        "required_rules": {
+          "evaluated": 110,
+          "passed": 96
+        },
+        "forbidden_rules": {
+          "evaluated": 110,
+          "passed": 108
+        },
+        "lexical_pos": {
+          "evaluated": 110,
+          "passed": 104
+        },
+        "constituents": {
+          "evaluated": 110,
+          "passed": 104
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
@@ -5035,14 +5414,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 2.89105,
-        "p95": 5.64562,
-        "p99": 6.28985
+        "p50": 3.79067,
+        "p95": 7.40454,
+        "p99": 8.11307
       },
       "reading_ms": {
-        "p50": 2.13363,
-        "p95": 4.56113,
-        "p99": 5.07313
+        "p50": 2.81939,
+        "p95": 6.12374,
+        "p99": 6.57281
       },
       "mean_unifications": 4.108,
       "mean_events": 17.008,
@@ -5092,36 +5471,63 @@
     },
     "O_local_snapshot2": {
       "evaluations": 240,
-      "complete": 121,
+      "complete": 122,
+      "complete_but_nonconforming": 34,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 122,
+          "passed": 118
+        },
+        "predicate": {
+          "evaluated": 122,
+          "passed": 102
+        },
+        "required_rules": {
+          "evaluated": 122,
+          "passed": 102
+        },
+        "forbidden_rules": {
+          "evaluated": 122,
+          "passed": 120
+        },
+        "lexical_pos": {
+          "evaluated": 122,
+          "passed": 114
+        },
+        "constituents": {
+          "evaluated": 122,
+          "passed": 116
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 88,
       "verbnet_tree_evidence": {
-        "vp_observations": 89,
+        "vp_observations": 90,
         "status": {
           "ATTESTED": 70,
-          "UNKNOWN": 17,
+          "UNKNOWN": 18,
           "PREFIX": 2
         },
         "confidence": {
           "sense_verified": 70,
-          "none": 17,
+          "none": 18,
           "lemma_only": 2
         },
         "attested_with_explicit_gold_pass": 66,
         "attested_with_explicit_gold_fail": 4
       },
-      "coverage_percent": 50.42,
+      "coverage_percent": 50.83,
       "total_ms": {
-        "p50": 3.00318,
-        "p95": 5.69471,
-        "p99": 6.69373
+        "p50": 4.02732,
+        "p95": 7.62781,
+        "p99": 9.07827
       },
       "reading_ms": {
-        "p50": 2.2669,
-        "p95": 4.73594,
-        "p99": 5.66616
+        "p50": 3.04638,
+        "p95": 6.29388,
+        "p99": 7.95274
       },
-      "mean_unifications": 4.562,
+      "mean_unifications": 4.567,
       "mean_events": 19.125,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
@@ -5130,10 +5536,10 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 281,
-      "checkpoint_attempts": 521,
+      "checkpoint_replays": 280,
+      "checkpoint_attempts": 520,
       "checkpoint_options_seen": 0,
-      "checkpoint_saves": 2330,
+      "checkpoint_saves": 2328,
       "checkpoint_peak_saved_max": 21,
       "stop_reasons": {
         "unconsumed_5_John": 2,
@@ -5164,7 +5570,7 @@
         "expected_continuation_PP_at_7_state_387": 2,
         "expected_continuation_VP-NP_at_3_state_417": 2,
         "expected_continuation_ADVP_at_3_state_480": 2,
-        "expected_continuation_N_at_3_state_438": 3,
+        "expected_continuation_N_at_3_state_438": 2,
         "expected_continuation_N_at_4_state_438": 4,
         "expected_continuation_VP_at_3_state_122": 2,
         "expected_continuation_N_at_1_state_438": 2
@@ -5173,6 +5579,33 @@
     "P_local_snapshot3": {
       "evaluations": 240,
       "complete": 136,
+      "complete_but_nonconforming": 46,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 136,
+          "passed": 128
+        },
+        "predicate": {
+          "evaluated": 136,
+          "passed": 108
+        },
+        "required_rules": {
+          "evaluated": 136,
+          "passed": 112
+        },
+        "forbidden_rules": {
+          "evaluated": 136,
+          "passed": 130
+        },
+        "lexical_pos": {
+          "evaluated": 136,
+          "passed": 128
+        },
+        "constituents": {
+          "evaluated": 136,
+          "passed": 130
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
@@ -5192,14 +5625,14 @@
       },
       "coverage_percent": 56.67,
       "total_ms": {
-        "p50": 3.16297,
-        "p95": 6.12462,
-        "p99": 7.88637
+        "p50": 4.20451,
+        "p95": 8.22607,
+        "p99": 10.57513
       },
       "reading_ms": {
-        "p50": 2.40924,
-        "p95": 5.01952,
-        "p99": 6.66281
+        "p50": 3.08809,
+        "p95": 6.65374,
+        "p99": 8.92487
       },
       "mean_unifications": 5.192,
       "mean_events": 21.133,
@@ -5252,6 +5685,33 @@
     "Q_local_snapshot0": {
       "evaluations": 240,
       "complete": 88,
+      "complete_but_nonconforming": 20,
+      "gold_by_family": {
+        "voice": {
+          "evaluated": 88,
+          "passed": 88
+        },
+        "predicate": {
+          "evaluated": 88,
+          "passed": 78
+        },
+        "required_rules": {
+          "evaluated": 88,
+          "passed": 80
+        },
+        "forbidden_rules": {
+          "evaluated": 88,
+          "passed": 86
+        },
+        "lexical_pos": {
+          "evaluated": 88,
+          "passed": 82
+        },
+        "constituents": {
+          "evaluated": 88,
+          "passed": 84
+        }
+      },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
@@ -5271,14 +5731,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 2.43301,
-        "p95": 5.07563,
-        "p99": 5.87949
+        "p50": 3.25875,
+        "p95": 6.80889,
+        "p99": 7.71417
       },
       "reading_ms": {
-        "p50": 1.74419,
-        "p95": 4.29749,
-        "p99": 4.55507
+        "p50": 2.3151,
+        "p95": 5.76778,
+        "p99": 6.28554
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
