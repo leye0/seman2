@@ -57,7 +57,7 @@ def project_postverb_events(
             at += 1
             continue
 
-        if not (_NP_START & cats):
+        if not (_NP_START.intersection(cats)):
             break
 
         i = at
@@ -71,7 +71,7 @@ def project_postverb_events(
         elif "ADJ" in cats and not (_NP_HEAD.intersection(cats)):
             while i < until and "ADJ" in lex.get(i, ()) and i - at < 3:
                 i += 1
-            if i >= until or not (_NP_HEAD & lex.get(i, ())):
+            if i >= until or not (_NP_HEAD.intersection(lex.get(i, ()))):
                 break
             i += 1
         else:
