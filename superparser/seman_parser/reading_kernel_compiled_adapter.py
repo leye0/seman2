@@ -36,7 +36,8 @@ class SemanCompiledReader:
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
                  structural_lookahead: int = 1, checkpoint_budget: int = 0,
                  lazy_checkpoints: bool = False,
-                 stack_checkpoints: bool = False):
+                 stack_checkpoints: bool = False,
+                 construction_guard: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -46,6 +47,7 @@ class SemanCompiledReader:
         self.checkpoint_budget = checkpoint_budget
         self.lazy_checkpoints = lazy_checkpoints
         self.stack_checkpoints = stack_checkpoints
+        self.construction_guard = construction_guard
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
@@ -62,12 +64,15 @@ class SemanCompiledReader:
     @classmethod
     def from_dir(cls, directory: str | Path, *, wordnet_dict: str | Path | None = None,
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
-                 structural_lookahead: int = 1, checkpoint_budget: int = 0):
+                 structural_lookahead: int = 1, checkpoint_budget: int = 0,
+                 lazy_checkpoints: bool = False, stack_checkpoints: bool = False,
+                 construction_guard: bool = False):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
                    lazy_checkpoints=lazy_checkpoints,
-                   stack_checkpoints=stack_checkpoints)
+                   stack_checkpoints=stack_checkpoints,
+                   construction_guard=construction_guard)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -98,10 +103,14 @@ class SemanCompiledReader:
             return node
 
         ranker = self.verbnet_ranker
+        guard = None
+        if self.construction_guard:
+            from research.verbnet_lr.construction_guard import ConstructionGuard
+            guard = ConstructionGuard()
         if ranker is not None:
             from research.verbnet_lr.guidance import project_postverb_events
 
-        if self.stack_checkpoints:
+        if self.stack_checkpoints or self.construction_guard:
             from research.verbnet_lr.stack_reader import LocalCheckpointReader
             reader_base = LocalCheckpointReader
         elif self.checkpoint_budget:
@@ -111,6 +120,12 @@ class SemanCompiledReader:
             reader_base = IncrementalReader
 
         class _TracedReader(reader_base):
+            def _validate_completed(self, root):
+                if guard is None:
+                    return True, ""
+                verdict = guard.validate(root)
+                return verdict.acceptable, verdict.reason
+
             def _lexical_rank_bonus(self, candidate, category: str) -> int:
                 if ranker is None or category != 'V' or ranker.mode == 'zero':
                     return 0
@@ -141,7 +156,7 @@ class SemanCompiledReader:
         machine = _TracedReader(
             self.compiled, combine, lattice.tokens, lattice.candidates,
             compiled_lookahead=self.structural_lookahead,
-            **({'replay_budget': self.checkpoint_budget} if (self.checkpoint_budget or self.stack_checkpoints) else {}),
+            **({'replay_budget': self.checkpoint_budget} if (self.checkpoint_budget or self.stack_checkpoints or self.construction_guard) else {}),
         )
         outcome = machine.read()
         t2 = perf_counter()
