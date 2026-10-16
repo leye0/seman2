@@ -55,7 +55,8 @@ class LocalCheckpointReader(IncrementalReader):
     """
 
     def __init__(self, *args, replay_budget: int = 2,
-                 max_checkpoints: int = 24, **kwargs):
+                 max_checkpoints: int = 24,
+                 reduce_checkpoints: bool = False, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -63,6 +64,7 @@ class LocalCheckpointReader(IncrementalReader):
         super().__init__(*args, **kwargs)
         self.replay_budget = replay_budget
         self.max_checkpoints = max_checkpoints
+        self.reduce_checkpoints = reduce_checkpoints
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -98,7 +100,14 @@ class LocalCheckpointReader(IncrementalReader):
         self._stack.append(_Frame(category, self.pos, frozenset(stop_at), root))
 
     def _register(self, frame: _Frame, edge: str):
-        if self.replay_budget == 0 or len(frame.state.edges) < 2:
+        eligible_finals = (
+            frame.state.finals if frame.live is None
+            else [r for r in frame.state.finals if id(r) in frame.live]
+        )
+        has_reduce_choice = self.reduce_checkpoints and bool(eligible_finals)
+        if self.replay_budget == 0 or (
+            len(frame.state.edges) < 2 and not has_reduce_choice
+        ):
             return
         if self._forced is not None:
             depth, state_id, forced = self._forced
@@ -192,6 +201,12 @@ class LocalCheckpointReader(IncrementalReader):
                 # This alternative was validated against the grammar's live
                 # mask when restoring the checkpoint.
                 selected = forced_edge
+        if selected == "$REDUCE":
+            # This is a licensed prefix reduction saved as an alternative
+            # to greedy continuation. Not a lexical or grammar edge.
+            selected = None
+            self._forced = None
+            self.count["checkpoint_forced_reductions"] += 1
         if state.finals and selected is not None:
             if not self._viable(state.edges[selected], self.pos + 1):
                 selected = None
@@ -260,6 +275,14 @@ class LocalCheckpointReader(IncrementalReader):
             frame = self._stack[-1]
             alternative = self._select(
                 frame.state, frame.live, excluded=frozenset(point.tried))
+            if (alternative is None and self.reduce_checkpoints
+                    and "$REDUCE" not in point.tried
+                    and frame.state.finals
+                    and (frame.live is None
+                         or any(id(r) in frame.live for r in frame.state.finals))):
+                # Prefer other eligible grammar transitions first. Once
+                # exhausted, reduce an already-complete prefix in place.
+                alternative = "$REDUCE"
             if alternative is None:
                 self.count["checkpoint_dead_ends"] += 1
                 continue
