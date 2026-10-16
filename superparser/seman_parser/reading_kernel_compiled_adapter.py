@@ -106,7 +106,11 @@ class SemanCompiledReader:
         guard = None
         if self.construction_guard:
             from research.verbnet_lr.construction_guard import ConstructionGuard
-            guard = ConstructionGuard()
+            # Derive the closed-class modal inventory from the *existing*
+            # lexical lattice. No per-word grammar exceptions or new lexicon.
+            guard = ConstructionGuard(
+                modal_forms={c.surface.casefold() for c in lattice.candidates
+                             if c.category == 'MODAL'})
         if ranker is not None:
             from research.verbnet_lr.guidance import project_postverb_events
 
