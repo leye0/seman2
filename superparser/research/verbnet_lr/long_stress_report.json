@@ -7,20 +7,20 @@
     "baseline": {
       "mean_words": 48.5,
       "complete_sentences": 0.0,
-      "p50_ms": 16.7542,
-      "lexical_p50_ms": 8.4283,
-      "reading_p50_ms": 4.6776,
-      "p95_ms": 25.2532,
-      "p99_ms": 25.2758,
-      "max_ms": 25.3502,
+      "p50_ms": 17.2377,
+      "lexical_p50_ms": 8.6867,
+      "reading_p50_ms": 4.8783,
+      "p95_ms": 25.8731,
+      "p99_ms": 26.3133,
+      "max_ms": 26.4573,
       "cases_reaching_75pct_of_tokens": 0.0,
       "by_length": [
         {
           "id": "stress_01",
           "words": 31,
-          "p50_ms": 13.8228,
-          "lexical_p50_ms": 5.4525,
-          "reading_p50_ms": 8.2961,
+          "p50_ms": 14.7121,
+          "lexical_p50_ms": 5.6697,
+          "reading_p50_ms": 8.9066,
           "complete": false,
           "furthest_token_fraction": 0.303,
           "final_token_fraction": 0.303
@@ -28,9 +28,9 @@
         {
           "id": "stress_02",
           "words": 41,
-          "p50_ms": 17.4138,
-          "lexical_p50_ms": 7.3996,
-          "reading_p50_ms": 9.9523,
+          "p50_ms": 18.1664,
+          "lexical_p50_ms": 7.7523,
+          "reading_p50_ms": 10.267,
           "complete": false,
           "furthest_token_fraction": 0.289,
           "final_token_fraction": 0.289
@@ -38,9 +38,9 @@
         {
           "id": "stress_03",
           "words": 43,
-          "p50_ms": 12.8864,
-          "lexical_p50_ms": 8.3237,
-          "reading_p50_ms": 4.4228,
+          "p50_ms": 13.362,
+          "lexical_p50_ms": 8.6396,
+          "reading_p50_ms": 4.5738,
           "complete": false,
           "furthest_token_fraction": 0.109,
           "final_token_fraction": 0.109
@@ -48,9 +48,9 @@
         {
           "id": "stress_04",
           "words": 49,
-          "p50_ms": 18.5353,
-          "lexical_p50_ms": 10.3974,
-          "reading_p50_ms": 7.7454,
+          "p50_ms": 19.1595,
+          "lexical_p50_ms": 10.8317,
+          "reading_p50_ms": 8.06,
           "complete": false,
           "furthest_token_fraction": 0.245,
           "final_token_fraction": 0.245
@@ -58,9 +58,9 @@
         {
           "id": "stress_05",
           "words": 45,
-          "p50_ms": 11.703,
-          "lexical_p50_ms": 7.7723,
-          "reading_p50_ms": 3.766,
+          "p50_ms": 12.1469,
+          "lexical_p50_ms": 8.0988,
+          "reading_p50_ms": 3.9063,
           "complete": false,
           "furthest_token_fraction": 0.125,
           "final_token_fraction": 0.125
@@ -68,9 +68,9 @@
         {
           "id": "stress_06",
           "words": 56,
-          "p50_ms": 16.6446,
-          "lexical_p50_ms": 11.7983,
-          "reading_p50_ms": 4.6106,
+          "p50_ms": 17.403,
+          "lexical_p50_ms": 12.3815,
+          "reading_p50_ms": 4.746,
           "complete": false,
           "furthest_token_fraction": 0.085,
           "final_token_fraction": 0.085
@@ -78,9 +78,9 @@
         {
           "id": "stress_07",
           "words": 58,
-          "p50_ms": 16.9063,
-          "lexical_p50_ms": 12.0272,
-          "reading_p50_ms": 4.6537,
+          "p50_ms": 17.2377,
+          "lexical_p50_ms": 12.1777,
+          "reading_p50_ms": 4.8066,
           "complete": false,
           "furthest_token_fraction": 0.111,
           "final_token_fraction": 0.111
@@ -88,9 +88,9 @@
         {
           "id": "stress_08",
           "words": 65,
-          "p50_ms": 25.2758,
-          "lexical_p50_ms": 14.3415,
-          "reading_p50_ms": 10.6076,
+          "p50_ms": 26.3133,
+          "lexical_p50_ms": 14.838,
+          "reading_p50_ms": 11.0548,
           "complete": false,
           "furthest_token_fraction": 0.103,
           "final_token_fraction": 0.103
@@ -100,20 +100,20 @@
     "local3": {
       "mean_words": 48.5,
       "complete_sentences": 0.0,
-      "p50_ms": 18.6816,
-      "lexical_p50_ms": 7.9492,
-      "reading_p50_ms": 10.5727,
-      "p95_ms": 37.086,
-      "p99_ms": 37.5691,
-      "max_ms": 37.763,
+      "p50_ms": 19.2036,
+      "lexical_p50_ms": 8.5301,
+      "reading_p50_ms": 10.9935,
+      "p95_ms": 38.6064,
+      "p99_ms": 38.8209,
+      "max_ms": 39.4197,
       "cases_reaching_75pct_of_tokens": 0.0,
       "by_length": [
         {
           "id": "stress_01",
           "words": 31,
-          "p50_ms": 15.6384,
-          "lexical_p50_ms": 5.3454,
-          "reading_p50_ms": 10.1379,
+          "p50_ms": 16.3321,
+          "lexical_p50_ms": 5.5591,
+          "reading_p50_ms": 10.7229,
           "complete": false,
           "furthest_token_fraction": 0.394,
           "final_token_fraction": 0.394
@@ -121,9 +121,9 @@
         {
           "id": "stress_02",
           "words": 41,
-          "p50_ms": 18.7899,
-          "lexical_p50_ms": 7.0102,
-          "reading_p50_ms": 11.3207,
+          "p50_ms": 19.3589,
+          "lexical_p50_ms": 7.4762,
+          "reading_p50_ms": 11.7377,
           "complete": false,
           "furthest_token_fraction": 0.244,
           "final_token_fraction": 0.244
@@ -131,9 +131,9 @@
         {
           "id": "stress_03",
           "words": 43,
-          "p50_ms": 14.4601,
-          "lexical_p50_ms": 7.9424,
-          "reading_p50_ms": 6.3372,
+          "p50_ms": 15.3989,
+          "lexical_p50_ms": 8.4824,
+          "reading_p50_ms": 6.7364,
           "complete": false,
           "furthest_token_fraction": 0.304,
           "final_token_fraction": 0.304
@@ -141,9 +141,9 @@
         {
           "id": "stress_04",
           "words": 49,
-          "p50_ms": 33.261,
-          "lexical_p50_ms": 10.0855,
-          "reading_p50_ms": 22.85,
+          "p50_ms": 34.3111,
+          "lexical_p50_ms": 10.5059,
+          "reading_p50_ms": 23.5674,
           "complete": false,
           "furthest_token_fraction": 0.453,
           "final_token_fraction": 0.453
@@ -151,9 +151,9 @@
         {
           "id": "stress_05",
           "words": 45,
-          "p50_ms": 12.4882,
-          "lexical_p50_ms": 7.2825,
-          "reading_p50_ms": 5.0377,
+          "p50_ms": 13.1845,
+          "lexical_p50_ms": 7.7301,
+          "reading_p50_ms": 5.2978,
           "complete": false,
           "furthest_token_fraction": 0.146,
           "final_token_fraction": 0.146
@@ -161,9 +161,9 @@
         {
           "id": "stress_06",
           "words": 56,
-          "p50_ms": 23.8108,
-          "lexical_p50_ms": 11.3759,
-          "reading_p50_ms": 12.1447,
+          "p50_ms": 24.9258,
+          "lexical_p50_ms": 11.7765,
+          "reading_p50_ms": 12.8179,
           "complete": false,
           "furthest_token_fraction": 0.407,
           "final_token_fraction": 0.407
@@ -171,9 +171,9 @@
         {
           "id": "stress_07",
           "words": 58,
-          "p50_ms": 18.6816,
-          "lexical_p50_ms": 11.6258,
-          "reading_p50_ms": 6.7834,
+          "p50_ms": 19.088,
+          "lexical_p50_ms": 11.767,
+          "reading_p50_ms": 7.1208,
           "complete": false,
           "furthest_token_fraction": 0.127,
           "final_token_fraction": 0.127
@@ -181,9 +181,9 @@
         {
           "id": "stress_08",
           "words": 65,
-          "p50_ms": 37.5691,
-          "lexical_p50_ms": 13.7734,
-          "reading_p50_ms": 23.2659,
+          "p50_ms": 38.8209,
+          "lexical_p50_ms": 14.07,
+          "reading_p50_ms": 24.2862,
           "complete": false,
           "furthest_token_fraction": 0.544,
           "final_token_fraction": 0.544
@@ -193,20 +193,20 @@
     "local3_guard": {
       "mean_words": 48.5,
       "complete_sentences": 0.0,
-      "p50_ms": 18.4995,
-      "lexical_p50_ms": 9.6505,
-      "reading_p50_ms": 10.2068,
-      "p95_ms": 37.6866,
-      "p99_ms": 37.9191,
-      "max_ms": 38.1042,
+      "p50_ms": 19.1918,
+      "lexical_p50_ms": 8.6474,
+      "reading_p50_ms": 10.7991,
+      "p95_ms": 39.0513,
+      "p99_ms": 40.3668,
+      "max_ms": 40.4447,
       "cases_reaching_75pct_of_tokens": 0.0,
       "by_length": [
         {
           "id": "stress_01",
           "words": 31,
-          "p50_ms": 15.6849,
-          "lexical_p50_ms": 5.3647,
-          "reading_p50_ms": 10.2027,
+          "p50_ms": 16.6077,
+          "lexical_p50_ms": 5.7674,
+          "reading_p50_ms": 10.6157,
           "complete": false,
           "furthest_token_fraction": 0.394,
           "final_token_fraction": 0.394
@@ -214,9 +214,9 @@
         {
           "id": "stress_02",
           "words": 41,
-          "p50_ms": 18.5819,
-          "lexical_p50_ms": 7.0408,
-          "reading_p50_ms": 11.4129,
+          "p50_ms": 19.4705,
+          "lexical_p50_ms": 7.4805,
+          "reading_p50_ms": 11.8184,
           "complete": false,
           "furthest_token_fraction": 0.244,
           "final_token_fraction": 0.244
@@ -224,9 +224,9 @@
         {
           "id": "stress_03",
           "words": 43,
-          "p50_ms": 14.5096,
-          "lexical_p50_ms": 7.9696,
-          "reading_p50_ms": 6.3845,
+          "p50_ms": 15.3845,
+          "lexical_p50_ms": 8.3699,
+          "reading_p50_ms": 6.789,
           "complete": false,
           "furthest_token_fraction": 0.304,
           "final_token_fraction": 0.304
@@ -234,9 +234,9 @@
         {
           "id": "stress_04",
           "words": 49,
-          "p50_ms": 33.4984,
-          "lexical_p50_ms": 10.3396,
-          "reading_p50_ms": 22.8289,
+          "p50_ms": 35.2598,
+          "lexical_p50_ms": 10.7258,
+          "reading_p50_ms": 24.1767,
           "complete": false,
           "furthest_token_fraction": 0.453,
           "final_token_fraction": 0.453
@@ -244,9 +244,9 @@
         {
           "id": "stress_05",
           "words": 45,
-          "p50_ms": 12.6029,
-          "lexical_p50_ms": 7.392,
-          "reading_p50_ms": 5.0073,
+          "p50_ms": 13.1691,
+          "lexical_p50_ms": 7.6824,
+          "reading_p50_ms": 5.3291,
           "complete": false,
           "furthest_token_fraction": 0.146,
           "final_token_fraction": 0.146
@@ -254,9 +254,9 @@
         {
           "id": "stress_06",
           "words": 56,
-          "p50_ms": 23.9722,
-          "lexical_p50_ms": 11.5409,
-          "reading_p50_ms": 12.0637,
+          "p50_ms": 25.0675,
+          "lexical_p50_ms": 12.0495,
+          "reading_p50_ms": 12.8229,
           "complete": false,
           "furthest_token_fraction": 0.407,
           "final_token_fraction": 0.407
@@ -264,9 +264,9 @@
         {
           "id": "stress_07",
           "words": 58,
-          "p50_ms": 18.2411,
-          "lexical_p50_ms": 11.302,
-          "reading_p50_ms": 6.6983,
+          "p50_ms": 19.1198,
+          "lexical_p50_ms": 11.8489,
+          "reading_p50_ms": 7.0969,
           "complete": false,
           "furthest_token_fraction": 0.127,
           "final_token_fraction": 0.127
@@ -274,9 +274,195 @@
         {
           "id": "stress_08",
           "words": 65,
-          "p50_ms": 37.9191,
-          "lexical_p50_ms": 13.858,
-          "reading_p50_ms": 23.4048,
+          "p50_ms": 39.0513,
+          "lexical_p50_ms": 14.4014,
+          "reading_p50_ms": 24.3294,
+          "complete": false,
+          "furthest_token_fraction": 0.544,
+          "final_token_fraction": 0.544
+        }
+      ]
+    },
+    "fast_baseline": {
+      "mean_words": 48.5,
+      "complete_sentences": 0.0,
+      "p50_ms": 16.7372,
+      "lexical_p50_ms": 8.9495,
+      "reading_p50_ms": 4.8063,
+      "p95_ms": 25.4669,
+      "p99_ms": 26.8894,
+      "max_ms": 376.6321,
+      "cases_reaching_75pct_of_tokens": 0.0,
+      "by_length": [
+        {
+          "id": "stress_01",
+          "words": 31,
+          "p50_ms": 14.5948,
+          "lexical_p50_ms": 5.6003,
+          "reading_p50_ms": 8.8649,
+          "complete": false,
+          "furthest_token_fraction": 0.303,
+          "final_token_fraction": 0.303
+        },
+        {
+          "id": "stress_02",
+          "words": 41,
+          "p50_ms": 17.7351,
+          "lexical_p50_ms": 7.3011,
+          "reading_p50_ms": 10.3002,
+          "complete": false,
+          "furthest_token_fraction": 0.289,
+          "final_token_fraction": 0.289
+        },
+        {
+          "id": "stress_03",
+          "words": 43,
+          "p50_ms": 13.1973,
+          "lexical_p50_ms": 8.5045,
+          "reading_p50_ms": 4.5603,
+          "complete": false,
+          "furthest_token_fraction": 0.109,
+          "final_token_fraction": 0.109
+        },
+        {
+          "id": "stress_04",
+          "words": 49,
+          "p50_ms": 19.1659,
+          "lexical_p50_ms": 10.9507,
+          "reading_p50_ms": 8.2051,
+          "complete": false,
+          "furthest_token_fraction": 0.245,
+          "final_token_fraction": 0.245
+        },
+        {
+          "id": "stress_05",
+          "words": 45,
+          "p50_ms": 11.8475,
+          "lexical_p50_ms": 7.7639,
+          "reading_p50_ms": 3.8989,
+          "complete": false,
+          "furthest_token_fraction": 0.125,
+          "final_token_fraction": 0.125
+        },
+        {
+          "id": "stress_06",
+          "words": 56,
+          "p50_ms": 17.0182,
+          "lexical_p50_ms": 12.0539,
+          "reading_p50_ms": 4.7618,
+          "complete": false,
+          "furthest_token_fraction": 0.085,
+          "final_token_fraction": 0.085
+        },
+        {
+          "id": "stress_07",
+          "words": 58,
+          "p50_ms": 16.6805,
+          "lexical_p50_ms": 11.687,
+          "reading_p50_ms": 4.8007,
+          "complete": false,
+          "furthest_token_fraction": 0.111,
+          "final_token_fraction": 0.111
+        },
+        {
+          "id": "stress_08",
+          "words": 65,
+          "p50_ms": 25.4669,
+          "lexical_p50_ms": 14.3221,
+          "reading_p50_ms": 10.8158,
+          "complete": false,
+          "furthest_token_fraction": 0.103,
+          "final_token_fraction": 0.103
+        }
+      ]
+    },
+    "fast_local3_guard": {
+      "mean_words": 48.5,
+      "complete_sentences": 0.0,
+      "p50_ms": 19.137,
+      "lexical_p50_ms": 8.4569,
+      "reading_p50_ms": 10.7216,
+      "p95_ms": 38.7968,
+      "p99_ms": 39.0933,
+      "max_ms": 39.2565,
+      "cases_reaching_75pct_of_tokens": 0.0,
+      "by_length": [
+        {
+          "id": "stress_01",
+          "words": 31,
+          "p50_ms": 16.142,
+          "lexical_p50_ms": 5.3976,
+          "reading_p50_ms": 10.6601,
+          "complete": false,
+          "furthest_token_fraction": 0.394,
+          "final_token_fraction": 0.394
+        },
+        {
+          "id": "stress_02",
+          "words": 41,
+          "p50_ms": 19.5963,
+          "lexical_p50_ms": 7.3924,
+          "reading_p50_ms": 11.988,
+          "complete": false,
+          "furthest_token_fraction": 0.244,
+          "final_token_fraction": 0.244
+        },
+        {
+          "id": "stress_03",
+          "words": 43,
+          "p50_ms": 15.3767,
+          "lexical_p50_ms": 8.2701,
+          "reading_p50_ms": 6.7424,
+          "complete": false,
+          "furthest_token_fraction": 0.304,
+          "final_token_fraction": 0.304
+        },
+        {
+          "id": "stress_04",
+          "words": 49,
+          "p50_ms": 34.2885,
+          "lexical_p50_ms": 10.4193,
+          "reading_p50_ms": 23.5973,
+          "complete": false,
+          "furthest_token_fraction": 0.453,
+          "final_token_fraction": 0.453
+        },
+        {
+          "id": "stress_05",
+          "words": 45,
+          "p50_ms": 13.0023,
+          "lexical_p50_ms": 7.5044,
+          "reading_p50_ms": 5.3002,
+          "complete": false,
+          "furthest_token_fraction": 0.146,
+          "final_token_fraction": 0.146
+        },
+        {
+          "id": "stress_06",
+          "words": 56,
+          "p50_ms": 24.9957,
+          "lexical_p50_ms": 11.6224,
+          "reading_p50_ms": 13.2292,
+          "complete": false,
+          "furthest_token_fraction": 0.407,
+          "final_token_fraction": 0.407
+        },
+        {
+          "id": "stress_07",
+          "words": 58,
+          "p50_ms": 19.1344,
+          "lexical_p50_ms": 11.7107,
+          "reading_p50_ms": 7.1746,
+          "complete": false,
+          "furthest_token_fraction": 0.127,
+          "final_token_fraction": 0.127
+        },
+        {
+          "id": "stress_08",
+          "words": 65,
+          "p50_ms": 39.0933,
+          "lexical_p50_ms": 14.2482,
+          "reading_p50_ms": 24.4161,
           "complete": false,
           "furthest_token_fraction": 0.544,
           "final_token_fraction": 0.544
