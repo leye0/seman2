@@ -162,7 +162,8 @@ class FullStructureSnapTests(unittest.TestCase):
             def parse(self, text):
                 raise AssertionError("L-R fallback must not run on valid snap")
         wrapper=SnappingResearchReader(self.resources,index=self.index,
-                                       fallback=NeverFallback())
+                                       fallback=NeverFallback(),
+                                       max_templates_checked=1)
         with patch("seman_parser.segmentation.build_lattice",return_value=lattice):
             snapped,path=wrapper.parse(lattice.text)
         self.assertEqual(path,"snap")
