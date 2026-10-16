@@ -1,0 +1,73 @@
+[
+  {
+    "kind": "clauses",
+    "target": 20,
+    "status": "OK",
+    "tokens": 23,
+    "parse_ms": 99.423,
+    "rss_mb": 46.6
+  },
+  {
+    "kind": "clauses",
+    "target": 50,
+    "status": "OK",
+    "tokens": 53,
+    "parse_ms": 1656.576,
+    "rss_mb": 111.3
+  },
+  {
+    "kind": "clauses",
+    "target": 100,
+    "status": "TIMEOUT"
+  },
+  {
+    "kind": "prepositions",
+    "target": 20,
+    "status": "OK",
+    "tokens": 20,
+    "parse_ms": 36.613,
+    "rss_mb": 46.7
+  },
+  {
+    "kind": "prepositions",
+    "target": 50,
+    "status": "OK",
+    "tokens": 50,
+    "parse_ms": 815.981,
+    "rss_mb": 74.7
+  },
+  {
+    "kind": "prepositions",
+    "target": 100,
+    "status": "TIMEOUT"
+  },
+  {
+    "kind": "noms",
+    "target": 20,
+    "status": "OK",
+    "tokens": 20,
+    "parse_ms": 11.809,
+    "rss_mb": 46.7
+  },
+  {
+    "kind": "noms",
+    "target": 50,
+    "status": "OK",
+    "tokens": 50,
+    "parse_ms": 106.548,
+    "rss_mb": 46.7
+  },
+  {
+    "kind": "noms",
+    "target": 100,
+    "status": "OK",
+    "tokens": 101,
+    "parse_ms": 972.695,
+    "rss_mb": 87.6
+  },
+  {
+    "kind": "noms",
+    "target": 200,
+    "status": "TIMEOUT"
+  }
+]
