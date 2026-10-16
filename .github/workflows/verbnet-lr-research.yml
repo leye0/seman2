@@ -12,6 +12,10 @@ on:
       - 'superparser/tests/test_verbnet_lr*.py'
   workflow_dispatch:
 
+concurrency:
+  group: verbnet-lr-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
