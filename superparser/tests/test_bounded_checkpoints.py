@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 import unittest
 
 from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader, LazyCheckpointReader
+from research.verbnet_lr.stack_reader import LocalCheckpointReader
 from seman_parser.reading_kernel_compiled import CompiledGrammar, IncrementalReader, ReadNode
 
 
@@ -42,7 +43,7 @@ class Candidate:
     score: float = 1.0
 
 
-def make_reader(tokens_with_categories, budget=0, *, ellipsis=True, passive=True, lazy=False):
+def make_reader(tokens_with_categories, budget=0, *, ellipsis=True, passive=True, lazy=False, stack=False):
     spec = [
         ("np_det_n", "NP", "DET", "N"),
         ("clause_np_vp", "CLAUSE", "NP", "VP"),
@@ -67,7 +68,7 @@ def make_reader(tokens_with_categories, budget=0, *, ellipsis=True, passive=True
     def combine(rule, children):
         return ReadNode(rule.lhs.category, children[0].start, children[-1].end,
                         rule=rule, children=tuple(children))
-    cls = (LazyCheckpointReader if lazy else BoundedCheckpointReader) if budget else IncrementalReader
+    cls = (LocalCheckpointReader if stack else LazyCheckpointReader if lazy else BoundedCheckpointReader) if budget else IncrementalReader
     kw = {"replay_budget": budget} if budget else {}
     return cls(CompiledGrammar(grammar), combine, tokens, lexical, **kw)
 
@@ -130,6 +131,32 @@ class TestBoundedCheckpoints(unittest.TestCase):
         self.assertEqual(lazy.counters["checkpoint_attempts"], 1)
         # No possible structural alternative must be forced by the guide.
         self.assertEqual(lazy.root.rule.rule_id, baseline.root.rule.rule_id)
+
+    def test_local_snapshots_same_recovery_without_repeating_prefix(self):
+        replay = make_reader(self.sentence, budget=3, lazy=True).read()
+        local = make_reader(self.sentence, budget=3, stack=True).read()
+        self.assertTrue(local.complete, (local.reason, local.events))
+        self.assertEqual(local.root.children[1].rule.rule_id, "vp_passive")
+        self.assertLessEqual(local.counters["checkpoint_restores_total"], 3)
+        self.assertGreaterEqual(local.counters["checkpoint_restores_total"], 1)
+        self.assertLess(local.counters["consumptions"], replay.counters["consumptions"])
+        self.assertGreater(local.counters["checkpoint_saves"], 0)
+
+    def test_local_no_forced_alternative_to_invalid_grammar(self):
+        local = make_reader(self.sentence, budget=3, stack=True,
+                            passive=False).read()
+        self.assertFalse(local.complete)
+        self.assertLessEqual(local.counters["checkpoint_restores_total"], 3)
+
+    def test_local_complete_preserves_baseline_tree(self):
+        positive = [("The", ("DET",)), ("door", ("N",)),
+                    ("was", ("AUX-BE",)), (".", ())]
+        base = make_reader(positive).read()
+        local = make_reader(positive, budget=3, stack=True).read()
+        self.assertTrue(base.complete)
+        self.assertTrue(local.complete)
+        self.assertEqual(base.root.rule.rule_id, local.root.rule.rule_id)
+        self.assertEqual(local.counters["checkpoint_restores_total"], 0)
 
     def test_replay_budget_is_strict(self):
         zero = make_reader(self.sentence, budget=0)
