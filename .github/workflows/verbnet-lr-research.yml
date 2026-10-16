@@ -138,5 +138,16 @@ jobs:
                   superparser/research/verbnet_lr/ud_ewt_probe.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
-            git push
+            # A documentation-only commit might land while this job runs.
+            # Rebase generated reports instead of rejecting the push; never
+            # force-push and never discard newer branch commits.
+            for attempt in 1 2 3; do
+              git fetch origin research/verbnet-left-to-right-poc
+              git rebase origin/research/verbnet-left-to-right-poc
+              if git push origin HEAD:research/verbnet-left-to-right-poc; then
+                exit 0
+              fi
+            done
+            echo "Could not publish generated reports after 3 safe retries" >&2
+            exit 1
           fi
