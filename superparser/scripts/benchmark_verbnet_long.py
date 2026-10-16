@@ -37,6 +37,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
         "fast_local3_guard": SemanCompiledReader(resources, stack_checkpoints=True,
                                    checkpoint_budget=3, construction_guard=True,
                                    fast_multiword=True),
+        "early_local3_guard": SemanCompiledReader(resources, stack_checkpoints=True,
+                                   checkpoint_budget=3, construction_guard=True,
+                                   early_construction_guard=True),
     }
     for case in cases:
         for model in modes.values():
