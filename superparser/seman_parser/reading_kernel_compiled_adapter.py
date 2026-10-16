@@ -26,6 +26,7 @@ class CompiledKernelReport:
     reading_ms: float
     materialization_ms: float
     failure_sites: tuple[dict, ...] = ()
+    recovery_trace: tuple = ()
 
     @property
     def complete(self) -> bool:
@@ -49,7 +50,9 @@ class SemanCompiledReader:
                  reachable_checkpoints_only: bool = False,
                  terminal_prefix_preference: bool = False,
                  extension_checkpoints: bool = False,
-                 sparse_memory: Any | None = None):
+                 sparse_memory: Any | None = None,
+                 learn_recoveries: bool = False,
+                 use_recovery_hints: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -77,7 +80,11 @@ class SemanCompiledReader:
         self.extension_checkpoints = extension_checkpoints
         if sparse_memory is not None and not stack_checkpoints:
             raise ValueError('sparse_memory requires stack_checkpoints')
+        if (learn_recoveries or use_recovery_hints) and sparse_memory is None:
+            raise ValueError('recovery learning or hints require sparse_memory')
         self.sparse_memory = sparse_memory
+        self.learn_recoveries = learn_recoveries
+        self.use_recovery_hints = use_recovery_hints
         if early_construction_guard and not construction_guard:
             raise ValueError("early_construction_guard requires construction_guard")
         self.early_construction_guard = early_construction_guard
@@ -115,7 +122,9 @@ class SemanCompiledReader:
                  reachable_checkpoints_only: bool = False,
                  terminal_prefix_preference: bool = False,
                  extension_checkpoints: bool = False,
-                 sparse_memory: Any | None = None):
+                 sparse_memory: Any | None = None,
+                 learn_recoveries: bool = False,
+                 use_recovery_hints: bool = False):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
@@ -132,7 +141,9 @@ class SemanCompiledReader:
                    reachable_checkpoints_only=reachable_checkpoints_only,
                    terminal_prefix_preference=terminal_prefix_preference,
                    extension_checkpoints=extension_checkpoints,
-                   sparse_memory=sparse_memory)
+                   sparse_memory=sparse_memory,
+                   learn_recoveries=learn_recoveries,
+                   use_recovery_hints=use_recovery_hints)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -265,7 +276,9 @@ class SemanCompiledReader:
                 if self.stack_checkpoints else
                 {'replay_budget': self.checkpoint_budget}
                 if (self.checkpoint_budget or self.construction_guard) else {}),
-            **({'sparse_memory': self.sparse_memory}
+            **({'sparse_memory': self.sparse_memory,
+                 'learn_recoveries': self.learn_recoveries,
+                 'use_recovery_hints': self.use_recovery_hints}
                if self.sparse_memory is not None else {}),
         )
         outcome = machine.read()
@@ -275,4 +288,5 @@ class SemanCompiledReader:
         return CompiledKernelReport(
             outcome, item, (t1-t0)*1000, (t2-t1)*1000, (t3-t2)*1000,
             tuple(getattr(machine, "failure_sites", ())),
+            tuple(getattr(machine, "recovery_trace", ())),
         )
