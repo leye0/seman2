@@ -8,6 +8,7 @@ on:
       - '.github/workflows/verbnet-lr-research.yml'
       - 'superparser/research/verbnet_lr/*.py'
       - 'superparser/scripts/probe_feature_witness.py'
+      - 'superparser/scripts/probe_packed_witness.py'
       - 'superparser/tests/test_feature_witness.py'
       - 'superparser/research/verbnet_lr/oracle_cases.jsonl'
       - 'superparser/scripts/benchmark_verbnet_lr.py'
@@ -145,6 +146,13 @@ jobs:
             --max-cases 8 --max-items 500000 --max-seconds 3 \
             --max-expansions 100000 --max-nodes-per-span 8 \
             --report superparser/research/verbnet_lr/feature_witness_report.json
+      - name: Packed Earley feature-witness probes (research only)
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/probe_packed_witness.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-cases 8 --max-items 500000 --max-seconds 3 \
+            --max-expansions 100000 --max-paths-per-item 6 --max-backpointers 6 \
+            --report superparser/research/verbnet_lr/packed_witness_report.json
       - name: Pinned UD EWT out-of-domain length-stratified assessment
         run: |
           PYTHONPATH=superparser python superparser/scripts/benchmark_ud_ewt_lr.py \
@@ -164,6 +172,7 @@ jobs:
                   superparser/research/verbnet_lr/long_stress_report.json \
                   superparser/research/verbnet_lr/grammar_upper_bound.json \
                   superparser/research/verbnet_lr/feature_witness_report.json \
+                  superparser/research/verbnet_lr/packed_witness_report.json \
                   superparser/research/verbnet_lr/ud_ewt_probe.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"

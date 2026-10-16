@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import unittest
 
 from research.verbnet_lr.feature_witness import seek_feature_witness
+from research.verbnet_lr.packed_witness import seek_packed_witness
 from research.verbnet_lr.upper_bound import recognize_upper_bound
 from seman_parser.features import FeatureStructure
 from seman_parser.grammar import GrammarRule, RuleSymbol
@@ -113,6 +114,47 @@ class FeatureWitnessTests(unittest.TestCase):
         answer = seek_feature_witness(gram, lat, max_nodes_per_span=2)
         self.assertEqual(answer["status"], "FOUND", answer)
         self.assertGreater(answer["duplicate_lexical_skips"], 0)
+
+    def test_packed_earley_links_record_lexical_predecessors(self):
+        result = recognize_upper_bound(
+            [("CLAUSE", ("V",))], [{"V"}],
+            collect_backpointers=True)
+        self.assertEqual(result["status"], "ACCEPTED")
+        self.assertEqual(len(result["roots"]), 1)
+        root = result["roots"][0]
+        self.assertEqual(result["backpointers"][root][0][0], "scan")
+
+    def test_packed_feature_witness_proves_real_unification(self):
+        grammar = Grammar((
+            make_rule("clause_np_v", symbol("CLAUSE"), symbol("NP"), symbol("V")),
+            make_rule("np_det_n", symbol("NP", number="?n"),
+                      symbol("DET", number="?n"), symbol("N", number="?n")),
+        ))
+        gram, valid = fixture(grammar, [
+            ("this", [("DET", {"number": "singular"})]),
+            ("dog", [("N", {"number": "singular"})]),
+            ("runs", [("V", {})]),
+        ])
+        positive = seek_packed_witness(gram, valid)
+        self.assertEqual(positive["status"], "FOUND", positive)
+        self.assertEqual(positive["witness"]["children"][0]["rule"], "np_det_n")
+        gram, invalid = fixture(grammar, [
+            ("these", [("DET", {"number": "plural"})]),
+            ("dog", [("N", {"number": "singular"})]),
+            ("runs", [("V", {})]),
+        ])
+        negative = seek_packed_witness(gram, invalid)
+        self.assertEqual(negative["category_status"], "ACCEPTED")
+        self.assertEqual(negative["status"], "UNKNOWN", negative)
+        self.assertIsNone(negative["witness"])
+
+    def test_packed_witness_budget_failure_is_unknown(self):
+        grammar = Grammar((make_rule("clause_v", symbol("CLAUSE"),
+                                    symbol("V")),))
+        gram, lat = fixture(grammar, [("run", [("V", {})])])
+        outcome = seek_packed_witness(gram, lat, max_expansions=1)
+        self.assertEqual(outcome["status"], "UNKNOWN", outcome)
+        self.assertIn("expansion_budget", outcome["reason"])
 
     def test_budget_is_unknown_not_grammatical_rejection(self):
         grammar = Grammar((make_rule("clause_v", symbol("CLAUSE"),
