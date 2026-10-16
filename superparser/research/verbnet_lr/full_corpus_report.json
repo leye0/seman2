@@ -16,7 +16,7 @@
     "frames_unsupported": 42,
     "compiled_frames": 28563,
     "lemmas": 4567,
-    "duration_ms": 1915.264,
+    "duration_ms": 1958.514,
     "peak_compilation_plus_warmup_memory_mb": 35.949,
     "frames_with_exact_link": 23441,
     "frames_lemma_only": 4861,
@@ -243,11 +243,11 @@
   "lookup_benchmark": {
     "calls": 20000,
     "distinct_cases": 250,
-    "rate_calls_per_sec": 145670.16,
-    "median_us": 6.226,
-    "p95_us": 9.132,
-    "p99_us": 12.123,
-    "max_us": 166.361,
+    "rate_calls_per_sec": 127604.62,
+    "median_us": 7.083,
+    "p95_us": 10.439,
+    "p99_us": 15.789,
+    "max_us": 152.735,
     "note": "Isolated warmed index.lookup; excludes recognition, morphology and full parsing."
   },
   "limitations": [
