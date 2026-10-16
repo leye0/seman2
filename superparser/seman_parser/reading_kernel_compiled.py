@@ -223,8 +223,8 @@ class IncrementalReader:
         self.combine = combine
         self.tokens = tuple(tokens)
         self.goal = goal
-        if compiled_lookahead not in (1, 2):
-            raise ValueError('compiled_lookahead must be 1 or 2')
+        if compiled_lookahead not in (1, 2, 3):
+            raise ValueError('compiled_lookahead must be 1, 2 or 3')
         self.compiled_lookahead = compiled_lookahead
         self.pos = 0
         self.events: list[Event] = []
@@ -245,7 +245,7 @@ class IncrementalReader:
         self._min_yield = {}
         self._remaining_tokens = ()
         self._lookahead_cache = {}
-        if self.compiled_lookahead == 2:
+        if self.compiled_lookahead >= 2:
             self._prepare_bounded_lookahead()
         self.active: set[tuple[str, int]] = set()
         self.depth = 0
@@ -328,6 +328,30 @@ class IncrementalReader:
                             return True
         self._lookahead_cache[key] = False
         return False
+
+    def _edge_second_token_witness(self, state: State, at: int) -> bool:
+        """A directly observed next-token transition, no parse or search."""
+        key = ('edge', state.state_id, at)
+        previous = self._lookahead_cache.get(key)
+        if previous is not None:
+            return previous
+        self.count['edge_witness_probes'] += 1
+        found = False
+        for lexical in self._categories(at):
+            for symbol in state.dispatch.get(lexical, ()):
+                if symbol in self.g.nonterminals:
+                    if self._min_yield_available(symbol, at):
+                        found = True
+                        break
+                elif self._lexical_compatible(symbol, state.hints.get(symbol, ()), at=at):
+                    found = True
+                    break
+            if found:
+                break
+        self._lookahead_cache[key] = found
+        if found:
+            self.count['edge_witness_hits'] += 1
+        return found
 
     def _emit(self, action, expected, detail='', *, at=None):
         at = self.pos if at is None else at
@@ -438,7 +462,7 @@ class IncrementalReader:
             direct = self._lexical_compatible(symbol, hints)
             if symbol not in self.g.nonterminals and not direct:
                 continue
-            if (self.compiled_lookahead == 2 and symbol in self.g.nonterminals
+            if (self.compiled_lookahead >= 2 and symbol in self.g.nonterminals
                     and not direct and not self._min_yield_available(symbol, self.pos)):
                 self.count['min_yield_rejections'] += 1
                 continue
@@ -450,11 +474,17 @@ class IncrementalReader:
             support = (self._local_continuation(target, self.pos + 1)
                        if direct else
                        1 if symbol in self.g.nonterminals else 0)
-            if (self.compiled_lookahead == 2 and symbol in self.g.nonterminals
+            if (self.compiled_lookahead >= 2 and symbol in self.g.nonterminals
                     and not direct and self._two_token_witness(symbol, self.pos)):
                 # A productive two-token construction has more evidence than
                 # a one-token ellipsis. This is a *ranking*, not hard pruning.
                 support = 3
+            if (self.compiled_lookahead == 3 and direct
+                    and self._edge_second_token_witness(target, self.pos + 1)):
+                # Reward a direct lexical reading whose compiled rule can
+                # also consume the next word. A passive AUX-BE V competes
+                # with COPULA ADJP using the existing rule scores.
+                support = max(support, 3)
             if support == 0:
                 continue
             distance = min(
