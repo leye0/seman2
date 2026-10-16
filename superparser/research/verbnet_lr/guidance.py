@@ -104,11 +104,13 @@ class VerbNetRanker:
             raise ValueError("max_tokens outside 1..32")
 
     def score(self, candidate: Any, tokens: Sequence[Any],
-              lex: Mapping[int, Mapping[str, Sequence[Any]]], position: int) -> int:
+              lex: Mapping[int, Mapping[str, Sequence[Any]]], position: int,
+              *, events: tuple[str, ...] | None = None) -> int:
         if self.mode == "zero" or getattr(candidate, "category", None) != "V":
             return 0
-        events = project_postverb_events(tokens, lex, position + 1,
-                                          max_tokens=self.max_tokens)
+        if events is None:
+            events = project_postverb_events(tokens, lex, position + 1,
+                                             max_tokens=self.max_tokens)
         # A guessed empty prefix is not syntactic evidence for intransitivity.
         if not events:
             return 0
