@@ -311,6 +311,36 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                 raw[mode].append(record)
                 if repeat == 0:
                     results[mode][case["id"]] = record
+    # The first-pass split report and all-repetition summary must never
+    # silently disagree. Keep outcome stability separate from timing noise:
+    # a successful analysis that disappears on the next repetition is
+    # unreliable, even when averaging hides the lost case.
+    repeat_stability = {}
+    for mode, rows in raw.items():
+        grouped = defaultdict(list)
+        for row in rows:
+            grouped[row["id"]].append(row)
+        first_gold = sum(items[0]["gold"]["pass"] is True
+                         for items in grouped.values())
+        stable_gold = sum(all(item["gold"]["pass"] is True for item in items)
+                          for items in grouped.values())
+        changed_gold = []
+        changed_completion = []
+        changed_trace = []
+        for case_id, items in grouped.items():
+            if len({item["gold"]["pass"] for item in items}) > 1:
+                changed_gold.append(case_id)
+            if len({item["complete"] for item in items}) > 1:
+                changed_completion.append(case_id)
+            if any(item["trace"] != items[0]["trace"] for item in items[1:]):
+                changed_trace.append(case_id)
+        repeat_stability[mode] = {
+            "first_pass_gold": first_gold,
+            "stable_gold": stable_gold,
+            "unstable_gold_ids": sorted(changed_gold),
+            "unstable_completion_ids": sorted(changed_completion),
+            "unstable_trace_ids": sorted(changed_trace),
+        }
     summary = {}
     for mode, entries in raw.items():
         successes = sum(v["complete"] for v in entries)
@@ -470,6 +500,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
+        "repeat_stability": repeat_stability,
         "limits": [
             "A path can stop without proving the sentence ungrammatical",
             "Positive corpus completion is not gold structural accuracy",
