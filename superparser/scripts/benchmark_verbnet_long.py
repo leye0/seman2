@@ -53,6 +53,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                                 checkpoint_budget=3, construction_guard=True,
                                 token_only_lattice=True,
                                 infer_unary_promotions=True),
+        "token_only_guard6": SemanCompiledReader(resources, stack_checkpoints=True,
+                                checkpoint_budget=6, construction_guard=True,
+                                token_only_lattice=True),
     }
     for case in cases:
         for model in modes.values():
@@ -81,6 +84,8 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                     "final_token_fraction":round(min(1,final_at/max(1,token_count)),3),
                     "furthest_fraction":round(min(1,furthest/max(1,token_count)),3),
                     "reason":result.outcome.reason if not result.complete else "",
+                    "restores":result.outcome.counters.get("checkpoint_restores_total",0),
+                    "max_stack_depth":result.outcome.counters.get("max_stack_depth",0),
                 })
     return {
         "schema":1,
@@ -97,6 +102,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                 "p95_ms":quant([x["total_ms"] for x in vals],0.95),
                 "p99_ms":quant([x["total_ms"] for x in vals],0.99),
                 "max_ms":max(x["total_ms"] for x in vals),
+                "total_restores":sum(x["restores"] for x in vals),
+                "max_restores":max(x["restores"] for x in vals),
+                "p50_restores":quant([x["restores"] for x in vals],0.5),
                 "cases_reaching_75pct_of_tokens":sum(
                     x["final_token_fraction"]>=0.75 for x in vals)/repetitions,
                 "by_length":[
@@ -106,6 +114,8 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                      "reading_p50_ms":quant([x["reading_ms"] for x in vals if x["id"]==case["id"]],0.5),
                      "complete":next(x["complete"] for x in vals if x["id"]==case["id"]),
                      "first_reason":next(x["reason"] for x in vals if x["id"]==case["id"]),
+                     "max_restores":max(x["restores"] for x in vals
+                                        if x["id"]==case["id"]),
                      "failure_mode":(
                          "early_stop" if max(x["final_token_fraction"] for x in vals
                                               if x["id"]==case["id"]) < 0.75
