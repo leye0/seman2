@@ -49,6 +49,10 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
         "token_cache_guard3": SemanCompiledReader(resources, stack_checkpoints=True,
                                 checkpoint_budget=3, construction_guard=True,
                                 token_only_lattice=True, fast_multiword=True),
+        "promoted_guard3": SemanCompiledReader(resources, stack_checkpoints=True,
+                                checkpoint_budget=3, construction_guard=True,
+                                token_only_lattice=True,
+                                infer_unary_promotions=True),
     }
     for case in cases:
         for model in modes.values():
