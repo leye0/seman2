@@ -188,6 +188,14 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "AD_token_only_guard3": SemanCompiledReader(
             resources, stack_checkpoints=True, checkpoint_budget=3,
             construction_guard=True, token_only_lattice=True),
+        "AE_token_cache_baseline": SemanCompiledReader(
+            resources, token_only_lattice=True, fast_multiword=True),
+        "AF_token_cache_guard1": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=1,
+            construction_guard=True, token_only_lattice=True, fast_multiword=True),
+        "AG_token_cache_guard3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True, fast_multiword=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -341,6 +349,16 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             if a["complete"] != b["complete"] or a["gold"] != b["gold"]:
                 raise AssertionError(
                     f"single-token lattice changed guarded outcome {reference}: {case['id']}")
+    for reference, cached in (
+        ("A_baseline", "AE_token_cache_baseline"),
+        ("S_guard1", "AF_token_cache_guard1"),
+        ("U_guard3", "AG_token_cache_guard3"),
+    ):
+        for case in cases:
+            a = results[reference][case["id"]]
+            b = results[cached][case["id"]]
+            if a["complete"] != b["complete"] or a["gold"] != b["gold"]:
+                raise AssertionError(f"token cache changed grammatical outcome {case['id']}")
     diffs = {}
     for mode in modes[1:]:
         changed = []
