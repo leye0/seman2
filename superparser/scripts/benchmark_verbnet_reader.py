@@ -163,6 +163,14 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             resources, checkpoint_budget=2, stack_checkpoints=True, construction_guard=True),
         "U_guard3": SemanCompiledReader(
             resources, checkpoint_budget=3, stack_checkpoints=True, construction_guard=True),
+        "V_fast_baseline": SemanCompiledReader(
+            resources, fast_multiword=True),
+        "W_fast_guard1": SemanCompiledReader(
+            resources, checkpoint_budget=1, stack_checkpoints=True,
+            construction_guard=True, fast_multiword=True),
+        "X_fast_guard3": SemanCompiledReader(
+            resources, checkpoint_budget=3, stack_checkpoints=True,
+            construction_guard=True, fast_multiword=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -292,6 +300,11 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             raise AssertionError(
                 f"stack0 semantic divergence for {case['id']}: "
                 f"{original['reason']} -> {control['reason']}")
+    for case in cases:
+        original=results["A_baseline"][case["id"]]
+        fast=results["V_fast_baseline"][case["id"]]
+        if original["complete"] != fast["complete"] or original["trace"] != fast["trace"]:
+            raise AssertionError("fast lexical lattice not equivalent: " + case["id"])
     diffs = {}
     for mode in modes[1:]:
         changed = []
@@ -350,7 +363,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "per_split": split_metrics,
         "baseline_verbnet_tree_evidence_by_case": baseline_evidence,
         "baseline_failure_diagnostics": failures,
-        "method": "A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S/T/U compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
+        "method": "A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S/T/U/V/W/X compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
