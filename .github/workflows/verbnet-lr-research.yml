@@ -16,6 +16,7 @@ on:
       - 'superparser/tests/test_verbnet_guidance.py'
       - 'superparser/tests/test_verbnet_tree_evidence.py'
       - 'superparser/tests/test_compiled_lookahead2.py'
+      - 'superparser/tests/test_bounded_checkpoints.py'
   workflow_dispatch:
 
 concurrency:
@@ -42,6 +43,7 @@ jobs:
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_guidance.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_tree_evidence.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_compiled_lookahead2.py' -v
+          PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_bounded_checkpoints.py' -v
       - name: Fetch WordNet 3.0 dictionary and sense index
         run: |
           python - <<'PY'
