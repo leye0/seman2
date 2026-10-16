@@ -18,7 +18,7 @@ OPTIONS = (
     "checkpoint_budget", "stack_checkpoints", "construction_guard",
     "fast_multiword", "early_construction_guard", "token_only_lattice",
     "infer_unary_promotions", "reduce_checkpoints", "parent_follow_reduce",
-    "reduce_follow_only",
+    "reduce_follow_only", "reachable_checkpoints_only",
 )
 
 
@@ -69,6 +69,7 @@ class BenchmarkConfigurationTests(unittest.TestCase):
             "infer_unary_promotions": True,
             "reduce_checkpoints": True,
             "reduce_follow_only": True,
+            "reachable_checkpoints_only": True,
         }
         with (
             patch("seman_parser.reading_kernel_compiled_adapter.ParserResources.from_dir",

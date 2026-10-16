@@ -50,7 +50,8 @@ class Candidate:
 
 
 def make_reader(reduce_checkpoints, budget=2, *, parent_follow_reduce=False,
-                reduce_follow_only=False, unrelated_root_edge=False):
+                reduce_follow_only=False, unrelated_root_edge=False,
+                reachable_checkpoints_only=False):
     productions = [
         ("clause_svo", "CLAUSE", ("NP", "VP", "NP")),
         ("np_name", "NP", ("PROPER-NOUN",)),
@@ -84,7 +85,8 @@ def make_reader(reduce_checkpoints, budget=2, *, parent_follow_reduce=False,
 
     kw = dict(replay_budget=budget, reduce_checkpoints=reduce_checkpoints,
               parent_follow_reduce=parent_follow_reduce,
-              reduce_follow_only=reduce_follow_only)
+              reduce_follow_only=reduce_follow_only,
+              reachable_checkpoints_only=reachable_checkpoints_only)
     return LocalCheckpointReader(CompiledGrammar(grammar), combine,
                                  tokens, lex, **kw)
 
@@ -117,14 +119,16 @@ class ReduceVersusExtendTests(unittest.TestCase):
         # CLAUSE starts with either NP or V in this grammar; the actual
         # first word has only a PROPER-NOUN lexical candidate (hence NP).
         # Recording an alternative V at that point cannot help recovery.
-        result = make_reader(False, budget=1, unrelated_root_edge=True).read()
+        result = make_reader(False, budget=1, unrelated_root_edge=True,
+                             reachable_checkpoints_only=True).read()
         self.assertFalse(result.complete)
         self.assertGreater(result.counters["checkpoint_unavailable_skips"], 0)
         self.assertEqual(result.counters.get("checkpoint_saves", 0), 0)
         self.assertEqual(result.counters["checkpoint_restores_total"], 0)
         # Real reduce-vs-extend ambiguity in the same sentence must survive.
         recovered = make_reader(True, budget=3,
-                                unrelated_root_edge=True).read()
+                                unrelated_root_edge=True,
+                                reachable_checkpoints_only=True).read()
         self.assertTrue(recovered.complete, recovered.reason)
         self.assertEqual(recovered.root.children[1].rule.rule_id, "vp_v")
         self.assertGreater(recovered.counters["checkpoint_forced_reductions"], 0)
