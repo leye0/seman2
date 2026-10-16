@@ -32,8 +32,9 @@ class TestVerbNetLR(unittest.TestCase):
         (path / "give.xml").write_text(XML, encoding="utf-8")
         (path / "help.xml").write_text(HELP, encoding="utf-8")
         self.senses = path / "index.sense"
-        self.senses.write_text("give%2:40:00 01234567 1 0\nlend%2:40:00 02345678 1 0\n", encoding="utf-8")
+        self.senses.write_text("give%2:40:00:: 01234567 1 0\nlend%2:40:00:: 02345678 1 0\n", encoding="utf-8")
         self.frames, self.stats = compile_directory(path, self.senses)
+        self.assertGreaterEqual(self.stats["members_exact"], 2)
         self.index = PrefixIndex(self.frames)
 
     def test_inherited_frames_do_not_flow_downwards(self):
@@ -82,7 +83,7 @@ class TestLexicalAdapter(unittest.TestCase):
             path = Path(folder)
             (path / "give.xml").write_text(XML)
             sense_index = path / "index.sense"
-            sense_index.write_text("give%2:40:00 01234567 1 0\nlend%2:40:00 02345678 1 0\n")
+            sense_index.write_text("give%2:40:00:: 01234567 1 0\nlend%2:40:00:: 02345678 1 0\n")
             frames, _ = compile_directory(path, sense_index)
             index = PrefixIndex(frames)
             c = SimpleNamespace(category="V", lemma="give", surface="gave",
