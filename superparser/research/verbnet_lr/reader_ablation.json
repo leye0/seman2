@@ -869,10 +869,10 @@
       },
       "validation": {
         "cases": 50,
-        "complete": 36,
-        "explicit_gold_passed": 24,
-        "verbnet_vp_observations": 31,
-        "attested_vp_observations": 25
+        "complete": 35,
+        "explicit_gold_passed": 23,
+        "verbnet_vp_observations": 29,
+        "attested_vp_observations": 23
       }
     },
     "AM_parent_follow1": {
@@ -4594,14 +4594,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.52643,
-        "p95": 9.89888,
-        "p99": 10.96003
+        "p50": 3.65402,
+        "p95": 7.52229,
+        "p99": 8.43571
       },
       "reading_ms": {
-        "p50": 3.17503,
-        "p95": 7.99876,
-        "p99": 8.42431
+        "p50": 2.58608,
+        "p95": 6.22848,
+        "p99": 6.63773
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4716,14 +4716,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.57637,
-        "p95": 9.87767,
-        "p99": 11.4523
+        "p50": 3.7126,
+        "p95": 7.77008,
+        "p99": 8.76112
       },
       "reading_ms": {
-        "p50": 3.30503,
-        "p95": 8.1776,
-        "p99": 9.07126
+        "p50": 2.64197,
+        "p95": 6.38976,
+        "p99": 7.0011
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4838,14 +4838,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.62159,
-        "p95": 10.08792,
-        "p99": 11.46552
+        "p50": 3.67472,
+        "p95": 7.82276,
+        "p99": 8.93415
       },
       "reading_ms": {
-        "p50": 3.25226,
-        "p95": 8.2916,
-        "p99": 8.94088
+        "p50": 2.60675,
+        "p95": 6.47343,
+        "p99": 7.1371
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4958,14 +4958,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.11523,
-        "p95": 11.76265,
-        "p99": 12.88549
+        "p50": 5.03874,
+        "p95": 9.22951,
+        "p99": 10.31804
       },
       "reading_ms": {
-        "p50": 4.79652,
-        "p95": 9.60919,
-        "p99": 11.246
+        "p50": 3.94626,
+        "p95": 7.7074,
+        "p99": 8.93998
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -5064,14 +5064,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.31013,
-        "p95": 12.02055,
-        "p99": 13.55598
+        "p50": 5.11585,
+        "p95": 9.43829,
+        "p99": 10.27586
       },
       "reading_ms": {
-        "p50": 4.92452,
-        "p95": 9.86099,
-        "p99": 11.56694
+        "p50": 3.98067,
+        "p95": 7.86385,
+        "p99": 8.9792
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -5172,14 +5172,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.48821,
-        "p95": 11.49838,
-        "p99": 12.25457
+        "p50": 4.32758,
+        "p95": 8.8543,
+        "p99": 9.5652
       },
       "reading_ms": {
-        "p50": 4.22472,
-        "p95": 9.47412,
-        "p99": 10.12094
+        "p50": 3.4217,
+        "p95": 7.44678,
+        "p99": 8.02149
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -5276,14 +5276,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.53073,
-        "p95": 11.92694,
-        "p99": 12.85326
+        "p50": 4.4748,
+        "p95": 9.28825,
+        "p99": 9.96331
       },
       "reading_ms": {
-        "p50": 4.29608,
-        "p95": 9.75436,
-        "p99": 10.7776
+        "p50": 3.46019,
+        "p95": 7.78228,
+        "p99": 8.52572
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -5380,14 +5380,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.12997,
-        "p95": 16.5886,
-        "p99": 20.45412
+        "p50": 5.01362,
+        "p95": 13.04919,
+        "p99": 15.46216
       },
       "reading_ms": {
-        "p50": 4.77236,
-        "p95": 14.53535,
-        "p99": 17.80171
+        "p50": 3.83509,
+        "p95": 11.5762,
+        "p99": 13.68335
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -5486,14 +5486,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 6.94498,
-        "p95": 27.63472,
-        "p99": 36.03736
+        "p50": 5.66564,
+        "p95": 21.19805,
+        "p99": 29.19331
       },
       "reading_ms": {
-        "p50": 5.56719,
-        "p95": 25.87723,
-        "p99": 33.63568
+        "p50": 4.46793,
+        "p95": 19.59574,
+        "p99": 27.38668
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5591,14 +5591,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 7.1683,
-        "p95": 26.56997,
-        "p99": 36.50034
+        "p50": 5.79948,
+        "p95": 22.90719,
+        "p99": 28.78481
       },
       "reading_ms": {
-        "p50": 5.7385,
-        "p95": 24.24376,
-        "p99": 33.95126
+        "p50": 4.69606,
+        "p95": 21.59239,
+        "p99": 26.95048
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5696,14 +5696,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.20522,
-        "p95": 16.27535,
-        "p99": 18.42469
+        "p50": 4.89646,
+        "p95": 12.6363,
+        "p99": 15.09235
       },
       "reading_ms": {
-        "p50": 4.65869,
-        "p95": 14.20248,
-        "p99": 16.10086
+        "p50": 3.82581,
+        "p95": 11.21991,
+        "p99": 13.07297
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -5764,7 +5764,7 @@
         },
         "predicate": {
           "evaluated": 128,
-          "passed": 108
+          "passed": 109
         },
         "required_rules": {
           "evaluated": 128,
@@ -5776,7 +5776,7 @@
         },
         "lexical_pos": {
           "evaluated": 128,
-          "passed": 120
+          "passed": 119
         },
         "constituents": {
           "evaluated": 128,
@@ -5802,17 +5802,17 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 6.91392,
-        "p95": 26.57712,
-        "p99": 34.48868
+        "p50": 5.56636,
+        "p95": 22.27984,
+        "p99": 27.68586
       },
       "reading_ms": {
-        "p50": 5.53092,
-        "p95": 23.92796,
-        "p99": 32.20655
+        "p50": 4.45685,
+        "p95": 20.95158,
+        "p99": 25.88409
       },
-      "mean_unifications": 6.925,
-      "mean_events": 34.375,
+      "mean_unifications": 6.954,
+      "mean_events": 34.492,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -5820,9 +5820,9 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 370,
-      "checkpoint_attempts": 610,
-      "checkpoint_options_seen": 4668,
+      "checkpoint_replays": 372,
+      "checkpoint_attempts": 612,
+      "checkpoint_options_seen": 4686,
       "construction_rejections": 0,
       "construction_early_rejections": 0,
       "checkpoint_saves": 0,
@@ -5907,14 +5907,14 @@
       },
       "coverage_percent": 49.17,
       "total_ms": {
-        "p50": 6.66961,
-        "p95": 23.15391,
-        "p99": 28.05107
+        "p50": 5.42718,
+        "p95": 18.71662,
+        "p99": 22.23394
       },
       "reading_ms": {
-        "p50": 5.20096,
-        "p95": 21.42579,
-        "p99": 25.8818
+        "p50": 4.20236,
+        "p95": 17.41098,
+        "p99": 20.17592
       },
       "mean_unifications": 5.933,
       "mean_events": 29.142,
@@ -6014,14 +6014,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.35889,
-        "p95": 10.55177,
-        "p99": 11.26273
+        "p50": 4.1711,
+        "p95": 8.11686,
+        "p99": 8.86039
       },
       "reading_ms": {
-        "p50": 3.92317,
-        "p95": 8.55208,
-        "p99": 8.88337
+        "p50": 3.15146,
+        "p95": 6.69214,
+        "p99": 6.93939
       },
       "mean_unifications": 4.108,
       "mean_events": 17.008,
@@ -6037,8 +6037,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 0,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2110,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -6120,14 +6120,14 @@
       },
       "coverage_percent": 50.83,
       "total_ms": {
-        "p50": 5.7445,
-        "p95": 11.10213,
-        "p99": 12.71797
+        "p50": 4.54856,
+        "p95": 8.44199,
+        "p99": 9.69871
       },
       "reading_ms": {
-        "p50": 4.28647,
-        "p95": 8.81704,
-        "p99": 10.96335
+        "p50": 3.36205,
+        "p95": 6.9315,
+        "p99": 8.29096
       },
       "mean_unifications": 4.567,
       "mean_events": 19.125,
@@ -6143,8 +6143,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 0,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2328,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1130,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -6191,7 +6191,7 @@
         },
         "predicate": {
           "evaluated": 136,
-          "passed": 108
+          "passed": 109
         },
         "required_rules": {
           "evaluated": 136,
@@ -6203,7 +6203,7 @@
         },
         "lexical_pos": {
           "evaluated": 136,
-          "passed": 128
+          "passed": 127
         },
         "constituents": {
           "evaluated": 136,
@@ -6229,17 +6229,17 @@
       },
       "coverage_percent": 56.67,
       "total_ms": {
-        "p50": 5.9393,
-        "p95": 11.85839,
-        "p99": 15.37402
+        "p50": 4.68822,
+        "p95": 9.01153,
+        "p99": 11.62883
       },
       "reading_ms": {
-        "p50": 4.50223,
-        "p95": 9.65082,
-        "p99": 12.96841
+        "p50": 3.57057,
+        "p95": 7.46345,
+        "p99": 9.75808
       },
-      "mean_unifications": 5.192,
-      "mean_events": 21.133,
+      "mean_unifications": 5.204,
+      "mean_events": 21.163,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -6247,13 +6247,13 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 392,
-      "checkpoint_attempts": 632,
+      "checkpoint_replays": 394,
+      "checkpoint_attempts": 634,
       "checkpoint_options_seen": 0,
       "construction_rejections": 0,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2514,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1240,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -6337,14 +6337,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.52228,
-        "p95": 9.90377,
-        "p99": 11.06489
+        "p50": 3.68023,
+        "p95": 7.60917,
+        "p99": 8.53214
       },
       "reading_ms": {
-        "p50": 3.23303,
-        "p95": 8.05121,
-        "p99": 8.6633
+        "p50": 2.59669,
+        "p95": 6.40031,
+        "p99": 6.74299
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -6459,14 +6459,14 @@
       },
       "coverage_percent": 35.83,
       "total_ms": {
-        "p50": 4.6494,
-        "p95": 10.00753,
-        "p99": 11.09332
+        "p50": 3.69199,
+        "p95": 7.60077,
+        "p99": 8.41839
       },
       "reading_ms": {
-        "p50": 3.23865,
-        "p95": 8.17718,
-        "p99": 8.65252
+        "p50": 2.62353,
+        "p95": 6.40354,
+        "p99": 6.65641
       },
       "mean_unifications": 3.508,
       "mean_events": 14.225,
@@ -6582,14 +6582,14 @@
       },
       "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.43735,
-        "p95": 10.61355,
-        "p99": 11.38546
+        "p50": 4.20223,
+        "p95": 7.88408,
+        "p99": 8.66407
       },
       "reading_ms": {
-        "p50": 4.02136,
-        "p95": 8.60942,
-        "p99": 9.10066
+        "p50": 3.15507,
+        "p95": 6.77975,
+        "p99": 6.92856
       },
       "mean_unifications": 4.108,
       "mean_events": 17,
@@ -6605,8 +6605,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2110,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -6689,14 +6689,14 @@
       },
       "coverage_percent": 48.33,
       "total_ms": {
-        "p50": 5.76059,
-        "p95": 11.09892,
-        "p99": 12.45765
+        "p50": 4.47144,
+        "p95": 8.48479,
+        "p99": 9.83681
       },
       "reading_ms": {
-        "p50": 4.28698,
-        "p95": 8.9575,
-        "p99": 10.76697
+        "p50": 3.4044,
+        "p95": 7.07449,
+        "p99": 8.27098
       },
       "mean_unifications": 4.583,
       "mean_events": 19.175,
@@ -6712,8 +6712,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 6,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2334,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1134,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -6800,14 +6800,14 @@
       },
       "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 6.03983,
-        "p95": 11.73563,
-        "p99": 15.08989
+        "p50": 4.72164,
+        "p95": 8.90454,
+        "p99": 11.66741
       },
       "reading_ms": {
-        "p50": 4.72713,
-        "p95": 9.65841,
-        "p99": 12.60479
+        "p50": 3.66977,
+        "p95": 7.36909,
+        "p99": 9.79964
       },
       "mean_unifications": 5.25,
       "mean_events": 21.308,
@@ -6823,8 +6823,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 6,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2532,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1248,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -6908,14 +6908,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.52088,
-        "p95": 9.75663,
-        "p99": 10.72607
+        "p50": 3.64622,
+        "p95": 7.63404,
+        "p99": 8.45454
       },
       "reading_ms": {
-        "p50": 3.24053,
-        "p95": 7.83608,
-        "p99": 8.39358
+        "p50": 2.57201,
+        "p95": 6.29863,
+        "p99": 6.63202
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -7030,14 +7030,14 @@
       },
       "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.32251,
-        "p95": 10.2105,
-        "p99": 11.29825
+        "p50": 4.15063,
+        "p95": 8.17425,
+        "p99": 8.68317
       },
       "reading_ms": {
-        "p50": 3.9063,
-        "p95": 8.49958,
-        "p99": 9.23179
+        "p50": 3.14496,
+        "p95": 6.73214,
+        "p99": 7.03118
       },
       "mean_unifications": 4.108,
       "mean_events": 17,
@@ -7053,8 +7053,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2110,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -7137,14 +7137,14 @@
       },
       "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 6.02343,
-        "p95": 11.51207,
-        "p99": 14.95759
+        "p50": 4.6996,
+        "p95": 8.86024,
+        "p99": 11.72428
       },
       "reading_ms": {
-        "p50": 4.75087,
-        "p95": 9.60668,
-        "p99": 12.52898
+        "p50": 3.64098,
+        "p95": 7.44147,
+        "p99": 9.91481
       },
       "mean_unifications": 5.25,
       "mean_events": 21.308,
@@ -7160,8 +7160,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 6,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2532,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1248,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -7245,14 +7245,14 @@
       },
       "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.35721,
-        "p95": 10.45777,
-        "p99": 11.36152
+        "p50": 4.28175,
+        "p95": 8.39973,
+        "p99": 8.72065
       },
       "reading_ms": {
-        "p50": 4.00255,
-        "p95": 8.6979,
-        "p99": 9.23771
+        "p50": 3.16996,
+        "p95": 6.763,
+        "p99": 7.08693
       },
       "mean_unifications": 4.092,
       "mean_events": 16.983,
@@ -7268,8 +7268,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 0,
       "construction_early_rejections": 4,
-      "checkpoint_saves": 2110,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -7352,14 +7352,14 @@
       },
       "coverage_percent": 48.33,
       "total_ms": {
-        "p50": 5.74757,
-        "p95": 11.28601,
-        "p99": 12.99952
+        "p50": 4.53139,
+        "p95": 8.49777,
+        "p99": 10.02973
       },
       "reading_ms": {
-        "p50": 4.39204,
-        "p95": 9.12858,
-        "p99": 11.29794
+        "p50": 3.41558,
+        "p95": 7.07658,
+        "p99": 8.77018
       },
       "mean_unifications": 4.558,
       "mean_events": 19.15,
@@ -7375,8 +7375,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 0,
       "construction_early_rejections": 6,
-      "checkpoint_saves": 2334,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1134,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -7463,14 +7463,14 @@
       },
       "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 6.13234,
-        "p95": 11.85718,
-        "p99": 15.00981
+        "p50": 4.76894,
+        "p95": 9.03652,
+        "p99": 11.86325
       },
       "reading_ms": {
-        "p50": 4.77912,
-        "p95": 9.61761,
-        "p99": 12.68029
+        "p50": 3.76636,
+        "p95": 7.57026,
+        "p99": 9.98673
       },
       "mean_unifications": 5.225,
       "mean_events": 21.283,
@@ -7486,8 +7486,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 0,
       "construction_early_rejections": 6,
-      "checkpoint_saves": 2532,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1248,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -7571,14 +7571,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.41578,
-        "p95": 9.43575,
-        "p99": 11.02191
+        "p50": 3.54354,
+        "p95": 7.40277,
+        "p99": 8.38453
       },
       "reading_ms": {
-        "p50": 3.27225,
-        "p95": 7.85317,
-        "p99": 8.52358
+        "p50": 2.55401,
+        "p95": 6.26939,
+        "p99": 6.65879
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -7693,14 +7693,14 @@
       },
       "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.33191,
-        "p95": 10.07235,
-        "p99": 11.54644
+        "p50": 4.12821,
+        "p95": 8.01603,
+        "p99": 8.68447
       },
       "reading_ms": {
-        "p50": 3.99748,
-        "p95": 8.6341,
-        "p99": 9.15445
+        "p50": 3.09285,
+        "p95": 6.67758,
+        "p99": 7.03097
       },
       "mean_unifications": 4.108,
       "mean_events": 17,
@@ -7716,8 +7716,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2110,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -7800,14 +7800,14 @@
       },
       "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 5.99043,
-        "p95": 11.44836,
-        "p99": 14.67682
+        "p50": 4.60655,
+        "p95": 8.85732,
+        "p99": 11.71331
       },
       "reading_ms": {
-        "p50": 4.79741,
-        "p95": 9.47634,
-        "p99": 12.39552
+        "p50": 3.6483,
+        "p95": 7.50469,
+        "p99": 9.8988
       },
       "mean_unifications": 5.25,
       "mean_events": 21.308,
@@ -7823,8 +7823,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 6,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2532,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1248,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -7908,14 +7908,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.48748,
-        "p95": 9.35926,
-        "p99": 10.69318
+        "p50": 3.62619,
+        "p95": 7.40329,
+        "p99": 8.39249
       },
       "reading_ms": {
-        "p50": 3.30933,
-        "p95": 7.83195,
-        "p99": 8.31177
+        "p50": 2.55843,
+        "p95": 6.24618,
+        "p99": 6.70355
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -8030,14 +8030,14 @@
       },
       "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.32078,
-        "p95": 10.3044,
-        "p99": 11.17933
+        "p50": 4.08734,
+        "p95": 7.86944,
+        "p99": 8.49465
       },
       "reading_ms": {
-        "p50": 4.02492,
-        "p95": 8.57609,
-        "p99": 9.32675
+        "p50": 3.1415,
+        "p95": 6.75551,
+        "p99": 6.94704
       },
       "mean_unifications": 4.108,
       "mean_events": 17,
@@ -8053,8 +8053,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2110,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -8137,14 +8137,14 @@
       },
       "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 5.93064,
-        "p95": 11.66211,
-        "p99": 14.85998
+        "p50": 4.70814,
+        "p95": 8.78843,
+        "p99": 11.6415
       },
       "reading_ms": {
-        "p50": 4.67704,
-        "p95": 9.61044,
-        "p99": 12.6082
+        "p50": 3.64837,
+        "p95": 7.44398,
+        "p99": 9.9003
       },
       "mean_unifications": 5.25,
       "mean_events": 21.308,
@@ -8160,8 +8160,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 6,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2532,
-      "checkpoint_peak_saved_max": 21,
+      "checkpoint_saves": 1248,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -8245,14 +8245,14 @@
       },
       "coverage_percent": 35.83,
       "total_ms": {
-        "p50": 4.55382,
-        "p95": 9.57298,
-        "p99": 11.09858
+        "p50": 3.6333,
+        "p95": 7.67015,
+        "p99": 8.42215
       },
       "reading_ms": {
-        "p50": 3.29309,
-        "p95": 8.15972,
-        "p99": 8.70982
+        "p50": 2.69861,
+        "p95": 6.39225,
+        "p99": 6.76742
       },
       "mean_unifications": 3.542,
       "mean_events": 14.283,
@@ -8369,14 +8369,14 @@
       },
       "coverage_percent": 44.17,
       "total_ms": {
-        "p50": 5.22003,
-        "p95": 10.37052,
-        "p99": 11.61278
+        "p50": 4.12004,
+        "p95": 8.07063,
+        "p99": 8.60291
       },
       "reading_ms": {
-        "p50": 3.92684,
-        "p95": 8.64878,
-        "p99": 9.17414
+        "p50": 3.14112,
+        "p95": 6.71803,
+        "p99": 7.07146
       },
       "mean_unifications": 4.2,
       "mean_events": 17.175,
@@ -8392,8 +8392,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2130,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1006,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -8476,14 +8476,14 @@
       },
       "coverage_percent": 55.0,
       "total_ms": {
-        "p50": 6.00478,
-        "p95": 11.59701,
-        "p99": 15.00084
+        "p50": 4.71331,
+        "p95": 8.90066,
+        "p99": 11.82404
       },
       "reading_ms": {
-        "p50": 4.74567,
-        "p95": 9.70686,
-        "p99": 12.62805
+        "p50": 3.69949,
+        "p95": 7.43116,
+        "p99": 10.04912
       },
       "mean_unifications": 5.375,
       "mean_events": 21.55,
@@ -8499,8 +8499,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 6,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2560,
-      "checkpoint_peak_saved_max": 22,
+      "checkpoint_saves": 1250,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_5_John": 2,
         "unconsumed_6_Emma": 2,
@@ -8584,14 +8584,14 @@
       },
       "coverage_percent": 48.33,
       "total_ms": {
-        "p50": 5.35877,
-        "p95": 10.43624,
-        "p99": 11.3265
+        "p50": 4.28466,
+        "p95": 7.97875,
+        "p99": 8.65932
       },
       "reading_ms": {
-        "p50": 4.07136,
-        "p95": 8.39257,
-        "p99": 8.95684
+        "p50": 3.26294,
+        "p95": 6.60821,
+        "p99": 7.00097
       },
       "mean_unifications": 4.383,
       "mean_events": 17.375,
@@ -8607,8 +8607,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2156,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1148,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 8,
         "expected_continuation_N_at_4_state_438": 8,
@@ -8644,64 +8644,64 @@
     },
     "AL_reduce_guard3": {
       "evaluations": 240,
-      "complete": 156,
+      "complete": 154,
       "complete_but_nonconforming": 50,
       "gold_by_family": {
         "voice": {
-          "evaluated": 156,
-          "passed": 146
+          "evaluated": 154,
+          "passed": 144
         },
         "predicate": {
-          "evaluated": 156,
-          "passed": 132
+          "evaluated": 154,
+          "passed": 130
         },
         "required_rules": {
-          "evaluated": 156,
-          "passed": 122
+          "evaluated": 154,
+          "passed": 120
         },
         "forbidden_rules": {
-          "evaluated": 156,
-          "passed": 154
+          "evaluated": 154,
+          "passed": 152
         },
         "lexical_pos": {
-          "evaluated": 156,
-          "passed": 148
+          "evaluated": 154,
+          "passed": 146
         },
         "constituents": {
-          "evaluated": 156,
-          "passed": 148
+          "evaluated": 154,
+          "passed": 146
         }
       },
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 106,
+      "explicit_gold_assertion_passed": 104,
       "verbnet_tree_evidence": {
-        "vp_observations": 128,
+        "vp_observations": 124,
         "status": {
-          "ATTESTED": 104,
+          "ATTESTED": 100,
           "UNKNOWN": 20,
           "PREFIX": 4
         },
         "confidence": {
-          "sense_verified": 106,
+          "sense_verified": 102,
           "none": 20,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 86,
+        "attested_with_explicit_gold_pass": 82,
         "attested_with_explicit_gold_fail": 18
       },
-      "coverage_percent": 65.0,
+      "coverage_percent": 64.17,
       "total_ms": {
-        "p50": 6.04705,
-        "p95": 11.29905,
-        "p99": 14.95458
+        "p50": 4.81316,
+        "p95": 8.72189,
+        "p99": 12.02205
       },
       "reading_ms": {
-        "p50": 4.7848,
-        "p95": 9.55911,
-        "p99": 12.54922
+        "p50": 3.81967,
+        "p95": 7.42857,
+        "p99": 10.17808
       },
-      "mean_unifications": 5.963,
-      "mean_events": 21.512,
+      "mean_unifications": 5.912,
+      "mean_events": 21.379,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -8714,8 +8714,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 8,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2511,
-      "checkpoint_peak_saved_max": 22,
+      "checkpoint_saves": 1358,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_6_Emma": 2,
         "unconsumed_6_Alice": 2,
@@ -8739,8 +8739,9 @@
         "expected_continuation_NP_at_6_state_67": 2,
         "expected_continuation_WH-NOM_at_2_state_477": 2,
         "expected_continuation_N_at_3_state_438": 4,
-        "unconsumed_2_the": 4,
+        "unification_failed_VP_at_2": 3,
         "expected_continuation_CLAUSE_at_8_state_261": 2,
+        "unification_failed_VP_at_4": 2,
         "unification_failed_CLAUSE_at_6": 2,
         "expected_continuation_ADJ_at_1_state_446": 6,
         "expected_continuation_NP_at_2_state_0": 2,
@@ -8749,7 +8750,8 @@
         "expected_continuation_N_at_1_state_438": 2,
         "expected_continuation_CLAUSE_at_7_state_245": 2,
         "expected_continuation_ADJ_at_6_state_446": 2,
-        "unification_failed_VP_at_7": 1
+        "unification_failed_VP_at_7": 1,
+        "unconsumed_2_the": 1
       }
     },
     "AM_parent_follow1": {
@@ -8801,14 +8803,14 @@
       },
       "coverage_percent": 50.83,
       "total_ms": {
-        "p50": 5.40569,
-        "p95": 10.57985,
-        "p99": 11.36467
+        "p50": 4.30437,
+        "p95": 7.84673,
+        "p99": 8.57544
       },
       "reading_ms": {
-        "p50": 4.05339,
-        "p95": 8.46364,
-        "p99": 9.26426
+        "p50": 3.24347,
+        "p95": 6.54955,
+        "p99": 7.23006
       },
       "mean_unifications": 4.783,
       "mean_events": 17.8,
@@ -8824,8 +8826,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 12,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2202,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1172,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "construction_guard_object_predicate_requires_complex_transitive": 4,
         "unconsumed_4_door": 2,
@@ -8910,17 +8912,17 @@
       },
       "coverage_percent": 66.67,
       "total_ms": {
-        "p50": 5.98086,
-        "p95": 11.49509,
-        "p99": 15.07518
+        "p50": 4.81615,
+        "p95": 8.89468,
+        "p99": 11.68575
       },
       "reading_ms": {
-        "p50": 4.80474,
-        "p95": 9.78828,
-        "p99": 12.42141
+        "p50": 3.84473,
+        "p95": 7.52865,
+        "p99": 9.85957
       },
-      "mean_unifications": 6.133,
-      "mean_events": 21.525,
+      "mean_unifications": 6.162,
+      "mean_events": 21.592,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -8933,8 +8935,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 14,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2536,
-      "checkpoint_peak_saved_max": 22,
+      "checkpoint_saves": 1374,
+      "checkpoint_peak_saved_max": 10,
       "stop_reasons": {
         "unconsumed_6_Alice": 2,
         "unconsumed_3_could": 4,
@@ -8948,15 +8950,14 @@
         "expected_continuation_CLAUSE_at_6_state_349": 2,
         "construction_guard_modal_homograph_uninflected_lexical_verb": 2,
         "expected_continuation_WH-OBJ_at_6_state_412": 2,
-        "unification_failed_VP_at_7": 2,
+        "expected_continuation_N_at_7_state_438": 2,
         "expected_continuation_CLAUSE_at_3_state_328": 2,
         "unconsumed_3_a": 2,
         "expected_continuation_WH-OBJ_at_7_state_412": 2,
         "expected_continuation_PP_at_4_state_387": 4,
         "expected_continuation_WH-NOM_at_2_state_477": 2,
         "expected_continuation_N_at_3_state_438": 4,
-        "unconsumed_2_the": 2,
-        "unification_failed_VP_at_2": 2,
+        "unification_failed_VP_at_2": 3,
         "expected_continuation_PP_at_7_state_387": 2,
         "expected_continuation_NP_at_4_state_67": 2,
         "expected_continuation_ADJ_at_1_state_446": 6,
@@ -8965,7 +8966,8 @@
         "expected_continuation_VP_at_3_state_122": 2,
         "expected_continuation_N_at_1_state_438": 2,
         "expected_continuation_CLAUSE_at_7_state_245": 2,
-        "expected_continuation_CLAUSE_at_7_state_333": 2
+        "expected_continuation_CLAUSE_at_7_state_333": 2,
+        "unconsumed_2_the": 1
       }
     },
     "AO_follow_only1": {
@@ -9017,14 +9019,14 @@
       },
       "coverage_percent": 47.5,
       "total_ms": {
-        "p50": 5.43315,
-        "p95": 10.36119,
-        "p99": 11.20631
+        "p50": 4.32712,
+        "p95": 7.80063,
+        "p99": 8.71015
       },
       "reading_ms": {
-        "p50": 4.13429,
-        "p95": 8.63263,
-        "p99": 8.98729
+        "p50": 3.31085,
+        "p95": 6.73966,
+        "p99": 6.98632
       },
       "mean_unifications": 4.292,
       "mean_events": 17.325,
@@ -9040,8 +9042,8 @@
       "checkpoint_options_seen": 0,
       "construction_rejections": 4,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2154,
-      "checkpoint_peak_saved_max": 19,
+      "checkpoint_saves": 1034,
+      "checkpoint_peak_saved_max": 7,
       "stop_reasons": {
         "expected_continuation_N_at_3_state_438": 10,
         "expected_continuation_N_at_4_state_438": 8,
@@ -9085,7 +9087,7 @@
         },
         "predicate": {
           "evaluated": 154,
-          "passed": 127
+          "passed": 126
         },
         "required_rules": {
           "evaluated": 154,
@@ -9097,7 +9099,7 @@
         },
         "lexical_pos": {
           "evaluated": 154,
-          "passed": 145
+          "passed": 146
         },
         "constituents": {
           "evaluated": 154,
@@ -9123,17 +9125,17 @@
       },
       "coverage_percent": 64.17,
       "total_ms": {
-        "p50": 6.07225,
-        "p95": 11.63876,
-        "p99": 14.66709
+        "p50": 4.92802,
+        "p95": 8.90459,
+        "p99": 11.73472
       },
       "reading_ms": {
-        "p50": 4.77792,
-        "p95": 9.60291,
-        "p99": 12.44973
+        "p50": 3.80499,
+        "p95": 7.45339,
+        "p99": 9.91358
       },
-      "mean_unifications": 5.7,
-      "mean_events": 21.746,
+      "mean_unifications": 5.683,
+      "mean_events": 21.717,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -9141,13 +9143,13 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 384,
-      "checkpoint_attempts": 624,
+      "checkpoint_replays": 382,
+      "checkpoint_attempts": 622,
       "checkpoint_options_seen": 0,
       "construction_rejections": 8,
       "construction_early_rejections": 0,
-      "checkpoint_saves": 2557,
-      "checkpoint_peak_saved_max": 22,
+      "checkpoint_saves": 1276,
+      "checkpoint_peak_saved_max": 9,
       "stop_reasons": {
         "unconsumed_6_Emma": 2,
         "unconsumed_6_Alice": 2,
@@ -65357,16 +65359,16 @@
             "pass": false,
             "checks": {
               "voice": true,
-              "predicate": false,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
-              "lexical_pos": true,
+              "lexical_pos": false,
               "constituents": true
             },
             "required_rules": [],
             "missing_required": [],
             "actual_voice": "active",
-            "actual_predicate": "seems"
+            "actual_predicate": "seem"
           },
           "baseline_trace": [
             [
@@ -65413,13 +65415,23 @@
             ],
             [
               "CONSUME",
-              "ADJ",
-              "correct/ADJ"
+              "V",
+              "correct/V"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_imperative"
             ],
             [
               "COMPLETE",
               "VP",
-              "vp_linking_adj"
+              "vp_zero_clause"
             ],
             [
               "COMPLETE",
@@ -85100,7 +85112,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -87896,7 +87914,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -92669,7 +92703,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -106040,7 +106080,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -108836,7 +108882,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -113664,7 +113726,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -122743,7 +122811,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -127571,7 +127655,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -140783,7 +140873,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -143579,7 +143675,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -148407,7 +148519,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -157486,7 +157604,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -162314,7 +162448,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -171393,7 +171533,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -176221,7 +176377,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -186222,7 +186384,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -191060,7 +191238,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -205445,7 +205629,7 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "expected_continuation_N_at_5_state_438",
-          "guided_reason": "unconsumed_2_the",
+          "guided_reason": "unification_failed_VP_at_2",
           "baseline_gold": {
             "has_assertions": true,
             "pass": false,
@@ -205512,16 +205696,6 @@
               "CONSUME",
               "V",
               "open/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
             ]
           ]
         },
@@ -205532,7 +205706,7 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "expected_continuation_N_at_5_state_438",
-          "guided_reason": "unconsumed_2_the",
+          "guided_reason": "unification_failed_VP_at_2",
           "baseline_gold": {
             "has_assertions": true,
             "pass": false,
@@ -205599,16 +205773,6 @@
               "CONSUME",
               "V",
               "repair/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
             ]
           ]
         },
@@ -206528,9 +206692,9 @@
           "split": "validation",
           "text": "When the sun appeared, the crowd cheered.",
           "baseline_complete": false,
-          "guided_complete": true,
+          "guided_complete": false,
           "baseline_reason": "expected_continuation_CLAUSE_at_8_state_261",
-          "guided_reason": "",
+          "guided_reason": "unification_failed_VP_at_4",
           "baseline_gold": {
             "has_assertions": true,
             "pass": false,
@@ -206540,19 +206704,10 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
-              "voice": true,
-              "predicate": true,
-              "required_rules": true,
-              "forbidden_rules": true,
-              "lexical_pos": true,
-              "constituents": true
-            },
-            "required_rules": [],
-            "missing_required": [],
-            "actual_voice": "active",
-            "actual_predicate": "cheer"
+              "complete": false
+            }
           },
           "baseline_trace": [
             [
@@ -206651,56 +206806,6 @@
               "CONSUME",
               "V",
               "appears/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ],
-            [
-              "CONSUME",
-              "COMMA",
-              ",/COMMA"
-            ],
-            [
-              "CONSUME",
-              "DET",
-              "the/DET"
-            ],
-            [
-              "CONSUME",
-              "N",
-              "crowd/N"
-            ],
-            [
-              "COMPLETE",
-              "NP",
-              "np_det_n"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "cheer/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_when_comma"
             ]
           ]
         },
@@ -206855,7 +206960,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -218803,7 +218914,7 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "expected_continuation_CLAUSE_at_8_state_261",
-          "guided_reason": "unification_failed_VP_at_7",
+          "guided_reason": "expected_continuation_N_at_7_state_438",
           "baseline_gold": {
             "has_assertions": true,
             "pass": false,
@@ -218935,6 +219046,26 @@
               "CONSUME",
               "V",
               "become/V"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_intransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_colon_question"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
             ]
           ]
         },
@@ -221275,7 +221406,7 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "expected_continuation_N_at_5_state_438",
-          "guided_reason": "unconsumed_2_the",
+          "guided_reason": "unification_failed_VP_at_2",
           "baseline_gold": {
             "has_assertions": true,
             "pass": false,
@@ -221342,16 +221473,6 @@
               "CONSUME",
               "V",
               "open/V"
-            ],
-            [
-              "COMPLETE",
-              "VP",
-              "vp_intransitive"
-            ],
-            [
-              "COMPLETE",
-              "CLAUSE",
-              "clause_np_vp"
             ]
           ]
         },
@@ -222625,7 +222746,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
@@ -231705,7 +231832,7 @@
             [
               "COMPLETE",
               "VP",
-              "vp_gerund_list"
+              "vp_transitive"
             ],
             [
               "COMPLETE",
@@ -232811,7 +232938,23 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "child/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ]
+          ]
         },
         {
           "id": "h009",
@@ -238126,7 +238269,13 @@
               "np_det_n"
             ]
           ],
-          "guided_trace": []
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ]
+          ]
         },
         {
           "id": "v037",
