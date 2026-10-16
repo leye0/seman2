@@ -120,7 +120,7 @@ class ReduceVersusExtendTests(unittest.TestCase):
         result = make_reader(False, budget=1, unrelated_root_edge=True).read()
         self.assertFalse(result.complete)
         self.assertGreater(result.counters["checkpoint_unavailable_skips"], 0)
-        self.assertEqual(result.counters["checkpoint_saves"], 0)
+        self.assertEqual(result.counters.get("checkpoint_saves", 0), 0)
         self.assertEqual(result.counters["checkpoint_restores_total"], 0)
         # Real reduce-vs-extend ambiguity in the same sentence must survive.
         recovered = make_reader(True, budget=3,
