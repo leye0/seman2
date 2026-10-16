@@ -5,6 +5,13 @@
       "id": "d002",
       "text": "The door was opened by John.",
       "reason": "unconsumed_3_opened",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -95,6 +102,13 @@
       "id": "h002",
       "text": "The wooden gate was unlocked by Emma.",
       "reason": "unconsumed_4_unlocked",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -197,6 +211,13 @@
       "id": "v002",
       "text": "The heavy door was closed by Alice.",
       "reason": "unconsumed_4_closed",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -299,6 +320,13 @@
       "id": "d005",
       "text": "They remembered the event differently.",
       "reason": "expected_continuation_PP_at_4_state_387",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -422,6 +450,13 @@
       "id": "h005",
       "text": "The witness described the scene accurately.",
       "reason": "expected_continuation_PP_at_5_state_387",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -550,6 +585,13 @@
       "id": "v005",
       "text": "We described the accident clearly.",
       "reason": "expected_continuation_PP_at_4_state_387",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -673,6 +715,13 @@
       "id": "d006",
       "text": "A classroom project could encourage kindness.",
       "reason": "expected_continuation_NP_at_3_state_0",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -765,6 +814,13 @@
       "id": "v006",
       "text": "A community garden could improve health.",
       "reason": "expected_continuation_NP_at_3_state_0",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -857,6 +913,13 @@
       "id": "d007",
       "text": "Jonah asked whether they could remember the same event differently.",
       "reason": "unconsumed_5_remember",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 1,
@@ -1000,6 +1063,13 @@
       "id": "h007",
       "text": "Nora suspected the machine failed overnight.",
       "reason": "expected_continuation_ADJ_at_4_state_446",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1123,6 +1193,13 @@
       "id": "v007",
       "text": "Lena wondered whether they would arrive tomorrow.",
       "reason": "unconsumed_5_arrive",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 1,
@@ -1266,6 +1343,13 @@
       "id": "d008",
       "text": "He said the picture mattered because he could not read every word yet.",
       "reason": "expected_continuation_ADJ_at_4_state_446",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1389,6 +1473,13 @@
       "id": "h008",
       "text": "The machine was inspected yesterday.",
       "reason": "unconsumed_3_inspected",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1479,6 +1570,13 @@
       "id": "v008",
       "text": "She knew the engine worked because the light was green.",
       "reason": "expected_continuation_ADJ_at_4_state_446",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1602,6 +1700,13 @@
       "id": "d009",
       "text": "The child watched the man with a telescope.",
       "reason": "expected_continuation_NP_at_5_state_0",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1730,6 +1835,13 @@
       "id": "h009",
       "text": "The musician who arrived early performed.",
       "reason": "expected_continuation_PP_at_4_state_387",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1848,6 +1960,13 @@
       "id": "v009",
       "text": "The tourist photographed the statue near the fountain.",
       "reason": "expected_continuation_VP_at_6_state_147",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -1981,6 +2100,13 @@
       "id": "h010",
       "text": "The report that Nora wrote vanished.",
       "reason": "expected_continuation_N_at_5_state_438",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 1,
@@ -2104,6 +2230,13 @@
       "id": "d011",
       "text": "The baby slept quietly.",
       "reason": "expected_continuation_ADVP_at_3_state_480",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -2203,6 +2336,13 @@
       "id": "h011",
       "text": "Nora thinks that the answer matters.",
       "reason": "expected_continuation_ADJ_at_5_state_446",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -2331,6 +2471,13 @@
       "id": "v011",
       "text": "The horse ran quickly.",
       "reason": "expected_continuation_PP_at_3_state_387",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -2423,6 +2570,13 @@
       "id": "h012",
       "text": "To protect the forest demands patience.",
       "reason": "expected_continuation_ADJ_at_4_state_446",
+      "gold": {
+        "has_assertions": true,
+        "pass": false,
+        "checks": {
+          "complete": false
+        }
+      },
       "last_events": [
         {
           "at": 0,
@@ -2537,16 +2691,18 @@
     "A_baseline": {
       "evaluations": 72,
       "complete": 28,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 26,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.13216,
-        "p95": 8.72595,
-        "p99": 9.76012
+        "p50": 3.90897,
+        "p95": 6.77484,
+        "p99": 7.57357
       },
       "reading_ms": {
-        "p50": 4.04725,
-        "p95": 7.13484,
-        "p99": 7.71648
+        "p50": 2.94517,
+        "p95": 5.482,
+        "p99": 5.93044
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -2577,16 +2733,18 @@
     "B_lemma_hints": {
       "evaluations": 72,
       "complete": 28,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 26,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.63381,
-        "p95": 9.03502,
-        "p99": 10.11776
+        "p50": 4.068,
+        "p95": 6.94262,
+        "p99": 7.77762
       },
       "reading_ms": {
-        "p50": 4.70252,
-        "p95": 7.2483,
-        "p99": 8.10058
+        "p50": 3.0284,
+        "p95": 5.57493,
+        "p99": 6.15872
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -2617,16 +2775,18 @@
     "C_sense_hints": {
       "evaluations": 72,
       "complete": 28,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 26,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 5.29381,
-        "p95": 9.02767,
-        "p99": 10.22404
+        "p50": 4.15983,
+        "p95": 6.96727,
+        "p99": 7.95404
       },
       "reading_ms": {
-        "p50": 3.94353,
-        "p95": 7.36396,
-        "p99": 8.1408
+        "p50": 3.03651,
+        "p95": 5.67176,
+        "p99": 6.27327
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -2657,72 +2817,74 @@
     "D_structural2": {
       "evaluations": 72,
       "complete": 36,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 28,
       "coverage_percent": 50.0,
       "total_ms": {
-        "p50": 6.27187,
-        "p95": 10.19066,
-        "p99": 10.63417
+        "p50": 5.1206,
+        "p95": 7.92811,
+        "p99": 8.39278
       },
       "reading_ms": {
-        "p50": 4.95347,
-        "p95": 8.39506,
-        "p99": 8.60456
+        "p50": 4.44795,
+        "p95": 6.54435,
+        "p99": 6.7667
       },
       "mean_unifications": 3.528,
-      "mean_events": 14.5,
+      "mean_events": 14.444,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
-      "two_token_probes": 494,
-      "two_token_witnesses": 220,
-      "min_yield_rejections": 10,
+      "two_token_probes": 468,
+      "two_token_witnesses": 216,
+      "min_yield_rejections": 42,
       "stop_reasons": {
-        "expected_continuation_PP_at_4_state_387": 6,
-        "expected_continuation_PP_at_5_state_387": 2,
-        "expected_continuation_NP_at_3_state_0": 6,
+        "expected_continuation_NP_at_4_state_0": 4,
+        "expected_continuation_NP_at_5_state_0": 4,
+        "expected_continuation_NP_at_3_state_0": 8,
         "expected_continuation_WH-OBJ_at_9_state_412": 2,
         "expected_continuation_ADJ_at_4_state_446": 6,
         "expected_continuation_VP_at_7_state_160": 2,
-        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_ADJ_at_3_state_446": 2,
         "expected_continuation_VP_at_6_state_147": 2,
         "expected_continuation_N_at_5_state_438": 2,
         "nonconsuming_recursive_CLAUSE_at_2": 2,
-        "expected_continuation_PP_at_3_state_387": 2,
         "expected_continuation_NP_at_1_state_51": 2
       }
     },
     "E_structural2_sense": {
       "evaluations": 72,
       "complete": 36,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 28,
       "coverage_percent": 50.0,
       "total_ms": {
-        "p50": 6.32255,
-        "p95": 10.34691,
-        "p99": 11.3016
+        "p50": 5.33878,
+        "p95": 8.11568,
+        "p99": 8.75037
       },
       "reading_ms": {
-        "p50": 4.9907,
-        "p95": 8.45712,
-        "p99": 9.05003
+        "p50": 4.40864,
+        "p95": 6.82503,
+        "p99": 7.12951
       },
       "mean_unifications": 3.528,
-      "mean_events": 14.5,
-      "verbnet_scoring_calls": 556,
-      "verbnet_positive_hints": 170,
-      "two_token_probes": 494,
-      "two_token_witnesses": 220,
-      "min_yield_rejections": 10,
+      "mean_events": 14.444,
+      "verbnet_scoring_calls": 552,
+      "verbnet_positive_hints": 166,
+      "two_token_probes": 468,
+      "two_token_witnesses": 216,
+      "min_yield_rejections": 42,
       "stop_reasons": {
-        "expected_continuation_PP_at_4_state_387": 6,
-        "expected_continuation_PP_at_5_state_387": 2,
-        "expected_continuation_NP_at_3_state_0": 6,
+        "expected_continuation_NP_at_4_state_0": 4,
+        "expected_continuation_NP_at_5_state_0": 4,
+        "expected_continuation_NP_at_3_state_0": 8,
         "expected_continuation_WH-OBJ_at_9_state_412": 2,
         "expected_continuation_ADJ_at_4_state_446": 6,
         "expected_continuation_VP_at_7_state_160": 2,
-        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_ADJ_at_3_state_446": 2,
         "expected_continuation_VP_at_6_state_147": 2,
         "expected_continuation_N_at_5_state_438": 2,
         "nonconsuming_recursive_CLAUSE_at_2": 2,
-        "expected_continuation_PP_at_3_state_387": 2,
         "expected_continuation_NP_at_1_state_51": 2
       }
     }
@@ -2747,6 +2909,30 @@
           "guided_complete": true,
           "baseline_reason": "",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [],
+            "missing_required": []
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -2855,6 +3041,29 @@
           "guided_complete": true,
           "baseline_reason": "unconsumed_3_opened",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": false,
+              "constituents": true
+            },
+            "required_rules": [
+              "clause_passive"
+            ],
+            "missing_required": [
+              "clause_passive"
+            ]
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -2953,6 +3162,29 @@
           "guided_complete": true,
           "baseline_reason": "unconsumed_4_unlocked",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "clause_passive"
+            ],
+            "missing_required": [
+              "clause_passive"
+            ]
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3066,6 +3298,29 @@
           "guided_complete": true,
           "baseline_reason": "unconsumed_4_closed",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "clause_passive"
+            ],
+            "missing_required": [
+              "clause_passive"
+            ]
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3174,6 +3429,20 @@
           "guided_complete": false,
           "baseline_reason": "unconsumed_5_remember",
           "guided_reason": "expected_continuation_WH-OBJ_at_9_state_412",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3302,6 +3571,20 @@
           "guided_complete": false,
           "baseline_reason": "unconsumed_5_arrive",
           "guided_reason": "expected_continuation_VP_at_7_state_160",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3434,7 +3717,21 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "unconsumed_3_inspected",
-          "guided_reason": "expected_continuation_PP_at_4_state_387",
+          "guided_reason": "expected_continuation_ADJ_at_3_state_446",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3482,11 +3779,6 @@
               "CONSUME",
               "COPULA",
               "be/COPULA"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "inspect/V"
             ]
           ]
         },
@@ -3498,6 +3790,27 @@
           "guided_complete": true,
           "baseline_reason": "expected_continuation_PP_at_4_state_387",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "np_relative_subj"
+            ],
+            "missing_required": []
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3601,6 +3914,20 @@
           "guided_complete": false,
           "baseline_reason": "expected_continuation_ADJ_at_5_state_446",
           "guided_reason": "nonconsuming_recursive_CLAUSE_at_2",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3664,6 +3991,20 @@
           "guided_complete": false,
           "baseline_reason": "expected_continuation_ADJ_at_4_state_446",
           "guided_reason": "expected_continuation_NP_at_1_state_51",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3712,6 +4053,30 @@
           "guided_complete": true,
           "baseline_reason": "",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [],
+            "missing_required": []
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3820,6 +4185,29 @@
           "guided_complete": true,
           "baseline_reason": "unconsumed_3_opened",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": false,
+              "constituents": true
+            },
+            "required_rules": [
+              "clause_passive"
+            ],
+            "missing_required": [
+              "clause_passive"
+            ]
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -3918,6 +4306,29 @@
           "guided_complete": true,
           "baseline_reason": "unconsumed_4_unlocked",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "clause_passive"
+            ],
+            "missing_required": [
+              "clause_passive"
+            ]
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4031,6 +4442,29 @@
           "guided_complete": true,
           "baseline_reason": "unconsumed_4_closed",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "clause_passive"
+            ],
+            "missing_required": [
+              "clause_passive"
+            ]
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4139,6 +4573,20 @@
           "guided_complete": false,
           "baseline_reason": "unconsumed_5_remember",
           "guided_reason": "expected_continuation_WH-OBJ_at_9_state_412",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4267,6 +4715,20 @@
           "guided_complete": false,
           "baseline_reason": "unconsumed_5_arrive",
           "guided_reason": "expected_continuation_VP_at_7_state_160",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4399,7 +4861,21 @@
           "baseline_complete": false,
           "guided_complete": false,
           "baseline_reason": "unconsumed_3_inspected",
-          "guided_reason": "expected_continuation_PP_at_4_state_387",
+          "guided_reason": "expected_continuation_ADJ_at_3_state_446",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4447,11 +4923,6 @@
               "CONSUME",
               "COPULA",
               "be/COPULA"
-            ],
-            [
-              "CONSUME",
-              "V",
-              "inspect/V"
             ]
           ]
         },
@@ -4463,6 +4934,27 @@
           "guided_complete": true,
           "baseline_reason": "expected_continuation_PP_at_4_state_387",
           "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "np_relative_subj"
+            ],
+            "missing_required": []
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4566,6 +5058,20 @@
           "guided_complete": false,
           "baseline_reason": "expected_continuation_ADJ_at_5_state_446",
           "guided_reason": "nonconsuming_recursive_CLAUSE_at_2",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
@@ -4629,6 +5135,20 @@
           "guided_complete": false,
           "baseline_reason": "expected_continuation_ADJ_at_4_state_446",
           "guided_reason": "expected_continuation_NP_at_1_state_51",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
           "baseline_trace": [
             [
               "CONSUME",
