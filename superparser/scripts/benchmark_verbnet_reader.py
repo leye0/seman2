@@ -19,6 +19,7 @@ import statistics
 from time import perf_counter
 
 from research.verbnet_lr import read_index
+from research.verbnet_lr.tree_evidence import observe_vp_frames
 from seman_parser.engine import ParserResources
 from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 
@@ -129,6 +130,16 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                 t = perf_counter()
                 item = machines[mode].parse(case["text"])
                 total_ms = (perf_counter() - t) * 1000
+                # Post-parse diagnosis happens OUTSIDE the timing window.
+                # Never affects the chosen structure, rank or latency figures.
+                observations = observe_vp_frames(item.item, index) if item.complete else ()
+                structural_evidence = [
+                    {"lemma": ob.lemma, "rule": ob.rule_id,
+                     "events": list(ob.events), "status": ob.status,
+                     "confidence": ob.confidence,
+                     "matching_frames": ob.matching_frames}
+                    for ob in observations
+                ]
                 counters = item.outcome.counters
                 record = {
                     "id": case["id"], "split": case.get("split", "other"),
@@ -151,6 +162,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "trace": trace(item),
                     "last_events": [event.as_dict() for event in item.outcome.events[-12:]],
                     "gold": syntax_assertions(case, item),
+                    "verbnet_vp_observations": structural_evidence,
                 }
                 raw[mode].append(record)
                 if repeat == 0:
@@ -159,11 +171,25 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
     for mode, entries in raw.items():
         successes = sum(v["complete"] for v in entries)
         gold_entries = [v for v in entries if v["gold"]["has_assertions"]]
+        observations = [(entry, obs)
+                        for entry in entries
+                        for obs in entry["verbnet_vp_observations"]]
         summary[mode] = {
             "evaluations": len(entries),
             "complete": successes,
             "explicit_gold_assertion_cases": len(gold_entries),
             "explicit_gold_assertion_passed": sum(v["gold"]["pass"] is True for v in gold_entries),
+            "verbnet_tree_evidence": {
+                "vp_observations": len(observations),
+                "status": dict(Counter(obs["status"] for _, obs in observations)),
+                "confidence": dict(Counter(obs["confidence"] for _, obs in observations)),
+                "attested_with_explicit_gold_pass": sum(
+                    obs["status"] == "ATTESTED" and entry["gold"]["pass"] is True
+                    for entry, obs in observations),
+                "attested_with_explicit_gold_fail": sum(
+                    obs["status"] == "ATTESTED" and entry["gold"]["pass"] is False
+                    for entry, obs in observations),
+            },
             "coverage_percent": round(100 * successes / len(entries), 2),
             "total_ms": quantiles([v["total_ms"] for v in entries]),
             "reading_ms": quantiles([v["reading_ms"] for v in entries]),
@@ -218,6 +244,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             "A path can stop without proving the sentence ungrammatical",
             "Positive corpus completion is not gold structural accuracy",
             "The lexical lookahead can only *rank*, never reject",
+            "VerbNet VP tree evidence is post-parse positive support, never gold structural truth",
             "No production parser or packed forest was invoked",
             "Full-parser 5 ms target cannot be inferred from trie lookup timings",
             "Mixed WordNet lexical cache is warmed before A/B/C measurements",
