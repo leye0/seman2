@@ -34,8 +34,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.90024,
-      "contrast_median_ms": 1.72649,
+      "negative_median_ms": 1.44739,
+      "contrast_median_ms": 1.30039,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -70,8 +70,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.58143,
-      "contrast_median_ms": 3.85574,
+      "negative_median_ms": 2.72856,
+      "contrast_median_ms": 2.87831,
       "new_false_accepts_vs_baseline": [
         "neg012",
         "neg015",
@@ -110,8 +110,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.99544,
-      "contrast_median_ms": 4.01002,
+      "negative_median_ms": 3.06058,
+      "contrast_median_ms": 3.01056,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg008",
@@ -154,8 +154,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.33802,
-      "contrast_median_ms": 4.13389,
+      "negative_median_ms": 3.19456,
+      "contrast_median_ms": 3.0255,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg006",
@@ -201,8 +201,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.81744,
-      "contrast_median_ms": 1.7323,
+      "negative_median_ms": 1.38921,
+      "contrast_median_ms": 1.33649,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -243,8 +243,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.64066,
-      "contrast_median_ms": 4.02589,
+      "negative_median_ms": 2.65451,
+      "contrast_median_ms": 2.91251,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -285,8 +285,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.19997,
-      "contrast_median_ms": 4.06388,
+      "negative_median_ms": 3.0747,
+      "contrast_median_ms": 3.09679,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -327,8 +327,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.50386,
-      "contrast_median_ms": 4.15675,
+      "negative_median_ms": 3.44887,
+      "contrast_median_ms": 3.06726,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -369,8 +369,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.83382,
-      "contrast_median_ms": 1.71713,
+      "negative_median_ms": 1.42848,
+      "contrast_median_ms": 1.29737,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -405,8 +405,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.53421,
-      "contrast_median_ms": 3.92753,
+      "negative_median_ms": 2.62188,
+      "contrast_median_ms": 2.93014,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -447,8 +447,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.44126,
-      "contrast_median_ms": 4.14235,
+      "negative_median_ms": 3.40576,
+      "contrast_median_ms": 3.07517,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -489,8 +489,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.09546,
-      "contrast_median_ms": 3.96962,
+      "negative_median_ms": 2.32944,
+      "contrast_median_ms": 2.98814,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -531,8 +531,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.20242,
-      "contrast_median_ms": 4.0816,
+      "negative_median_ms": 3.08021,
+      "contrast_median_ms": 3.083,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -573,8 +573,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.48739,
-      "contrast_median_ms": 4.19271,
+      "negative_median_ms": 3.38431,
+      "contrast_median_ms": 3.08736,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -615,8 +615,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.74913,
-      "contrast_median_ms": 1.63389,
+      "negative_median_ms": 1.3601,
+      "contrast_median_ms": 1.27279,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -651,8 +651,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.53756,
-      "contrast_median_ms": 3.98942,
+      "negative_median_ms": 2.61549,
+      "contrast_median_ms": 2.87826,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -693,8 +693,254 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 4.51321,
-      "contrast_median_ms": 4.0869,
+      "negative_median_ms": 3.27788,
+      "contrast_median_ms": 3.05169,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AE_token_cache_baseline": {
+      "negative_cases": 24,
+      "negative_false_accepts": 6,
+      "positive_contrast_completes": 6,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 2,
+          "contrast_completes": 2
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 0
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 1,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 0
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 3,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 1.33803,
+      "contrast_median_ms": 1.23834,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": []
+    },
+    "AF_token_cache_guard1": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 11,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 2
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 2
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 2.59851,
+      "contrast_median_ms": 3.04364,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AG_token_cache_guard3": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 16,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 5
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 4
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 3.32511,
+      "contrast_median_ms": 3.04462,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AH_promoted_guard0": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 7,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 0
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 0
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 1.42129,
+      "contrast_median_ms": 1.39766,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AI_promoted_guard1": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 12,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 2
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 2.57606,
+      "contrast_median_ms": 2.84752,
+      "new_false_accepts_vs_baseline": [],
+      "lost_false_accepts_vs_baseline": [
+        "neg002",
+        "neg004",
+        "neg018",
+        "neg020",
+        "neg022"
+      ]
+    },
+    "AJ_promoted_guard3": {
+      "negative_cases": 24,
+      "negative_false_accepts": 1,
+      "positive_contrast_completes": 16,
+      "by_family": {
+        "agreement": {
+          "cases": 8,
+          "negative_false_accepts": 0,
+          "contrast_completes": 5
+        },
+        "auxiliary": {
+          "cases": 4,
+          "negative_false_accepts": 0,
+          "contrast_completes": 4
+        },
+        "determiner": {
+          "cases": 2,
+          "negative_false_accepts": 0,
+          "contrast_completes": 1
+        },
+        "modal": {
+          "cases": 5,
+          "negative_false_accepts": 0,
+          "contrast_completes": 3
+        },
+        "valency": {
+          "cases": 5,
+          "negative_false_accepts": 1,
+          "contrast_completes": 3
+        }
+      },
+      "negative_median_ms": 3.35316,
+      "contrast_median_ms": 3.04355,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": [
         "neg002",
@@ -6604,6 +6850,1600 @@
       }
     },
     "AD_token_only_guard3": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AE_token_cache_baseline": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_intransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "sleeps",
+              "lemma": "sleep",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "intransitive"
+              }
+            }
+          ]
+        }
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_quant_n",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "children",
+              "lemma": "child",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "plays",
+              "lemma": "play",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'transitive']"
+              }
+            },
+            {
+              "surface": "outside",
+              "lemma": "outside",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_particle"
+          ],
+          "lexemes": [
+            {
+              "surface": "A",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "ran",
+              "lemma": "run",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "away",
+              "lemma": "away",
+              "category": "PARTICLE",
+              "features": {}
+            }
+          ]
+        }
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "They",
+              "lemma": "they",
+              "category": "PRONOUN",
+              "features": {
+                "number": "plural",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "donated",
+              "lemma": "donate",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'prep_ditransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "a",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 2,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "explained",
+              "lemma": "explain",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'clausal']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "problem",
+              "lemma": "problem",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AF_token_cache_guard1": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AG_token_cache_guard3": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AH_promoted_guard0": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AI_promoted_guard1": {
+      "neg001": {
+        "family": "agreement",
+        "negative": "The dogs barks loudly.",
+        "contrast": "The dogs bark loudly.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg002": {
+        "family": "agreement",
+        "negative": "The cats sleeps.",
+        "contrast": "The cats sleep.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg003": {
+        "family": "agreement",
+        "negative": "These workers works hard.",
+        "contrast": "These workers work hard.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg004": {
+        "family": "agreement",
+        "negative": "The children plays outside.",
+        "contrast": "The children play outside.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg005": {
+        "family": "agreement",
+        "negative": "The boy are happy.",
+        "contrast": "The boy is happy.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg006": {
+        "family": "agreement",
+        "negative": "The books is heavy.",
+        "contrast": "The books are heavy.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg007": {
+        "family": "agreement",
+        "negative": "The doors was locked.",
+        "contrast": "The doors were locked.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg008": {
+        "family": "agreement",
+        "negative": "The woman have arrived.",
+        "contrast": "The woman has arrived.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg009": {
+        "family": "modal",
+        "negative": "John can reads the book.",
+        "contrast": "John can read the book.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg010": {
+        "family": "modal",
+        "negative": "She should goes home.",
+        "contrast": "She should go home.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg011": {
+        "family": "modal",
+        "negative": "He must eats now.",
+        "contrast": "He must eat now.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg012": {
+        "family": "modal",
+        "negative": "Mary will buys milk.",
+        "contrast": "Mary will buy milk.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg013": {
+        "family": "modal",
+        "negative": "I can to swim.",
+        "contrast": "I can swim.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg014": {
+        "family": "auxiliary",
+        "negative": "They did opened the door.",
+        "contrast": "They did open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg015": {
+        "family": "auxiliary",
+        "negative": "She did not opened the door.",
+        "contrast": "She did not open the door.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg016": {
+        "family": "auxiliary",
+        "negative": "He does not likes coffee.",
+        "contrast": "He does not like coffee.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg017": {
+        "family": "auxiliary",
+        "negative": "John did eats.",
+        "contrast": "John did eat.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg018": {
+        "family": "determiner",
+        "negative": "A cats ran away.",
+        "contrast": "A cat ran away.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg019": {
+        "family": "determiner",
+        "negative": "Those child are sleeping.",
+        "contrast": "Those children are sleeping.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg020": {
+        "family": "valency",
+        "negative": "They donated John a book.",
+        "contrast": "They donated a book to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg021": {
+        "family": "valency",
+        "negative": "He arrived the station.",
+        "contrast": "He arrived at the station.",
+        "negative_accepts": 0,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
+      },
+      "neg022": {
+        "family": "valency",
+        "negative": "She explained John the problem.",
+        "contrast": "She explained the problem to John.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      },
+      "neg023": {
+        "family": "valency",
+        "negative": "She enjoys read.",
+        "contrast": "She enjoys reading.",
+        "negative_accepts": 2,
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
+      },
+      "neg024": {
+        "family": "valency",
+        "negative": "She depends of her friends.",
+        "contrast": "She depends on her friends.",
+        "negative_accepts": 0,
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
+      }
+    },
+    "AJ_promoted_guard3": {
       "neg001": {
         "family": "agreement",
         "negative": "The dogs barks loudly.",
