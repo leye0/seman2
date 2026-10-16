@@ -128,3 +128,54 @@ The new capped + offset-sliced lookup avoids O(number-of-candidates) iteration.
   targeting millions of structures.
 - Preserve verified alternatives as distinguishable candidate sets for layer 2;
   keep grammatical ambiguity independent of semantic plausibility.
+
+## Final integrated guard + lexical reuse evaluation (Actions 38972058379)
+
+This supersedes the preliminary unguarded hybrid timing above. The full
+run is green. Same 50 dev training / **70 never-trained** validation+holdout
+positive sentences, plus **24 separate** ungrammatical negative cases.
+
+| Metric | L-R only | Full-tree snap + guarded L-R fallback |
+|---|---:|---:|
+| Completed positive sentences | 28/70 | **41/70** |
+| Passes all explicitly annotated syntax checks | 22/70 | **30/70** |
+| Negative sentences incorrectly accepted | **6/24** | **6/24** |
+| End-to-end p50 | 4.21023 ms | **2.31628 ms** |
+| End-to-end p95 | 8.58356 ms | **8.21967 ms** |
+| End-to-end p99 | 9.56945 ms | **9.40980 ms** |
+
+Positive gold case delta: **9 newly passing**, **1 previously passing
+case lost** (`h003`). Do NOT label this strict nonregression. The fast
+path still chooses a candidate grammatical tree without semantic context;
+multiple correct-looking trees remain available for later disambiguation.
+Explicit syntax assertions are incomplete, so 30/70 is not certified full
+grammatical correctness.
+
+The 24 negative cases exposed an important failure before guarding:
+the unguarded snapper had **9/24 false accepts**, three more than L-R
+(`neg001`, `neg005`, `neg006`), due to missing
+construction/morphology checks on reconstructed `ChartItem` trees. The
+existing `ConstructionGuard` now also reads `ChartItem.lexical_candidate`
+and rule IDs. `SnappingResearchReader` rejects such candidates for its
+fast path (without evicting templates from memory), falling back to L-R
+if none survives. Result: **zero new negative false accepts** on these
+24 cases, while retaining the 9 positive annotation gains.
+
+The L-R compiled adapter can now accept an already computed identical
+lexical lattice, avoiding duplicate WordNet morphology lookup when the
+one-token snap index misses. This reduces miss overhead and is included
+in the integrated end-to-end benchmark. The production `Parser` and
+`main` have not changed.
+
+**Not yet achieved**: 5 ms p95 (or hard worst-case bound), exhaustive
+well-formed parse enumeration, representative million-template memory
+or latency measurements, zero positive-gold regressions, long-sentence
+syntax coverage, or human/semantic disambiguation. The offline Earley
+teacher remains bounded and its grammar witnesses are NOT manually
+verified linguistic gold. Never treat a timeout or UNKNOWN as invalid.
+
+Canonical links:
+- [Whole-tree index source](https://github.com/leye0/seman2/blob/research/verbnet-left-to-right-poc/superparser/research/verbnet_lr/full_structure_snap.py)
+- [Holdout benchmark report](https://github.com/leye0/seman2/blob/research/verbnet-left-to-right-poc/superparser/research/verbnet_lr/snap_holdout_report.json)
+- [Full integrated CI success](https://github.com/leye0/seman2/actions/runs/38972058379)
+- [Synthetic scale benchmark](https://github.com/leye0/seman2/actions/runs/38970509444)
