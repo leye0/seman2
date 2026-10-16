@@ -400,6 +400,7 @@ class IncrementalReader:
         best_rank = None
         for candidate in options:
             attrs = self._features(candidate)
+            bonus = None  # one lexical hint per candidate, not per rule
             for rule, symbol, tail in hints:
                 required = self._features(symbol)
                 if any(key in attrs and not self._value_compatible(value, attrs[key])
@@ -414,9 +415,9 @@ class IncrementalReader:
                 # Avoid preferring an unfinished rule when the next token
                 # cannot possibly begin its next slot.
                 viable = 2 if tail_expected else (1 if not tail else 0)
-                rank = (viable, rule.score,
-                        self._lexical_rank_bonus(candidate, category),
-                        candidate.score)
+                if bonus is None:
+                    bonus = self._lexical_rank_bonus(candidate, category)
+                rank = (viable, rule.score, bonus, candidate.score)
                 self.count['lexical_feature_checks'] += 1
                 if best_rank is None or rank > best_rank:
                     selected, best_rank = candidate, rank
