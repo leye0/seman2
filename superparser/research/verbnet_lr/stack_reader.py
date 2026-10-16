@@ -68,6 +68,21 @@ class LocalCheckpointReader(IncrementalReader):
         self._forced: tuple[int, int, str] | None = None
         self._peak_checkpoints = 0
 
+    def _emit(self, action, expected, detail='', *, at=None):
+        """Bound active-path events; count abandoned work separately.
+
+        The recursive reader uses an event-count budget per parse. After
+        restoring a continuation we must not accidentally count discarded
+        events as part of the *new* active continuation.
+        """
+        at = self.pos if at is None else at
+        tok = self.tokens[at] if at < len(self.tokens) else None
+        self.events.append(Event(
+            at, tok.text if tok else '$END', action, expected, detail))
+        self.count['events'] += 1
+        if len(self.events) > self.limit:
+            raise Stop('event_budget')
+
     def _enter(self, category: str, stop_at=frozenset()):
         key = (category, self.pos)
         if key in self.active:
