@@ -124,6 +124,8 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             resources, checkpoint_budget=2, stack_checkpoints=True),
         "P_local_snapshot3": SemanCompiledReader(
             resources, checkpoint_budget=3, stack_checkpoints=True),
+        "Q_local_snapshot0": SemanCompiledReader(
+            resources, checkpoint_budget=0, stack_checkpoints=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -230,6 +232,16 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             "checkpoint_peak_saved_max": max(v["checkpoint_peak_saved"] for v in entries),
             "stop_reasons": dict(Counter(v["reason"] for v in entries if not v["complete"])),
         }
+    # The defunctionalized explicit stack must preserve the baseline's
+    # completion AND exact sequence of consumed categories/reductions when
+    # no alternative restores are enabled. This is a hard correctness gate.
+    for case in cases:
+        original = results["A_baseline"][case["id"]]
+        control = results["Q_local_snapshot0"][case["id"]]
+        if original["complete"] != control["complete"] or original["trace"] != control["trace"]:
+            raise AssertionError(
+                f"stack0 semantic divergence for {case['id']}: "
+                f"{original['reason']} -> {control['reason']}")
     diffs = {}
     for mode in modes[1:]:
         changed = []
@@ -288,7 +300,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "per_split": split_metrics,
         "baseline_verbnet_tree_evidence_by_case": baseline_evidence,
         "baseline_failure_diagnostics": failures,
-        "method": "A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
+        "method": "A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
