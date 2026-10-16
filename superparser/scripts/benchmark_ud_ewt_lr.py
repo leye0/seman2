@@ -123,6 +123,9 @@ def run(wordnet_dir=None,limit_per_bin=8,repetitions=2):
                                           checkpoint_budget=3,construction_guard=True,
                                           token_only_lattice=True,
                                           infer_unary_promotions=True),
+        "token_only_guard6":SemanCompiledReader(resources,stack_checkpoints=True,
+                                          checkpoint_budget=6,construction_guard=True,
+                                          token_only_lattice=True),
     }
     for _,case in selected:
         for machine in modes.values():machine.parse(case["text"])
@@ -143,6 +146,8 @@ def run(wordnet_dir=None,limit_per_bin=8,repetitions=2):
                     "lexical_ms":round(outcome.lexical_ms,4),
                     "read_ms":round(outcome.reading_ms,4),
                     "max_progress":round(furthest/max(1,tok_count),3),
+                    "restores":outcome.outcome.counters.get("checkpoint_restores_total",0),
+                    "reason":outcome.outcome.reason if not outcome.complete else "",
                     "gold":gold,
                 })
     results={}
@@ -162,6 +167,12 @@ def run(wordnet_dir=None,limit_per_bin=8,repetitions=2):
                 "wall_p95_ms":percentile([x["time_ms"] for x in subset],.95),
                 "lexical_p50_ms":percentile([x["lexical_ms"] for x in subset],.5),
                 "read_p50_ms":percentile([x["read_ms"] for x in subset],.5),
+                "max_checkpoint_restores":max(x["restores"] for x in subset),
+                "median_checkpoint_restores":percentile([x["restores"] for x in subset],.5),
+                "top_stop_reasons":sorted(
+                    {x["reason"] for x in subset if x["reason"]},
+                    key=lambda reason:-sum(x["reason"]==reason for x in subset)
+                )[:5],
                 "aligned_completed":sum(x["gold"]["aligned"] for x in subset)/repetitions,
                 "pos_matches":sum(x["gold"]["matched"] for x in subset),
                 "pos_gold_tokens":sum(x["gold"]["total"] for x in subset),
