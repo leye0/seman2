@@ -60,7 +60,8 @@ class LocalCheckpointReader(IncrementalReader):
                  parent_follow_reduce: bool = False,
                  reduce_follow_only: bool = False,
                  reachable_checkpoints_only: bool = False,
-                 terminal_prefix_preference: bool = False, **kwargs):
+                 terminal_prefix_preference: bool = False,
+                 extension_checkpoints: bool = False, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -77,6 +78,7 @@ class LocalCheckpointReader(IncrementalReader):
         self.reduce_follow_only = reduce_follow_only
         self.reachable_checkpoints_only = reachable_checkpoints_only
         self.terminal_prefix_preference = terminal_prefix_preference
+        self.extension_checkpoints = extension_checkpoints
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -284,12 +286,41 @@ class LocalCheckpointReader(IncrementalReader):
     def _step(self) -> ReadNode | None:
         frame = self._stack[-1]
         if frame.phase == "extend":
+            if (self._forced == (
+                    len(self._stack), frame.state.state_id, "$FINISH")):
+                # A prior extension failed: return the already-built child
+                # to its caller without consuming the caller's next word.
+                self._forced = None
+                self.count["checkpoint_forced_extension_finishes"] += 1
+                assert frame.result is not None
+                return self._finish(frame.result)
             root = self.g.extensions.get(frame.category)
             if (root is None or self.pos >= len(self.tokens)
                     or self._categories() & frame.stop_at
                     or self._select(root) is None):
                 assert frame.result is not None
                 return self._finish(frame.result)
+            if self.extension_checkpoints and self.replay_budget > 0:
+                # A completed constituent may extend OR return to its
+                # parent. The grammar licenses the extension, but this
+                # does not prove the boundary belongs to the child.
+                # Snapshot a single active stack: never a parse forest.
+                point = _Snapshot(
+                    stack=tuple(replace(f) for f in self._stack),
+                    pos=self.pos,
+                    event_len=len(self.events),
+                    state_id=frame.state.state_id,
+                    first_edge="$EXTEND",
+                    tried=("$EXTEND",),
+                )
+                if len(self._snapshots) >= self.max_checkpoints:
+                    self._snapshots.pop(0)
+                    self.count["checkpoint_evictions"] += 1
+                self._snapshots.append(point)
+                self._peak_checkpoints = max(
+                    self._peak_checkpoints, len(self._snapshots))
+                self.count["checkpoint_saves"] += 1
+                self.count["checkpoint_extension_saves"] += 1
             self.count["extensions"] += 1
             self._emit("EXTEND", frame.category,
                        f"compiled suffix at {root.state_id}")
@@ -400,9 +431,16 @@ class LocalCheckpointReader(IncrementalReader):
             self.active = {(f.category, f.start) for f in self._stack}
             self.depth = len(self._stack)
             frame = self._stack[-1]
-            alternative = self._select(
-                frame.state, frame.live, excluded=frozenset(point.tried))
-            if (alternative is None and self.reduce_checkpoints
+            if point.first_edge == "$EXTEND":
+                # This checkpoint records a clause/phrase boundary, not
+                # an alternative lexical transition inside the old trie.
+                alternative = ("$FINISH"
+                               if "$FINISH" not in point.tried else None)
+            else:
+                alternative = self._select(
+                    frame.state, frame.live, excluded=frozenset(point.tried))
+            if (point.first_edge != "$EXTEND"
+                    and alternative is None and self.reduce_checkpoints
                     and (not self.reduce_follow_only
                          or self._parent_follow_witness())
                     and "$REDUCE" not in point.tried
