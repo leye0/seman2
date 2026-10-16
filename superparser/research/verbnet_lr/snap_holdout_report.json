@@ -37,24 +37,24 @@
   },
   "latency": {
     "snap_recognition_warmed_lattice": {
-      "p50_ms": 0.03298,
-      "p95_ms": 0.92185,
-      "p99_ms": 1.2378
+      "p50_ms": 0.02919,
+      "p95_ms": 0.93452,
+      "p99_ms": 1.23793
     },
     "snap_including_lexical_lattice": {
-      "p50_ms": 1.46136,
-      "p95_ms": 2.38553,
-      "p99_ms": 3.02247
+      "p50_ms": 1.19852,
+      "p95_ms": 2.3038,
+      "p99_ms": 3.06993
     },
     "lr_baseline_including_lattice": {
-      "p50_ms": 4.53143,
-      "p95_ms": 8.82181,
-      "p99_ms": 11.06915
+      "p50_ms": 4.39006,
+      "p95_ms": 8.86386,
+      "p99_ms": 10.00625
     },
     "hybrid_snap_then_lr_fallback": {
-      "p50_ms": 2.63944,
-      "p95_ms": 8.41763,
-      "p99_ms": 9.10768
+      "p50_ms": 2.49459,
+      "p95_ms": 8.16768,
+      "p99_ms": 8.98706
     }
   },
   "cases": [
