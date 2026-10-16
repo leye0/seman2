@@ -84,7 +84,7 @@ jobs:
           PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_reader.py \
             --index superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --max-cases 36 \
+            --max-cases 120 \
             --repetitions 2 \
             --report superparser/research/verbnet_lr/reader_ablation.json
       - name: Commit research reports and compiled index to branch
