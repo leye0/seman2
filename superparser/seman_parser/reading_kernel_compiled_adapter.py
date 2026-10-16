@@ -83,13 +83,29 @@ class SemanCompiledReader:
             return node
 
         ranker = self.verbnet_ranker
+        if ranker is not None:
+            from research.verbnet_lr.guidance import project_postverb_events
 
         class _TracedReader(IncrementalReader):
             def _lexical_rank_bonus(self, candidate, category: str) -> int:
-                if ranker is None or category != 'V':
+                if ranker is None or category != 'V' or ranker.mode == 'zero':
                     return 0
+                if not hasattr(self, '_vn_cache'):
+                    self._vn_cache = {}
+                    self._vn_observed = {}
+                key = (self.pos, id(candidate))
+                previous = self._vn_cache.get(key)
+                if previous is not None:
+                    self.count['verbnet_cache_hits'] += 1
+                    return previous
+                if self.pos not in self._vn_observed:
+                    self._vn_observed[self.pos] = project_postverb_events(
+                        self.tokens, self.lex, self.pos + 1,
+                        max_tokens=ranker.max_tokens)
                 self.count['verbnet_scoring_calls'] += 1
-                bonus = ranker.score(candidate, self.tokens, self.lex, self.pos)
+                bonus = ranker.score(candidate, self.tokens, self.lex, self.pos,
+                                     events=self._vn_observed[self.pos])
+                self._vn_cache[key] = bonus
                 self.count['verbnet_positive_hints'] += int(bonus > 0)
                 return bonus
 
