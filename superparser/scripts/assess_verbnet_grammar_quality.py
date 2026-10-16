@@ -17,7 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def assess(main: dict, negative: dict, median_target_ms: float = 5.0) -> dict:
     modes = ("A_baseline", "N_local_snapshot1", "O_local_snapshot2", "P_local_snapshot3",
              "R_guard0", "S_guard1", "T_guard2", "U_guard3",
-             "V_fast_baseline", "W_fast_guard1", "X_fast_guard3")
+             "V_fast_baseline", "W_fast_guard1", "X_fast_guard3",
+             "Y_early_guard1", "Z_early_guard2", "AA_early_guard3")
     comparisons = {}
     base = main["summary"]["A_baseline"]
     negative_baseline = negative["summary"]["A_baseline"]
