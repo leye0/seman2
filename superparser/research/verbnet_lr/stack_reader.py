@@ -56,7 +56,8 @@ class LocalCheckpointReader(IncrementalReader):
 
     def __init__(self, *args, replay_budget: int = 2,
                  max_checkpoints: int = 24,
-                 reduce_checkpoints: bool = False, **kwargs):
+                 reduce_checkpoints: bool = False,
+                 parent_follow_reduce: bool = False, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -65,6 +66,9 @@ class LocalCheckpointReader(IncrementalReader):
         self.replay_budget = replay_budget
         self.max_checkpoints = max_checkpoints
         self.reduce_checkpoints = reduce_checkpoints
+        if parent_follow_reduce and not reduce_checkpoints:
+            raise ValueError("parent_follow_reduce requires reduce_checkpoints")
+        self.parent_follow_reduce = parent_follow_reduce
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -135,6 +139,33 @@ class LocalCheckpointReader(IncrementalReader):
             self._peak_checkpoints, len(self._snapshots))
         self.count["checkpoint_saves"] += 1
 
+    def _parent_follow_witness(self) -> bool:
+        """Positive evidence that the caller, not this child, owns next word.
+
+        A *completed* child can return to its parent. The parent's compiled
+        grammar RHS still has an explicitly required next symbol. Check
+        FIRST of that symbol against observed lexical categories. This is a
+        bounded grammar witness, not a hardcoded class/word heuristic.
+        """
+        if len(self._stack) < 2:
+            return False
+        parent = self._stack[-2]
+        if parent.phase != "waiting":
+            return False
+        seen = self._categories()
+        if not seen:
+            return False
+        for _rule, _slot, tail in parent.pending_hints:
+            if not tail:
+                continue
+            category = tail[0]
+            if category in self.g.nonterminals:
+                if seen & self.g.first.get(category, frozenset()):
+                    return True
+            elif category in seen:
+                return True
+        return False
+
     def _attach(self, frame: _Frame, child: ReadNode):
         target = frame.pending_target
         hints = frame.pending_hints
@@ -195,12 +226,25 @@ class LocalCheckpointReader(IncrementalReader):
 
         state = frame.state
         selected = self._select(state, frame.live)
+        forced_here = False
         if self._forced is not None:
             depth, state_id, forced_edge = self._forced
             if depth == len(self._stack) and state_id == state.state_id:
                 # This alternative was validated against the grammar's live
                 # mask when restoring the checkpoint.
                 selected = forced_edge
+                forced_here = True
+        if (not forced_here and self.parent_follow_reduce
+                and self.replay_budget > 0 and selected is not None
+                and state.finals
+                and (frame.live is None
+                     or any(id(r) in frame.live for r in state.finals))
+                and self._parent_follow_witness()):
+            # Snapshot the opposite decision (extension) so the grammar may
+            # still recover if the caller path fails. No forest is retained.
+            self._register(frame, "$REDUCE")
+            selected = "$REDUCE"
+            self.count["parent_follow_witness_reductions"] += 1
         if selected == "$REDUCE":
             # This is a licensed prefix reduction saved as an alternative
             # to greedy continuation. Not a lexical or grammar edge.
