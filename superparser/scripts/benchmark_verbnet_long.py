@@ -40,6 +40,10 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
         "early_local3_guard": SemanCompiledReader(resources, stack_checkpoints=True,
                                    checkpoint_budget=3, construction_guard=True,
                                    early_construction_guard=True),
+        "token_only_baseline": SemanCompiledReader(resources, token_only_lattice=True),
+        "token_only_guard3": SemanCompiledReader(resources, stack_checkpoints=True,
+                               checkpoint_budget=3, construction_guard=True,
+                               token_only_lattice=True),
     }
     for case in cases:
         for model in modes.values():
