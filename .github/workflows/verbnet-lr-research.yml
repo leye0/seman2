@@ -13,6 +13,7 @@ on:
       - 'superparser/scripts/benchmark_verbnet_negatives.py'
       - 'superparser/scripts/assess_verbnet_grammar_quality.py'
       - 'superparser/scripts/benchmark_verbnet_long.py'
+      - 'superparser/scripts/probe_grammar_upper_bound.py'
       - 'superparser/scripts/benchmark_ud_ewt_lr.py'
       - 'superparser/research/verbnet_lr/long_sentence_stress.jsonl'
       - 'superparser/research/verbnet_lr/negative_minimal_pairs.jsonl'
@@ -28,6 +29,7 @@ on:
       - 'superparser/tests/test_token_only_lattice.py'
       - 'superparser/tests/test_unary_promotions.py'
       - 'superparser/tests/test_reduce_checkpoints.py'
+      - 'superparser/tests/test_grammar_upper_bound.py'
   workflow_dispatch:
 
 concurrency:
@@ -60,6 +62,7 @@ jobs:
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_token_only_lattice.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_unary_promotions.py' -v
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_reduce_checkpoints.py' -v
+          PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_grammar_upper_bound.py' -v
       - name: Fetch WordNet 3.0 dictionary and sense index
         run: |
           python - <<'PY'
@@ -124,6 +127,12 @@ jobs:
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --repetitions 3 \
             --report superparser/research/verbnet_lr/long_stress_report.json
+      - name: Offline grammar upper-bound diagnostic (no parser changes)
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/probe_grammar_upper_bound.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-items 200000 --max-seconds 2.5 \
+            --report superparser/research/verbnet_lr/grammar_upper_bound.json
       - name: Pinned UD EWT out-of-domain length-stratified assessment
         run: |
           PYTHONPATH=superparser python superparser/scripts/benchmark_ud_ewt_lr.py \
@@ -141,6 +150,7 @@ jobs:
                   superparser/research/verbnet_lr/negative_report.json \
                   superparser/research/verbnet_lr/grammar_quality_gate.json \
                   superparser/research/verbnet_lr/long_stress_report.json \
+                  superparser/research/verbnet_lr/grammar_upper_bound.json \
                   superparser/research/verbnet_lr/ud_ewt_probe.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
