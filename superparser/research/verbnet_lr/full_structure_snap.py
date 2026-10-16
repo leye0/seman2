@@ -341,19 +341,33 @@ class SnappingResearchReader:
     next offset for deferred layer-2 enumeration.
     """
     def __init__(self, resources, *, index: FullStructureSnapIndex,
-                 fallback=None, max_templates_checked: int = 128):
+                 fallback=None, max_templates_checked: int = 128,
+                 construction_guard: bool = True):
         if max_templates_checked < 1:
             raise ValueError("max_templates_checked must be positive")
         self.resources = resources
         self.index = index
         self.fallback = fallback or SemanCompiledReader(resources)
         self.max_templates_checked = max_templates_checked
+        self.construction_guard = construction_guard
 
     def parse(self, text: str, *, learn_candidate: bool = False):
         from seman_parser.segmentation import build_lattice
         lattice = build_lattice(text, self.resources.lexicon, multiword_max=1)
         snapped = self.index.match(
             lattice, max_templates_checked=self.max_templates_checked)
+        if snapped.complete and self.construction_guard:
+            from research.verbnet_lr.construction_guard import ConstructionGuard
+            guard = ConstructionGuard(modal_forms={
+                candidate.surface.casefold()
+                for candidate in lattice.candidates
+                if candidate.category == "MODAL"})
+            # The templates remain intact in the index. A local structural
+            # candidate is usable only when it ALSO passes the same generic
+            # construction guard available to the existing L-R experiments.
+            snapped.matches = tuple(
+                matched for matched in snapped.matches
+                if guard.validate(matched.item).acceptable)
         if snapped.complete:
             # A complete grammar-licensed derivation is an operational
             # answer. Incomplete means OTHER plausible trees remain deferred,

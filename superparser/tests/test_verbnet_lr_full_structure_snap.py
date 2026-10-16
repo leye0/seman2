@@ -11,6 +11,8 @@ from seman_parser.symbols import intern
 from research.verbnet_lr.full_structure_snap import (
     FullStructureSnapIndex, SnappingResearchReader)
 from research.verbnet_lr.packed_witness import seek_packed_witness
+from research.verbnet_lr.construction_guard import ConstructionGuard
+from research.verbnet_lr.full_structure_snap import SnapResult, SnapMatch
 
 
 def S(cat, **features):
@@ -170,6 +172,42 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertEqual(path,"snap")
         self.assertTrue(snapped.incomplete)
         self.assertTrue(snapped.complete)
+
+    def test_chartitem_construction_guard_and_hybrid_rejection(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        def leaf(word,category,lemma=None,**features):
+            c=SimpleNamespace(surface=word,category=category,
+                              lemma=lemma or word.casefold(),features=features)
+            return SimpleNamespace(category=category,lexical_candidate=c,
+                                   children=(),rule_id=None)
+        def phrase(category,children):
+            return SimpleNamespace(category=category,lexical_candidate=None,
+                                   children=tuple(children),rule_id="synthetic")
+        subject=phrase("NP",(leaf("The","DET"),
+                              leaf("dogs","N",number="plural")))
+        vp=phrase("VP",(leaf("barks","V",lemma="bark"),))
+        wrong=phrase("CLAUSE",(subject,vp))
+        self.assertFalse(ConstructionGuard().validate(wrong).acceptable)
+        good=phrase("CLAUSE",(subject,
+                              phrase("VP",(leaf("bark","V",lemma="bark"),))))
+        self.assertTrue(ConstructionGuard().validate(good).acceptable)
+
+        class ControlFallback:
+            def parse(self, text):
+                return SimpleNamespace(complete=False)
+        fake_lattice=self.lattice(["The","dogs","barks"],
+            [[("DET",None,1)],[("N","pl",1)],[("V",None,1)]])
+        fake=SnapResult((SnapMatch(0,wrong,False),),fake_lattice,
+                        1,1,0,False,"matched")
+        wrapper=SnappingResearchReader(self.resources,index=self.index,
+                                       fallback=ControlFallback())
+        with patch("seman_parser.segmentation.build_lattice",
+                   return_value=fake_lattice), patch.object(self.index,"match",
+                   return_value=fake):
+            result,path=wrapper.parse(fake_lattice.text)
+        self.assertEqual(path,"left_to_right")
+        self.assertFalse(result.complete)
 
     def test_prebuilt_lattice_reused_by_l_r_after_snap_miss(self):
         from unittest.mock import patch

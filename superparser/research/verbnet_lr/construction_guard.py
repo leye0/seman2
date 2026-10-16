@@ -14,8 +14,14 @@ def _features(c):
     f = c.features
     return f.as_dict() if hasattr(f, "as_dict") else f
 
-def _leaves(node):
+def _candidate(node):
+    # ReadNode/CompactNode expose candidate, whereas grammar-revalidated
+    # snapped ChartItem trees expose lexical_candidate.
     c = getattr(node, "candidate", None)
+    return c if c is not None else getattr(node, "lexical_candidate", None)
+
+def _leaves(node):
+    c = _candidate(node)
     if c is not None:
         yield c
     else:
@@ -105,7 +111,7 @@ class ConstructionGuard:
         def leaves(node):
             key = id(node)
             if key not in leaf_cache:
-                candidate = getattr(node, "candidate", None)
+                candidate = _candidate(node)
                 if candidate is not None:
                     leaf_cache[key] = (candidate,)
                 else:
@@ -123,7 +129,7 @@ class ConstructionGuard:
             children = getattr(node, "children", ())
             # Morphology must support the candidate's selected grammatical
             # form: a surface such as "did" cannot be a BASE reading of "do".
-            candidate = getattr(node, "candidate", None)
+            candidate = _candidate(node)
             if candidate is not None and candidate.category == "V":
                 vform = _features(candidate).get("vform")
                 if vform == "base" and (
@@ -151,7 +157,8 @@ class ConstructionGuard:
                             if not check.acceptable: return check
                         break
             if node.category == "VP" and children:
-                rule = getattr(getattr(node, "rule", None), "rule_id", None)
+                rule = (getattr(getattr(node, "rule", None), "rule_id", None)
+                        or getattr(node, "rule_id", None))
                 if rule == "vp_obj_pred":
                     lexical_head = next((v for v in leaves(children[0]) if v.category == "V"),None)
                     if lexical_head is not None:
