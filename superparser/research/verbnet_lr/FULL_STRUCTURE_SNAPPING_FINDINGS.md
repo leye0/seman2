@@ -273,3 +273,41 @@ teacher-side grammatical constraints or require stronger verification.
 Only one of ten selected external sentences is sent to Earley in the
 sampling version, with a fixed queue budget and explicit offline drains.
 There is NO implicit background verifier and no production parser change.
+
+## Definitive no-lost-positive-gold result after score-first ranking
+
+Full research workflow green: [Actions #38975292898](https://github.com/leye0/seman2/actions/runs/38975292898).
+Saved reproducible report: snap_holdout_report.json.
+
+| Held-out metric (70 Seman2 sentences) | L-R | Guarded snap+L-R |
+|---|---:|---:|
+| Completed analyses | 28 | 41 |
+| Passed all annotated syntax checks | 22 | **31** |
+| New annotated-gold passes | — | **9** |
+| Annotated-gold passes lost | — | **0** |
+| Incorrect sentences accepted / 24 negatives | 6 | **6** |
+| End-to-end p50 | 4.53143 ms | **2.63944 ms** |
+| End-to-end p95 | 8.82181 ms | **8.41763 ms** |
+| End-to-end p99 | 11.06915 ms | **9.10768 ms** |
+
+The formerly regressing h003 now selects the annotated clause_np_vp
+complete tree with vp_ditransitive, score **16**. Its other grammatical
+alternatives at scores **13** and **8.02** remain available for layer 2.
+The bounded Earley-witness structure at score 8.02 is NOT privileged
+simply for being recognized by an independent grammar algorithm.
+
+Quality improved on this SMALL FIXED test set, but 9 gained/0 lost is
+not a population-level guarantee; p95 8.42 ms does not meet the 5 ms
+worst-case objective. 13/25 matched sentences still had truncated
+lexical-variant exploration and must preserve an incompleteness marker.
+
+For authentic EWT expansion, see Actions #38975334358: both caches
+start with identical 42 DEV templates, then at 600 EWT train sentences
+contain 106 (all-teacher) vs 49 (10%-teacher). Neither improved 31/70
+explicit positive-gold syntax cases and negative false acceptance rose
+to 8/24 and 7/24, respectively. Hence NO default deployment of newly
+EWT-trained templates until improved grammar checking. The initial
+42-template DEV cache remains the better-supported experimental mode.
+
+All modifications remain research-only on research/verbnet-left-to-right-poc.
+Production Parser and main are untouched.
