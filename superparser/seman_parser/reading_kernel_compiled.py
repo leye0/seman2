@@ -377,6 +377,15 @@ class IncrementalReader:
         features = getattr(item, 'features', {})
         return features.as_dict() if hasattr(features, 'as_dict') else features
 
+    def _lexical_rank_bonus(self, candidate, category: str) -> int:
+        """Optional lexical evidence: only a tie-breaker, never an obligation.
+
+        The baseline returns zero for every candidate. Research readers may
+        override the hook, but grammatical compatibility and viability always
+        take precedence. No second parsing algorithm is invoked.
+        """
+        return 0
+
     def _consume(self, category: str, hints=()):
         self.count['lexical_lookups'] += 1
         options = self.lex[self.pos].get(category, ())
@@ -405,7 +414,9 @@ class IncrementalReader:
                 # Avoid preferring an unfinished rule when the next token
                 # cannot possibly begin its next slot.
                 viable = 2 if tail_expected else (1 if not tail else 0)
-                rank = (viable, rule.score, candidate.score)
+                rank = (viable, rule.score,
+                        self._lexical_rank_bonus(candidate, category),
+                        candidate.score)
                 self.count['lexical_feature_checks'] += 1
                 if best_rank is None or rank > best_rank:
                     selected, best_rank = candidate, rank
