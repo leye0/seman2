@@ -140,8 +140,19 @@ def compile_directory(xml_dir: str | Path, wordnet_sense_index: str | Path | Non
             if not lemma:
                 continue
             keys = tuple(k for k in member.get("wn", "").split() if k)
-            mapped = tuple(sorted({offsets[k] for k in keys if k in offsets}))
+            # VerbNet often abbreviates WordNet verb keys as
+            # "give%2:40:00"; index.sense stores "give%2:40:00::".
+            # The empty head_word/head_id suffix is compulsory for verbs.
+            matched = []
+            for key in keys:
+                full_key = key if key.count(":") >= 4 else key + "::"
+                offset = offsets.get(key, offsets.get(full_key))
+                if offset is not None:
+                    matched.append(offset)
+            mapped = tuple(sorted(set(matched)))
             link = "exact" if mapped else ("unresolved" if keys else "lemma_only")
+            stats["wordnet_keys_total"] += len(keys)
+            stats["wordnet_keys_matched"] += len(matched)
             stats["members"] += 1
             if link == "exact":
                 stats["members_exact"] += 1
