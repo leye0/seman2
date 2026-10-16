@@ -14,8 +14,8 @@
       "negative_false_accepts": 6,
       "new_negative_false_acceptances": [],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 3.25777,
-      "positive_p95_ms": 6.9041,
+      "positive_median_ms": 4.28775,
+      "positive_p95_ms": 9.07337,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
@@ -48,16 +48,16 @@
         "neg016"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 3.79067,
-      "positive_p95_ms": 7.40454,
+      "positive_median_ms": 5.04714,
+      "positive_p95_ms": 9.79052,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
         "no_new_negative_false_acceptances": false,
-        "median_at_or_below_target": true
+        "median_at_or_below_target": false
       },
       "quality_gate": false,
-      "performance_target_met": true
+      "performance_target_met": false
     },
     "O_local_snapshot2": {
       "total_positive_cases": 120,
@@ -89,16 +89,16 @@
         "neg016"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.02732,
-      "positive_p95_ms": 7.62781,
+      "positive_median_ms": 5.42446,
+      "positive_p95_ms": 10.27774,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
         "no_new_negative_false_acceptances": false,
-        "median_at_or_below_target": true
+        "median_at_or_below_target": false
       },
       "quality_gate": false,
-      "performance_target_met": true
+      "performance_target_met": false
     },
     "P_local_snapshot3": {
       "total_positive_cases": 120,
@@ -134,16 +134,16 @@
         "neg017"
       ],
       "baseline_negative_false_accepts": 6,
-      "positive_median_ms": 4.20451,
-      "positive_p95_ms": 8.22607,
+      "positive_median_ms": 5.68548,
+      "positive_p95_ms": 10.86428,
       "tests": {
         "nonregression_on_explicit_positive_gold": true,
         "gold_passes_at_least_baseline": true,
         "no_new_negative_false_acceptances": false,
-        "median_at_or_below_target": true
+        "median_at_or_below_target": false
       },
       "quality_gate": false,
-      "performance_target_met": true
+      "performance_target_met": false
     }
   },
   "warning": [

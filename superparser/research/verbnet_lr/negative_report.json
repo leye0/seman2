@@ -34,8 +34,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 1.37532,
-      "contrast_median_ms": 1.3193,
+      "negative_median_ms": 1.91189,
+      "contrast_median_ms": 1.82268,
       "new_false_accepts_vs_baseline": [],
       "lost_false_accepts_vs_baseline": []
     },
@@ -70,8 +70,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.55634,
-      "contrast_median_ms": 2.80713,
+      "negative_median_ms": 3.5297,
+      "contrast_median_ms": 3.86389,
       "new_false_accepts_vs_baseline": [
         "neg012",
         "neg015",
@@ -110,8 +110,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 2.97382,
-      "contrast_median_ms": 2.95223,
+      "negative_median_ms": 4.11285,
+      "contrast_median_ms": 4.04308,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg008",
@@ -154,8 +154,8 @@
           "contrast_completes": 3
         }
       },
-      "negative_median_ms": 3.16009,
-      "contrast_median_ms": 3.0529,
+      "negative_median_ms": 4.40986,
+      "contrast_median_ms": 4.10699,
       "new_false_accepts_vs_baseline": [
         "neg005",
         "neg006",
@@ -178,168 +178,447 @@
         "negative": "The dogs barks loudly.",
         "contrast": "The dogs bark loudly.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg002": {
         "family": "agreement",
         "negative": "The cats sleeps.",
         "contrast": "The cats sleep.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_intransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "sleeps",
+              "lemma": "sleep",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "intransitive"
+              }
+            }
+          ]
+        }
       },
       "neg003": {
         "family": "agreement",
         "negative": "These workers works hard.",
         "contrast": "These workers work hard.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg004": {
         "family": "agreement",
         "negative": "The children plays outside.",
         "contrast": "The children play outside.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_quant_n",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "children",
+              "lemma": "child",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "plays",
+              "lemma": "play",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'transitive']"
+              }
+            },
+            {
+              "surface": "outside",
+              "lemma": "outside",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg005": {
         "family": "agreement",
         "negative": "The boy are happy.",
         "contrast": "The boy is happy.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg006": {
         "family": "agreement",
         "negative": "The books is heavy.",
         "contrast": "The books are heavy.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg007": {
         "family": "agreement",
         "negative": "The doors was locked.",
         "contrast": "The doors were locked.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg008": {
         "family": "agreement",
         "negative": "The woman have arrived.",
         "contrast": "The woman has arrived.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg009": {
         "family": "modal",
         "negative": "John can reads the book.",
         "contrast": "John can read the book.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg010": {
         "family": "modal",
         "negative": "She should goes home.",
         "contrast": "She should go home.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg011": {
         "family": "modal",
         "negative": "He must eats now.",
         "contrast": "He must eat now.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg012": {
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg013": {
         "family": "modal",
         "negative": "I can to swim.",
         "contrast": "I can swim.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg014": {
         "family": "auxiliary",
         "negative": "They did opened the door.",
         "contrast": "They did open the door.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg015": {
         "family": "auxiliary",
         "negative": "She did not opened the door.",
         "contrast": "She did not open the door.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg016": {
         "family": "auxiliary",
         "negative": "He does not likes coffee.",
         "contrast": "He does not like coffee.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg017": {
         "family": "auxiliary",
         "negative": "John did eats.",
         "contrast": "John did eat.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg018": {
         "family": "determiner",
         "negative": "A cats ran away.",
         "contrast": "A cat ran away.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_particle"
+          ],
+          "lexemes": [
+            {
+              "surface": "A",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "ran",
+              "lemma": "run",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "away",
+              "lemma": "away",
+              "category": "PARTICLE",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg019": {
         "family": "determiner",
         "negative": "Those child are sleeping.",
         "contrast": "Those children are sleeping.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg020": {
         "family": "valency",
         "negative": "They donated John a book.",
         "contrast": "They donated a book to John.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "They",
+              "lemma": "they",
+              "category": "PRONOUN",
+              "features": {
+                "number": "plural",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "donated",
+              "lemma": "donate",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'prep_ditransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "a",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg021": {
         "family": "valency",
         "negative": "He arrived the station.",
         "contrast": "He arrived at the station.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg022": {
         "family": "valency",
         "negative": "She explained John the problem.",
         "contrast": "She explained the problem to John.",
         "negative_accepts": 2,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "explained",
+              "lemma": "explain",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'clausal']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "problem",
+              "lemma": "problem",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg023": {
         "family": "valency",
         "negative": "She enjoys read.",
         "contrast": "She enjoys reading.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg024": {
         "family": "valency",
         "negative": "She depends of her friends.",
         "contrast": "She depends on her friends.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       }
     },
     "N_local_snapshot1": {
@@ -348,168 +627,596 @@
         "negative": "The dogs barks loudly.",
         "contrast": "The dogs bark loudly.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg002": {
         "family": "agreement",
         "negative": "The cats sleeps.",
         "contrast": "The cats sleep.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_intransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "sleeps",
+              "lemma": "sleep",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "intransitive"
+              }
+            }
+          ]
+        }
       },
       "neg003": {
         "family": "agreement",
         "negative": "These workers works hard.",
         "contrast": "These workers work hard.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg004": {
         "family": "agreement",
         "negative": "The children plays outside.",
         "contrast": "The children play outside.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_quant_n",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "children",
+              "lemma": "child",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "plays",
+              "lemma": "play",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'transitive']"
+              }
+            },
+            {
+              "surface": "outside",
+              "lemma": "outside",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg005": {
         "family": "agreement",
         "negative": "The boy are happy.",
         "contrast": "The boy is happy.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg006": {
         "family": "agreement",
         "negative": "The books is heavy.",
         "contrast": "The books are heavy.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg007": {
         "family": "agreement",
         "negative": "The doors was locked.",
         "contrast": "The doors were locked.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg008": {
         "family": "agreement",
         "negative": "The woman have arrived.",
         "contrast": "The woman has arrived.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg009": {
         "family": "modal",
         "negative": "John can reads the book.",
         "contrast": "John can read the book.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg010": {
         "family": "modal",
         "negative": "She should goes home.",
         "contrast": "She should go home.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg011": {
         "family": "modal",
         "negative": "He must eats now.",
         "contrast": "He must eat now.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg012": {
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_proper",
+            "vp_ditransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "Mary",
+              "lemma": "Mary",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "will",
+              "lemma": "will",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['ditransitive', 'prep_ditransitive']"
+              }
+            },
+            {
+              "surface": "buys",
+              "lemma": "buy",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "milk",
+              "lemma": "milk",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg013": {
         "family": "modal",
         "negative": "I can to swim.",
         "contrast": "I can swim.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg014": {
         "family": "auxiliary",
         "negative": "They did opened the door.",
         "contrast": "They did open the door.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg015": {
         "family": "auxiliary",
         "negative": "She did not opened the door.",
         "contrast": "She did not open the door.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_neg_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "did",
+              "lemma": "do",
+              "category": "AUX",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "not",
+              "lemma": "not",
+              "category": "NEG",
+              "features": {}
+            },
+            {
+              "surface": "opened",
+              "lemma": "open",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "transitive"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "door",
+              "lemma": "door",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg016": {
         "family": "auxiliary",
         "negative": "He does not likes coffee.",
         "contrast": "He does not like coffee.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_neg_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "He",
+              "lemma": "he",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "does",
+              "lemma": "do",
+              "category": "AUX",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "not",
+              "lemma": "not",
+              "category": "NEG",
+              "features": {}
+            },
+            {
+              "surface": "likes",
+              "lemma": "like",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'subject_control', 'gerund_complement']"
+              }
+            },
+            {
+              "surface": "coffee",
+              "lemma": "coffee",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg017": {
         "family": "auxiliary",
         "negative": "John did eats.",
         "contrast": "John did eat.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg018": {
         "family": "determiner",
         "negative": "A cats ran away.",
         "contrast": "A cat ran away.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_particle"
+          ],
+          "lexemes": [
+            {
+              "surface": "A",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "ran",
+              "lemma": "run",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "away",
+              "lemma": "away",
+              "category": "PARTICLE",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg019": {
         "family": "determiner",
         "negative": "Those child are sleeping.",
         "contrast": "Those children are sleeping.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg020": {
         "family": "valency",
         "negative": "They donated John a book.",
         "contrast": "They donated a book to John.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "They",
+              "lemma": "they",
+              "category": "PRONOUN",
+              "features": {
+                "number": "plural",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "donated",
+              "lemma": "donate",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'prep_ditransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "a",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg021": {
         "family": "valency",
         "negative": "He arrived the station.",
         "contrast": "He arrived at the station.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg022": {
         "family": "valency",
         "negative": "She explained John the problem.",
         "contrast": "She explained the problem to John.",
         "negative_accepts": 2,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "explained",
+              "lemma": "explain",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'clausal']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "problem",
+              "lemma": "problem",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg023": {
         "family": "valency",
         "negative": "She enjoys read.",
         "contrast": "She enjoys reading.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg024": {
         "family": "valency",
         "negative": "She depends of her friends.",
         "contrast": "She depends on her friends.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       }
     },
     "O_local_snapshot2": {
@@ -518,168 +1225,770 @@
         "negative": "The dogs barks loudly.",
         "contrast": "The dogs bark loudly.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg002": {
         "family": "agreement",
         "negative": "The cats sleeps.",
         "contrast": "The cats sleep.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_intransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "sleeps",
+              "lemma": "sleep",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "intransitive"
+              }
+            }
+          ]
+        }
       },
       "neg003": {
         "family": "agreement",
         "negative": "These workers works hard.",
         "contrast": "These workers work hard.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg004": {
         "family": "agreement",
         "negative": "The children plays outside.",
         "contrast": "The children play outside.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_quant_n",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "children",
+              "lemma": "child",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "plays",
+              "lemma": "play",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'transitive']"
+              }
+            },
+            {
+              "surface": "outside",
+              "lemma": "outside",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg005": {
         "family": "agreement",
         "negative": "The boy are happy.",
         "contrast": "The boy is happy.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "vp_copula_adj"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "boy",
+              "lemma": "boy",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "are",
+              "lemma": "be",
+              "category": "COPULA",
+              "features": {
+                "vform": "finite",
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "happy",
+              "lemma": "happy",
+              "category": "ADJ",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg006": {
         "family": "agreement",
         "negative": "The books is heavy.",
         "contrast": "The books are heavy.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg007": {
         "family": "agreement",
         "negative": "The doors was locked.",
         "contrast": "The doors were locked.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg008": {
         "family": "agreement",
         "negative": "The woman have arrived.",
         "contrast": "The woman has arrived.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "vp_perfect"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "woman",
+              "lemma": "woman",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "have",
+              "lemma": "have",
+              "category": "HAVE",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "arrived",
+              "lemma": "arrive",
+              "category": "V",
+              "features": {
+                "vform": "ed",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            }
+          ]
+        }
       },
       "neg009": {
         "family": "modal",
         "negative": "John can reads the book.",
         "contrast": "John can read the book.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_n_det_post",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "can",
+              "lemma": "can",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "transitive"
+              }
+            },
+            {
+              "surface": "reads",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg010": {
         "family": "modal",
         "negative": "She should goes home.",
         "contrast": "She should go home.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_indef_pron",
+            "vp_linking_adj",
+            "vp_modal"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "should",
+              "lemma": "will",
+              "category": "MODAL",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "goes",
+              "lemma": "go",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['prepositional', 'linking']"
+              }
+            },
+            {
+              "surface": "home",
+              "lemma": "home",
+              "category": "ADJ",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg011": {
         "family": "modal",
         "negative": "He must eats now.",
         "contrast": "He must eat now.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg012": {
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_proper",
+            "vp_ditransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "Mary",
+              "lemma": "Mary",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "will",
+              "lemma": "will",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['ditransitive', 'prep_ditransitive']"
+              }
+            },
+            {
+              "surface": "buys",
+              "lemma": "buy",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "milk",
+              "lemma": "milk",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg013": {
         "family": "modal",
         "negative": "I can to swim.",
         "contrast": "I can swim.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg014": {
         "family": "auxiliary",
         "negative": "They did opened the door.",
         "contrast": "They did open the door.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg015": {
         "family": "auxiliary",
         "negative": "She did not opened the door.",
         "contrast": "She did not open the door.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_neg_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "did",
+              "lemma": "do",
+              "category": "AUX",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "not",
+              "lemma": "not",
+              "category": "NEG",
+              "features": {}
+            },
+            {
+              "surface": "opened",
+              "lemma": "open",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "transitive"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "door",
+              "lemma": "door",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg016": {
         "family": "auxiliary",
         "negative": "He does not likes coffee.",
         "contrast": "He does not like coffee.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_neg_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "He",
+              "lemma": "he",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "does",
+              "lemma": "do",
+              "category": "AUX",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "not",
+              "lemma": "not",
+              "category": "NEG",
+              "features": {}
+            },
+            {
+              "surface": "likes",
+              "lemma": "like",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'subject_control', 'gerund_complement']"
+              }
+            },
+            {
+              "surface": "coffee",
+              "lemma": "coffee",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg017": {
         "family": "auxiliary",
         "negative": "John did eats.",
         "contrast": "John did eat.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg018": {
         "family": "determiner",
         "negative": "A cats ran away.",
         "contrast": "A cat ran away.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_particle"
+          ],
+          "lexemes": [
+            {
+              "surface": "A",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "ran",
+              "lemma": "run",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "away",
+              "lemma": "away",
+              "category": "PARTICLE",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg019": {
         "family": "determiner",
         "negative": "Those child are sleeping.",
         "contrast": "Those children are sleeping.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg020": {
         "family": "valency",
         "negative": "They donated John a book.",
         "contrast": "They donated a book to John.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "They",
+              "lemma": "they",
+              "category": "PRONOUN",
+              "features": {
+                "number": "plural",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "donated",
+              "lemma": "donate",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'prep_ditransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "a",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg021": {
         "family": "valency",
         "negative": "He arrived the station.",
         "contrast": "He arrived at the station.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg022": {
         "family": "valency",
         "negative": "She explained John the problem.",
         "contrast": "She explained the problem to John.",
         "negative_accepts": 2,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "explained",
+              "lemma": "explain",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'clausal']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "problem",
+              "lemma": "problem",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg023": {
         "family": "valency",
         "negative": "She enjoys read.",
         "contrast": "She enjoys reading.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg024": {
         "family": "valency",
         "negative": "She depends of her friends.",
         "contrast": "She depends on her friends.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       }
     },
     "P_local_snapshot3": {
@@ -688,168 +1997,888 @@
         "negative": "The dogs barks loudly.",
         "contrast": "The dogs bark loudly.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg002": {
         "family": "agreement",
         "negative": "The cats sleeps.",
         "contrast": "The cats sleep.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_intransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "sleeps",
+              "lemma": "sleep",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "intransitive"
+              }
+            }
+          ]
+        }
       },
       "neg003": {
         "family": "agreement",
         "negative": "These workers works hard.",
         "contrast": "These workers work hard.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg004": {
         "family": "agreement",
         "negative": "The children plays outside.",
         "contrast": "The children play outside.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_quant_n",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "children",
+              "lemma": "child",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "plays",
+              "lemma": "play",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'transitive']"
+              }
+            },
+            {
+              "surface": "outside",
+              "lemma": "outside",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg005": {
         "family": "agreement",
         "negative": "The boy are happy.",
         "contrast": "The boy is happy.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "vp_copula_adj"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "boy",
+              "lemma": "boy",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "are",
+              "lemma": "be",
+              "category": "COPULA",
+              "features": {
+                "vform": "finite",
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "happy",
+              "lemma": "happy",
+              "category": "ADJ",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg006": {
         "family": "agreement",
         "negative": "The books is heavy.",
         "contrast": "The books are heavy.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_cop_adv"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "books",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "is",
+              "lemma": "be",
+              "category": "COPULA",
+              "features": {
+                "vform": "finite",
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "heavy",
+              "lemma": "heavy",
+              "category": "ADV",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg007": {
         "family": "agreement",
         "negative": "The doors was locked.",
         "contrast": "The doors were locked.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg008": {
         "family": "agreement",
         "negative": "The woman have arrived.",
         "contrast": "The woman has arrived.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "vp_perfect"
+          ],
+          "lexemes": [
+            {
+              "surface": "The",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "woman",
+              "lemma": "woman",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "have",
+              "lemma": "have",
+              "category": "HAVE",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "arrived",
+              "lemma": "arrive",
+              "category": "V",
+              "features": {
+                "vform": "ed",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            }
+          ]
+        }
       },
       "neg009": {
         "family": "modal",
         "negative": "John can reads the book.",
         "contrast": "John can read the book.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_n_det_post",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "can",
+              "lemma": "can",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "transitive"
+              }
+            },
+            {
+              "surface": "reads",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg010": {
         "family": "modal",
         "negative": "She should goes home.",
         "contrast": "She should go home.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_indef_pron",
+            "vp_linking_adj",
+            "vp_modal"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "should",
+              "lemma": "will",
+              "category": "MODAL",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "goes",
+              "lemma": "go",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['prepositional', 'linking']"
+              }
+            },
+            {
+              "surface": "home",
+              "lemma": "home",
+              "category": "ADJ",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg011": {
         "family": "modal",
         "negative": "He must eats now.",
         "contrast": "He must eat now.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_modal",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "He",
+              "lemma": "he",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "must",
+              "lemma": "must",
+              "category": "MODAL",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "eats",
+              "lemma": "eat",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "transitive"
+              }
+            },
+            {
+              "surface": "now",
+              "lemma": "now",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg012": {
         "family": "modal",
         "negative": "Mary will buys milk.",
         "contrast": "Mary will buy milk.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_proper",
+            "vp_ditransitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "Mary",
+              "lemma": "Mary",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "will",
+              "lemma": "will",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['ditransitive', 'prep_ditransitive']"
+              }
+            },
+            {
+              "surface": "buys",
+              "lemma": "buy",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "milk",
+              "lemma": "milk",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg013": {
         "family": "modal",
         "negative": "I can to swim.",
         "contrast": "I can swim.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg014": {
         "family": "auxiliary",
         "negative": "They did opened the door.",
         "contrast": "They did open the door.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg015": {
         "family": "auxiliary",
         "negative": "She did not opened the door.",
         "contrast": "She did not open the door.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_neg_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "did",
+              "lemma": "do",
+              "category": "AUX",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "not",
+              "lemma": "not",
+              "category": "NEG",
+              "features": {}
+            },
+            {
+              "surface": "opened",
+              "lemma": "open",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "transitive"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "door",
+              "lemma": "door",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg016": {
         "family": "auxiliary",
         "negative": "He does not likes coffee.",
         "contrast": "He does not like coffee.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_neg_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "He",
+              "lemma": "he",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "does",
+              "lemma": "do",
+              "category": "AUX",
+              "features": {
+                "vform": "finite"
+              }
+            },
+            {
+              "surface": "not",
+              "lemma": "not",
+              "category": "NEG",
+              "features": {}
+            },
+            {
+              "surface": "likes",
+              "lemma": "like",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'subject_control', 'gerund_complement']"
+              }
+            },
+            {
+              "surface": "coffee",
+              "lemma": "coffee",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg017": {
         "family": "auxiliary",
         "negative": "John did eats.",
         "contrast": "John did eat.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_coord_aux_adv",
+            "np_bare",
+            "np_proper",
+            "vp_bare_trans"
+          ],
+          "lexemes": [
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "did",
+              "lemma": "do",
+              "category": "V",
+              "features": {
+                "vform": "base"
+              }
+            },
+            {
+              "surface": "eats",
+              "lemma": "eats",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg018": {
         "family": "determiner",
         "negative": "A cats ran away.",
         "contrast": "A cat ran away.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_quant_n",
+            "vp_particle"
+          ],
+          "lexemes": [
+            {
+              "surface": "A",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "cats",
+              "lemma": "cat",
+              "category": "N",
+              "features": {
+                "number": "plural"
+              }
+            },
+            {
+              "surface": "ran",
+              "lemma": "run",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['intransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "away",
+              "lemma": "away",
+              "category": "PARTICLE",
+              "features": {}
+            }
+          ]
+        }
       },
       "neg019": {
         "family": "determiner",
         "negative": "Those child are sleeping.",
         "contrast": "Those children are sleeping.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       },
       "neg020": {
         "family": "valency",
         "negative": "They donated John a book.",
         "contrast": "They donated a book to John.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "They",
+              "lemma": "they",
+              "category": "PRONOUN",
+              "features": {
+                "number": "plural",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "donated",
+              "lemma": "donate",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'prep_ditransitive', 'prepositional']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "a",
+              "lemma": "a",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "book",
+              "lemma": "book",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg021": {
         "family": "valency",
         "negative": "He arrived the station.",
         "contrast": "He arrived at the station.",
         "negative_accepts": 0,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": null
       },
       "neg022": {
         "family": "valency",
         "negative": "She explained John the problem.",
         "contrast": "She explained the problem to John.",
         "negative_accepts": 2,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_det_n",
+            "np_indef_pron",
+            "np_proper",
+            "vp_obj_pred"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "explained",
+              "lemma": "explain",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'clausal']"
+              }
+            },
+            {
+              "surface": "John",
+              "lemma": "John",
+              "category": "PROPER-NOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "the",
+              "lemma": "the",
+              "category": "DET",
+              "features": {
+                "number": "singular"
+              }
+            },
+            {
+              "surface": "problem",
+              "lemma": "problem",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg023": {
         "family": "valency",
         "negative": "She enjoys read.",
         "contrast": "She enjoys reading.",
         "negative_accepts": 2,
-        "contrast_completes": 2
+        "contrast_completes": 2,
+        "accepted_negative_analysis": {
+          "rules": [
+            "clause_np_vp",
+            "np_bare",
+            "np_indef_pron",
+            "vp_transitive"
+          ],
+          "lexemes": [
+            {
+              "surface": "She",
+              "lemma": "she",
+              "category": "PRONOUN",
+              "features": {
+                "number": "singular",
+                "person": "3"
+              }
+            },
+            {
+              "surface": "enjoys",
+              "lemma": "enjoy",
+              "category": "V",
+              "features": {
+                "vform": "finite",
+                "subcat": "['transitive', 'gerund_complement', 'prepositional']"
+              }
+            },
+            {
+              "surface": "read",
+              "lemma": "read",
+              "category": "N",
+              "features": {
+                "number": "singular"
+              }
+            }
+          ]
+        }
       },
       "neg024": {
         "family": "valency",
         "negative": "She depends of her friends.",
         "contrast": "She depends on her friends.",
         "negative_accepts": 0,
-        "contrast_completes": 0
+        "contrast_completes": 0,
+        "accepted_negative_analysis": null
       }
     }
   },

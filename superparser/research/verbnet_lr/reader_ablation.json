@@ -4019,14 +4019,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.25777,
-        "p95": 6.9041,
-        "p99": 7.66345
+        "p50": 4.28775,
+        "p95": 9.07337,
+        "p99": 10.2222
       },
       "reading_ms": {
-        "p50": 2.30101,
-        "p95": 5.82375,
-        "p99": 6.077
+        "p50": 3.0942,
+        "p95": 7.5429,
+        "p99": 8.33699
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4139,14 +4139,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.31778,
-        "p95": 7.10412,
-        "p99": 7.88031
+        "p50": 4.43861,
+        "p95": 9.31092,
+        "p99": 10.56816
       },
       "reading_ms": {
-        "p50": 2.32001,
-        "p95": 5.86171,
-        "p99": 6.29647
+        "p50": 3.16856,
+        "p95": 7.82595,
+        "p99": 8.46606
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4259,14 +4259,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.24315,
-        "p95": 7.07797,
-        "p99": 7.91623
+        "p50": 4.35757,
+        "p95": 9.4108,
+        "p99": 10.60582
       },
       "reading_ms": {
-        "p50": 2.36987,
-        "p95": 5.912,
-        "p99": 6.34151
+        "p50": 3.12831,
+        "p95": 7.97727,
+        "p99": 8.50047
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4377,14 +4377,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 4.43995,
-        "p95": 8.23096,
-        "p99": 9.30531
+        "p50": 5.92024,
+        "p95": 11.00181,
+        "p99": 12.24654
       },
       "reading_ms": {
-        "p50": 3.47427,
-        "p95": 6.89029,
-        "p99": 8.17961
+        "p50": 4.66229,
+        "p95": 9.19363,
+        "p99": 10.76165
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4481,14 +4481,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 4.47091,
-        "p95": 8.44658,
-        "p99": 9.38833
+        "p50": 6.01634,
+        "p95": 11.27519,
+        "p99": 12.41933
       },
       "reading_ms": {
-        "p50": 3.56091,
-        "p95": 7.13366,
-        "p99": 8.2623
+        "p50": 4.75205,
+        "p95": 9.46644,
+        "p99": 10.87948
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4587,14 +4587,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 3.84501,
-        "p95": 8.0249,
-        "p99": 8.77194
+        "p50": 5.13562,
+        "p95": 10.71884,
+        "p99": 11.54352
       },
       "reading_ms": {
-        "p50": 2.96597,
-        "p95": 6.88543,
-        "p99": 7.18786
+        "p50": 4.03905,
+        "p95": 9.05907,
+        "p99": 9.79166
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4689,14 +4689,14 @@
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 3.90369,
-        "p95": 8.34627,
-        "p99": 8.87972
+        "p50": 5.33308,
+        "p95": 11.10753,
+        "p99": 11.96071
       },
       "reading_ms": {
-        "p50": 3.08812,
-        "p95": 7.04713,
-        "p99": 7.60131
+        "p50": 4.16554,
+        "p95": 9.41011,
+        "p99": 10.186
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4791,14 +4791,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 4.37744,
-        "p95": 11.96305,
-        "p99": 14.34351
+        "p50": 5.90437,
+        "p95": 15.9595,
+        "p99": 18.7862
       },
       "reading_ms": {
-        "p50": 3.4499,
-        "p95": 10.62912,
-        "p99": 12.7436
+        "p50": 4.61631,
+        "p95": 14.18825,
+        "p99": 16.68471
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -4895,17 +4895,17 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 5.05807,
-        "p95": 20.10193,
-        "p99": 27.23591
+        "p50": 6.73123,
+        "p95": 27.21947,
+        "p99": 34.80025
       },
       "reading_ms": {
-        "p50": 4.09859,
-        "p95": 18.96239,
-        "p99": 25.51776
+        "p50": 5.37404,
+        "p95": 25.66638,
+        "p99": 32.6897
       },
-      "mean_unifications": 6.925,
-      "mean_events": 34.375,
+      "mean_unifications": 6.942,
+      "mean_events": 34.433,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -4913,9 +4913,9 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 370,
-      "checkpoint_attempts": 610,
-      "checkpoint_options_seen": 2006,
+      "checkpoint_replays": 371,
+      "checkpoint_attempts": 611,
+      "checkpoint_options_seen": 2011,
       "checkpoint_saves": 0,
       "checkpoint_peak_saved_max": 0,
       "stop_reasons": {
@@ -4998,14 +4998,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 5.199,
-        "p95": 19.34861,
-        "p99": 26.66736
+        "p50": 7.00179,
+        "p95": 27.2203,
+        "p99": 36.53465
       },
       "reading_ms": {
-        "p50": 4.21431,
-        "p95": 17.99329,
-        "p99": 24.96537
+        "p50": 5.62076,
+        "p95": 25.7204,
+        "p99": 34.36547
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5054,64 +5054,64 @@
     },
     "K_lazy_checkpoint1": {
       "evaluations": 240,
-      "complete": 109,
-      "complete_but_nonconforming": 27,
+      "complete": 110,
+      "complete_but_nonconforming": 28,
       "gold_by_family": {
         "voice": {
-          "evaluated": 109,
-          "passed": 109
+          "evaluated": 110,
+          "passed": 110
         },
         "predicate": {
-          "evaluated": 109,
+          "evaluated": 110,
           "passed": 96
         },
         "required_rules": {
-          "evaluated": 109,
-          "passed": 95
+          "evaluated": 110,
+          "passed": 96
         },
         "forbidden_rules": {
-          "evaluated": 109,
-          "passed": 107
+          "evaluated": 110,
+          "passed": 108
         },
         "lexical_pos": {
-          "evaluated": 109,
-          "passed": 103
+          "evaluated": 110,
+          "passed": 104
         },
         "constituents": {
-          "evaluated": 109,
-          "passed": 103
+          "evaluated": 110,
+          "passed": 104
         }
       },
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
-        "vp_observations": 87,
+        "vp_observations": 88,
         "status": {
           "ATTESTED": 70,
-          "UNKNOWN": 15,
+          "UNKNOWN": 16,
           "PREFIX": 2
         },
         "confidence": {
           "sense_verified": 70,
-          "none": 15,
+          "none": 16,
           "lemma_only": 2
         },
         "attested_with_explicit_gold_pass": 66,
         "attested_with_explicit_gold_fail": 4
       },
-      "coverage_percent": 45.42,
+      "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 4.33931,
-        "p95": 11.81087,
-        "p99": 13.87249
+        "p50": 5.81156,
+        "p95": 15.48456,
+        "p99": 18.09165
       },
       "reading_ms": {
-        "p50": 3.42366,
-        "p95": 10.32119,
-        "p99": 12.10396
+        "p50": 4.48581,
+        "p95": 13.79948,
+        "p99": 15.94958
       },
-      "mean_unifications": 4.996,
-      "mean_events": 22.954,
+      "mean_unifications": 5,
+      "mean_events": 22.967,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -5153,8 +5153,7 @@
         "unconsumed_3_the": 2,
         "unconsumed_4_?": 2,
         "expected_continuation_VP-NP_at_4_state_417": 2,
-        "expected_continuation_NP_at_5_state_8": 2,
-        "unification_failed_VP_at_4": 1
+        "expected_continuation_NP_at_5_state_8": 2
       }
     },
     "L_lazy_checkpoint3": {
@@ -5206,14 +5205,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 4.91965,
-        "p95": 18.77714,
-        "p99": 26.21392
+        "p50": 6.64542,
+        "p95": 25.46896,
+        "p99": 33.89701
       },
       "reading_ms": {
-        "p50": 4.03062,
-        "p95": 17.4301,
-        "p99": 24.55972
+        "p50": 5.29406,
+        "p95": 23.11017,
+        "p99": 31.75629
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -5309,14 +5308,14 @@
       },
       "coverage_percent": 49.17,
       "total_ms": {
-        "p50": 4.82442,
-        "p95": 16.99546,
-        "p99": 20.17091
+        "p50": 6.42567,
+        "p95": 23.4276,
+        "p99": 27.01745
       },
       "reading_ms": {
-        "p50": 3.73489,
-        "p95": 16.14207,
-        "p99": 18.48179
+        "p50": 5.12896,
+        "p95": 21.58654,
+        "p99": 24.84925
       },
       "mean_unifications": 5.933,
       "mean_events": 29.142,
@@ -5414,14 +5413,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 3.79067,
-        "p95": 7.40454,
-        "p99": 8.11307
+        "p50": 5.04714,
+        "p95": 9.79052,
+        "p99": 10.51392
       },
       "reading_ms": {
-        "p50": 2.81939,
-        "p95": 6.12374,
-        "p99": 6.57281
+        "p50": 3.84118,
+        "p95": 8.20492,
+        "p99": 8.46031
       },
       "mean_unifications": 4.108,
       "mean_events": 17.008,
@@ -5518,14 +5517,14 @@
       },
       "coverage_percent": 50.83,
       "total_ms": {
-        "p50": 4.02732,
-        "p95": 7.62781,
-        "p99": 9.07827
+        "p50": 5.42446,
+        "p95": 10.27774,
+        "p99": 12.45954
       },
       "reading_ms": {
-        "p50": 3.04638,
-        "p95": 6.29388,
-        "p99": 7.95274
+        "p50": 4.00295,
+        "p95": 8.45562,
+        "p99": 10.85795
       },
       "mean_unifications": 4.567,
       "mean_events": 19.125,
@@ -5625,14 +5624,14 @@
       },
       "coverage_percent": 56.67,
       "total_ms": {
-        "p50": 4.20451,
-        "p95": 8.22607,
-        "p99": 10.57513
+        "p50": 5.68548,
+        "p95": 10.86428,
+        "p99": 14.34106
       },
       "reading_ms": {
-        "p50": 3.08809,
-        "p95": 6.65374,
-        "p99": 8.92487
+        "p50": 4.36473,
+        "p95": 9.0254,
+        "p99": 12.14531
       },
       "mean_unifications": 5.192,
       "mean_events": 21.133,
@@ -5731,14 +5730,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.25875,
-        "p95": 6.80889,
-        "p99": 7.71417
+        "p50": 4.31465,
+        "p95": 9.04109,
+        "p99": 11.0092
       },
       "reading_ms": {
-        "p50": 2.3151,
-        "p95": 5.76778,
-        "p99": 6.28554
+        "p50": 3.09974,
+        "p95": 7.69161,
+        "p99": 9.52958
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -42100,13 +42099,13 @@
             ],
             [
               "CONSUME",
-              "PROPER-NOUN",
-              "John/PROPER-NOUN"
+              "N",
+              "john/N"
             ],
             [
               "COMPLETE",
               "NP",
-              "np_proper"
+              "np_bare"
             ],
             [
               "CONSUME",
