@@ -32,16 +32,27 @@ class CompiledKernelReport:
 
 
 class SemanCompiledReader:
-    def __init__(self, resources: ParserResources):
+    def __init__(self, resources: ParserResources, *,
+                 verbnet_index: Any | None = None, verbnet_mode: str = 'exact'):
         self.resources = resources
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
         self.adapter = PredictiveParser(resources)
+        self.verbnet_ranker = None
+        if verbnet_index is not None:
+            # Research-only dependency: production parser never imports VerbNet.
+            from research.verbnet_lr import read_index
+            from research.verbnet_lr.guidance import VerbNetRanker
+            if isinstance(verbnet_index, (str, Path)):
+                verbnet_index = read_index(verbnet_index)
+            self.verbnet_ranker = VerbNetRanker(verbnet_index, mode=verbnet_mode)
 
     @classmethod
-    def from_dir(cls, directory: str | Path):
-        return cls(ParserResources.from_dir(directory))
+    def from_dir(cls, directory: str | Path, *, wordnet_dict: str | Path | None = None,
+                 verbnet_index: Any | None = None, verbnet_mode: str = 'exact'):
+        return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
+                   verbnet_index=verbnet_index, verbnet_mode=verbnet_mode)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -71,7 +82,17 @@ class SemanCompiledReader:
             memo[id(node)] = result
             return node
 
+        ranker = self.verbnet_ranker
+
         class _TracedReader(IncrementalReader):
+            def _lexical_rank_bonus(self, candidate, category: str) -> int:
+                if ranker is None or category != 'V':
+                    return 0
+                self.count['verbnet_scoring_calls'] += 1
+                bonus = ranker.score(candidate, self.tokens, self.lex, self.pos)
+                self.count['verbnet_positive_hints'] += int(bonus > 0)
+                return bonus
+
             def _consume(self, category: str, hints=()):
                 node = super()._consume(category, hints)
                 memo[id(node)] = SemanCompiledReader._leaf(node)
