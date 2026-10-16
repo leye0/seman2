@@ -98,7 +98,7 @@ def predict_candidate(index, candidate, observed=()):
     if candidate.category != "V": return {"status":"UNKNOWN", "next_events":[], "frames":0}
     import re
     offsets = {int(m.group(1)) for key in candidate.sense_ids
-               if (m := re.fullmatch(r"wn-(\\d+)-v-(?:finite|base|ed|ing)", key))}
+               if (m := re.fullmatch(r"wn-(\d+)-v-(?:finite|base|ed|ing)", key))}
     if not offsets: return index.predict(candidate.lemma, tuple(observed))
     results = [index.predict(candidate.lemma, tuple(observed), offset) for offset in sorted(offsets)]
     return {"status": "ATTESTED" if any(r["status"]=="ATTESTED" for r in results)
