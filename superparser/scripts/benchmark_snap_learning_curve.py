@@ -65,7 +65,7 @@ def _gold(case, report, path):
     return syntax_assertions(case,proxy)["pass"]
 
 
-def _train_teacher(index, lattice, *, seconds):
+def _train_teacher(index, lattice, *, seconds, mirror=None):
     guard = ConstructionGuard(modal_forms={
         c.surface.casefold() for c in lattice.candidates if c.category == "MODAL"})
     report = seek_packed_witness(
@@ -79,6 +79,10 @@ def _train_teacher(index, lattice, *, seconds):
     item = index._materializer._materialize(report["witness_node"])
     try:
         index.observe(item,lattice=lattice,evidence="grammar_witness")
+        if mirror is not None:
+            # Exactly the SAME proven tree, not a re-ranked (possibly
+            # different) template on a second read of the same sentence.
+            mirror.observe(item,lattice=lattice,evidence="grammar_witness")
     except ValueError:
         return "UNSUPPORTED"
     return "ADDED"
@@ -166,25 +170,14 @@ def run(*,wordnet_dir,max_external=600,milestones=(0,100,300,600),
                 except ValueError:
                     dev_stats["lr_unsupported"]+=1
             dev_stats["lr_complete"]+=1
-        before=len(all_index.templates)
-        status=_train_teacher(all_index,lattice,seconds=dev_seconds)
+        status=_train_teacher(all_index,lattice,seconds=dev_seconds,
+                              mirror=tenth_index)
         dev_stats["teacher_"+status]+=1
-        # Teacher witness should seed both indexes with the identical source,
-        # but without sharing mutable index objects or any gold labels.
-        if status=="ADDED":
-            source=all_index.templates[-1] if len(all_index.templates)>before else None
-            # Re-run a fast independently grammatical lookup on the dev
-            # sentence, and transfer its confirmed topology to tenth_index.
-            result=all_index.match(lattice,max_templates_checked=128)
-            witness=next((m for m in result.matches
-                          if all_index.templates[m.template_id].grammar_witness_observations>0),
-                         None)
-            if witness is not None:
-                try:
-                    tenth_index.observe(witness.item,lattice=lattice,
-                                        evidence="grammar_witness")
-                except ValueError:
-                    dev_stats["seed_tenth_unsupported"]+=1
+    # A fair learning-curve comparison MUST have the same exact initial
+    # structures, not merely similar totals. The only difference between
+    # caches after this point is external teacher sampling frequency.
+    assert all_index._by_shape == tenth_index._by_shape
+    assert all_index.summary() == tenth_index.summary()
     sampler=VerificationSamplingQueue(every=10,phase=0,max_pending=20)
     checkpoints=[]
     external_stats=Counter()
