@@ -42,7 +42,7 @@ class TestFastMultiword(unittest.TestCase):
         fast = FastMultiwordLexicon(self.lex)
         before = self.lex.lookup_morphology("the")
         after = fast.lookup_morphology("the")
-        self.assertEqual(before, after)
+        self.assertEqual(tuple(before), after)
 
 
 if __name__=="__main__":
