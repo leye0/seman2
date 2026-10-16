@@ -23,6 +23,34 @@ from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def chosen_tree_facts(node):
+    """Read only the *chosen* completed analysis, never alternative trees."""
+    if node is None:
+        return {}
+    rule_ids = []
+    leaves = []
+    stack = [node]
+    while stack:
+        current = stack.pop()
+        rule = getattr(current, "rule_id", None)
+        if rule:
+            rule_ids.append(rule)
+        lex = getattr(current, "lexical_candidate", None)
+        if lex is not None:
+            feats = lex.features.as_dict() if hasattr(lex.features, "as_dict") else lex.features
+            leaves.append({
+                "surface": lex.surface,
+                "lemma": lex.lemma,
+                "category": lex.category,
+                "features": {str(k): str(v) for k, v in feats.items()
+                             if k in {"number", "person", "vform", "subcat"}},
+            })
+        stack.extend(reversed(getattr(current, "children", ())))
+    return {"rules": sorted(set(rule_ids)), "lexemes": leaves}
+
+
 MODES = (
     ("A_baseline", 0),
     ("N_local_snapshot1", 1),
@@ -67,6 +95,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=2):
                         "complete": bool(result.complete),
                         "time_ms": round(elapsed, 5),
                         "reason": result.outcome.reason if not result.complete else "",
+                        "chosen_analysis": (chosen_tree_facts(result.item)
+                                            if kind == "text" and result.complete and repeat == 0
+                                            else None),
                     })
 
     summary = {}
@@ -83,6 +114,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=2):
                 "contrast": case["contrast"],
                 "negative_accepts": sum(r["complete"] for r in neg),
                 "contrast_completes": sum(r["complete"] for r in pos),
+                "accepted_negative_analysis": next(
+                    (r["chosen_analysis"] for r in neg if r["chosen_analysis"] is not None),
+                    None),
             }
         summary[mode] = {
             "negative_cases": len(cases),
