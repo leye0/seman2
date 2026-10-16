@@ -63,6 +63,7 @@ class SnapResult:
     reductions: int
     incomplete: bool
     reason: str
+    next_template_offset: int | None = None
 
     @property
     def complete(self) -> bool:
@@ -198,7 +199,8 @@ class FullStructureSnapIndex:
 
     def match(self, lattice: Any, *, max_templates_checked: int = 128,
               max_states: int = 4096, max_variants: int = 8,
-              max_reductions: int = 512) -> SnapResult:
+              max_reductions: int = 512,
+              template_offset: int = 0) -> SnapResult:
         """Return ALL matching whole-tree templates within explicit budgets.
 
         Any budget cutoff sets incomplete=True; a truncated search must never
@@ -206,6 +208,8 @@ class FullStructureSnapIndex:
         """
         if min(max_templates_checked, max_states, max_variants, max_reductions) < 1:
             raise ValueError("All budgets must be positive")
+        if template_offset < 0:
+            raise ValueError("template_offset must be nonnegative")
         options = self._lexical_slots(lattice)
         active = [self._root]
         incomplete = False
@@ -230,12 +234,20 @@ class FullStructureSnapIndex:
         # full traversal of a potentially multimillion-ID bucket is needed.
         count = sum(len(state.template_ids) for state in active)
         ids = []
+        skip = template_offset
         for state in active:
+            length = len(state.template_ids)
+            if skip >= length:
+                skip -= length
+                continue
             remaining = max_templates_checked - len(ids)
             if remaining <= 0:
                 break
-            ids.extend(state.template_ids[:remaining])
-        if count > len(ids):
+            ids.extend(state.template_ids[skip:skip + remaining])
+            skip = 0
+        next_offset = (template_offset + len(ids)
+                       if template_offset + len(ids) < count else None)
+        if next_offset is not None:
             incomplete = True
         reductions = 0
         matched = []
@@ -298,12 +310,14 @@ class FullStructureSnapIndex:
             reason = "budget_exhausted_or_lexical_variants_unexplored"
         elif matched:
             reason = "matched"
+        elif count and not ids and template_offset > 0:
+            reason = "template_offset_past_end"
         elif count:
             reason = "templates_failed_feature_unification"
         else:
             reason = "unseen_pattern"
         return SnapResult(tuple(matched), lattice, count, len(ids),
-                          reductions, incomplete, reason)
+                          reductions, incomplete, reason, next_offset)
 
     def summary(self):
         return {
@@ -321,8 +335,10 @@ class FullStructureSnapIndex:
 class SnappingResearchReader:
     """Opt-in fast-path front end; default L-R remains unchanged.
 
-    A miss or incomplete search is handed to the existing L-R fallback. A
-    matched template is revalidated through real grammatical unification.
+    A miss is handed to the existing L-R fallback. One revalidated match
+    is sufficient for the fast path even if other known alternatives remain
+    unmaterialized; the result explicitly advertises incompleteness and the
+    next offset for deferred layer-2 enumeration.
     """
     def __init__(self, resources, *, index: FullStructureSnapIndex,
                  fallback=None):
@@ -334,7 +350,10 @@ class SnappingResearchReader:
         from seman_parser.segmentation import build_lattice
         lattice = build_lattice(text, self.resources.lexicon, multiword_max=1)
         snapped = self.index.match(lattice)
-        if snapped.complete and not snapped.incomplete:
+        if snapped.complete:
+            # A complete grammar-licensed derivation is an operational
+            # answer. Incomplete means OTHER plausible trees remain deferred,
+            # not that this matched tree is invalid. Layer 2 can page them.
             return snapped, "snap"
         fallback = self.fallback.parse(text)
         if learn_candidate and fallback.complete:

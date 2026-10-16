@@ -100,6 +100,19 @@ def snapshot(index, lattice, runs=15):
             "returned":len(hit.matches),
             "incomplete":hit.incomplete,
         }
+    late=[]
+    for _ in range(runs):
+        started=perf_counter()
+        tail=index.match(lattice,max_templates_checked=1,
+                         template_offset=len(index.templates)-1,
+                         max_reductions=512)
+        late.append((perf_counter()-started)*1000)
+        assert len(tail.matches)==1 and tail.next_template_offset is None
+    late.sort()
+    measurements["last_template"]={
+        "p50_ms":round(late[(len(late)-1)//2],5),
+        "p95_ms":round(late[int((len(late)-1)*.95)],5),
+    }
     return measurements
 
 

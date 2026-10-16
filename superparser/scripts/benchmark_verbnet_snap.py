@@ -14,7 +14,7 @@ from pathlib import Path
 from statistics import median
 from time import perf_counter
 
-from research.verbnet_lr.full_structure_snap import FullStructureSnapIndex
+from research.verbnet_lr.full_structure_snap import FullStructureSnapIndex, SnappingResearchReader
 from research.verbnet_lr.packed_witness import seek_packed_witness
 from research.verbnet_lr.construction_guard import ConstructionGuard
 from seman_parser.predictive import PredictiveParser
@@ -78,7 +78,9 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
                     training["teacher_unsupported"]+=1
             else:
                 training["teacher_"+witness["status"].lower()]+=1
-    totals={"lr":[],"snap_recognition":[],"snap_including_lattice":[]}
+    hybrid=SnappingResearchReader(resources,index=snap,fallback=lr)
+    totals={"lr":[],"snap_recognition":[],"snap_including_lattice":[],
+            "hybrid_including_lattice":[]}
     case_results=[]
     def snapped_gold(case, item):
         # Produce the same evidence representation consumed by the existing
@@ -109,6 +111,9 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
         t=perf_counter()
         baseline=lr.parse(case["text"])
         totals["lr"].append((perf_counter()-t)*1000)
+        t=perf_counter()
+        hybrid_result,hybrid_path=hybrid.parse(case["text"])
+        totals["hybrid_including_lattice"].append((perf_counter()-t)*1000)
         gold_scores=[snapped_gold(case,m.item) for m in hit.matches]
         case_results.append({
             "id":case["id"],"split":case.get("split"),
@@ -121,6 +126,8 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "snap_incomplete":hit.incomplete,"snap_reason":hit.reason,
             "candidate_templates":hit.candidate_templates,
             "lr_complete":baseline.complete,
+            "hybrid_path":hybrid_path,
+            "hybrid_complete":hybrid_result.complete,
             "snap_rule_ids":sorted({m.item.rule_id for m in hit.matches}),
         })
     def metrics(seq):
@@ -142,6 +149,10 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
                            r["any_explicit_gold_pass"] for r in case_results),
                        "hits_all_matches_pass_explicit_gold":sum(
                            r["all_explicit_gold_pass"] for r in case_results),
+                       "hybrid_snap_fastpath":sum(
+                           r["hybrid_path"] == "snap" for r in case_results),
+                       "hybrid_lr_fallback":sum(
+                           r["hybrid_path"] == "left_to_right" for r in case_results),
                        "multi_structure_hits":sum(r["snap_matches"]>1 for r in case_results),
                        "incomplete":sum(r["snap_incomplete"] for r in case_results),
                        "no_hit":sum(not r["snap_matches"] for r in case_results)},
@@ -149,6 +160,7 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "snap_recognition_warmed_lattice":metrics(totals["snap_recognition"]),
             "snap_including_lexical_lattice":metrics(totals["snap_including_lattice"]),
             "lr_baseline_including_lattice":metrics(totals["lr"]),
+            "hybrid_snap_then_lr_fallback":metrics(totals["hybrid_including_lattice"]),
         },
         "cases":case_results,
         "limitations":[
@@ -157,7 +169,8 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "Candidate templates come from L-R; grammar_witness templates come from independent bounded Earley+unification, NOT gold syntax.",
             "The teacher tests only dev. UNKNOWN from its budgets is not evidence of invalid grammar.",
             "Only one lexical derivation is materialized per matched whole-tree template.",
-            "Hard budgets can truncate lookup; such cases are marked incomplete.",
+            "Hard budgets can truncate lookup; such cases are marked incomplete; a valid match still takes fast path.",
+            "Hybrid fallback currently repeats lexical lattice construction on misses; this overhead is included.",
             "No 20-million-template memory or on-disk index performance has been claimed.",
         ]
     }

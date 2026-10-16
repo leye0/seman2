@@ -7,7 +7,8 @@ from seman_parser.grammar import Grammar, GrammarRule, RuleSymbol
 from seman_parser.segmentation import LexicalCandidate, LexicalLattice, Token
 from seman_parser.predictive import CompactNode, PredictiveParser
 from seman_parser.symbols import intern
-from research.verbnet_lr.full_structure_snap import FullStructureSnapIndex
+from research.verbnet_lr.full_structure_snap import (
+    FullStructureSnapIndex, SnappingResearchReader)
 from research.verbnet_lr.packed_witness import seek_packed_witness
 
 
@@ -134,6 +135,39 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertTrue(result.incomplete)
         self.assertIs(self.index.templates[0].categories,
                       self.index.templates[1].categories)
+
+    def test_deferred_alternatives_paged_and_first_match_can_return(self):
+        from unittest.mock import patch
+        cats=[[("PRON",None,1)],[("V",None,1)],
+              [("N","sg",1)],[("PREP",None,1)],[("N","sg",1)]]
+        lattice=self.lattice(["I","saw","girl","with","hat"],cats)
+        for tree in self.two_attached_trees(lattice):
+            self.index.observe(tree,lattice=lattice)
+        first=self.index.match(lattice,max_templates_checked=1)
+        self.assertTrue(first.complete)
+        self.assertEqual(first.next_template_offset,1)
+        second=self.index.match(lattice,max_templates_checked=1,
+                                template_offset=first.next_template_offset)
+        self.assertEqual(second.matches[0].template_id,1)
+        self.assertIsNone(second.next_template_offset)
+        self.assertEqual(second.candidate_templates,2)
+        past=self.index.match(lattice,max_templates_checked=1,
+                              template_offset=2)
+        self.assertEqual(past.reason,"template_offset_past_end")
+        self.assertFalse(past.complete)
+        with self.assertRaises(ValueError):
+            self.index.match(lattice,template_offset=-1)
+
+        class NeverFallback:
+            def parse(self, text):
+                raise AssertionError("L-R fallback must not run on valid snap")
+        wrapper=SnappingResearchReader(self.resources,index=self.index,
+                                       fallback=NeverFallback())
+        with patch("seman_parser.segmentation.build_lattice",return_value=lattice):
+            snapped,path=wrapper.parse(lattice.text)
+        self.assertEqual(path,"snap")
+        self.assertTrue(snapped.incomplete)
+        self.assertTrue(snapped.complete)
 
     def test_unknown_and_explicit_budgets(self):
         cats = [[("PRON",None,1)], [("V",None,1)],
