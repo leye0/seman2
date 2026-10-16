@@ -167,6 +167,10 @@ class LocalCheckpointReader(IncrementalReader):
                     return True
         return False
 
+    def _prefer_finish_extension(self, frame: _Frame) -> bool:
+        """Opt-in ranking hook, never permission to violate a grammar rule."""
+        return False
+
     def _register(self, frame: _Frame, edge: str):
         eligible_finals = (
             frame.state.finals if frame.live is None
@@ -326,6 +330,29 @@ class LocalCheckpointReader(IncrementalReader):
                     self._peak_checkpoints, len(self._snapshots))
                 self.count["checkpoint_saves"] += 1
                 self.count["checkpoint_extension_saves"] += 1
+            # A weak learned preference may finish this boundary first,
+            # with the grammatically possible extension saved for recovery.
+            forced_extension = self._forced == (
+                len(self._stack), frame.state.state_id, "$EXTEND")
+            if forced_extension:
+                self._forced = None
+            elif (self.extension_checkpoints and self.replay_budget > 0
+                  and self._prefer_finish_extension(frame)):
+                point = _Snapshot(
+                    stack=tuple(replace(f) for f in self._stack),
+                    pos=self.pos, event_len=len(self.events),
+                    state_id=frame.state.state_id,
+                    first_edge="$FINISH", tried=("$FINISH",))
+                if len(self._snapshots) >= self.max_checkpoints:
+                    self._snapshots.pop(0)
+                    self.count["checkpoint_evictions"] += 1
+                self._snapshots.append(point)
+                self._peak_checkpoints = max(
+                    self._peak_checkpoints, len(self._snapshots))
+                self.count["checkpoint_saves"] += 1
+                self.count["checkpoint_extension_saves"] += 1
+                assert frame.result is not None
+                return self._finish(frame.result)
             self.count["extensions"] += 1
             self._emit("EXTEND", frame.category,
                        f"compiled suffix at {root.state_id}")
@@ -365,6 +392,9 @@ class LocalCheckpointReader(IncrementalReader):
             selected = "$REDUCE"
             self.count["parent_follow_witness_reductions"] += 1
         if selected == "$REDUCE":
+            # Learned reduce-first decisions still preserve extension backup.
+            if not forced_here and self._forced is None:
+                self._register(frame, "$REDUCE")
             # This is a licensed prefix reduction saved as an alternative
             # to greedy continuation. Not a lexical or grammar edge.
             selected = None
@@ -436,15 +466,15 @@ class LocalCheckpointReader(IncrementalReader):
             self.active = {(f.category, f.start) for f in self._stack}
             self.depth = len(self._stack)
             frame = self._stack[-1]
-            if point.first_edge == "$EXTEND":
-                # This checkpoint records a clause/phrase boundary, not
-                # an alternative lexical transition inside the old trie.
-                alternative = ("$FINISH"
-                               if "$FINISH" not in point.tried else None)
+            if point.first_edge in {"$EXTEND", "$FINISH"}:
+                # Only the two grammar-licensed boundary outcomes compete.
+                opposite = ("$FINISH" if point.first_edge == "$EXTEND"
+                            else "$EXTEND")
+                alternative = opposite if opposite not in point.tried else None
             else:
                 alternative = self._select(
                     frame.state, frame.live, excluded=frozenset(point.tried))
-            if (point.first_edge != "$EXTEND"
+            if (point.first_edge not in {"$EXTEND", "$FINISH"}
                     and alternative is None and self.reduce_checkpoints
                     and (not self.reduce_follow_only
                          or self._parent_follow_witness())
