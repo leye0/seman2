@@ -24,7 +24,8 @@ def assess(main: dict, negative: dict, median_target_ms: float = 5.0) -> dict:
              "AH_promoted_guard0", "AI_promoted_guard1", "AJ_promoted_guard3",
              "AK_reduce_guard1", "AL_reduce_guard3",
              "AM_parent_follow1", "AN_parent_follow3",
-             "AO_follow_only1", "AP_follow_only3")
+             "AO_follow_only1", "AP_follow_only3",
+             "AQ_reachable_guard1", "AR_reachable_guard3")
     comparisons = {}
     base = main["summary"]["A_baseline"]
     negative_baseline = negative["summary"]["A_baseline"]
@@ -39,17 +40,39 @@ def assess(main: dict, negative: dict, median_target_ms: float = 5.0) -> dict:
                           if c["baseline_gold"]["pass"] is not True
                           and c["guided_gold"]["pass"] is True)
         median_ms = row["total_ms"]["p50"]
+        consistency = main.get("repeat_stability", {}).get(mode, {})
+        # Averaging passes then rounding down hides variable parse outcomes.
+        first_pass_gold = consistency.get(
+            "first_pass_gold",
+            sum(split["explicit_gold_passed"]
+                for split in main.get("per_split", {}).get(mode, {}).values())
+            if mode in main.get("per_split", {})
+            else row["explicit_gold_assertion_passed"] // main["repetitions"]
+        )
+        stable_gold = consistency.get("stable_gold", first_pass_gold)
+        unstable_ids = sorted(set(
+            consistency.get("unstable_gold_ids", ())
+        ) | set(consistency.get("unstable_completion_ids", ()))
+          | set(consistency.get("unstable_trace_ids", ())))
         tests = {
             "nonregression_on_explicit_positive_gold": not regressions,
             "gold_passes_at_least_baseline": (
-                row["explicit_gold_assertion_passed"] >= base["explicit_gold_assertion_passed"]),
+                stable_gold >= main.get("repeat_stability", {}).get(
+                    "A_baseline", {}).get("stable_gold",
+                    base["explicit_gold_assertion_passed"] // main["repetitions"])),
             "no_new_negative_false_acceptances": not neg["new_false_accepts_vs_baseline"],
             "median_at_or_below_target": median_ms <= median_target_ms,
+            "reproducible_across_repetitions": not unstable_ids,
         }
         comparisons[mode] = {
             "total_positive_cases": main["cases"],
-            "gold_passed_cases": row["explicit_gold_assertion_passed"] // main["repetitions"],
-            "completed_positive_cases": row["complete"] // main["repetitions"],
+            "gold_passed_cases": stable_gold,
+            "gold_passed_first_repetition": first_pass_gold,
+            "unstable_positive_cases": unstable_ids,
+            "completed_positive_cases": (
+                sum(split["complete"] for split in main["per_split"][mode].values())
+                if mode in main.get("per_split", {})
+                else row["complete"] // main["repetitions"]),
             "complete_but_nonconforming_cases": row["complete_but_nonconforming"] // main["repetitions"],
             "positive_gold_improvements": improved,
             "positive_gold_regressions": regressions,
