@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "mode": "feature_agnostic_CGF_upper_bound",
+  "limitations": [
+    "An ACCEPTED upper bound may fail all feature unifications.",
+    "A REJECTED upper bound establishes missing structural/lexical coverage only with the current token-only lattice and entire grammar.",
+    "UNKNOWN is a budget/time limit, not grammatical rejection.",
+    "This offline recognizer has no effect on the runtime or parse rankings."
+  ],
+  "summary": {
+    "accepted": 6,
+    "rejected": 0,
+    "unknown": 2
+  },
+  "cases": [
+    {
+      "id": "stress_01",
+      "tokens": 32,
+      "lexical_gap": [],
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 59357,
+      "furthest_goal_prefix": 32,
+      "elapsed_ms": 98.309,
+      "max_chart_items": 3899
+    },
+    {
+      "id": "stress_02",
+      "tokens": 44,
+      "lexical_gap": [],
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 79197,
+      "furthest_goal_prefix": 44,
+      "elapsed_ms": 125.168,
+      "max_chart_items": 4106
+    },
+    {
+      "id": "stress_03",
+      "tokens": 45,
+      "lexical_gap": [],
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 113594,
+      "furthest_goal_prefix": 45,
+      "elapsed_ms": 248.536,
+      "max_chart_items": 6403
+    },
+    {
+      "id": "stress_04",
+      "tokens": 52,
+      "lexical_gap": [],
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 153761,
+      "furthest_goal_prefix": 52,
+      "elapsed_ms": 358.82,
+      "max_chart_items": 7360
+    },
+    {
+      "id": "stress_05",
+      "tokens": 47,
+      "lexical_gap": [],
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 119849,
+      "furthest_goal_prefix": 47,
+      "elapsed_ms": 264.395,
+      "max_chart_items": 5784
+    },
+    {
+      "id": "stress_06",
+      "tokens": 58,
+      "lexical_gap": [],
+      "status": "ACCEPTED",
+      "complete": true,
+      "reason": "",
+      "items": 190036,
+      "furthest_goal_prefix": 58,
+      "elapsed_ms": 452.904,
+      "max_chart_items": 7138
+    },
+    {
+      "id": "stress_07",
+      "tokens": 62,
+      "lexical_gap": [],
+      "status": "UNKNOWN",
+      "complete": null,
+      "reason": "item_budget",
+      "items": 200000,
+      "furthest_goal_prefix": 55,
+      "elapsed_ms": 549.526,
+      "max_chart_items": 7679
+    },
+    {
+      "id": "stress_08",
+      "tokens": 67,
+      "lexical_gap": [],
+      "status": "UNKNOWN",
+      "complete": null,
+      "reason": "item_budget",
+      "items": 200000,
+      "furthest_goal_prefix": 57,
+      "elapsed_ms": 508.685,
+      "max_chart_items": 7524
+    }
+  ]
+}
