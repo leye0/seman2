@@ -214,3 +214,75 @@ Le lecteur à restaurations locales reste un excellent mécanisme de
 linguistiques. Les négatives mal classées ne sont pas déclarées
 « grammaticales » ; une lecture incomplète ne prouve pas non plus
 l'agrammaticalité.
+
+## Itérations : garde morphosyntaxique, test négatif et généralisation externe
+
+**CI vérifiée :** [A/B conformité + performance](https://github.com/leye0/seman2/actions/runs/38855212291).
+Les chiffres ci-dessous proviennent du lecteur expérimental, à chaud, et ne
+représentent ni un parseur de production ni une exactitude de dépendances UD.
+
+### Vérification stricte des 120 positives et 24 négatives
+
+| Variante | Assertions positives / 120 | Fausses acceptations / 24 | Médiane |
+| --- | ---: | ---: | ---: |
+| Baseline | 34 | 6 | 4,40 ms |
+| Garde, zéro reprise | 34 | **1** | **4,47 ms** |
+| Garde, une reprise locale | 41 | **1** | 5,14 ms |
+| Garde, trois reprises locales | **46** | **1** | 5,84 ms |
+
+La variante **garde sans reprise** passe à la fois les conditions de
+non-régression positive, de non-aggravation des négatives et de médiane
+**≤ 5 ms**. Les variantes à reprises passent les contrôles de qualité
+partiels, mais dépassent le seuil strict de médiane observé sur ce runner.
+Le contrôle est volontairement une double barrière : un parse qui termine
+mais viole la morphologie ou les assertions ne compte pas comme bonne
+analyse.
+
+Garde implémenté dans [construction_guard.py](construction_guard.py),
+**désactivé par défaut**, couvrant des familles productives : accord de
+`be`/`have`/`do` avec sujet clairement identifié, singulier/pluriel
+de déterminants clairement identifiés, forme de base après modal/do,
+et construction verbale à prédicat objet. La forme `V base` doit aussi
+être compatible avec la surface écrite. Les homographes modaux sont
+identifiés depuis les **candidats du lexique**, pas depuis des phrases de
+test. Les cas sans preuve morphologique suffisante restent non tranchés.
+
+### Longues phrases : ne pas confondre temps d'arrêt et analyse réussie
+
+Le corpus stress [long_sentence_stress.jsonl](long_sentence_stress.jsonl)
+contient 8 phrases manuellement composées, de **31 à 65 mots**, sans arbre
+gold. Aucune n'est encore complétée, y compris avec trois reprises locales.
+Le coût médian total du lecteur initial est ~17,2 ms, dont ~8,7 ms
+d'ingestion lexicale, et le lecteur à trois reprises ~19,2 ms. Aucun exemple
+ne passe le cap de 75 % des tokens selon le rapport initial. Une faible
+latence d'arrêt n'est donc **pas une preuve de parsing efficace des longues
+phrases**.
+
+Un accélérateur expérimental pour les recherches multiword
+[fast_lattice.py](fast_lattice.py) conserve exactement les décisions du
+lecteur initial sur les 120 cas de référence, mais le gain mesuré (~4,40 →
+~4,37 ms sur les phrases courtes) est faible et du niveau du bruit de mesure.
+Il reste expérimental.
+
+### Généralisation hors corpus Seman2 : UD English-EWT
+
+Le banc [benchmark_ud_ewt_lr.py](../../scripts/benchmark_ud_ewt_lr.py)
+utilise la révision externe épinglée
+`4a4d77f599ea53cc405f85d0cec4b2f14f81d42b` du corpus
+[Universal Dependencies English EWT](https://github.com/UniversalDependencies/UD_English-EWT),
+avec un échantillonnage déterministe indépendant des sorties du parseur
+(8 phrases chacune des bandes **8–14, 15–24, 25–39 et 40–70 mots**).
+Le baseline n'en complète **aucune sur 32** ; la variante à trois reprises
+avec garde en complète **une sur 32**, sans alignement complet aux tokens gold
+sur lequel calculer une qualité POS. Cela signale que les gains observés
+sur les phrases construites du projet **ne se généralisent pas encore**.
+On ne peut donc pas parler de bonne couverture grammaticale générale.
+
+**Priorité structurelle:** poursuivre les tests des contraintes générales
+en conservant des lectures alternatives compactes, mais surtout accroître
+la couverture des propositions relatives, enchâssées et coordonnées.
+Éviter de faire de l'optimisation du p50 pour un lecteur qui échoue trop tôt
+sur les vraies phrases. Réserver les exemples holdout/UD aux contrôles
+externes, pas à des règles spécifiques.
+
+**Cette note est un état de recherche, pas un GO de fusion vers main.**
