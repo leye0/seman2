@@ -12,7 +12,7 @@ from time import perf_counter
 
 from seman_parser.engine import ParserResources
 from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
-from seman_parser.segmentation import tokenize
+from seman_parser.segmentation import tokenize, build_lattice
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -77,6 +77,11 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
         for model in modes.values():
             model.parse(case["text"])
     records = {mode: [] for mode in modes}
+    diagnostics = {}
+    # Diagnostics are constructed outside the measured wall-time window.
+    # They never alter the parsing choices; they expose first-reader
+    # failures and actual candidate POS around the stopping token.
+    selected_modes = {"baseline", "reachable_guard3", "follow_only_guard3"}
     for rep in range(repetitions):
         for case in cases:
             token_count = len(tokenize(case["text"]))
@@ -91,6 +96,33 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                                  if x.action in {"STOP","ACCEPT"}),None)
                 final_at = terminal.at if terminal else 0
                 furthest = max((ev.at for ev in events),default=0)
+                if rep == 0 and mode in selected_modes and not result.complete:
+                    toks = tokenize(case["text"])
+                    site = min(max(0, final_at), len(toks)-1)
+                    lo, hi = max(0, site-4), min(len(toks), site+5)
+                    lexical = build_lattice(
+                        case["text"], resources.lexicon, multiword_max=1)
+                    pos_categories = {}
+                    for cand in lexical.candidates:
+                        pos_categories.setdefault(
+                            (cand.span_start, cand.span_end), set()
+                        ).add(cand.category)
+                    diagnostics.setdefault(mode, []).append({
+                        "id": case["id"],
+                        "stop_at": final_at,
+                        "reason": result.outcome.reason,
+                        "window": [
+                            {"at": i, "word": toks[i].text,
+                             "categories": sorted(pos_categories.get(
+                                 (toks[i].start,toks[i].end), ()))}
+                            for i in range(lo, hi)
+                        ],
+                        "last_events": [
+                            {"at": e.at, "action": e.action,
+                             "symbol": e.expected, "detail": e.detail}
+                            for e in events[-18:]
+                        ]
+                    })
                 records[mode].append({
                     "id":case["id"], "words":case["length_words"],
                     "tokens":token_count, "complete":bool(result.complete),
@@ -146,6 +178,7 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
             }
             for mode,vals in records.items()
         },
+        "diagnostics": diagnostics,
         "warning":[
             "A fast early STOP does not demonstrate efficient long-sentence recognition.",
             "This corpus has no gold trees; completion cannot be scored as syntactic correctness.",
