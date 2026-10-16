@@ -69,6 +69,9 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "A_baseline": SemanCompiledReader(resources),
         "B_lemma_hints": SemanCompiledReader(resources, verbnet_index=index, verbnet_mode="lemma"),
         "C_sense_hints": SemanCompiledReader(resources, verbnet_index=index, verbnet_mode="exact"),
+        "D_structural2": SemanCompiledReader(resources, structural_lookahead=2),
+        "E_structural2_sense": SemanCompiledReader(
+            resources, verbnet_index=index, verbnet_mode="exact", structural_lookahead=2),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -85,7 +88,8 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
     modes = tuple(machines)
     for repeat in range(repetitions):
         for i, case in enumerate(cases):
-            ordered = modes[(i + repeat) % 3:] + modes[:(i + repeat) % 3]
+            rotate = (i + repeat) % len(modes)
+            ordered = modes[rotate:] + modes[:rotate]
             for mode in ordered:
                 t = perf_counter()
                 item = machines[mode].parse(case["text"])
@@ -104,6 +108,9 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "events": counters.get("events", 0),
                     "verbnet_scoring_calls": counters.get("verbnet_scoring_calls", 0),
                     "verbnet_positive_hints": counters.get("verbnet_positive_hints", 0),
+                    "two_token_probes": counters.get("two_token_probes", 0),
+                    "two_token_witnesses": counters.get("two_token_witnesses", 0),
+                    "min_yield_rejections": counters.get("min_yield_rejections", 0),
                     "trace": trace(item),
                     "last_events": [event.as_dict() for event in item.outcome.events[-12:]],
                 }
@@ -123,10 +130,13 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             "mean_events": round(statistics.mean(v["events"] for v in entries), 3),
             "verbnet_scoring_calls": sum(v["verbnet_scoring_calls"] for v in entries),
             "verbnet_positive_hints": sum(v["verbnet_positive_hints"] for v in entries),
+            "two_token_probes": sum(v["two_token_probes"] for v in entries),
+            "two_token_witnesses": sum(v["two_token_witnesses"] for v in entries),
+            "min_yield_rejections": sum(v["min_yield_rejections"] for v in entries),
             "stop_reasons": dict(Counter(v["reason"] for v in entries if not v["complete"])),
         }
     diffs = {}
-    for mode in ("B_lemma_hints", "C_sense_hints"):
+    for mode in modes[1:]:
         changed = []
         for case in cases:
             baseline = results["A_baseline"][case["id"]]
@@ -154,7 +164,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
     return {
         "schema": 1,
         "baseline_failure_diagnostics": failures,
-        "method": "A/B/C compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
+        "method": "A/B/C/D/E compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
