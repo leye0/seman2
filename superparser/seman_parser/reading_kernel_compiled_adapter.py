@@ -45,7 +45,8 @@ class SemanCompiledReader:
                  reduce_checkpoints: bool = False,
                  parent_follow_reduce: bool = False,
                  reduce_follow_only: bool = False,
-                 reachable_checkpoints_only: bool = False):
+                 reachable_checkpoints_only: bool = False,
+                 terminal_prefix_preference: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -69,6 +70,7 @@ class SemanCompiledReader:
             raise ValueError("reduce_follow_only requires reduce_checkpoints")
         self.reduce_follow_only = reduce_follow_only
         self.reachable_checkpoints_only = reachable_checkpoints_only
+        self.terminal_prefix_preference = terminal_prefix_preference
         if early_construction_guard and not construction_guard:
             raise ValueError("early_construction_guard requires construction_guard")
         self.early_construction_guard = early_construction_guard
@@ -103,7 +105,8 @@ class SemanCompiledReader:
                  reduce_checkpoints: bool = False,
                  parent_follow_reduce: bool = False,
                  reduce_follow_only: bool = False,
-                 reachable_checkpoints_only: bool = False):
+                 reachable_checkpoints_only: bool = False,
+                 terminal_prefix_preference: bool = False):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
@@ -117,7 +120,8 @@ class SemanCompiledReader:
                    reduce_checkpoints=reduce_checkpoints,
                    parent_follow_reduce=parent_follow_reduce,
                    reduce_follow_only=reduce_follow_only,
-                   reachable_checkpoints_only=reachable_checkpoints_only)
+                   reachable_checkpoints_only=reachable_checkpoints_only,
+                   terminal_prefix_preference=terminal_prefix_preference)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -239,7 +243,8 @@ class SemanCompiledReader:
                  'reduce_checkpoints': self.reduce_checkpoints,
                  'parent_follow_reduce': self.parent_follow_reduce,
                  'reduce_follow_only': self.reduce_follow_only,
-                 'reachable_checkpoints_only': self.reachable_checkpoints_only}
+                 'reachable_checkpoints_only': self.reachable_checkpoints_only,
+                 'terminal_prefix_preference': self.terminal_prefix_preference}
                 if self.stack_checkpoints else
                 {'replay_budget': self.checkpoint_budget}
                 if (self.checkpoint_budget or self.construction_guard) else {}),

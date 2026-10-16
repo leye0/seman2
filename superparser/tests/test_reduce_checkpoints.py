@@ -51,7 +51,8 @@ class Candidate:
 
 def make_reader(reduce_checkpoints, budget=2, *, parent_follow_reduce=False,
                 reduce_follow_only=False, unrelated_root_edge=False,
-                reachable_checkpoints_only=False):
+                reachable_checkpoints_only=False,
+                terminal_prefix_preference=False):
     productions = [
         ("clause_svo", "CLAUSE", ("NP", "VP", "NP")),
         ("np_name", "NP", ("PROPER-NOUN",)),
@@ -86,7 +87,8 @@ def make_reader(reduce_checkpoints, budget=2, *, parent_follow_reduce=False,
     kw = dict(replay_budget=budget, reduce_checkpoints=reduce_checkpoints,
               parent_follow_reduce=parent_follow_reduce,
               reduce_follow_only=reduce_follow_only,
-              reachable_checkpoints_only=reachable_checkpoints_only)
+              reachable_checkpoints_only=reachable_checkpoints_only,
+              terminal_prefix_preference=terminal_prefix_preference)
     return LocalCheckpointReader(CompiledGrammar(grammar), combine,
                                  tokens, lex, **kw)
 
@@ -148,6 +150,50 @@ class ReduceVersusExtendTests(unittest.TestCase):
         self.assertEqual(ordinary.reason, gated.reason)
         self.assertEqual([(x.action, x.expected) for x in ordinary.events],
                          [(x.action, x.expected) for x in gated.events])
+
+    def test_terminal_prefix_uses_existing_grammar_evidence(self):
+        # Direct 3-token lexical evidence HAVE ADV V discriminates against
+        # V NP whose NP can begin with ADV but cannot consume the next V.
+        productions = [
+            ("clause_np_vp", "CLAUSE", ("NP", "VP"), 1.0),
+            ("np_name", "NP", ("PROPER-NOUN",), 1.0),
+            ("np_adv_n", "NP", ("ADV", "N"), 1.0),
+            ("vp_greedy_v_np", "VP", ("V", "NP"), 10.0),
+            ("vp_perfect_adv", "VP", ("HAVE", "ADV", "V"), 1.0),
+        ]
+        grammar = Grammar([
+            Rule(name, Symbol(lhs), tuple(Symbol(cat) for cat in rhs), score)
+            for name, lhs, rhs, score in productions
+        ])
+        words = [
+            ("Alice", ("PROPER-NOUN",)),
+            ("had", ("V", "HAVE")),
+            ("already", ("ADV",)),
+            ("examined", ("V",)),
+            (".", ()),
+        ]
+        tokens, lex, start = [], [], 0
+        for word, categories in words:
+            tokens.append(Token(word, start, start+len(word)))
+            for cat in categories:
+                lex.append(Candidate(cat, start, start+len(word), word.casefold()))
+            start += len(word)+1
+        def combine(rule, children):
+            return ReadNode(rule.lhs.category, children[0].start,
+                            children[-1].end, rule=rule, children=tuple(children))
+        parser = LocalCheckpointReader(
+            CompiledGrammar(grammar), combine, tokens, lex,
+            replay_budget=0, terminal_prefix_preference=True)
+        parsed = parser.read()
+        self.assertTrue(parsed.complete, parsed.reason)
+        self.assertEqual(parsed.root.children[1].rule.rule_id, "vp_perfect_adv")
+        self.assertGreater(parsed.counters["terminal_prefix_guided_choices"], 0)
+
+    def test_terminal_prefix_never_changes_default_choice(self):
+        baseline = make_reader(True, budget=1).read()
+        control = make_reader(True, budget=1, terminal_prefix_preference=False).read()
+        self.assertEqual(baseline.complete, control.complete)
+        self.assertEqual(baseline.reason, control.reason)
 
     def test_budget_one_can_choose_reduction(self):
         chosen = make_reader(True, budget=1).read()

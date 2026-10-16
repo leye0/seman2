@@ -59,7 +59,8 @@ class LocalCheckpointReader(IncrementalReader):
                  reduce_checkpoints: bool = False,
                  parent_follow_reduce: bool = False,
                  reduce_follow_only: bool = False,
-                 reachable_checkpoints_only: bool = False, **kwargs):
+                 reachable_checkpoints_only: bool = False,
+                 terminal_prefix_preference: bool = False, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -75,6 +76,7 @@ class LocalCheckpointReader(IncrementalReader):
             raise ValueError("reduce_follow_only requires reduce_checkpoints")
         self.reduce_follow_only = reduce_follow_only
         self.reachable_checkpoints_only = reachable_checkpoints_only
+        self.terminal_prefix_preference = terminal_prefix_preference
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -108,6 +110,55 @@ class LocalCheckpointReader(IncrementalReader):
             self.count["max_stack_depth"], self.depth)
         self._emit("EXPECT", category, f"compiled state {root.state_id}")
         self._stack.append(_Frame(category, self.pos, frozenset(stop_at), root))
+
+    def _select(self, state, live=None, *, excluded=frozenset()):
+        chosen = super()._select(state, live, excluded=excluded)
+        if (not self.terminal_prefix_preference or chosen is None
+                or self.pos + 2 >= len(self.tokens)):
+            return chosen
+        # Look only at existing *direct terminal* sequences of 3 tokens
+        # in the compiled grammar. Do not generate trees or invent slots.
+        # Restrict successive edges to at least one *same* grammar rule.
+        # Abstain unless a unique eligible edge has this positive witness.
+        options = {}
+        for category in self._categories():
+            for symbol in state.dispatch.get(category, ()):
+                if symbol in excluded or symbol in options:
+                    continue
+                hints = tuple(h for h in state.hints.get(symbol, ())
+                              if live is None or id(h[0]) in live)
+                if hints and self._lexical_compatible(symbol, hints):
+                    options[symbol] = (state.edges[symbol],
+                                       frozenset(id(h[0]) for h in hints))
+        if len(options) < 2:
+            return chosen
+        observed = []
+        for symbol, (target, rule_ids) in options.items():
+            if self._direct_prefix_match(target, self.pos + 1, rule_ids, 2):
+                observed.append(symbol)
+        if len(observed) == 1 and observed[0] != chosen:
+            self.count["terminal_prefix_guided_choices"] += 1
+            return observed[0]
+        return chosen
+
+    def _direct_prefix_match(self, state, at, rule_ids, steps):
+        # Maximum two future lexical tokens: constant bounded work.
+        # A category that is normally productive must ALSO have an
+        # actual lexical candidate here to count as a direct witness.
+        if not steps:
+            return True
+        for category in self._categories(at):
+            for symbol in state.dispatch.get(category, ()):
+                hints = tuple(h for h in state.hints.get(symbol, ())
+                              if id(h[0]) in rule_ids)
+                if not hints or not self._lexical_compatible(
+                        symbol, hints, at=at):
+                    continue
+                remaining = frozenset(id(h[0]) for h in hints)
+                if self._direct_prefix_match(state.edges[symbol], at + 1,
+                                             remaining, steps - 1):
+                    return True
+        return False
 
     def _register(self, frame: _Frame, edge: str):
         eligible_finals = (
