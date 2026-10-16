@@ -21,7 +21,8 @@ class _Budget(Exception):
 
 def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
                           max_items=200_000, max_seconds=2.5,
-                          collect_spans=False):
+                          collect_spans=False,
+                          collect_backpointers=False, max_backpointers=6):
     """Boolean Earley recognition with no materialized parse trees.
 
     :param rules: iterable of (lhs_category, tuple(rhs_categories)).
@@ -43,9 +44,20 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
     count = 0
     furthest_goal = 0
     completed_spans = set() if collect_spans else None
+    backpointers = {} if collect_backpointers else None
+    backpointer_truncated = False
 
-    def add(at, item):
-        nonlocal count
+    def add(at, item, pointer=None):
+        nonlocal count, backpointer_truncated
+        if backpointers is not None and pointer is not None:
+            # Preserve derivation alternatives independently of state de-dup.
+            key = (at, *item)
+            choices = backpointers.setdefault(key, [])
+            if pointer not in choices:
+                if len(choices) < max_backpointers:
+                    choices.append(pointer)
+                else:
+                    backpointer_truncated = True
         if item in chart[at]:
             return
         if count >= max_items:
@@ -86,11 +98,18 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
                                 "furthest_goal_prefix": n,
                                 "elapsed_ms": round((perf_counter() - begun) * 1000, 3),
                                 "max_chart_items": max(map(len, chart)),
+                                **({"backpointers": backpointers,
+                                    "backpointer_truncated": backpointer_truncated,
+                                    "roots": ((at, rule_idx, dot, start),)}
+                                   if backpointers is not None else {}),
                                 **({"spans": frozenset(completed_spans)}
                                    if completed_spans is not None else {}),
                             }
                     for parent_idx, parent_dot, parent_start in waiting[start][lhs]:
-                        add(at, (parent_idx, parent_dot + 1, parent_start))
+                        add(at, (parent_idx, parent_dot + 1, parent_start),
+                            ("complete",
+                             (start, parent_idx, parent_dot, parent_start),
+                             (at, rule_idx, dot, start)))
                     continue
                 symbol = rhs[dot]
                 waiting[at][symbol].append((rule_idx, dot, start))
@@ -99,7 +118,8 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
                     for child_idx in by_lhs[symbol]:
                         add(at, (child_idx, 0, at))
                 if at < n and symbol in observed[at]:
-                    add(at + 1, (rule_idx, dot + 1, start))
+                    add(at + 1, (rule_idx, dot + 1, start),
+                        ("scan", (at, rule_idx, dot, start), symbol, at))
         reason = ""
     except _Budget as exc:
         status = "UNKNOWN"
@@ -113,6 +133,9 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
         "furthest_goal_prefix": furthest_goal,
         "elapsed_ms": round((perf_counter() - begun) * 1000, 3),
         "max_chart_items": max(map(len, chart)),
+        **({"backpointers": backpointers,
+            "backpointer_truncated": backpointer_truncated, "roots": ()}
+           if backpointers is not None else {}),
         **({"spans": frozenset(completed_spans)}
            if completed_spans is not None else {}),
     }
