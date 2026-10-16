@@ -23,7 +23,8 @@ def assess(main: dict, negative: dict, median_target_ms: float = 5.0) -> dict:
              "AE_token_cache_baseline", "AF_token_cache_guard1", "AG_token_cache_guard3",
              "AH_promoted_guard0", "AI_promoted_guard1", "AJ_promoted_guard3",
              "AK_reduce_guard1", "AL_reduce_guard3",
-             "AM_parent_follow1", "AN_parent_follow3")
+             "AM_parent_follow1", "AN_parent_follow3",
+             "AO_follow_only1", "AP_follow_only3")
     comparisons = {}
     base = main["summary"]["A_baseline"]
     negative_baseline = negative["summary"]["A_baseline"]
