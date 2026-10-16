@@ -19,7 +19,7 @@
       "validation": {
         "cases": 50,
         "complete": 21,
-        "explicit_gold_passed": 17,
+        "explicit_gold_passed": 16,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       }
@@ -42,7 +42,7 @@
       "validation": {
         "cases": 50,
         "complete": 21,
-        "explicit_gold_passed": 17,
+        "explicit_gold_passed": 16,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       }
@@ -65,7 +65,7 @@
       "validation": {
         "cases": 50,
         "complete": 21,
-        "explicit_gold_passed": 17,
+        "explicit_gold_passed": 16,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       }
@@ -74,7 +74,7 @@
       "dev": {
         "cases": 50,
         "complete": 22,
-        "explicit_gold_passed": 13,
+        "explicit_gold_passed": 11,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 14
       },
@@ -88,7 +88,7 @@
       "validation": {
         "cases": 50,
         "complete": 25,
-        "explicit_gold_passed": 15,
+        "explicit_gold_passed": 14,
         "verbnet_vp_observations": 17,
         "attested_vp_observations": 12
       }
@@ -97,7 +97,7 @@
       "dev": {
         "cases": 50,
         "complete": 22,
-        "explicit_gold_passed": 13,
+        "explicit_gold_passed": 11,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 14
       },
@@ -111,7 +111,7 @@
       "validation": {
         "cases": 50,
         "complete": 25,
-        "explicit_gold_passed": 15,
+        "explicit_gold_passed": 14,
         "verbnet_vp_observations": 17,
         "attested_vp_observations": 12
       }
@@ -134,7 +134,7 @@
       "validation": {
         "cases": 50,
         "complete": 21,
-        "explicit_gold_passed": 14,
+        "explicit_gold_passed": 13,
         "verbnet_vp_observations": 17,
         "attested_vp_observations": 12
       }
@@ -157,7 +157,7 @@
       "validation": {
         "cases": 50,
         "complete": 21,
-        "explicit_gold_passed": 14,
+        "explicit_gold_passed": 13,
         "verbnet_vp_observations": 17,
         "attested_vp_observations": 12
       }
@@ -166,7 +166,7 @@
       "dev": {
         "cases": 50,
         "complete": 20,
-        "explicit_gold_passed": 16,
+        "explicit_gold_passed": 15,
         "verbnet_vp_observations": 16,
         "attested_vp_observations": 14
       },
@@ -180,7 +180,7 @@
       "validation": {
         "cases": 50,
         "complete": 27,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 19,
         "verbnet_vp_observations": 22,
         "attested_vp_observations": 16
       }
@@ -189,7 +189,7 @@
       "dev": {
         "cases": 50,
         "complete": 26,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 18,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       },
@@ -203,7 +203,7 @@
       "validation": {
         "cases": 50,
         "complete": 30,
-        "explicit_gold_passed": 22,
+        "explicit_gold_passed": 20,
         "verbnet_vp_observations": 23,
         "attested_vp_observations": 16
       }
@@ -212,7 +212,7 @@
       "dev": {
         "cases": 50,
         "complete": 26,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 18,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       },
@@ -226,7 +226,7 @@
       "validation": {
         "cases": 50,
         "complete": 30,
-        "explicit_gold_passed": 22,
+        "explicit_gold_passed": 20,
         "verbnet_vp_observations": 23,
         "attested_vp_observations": 16
       }
@@ -235,7 +235,7 @@
       "dev": {
         "cases": 50,
         "complete": 20,
-        "explicit_gold_passed": 16,
+        "explicit_gold_passed": 15,
         "verbnet_vp_observations": 16,
         "attested_vp_observations": 14
       },
@@ -249,7 +249,7 @@
       "validation": {
         "cases": 50,
         "complete": 27,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 19,
         "verbnet_vp_observations": 22,
         "attested_vp_observations": 16
       }
@@ -258,7 +258,7 @@
       "dev": {
         "cases": 50,
         "complete": 26,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 18,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       },
@@ -272,7 +272,7 @@
       "validation": {
         "cases": 50,
         "complete": 30,
-        "explicit_gold_passed": 22,
+        "explicit_gold_passed": 20,
         "verbnet_vp_observations": 23,
         "attested_vp_observations": 16
       }
@@ -281,7 +281,7 @@
       "dev": {
         "cases": 50,
         "complete": 23,
-        "explicit_gold_passed": 18,
+        "explicit_gold_passed": 17,
         "verbnet_vp_observations": 17,
         "attested_vp_observations": 14
       },
@@ -295,7 +295,7 @@
       "validation": {
         "cases": 50,
         "complete": 28,
-        "explicit_gold_passed": 21,
+        "explicit_gold_passed": 20,
         "verbnet_vp_observations": 22,
         "attested_vp_observations": 16
       }
@@ -304,7 +304,7 @@
       "dev": {
         "cases": 50,
         "complete": 20,
-        "explicit_gold_passed": 16,
+        "explicit_gold_passed": 15,
         "verbnet_vp_observations": 16,
         "attested_vp_observations": 14
       },
@@ -318,7 +318,7 @@
       "validation": {
         "cases": 50,
         "complete": 27,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 19,
         "verbnet_vp_observations": 22,
         "attested_vp_observations": 16
       }
@@ -327,7 +327,7 @@
       "dev": {
         "cases": 50,
         "complete": 24,
-        "explicit_gold_passed": 18,
+        "explicit_gold_passed": 17,
         "verbnet_vp_observations": 17,
         "attested_vp_observations": 14
       },
@@ -341,7 +341,7 @@
       "validation": {
         "cases": 50,
         "complete": 29,
-        "explicit_gold_passed": 21,
+        "explicit_gold_passed": 20,
         "verbnet_vp_observations": 22,
         "attested_vp_observations": 16
       }
@@ -350,7 +350,7 @@
       "dev": {
         "cases": 50,
         "complete": 28,
-        "explicit_gold_passed": 20,
+        "explicit_gold_passed": 18,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       },
@@ -364,7 +364,7 @@
       "validation": {
         "cases": 50,
         "complete": 32,
-        "explicit_gold_passed": 22,
+        "explicit_gold_passed": 20,
         "verbnet_vp_observations": 23,
         "attested_vp_observations": 16
       }
@@ -387,7 +387,7 @@
       "validation": {
         "cases": 50,
         "complete": 21,
-        "explicit_gold_passed": 17,
+        "explicit_gold_passed": 16,
         "verbnet_vp_observations": 19,
         "attested_vp_observations": 15
       }
@@ -1025,7 +1025,7 @@
       "split": "validation",
       "text": "Either route seems safe.",
       "complete": true,
-      "explicit_gold_pass": true,
+      "explicit_gold_pass": false,
       "verbnet_vp_observations": [
         {
           "lemma": "seems",
@@ -3974,7 +3974,7 @@
       "evaluations": 240,
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 70,
+      "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
         "vp_observations": 76,
         "status": {
@@ -3992,14 +3992,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.37575,
-        "p95": 9.10874,
-        "p99": 10.38303
+        "p50": 2.43908,
+        "p95": 5.14359,
+        "p99": 5.84772
       },
       "reading_ms": {
-        "p50": 3.11505,
-        "p95": 7.65879,
-        "p99": 8.26474
+        "p50": 1.74403,
+        "p95": 4.26323,
+        "p99": 4.5911
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4067,7 +4067,7 @@
       "evaluations": 240,
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 70,
+      "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
         "vp_observations": 76,
         "status": {
@@ -4085,14 +4085,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.56744,
-        "p95": 9.40049,
-        "p99": 10.6791
+        "p50": 2.52074,
+        "p95": 5.25089,
+        "p99": 5.9372
       },
       "reading_ms": {
-        "p50": 3.23517,
-        "p95": 7.83892,
-        "p99": 8.56727
+        "p50": 1.76194,
+        "p95": 4.36554,
+        "p99": 4.75944
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4160,7 +4160,7 @@
       "evaluations": 240,
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 70,
+      "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
         "vp_observations": 76,
         "status": {
@@ -4178,14 +4178,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.48367,
-        "p95": 9.5169,
-        "p99": 10.74149
+        "p50": 2.47768,
+        "p95": 5.31062,
+        "p99": 6.00534
       },
       "reading_ms": {
-        "p50": 3.17725,
-        "p95": 8.00352,
-        "p99": 8.67171
+        "p50": 1.78132,
+        "p95": 4.34892,
+        "p99": 4.79055
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -4253,7 +4253,7 @@
       "evaluations": 240,
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 68,
+      "explicit_gold_assertion_passed": 62,
       "verbnet_tree_evidence": {
         "vp_observations": 86,
         "status": {
@@ -4264,19 +4264,19 @@
           "sense_verified": 60,
           "none": 26
         },
-        "attested_with_explicit_gold_pass": 54,
-        "attested_with_explicit_gold_fail": 6
+        "attested_with_explicit_gold_pass": 50,
+        "attested_with_explicit_gold_fail": 10
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.95738,
-        "p95": 11.07506,
-        "p99": 12.42268
+        "p50": 3.3968,
+        "p95": 6.3301,
+        "p99": 6.99429
       },
       "reading_ms": {
-        "p50": 4.69934,
-        "p95": 9.23157,
-        "p99": 10.87214
+        "p50": 2.62897,
+        "p95": 5.18898,
+        "p99": 6.14782
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4330,7 +4330,7 @@
       "evaluations": 240,
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 68,
+      "explicit_gold_assertion_passed": 62,
       "verbnet_tree_evidence": {
         "vp_observations": 86,
         "status": {
@@ -4341,19 +4341,19 @@
           "sense_verified": 60,
           "none": 26
         },
-        "attested_with_explicit_gold_pass": 54,
-        "attested_with_explicit_gold_fail": 6
+        "attested_with_explicit_gold_pass": 50,
+        "attested_with_explicit_gold_fail": 10
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 6.05116,
-        "p95": 11.44424,
-        "p99": 12.53313
+        "p50": 3.40939,
+        "p95": 6.45483,
+        "p99": 6.95768
       },
       "reading_ms": {
-        "p50": 4.79117,
-        "p95": 9.55768,
-        "p99": 10.94487
+        "p50": 2.68009,
+        "p95": 5.33462,
+        "p99": 6.11411
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -4407,7 +4407,7 @@
       "evaluations": 240,
       "complete": 92,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 62,
+      "explicit_gold_assertion_passed": 60,
       "verbnet_tree_evidence": {
         "vp_observations": 76,
         "status": {
@@ -4420,19 +4420,19 @@
           "none": 14,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 54,
-        "attested_with_explicit_gold_fail": 6
+        "attested_with_explicit_gold_pass": 52,
+        "attested_with_explicit_gold_fail": 8
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.13908,
-        "p95": 10.73095,
-        "p99": 11.43986
+        "p50": 2.89639,
+        "p95": 6.1937,
+        "p99": 6.80596
       },
       "reading_ms": {
-        "p50": 4.07451,
-        "p95": 9.0199,
-        "p99": 9.72663
+        "p50": 2.25105,
+        "p95": 5.14332,
+        "p99": 5.98525
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4482,7 +4482,7 @@
       "evaluations": 240,
       "complete": 92,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 62,
+      "explicit_gold_assertion_passed": 60,
       "verbnet_tree_evidence": {
         "vp_observations": 76,
         "status": {
@@ -4495,19 +4495,19 @@
           "none": 14,
           "lemma_only": 2
         },
-        "attested_with_explicit_gold_pass": 54,
-        "attested_with_explicit_gold_fail": 6
+        "attested_with_explicit_gold_pass": 52,
+        "attested_with_explicit_gold_fail": 8
       },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 5.3711,
-        "p95": 11.0935,
-        "p99": 11.90654
+        "p50": 3.07844,
+        "p95": 6.31202,
+        "p99": 6.83787
       },
       "reading_ms": {
-        "p50": 4.16698,
-        "p95": 9.43007,
-        "p99": 10.23564
+        "p50": 2.38624,
+        "p95": 5.2429,
+        "p99": 5.78086
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -4557,7 +4557,7 @@
       "evaluations": 240,
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 86,
+      "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
         "vp_observations": 88,
         "status": {
@@ -4575,14 +4575,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.98919,
-        "p95": 16.06936,
-        "p99": 19.25605
+        "p50": 3.30452,
+        "p95": 8.91917,
+        "p99": 10.46998
       },
       "reading_ms": {
-        "p50": 4.69132,
-        "p95": 14.3002,
-        "p99": 17.08051
+        "p50": 2.63569,
+        "p95": 7.87525,
+        "p99": 9.44219
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -4634,7 +4634,7 @@
       "evaluations": 240,
       "complete": 128,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 98,
+      "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
         "vp_observations": 96,
         "status": {
@@ -4652,17 +4652,17 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 6.74372,
-        "p95": 27.4255,
-        "p99": 35.12284
+        "p50": 3.79033,
+        "p95": 15.10968,
+        "p99": 19.42712
       },
       "reading_ms": {
-        "p50": 5.48728,
-        "p95": 25.93006,
-        "p99": 33.01694
+        "p50": 3.03289,
+        "p95": 14.24779,
+        "p99": 18.23835
       },
-      "mean_unifications": 6.942,
-      "mean_events": 34.433,
+      "mean_unifications": 6.925,
+      "mean_events": 34.375,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
       "two_token_probes": 0,
@@ -4670,9 +4670,9 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 371,
-      "checkpoint_attempts": 611,
-      "checkpoint_options_seen": 2011,
+      "checkpoint_replays": 370,
+      "checkpoint_attempts": 610,
+      "checkpoint_options_seen": 2006,
       "checkpoint_saves": 0,
       "checkpoint_peak_saved_max": 0,
       "stop_reasons": {
@@ -4710,7 +4710,7 @@
       "evaluations": 240,
       "complete": 128,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 98,
+      "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
         "vp_observations": 96,
         "status": {
@@ -4728,14 +4728,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 7.00083,
-        "p95": 27.84589,
-        "p99": 37.26555
+        "p50": 3.97225,
+        "p95": 15.51414,
+        "p99": 19.96385
       },
       "reading_ms": {
-        "p50": 5.67446,
-        "p95": 26.21193,
-        "p99": 35.09195
+        "p50": 3.10341,
+        "p95": 14.39869,
+        "p99": 18.64191
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -4786,7 +4786,7 @@
       "evaluations": 240,
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 86,
+      "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
         "vp_observations": 88,
         "status": {
@@ -4804,14 +4804,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.78523,
-        "p95": 15.68185,
-        "p99": 18.34794
+        "p50": 3.24728,
+        "p95": 8.93498,
+        "p99": 10.39918
       },
       "reading_ms": {
-        "p50": 4.5525,
-        "p95": 13.87806,
-        "p99": 16.16444
+        "p50": 2.5424,
+        "p95": 7.79074,
+        "p99": 9.06166
       },
       "mean_unifications": 5,
       "mean_events": 22.967,
@@ -4863,7 +4863,7 @@
       "evaluations": 240,
       "complete": 128,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 98,
+      "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
         "vp_observations": 96,
         "status": {
@@ -4881,14 +4881,14 @@
       },
       "coverage_percent": 53.33,
       "total_ms": {
-        "p50": 6.61794,
-        "p95": 25.69836,
-        "p99": 34.27044
+        "p50": 3.76181,
+        "p95": 14.80057,
+        "p99": 18.96271
       },
       "reading_ms": {
-        "p50": 5.39065,
-        "p95": 23.2842,
-        "p99": 32.13603
+        "p50": 2.97952,
+        "p95": 13.64907,
+        "p99": 17.72832
       },
       "mean_unifications": 6.925,
       "mean_events": 34.375,
@@ -4939,7 +4939,7 @@
       "evaluations": 240,
       "complete": 118,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 92,
+      "explicit_gold_assertion_passed": 88,
       "verbnet_tree_evidence": {
         "vp_observations": 90,
         "status": {
@@ -4957,14 +4957,14 @@
       },
       "coverage_percent": 49.17,
       "total_ms": {
-        "p50": 6.4185,
-        "p95": 22.80689,
-        "p99": 27.28249
+        "p50": 3.56103,
+        "p95": 12.93614,
+        "p99": 15.17693
       },
       "reading_ms": {
-        "p50": 5.1123,
-        "p95": 21.49365,
-        "p99": 24.97094
+        "p50": 2.84015,
+        "p95": 11.92186,
+        "p99": 13.70722
       },
       "mean_unifications": 5.933,
       "mean_events": 29.142,
@@ -5017,7 +5017,7 @@
       "evaluations": 240,
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 86,
+      "explicit_gold_assertion_passed": 82,
       "verbnet_tree_evidence": {
         "vp_observations": 88,
         "status": {
@@ -5035,14 +5035,14 @@
       },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.03992,
-        "p95": 9.93872,
-        "p99": 10.59159
+        "p50": 2.89105,
+        "p95": 5.64562,
+        "p99": 6.28985
       },
       "reading_ms": {
-        "p50": 3.81519,
-        "p95": 8.2285,
-        "p99": 8.61715
+        "p50": 2.13363,
+        "p95": 4.56113,
+        "p99": 5.07313
       },
       "mean_unifications": 4.108,
       "mean_events": 17.008,
@@ -5092,36 +5092,36 @@
     },
     "O_local_snapshot2": {
       "evaluations": 240,
-      "complete": 122,
+      "complete": 121,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 92,
+      "explicit_gold_assertion_passed": 88,
       "verbnet_tree_evidence": {
-        "vp_observations": 90,
+        "vp_observations": 89,
         "status": {
           "ATTESTED": 70,
-          "UNKNOWN": 18,
+          "UNKNOWN": 17,
           "PREFIX": 2
         },
         "confidence": {
           "sense_verified": 70,
-          "none": 18,
+          "none": 17,
           "lemma_only": 2
         },
         "attested_with_explicit_gold_pass": 66,
         "attested_with_explicit_gold_fail": 4
       },
-      "coverage_percent": 50.83,
+      "coverage_percent": 50.42,
       "total_ms": {
-        "p50": 5.48009,
-        "p95": 10.32736,
-        "p99": 12.00289
+        "p50": 3.00318,
+        "p95": 5.69471,
+        "p99": 6.69373
       },
       "reading_ms": {
-        "p50": 4.11368,
-        "p95": 8.52212,
-        "p99": 10.30617
+        "p50": 2.2669,
+        "p95": 4.73594,
+        "p99": 5.66616
       },
-      "mean_unifications": 4.567,
+      "mean_unifications": 4.562,
       "mean_events": 19.125,
       "verbnet_scoring_calls": 0,
       "verbnet_positive_hints": 0,
@@ -5130,10 +5130,10 @@
       "min_yield_rejections": 0,
       "edge_witness_hits": 0,
       "edge_witness_probes": 0,
-      "checkpoint_replays": 280,
-      "checkpoint_attempts": 520,
+      "checkpoint_replays": 281,
+      "checkpoint_attempts": 521,
       "checkpoint_options_seen": 0,
-      "checkpoint_saves": 2328,
+      "checkpoint_saves": 2330,
       "checkpoint_peak_saved_max": 21,
       "stop_reasons": {
         "unconsumed_5_John": 2,
@@ -5164,7 +5164,7 @@
         "expected_continuation_PP_at_7_state_387": 2,
         "expected_continuation_VP-NP_at_3_state_417": 2,
         "expected_continuation_ADVP_at_3_state_480": 2,
-        "expected_continuation_N_at_3_state_438": 2,
+        "expected_continuation_N_at_3_state_438": 3,
         "expected_continuation_N_at_4_state_438": 4,
         "expected_continuation_VP_at_3_state_122": 2,
         "expected_continuation_N_at_1_state_438": 2
@@ -5174,7 +5174,7 @@
       "evaluations": 240,
       "complete": 136,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 98,
+      "explicit_gold_assertion_passed": 90,
       "verbnet_tree_evidence": {
         "vp_observations": 96,
         "status": {
@@ -5192,14 +5192,14 @@
       },
       "coverage_percent": 56.67,
       "total_ms": {
-        "p50": 5.6817,
-        "p95": 10.9541,
-        "p99": 14.15967
+        "p50": 3.16297,
+        "p95": 6.12462,
+        "p99": 7.88637
       },
       "reading_ms": {
-        "p50": 4.37047,
-        "p95": 9.08275,
-        "p99": 11.93631
+        "p50": 2.40924,
+        "p95": 5.01952,
+        "p99": 6.66281
       },
       "mean_unifications": 5.192,
       "mean_events": 21.133,
@@ -5253,7 +5253,7 @@
       "evaluations": 240,
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
-      "explicit_gold_assertion_passed": 70,
+      "explicit_gold_assertion_passed": 68,
       "verbnet_tree_evidence": {
         "vp_observations": 76,
         "status": {
@@ -5271,14 +5271,14 @@
       },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 4.35198,
-        "p95": 9.1695,
-        "p99": 10.38059
+        "p50": 2.43301,
+        "p95": 5.07563,
+        "p99": 5.87949
       },
       "reading_ms": {
-        "p50": 3.12315,
-        "p95": 7.65553,
-        "p99": 8.25064
+        "p50": 1.74419,
+        "p95": 4.29749,
+        "p99": 4.55507
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -5367,25 +5367,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "unlock"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "unlock"
           },
           "baseline_trace": [
             [
@@ -5506,6 +5514,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -5516,7 +5526,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -5627,6 +5639,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -5637,7 +5651,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -5763,6 +5779,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -5773,7 +5791,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -6255,6 +6275,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -6263,7 +6285,9 @@
             "required_rules": [
               "np_relative_subj"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "perform"
           },
           "baseline_trace": [
             [
@@ -6513,6 +6537,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -6523,7 +6549,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -6612,6 +6640,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -6620,7 +6650,9 @@
             "required_rules": [
               "clause_participial_front_obj"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "notice"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -6813,6 +6845,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -6823,7 +6857,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -7205,6 +7241,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -7215,7 +7253,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -7468,6 +7508,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -7478,7 +7520,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -7564,6 +7608,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -7574,7 +7620,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -7690,6 +7738,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -7700,7 +7750,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -7816,6 +7868,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -7826,7 +7880,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -8375,6 +8431,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -8385,12 +8443,16 @@
             ],
             "missing_required": [
               "vp_that"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -8401,7 +8463,9 @@
             ],
             "missing_required": [
               "vp_that"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "baseline_trace": [
             [
@@ -8520,6 +8584,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -8530,7 +8596,9 @@
             ],
             "missing_required": [
               "vp_that"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -8626,6 +8694,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -8636,12 +8706,16 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -8652,7 +8726,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "baseline_trace": [
             [
@@ -8758,6 +8834,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -8768,7 +8846,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -8981,13 +9061,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "want"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -9088,13 +9172,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hope"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -9200,15 +9288,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "home"
           },
           "baseline_trace": [
             [
@@ -9347,25 +9439,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hear"
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "home"
           },
           "baseline_trace": [
             [
@@ -9526,13 +9626,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "box"
           },
           "baseline_trace": [
             [
@@ -9678,13 +9782,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "fence"
           },
           "baseline_trace": [
             [
@@ -10341,25 +10449,33 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": false,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "is"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -10463,15 +10579,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -10543,15 +10663,19 @@
           "guided_reason": "expected_continuation_ADJ_at_2_state_446",
           "baseline_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -11057,25 +11181,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -11214,13 +11346,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -11425,13 +11561,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -11550,25 +11690,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "unlock"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "unlock"
           },
           "baseline_trace": [
             [
@@ -11689,6 +11837,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -11699,7 +11849,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -11810,6 +11962,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -11820,7 +11974,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -11946,6 +12102,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -11956,7 +12114,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -12438,6 +12598,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -12446,7 +12608,9 @@
             "required_rules": [
               "np_relative_subj"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "perform"
           },
           "baseline_trace": [
             [
@@ -12696,6 +12860,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -12706,7 +12872,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -12795,6 +12963,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -12803,7 +12973,9 @@
             "required_rules": [
               "clause_participial_front_obj"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "notice"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -12996,6 +13168,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -13006,7 +13180,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -13388,6 +13564,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -13398,7 +13576,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -13651,6 +13831,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -13661,7 +13843,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -13747,6 +13931,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -13757,7 +13943,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -13873,6 +14061,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -13883,7 +14073,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -13999,6 +14191,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14009,7 +14203,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -14558,6 +14754,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14568,12 +14766,16 @@
             ],
             "missing_required": [
               "vp_that"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14584,7 +14786,9 @@
             ],
             "missing_required": [
               "vp_that"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "baseline_trace": [
             [
@@ -14703,6 +14907,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14713,7 +14919,9 @@
             ],
             "missing_required": [
               "vp_that"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -14809,6 +15017,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14819,12 +15029,16 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14835,7 +15049,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "believe"
           },
           "baseline_trace": [
             [
@@ -14941,6 +15157,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -14951,7 +15169,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -15164,13 +15384,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "want"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -15271,13 +15495,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hope"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -15383,15 +15611,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "home"
           },
           "baseline_trace": [
             [
@@ -15530,25 +15762,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hear"
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "home"
           },
           "baseline_trace": [
             [
@@ -15709,13 +15949,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "box"
           },
           "baseline_trace": [
             [
@@ -15861,13 +16105,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "fence"
           },
           "baseline_trace": [
             [
@@ -16524,25 +16772,33 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": false,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "is"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -16646,15 +16902,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -16726,15 +16986,19 @@
           "guided_reason": "expected_continuation_ADJ_at_2_state_446",
           "baseline_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -17240,25 +17504,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -17397,13 +17669,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -17608,13 +17884,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -17969,6 +18249,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -17977,12 +18259,16 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "give"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -17993,7 +18279,9 @@
             ],
             "missing_required": [
               "vp_ditransitive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "book"
           },
           "baseline_trace": [
             [
@@ -18107,6 +18395,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -18115,7 +18405,9 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "offer"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -18221,6 +18513,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -18229,7 +18523,9 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hand"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -18499,13 +18795,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -18830,6 +19130,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -18840,7 +19142,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -18936,6 +19240,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -18946,7 +19252,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -19042,13 +19350,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -19281,13 +19593,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -20052,6 +20368,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -20060,7 +20378,9 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "teach"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -20181,13 +20501,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "teach"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -20626,6 +20950,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -20636,7 +20962,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -20857,25 +21185,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hear"
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "home"
           },
           "baseline_trace": [
             [
@@ -21031,13 +21367,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "box"
           },
           "baseline_trace": [
             [
@@ -21183,13 +21523,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "fence"
           },
           "baseline_trace": [
             [
@@ -21846,13 +22190,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": false,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "is"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -21948,13 +22296,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "collapse"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -22090,13 +22442,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "sink"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -22230,15 +22586,19 @@
           "guided_reason": "expected_continuation_ADJ_at_2_state_446",
           "baseline_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -22577,13 +22937,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -22786,13 +23150,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "bridge"
           },
           "baseline_trace": [
             [
@@ -23152,6 +23520,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -23160,12 +23530,16 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "give"
           },
           "guided_gold": {
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -23176,7 +23550,9 @@
             ],
             "missing_required": [
               "vp_ditransitive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "book"
           },
           "baseline_trace": [
             [
@@ -23290,6 +23666,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -23298,7 +23676,9 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "offer"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -23404,6 +23784,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -23412,7 +23794,9 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hand"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -23682,13 +24066,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -24013,6 +24401,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -24023,7 +24413,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -24119,6 +24511,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -24129,7 +24523,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -24225,13 +24621,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -24464,13 +24864,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -25235,6 +25639,8 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -25243,7 +25649,9 @@
             "required_rules": [
               "vp_ditransitive"
             ],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "teach"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -25364,13 +25772,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "teach"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -25809,6 +26221,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -25819,7 +26233,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -26040,25 +26456,33 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "hear"
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "home"
           },
           "baseline_trace": [
             [
@@ -26214,13 +26638,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "box"
           },
           "baseline_trace": [
             [
@@ -26366,13 +26794,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "fence"
           },
           "baseline_trace": [
             [
@@ -27029,13 +27461,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": false,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "is"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -27131,13 +27567,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "collapse"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -27273,13 +27713,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "sink"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -27413,15 +27857,19 @@
           "guided_reason": "expected_continuation_ADJ_at_2_state_446",
           "baseline_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "guided_gold": {
             "has_assertions": true,
@@ -27760,13 +28208,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -27969,13 +28421,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": false
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "bridge"
           },
           "baseline_trace": [
             [
@@ -28576,13 +29032,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -29327,6 +29787,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -29337,7 +29799,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -29433,13 +29897,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -29672,13 +30140,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -29851,13 +30323,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -30538,6 +31014,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -30548,7 +31026,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -31201,6 +31681,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -31211,7 +31693,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -32330,13 +32814,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -32512,13 +33000,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -33294,15 +33786,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -33865,13 +34361,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -34658,13 +35158,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "encourage"
           },
           "baseline_trace": [
             [
@@ -34785,13 +35289,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "improve"
           },
           "baseline_trace": [
             [
@@ -35126,13 +35634,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -36135,6 +36647,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -36145,7 +36659,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -36241,6 +36757,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -36251,7 +36769,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -36347,13 +36867,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -36591,13 +37115,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -36770,13 +37298,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -37382,6 +37914,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -37392,7 +37926,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -38298,6 +38834,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -38308,7 +38846,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -38528,13 +39068,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "saw"
           },
           "baseline_trace": [
             [
@@ -39292,13 +39836,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -39474,13 +40022,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -40171,15 +40723,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -40260,13 +40816,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "eat"
           },
           "baseline_trace": [
             [
@@ -40352,13 +40912,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "finish"
           },
           "baseline_trace": [
             [
@@ -40442,15 +41006,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -40549,15 +41117,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -41006,13 +41578,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -41113,13 +41689,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -41921,13 +42501,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "encourage"
           },
           "baseline_trace": [
             [
@@ -42048,13 +42632,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "improve"
           },
           "baseline_trace": [
             [
@@ -42389,13 +42977,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -43398,6 +43990,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -43408,7 +44002,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -43504,6 +44100,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -43514,7 +44112,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -43610,13 +44210,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -43854,13 +44458,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -44033,13 +44641,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -44645,6 +45257,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -44655,7 +45269,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -45561,6 +46177,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -45571,7 +46189,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -45791,13 +46411,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "saw"
           },
           "baseline_trace": [
             [
@@ -46555,13 +47179,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -46737,13 +47365,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -47434,15 +48066,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -47523,13 +48159,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "eat"
           },
           "baseline_trace": [
             [
@@ -47615,13 +48255,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "finish"
           },
           "baseline_trace": [
             [
@@ -47705,15 +48349,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -47812,15 +48460,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -48269,13 +48921,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -48376,13 +49032,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -49162,13 +49822,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -49913,6 +50577,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -49923,7 +50589,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -50019,13 +50687,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -50258,13 +50930,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -50437,13 +51113,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -51124,6 +51804,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -51134,7 +51816,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -51787,6 +52471,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -51797,7 +52483,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -52916,13 +53604,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -53098,13 +53790,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -53880,15 +54576,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -54451,13 +55151,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -55244,13 +55948,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "encourage"
           },
           "baseline_trace": [
             [
@@ -55371,13 +56079,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "improve"
           },
           "baseline_trace": [
             [
@@ -55712,13 +56424,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -56721,6 +57437,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -56731,7 +57449,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -56827,6 +57547,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -56837,7 +57559,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -56933,13 +57657,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -57177,13 +57905,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -57356,13 +58088,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -57968,6 +58704,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -57978,7 +58716,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -58884,6 +59624,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -58894,7 +59636,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -59114,13 +59858,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "saw"
           },
           "baseline_trace": [
             [
@@ -59878,13 +60626,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -60060,13 +60812,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -60757,15 +61513,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -60846,13 +61606,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "eat"
           },
           "baseline_trace": [
             [
@@ -60938,13 +61702,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "finish"
           },
           "baseline_trace": [
             [
@@ -61028,15 +61796,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -61135,15 +61907,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -61592,13 +62368,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -61699,13 +62479,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -62632,13 +63416,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -63574,6 +64362,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -63584,7 +64374,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -63680,6 +64472,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -63690,7 +64484,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -63786,13 +64582,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -64000,13 +64800,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -64179,13 +64983,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -64821,6 +65629,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -64831,7 +65641,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -65707,6 +66519,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -65717,7 +66531,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -66746,13 +67562,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -66928,13 +67748,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -67665,15 +68489,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -67754,13 +68582,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "eat"
           },
           "baseline_trace": [
             [
@@ -67846,13 +68678,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "finish"
           },
           "baseline_trace": [
             [
@@ -68350,13 +69186,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -68457,13 +69297,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -69253,13 +70097,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -70004,6 +70852,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -70014,7 +70864,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -70110,13 +70962,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -70349,13 +71205,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -70528,13 +71388,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -71215,6 +72079,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -71225,7 +72091,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -71878,6 +72746,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -71888,7 +72758,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -73007,13 +73879,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -73189,13 +74065,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -73971,15 +74851,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -74542,13 +75426,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -75475,13 +76363,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -76293,6 +77185,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -76303,7 +77197,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -76399,6 +77295,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -76409,7 +77307,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -76505,13 +77405,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -76719,13 +77623,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -76826,6 +77734,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -76836,7 +77746,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -76922,13 +77834,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -77124,6 +78040,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -77134,7 +78052,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -77603,6 +78523,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -77613,7 +78535,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -78514,6 +79438,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -78524,7 +79450,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -79608,13 +80536,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -79790,13 +80722,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -80521,15 +81457,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -80610,13 +81550,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "eat"
           },
           "baseline_trace": [
             [
@@ -80702,13 +81646,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "finish"
           },
           "baseline_trace": [
             [
@@ -81206,13 +82154,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -81313,13 +82265,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
@@ -82161,13 +83117,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "encourage"
           },
           "baseline_trace": [
             [
@@ -82288,13 +83248,17 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": false,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "improve"
           },
           "baseline_trace": [
             [
@@ -82629,13 +83593,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "wonder"
           },
           "baseline_trace": [
             [
@@ -83692,6 +84660,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": false,
@@ -83702,7 +84672,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "can"
           },
           "baseline_trace": [
             [
@@ -83798,6 +84770,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -83808,7 +84782,9 @@
             ],
             "missing_required": [
               "vp_modal"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -83904,13 +84880,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "open"
           },
           "baseline_trace": [
             [
@@ -84148,13 +85128,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "solve"
           },
           "baseline_trace": [
             [
@@ -84255,6 +85239,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -84265,7 +85251,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -84351,13 +85339,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "practice"
           },
           "baseline_trace": [
             [
@@ -84553,6 +85545,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -84563,7 +85557,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -84786,6 +85782,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -84796,7 +85794,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -84912,6 +85912,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": false,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -84922,7 +85924,9 @@
             ],
             "missing_required": [
               "clause_passive"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "be"
           },
           "baseline_trace": [
             [
@@ -85135,6 +86139,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -85145,7 +86151,9 @@
             ],
             "missing_required": [
               "vp_adv"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "truck"
           },
           "baseline_trace": [
             [
@@ -86061,6 +87069,8 @@
             "has_assertions": true,
             "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": false,
               "forbidden_rules": true,
               "lexical_pos": true,
@@ -86071,7 +87081,9 @@
             ],
             "missing_required": [
               "vp_zero_clause"
-            ]
+            ],
+            "actual_voice": "active",
+            "actual_predicate": "claim"
           },
           "baseline_trace": [
             [
@@ -86285,13 +87297,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "saw"
           },
           "baseline_trace": [
             [
@@ -87084,13 +88100,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "stay"
           },
           "baseline_trace": [
             [
@@ -87266,13 +88286,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "leave"
           },
           "baseline_trace": [
             [
@@ -87992,15 +89016,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "seems"
           },
           "baseline_trace": [
             [
@@ -88081,13 +89109,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "eat"
           },
           "baseline_trace": [
             [
@@ -88173,13 +89205,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "finish"
           },
           "baseline_trace": [
             [
@@ -88263,15 +89299,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -88370,15 +89410,19 @@
           },
           "guided_gold": {
             "has_assertions": true,
-            "pass": true,
+            "pass": false,
             "checks": {
+              "voice": true,
+              "predicate": false,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "have"
           },
           "baseline_trace": [
             [
@@ -88757,13 +89801,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "ask"
           },
           "baseline_trace": [
             [
@@ -88864,13 +89912,17 @@
             "has_assertions": true,
             "pass": true,
             "checks": {
+              "voice": true,
+              "predicate": true,
               "required_rules": true,
               "forbidden_rules": true,
               "lexical_pos": true,
               "constituents": true
             },
             "required_rules": [],
-            "missing_required": []
+            "missing_required": [],
+            "actual_voice": "active",
+            "actual_predicate": "win"
           },
           "baseline_trace": [
             [
