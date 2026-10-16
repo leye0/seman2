@@ -69,6 +69,11 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                                 checkpoint_budget=3, construction_guard=True,
                                 token_only_lattice=True, infer_unary_promotions=True,
                                 reduce_checkpoints=True, reachable_checkpoints_only=True),
+        "prefix_guard3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            reachable_checkpoints_only=True, terminal_prefix_preference=True),
         "token_only_guard6": SemanCompiledReader(resources, stack_checkpoints=True,
                                 checkpoint_budget=6, construction_guard=True,
                                 token_only_lattice=True),
@@ -81,7 +86,7 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
     # Diagnostics are constructed outside the measured wall-time window.
     # They never alter the parsing choices; they expose first-reader
     # failures and actual candidate POS around the stopping token.
-    selected_modes = {"baseline", "reachable_guard3", "follow_only_guard3"}
+    selected_modes = {"baseline", "reachable_guard3", "follow_only_guard3", "prefix_guard3"}
     for rep in range(repetitions):
         for case in cases:
             token_count = len(tokenize(case["text"]))
