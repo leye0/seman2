@@ -19,16 +19,16 @@ The extractor heuristically separates prose sentences, drops Gutenberg
 front/back matter, headings and malformed fragments, records per-book
 counts and rejections, and refuses ebooks missing proper markers.
 
-The run deterministically selects UP TO 60,000 unique 4-32 token novel
+The run deterministically selects UP TO 50,000 unique 4-32 token novel
 observations balanced across the twelve books; it explicitly fails if the
 required milestone is unreachable. It dispatches exactly every tenth
 observation to the separate budgeted Earley grammar teacher: approximately
-6,000 actual verification attempts on a full 60,000-observation run.
+5,000 actual verification attempts on a full 50,000-observation run.
 The other 90 percent are seen but NOT parsed, and may not be described as
 grammatically verified. An Earley FOUND gives a grammar-compatible tree,
 not a unique or independently human-gold derivation.
 
-Checkpoints: 0, 5,000, 20,000, and 60,000 observed training sentences.
+Checkpoints: 0, 5,000, 20,000, and 50,000 observed training sentences.
 At each checkpoint evaluate heldout novel snap/completion rates split by
 word count, author and book, with total processing latency. Separately
 record performance against Seman2's 70 partially annotated heldout positives

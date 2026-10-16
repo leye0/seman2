@@ -1,7 +1,7 @@
 """Novel-scale whole-sentence syntax snapping experiment (research only).
 
 Sources: complete public-domain Project Gutenberg classic novels, downloaded
-live; author-disjoint holdout novels. We ingest up to 60,000 short-to-medium
+live; author-disjoint holdout novels. We ingest up to 50,000 short-to-medium
 novel sentence observations, and run bounded Earley on exactly every tenth
 eligible training observation, outside parsing. All other observations are
 counted, not misleadingly called verified.
@@ -121,8 +121,8 @@ def _evaluate(index, resources, novel_test, seman_cases, negatives):
     }
 
 
-def run(*, wordnet_dir, max_train=60_000,
-        checkpoints=(0, 5_000, 20_000, 60_000), tenth=10,
+def run(*, wordnet_dir, max_train=50_000,
+        checkpoints=(0, 5_000, 20_000, 50_000), tenth=10,
         teacher_seconds=.055, seed_seconds=.35,
         per_book_band=75, max_teacher_tokens=32):
     checkpoints = tuple(sorted(set(checkpoints)))
@@ -301,8 +301,8 @@ def run(*, wordnet_dir, max_train=60_000,
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--wordnet-dir", required=True)
-    p.add_argument("--max-train", type=int, default=60_000)
-    p.add_argument("--checkpoints", default="0,5000,20000,60000")
+    p.add_argument("--max-train", type=int, default=50_000)
+    p.add_argument("--checkpoints", default="0,5000,20000,50000")
     p.add_argument("--every", type=int, default=10)
     p.add_argument("--teacher-seconds", type=float, default=.055)
     p.add_argument("--seed-seconds", type=float, default=.35)

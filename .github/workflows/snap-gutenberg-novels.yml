@@ -55,7 +55,7 @@ jobs:
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_novels.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --max-train 60000 --checkpoints 0,5000,20000,60000 \
+            --max-train 50000 --checkpoints 0,5000,20000,50000 \
             --every 10 --teacher-seconds 0.055 \
             --per-book-band 75 --max-teacher-tokens 32 \
             --out /tmp/snap-gutenberg-novel-report.json
