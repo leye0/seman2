@@ -25,25 +25,32 @@
     "hits_with_teacher_templates": 23,
     "hits_passing_explicit_gold": 20,
     "hits_all_matches_pass_explicit_gold": 18,
+    "hybrid_snap_fastpath": 25,
+    "hybrid_lr_fallback": 45,
     "multi_structure_hits": 6,
     "incomplete": 13,
     "no_hit": 45
   },
   "latency": {
     "snap_recognition_warmed_lattice": {
-      "p50_ms": 0.02862,
-      "p95_ms": 0.83242,
-      "p99_ms": 1.20704
+      "p50_ms": 0.02951,
+      "p95_ms": 0.90421,
+      "p99_ms": 1.2559
     },
     "snap_including_lexical_lattice": {
-      "p50_ms": 1.25064,
-      "p95_ms": 2.19049,
-      "p99_ms": 3.15622
+      "p50_ms": 1.23154,
+      "p95_ms": 2.26937,
+      "p99_ms": 3.09798
     },
     "lr_baseline_including_lattice": {
-      "p50_ms": 4.40769,
-      "p95_ms": 8.99582,
-      "p99_ms": 9.76543
+      "p50_ms": 4.30737,
+      "p95_ms": 8.63567,
+      "p99_ms": 9.62844
+    },
+    "hybrid_snap_then_lr_fallback": {
+      "p50_ms": 3.34457,
+      "p95_ms": 9.60684,
+      "p99_ms": 10.94655
     }
   },
   "cases": [
@@ -58,6 +65,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -71,6 +80,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -84,6 +95,8 @@
       "snap_reason": "matched",
       "candidate_templates": 2,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -99,6 +112,8 @@
       "snap_reason": "matched",
       "candidate_templates": 2,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -114,6 +129,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -129,6 +146,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -142,6 +161,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -155,6 +176,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -168,6 +191,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -181,6 +206,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -194,6 +221,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -209,6 +238,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 2,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -224,6 +255,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -237,6 +270,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_neg"
       ]
@@ -252,6 +287,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -267,6 +304,8 @@
       "snap_reason": "matched",
       "candidate_templates": 2,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -282,6 +321,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -295,6 +336,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -310,6 +353,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -323,6 +368,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -336,6 +383,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -349,6 +398,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -364,6 +415,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -377,6 +430,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -390,6 +445,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -403,6 +460,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -416,6 +475,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -429,6 +490,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -442,6 +505,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -457,6 +522,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -470,6 +537,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_coord_aux_adv"
       ]
@@ -485,6 +554,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -498,6 +569,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -511,6 +584,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -524,6 +599,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -539,6 +616,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -552,6 +631,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -567,6 +648,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -580,6 +663,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -595,6 +680,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 2,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -610,6 +697,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -623,6 +712,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -636,6 +727,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 2,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -651,6 +744,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_coord_aux_adv"
       ]
@@ -666,6 +761,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -679,6 +776,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -692,6 +791,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -705,6 +806,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -720,6 +823,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -735,6 +840,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -748,6 +855,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -761,6 +870,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -774,6 +885,8 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 3,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_coord_aux_adv",
         "clause_np_vp"
@@ -790,6 +903,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -805,6 +920,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -820,6 +937,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -833,6 +952,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -846,6 +967,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -859,6 +982,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -872,6 +997,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -885,6 +1012,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -898,6 +1027,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -911,6 +1042,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -924,6 +1057,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -937,6 +1072,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -950,6 +1087,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -963,6 +1102,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": true,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": true,
       "snap_rule_ids": []
     },
     {
@@ -976,6 +1117,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": true,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -991,6 +1134,8 @@
       "snap_reason": "unseen_pattern",
       "candidate_templates": 0,
       "lr_complete": false,
+      "hybrid_path": "left_to_right",
+      "hybrid_complete": false,
       "snap_rule_ids": []
     },
     {
@@ -1004,6 +1149,8 @@
       "snap_reason": "matched",
       "candidate_templates": 1,
       "lr_complete": false,
+      "hybrid_path": "snap",
+      "hybrid_complete": true,
       "snap_rule_ids": [
         "clause_np_vp"
       ]
@@ -1015,7 +1162,8 @@
     "Candidate templates come from L-R; grammar_witness templates come from independent bounded Earley+unification, NOT gold syntax.",
     "The teacher tests only dev. UNKNOWN from its budgets is not evidence of invalid grammar.",
     "Only one lexical derivation is materialized per matched whole-tree template.",
-    "Hard budgets can truncate lookup; such cases are marked incomplete.",
+    "Hard budgets can truncate lookup; such cases are marked incomplete; a valid match still takes fast path.",
+    "Hybrid fallback currently repeats lexical lattice construction on misses; this overhead is included.",
     "No 20-million-template memory or on-disk index performance has been claimed."
   ]
 }
