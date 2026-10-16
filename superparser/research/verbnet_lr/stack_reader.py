@@ -171,6 +171,12 @@ class LocalCheckpointReader(IncrementalReader):
 
         state = frame.state
         selected = self._select(state, frame.live)
+        if self._forced is not None:
+            depth, state_id, forced_edge = self._forced
+            if depth == len(self._stack) and state_id == state.state_id:
+                # This alternative was validated against the grammar's live
+                # mask when restoring the checkpoint.
+                selected = forced_edge
         if state.finals and selected is not None:
             if not self._viable(state.edges[selected], self.pos + 1):
                 selected = None
@@ -185,12 +191,6 @@ class LocalCheckpointReader(IncrementalReader):
             frame.phase = "extend"
             return None
 
-        if self._forced is not None:
-            depth, state_id, forced_edge = self._forced
-            if depth == len(self._stack) and state_id == state.state_id:
-                # Candidate was selected through _select in _restore().
-                # Its eligibility has already been checked there.
-                selected = forced_edge
         self._register(frame, selected)
         target = state.edges[selected]
         hints = tuple(
