@@ -37,24 +37,24 @@
   },
   "latency": {
     "snap_recognition_warmed_lattice": {
-      "p50_ms": 0.03429,
-      "p95_ms": 0.93997,
-      "p99_ms": 1.37599
+      "p50_ms": 0.03096,
+      "p95_ms": 0.90953,
+      "p99_ms": 1.1739
     },
     "snap_including_lexical_lattice": {
-      "p50_ms": 1.26996,
-      "p95_ms": 2.57003,
-      "p99_ms": 3.11719
+      "p50_ms": 1.31473,
+      "p95_ms": 2.33642,
+      "p99_ms": 2.8468
     },
     "lr_baseline_including_lattice": {
-      "p50_ms": 4.44462,
-      "p95_ms": 9.25492,
-      "p99_ms": 10.19372
+      "p50_ms": 4.21023,
+      "p95_ms": 8.58356,
+      "p99_ms": 9.56945
     },
     "hybrid_snap_then_lr_fallback": {
-      "p50_ms": 2.53903,
-      "p95_ms": 8.47442,
-      "p99_ms": 8.91308
+      "p50_ms": 2.31628,
+      "p95_ms": 8.21967,
+      "p99_ms": 9.4098
     }
   },
   "cases": [
@@ -1373,16 +1373,16 @@
   "negative_probe": {
     "cases": 24,
     "baseline_false_accepts": 6,
-    "hybrid_false_accepts": 9,
-    "new_false_accepts": 3,
+    "hybrid_false_accepts": 6,
+    "new_false_accepts": 0,
     "contrast_completes": 10,
     "details": [
       {
         "id": "neg001",
         "family": "agreement",
         "baseline_false_accept": false,
-        "hybrid_false_accept": true,
-        "hybrid_route": "snap",
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
         "contrast_completes": true,
         "contrast_route": "snap"
       },
@@ -1409,7 +1409,7 @@
         "family": "agreement",
         "baseline_false_accept": true,
         "hybrid_false_accept": true,
-        "hybrid_route": "snap",
+        "hybrid_route": "left_to_right",
         "contrast_completes": true,
         "contrast_route": "snap"
       },
@@ -1417,8 +1417,8 @@
         "id": "neg005",
         "family": "agreement",
         "baseline_false_accept": false,
-        "hybrid_false_accept": true,
-        "hybrid_route": "snap",
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
         "contrast_completes": true,
         "contrast_route": "snap"
       },
@@ -1426,8 +1426,8 @@
         "id": "neg006",
         "family": "agreement",
         "baseline_false_accept": false,
-        "hybrid_false_accept": true,
-        "hybrid_route": "snap",
+        "hybrid_false_accept": false,
+        "hybrid_route": "left_to_right",
         "contrast_completes": true,
         "contrast_route": "snap"
       },
