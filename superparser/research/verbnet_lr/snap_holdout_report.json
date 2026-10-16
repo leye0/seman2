@@ -1,0 +1,771 @@
+{
+  "schema": "seman2-full-structure-snap-v1",
+  "training_source": "dev L-R completed candidate trees (NOT fully verified)",
+  "evaluation_source": "non-dev unseen sentences; no online training",
+  "training_cases": 50,
+  "evaluation_cases": 70,
+  "training": {
+    "accepted": 16,
+    "incomplete": 34
+  },
+  "index": {
+    "templates": 15,
+    "verified_templates": 0,
+    "candidate_templates": 15
+  },
+  "recognition": {
+    "hits": 11,
+    "multi_structure_hits": 4,
+    "incomplete": 5,
+    "no_hit": 59
+  },
+  "latency": {
+    "snap_recognition_warmed_lattice": {
+      "p50_ms": 0.02337,
+      "p95_ms": 0.61901,
+      "p99_ms": 1.07506
+    },
+    "snap_including_lexical_lattice": {
+      "p50_ms": 1.05488,
+      "p95_ms": 1.9706,
+      "p99_ms": 2.6319
+    },
+    "lr_baseline_including_lattice": {
+      "p50_ms": 4.51076,
+      "p95_ms": 9.05308,
+      "p99_ms": 10.08676
+    }
+  },
+  "cases": [
+    {
+      "id": "v001",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v002",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v003",
+      "split": "validation",
+      "snap_matches": 2,
+      "snap_incomplete": false,
+      "snap_reason": "matched",
+      "candidate_templates": 2,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v004",
+      "split": "validation",
+      "snap_matches": 1,
+      "snap_incomplete": false,
+      "snap_reason": "matched",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v005",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v006",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v007",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v008",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v009",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v010",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v011",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v012",
+      "split": "validation",
+      "snap_matches": 2,
+      "snap_incomplete": true,
+      "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
+      "candidate_templates": 2,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v013",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v014",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v015",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v016",
+      "split": "validation",
+      "snap_matches": 2,
+      "snap_incomplete": false,
+      "snap_reason": "matched",
+      "candidate_templates": 2,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v017",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v018",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v019",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v020",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v021",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v022",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v023",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v024",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v025",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v026",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v027",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v028",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v029",
+      "split": "validation",
+      "snap_matches": 1,
+      "snap_incomplete": true,
+      "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v030",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v031",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v032",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v033",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v034",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v035",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v036",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v037",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v038",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v039",
+      "split": "validation",
+      "snap_matches": 1,
+      "snap_incomplete": true,
+      "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v040",
+      "split": "validation",
+      "snap_matches": 1,
+      "snap_incomplete": true,
+      "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v041",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v042",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v043",
+      "split": "validation",
+      "snap_matches": 1,
+      "snap_incomplete": false,
+      "snap_reason": "matched",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "v044",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v045",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v046",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v047",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v048",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v049",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "v050",
+      "split": "validation",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h001",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h002",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h003",
+      "split": "holdout",
+      "snap_matches": 2,
+      "snap_incomplete": true,
+      "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
+      "candidate_templates": 2,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "h004",
+      "split": "holdout",
+      "snap_matches": 1,
+      "snap_incomplete": false,
+      "snap_reason": "matched",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "h005",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h006",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h007",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h008",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h009",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h010",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h011",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h012",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h013",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h014",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h015",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h016",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h017",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": true,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h018",
+      "split": "holdout",
+      "snap_matches": 1,
+      "snap_incomplete": false,
+      "snap_reason": "matched",
+      "candidate_templates": 1,
+      "lr_complete": true,
+      "snap_rule_ids": [
+        "clause_np_vp"
+      ]
+    },
+    {
+      "id": "h019",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    },
+    {
+      "id": "h020",
+      "split": "holdout",
+      "snap_matches": 0,
+      "snap_incomplete": false,
+      "snap_reason": "unseen_pattern",
+      "candidate_templates": 0,
+      "lr_complete": false,
+      "snap_rule_ids": []
+    }
+  ],
+  "limitations": [
+    "Only previously observed full trees are indexed; zero hits do not disprove grammaticality.",
+    "One-token lexical slots; trailing period and exclamation are excluded like current L-R.",
+    "Candidate templates come from L-R and have no independent grammatical verification.",
+    "Only one lexical derivation is materialized per matched whole-tree template.",
+    "Hard budgets can truncate lookup; such cases are marked incomplete.",
+    "No 20-million-template memory or on-disk index performance has been claimed."
+  ]
+}
