@@ -264,6 +264,13 @@ class IncrementalReader:
         self._remaining_tokens = tuple(remaining)
         mins = {cat: 1 for cats in self.lex_cats for cat in cats}
         signatures = tuple(self.g.by_signature)
+        # Terminal categories always have minimum lexical yield one even
+        # when absent from this particular sentence. Otherwise PP might
+        # incorrectly look unbounded simply because no PREP is present.
+        for _, rhs in signatures:
+            for cat in rhs:
+                if cat not in self.g.nonterminals:
+                    mins[cat] = 1
         for _ in range(len(self.g.nonterminals) + 1):
             changed = False
             for lhs, rhs in signatures:
