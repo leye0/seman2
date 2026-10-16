@@ -105,6 +105,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "verbnet_scoring_calls": counters.get("verbnet_scoring_calls", 0),
                     "verbnet_positive_hints": counters.get("verbnet_positive_hints", 0),
                     "trace": trace(item),
+                    "last_events": [event.as_dict() for event in item.outcome.events[-12:]],
                 }
                 raw[mode].append(record)
                 if repeat == 0:
@@ -142,8 +143,17 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "guided_trace": guided["trace"],
                 })
         diffs[mode] = {"changed_count": len(changed), "changes": changed}
+    failures = []
+    for case in cases:
+        record = results["A_baseline"][case["id"]]
+        if not record["complete"] and len(failures) < 24:
+            failures.append({"id": case["id"], "text": case["text"],
+                             "reason": record["reason"],
+                             "last_events": record["last_events"],
+                             "trace": record["trace"]})
     return {
         "schema": 1,
+        "baseline_failure_diagnostics": failures,
         "method": "A/B/C compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
