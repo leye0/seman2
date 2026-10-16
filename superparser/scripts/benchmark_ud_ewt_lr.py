@@ -107,6 +107,9 @@ def run(wordnet_dir=None,limit_per_bin=8,repetitions=2):
                                           checkpoint_budget=2,construction_guard=True),
         "local3_guard":SemanCompiledReader(resources,stack_checkpoints=True,
                                           checkpoint_budget=3,construction_guard=True),
+        "fast_local3_guard":SemanCompiledReader(resources,stack_checkpoints=True,
+                                          checkpoint_budget=3,construction_guard=True,
+                                          fast_multiword=True),
     }
     for _,case in selected:
         for machine in modes.values():machine.parse(case["text"])
