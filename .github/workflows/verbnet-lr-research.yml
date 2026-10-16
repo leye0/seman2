@@ -9,7 +9,11 @@ on:
       - 'superparser/research/verbnet_lr/*.py'
       - 'superparser/research/verbnet_lr/oracle_cases.jsonl'
       - 'superparser/scripts/benchmark_verbnet_lr.py'
+      - 'superparser/scripts/benchmark_verbnet_reader.py'
+      - 'superparser/seman_parser/reading_kernel_compiled.py'
+      - 'superparser/seman_parser/reading_kernel_compiled_adapter.py'
       - 'superparser/tests/test_verbnet_lr*.py'
+      - 'superparser/tests/test_verbnet_guidance.py'
   workflow_dispatch:
 
 concurrency:
@@ -33,7 +37,8 @@ jobs:
       - name: Unit tests (standard library only)
         run: |
           PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_lr*.py' -v
-      - name: Fetch WordNet 3.0 sense index
+          PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_guidance.py' -v
+      - name: Fetch WordNet 3.0 dictionary and sense index
         run: |
           python - <<'PY'
           from io import BytesIO
@@ -52,6 +57,17 @@ jobs:
               dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet-index.sense'
               dest.write_bytes(archive.read(matches[0]))
               print('WordNet sense index:', dest.stat().st_size, 'bytes')
+              wordnet_dict = Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict'
+              wordnet_dict.mkdir(parents=True, exist_ok=True)
+              allowed = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb', 'sents.vrb', 'cntlist.rev'}
+              for suffix in ('noun', 'verb', 'adj', 'adv'):
+                  allowed.update({f'index.{suffix}', f'data.{suffix}', f'{suffix}.exc'})
+              for name in archive.namelist():
+                  base = Path(name).name
+                  if base in allowed and name.startswith('wordnet/'):
+                      (wordnet_dict / base).write_bytes(archive.read(name))
+              if not (wordnet_dict / 'index.verb').is_file():
+                  raise RuntimeError('WordNet dictionary extraction failed')
           PY
       - name: Compile complete VerbNet 3.4 and benchmark
         run: |
@@ -61,13 +77,22 @@ jobs:
             --report superparser/research/verbnet_lr/full_corpus_report.json \
             --index-out superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
             --iterations 20000
-      - name: Commit report and compiled index to research branch
+      - name: A/B/C benchmark on real Seman2 compiled left-to-right reader
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_reader.py \
+            --index superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-cases 36 \
+            --repetitions 2 \
+            --report superparser/research/verbnet_lr/reader_ablation.json
+      - name: Commit research reports and compiled index to branch
         if: github.ref == 'refs/heads/research/verbnet-left-to-right-poc'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add superparser/research/verbnet_lr/full_corpus_report.json \
-                  superparser/research/verbnet_lr/verbnet34.compiled.json.gz
+                  superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
+                  superparser/research/verbnet_lr/reader_ablation.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
             git push
