@@ -1,0 +1,165 @@
+"""Whole-structure snapping regression tests (no WordNet download)."""
+import unittest
+from dataclasses import dataclass
+from seman_parser.engine import ParserResources
+from seman_parser.features import FeatureStructure, Variable
+from seman_parser.grammar import Grammar, GrammarRule, RuleSymbol
+from seman_parser.segmentation import LexicalCandidate, LexicalLattice, Token
+from seman_parser.predictive import CompactNode, PredictiveParser
+from seman_parser.symbols import intern
+from research.verbnet_lr.full_structure_snap import FullStructureSnapIndex
+
+
+def S(cat, **features):
+    return RuleSymbol(cat, FeatureStructure.build(features))
+
+
+def R(name, lhs, *rhs):
+    return GrammarRule(name, tuple(rhs), lhs)
+
+
+class FullStructureSnapTests(unittest.TestCase):
+    def setUp(self):
+        grammar = Grammar([
+            R("clause", S("CLAUSE"), S("PRON"), S("VP")),
+            R("vp_np", S("VP"), S("V"), S("NP")),
+            R("vp_pp", S("VP"), S("VP"), S("PP")),
+            R("np_n", S("NP"), S("N", number="sg")),
+            R("np_pp", S("NP"), S("NP"), S("PP")),
+            R("pp", S("PP"), S("PREP"), S("NP")),
+        ])
+        self.resources = ParserResources(grammar, None, None)
+        self.index = FullStructureSnapIndex(self.resources)
+        self.rules = {r.rule_id:r for r in grammar}
+        self.adapter = PredictiveParser(self.resources)
+
+    def lattice(self, words, categories):
+        tokens, options = [], []
+        pos = 0
+        for i, (word, rows) in enumerate(zip(words, categories)):
+            token = Token(i, pos, pos + len(word), word)
+            tokens.append(token)
+            for cat, number, score in rows:
+                options.append(LexicalCandidate(
+                    pos, pos+len(word), word, word.casefold(), cat,
+                    FeatureStructure.build({"number": number} if number else {}),
+                    score=score))
+            pos += len(word)+1
+        return LexicalLattice(" ".join(words), tuple(tokens), tuple(options))
+
+    def leaf(self, cand):
+        return CompactNode(cand.category, intern(cand.category),
+                           cand.span_start, cand.span_end, cand.features,
+                           frozenset(k for k,v in cand.features.items()
+                                     if not isinstance(v, Variable)),
+                           cand.score, candidate=cand)
+
+    def tree(self, rule_name, *children):
+        node = PredictiveParser._reduce(self.rules[rule_name], children)
+        self.assertIsNotNone(node, rule_name)
+        return node
+
+    def two_attached_trees(self, lattice):
+        c = lattice.candidates
+        # The same exact lexical sequence supports VP and NP attachment.
+        pron, verb, noun, prep, final = [self.leaf(x) for x in c]
+        first_np = self.tree("np_n", noun)
+        second_np = self.tree("np_n", final)
+        pp = self.tree("pp", prep, second_np)
+        vp_attached = self.tree("clause", pron,
+                               self.tree("vp_pp",
+                                   self.tree("vp_np", verb, first_np), pp))
+        np_attached = self.tree("clause", pron,
+                               self.tree("vp_np", verb,
+                                   self.tree("np_pp", first_np, pp)))
+        return (self.adapter._materialize(vp_attached),
+                self.adapter._materialize(np_attached))
+
+    def test_one_type_sequence_snaps_to_both_complete_trees(self):
+        raw = [("PRON", None, 1), ("V", None, 1),
+               ("N", "sg", 1), ("PREP", None, 1), ("N", "sg", 1)]
+        training = self.lattice(["I", "saw", "girl", "with", "hat"],
+                                [[entry] for entry in raw])
+        a, b = self.two_attached_trees(training)
+        ids = [self.index.observe(x, lattice=training) for x in (a, b)]
+        self.assertNotEqual(ids[0], ids[1])
+        self.assertEqual(self.index.summary()["templates"], 2)
+        unseen = self.lattice(["we", "met", "pilot", "near", "town"],
+                              [[entry] for entry in raw])
+        result = self.index.match(unseen)
+        self.assertTrue(result.complete, result.reason)
+        self.assertFalse(result.incomplete, result.reason)
+        self.assertEqual({m.template_id for m in result.matches}, set(ids))
+        self.assertEqual({m.item.rule_id for m in result.matches}, {"clause"})
+        self.assertTrue(all(not m.independently_verified_template
+                            for m in result.matches))
+
+    def test_all_lexical_candidates_retained_and_real_unification(self):
+        rows = [[("PRON", None, 1)], [("V", None, 1)],
+                [("N", "pl", 9), ("N", "sg", 1)],
+                [("PREP", None, 1)], [("N", "sg", 1)]]
+        lattice = self.lattice(["I", "saw", "girl", "with", "hat"],
+                               [[r[0]] for r in rows])
+        self.index.observe(self.two_attached_trees(lattice)[0], lattice=lattice)
+        ambiguous = self.lattice(["we", "met", "pilot", "near", "town"], rows)
+        result = self.index.match(ambiguous)
+        self.assertEqual(len(result.matches), 1)
+        self.assertEqual(len(result.lattice.candidates), 6)
+        leaves = []
+        def visit(item):
+            if item.lexical_candidate is not None:
+                leaves.append(item.lexical_candidate)
+            for child in item.children:
+                visit(child)
+        visit(result.item)
+        self.assertEqual(str(leaves[2].features.as_dict()["number"]), "sg")
+        wrong = self.lattice(["we", "met", "pilot", "near", "town"],
+                             [[r[0]] if i!=2 else [("N", "pl", 1)]
+                              for i,r in enumerate(rows)])
+        missed = self.index.match(wrong)
+        self.assertFalse(missed.complete)
+        self.assertEqual(missed.reason, "templates_failed_feature_unification")
+
+    def test_unknown_and_explicit_budgets(self):
+        cats = [[("PRON",None,1)], [("V",None,1)],
+                [("N","sg",1)], [("PREP",None,1)],
+                [("N","sg",1)]]
+        src = self.lattice(["I", "saw", "girl", "with", "hat"],cats)
+        for tree in self.two_attached_trees(src):
+            self.index.observe(tree, lattice=src)
+        limited = self.index.match(src, max_templates_checked=1)
+        self.assertTrue(limited.incomplete)
+        self.assertEqual(limited.candidate_templates, 2)
+        self.assertEqual(len(limited.matches), 1)
+        missing = self.lattice(["I", "saw", "girl"], cats[:3])
+        self.assertEqual(self.index.match(missing).reason,"unseen_pattern")
+        self.assertEqual(len(self.index.templates), 2)
+
+    def test_dedup_and_provenance(self):
+        rows = [[("PRON",None,1)], [("V",None,1)],
+                [("N","sg",1)], [("PREP",None,1)],
+                [("N","sg",1)]]
+        src = self.lattice(["I","saw","girl","with","hat"], rows)
+        t = self.two_attached_trees(src)[0]
+        self.assertEqual(self.index.observe(t, lattice=src), 0)
+        self.assertEqual(self.index.observe(t, lattice=src), 0)
+        self.assertEqual(self.index.templates[0].candidate_observations, 2)
+        self.assertFalse(self.index.match(src).matches[0].independently_verified_template)
+        self.index.observe(t,lattice=src,evidence="verified")
+        self.assertTrue(self.index.match(src).matches[0].independently_verified_template)
+        with self.assertRaises(ValueError):
+            self.index.observe(t,lattice=src,evidence="parser_completion")
+
+    def test_no_multiword_fabrication(self):
+        rows = [[("PRON",None,1)], [("V",None,1)],
+                [("N","sg",1)], [("PREP",None,1)],
+                [("N","sg",1)]]
+        src = self.lattice(["I","saw","girl","with","hat"], rows)
+        t = self.two_attached_trees(src)[0]
+        shortened = LexicalLattice(src.text, src.tokens[:-1], src.candidates)
+        with self.assertRaises(ValueError):
+            self.index.observe(t,lattice=shortened)
+
+
+if __name__ == "__main__":
+    unittest.main()
