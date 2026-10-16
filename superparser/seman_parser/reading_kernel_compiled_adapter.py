@@ -34,7 +34,8 @@ class CompiledKernelReport:
 class SemanCompiledReader:
     def __init__(self, resources: ParserResources, *,
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
-                 structural_lookahead: int = 1, checkpoint_budget: int = 0):
+                 structural_lookahead: int = 1, checkpoint_budget: int = 0,
+                 lazy_checkpoints: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -42,6 +43,7 @@ class SemanCompiledReader:
         if not 0 <= checkpoint_budget <= 6:
             raise ValueError('checkpoint_budget must be 0..6')
         self.checkpoint_budget = checkpoint_budget
+        self.lazy_checkpoints = lazy_checkpoints
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
@@ -61,7 +63,8 @@ class SemanCompiledReader:
                  structural_lookahead: int = 1, checkpoint_budget: int = 0):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
-                   structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget)
+                   structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
+                   lazy_checkpoints=lazy_checkpoints)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -96,8 +99,8 @@ class SemanCompiledReader:
             from research.verbnet_lr.guidance import project_postverb_events
 
         if self.checkpoint_budget:
-            from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader
-            reader_base = BoundedCheckpointReader
+            from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader, LazyCheckpointReader
+            reader_base = LazyCheckpointReader if self.lazy_checkpoints else BoundedCheckpointReader
         else:
             reader_base = IncrementalReader
 
