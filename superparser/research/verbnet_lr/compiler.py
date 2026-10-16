@@ -123,6 +123,8 @@ def compile_directory(xml_dir: str | Path, wordnet_sense_index: str | Path | Non
     offsets = sense_offsets(wordnet_sense_index) if wordnet_sense_index else {}
     stats = Counter()
     compiled: list[Frame] = []
+    unique_wordnet_keys: set[str] = set()
+    matched_wordnet_keys: set[str] = set()
 
     def walk(node: ET.Element, inherited: tuple[tuple[str, tuple[tuple[str, ...], ...], tuple[str, ...]], ...]):
         class_id = node.get("ID", "")
@@ -140,6 +142,7 @@ def compile_directory(xml_dir: str | Path, wordnet_sense_index: str | Path | Non
             if not lemma:
                 continue
             keys = tuple(k for k in member.get("wn", "").split() if k)
+            unique_wordnet_keys.update(keys)
             # VerbNet often abbreviates WordNet verb keys as
             # "give%2:40:00"; index.sense stores "give%2:40:00::".
             # The empty head_word/head_id suffix is compulsory for verbs.
@@ -149,6 +152,7 @@ def compile_directory(xml_dir: str | Path, wordnet_sense_index: str | Path | Non
                 offset = offsets.get(key, offsets.get(full_key))
                 if offset is not None:
                     matched.append(offset)
+                    matched_wordnet_keys.add(key)
             mapped = tuple(sorted(set(matched)))
             link = "exact" if mapped else ("unresolved" if keys else "lemma_only")
             stats["wordnet_keys_total"] += len(keys)
@@ -174,6 +178,8 @@ def compile_directory(xml_dir: str | Path, wordnet_sense_index: str | Path | Non
     frames = tuple(sorted(unique.values(), key=lambda f: (f.lemma, f.class_id, f.frame_id)))
     stats["compiled_frames"] = len(frames)
     stats["lemmas"] = len({f.lemma for f in frames})
+    stats["unique_wordnet_keys"] = len(unique_wordnet_keys)
+    stats["unique_wordnet_keys_matched"] = len(matched_wordnet_keys)
     return frames, dict(stats)
 
 
