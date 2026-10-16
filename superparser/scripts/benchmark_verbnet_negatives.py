@@ -69,6 +69,9 @@ MODES = (
     ("AB_token_only_baseline", 0),
     ("AC_token_only_guard1", 1),
     ("AD_token_only_guard3", 3),
+    ("AE_token_cache_baseline", 0),
+    ("AF_token_cache_guard1", 1),
+    ("AG_token_cache_guard3", 3),
 )
 
 
@@ -85,10 +88,10 @@ def run(wordnet_dir=None, corpus=None, repetitions=2):
         name: SemanCompiledReader(
             resources, checkpoint_budget=budget,
             stack_checkpoints=bool(budget) or name.endswith("guard0"),
-            construction_guard=name.startswith(("R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_", "AC_", "AD_")),
-            fast_multiword=name.startswith(("V_", "W_", "X_")),
+            construction_guard=name.startswith(("R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_", "AC_", "AD_", "AF_", "AG_")),
+            fast_multiword=name.startswith(("V_", "W_", "X_", "AE_", "AF_", "AG_")),
             early_construction_guard=name.startswith(("Y_", "Z_", "AA_")),
-            token_only_lattice=name.startswith(("AB_", "AC_", "AD_")))
+            token_only_lattice=name.startswith(("AB_", "AC_", "AD_", "AE_", "AF_", "AG_")))
         for name, budget in MODES
     }
     # Warm each unique sentence equally for all modes; measure end-to-end
