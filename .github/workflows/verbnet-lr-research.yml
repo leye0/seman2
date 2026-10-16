@@ -13,6 +13,7 @@ on:
       - 'superparser/scripts/benchmark_verbnet_negatives.py'
       - 'superparser/scripts/assess_verbnet_grammar_quality.py'
       - 'superparser/scripts/benchmark_verbnet_long.py'
+      - 'superparser/scripts/benchmark_ud_ewt_lr.py'
       - 'superparser/research/verbnet_lr/long_sentence_stress.jsonl'
       - 'superparser/research/verbnet_lr/negative_minimal_pairs.jsonl'
       - 'superparser/seman_parser/reading_kernel_compiled.py'
@@ -115,6 +116,12 @@ jobs:
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --repetitions 3 \
             --report superparser/research/verbnet_lr/long_stress_report.json
+      - name: Pinned UD EWT out-of-domain length-stratified assessment
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/benchmark_ud_ewt_lr.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --per-bin 8 --repetitions 2 \
+            --report superparser/research/verbnet_lr/ud_ewt_probe.json
       - name: Commit research reports and compiled index to branch
         if: github.ref == 'refs/heads/research/verbnet-left-to-right-poc'
         run: |
@@ -125,7 +132,8 @@ jobs:
                   superparser/research/verbnet_lr/reader_ablation.json \
                   superparser/research/verbnet_lr/negative_report.json \
                   superparser/research/verbnet_lr/grammar_quality_gate.json \
-                  superparser/research/verbnet_lr/long_stress_report.json
+                  superparser/research/verbnet_lr/long_stress_report.json \
+                  superparser/research/verbnet_lr/ud_ewt_probe.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
             git push
