@@ -37,7 +37,8 @@ class SemanCompiledReader:
                  structural_lookahead: int = 1, checkpoint_budget: int = 0,
                  lazy_checkpoints: bool = False,
                  stack_checkpoints: bool = False,
-                 construction_guard: bool = False):
+                 construction_guard: bool = False,
+                 fast_multiword: bool = False):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -48,6 +49,7 @@ class SemanCompiledReader:
         self.lazy_checkpoints = lazy_checkpoints
         self.stack_checkpoints = stack_checkpoints
         self.construction_guard = construction_guard
+        self.fast_multiword = fast_multiword
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
@@ -72,7 +74,8 @@ class SemanCompiledReader:
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
                    lazy_checkpoints=lazy_checkpoints,
                    stack_checkpoints=stack_checkpoints,
-                   construction_guard=construction_guard)
+                   construction_guard=construction_guard,
+                   fast_multiword=fast_multiword)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -86,7 +89,12 @@ class SemanCompiledReader:
 
     def parse(self, text: str) -> CompiledKernelReport:
         t0 = perf_counter()
-        lattice = build_lattice(text, self.resources.lexicon)
+        if self.fast_multiword:
+            from research.verbnet_lr.fast_lattice import FastMultiwordLexicon
+            lexical_view = FastMultiwordLexicon(self.resources.lexicon)
+        else:
+            lexical_view = self.resources.lexicon
+        lattice = build_lattice(text, lexical_view)
         t1 = perf_counter()
         memo: dict[int, CompactNode] = {}
 
