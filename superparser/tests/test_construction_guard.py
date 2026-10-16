@@ -79,6 +79,15 @@ class TestConstructionGuard(unittest.TestCase):
         self.assertFalse(self.check(leaf("did", "V", "do", vform="base")))
         self.assertTrue(self.check(leaf("do", "V", "do", vform="base")))
 
+    def test_modal_homograph_is_not_third_singular_lexical_verb(self):
+        # "Mary will ..." can be a modal construction. As a lexical verb,
+        # third-person singular present would require "wills".
+        subject = Node("NP", (leaf("Mary", "PROPER-NOUN"),))
+        node = clause(subject, leaf("will", "V", "will", vform="finite"))
+        self.assertFalse(ConstructionGuard(modal_forms={"will"}).validate(node).acceptable)
+        # Without positive lexical MODAL evidence, do not make that inference.
+        self.assertTrue(ConstructionGuard().validate(node).acceptable)
+
     def test_open_class_present_s_vs_plural(self):
         plural = nominal("The", "children", "plural")
         self.assertFalse(self.check(clause(plural, leaf("plays", "V", "play"))))
