@@ -180,6 +180,14 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "AA_early_guard3": SemanCompiledReader(
             resources, checkpoint_budget=3, stack_checkpoints=True,
             construction_guard=True, early_construction_guard=True),
+        "AB_token_only_baseline": SemanCompiledReader(
+            resources, token_only_lattice=True),
+        "AC_token_only_guard1": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=1,
+            construction_guard=True, token_only_lattice=True),
+        "AD_token_only_guard3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -316,6 +324,23 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         fast=results["V_fast_baseline"][case["id"]]
         if original["complete"] != fast["complete"] or original["trace"] != fast["trace"]:
             raise AssertionError("fast lexical lattice not equivalent: " + case["id"])
+    # This reader only consumes exact one-token spans. Reject this lexical
+    # optimization on any observable syntactic divergence across 120 cases.
+    for case in cases:
+        ref = results["A_baseline"][case["id"]]
+        reduced = results["AB_token_only_baseline"][case["id"]]
+        if (ref["complete"] != reduced["complete"]
+                or ref["trace"] != reduced["trace"]
+                or ref["gold"] != reduced["gold"]):
+            raise AssertionError("single-token lattice changed syntax: " + case["id"])
+    for reference, optimized in (("S_guard1", "AC_token_only_guard1"),
+                                 ("U_guard3", "AD_token_only_guard3")):
+        for case in cases:
+            a = results[reference][case["id"]]
+            b = results[optimized][case["id"]]
+            if a["complete"] != b["complete"] or a["gold"] != b["gold"]:
+                raise AssertionError(
+                    f"single-token lattice changed guarded outcome {reference}: {case['id']}")
     diffs = {}
     for mode in modes[1:]:
         changed = []
