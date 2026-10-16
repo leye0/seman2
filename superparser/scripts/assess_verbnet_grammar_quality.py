@@ -26,7 +26,8 @@ def assess(main: dict, negative: dict, median_target_ms: float = 5.0) -> dict:
              "AM_parent_follow1", "AN_parent_follow3",
              "AO_follow_only1", "AP_follow_only3",
              "AQ_reachable_guard1", "AR_reachable_guard3",
-             "AS_prefix_guard1", "AT_prefix_guard3")
+             "AS_prefix_guard1", "AT_prefix_guard3",
+             "AU_prefix_follow2", "AV_prefix_follow3")
     comparisons = {}
     base = main["summary"]["A_baseline"]
     negative_baseline = negative["summary"]["A_baseline"]
