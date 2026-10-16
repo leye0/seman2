@@ -286,3 +286,85 @@ sur les vraies phrases. Réserver les exemples holdout/UD aux contrôles
 externes, pas à des règles spécifiques.
 
 **Cette note est un état de recherche, pas un GO de fusion vers main.**
+
+
+## Nouvelles itérations vérifiées — 16 octobre 2026 (branche expérimentale)
+
+**CI complète réussie :** [GitHub Actions #38890056991](https://github.com/leye0/seman2/actions/runs/38890056991).
+
+### A. Réseau lexical réduit aux tokens réellement consommables
+
+`SemanCompiledReader(token_only_lattice=True)` demande à `build_lattice`
+uniquement les candidats lexicaux d'un token. C'est cohérent avec la
+limitation **actuelle** du lecteur compilé : `IncrementalReader` ne peut
+consommer que les candidats dont les bornes coïncident avec celles d'un
+token. Le réseau lexicographique complet, utilisé ailleurs, n'est **pas**
+modifié. Une batterie de tests et l'ablation A/B exigent la stricte
+équivalence des décisions de parsing et des annotations sur 120 phrases.
+
+Sur un même runner GitHub Actions, les huit phrases de 31–65 mots
+présentent une médiane d'environ **17,85 → 15,72 ms** pour le lecteur de
+référence (soit ~12 % de réduction), **sans nouvelle complétion**.
+Sur le corpus externe EWT, le temps lexical des phrases 40–70 mots diminue
+également. Ce sont des gains de **préparation lexicale**, pas des gains de
+qualité syntaxique.
+
+La variante qui ajoute `fast_multiword=True` au token-only n'améliore
+pas davantage les mesures de façon fiable. Ne pas la promouvoir
+automatiquement au runtime principal.
+
+### B. Proposition déclarative de promotion unaire
+
+`unary_promotions.py` compare les noms des catégories productives, leur
+catégorie lexicale associée et les signatures déjà présentes, pour proposer
+sans modifier les fichiers de grammaire les promotions lexicales absentes.
+La seule proposition sur la grammaire actuelle est **ADVP → ADV** :
+les constructions NP→N, VP→V et ADJP→ADJ y sont déjà présentes.
+
+Cette proposition est indépendante des phrases du corpus et passe les
+tests unitaires, mais son évaluation A/B ne produit **aucun gain net de
+conformité** sur les 120 phrases ni de généralisation sur EWT :
+la variante avec une restauration reste à **41/120** assertions satisfaites,
+**1/24** acceptation négative ; la variante à trois restaurations demeure
+à **46/120**, **1/24**. Des écarts de médiane de quelques centièmes
+de milliseconde ne sont pas interprétés comme un gain démontré.
+
+**Verdict : outil de diagnostic / hypothèse de grammaire, pas GO.**
+
+### C. Test de saturation du budget de continuations sur phrases longues
+
+`benchmark_verbnet_long.py` mesure maintenant non seulement la latence,
+mais le nombre de restaurations et la position de l'arrêt. Les **huit**
+phrases longues épuisent systématiquement les trois restaurations permises.
+En passant expérimentalement à six restaurations :
+
+- La médiane passe de **18,17 ms à 25,57 ms** sur le mode token-only.
+- **0/8** phrases longues sont complétées, dans les deux variantes.
+- Certaines analyses progressent davantage, notamment une phrase passée
+  de 39 % à **82 %** des tokens, mais d'autres ne progressent pas.
+- Sur le corpus externe UD EWT, les variantes 3 et 6 restaurations terminent
+  chacune seulement **1/32** phrase, avec un surcoût notable pour six.
+- Les arrêts se concentrent encore sur N, NP, ADJ, ADVP, PP et les groupes
+  verbaux/propositions enchâssées (voir les `first_reason` et
+  `top_stop_reasons` des rapports JSON).
+
+**Verdict : augmenter le budget de retour arrière n'est pas la solution à la
+couverture des phrases longues.** La priorité devient une analyse
+systématique des capacités de composition grammaticale (constituants
+enchâssés, extensions, bornes de groupes), guidée par les vrais échecs
+des données dev et validée séparément sur validation/holdout/externe,
+sans introduire de construction spéciale par phrase.
+
+### Référence actuelle, conformité d'abord
+
+Sur la même dernière exécution CI, le lecteur avec garde et 1 restauration
+fait **41/120** sur les assertions explicites et **1/24** fausse
+acceptation. Sa médiane est ~**5,08 ms** avec le réseau complet,
+~**5,01 ms** avec le token-only. La variante avec promotion unaire a
+été mesurée à ~**4,98 ms**, mais cet écart minuscule ne démontre
+pas que la promotion améliore les performances. Les chiffres varient avec
+le runner. Le mode à 3 restaurations satisfait **46/120** assertions mais
+dépasse les 5 ms de médiane (~5,65 ms token-only).
+
+Aucun changement de `main`, `grammar.jsonl`, du parseur de production ou
+du comportement par défaut du lecteur expérimental n'a été effectué.
