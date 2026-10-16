@@ -49,6 +49,9 @@ class TestCorpusInterface(unittest.TestCase):
         write_index(dest, self.frames, self.stats)
         again = read_index(dest)
         self.assertEqual(again.predict("branch", ("PREP:to", "NP")).next_events, ("NP",))
+        zipped = Path(self.tmp.name) / "index.json.gz"
+        write_index(zipped, self.frames, self.stats)
+        self.assertEqual(read_index(zipped).predict("branch", ("PREP:to", "NP")).next_events, ("NP",))
 
 
 if __name__ == "__main__":
