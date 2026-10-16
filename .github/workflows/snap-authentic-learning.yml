@@ -8,6 +8,7 @@ on:
       - '.github/workflows/snap-authentic-learning.yml'
       - 'superparser/scripts/benchmark_snap_learning_curve.py'
       - 'superparser/research/verbnet_lr/sampled_teacher.py'
+      - 'superparser/research/verbnet_lr/full_structure_snap.py'
   workflow_dispatch:
 
 permissions:
