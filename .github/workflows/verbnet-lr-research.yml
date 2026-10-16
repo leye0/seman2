@@ -10,6 +10,9 @@ on:
       - 'superparser/research/verbnet_lr/oracle_cases.jsonl'
       - 'superparser/scripts/benchmark_verbnet_lr.py'
       - 'superparser/scripts/benchmark_verbnet_reader.py'
+      - 'superparser/scripts/benchmark_verbnet_negatives.py'
+      - 'superparser/scripts/assess_verbnet_grammar_quality.py'
+      - 'superparser/research/verbnet_lr/negative_minimal_pairs.jsonl'
       - 'superparser/seman_parser/reading_kernel_compiled.py'
       - 'superparser/seman_parser/reading_kernel_compiled_adapter.py'
       - 'superparser/tests/test_verbnet_lr*.py'
@@ -91,6 +94,17 @@ jobs:
             --max-cases 120 \
             --repetitions 2 \
             --report superparser/research/verbnet_lr/reader_ablation.json
+      - name: Independent grammatical negatives and valid contrasts
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_negatives.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --repetitions 2 \
+            --report superparser/research/verbnet_lr/negative_report.json
+      - name: Assess conformity and 5ms median target
+        run: |
+          python superparser/scripts/assess_verbnet_grammar_quality.py \
+            --median-target-ms 5 \
+            --out superparser/research/verbnet_lr/grammar_quality_gate.json
       - name: Commit research reports and compiled index to branch
         if: github.ref == 'refs/heads/research/verbnet-left-to-right-poc'
         run: |
@@ -98,7 +112,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add superparser/research/verbnet_lr/full_corpus_report.json \
                   superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
-                  superparser/research/verbnet_lr/reader_ablation.json
+                  superparser/research/verbnet_lr/reader_ablation.json \
+                  superparser/research/verbnet_lr/negative_report.json \
+                  superparser/research/verbnet_lr/grammar_quality_gate.json
           if ! git diff --cached --quiet; then
             git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
             git push
