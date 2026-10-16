@@ -195,6 +195,45 @@ class ReduceVersusExtendTests(unittest.TestCase):
         self.assertEqual(baseline.complete, control.complete)
         self.assertEqual(baseline.reason, control.reason)
 
+
+    def test_return_instead_of_greedy_extension_is_grammar_licensed(self):
+        # NP -> NP CONJ NP competes with the parent's CLAUSE -> NP CONJ VP.
+        # NP can BEGIN with V N but cannot finish on the final bare V.
+        # The abandoned extension must not swallow the parent's CONJ.
+        grammar = Grammar([
+            Rule(name, Symbol(lhs), tuple(Symbol(cat) for cat in rhs))
+            for name, lhs, rhs in (
+                ("clause_np_conj_vp", "CLAUSE", ("NP", "CONJ", "VP")),
+                ("np_n", "NP", ("N",)),
+                ("np_verb_noun", "NP", ("V", "N")),
+                ("np_coord", "NP", ("NP", "CONJ", "NP")),
+                ("vp_v", "VP", ("V",)),
+            )
+        ])
+        words = [("Cats", "N"), ("and", "CONJ"), ("run", "V"), (".", None)]
+        tokens, candidates, offset = [], [], 0
+        for word, category in words:
+            tokens.append(Token(word, offset, offset + len(word)))
+            if category:
+                candidates.append(Candidate(
+                    category, offset, offset + len(word), word.casefold()))
+            offset += len(word) + 1
+        def combine(rule, children):
+            return ReadNode(rule.lhs.category, children[0].start,
+                            children[-1].end, rule=rule, children=tuple(children))
+        compiled = CompiledGrammar(grammar)
+        baseline = LocalCheckpointReader(
+            compiled, combine, tokens, candidates,
+            replay_budget=1).read()
+        guided = LocalCheckpointReader(
+            compiled, combine, tokens, candidates,
+            replay_budget=1, extension_checkpoints=True).read()
+        self.assertFalse(baseline.complete)
+        self.assertTrue(guided.complete, guided.reason)
+        self.assertEqual(guided.root.rule.rule_id, "clause_np_conj_vp")
+        self.assertEqual(guided.counters["checkpoint_restores_total"], 1)
+        self.assertGreater(guided.counters["checkpoint_forced_extension_finishes"], 0)
+
     def test_budget_one_can_choose_reduction(self):
         chosen = make_reader(True, budget=1).read()
         self.assertTrue(chosen.complete, chosen.reason)
