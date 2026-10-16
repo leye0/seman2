@@ -56,7 +56,7 @@ p95 **14.675 ms**. These are timing measurements on the CI runner,
 and neither result meets a hard 5-ms target.
 
 On the Seman2 70 partially annotated syntax checks, the cache gained
-1 additional snap (24 to 26) but **no additional annotated syntax
+2 additional snaps (24 to 26) but **no additional annotated syntax
 passes** (31 at both ends). The independent negative suite accepted
 **one more known-incorrect sentence** after the novel training (7 to 8).
 Do not promote newly learned novel patterns to a default production
