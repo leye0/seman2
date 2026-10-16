@@ -72,6 +72,8 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                 "mean_words":round(sum(x["words"] for x in vals)/len(vals),2),
                 "complete_sentences":sum(x["complete"] for x in vals)/repetitions,
                 "p50_ms":quant([x["total_ms"] for x in vals],0.5),
+                "lexical_p50_ms":quant([x["lexical_ms"] for x in vals],0.5),
+                "reading_p50_ms":quant([x["reading_ms"] for x in vals],0.5),
                 "p95_ms":quant([x["total_ms"] for x in vals],0.95),
                 "p99_ms":quant([x["total_ms"] for x in vals],0.99),
                 "max_ms":max(x["total_ms"] for x in vals),
@@ -80,6 +82,8 @@ def run(wordnet_dir=None, corpus=None, repetitions=3):
                 "by_length":[
                     {"id":case["id"],"words":case["length_words"],
                      "p50_ms":quant([x["total_ms"] for x in vals if x["id"]==case["id"]],0.5),
+                     "lexical_p50_ms":quant([x["lexical_ms"] for x in vals if x["id"]==case["id"]],0.5),
+                     "reading_p50_ms":quant([x["reading_ms"] for x in vals if x["id"]==case["id"]],0.5),
                      "complete":next(x["complete"] for x in vals if x["id"]==case["id"]),
                      "furthest_token_fraction":max(x["furthest_fraction"] for x in vals
                                                    if x["id"]==case["id"]),
