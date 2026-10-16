@@ -114,6 +114,11 @@ def run(wordnet_dir=None,limit_per_bin=8,repetitions=2):
         "token_only_guard3":SemanCompiledReader(resources,stack_checkpoints=True,
                                           checkpoint_budget=3,construction_guard=True,
                                           token_only_lattice=True),
+        "token_cache_baseline":SemanCompiledReader(resources,token_only_lattice=True,
+                                           fast_multiword=True),
+        "token_cache_guard3":SemanCompiledReader(resources,stack_checkpoints=True,
+                                          checkpoint_budget=3,construction_guard=True,
+                                          token_only_lattice=True,fast_multiword=True),
     }
     for _,case in selected:
         for machine in modes.values():machine.parse(case["text"])
