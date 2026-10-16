@@ -217,11 +217,15 @@ class IncrementalReader:
     """
     def __init__(self, compiled: CompiledGrammar,
                  combine: Callable[[Any, tuple[ReadNode, ...]], ReadNode | None],
-                 tokens: Sequence[Any], candidates: Sequence[Any], *, goal: str = 'CLAUSE'):
+                 tokens: Sequence[Any], candidates: Sequence[Any], *, goal: str = 'CLAUSE',
+                 compiled_lookahead: int = 1):
         self.g = compiled
         self.combine = combine
         self.tokens = tuple(tokens)
         self.goal = goal
+        if compiled_lookahead not in (1, 2):
+            raise ValueError('compiled_lookahead must be 1 or 2')
+        self.compiled_lookahead = compiled_lookahead
         self.pos = 0
         self.events: list[Event] = []
         self.count = Counter()
@@ -238,9 +242,85 @@ class IncrementalReader:
                     continue
                 self.lex[i][candidate.category].append(candidate)
         self.lex_cats = tuple(frozenset(self.lex[i]) for i in range(len(self.tokens)))
+        self._min_yield = {}
+        self._remaining_tokens = ()
+        self._lookahead_cache = {}
+        if self.compiled_lookahead == 2:
+            self._prepare_bounded_lookahead()
         self.active: set[tuple[str, int]] = set()
         self.depth = 0
         self.limit = max(96, 30 * len(self.tokens))
+
+    def _prepare_bounded_lookahead(self):
+        """Per-sentence lower bounds from compiled rules; no parse search.
+
+        A lexical category appearing in the input consumes one token.
+        A constructed category can only consume at least the sum of its RHS
+        minimums. No manually maintained class/word list is involved.
+        """
+        remaining = [0] * (len(self.tokens) + 1)
+        for at in range(len(self.tokens) - 1, -1, -1):
+            remaining[at] = remaining[at + 1] + int(bool(self.lex_cats[at]))
+        self._remaining_tokens = tuple(remaining)
+        mins = {cat: 1 for cats in self.lex_cats for cat in cats}
+        signatures = tuple(self.g.by_signature)
+        for _ in range(len(self.g.nonterminals) + 1):
+            changed = False
+            for lhs, rhs in signatures:
+                if not all(cat in mins for cat in rhs):
+                    continue
+                cost = sum(mins[cat] for cat in rhs)
+                if cost < mins.get(lhs, 10 ** 7):
+                    mins[lhs] = cost
+                    changed = True
+            if not changed:
+                break
+        self._min_yield = mins
+
+    def _min_yield_available(self, symbol, at):
+        minimum = self._min_yield.get(symbol)
+        return minimum is None or (
+            at < len(self._remaining_tokens)
+            and self._remaining_tokens[at] >= minimum
+        )
+
+    def _two_token_witness(self, category, at):
+        """Direct evidence for an initial lexical slot + following slot.
+
+        Probe only a compiled category trie and two observed token positions.
+        No tree is built. Unknown does not mean impossible; it simply lacks
+        the bonus. Memoized per category/position for a sentence.
+        """
+        key = (category, at)
+        if key in self._lookahead_cache:
+            return self._lookahead_cache[key]
+        self.count['two_token_probes'] += 1
+        root = self.g.roots.get(category)
+        if root is None or at + 1 >= len(self.tokens):
+            self._lookahead_cache[key] = False
+            return False
+        for first_cat in self._categories(at):
+            for first in root.dispatch.get(first_cat, ()):
+                # A constructed first slot may occupy several tokens, so do
+                # not conjecture its end. Only direct lexical first slots
+                # yield a positive two-token witness.
+                if not self._lexical_compatible(first, root.hints.get(first, ()), at=at):
+                    continue
+                child = root.edges[first]
+                for second_cat in self._categories(at + 1):
+                    for second in child.dispatch.get(second_cat, ()):
+                        if second in self.g.nonterminals:
+                            if self._min_yield_available(second, at + 1):
+                                self._lookahead_cache[key] = True
+                                self.count['two_token_witnesses'] += 1
+                                return True
+                        elif self._lexical_compatible(
+                                second, child.hints.get(second, ()), at=at + 1):
+                            self._lookahead_cache[key] = True
+                            self.count['two_token_witnesses'] += 1
+                            return True
+        self._lookahead_cache[key] = False
+        return False
 
     def _emit(self, action, expected, detail='', *, at=None):
         at = self.pos if at is None else at
@@ -351,6 +431,10 @@ class IncrementalReader:
             direct = self._lexical_compatible(symbol, hints)
             if symbol not in self.g.nonterminals and not direct:
                 continue
+            if (self.compiled_lookahead == 2 and symbol in self.g.nonterminals
+                    and not direct and not self._min_yield_available(symbol, self.pos)):
+                self.count['min_yield_rejections'] += 1
+                continue
             # A productive category can ALSO be lexical (N, ADJ, etc.).
             # If a compatible token exists, prefer consuming it directly.
             # Otherwise the category may be opened as a constructed child.
@@ -359,6 +443,11 @@ class IncrementalReader:
             support = (self._local_continuation(target, self.pos + 1)
                        if direct else
                        1 if symbol in self.g.nonterminals else 0)
+            if (self.compiled_lookahead == 2 and symbol in self.g.nonterminals
+                    and not direct and self._two_token_witness(symbol, self.pos)):
+                # A productive two-token construction has more evidence than
+                # a one-token ellipsis. This is a *ranking*, not hard pruning.
+                support = 3
             if support == 0:
                 continue
             distance = min(
