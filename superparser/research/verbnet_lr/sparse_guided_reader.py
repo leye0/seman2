@@ -49,8 +49,12 @@ class SparseGuidedCheckpointReader(LocalCheckpointReader):
                     continue
                 seen.add(key)
                 self.recovery_trace.append((site, failed, chosen))
+                # Only one weak vote per distinct input/context within
+                # the bounded memory horizon; no text is stored.
+                sentence_id = hash(tuple(t.text.casefold() for t in self.tokens))
                 if self.learn_recoveries and self.sparse_memory.note_recovery(
-                        site, failed=failed, chosen=chosen):
+                        site, failed=failed, chosen=chosen,
+                        observation_id=sentence_id):
                     self.count["sparse_recoveries_learned"] += 1
                     outcome.counters["sparse_recoveries_learned"] = (
                         self.count["sparse_recoveries_learned"])
