@@ -366,9 +366,14 @@ class SnappingResearchReader:
         self.construction_guard = construction_guard
         self.sampler = sampler
 
-    def parse(self, text: str, *, learn_candidate: bool = False):
-        from seman_parser.segmentation import build_lattice
-        lattice = build_lattice(text, self.resources.lexicon, multiword_max=1)
+    def parse(self, text: str, *, learn_candidate: bool = False,
+              lattice: Any | None = None):
+        if lattice is None:
+            from seman_parser.segmentation import build_lattice
+            lattice = build_lattice(
+                text, self.resources.lexicon, multiword_max=1)
+        elif lattice.text != text:
+            raise ValueError("Prepared lattice text does not match input")
         if self.sampler is not None:
             # Just enqueue. The expensive verifier is NEVER called by parse.
             self.sampler.enqueue(text, lattice)

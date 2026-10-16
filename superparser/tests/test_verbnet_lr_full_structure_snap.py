@@ -252,6 +252,29 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertTrue(wrapped.complete,wrapped.outcome.reason)
         self.assertEqual(wrapped.item.rule_id,parsed.item.rule_id)
 
+    def test_reused_lattice_for_full_online_sentence(self):
+        from unittest.mock import patch
+        from research.verbnet_lr.full_structure_snap import SnappingResearchReader
+        cats=[[("PRON",None,1)],[("V",None,1)],[("N","sg",1)]]
+        lattice=self.lattice(["I","saw","girl"],cats)
+        fallback=SemanCompiledReader(self.resources,token_only_lattice=True)
+        wrapper=SnappingResearchReader(
+            self.resources,index=self.index,fallback=fallback)
+        with patch("seman_parser.segmentation.build_lattice") as build:
+            result,route=wrapper.parse(
+                lattice.text,lattice=lattice,learn_candidate=True)
+            build.assert_not_called()
+        self.assertEqual(route,"left_to_right")
+        self.assertTrue(result.complete)
+        self.assertEqual(len(self.index.templates),1)
+        with patch("seman_parser.segmentation.build_lattice") as build:
+            again,route=wrapper.parse(lattice.text,lattice=lattice)
+            build.assert_not_called()
+        self.assertEqual(route,"snap")
+        self.assertTrue(again.complete)
+        with self.assertRaises(ValueError):
+            wrapper.parse("wrong",lattice=lattice)
+
     def test_unknown_and_explicit_budgets(self):
         cats = [[("PRON",None,1)], [("V",None,1)],
                 [("N","sg",1)], [("PREP",None,1)],
