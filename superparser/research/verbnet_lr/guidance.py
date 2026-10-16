@@ -53,7 +53,7 @@ def project_postverb_events(
             events.append("GERUND")
             break
 
-        if "ADV" in cats and not (_NP_START & cats):
+        if "ADV" in cats and not (_NP_START.intersection(cats)):
             at += 1
             continue
 
@@ -65,10 +65,10 @@ def project_postverb_events(
             i += 1
             while i < until and (("ADJ" in lex.get(i, ())) or ("ADV" in lex.get(i, ()))) and i - at < 4:
                 i += 1
-            if i >= until or not (_NP_HEAD & lex.get(i, ())):
+            if i >= until or not (_NP_HEAD.intersection(lex.get(i, ()))):
                 break  # do not invent NP without a head
             i += 1
-        elif "ADJ" in cats and not (_NP_HEAD & cats):
+        elif "ADJ" in cats and not (_NP_HEAD.intersection(cats)):
             while i < until and "ADJ" in lex.get(i, ()) and i - at < 3:
                 i += 1
             if i >= until or not (_NP_HEAD & lex.get(i, ())):
