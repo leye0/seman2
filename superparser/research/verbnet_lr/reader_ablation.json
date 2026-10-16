@@ -2863,16 +2863,31 @@
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 70,
+      "verbnet_tree_evidence": {
+        "vp_observations": 76,
+        "status": {
+          "ATTESTED": 64,
+          "UNKNOWN": 10,
+          "PREFIX": 2
+        },
+        "confidence": {
+          "sense_verified": 64,
+          "none": 10,
+          "lemma_only": 2
+        },
+        "attested_with_explicit_gold_pass": 60,
+        "attested_with_explicit_gold_fail": 4
+      },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.71374,
-        "p95": 7.72539,
-        "p99": 8.78241
+        "p50": 4.31409,
+        "p95": 8.99656,
+        "p99": 10.15812
       },
       "reading_ms": {
-        "p50": 2.634,
-        "p95": 6.40071,
-        "p99": 6.86695
+        "p50": 3.07748,
+        "p95": 7.52124,
+        "p99": 8.0539
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -2936,16 +2951,31 @@
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 70,
+      "verbnet_tree_evidence": {
+        "vp_observations": 76,
+        "status": {
+          "ATTESTED": 64,
+          "UNKNOWN": 10,
+          "PREFIX": 2
+        },
+        "confidence": {
+          "sense_verified": 64,
+          "none": 10,
+          "lemma_only": 2
+        },
+        "attested_with_explicit_gold_pass": 60,
+        "attested_with_explicit_gold_fail": 4
+      },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.71939,
-        "p95": 7.94056,
-        "p99": 9.07052
+        "p50": 4.40678,
+        "p95": 9.32457,
+        "p99": 10.49936
       },
       "reading_ms": {
-        "p50": 2.62905,
-        "p95": 6.48827,
-        "p99": 7.17422
+        "p50": 3.08191,
+        "p95": 7.70404,
+        "p99": 8.43752
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -3009,16 +3039,31 @@
       "complete": 88,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 70,
+      "verbnet_tree_evidence": {
+        "vp_observations": 76,
+        "status": {
+          "ATTESTED": 64,
+          "UNKNOWN": 10,
+          "PREFIX": 2
+        },
+        "confidence": {
+          "sense_verified": 64,
+          "none": 10,
+          "lemma_only": 2
+        },
+        "attested_with_explicit_gold_pass": 60,
+        "attested_with_explicit_gold_fail": 4
+      },
       "coverage_percent": 36.67,
       "total_ms": {
-        "p50": 3.84651,
-        "p95": 8.07227,
-        "p99": 9.02893
+        "p50": 4.31885,
+        "p95": 9.38057,
+        "p99": 10.59628
       },
       "reading_ms": {
-        "p50": 2.7044,
-        "p95": 6.84105,
-        "p99": 7.10088
+        "p50": 3.12415,
+        "p95": 7.86054,
+        "p99": 8.49934
       },
       "mean_unifications": 3.508,
       "mean_events": 14.233,
@@ -3082,16 +3127,29 @@
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 68,
+      "verbnet_tree_evidence": {
+        "vp_observations": 86,
+        "status": {
+          "ATTESTED": 60,
+          "UNKNOWN": 26
+        },
+        "confidence": {
+          "sense_verified": 60,
+          "none": 26
+        },
+        "attested_with_explicit_gold_pass": 54,
+        "attested_with_explicit_gold_fail": 6
+      },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.03708,
-        "p95": 9.45148,
-        "p99": 10.43035
+        "p50": 5.85733,
+        "p95": 10.9394,
+        "p99": 12.15763
       },
       "reading_ms": {
-        "p50": 3.95116,
-        "p95": 7.74705,
-        "p99": 9.14852
+        "p50": 4.58743,
+        "p95": 9.06113,
+        "p99": 10.68204
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -3141,16 +3199,29 @@
       "complete": 110,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 68,
+      "verbnet_tree_evidence": {
+        "vp_observations": 86,
+        "status": {
+          "ATTESTED": 60,
+          "UNKNOWN": 26
+        },
+        "confidence": {
+          "sense_verified": 60,
+          "none": 26
+        },
+        "attested_with_explicit_gold_pass": 54,
+        "attested_with_explicit_gold_fail": 6
+      },
       "coverage_percent": 45.83,
       "total_ms": {
-        "p50": 5.15442,
-        "p95": 9.81389,
-        "p99": 12.43587
+        "p50": 6.00256,
+        "p95": 11.1299,
+        "p99": 12.31833
       },
       "reading_ms": {
-        "p50": 4.04691,
-        "p95": 8.05287,
-        "p99": 10.38415
+        "p50": 4.73253,
+        "p95": 9.3913,
+        "p99": 10.64776
       },
       "mean_unifications": 3.8,
       "mean_events": 15.508,
@@ -3200,16 +3271,31 @@
       "complete": 92,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 62,
+      "verbnet_tree_evidence": {
+        "vp_observations": 76,
+        "status": {
+          "ATTESTED": 60,
+          "UNKNOWN": 14,
+          "PREFIX": 2
+        },
+        "confidence": {
+          "sense_verified": 60,
+          "none": 14,
+          "lemma_only": 2
+        },
+        "attested_with_explicit_gold_pass": 54,
+        "attested_with_explicit_gold_fail": 6
+      },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 4.47902,
-        "p95": 9.0534,
-        "p99": 9.70614
+        "p50": 5.10285,
+        "p95": 10.5419,
+        "p99": 11.35116
       },
       "reading_ms": {
-        "p50": 3.45941,
-        "p95": 7.5985,
-        "p99": 8.18361
+        "p50": 3.97243,
+        "p95": 8.95385,
+        "p99": 9.59274
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -3255,16 +3341,31 @@
       "complete": 92,
       "explicit_gold_assertion_cases": 240,
       "explicit_gold_assertion_passed": 62,
+      "verbnet_tree_evidence": {
+        "vp_observations": 76,
+        "status": {
+          "ATTESTED": 60,
+          "UNKNOWN": 14,
+          "PREFIX": 2
+        },
+        "confidence": {
+          "sense_verified": 60,
+          "none": 14,
+          "lemma_only": 2
+        },
+        "attested_with_explicit_gold_pass": 54,
+        "attested_with_explicit_gold_fail": 6
+      },
       "coverage_percent": 38.33,
       "total_ms": {
-        "p50": 4.69392,
-        "p95": 9.54297,
-        "p99": 10.46649
+        "p50": 5.15636,
+        "p95": 11.06161,
+        "p99": 11.8587
       },
       "reading_ms": {
-        "p50": 3.52863,
-        "p95": 7.96966,
-        "p99": 8.96101
+        "p50": 4.04895,
+        "p95": 9.30246,
+        "p99": 10.1927
       },
       "mean_unifications": 3.325,
       "mean_events": 14.467,
@@ -26052,6 +26153,7 @@
     "A path can stop without proving the sentence ungrammatical",
     "Positive corpus completion is not gold structural accuracy",
     "The lexical lookahead can only *rank*, never reject",
+    "VerbNet VP tree evidence is post-parse positive support, never gold structural truth",
     "No production parser or packed forest was invoked",
     "Full-parser 5 ms target cannot be inferred from trie lookup timings",
     "Mixed WordNet lexical cache is warmed before A/B/C measurements"
