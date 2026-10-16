@@ -139,11 +139,13 @@ def oracle_examples(index: PrefixIndex, path: Path) -> dict:
 
 def benchmark(index: PrefixIndex, frames: tuple, iterations: int) -> dict:
     # Fixed deterministic workload, independent of host timing.
-    cases = []
+    by_lemma = {}
     for frame in frames:
-        if frame.symbols and len(frame.symbols) <= 6 and len(cases) < 250:
-            prefix = tuple(alts[0] for alts in frame.symbols[:-1])
-            cases.append((frame.lemma, prefix))
+        if frame.symbols and len(frame.symbols) <= 6 and frame.lemma not in by_lemma:
+            by_lemma[frame.lemma] = tuple(alts[0] for alts in frame.symbols[:-1])
+    lemmas = sorted(by_lemma)
+    step = max(1, len(lemmas) // 250)
+    cases = [(lemma, by_lemma[lemma]) for lemma in lemmas[::step][:250]]
     if not cases:
         return {"error": "no compiled frames"}
     for lemma, events in cases:
@@ -184,9 +186,13 @@ def main(argv=None):
         frames, stats = compile_directory(source, sense)
         compile_ms = (perf_counter_ns() - start_ns) / 1e6
         index = PrefixIndex(frames)
-        lookup_benchmark = benchmark(index, frames, args.iterations)
+        # Warm up representative tries while tracing allocation, then disable
+        # the tracer before timing; tracemalloc distorts microsecond latency.
+        for f in frames[::max(1, len(frames) // 250)][:250]:
+            index.predict(f.lemma, ())
         _, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
+        lookup_benchmark = benchmark(index, frames, args.iterations)
         if args.index_out:
             write_index(args.index_out, frames, stats)
             verify = read_index(args.index_out)
@@ -197,7 +203,7 @@ def main(argv=None):
               "wordnet_sense_index": str(sense) if sense else None,
               "sense_alignment_enabled": sense is not None},
             "compilation": {**stats, "duration_ms": round(compile_ms, 3),
-                            "peak_compilation_plus_benchmark_memory_mb": round(peak / 1048576, 3),
+                            "peak_compilation_plus_warmup_memory_mb": round(peak / 1048576, 3),
                             "frames_with_exact_link": sum(f.link == "exact" for f in frames),
                             "frames_lemma_only": sum(f.link == "lemma_only" for f in frames),
                             "frames_unresolved": sum(f.link == "unresolved" for f in frames)},
