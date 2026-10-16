@@ -115,6 +115,16 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
         hybrid_result,hybrid_path=hybrid.parse(case["text"])
         totals["hybrid_including_lattice"].append((perf_counter()-t)*1000)
         gold_scores=[snapped_gold(case,m.item) for m in hit.matches]
+        match_details=[{
+            "template_id":m.template_id,
+            "root_rule":m.item.rule_id,
+            "score":round(m.item.score,6),
+            "grammar_witness":m.grammar_witness_template,
+            "independently_verified":m.independently_verified_template,
+            "gold_pass":g["pass"],
+            "gold_checks":g.get("checks"),
+            "missing_required":g.get("missing_required"),
+        } for m,g in zip(hit.matches,gold_scores)]
         baseline_gold=syntax_assertions(case,baseline)["pass"]
         hybrid_gold=(snapped_gold(case,hybrid_result.item)["pass"]
                      if hybrid_path=="snap" else
@@ -132,6 +142,7 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
             "snap_matches":len(hit.matches),
             "snap_incomplete":hit.incomplete,"snap_reason":hit.reason,
             "candidate_templates":hit.candidate_templates,
+            "match_details":match_details,
             "lr_complete":baseline.complete,
             "hybrid_path":hybrid_path,
             "hybrid_complete":hybrid_result.complete,

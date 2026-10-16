@@ -125,6 +125,20 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertFalse(missed.complete)
         self.assertEqual(missed.reason, "templates_failed_feature_unification")
 
+    def test_source_evidence_orders_operational_choice_without_deleting_alternatives(self):
+        raw=[("PRON",None,1),("V",None,1),("N","sg",1),
+             ("PREP",None,1),("N","sg",1)]
+        lattice=self.lattice(["I","saw","girl","with","hat"],[[x] for x in raw])
+        a,b=self.two_attached_trees(lattice)
+        self.index.observe(a,lattice=lattice,evidence="candidate")
+        self.index.observe(b,lattice=lattice,evidence="grammar_witness")
+        result=self.index.match(lattice)
+        self.assertEqual(len(result.matches),2)
+        self.assertTrue(result.matches[0].grammar_witness_template)
+        self.assertEqual(result.matches[0].template_id,1)
+        self.assertEqual({m.template_id for m in result.matches},{0,1})
+        self.assertFalse(result.matches[0].independently_verified_template)
+
     def test_many_templates_same_sequence_remain_bounded(self):
         rows=[[("PRON",None,1)],[("V",None,1)],
               [("N","sg",1)],[("PREP",None,1)],[("N","sg",1)]]

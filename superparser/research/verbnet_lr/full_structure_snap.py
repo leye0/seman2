@@ -306,6 +306,19 @@ class FullStructureSnapIndex:
                     template_id, item,
                     template.verified_observations > 0,
                     template.grammar_witness_observations > 0))
+        # Prefer independently attested grammar derivations and supported
+        # full shapes, then the actual (lexical + rule) score. This is an
+        # execution tie-breaker, never an assertion that other syntactically
+        # compatible trees are invalid. Do NOT use held-out gold here.
+        matched.sort(key=lambda m: (
+            int(m.independently_verified_template),
+            int(m.grammar_witness_template),
+            self.templates[m.template_id].verified_observations,
+            self.templates[m.template_id].grammar_witness_observations,
+            m.item.score,
+            self.templates[m.template_id].candidate_observations,
+            -m.template_id,
+        ), reverse=True)
         if incomplete:
             reason = "budget_exhausted_or_lexical_variants_unexplored"
         elif matched:
