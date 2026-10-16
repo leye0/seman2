@@ -43,6 +43,7 @@ class Template:
 class _Trie:
     edges: dict[str, "_Trie"] = field(default_factory=dict)
     template_ids: list[int] = field(default_factory=list)
+    lexical_signature: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -161,15 +162,21 @@ class FullStructureSnapIndex:
         if len(self.templates) >= self.max_templates:
             raise OverflowError("Template capacity reached")
         categories = tuple(cat for _, _, cat in leaves)
+        state = self._root
+        for cat in categories:
+            state = state.edges.setdefault(cat, _Trie())
+        # Intern the category sequence per full lexical path. Millions of
+        # different attachments may share precisely the same leaf sequence.
+        if state.lexical_signature is None:
+            state.lexical_signature = categories
+        else:
+            categories = state.lexical_signature
         key = len(self.templates)
         self._by_shape[shape] = key
         self.templates.append(Template(
             shape, categories, int(evidence == "candidate"),
             int(evidence == "verified"),
             int(evidence == "grammar_witness")))
-        state = self._root
-        for cat in categories:
-            state = state.edges.setdefault(cat, _Trie())
         state.template_ids.append(key)
         return key
 
@@ -217,12 +224,19 @@ class FullStructureSnapIndex:
             if not active:
                 return SnapResult((), lattice, 0, 0, 0, incomplete,
                                   "trie_budget" if incomplete else "unseen_pattern")
-        ids = [template_id for state in active for template_id in state.template_ids]
-        ids = list(dict.fromkeys(ids))
-        count = len(ids)
-        if len(ids) > max_templates_checked:
+        # A category trie has no merging transitions: each reachable state
+        # represents one distinct lexical prefix. Template IDs are stored
+        # at exactly one terminal. Hence no O(bucket_size) deduplication or
+        # full traversal of a potentially multimillion-ID bucket is needed.
+        count = sum(len(state.template_ids) for state in active)
+        ids = []
+        for state in active:
+            remaining = max_templates_checked - len(ids)
+            if remaining <= 0:
+                break
+            ids.extend(state.template_ids[:remaining])
+        if count > len(ids):
             incomplete = True
-            ids = ids[:max_templates_checked]
         reductions = 0
         matched = []
 

@@ -79,25 +79,28 @@ def rss_mb():
 
 
 def snapshot(index, lattice, runs=15):
-    # This is the actual recognition path, including feature unification and
-    # final materialization. The 8-template cap avoids enumerating 100k trees.
-    times=[]
-    for _ in range(runs):
-        started=perf_counter()
-        hit=index.match(lattice,max_templates_checked=8,
-                        max_reductions=512,max_states=1024,
-                        max_variants=2)
-        times.append((perf_counter()-started)*1000)
-        assert len(hit.matches)==8, (len(hit.matches),hit.reason)
-        assert hit.incomplete, "The other plausible trees were not enumerated"
-    times.sort()
-    return {
-        "p50_ms":round(times[(len(times)-1)//2],5),
-        "p95_ms":round(times[int((len(times)-1)*.95)],5),
-        "candidate_templates":hit.candidate_templates,
-        "returned":len(hit.matches),
-        "incomplete":hit.incomplete,
-    }
+    measurements={}
+    for cap in (1,8):
+        # Same grammar-unifying actual recognition path, with different
+        # bounded number of returned trees. Everything else stays fixed.
+        times=[]
+        for _ in range(runs):
+            started=perf_counter()
+            hit=index.match(lattice,max_templates_checked=cap,
+                            max_reductions=512,max_states=1024,
+                            max_variants=2)
+            times.append((perf_counter()-started)*1000)
+            assert len(hit.matches)==cap, (cap,len(hit.matches),hit.reason)
+            assert hit.incomplete, "Remaining parses must remain available"
+        times.sort()
+        measurements[f"top_{cap}"]={
+            "p50_ms":round(times[(len(times)-1)//2],5),
+            "p95_ms":round(times[int((len(times)-1)*.95)],5),
+            "candidate_templates":hit.candidate_templates,
+            "returned":len(hit.matches),
+            "incomplete":hit.incomplete,
+        }
+    return measurements
 
 
 def run(sizes=(100,1000,10000,100000)):

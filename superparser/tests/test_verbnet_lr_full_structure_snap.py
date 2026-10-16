@@ -121,6 +121,20 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertFalse(missed.complete)
         self.assertEqual(missed.reason, "templates_failed_feature_unification")
 
+    def test_many_templates_same_sequence_remain_bounded(self):
+        rows=[[("PRON",None,1)],[("V",None,1)],
+              [("N","sg",1)],[("PREP",None,1)],[("N","sg",1)]]
+        source=self.lattice(["I","saw","girl","with","hat"],rows)
+        for tree in self.two_attached_trees(source):
+            self.index.observe(tree,lattice=source)
+        result=self.index.match(source,max_templates_checked=1)
+        self.assertEqual(result.candidate_templates,2)
+        self.assertEqual(result.checked_templates,1)
+        self.assertEqual(len(result.matches),1)
+        self.assertTrue(result.incomplete)
+        self.assertIs(self.index.templates[0].categories,
+                      self.index.templates[1].categories)
+
     def test_unknown_and_explicit_budgets(self):
         cats = [[("PRON",None,1)], [("V",None,1)],
                 [("N","sg",1)], [("PREP",None,1)],

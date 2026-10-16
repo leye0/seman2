@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/verbnet-snap-scale.yml'
       - 'superparser/scripts/benchmark_snap_scale.py'
+      - 'superparser/research/verbnet_lr/full_structure_snap.py'
   workflow_dispatch:
 
 permissions:
