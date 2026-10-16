@@ -1,0 +1,238 @@
+{
+  "schema": 1,
+  "source": "manually composed English stress sentences, WITHOUT annotated gold syntax",
+  "repetitions": 3,
+  "cases": 8,
+  "results": {
+    "baseline": {
+      "mean_words": 48.5,
+      "complete_sentences": 0.0,
+      "p50_ms": 17.3102,
+      "p95_ms": 25.3198,
+      "p99_ms": 25.7181,
+      "max_ms": 26.1472,
+      "cases_reaching_75pct_of_tokens": 0.0,
+      "by_length": [
+        {
+          "id": "stress_01",
+          "words": 31,
+          "p50_ms": 14.5955,
+          "complete": false,
+          "furthest_token_fraction": 0.303,
+          "final_token_fraction": 0.303
+        },
+        {
+          "id": "stress_02",
+          "words": 41,
+          "p50_ms": 18.0624,
+          "complete": false,
+          "furthest_token_fraction": 0.289,
+          "final_token_fraction": 0.289
+        },
+        {
+          "id": "stress_03",
+          "words": 43,
+          "p50_ms": 13.3489,
+          "complete": false,
+          "furthest_token_fraction": 0.109,
+          "final_token_fraction": 0.109
+        },
+        {
+          "id": "stress_04",
+          "words": 49,
+          "p50_ms": 19.0201,
+          "complete": false,
+          "furthest_token_fraction": 0.245,
+          "final_token_fraction": 0.245
+        },
+        {
+          "id": "stress_05",
+          "words": 45,
+          "p50_ms": 12.0202,
+          "complete": false,
+          "furthest_token_fraction": 0.125,
+          "final_token_fraction": 0.125
+        },
+        {
+          "id": "stress_06",
+          "words": 56,
+          "p50_ms": 17.3102,
+          "complete": false,
+          "furthest_token_fraction": 0.085,
+          "final_token_fraction": 0.085
+        },
+        {
+          "id": "stress_07",
+          "words": 58,
+          "p50_ms": 17.4586,
+          "complete": false,
+          "furthest_token_fraction": 0.111,
+          "final_token_fraction": 0.111
+        },
+        {
+          "id": "stress_08",
+          "words": 65,
+          "p50_ms": 25.7181,
+          "complete": false,
+          "furthest_token_fraction": 0.103,
+          "final_token_fraction": 0.103
+        }
+      ]
+    },
+    "local3": {
+      "mean_words": 48.5,
+      "complete_sentences": 0.0,
+      "p50_ms": 19.262,
+      "p95_ms": 38.599,
+      "p99_ms": 38.6425,
+      "max_ms": 39.14,
+      "cases_reaching_75pct_of_tokens": 0.0,
+      "by_length": [
+        {
+          "id": "stress_01",
+          "words": 31,
+          "p50_ms": 16.5255,
+          "complete": false,
+          "furthest_token_fraction": 0.394,
+          "final_token_fraction": 0.394
+        },
+        {
+          "id": "stress_02",
+          "words": 41,
+          "p50_ms": 19.4352,
+          "complete": false,
+          "furthest_token_fraction": 0.244,
+          "final_token_fraction": 0.244
+        },
+        {
+          "id": "stress_03",
+          "words": 43,
+          "p50_ms": 15.0516,
+          "complete": false,
+          "furthest_token_fraction": 0.304,
+          "final_token_fraction": 0.304
+        },
+        {
+          "id": "stress_04",
+          "words": 49,
+          "p50_ms": 34.7084,
+          "complete": false,
+          "furthest_token_fraction": 0.453,
+          "final_token_fraction": 0.453
+        },
+        {
+          "id": "stress_05",
+          "words": 45,
+          "p50_ms": 13.4737,
+          "complete": false,
+          "furthest_token_fraction": 0.146,
+          "final_token_fraction": 0.146
+        },
+        {
+          "id": "stress_06",
+          "words": 56,
+          "p50_ms": 25.097,
+          "complete": false,
+          "furthest_token_fraction": 0.407,
+          "final_token_fraction": 0.407
+        },
+        {
+          "id": "stress_07",
+          "words": 58,
+          "p50_ms": 19.262,
+          "complete": false,
+          "furthest_token_fraction": 0.127,
+          "final_token_fraction": 0.127
+        },
+        {
+          "id": "stress_08",
+          "words": 65,
+          "p50_ms": 38.6425,
+          "complete": false,
+          "furthest_token_fraction": 0.544,
+          "final_token_fraction": 0.544
+        }
+      ]
+    },
+    "local3_guard": {
+      "mean_words": 48.5,
+      "complete_sentences": 0.0,
+      "p50_ms": 19.2701,
+      "p95_ms": 39.2249,
+      "p99_ms": 39.2586,
+      "max_ms": 39.4072,
+      "cases_reaching_75pct_of_tokens": 0.0,
+      "by_length": [
+        {
+          "id": "stress_01",
+          "words": 31,
+          "p50_ms": 16.38,
+          "complete": false,
+          "furthest_token_fraction": 0.394,
+          "final_token_fraction": 0.394
+        },
+        {
+          "id": "stress_02",
+          "words": 41,
+          "p50_ms": 19.7054,
+          "complete": false,
+          "furthest_token_fraction": 0.244,
+          "final_token_fraction": 0.244
+        },
+        {
+          "id": "stress_03",
+          "words": 43,
+          "p50_ms": 15.1281,
+          "complete": false,
+          "furthest_token_fraction": 0.304,
+          "final_token_fraction": 0.304
+        },
+        {
+          "id": "stress_04",
+          "words": 49,
+          "p50_ms": 34.9295,
+          "complete": false,
+          "furthest_token_fraction": 0.453,
+          "final_token_fraction": 0.453
+        },
+        {
+          "id": "stress_05",
+          "words": 45,
+          "p50_ms": 13.2737,
+          "complete": false,
+          "furthest_token_fraction": 0.146,
+          "final_token_fraction": 0.146
+        },
+        {
+          "id": "stress_06",
+          "words": 56,
+          "p50_ms": 25.5334,
+          "complete": false,
+          "furthest_token_fraction": 0.407,
+          "final_token_fraction": 0.407
+        },
+        {
+          "id": "stress_07",
+          "words": 58,
+          "p50_ms": 19.2701,
+          "complete": false,
+          "furthest_token_fraction": 0.127,
+          "final_token_fraction": 0.127
+        },
+        {
+          "id": "stress_08",
+          "words": 65,
+          "p50_ms": 39.2249,
+          "complete": false,
+          "furthest_token_fraction": 0.544,
+          "final_token_fraction": 0.544
+        }
+      ]
+    }
+  },
+  "warning": [
+    "A fast early STOP does not demonstrate efficient long-sentence recognition.",
+    "This corpus has no gold trees; completion cannot be scored as syntactic correctness.",
+    "No parser grammar or candidate priority is tuned from this stress sample."
+  ]
+}
