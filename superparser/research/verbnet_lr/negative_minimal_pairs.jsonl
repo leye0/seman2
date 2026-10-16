@@ -1,0 +1,24 @@
+{"id":"neg001","family":"agreement","text":"The dogs barks loudly.","contrast":"The dogs bark loudly.","label":"ungrammatical_standard_written_english"}
+{"id":"neg002","family":"agreement","text":"The cats sleeps.","contrast":"The cats sleep.","label":"ungrammatical_standard_written_english"}
+{"id":"neg003","family":"agreement","text":"These workers works hard.","contrast":"These workers work hard.","label":"ungrammatical_standard_written_english"}
+{"id":"neg004","family":"agreement","text":"The children plays outside.","contrast":"The children play outside.","label":"ungrammatical_standard_written_english"}
+{"id":"neg005","family":"agreement","text":"The boy are happy.","contrast":"The boy is happy.","label":"ungrammatical_standard_written_english"}
+{"id":"neg006","family":"agreement","text":"The books is heavy.","contrast":"The books are heavy.","label":"ungrammatical_standard_written_english"}
+{"id":"neg007","family":"agreement","text":"The doors was locked.","contrast":"The doors were locked.","label":"ungrammatical_standard_written_english"}
+{"id":"neg008","family":"agreement","text":"The woman have arrived.","contrast":"The woman has arrived.","label":"ungrammatical_standard_written_english"}
+{"id":"neg009","family":"modal","text":"John can reads the book.","contrast":"John can read the book.","label":"ungrammatical_standard_written_english"}
+{"id":"neg010","family":"modal","text":"She should goes home.","contrast":"She should go home.","label":"ungrammatical_standard_written_english"}
+{"id":"neg011","family":"modal","text":"He must eats now.","contrast":"He must eat now.","label":"ungrammatical_standard_written_english"}
+{"id":"neg012","family":"modal","text":"Mary will buys milk.","contrast":"Mary will buy milk.","label":"ungrammatical_standard_written_english"}
+{"id":"neg013","family":"modal","text":"I can to swim.","contrast":"I can swim.","label":"ungrammatical_standard_written_english"}
+{"id":"neg014","family":"auxiliary","text":"They did opened the door.","contrast":"They did open the door.","label":"ungrammatical_standard_written_english"}
+{"id":"neg015","family":"auxiliary","text":"She did not opened the door.","contrast":"She did not open the door.","label":"ungrammatical_standard_written_english"}
+{"id":"neg016","family":"auxiliary","text":"He does not likes coffee.","contrast":"He does not like coffee.","label":"ungrammatical_standard_written_english"}
+{"id":"neg017","family":"auxiliary","text":"John did eats.","contrast":"John did eat.","label":"ungrammatical_standard_written_english"}
+{"id":"neg018","family":"determiner","text":"A cats ran away.","contrast":"A cat ran away.","label":"ungrammatical_standard_written_english"}
+{"id":"neg019","family":"determiner","text":"Those child are sleeping.","contrast":"Those children are sleeping.","label":"ungrammatical_standard_written_english"}
+{"id":"neg020","family":"valency","text":"They donated John a book.","contrast":"They donated a book to John.","label":"ungrammatical_standard_written_english"}
+{"id":"neg021","family":"valency","text":"He arrived the station.","contrast":"He arrived at the station.","label":"ungrammatical_standard_written_english"}
+{"id":"neg022","family":"valency","text":"She explained John the problem.","contrast":"She explained the problem to John.","label":"ungrammatical_standard_written_english"}
+{"id":"neg023","family":"valency","text":"She enjoys read.","contrast":"She enjoys reading.","label":"ungrammatical_standard_written_english"}
+{"id":"neg024","family":"valency","text":"She depends of her friends.","contrast":"She depends on her friends.","label":"ungrammatical_standard_written_english"}
