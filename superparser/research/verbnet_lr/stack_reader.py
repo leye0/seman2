@@ -127,6 +127,29 @@ class LocalCheckpointReader(IncrementalReader):
                 # This is the already-saved checkpoint being resumed.
                 self._forced = None
                 return
+        if not has_reduce_choice:
+            # Static dispatch is a sound *necessary* condition for another
+            # grammar edge. If no different RHS symbol is reachable from
+            # the current lexical categories (under the live rule mask),
+            # _select(excluded={edge}) cannot return an alternative later.
+            # Never snapshot a point that only looks ambiguous because the
+            # compiled state has edges for words that are not present here.
+            has_other = False
+            for lexical in self._categories():
+                for other in frame.state.dispatch.get(lexical, ()):
+                    if other == edge:
+                        continue
+                    if frame.live is None or any(
+                        id(hint[0]) in frame.live
+                        for hint in frame.state.hints.get(other, ())
+                    ):
+                        has_other = True
+                        break
+                if has_other:
+                    break
+            if not has_other:
+                self.count["checkpoint_unavailable_skips"] += 1
+                return
         # Lazy: only check a second eligible edge if/when we need a restore.
         snapshot = _Snapshot(
             stack=tuple(replace(f) for f in self._stack),
@@ -355,6 +378,7 @@ class LocalCheckpointReader(IncrementalReader):
         self._stack = []
         self._snapshots = []
         self._forced = None
+        self._peak_checkpoints = 0
         self.active.clear()
         self.depth = 0
         self.pos = 0

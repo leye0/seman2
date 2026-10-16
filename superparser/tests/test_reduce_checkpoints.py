@@ -50,13 +50,17 @@ class Candidate:
 
 
 def make_reader(reduce_checkpoints, budget=2, *, parent_follow_reduce=False,
-                reduce_follow_only=False):
+                reduce_follow_only=False, unrelated_root_edge=False):
     productions = [
         ("clause_svo", "CLAUSE", ("NP", "VP", "NP")),
         ("np_name", "NP", ("PROPER-NOUN",)),
         ("vp_v", "VP", ("V",)),
         ("vp_v_np", "VP", ("V", "NP")),
     ]
+    if unrelated_root_edge:
+        # An alternative grammatical RHS in the trie is *not* necessarily
+        # available to the observed first token.
+        productions.append(("clause_v_np", "CLAUSE", ("V", "NP")))
     grammar = Grammar([
         Rule(name, Symbol(lhs), tuple(Symbol(c) for c in rhs))
         for name, lhs, rhs in productions
@@ -108,6 +112,30 @@ class ReduceVersusExtendTests(unittest.TestCase):
         self.assertTrue(parsed.complete, parsed.reason)
         self.assertEqual(parsed.root.children[1].rule.rule_id, "vp_v")
         self.assertEqual(parsed.counters["checkpoint_restores_total"], 1)
+
+    def test_do_not_save_lexically_unreachable_checkpoints(self):
+        # CLAUSE starts with either NP or V in this grammar; the actual
+        # first word has only a PROPER-NOUN lexical candidate (hence NP).
+        # Recording an alternative V at that point cannot help recovery.
+        result = make_reader(False, budget=1, unrelated_root_edge=True).read()
+        self.assertFalse(result.complete)
+        self.assertGreater(result.counters["checkpoint_unavailable_skips"], 0)
+        self.assertEqual(result.counters["checkpoint_saves"], 0)
+        self.assertEqual(result.counters["checkpoint_restores_total"], 0)
+        # Real reduce-vs-extend ambiguity in the same sentence must survive.
+        recovered = make_reader(True, budget=3,
+                                unrelated_root_edge=True).read()
+        self.assertTrue(recovered.complete, recovered.reason)
+        self.assertEqual(recovered.root.children[1].rule.rule_id, "vp_v")
+        self.assertGreater(recovered.counters["checkpoint_forced_reductions"], 0)
+
+    def test_checkpoint_peak_is_sentence_local(self):
+        reader = make_reader(True, budget=3)
+        self.assertTrue(reader.read().complete)
+        self.assertGreater(reader._peak_checkpoints, 0)
+        reader.replay_budget = 0
+        second = reader.read()
+        self.assertEqual(second.counters["checkpoint_peak_saved"], 0)
 
     def test_zero_budget_does_not_change_initial_decision(self):
         ordinary = make_reader(False, budget=0).read()
