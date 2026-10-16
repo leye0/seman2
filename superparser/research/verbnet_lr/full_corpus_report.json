@@ -18,8 +18,8 @@
     "lemmas": 4567,
     "unique_wordnet_keys": 6776,
     "unique_wordnet_keys_matched": 6678,
-    "duration_ms": 2003.328,
-    "peak_compilation_plus_warmup_memory_mb": 36.95,
+    "duration_ms": 1825.888,
+    "peak_compilation_plus_warmup_memory_mb": 36.951,
     "frames_with_exact_link": 23441,
     "frames_lemma_only": 4861,
     "frames_unresolved": 261
@@ -247,11 +247,11 @@
   "lookup_benchmark": {
     "calls": 20000,
     "distinct_cases": 250,
-    "rate_calls_per_sec": 126144.92,
-    "median_us": 7.113,
-    "p95_us": 11.081,
-    "p99_us": 16.14,
-    "max_us": 167.463,
+    "rate_calls_per_sec": 136045.38,
+    "median_us": 6.68,
+    "p95_us": 9.574,
+    "p99_us": 13.16,
+    "max_us": 170.905,
     "note": "Isolated warmed index.lookup; excludes recognition, morphology and full parsing."
   },
   "limitations": [

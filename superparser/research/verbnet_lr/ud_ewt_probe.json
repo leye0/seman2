@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "source": "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/4a4d77f599ea53cc405f85d0cec4b2f14f81d42b/en_ewt-ud-dev.conllu",
+  "pinned_revision": "4a4d77f599ea53cc405f85d0cec4b2f14f81d42b",
+  "selection": "SHA256(sentence ID), independent of parse result",
+  "max_per_length_bin": 8,
+  "repetitions": 2,
+  "cases": 32,
+  "results": {
+    "baseline": {
+      "8-14": {
+        "sentences": 8,
+        "mean_words": 9.88,
+        "complete": 0.0,
+        "reached_75pct": 0.0,
+        "wall_p50_ms": 2.0997,
+        "wall_p95_ms": 7.2631,
+        "lexical_p50_ms": 1.4302,
+        "read_p50_ms": 0.4363,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "15-24": {
+        "sentences": 8,
+        "mean_words": 16.38,
+        "complete": 0.0,
+        "reached_75pct": 2.0,
+        "wall_p50_ms": 5.0701,
+        "wall_p95_ms": 9.4598,
+        "lexical_p50_ms": 2.9783,
+        "read_p50_ms": 2.4702,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "25-39": {
+        "sentences": 8,
+        "mean_words": 29.0,
+        "complete": 0.0,
+        "reached_75pct": 0.0,
+        "wall_p50_ms": 6.0645,
+        "wall_p95_ms": 11.3582,
+        "lexical_p50_ms": 4.784,
+        "read_p50_ms": 1.3323,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "40-70": {
+        "sentences": 8,
+        "mean_words": 45.38,
+        "complete": 0.0,
+        "reached_75pct": 0.0,
+        "wall_p50_ms": 10.374,
+        "wall_p95_ms": 16.0911,
+        "lexical_p50_ms": 8.2194,
+        "read_p50_ms": 1.8753,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      }
+    },
+    "local2_guard": {
+      "8-14": {
+        "sentences": 8,
+        "mean_words": 9.88,
+        "complete": 1.0,
+        "reached_75pct": 3.0,
+        "wall_p50_ms": 2.9323,
+        "wall_p95_ms": 8.5724,
+        "lexical_p50_ms": 1.4337,
+        "read_p50_ms": 1.1998,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "15-24": {
+        "sentences": 8,
+        "mean_words": 16.38,
+        "complete": 0.0,
+        "reached_75pct": 3.0,
+        "wall_p50_ms": 7.9166,
+        "wall_p95_ms": 12.0542,
+        "lexical_p50_ms": 2.7278,
+        "read_p50_ms": 5.1154,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "25-39": {
+        "sentences": 8,
+        "mean_words": 29.0,
+        "complete": 0.0,
+        "reached_75pct": 2.0,
+        "wall_p50_ms": 9.9467,
+        "wall_p95_ms": 15.8918,
+        "lexical_p50_ms": 4.4875,
+        "read_p50_ms": 5.6959,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "40-70": {
+        "sentences": 8,
+        "mean_words": 45.38,
+        "complete": 0.0,
+        "reached_75pct": 0.0,
+        "wall_p50_ms": 11.8908,
+        "wall_p95_ms": 18.3811,
+        "lexical_p50_ms": 7.4682,
+        "read_p50_ms": 5.6482,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      }
+    },
+    "local3_guard": {
+      "8-14": {
+        "sentences": 8,
+        "mean_words": 9.88,
+        "complete": 1.0,
+        "reached_75pct": 4.0,
+        "wall_p50_ms": 3.5185,
+        "wall_p95_ms": 8.8753,
+        "lexical_p50_ms": 1.7027,
+        "read_p50_ms": 2.4991,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "15-24": {
+        "sentences": 8,
+        "mean_words": 16.38,
+        "complete": 0.0,
+        "reached_75pct": 3.0,
+        "wall_p50_ms": 8.3895,
+        "wall_p95_ms": 13.0816,
+        "lexical_p50_ms": 2.7926,
+        "read_p50_ms": 5.4328,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "25-39": {
+        "sentences": 8,
+        "mean_words": 29.0,
+        "complete": 0.0,
+        "reached_75pct": 2.0,
+        "wall_p50_ms": 11.4921,
+        "wall_p95_ms": 20.2343,
+        "lexical_p50_ms": 4.5007,
+        "read_p50_ms": 6.5033,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      },
+      "40-70": {
+        "sentences": 8,
+        "mean_words": 45.38,
+        "complete": 0.0,
+        "reached_75pct": 0.0,
+        "wall_p50_ms": 12.5948,
+        "wall_p95_ms": 21.0969,
+        "lexical_p50_ms": 7.603,
+        "read_p50_ms": 6.44,
+        "aligned_completed": 0.0,
+        "pos_matches": 0,
+        "pos_gold_tokens": 0
+      }
+    }
+  },
+  "limitations": [
+    "UPOS is coarser than Seman2's categories; mapping is approximate.",
+    "POS accuracy applies only when completed leaves align exactly.",
+    "Grammar/attachment correctness is not measured by UPOS alone.",
+    "An incomplete parse is not a claim that the source sentence is ungrammatical.",
+    "Holdout EWT annotations are not used to tune parser decisions or grammar."
+  ]
+}
