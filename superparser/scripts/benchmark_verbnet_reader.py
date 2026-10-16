@@ -62,13 +62,34 @@ def trace(result):
             if e.action in {"CONSUME", "COMPLETE"}]
 
 
+def _predicate_from_chart(item):
+    """Match production evaluator's syntax-anchor interpretation."""
+    if item is None:
+        return None
+    anchors = item.syntax.anchors
+    for name in ("main", "event", "predicate"):
+        anchor = anchors.get(name)
+        if not anchor or not anchor.startswith("lex:"):
+            continue
+        parts = anchor.split(":", 4)
+        if len(parts) == 5:
+            return parts[4].casefold()
+    for child in item.children:
+        found = _predicate_from_chart(child)
+        if found:
+            return found
+    return None
+
+
 def syntax_assertions(case, result):
     """Score explicit gold assertions; completion alone is not correctness."""
     required = set(case.get("required", ()))
     forbidden = set(case.get("forbidden", ()))
     pos = case.get("pos", {})
     constituents = case.get("constituents", ())
-    checks = bool(required or forbidden or pos or constituents)
+    voice = case.get("voice")
+    predicate = case.get("predicate")
+    checks = bool(required or forbidden or pos or constituents or voice or predicate)
     if not result.complete:
         return {"has_assertions": checks, "pass": False if checks else None,
                 "checks": {"complete": False}}
@@ -82,7 +103,13 @@ def syntax_assertions(case, result):
             visit(child)
     if result.item is not None:
         visit(result.item)
+    features = result.item.features.as_dict() if result.item is not None else {}
+    found_voice = ("passive" if result.item is not None and
+                   (result.item.rule_id == "clause_passive" or features.get("voice") == "passive")
+                   else "active")
     scored = {
+        "voice": voice is None or found_voice == voice,
+        "predicate": predicate is None or _predicate_from_chart(result.item) == predicate.casefold(),
         "required_rules": all(name in completes for name in required),
         "forbidden_rules": all(name not in completes for name in forbidden),
         "lexical_pos": all((surface.casefold(), category) in consumed for surface, category in pos.items()),
@@ -91,7 +118,9 @@ def syntax_assertions(case, result):
     }
     return {"has_assertions": checks, "pass": all(scored.values()) if checks else None,
             "checks": scored, "required_rules": sorted(required),
-            "missing_required": sorted(required - completes)}
+            "missing_required": sorted(required - completes),
+            "actual_voice": found_voice,
+            "actual_predicate": _predicate_from_chart(result.item)}
 
 
 def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
