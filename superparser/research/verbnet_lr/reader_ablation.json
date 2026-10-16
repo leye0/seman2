@@ -2678,7 +2678,7 @@
       ]
     }
   ],
-  "method": "A/B/C/D/E compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
+  "method": "A/B/C/D/E/F/G compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
   "cases": 36,
   "repetitions": 2,
   "splits": {
@@ -2695,14 +2695,14 @@
       "explicit_gold_assertion_passed": 26,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 3.90897,
-        "p95": 6.77484,
-        "p99": 7.57357
+        "p50": 5.11128,
+        "p95": 8.82457,
+        "p99": 9.64571
       },
       "reading_ms": {
-        "p50": 2.94517,
-        "p95": 5.482,
-        "p99": 5.93044
+        "p50": 3.75649,
+        "p95": 7.10349,
+        "p99": 7.68457
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -2711,6 +2711,8 @@
       "two_token_probes": 0,
       "two_token_witnesses": 0,
       "min_yield_rejections": 0,
+      "edge_witness_hits": 0,
+      "edge_witness_probes": 0,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -2737,14 +2739,14 @@
       "explicit_gold_assertion_passed": 26,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 4.068,
-        "p95": 6.94262,
-        "p99": 7.77762
+        "p50": 5.20466,
+        "p95": 8.94215,
+        "p99": 10.108
       },
       "reading_ms": {
-        "p50": 3.0284,
-        "p95": 5.57493,
-        "p99": 6.15872
+        "p50": 3.82561,
+        "p95": 7.15616,
+        "p99": 7.96183
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -2753,6 +2755,8 @@
       "two_token_probes": 0,
       "two_token_witnesses": 0,
       "min_yield_rejections": 0,
+      "edge_witness_hits": 0,
+      "edge_witness_probes": 0,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -2779,14 +2783,14 @@
       "explicit_gold_assertion_passed": 26,
       "coverage_percent": 38.89,
       "total_ms": {
-        "p50": 4.15983,
-        "p95": 6.96727,
-        "p99": 7.95404
+        "p50": 5.46216,
+        "p95": 9.07922,
+        "p99": 10.22184
       },
       "reading_ms": {
-        "p50": 3.03651,
-        "p95": 5.67176,
-        "p99": 6.27327
+        "p50": 4.13127,
+        "p95": 7.22073,
+        "p99": 8.13342
       },
       "mean_unifications": 3.028,
       "mean_events": 12.833,
@@ -2795,6 +2799,8 @@
       "two_token_probes": 0,
       "two_token_witnesses": 0,
       "min_yield_rejections": 0,
+      "edge_witness_hits": 0,
+      "edge_witness_probes": 0,
       "stop_reasons": {
         "unconsumed_3_opened": 2,
         "unconsumed_4_unlocked": 2,
@@ -2821,14 +2827,14 @@
       "explicit_gold_assertion_passed": 28,
       "coverage_percent": 50.0,
       "total_ms": {
-        "p50": 5.1206,
-        "p95": 7.92811,
-        "p99": 8.39278
+        "p50": 6.62945,
+        "p95": 10.13396,
+        "p99": 10.84737
       },
       "reading_ms": {
-        "p50": 4.44795,
-        "p95": 6.54435,
-        "p99": 6.7667
+        "p50": 5.58135,
+        "p95": 8.47463,
+        "p99": 8.76583
       },
       "mean_unifications": 3.528,
       "mean_events": 14.444,
@@ -2837,6 +2843,8 @@
       "two_token_probes": 468,
       "two_token_witnesses": 216,
       "min_yield_rejections": 42,
+      "edge_witness_hits": 0,
+      "edge_witness_probes": 0,
       "stop_reasons": {
         "expected_continuation_NP_at_4_state_0": 4,
         "expected_continuation_NP_at_5_state_0": 4,
@@ -2858,14 +2866,14 @@
       "explicit_gold_assertion_passed": 28,
       "coverage_percent": 50.0,
       "total_ms": {
-        "p50": 5.33878,
-        "p95": 8.11568,
-        "p99": 8.75037
+        "p50": 6.82362,
+        "p95": 10.4805,
+        "p99": 11.35156
       },
       "reading_ms": {
-        "p50": 4.40864,
-        "p95": 6.82503,
-        "p99": 7.12951
+        "p50": 5.78602,
+        "p95": 8.82618,
+        "p99": 9.25339
       },
       "mean_unifications": 3.528,
       "mean_events": 14.444,
@@ -2874,6 +2882,8 @@
       "two_token_probes": 468,
       "two_token_witnesses": 216,
       "min_yield_rejections": 42,
+      "edge_witness_hits": 0,
+      "edge_witness_probes": 0,
       "stop_reasons": {
         "expected_continuation_NP_at_4_state_0": 4,
         "expected_continuation_NP_at_5_state_0": 4,
@@ -2886,6 +2896,88 @@
         "expected_continuation_N_at_5_state_438": 2,
         "nonconsuming_recursive_CLAUSE_at_2": 2,
         "expected_continuation_NP_at_1_state_51": 2
+      }
+    },
+    "F_structural3": {
+      "evaluations": 72,
+      "complete": 26,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 22,
+      "coverage_percent": 36.11,
+      "total_ms": {
+        "p50": 5.68902,
+        "p95": 9.85624,
+        "p99": 11.1374
+      },
+      "reading_ms": {
+        "p50": 4.54777,
+        "p95": 8.32739,
+        "p99": 8.96293
+      },
+      "mean_unifications": 2.889,
+      "mean_events": 13.194,
+      "verbnet_scoring_calls": 0,
+      "verbnet_positive_hints": 0,
+      "two_token_probes": 442,
+      "two_token_witnesses": 196,
+      "min_yield_rejections": 46,
+      "edge_witness_hits": 192,
+      "edge_witness_probes": 418,
+      "stop_reasons": {
+        "expected_continuation_N_at_3_state_438": 2,
+        "expected_continuation_N_at_4_state_438": 4,
+        "lexical_features_incompatible_V_at_4": 4,
+        "expected_continuation_NP_at_4_state_0": 4,
+        "expected_continuation_NP_at_5_state_0": 4,
+        "expected_continuation_NP_at_3_state_0": 8,
+        "expected_continuation_NP_at_9_state_64": 2,
+        "expected_continuation_ADJ_at_4_state_446": 8,
+        "expected_continuation_CLAUSE_at_5_state_333": 2,
+        "expected_continuation_ADJ_at_5_state_446": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "expected_continuation_CLAUSE_at_5_state_349": 2
+      }
+    },
+    "G_structural3_sense": {
+      "evaluations": 72,
+      "complete": 26,
+      "explicit_gold_assertion_cases": 72,
+      "explicit_gold_assertion_passed": 22,
+      "coverage_percent": 36.11,
+      "total_ms": {
+        "p50": 5.84245,
+        "p95": 10.36501,
+        "p99": 11.21901
+      },
+      "reading_ms": {
+        "p50": 4.68342,
+        "p95": 8.59897,
+        "p99": 9.10038
+      },
+      "mean_unifications": 2.889,
+      "mean_events": 13.194,
+      "verbnet_scoring_calls": 494,
+      "verbnet_positive_hints": 158,
+      "two_token_probes": 442,
+      "two_token_witnesses": 196,
+      "min_yield_rejections": 46,
+      "edge_witness_hits": 192,
+      "edge_witness_probes": 418,
+      "stop_reasons": {
+        "expected_continuation_N_at_3_state_438": 2,
+        "expected_continuation_N_at_4_state_438": 4,
+        "lexical_features_incompatible_V_at_4": 4,
+        "expected_continuation_NP_at_4_state_0": 4,
+        "expected_continuation_NP_at_5_state_0": 4,
+        "expected_continuation_NP_at_3_state_0": 8,
+        "expected_continuation_NP_at_9_state_64": 2,
+        "expected_continuation_ADJ_at_4_state_446": 8,
+        "expected_continuation_CLAUSE_at_5_state_333": 2,
+        "expected_continuation_ADJ_at_5_state_446": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "expected_continuation_CLAUSE_at_5_state_349": 2
       }
     }
   },
@@ -5181,6 +5273,2196 @@
               "CONSUME",
               "TO",
               "to/TO"
+            ]
+          ]
+        }
+      ]
+    },
+    "F_structural3": {
+      "changed_count": 10,
+      "changes": [
+        {
+          "id": "d002",
+          "split": "dev",
+          "text": "The door was opened by John.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_3_opened",
+          "guided_reason": "expected_continuation_N_at_3_state_438",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ]
+          ]
+        },
+        {
+          "id": "h002",
+          "split": "holdout",
+          "text": "The wooden gate was unlocked by Emma.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_4_unlocked",
+          "guided_reason": "expected_continuation_N_at_4_state_438",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ]
+          ]
+        },
+        {
+          "id": "v002",
+          "split": "validation",
+          "text": "The heavy door was closed by Alice.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_4_closed",
+          "guided_reason": "expected_continuation_N_at_4_state_438",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ]
+          ]
+        },
+        {
+          "id": "d003",
+          "split": "dev",
+          "text": "Mary gave John a book.",
+          "baseline_complete": true,
+          "guided_complete": true,
+          "baseline_reason": "",
+          "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": [
+              "vp_ditransitive"
+            ]
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Mary/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "give/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "John/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "book/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_ditransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "mary/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "give/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "john/N"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_n_det_post"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "n_part_ed_name"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "book/V"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_intransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h003",
+          "split": "holdout",
+          "text": "Thomas offered Rachel a seat.",
+          "baseline_complete": true,
+          "guided_complete": false,
+          "baseline_reason": "",
+          "guided_reason": "lexical_features_incompatible_V_at_4",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Thomas/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "offer/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Rachel/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "seat/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_ditransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "thomas/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "offer/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "rachel/N"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_n_det_post"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "n_part_ed_name"
+            ]
+          ]
+        },
+        {
+          "id": "v003",
+          "split": "validation",
+          "text": "Robert handed Julia the keys.",
+          "baseline_complete": true,
+          "guided_complete": false,
+          "baseline_reason": "",
+          "guided_reason": "lexical_features_incompatible_V_at_4",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Robert/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "hand/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Julia/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "key/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_quant_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_ditransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "robert/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "hand/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Julia/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_post"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "n_part_ed_name"
+            ]
+          ]
+        },
+        {
+          "id": "d007",
+          "split": "dev",
+          "text": "Jonah asked whether they could remember the same event differently.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_5_remember",
+          "guided_reason": "expected_continuation_NP_at_9_state_64",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Jonah/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "jonah/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "remember/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "same/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "event/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare_trans"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_modal_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "WH-CLAUSE",
+              "wh_conj_clause"
+            ]
+          ]
+        },
+        {
+          "id": "v007",
+          "split": "validation",
+          "text": "Lena wondered whether they would arrive tomorrow.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_5_arrive",
+          "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [],
+            "missing_required": []
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "tomorrow/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare_trans"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_modal_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h008",
+          "split": "holdout",
+          "text": "The machine was inspected yesterday.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_3_inspected",
+          "guided_reason": "expected_continuation_CLAUSE_at_5_state_333",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "inspect/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "yesterday/N"
+            ],
+            [
+              "COMPLETE",
+              "N",
+              "n_ved_n"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ]
+          ]
+        },
+        {
+          "id": "h009",
+          "split": "holdout",
+          "text": "The musician who arrived early performed.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "expected_continuation_PP_at_4_state_387",
+          "guided_reason": "expected_continuation_ADJ_at_5_state_446",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "early/ADV"
+            ]
+          ]
+        }
+      ]
+    },
+    "G_structural3_sense": {
+      "changed_count": 10,
+      "changes": [
+        {
+          "id": "d002",
+          "split": "dev",
+          "text": "The door was opened by John.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_3_opened",
+          "guided_reason": "expected_continuation_N_at_3_state_438",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ]
+          ]
+        },
+        {
+          "id": "h002",
+          "split": "holdout",
+          "text": "The wooden gate was unlocked by Emma.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_4_unlocked",
+          "guided_reason": "expected_continuation_N_at_4_state_438",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "wooden/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "gate/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ]
+          ]
+        },
+        {
+          "id": "v002",
+          "split": "validation",
+          "text": "The heavy door was closed by Alice.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_4_closed",
+          "guided_reason": "expected_continuation_N_at_4_state_438",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "heavy/ADV"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "door/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adv_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ]
+          ]
+        },
+        {
+          "id": "d003",
+          "split": "dev",
+          "text": "Mary gave John a book.",
+          "baseline_complete": true,
+          "guided_complete": true,
+          "baseline_reason": "",
+          "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "required_rules": false,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": [
+              "vp_ditransitive"
+            ]
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Mary/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "give/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "John/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "book/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_ditransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "mary/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "give/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "john/N"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_n_det_post"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "n_part_ed_name"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "book/V"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_intransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h003",
+          "split": "holdout",
+          "text": "Thomas offered Rachel a seat.",
+          "baseline_complete": true,
+          "guided_complete": false,
+          "baseline_reason": "",
+          "guided_reason": "lexical_features_incompatible_V_at_4",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Thomas/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "offer/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Rachel/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "seat/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_ditransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "thomas/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "offer/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "rachel/N"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "a/DET"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_n_det_post"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "n_part_ed_name"
+            ]
+          ]
+        },
+        {
+          "id": "v003",
+          "split": "validation",
+          "text": "Robert handed Julia the keys.",
+          "baseline_complete": true,
+          "guided_complete": false,
+          "baseline_reason": "",
+          "guided_reason": "lexical_features_incompatible_V_at_4",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [
+              "vp_ditransitive"
+            ],
+            "missing_required": []
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Robert/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "hand/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Julia/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "key/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_quant_n"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_ditransitive"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "robert/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "hand/V"
+            ],
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Julia/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_post"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "n_part_ed_name"
+            ]
+          ]
+        },
+        {
+          "id": "d007",
+          "split": "dev",
+          "text": "Jonah asked whether they could remember the same event differently.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_5_remember",
+          "guided_reason": "expected_continuation_NP_at_9_state_64",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Jonah/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "N",
+              "jonah/N"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "ask/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "remember/V"
+            ],
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "ADJ",
+              "same/ADJ"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "event/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_adj_n"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare_trans"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_modal_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "WH-CLAUSE",
+              "wh_conj_clause"
+            ]
+          ]
+        },
+        {
+          "id": "v007",
+          "split": "validation",
+          "text": "Lena wondered whether they would arrive tomorrow.",
+          "baseline_complete": false,
+          "guided_complete": true,
+          "baseline_reason": "unconsumed_5_arrive",
+          "guided_reason": "",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": true,
+            "checks": {
+              "required_rules": true,
+              "forbidden_rules": true,
+              "lexical_pos": true,
+              "constituents": true
+            },
+            "required_rules": [],
+            "missing_required": []
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_modal_ellipsis"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "PROPER-NOUN",
+              "Lena/PROPER-NOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_proper"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "wonder/V"
+            ],
+            [
+              "CONSUME",
+              "CONJ",
+              "whether/CONJ"
+            ],
+            [
+              "CONSUME",
+              "PRONOUN",
+              "they/PRONOUN"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_indef_pron"
+            ],
+            [
+              "CONSUME",
+              "MODAL",
+              "will/MODAL"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "tomorrow/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ],
+            [
+              "COMPLETE",
+              "VP-NP",
+              "vp_bare_trans"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_modal_bare"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ],
+            [
+              "COMPLETE",
+              "VP",
+              "vp_whether"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_np_vp"
+            ]
+          ]
+        },
+        {
+          "id": "h008",
+          "split": "holdout",
+          "text": "The machine was inspected yesterday.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "unconsumed_3_inspected",
+          "guided_reason": "expected_continuation_CLAUSE_at_5_state_333",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "AUX-BE",
+              "be/AUX-BE"
+            ],
+            [
+              "COMPLETE",
+              "CLAUSE",
+              "clause_cop_ellipsis"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "machine/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "COPULA",
+              "be/COPULA"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "inspect/V"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "yesterday/N"
+            ],
+            [
+              "COMPLETE",
+              "N",
+              "n_ved_n"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_bare"
+            ]
+          ]
+        },
+        {
+          "id": "h009",
+          "split": "holdout",
+          "text": "The musician who arrived early performed.",
+          "baseline_complete": false,
+          "guided_complete": false,
+          "baseline_reason": "expected_continuation_PP_at_4_state_387",
+          "guided_reason": "expected_continuation_ADJ_at_5_state_446",
+          "baseline_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "guided_gold": {
+            "has_assertions": true,
+            "pass": false,
+            "checks": {
+              "complete": false
+            }
+          },
+          "baseline_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ]
+          ],
+          "guided_trace": [
+            [
+              "CONSUME",
+              "DET",
+              "the/DET"
+            ],
+            [
+              "CONSUME",
+              "N",
+              "musician/N"
+            ],
+            [
+              "COMPLETE",
+              "NP",
+              "np_det_n"
+            ],
+            [
+              "CONSUME",
+              "WH-PRONOUN",
+              "who/WH-PRONOUN"
+            ],
+            [
+              "CONSUME",
+              "V",
+              "arrive/V"
+            ],
+            [
+              "CONSUME",
+              "ADV",
+              "early/ADV"
             ]
           ]
         }
