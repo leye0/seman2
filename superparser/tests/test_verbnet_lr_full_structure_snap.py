@@ -134,10 +134,20 @@ class FullStructureSnapTests(unittest.TestCase):
         self.index.observe(b,lattice=lattice,evidence="grammar_witness")
         result=self.index.match(lattice)
         self.assertEqual(len(result.matches),2)
+        # Equal rule scores: the Earley grammatical witness breaks a tie.
         self.assertTrue(result.matches[0].grammar_witness_template)
         self.assertEqual(result.matches[0].template_id,1)
         self.assertEqual({m.template_id for m in result.matches},{0,1})
         self.assertFalse(result.matches[0].independently_verified_template)
+
+        # A lower-scored witness should not suppress a stronger alternative.
+        original=self.rules["np_pp"]
+        self.index.rules["np_pp"]=GrammarRule(
+            original.rule_id,original.rhs,original.lhs,score=-7.0)
+        outranked=self.index.match(lattice)
+        self.assertEqual(outranked.matches[0].template_id,0)
+        self.assertFalse(outranked.matches[0].grammar_witness_template)
+        self.assertEqual({m.template_id for m in outranked.matches},{0,1})
 
     def test_many_templates_same_sequence_remain_bounded(self):
         rows=[[("PRON",None,1)],[("V",None,1)],
