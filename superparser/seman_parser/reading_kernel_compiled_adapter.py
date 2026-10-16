@@ -34,11 +34,14 @@ class CompiledKernelReport:
 class SemanCompiledReader:
     def __init__(self, resources: ParserResources, *,
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
-                 structural_lookahead: int = 1):
+                 structural_lookahead: int = 1, checkpoint_budget: int = 0):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
         self.structural_lookahead = structural_lookahead
+        if not 0 <= checkpoint_budget <= 6:
+            raise ValueError('checkpoint_budget must be 0..6')
+        self.checkpoint_budget = checkpoint_budget
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
         # NEVER call the existing Parser's parse/search algorithm.
@@ -55,10 +58,10 @@ class SemanCompiledReader:
     @classmethod
     def from_dir(cls, directory: str | Path, *, wordnet_dict: str | Path | None = None,
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
-                 structural_lookahead: int = 1):
+                 structural_lookahead: int = 1, checkpoint_budget: int = 0):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
-                   structural_lookahead=structural_lookahead)
+                   structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -92,7 +95,13 @@ class SemanCompiledReader:
         if ranker is not None:
             from research.verbnet_lr.guidance import project_postverb_events
 
-        class _TracedReader(IncrementalReader):
+        if self.checkpoint_budget:
+            from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader
+            reader_base = BoundedCheckpointReader
+        else:
+            reader_base = IncrementalReader
+
+        class _TracedReader(reader_base):
             def _lexical_rank_bonus(self, candidate, category: str) -> int:
                 if ranker is None or category != 'V' or ranker.mode == 'zero':
                     return 0
@@ -120,8 +129,11 @@ class SemanCompiledReader:
                 memo[id(node)] = SemanCompiledReader._leaf(node)
                 return node
 
-        machine = _TracedReader(self.compiled, combine, lattice.tokens, lattice.candidates,
-                                compiled_lookahead=self.structural_lookahead)
+        machine = _TracedReader(
+            self.compiled, combine, lattice.tokens, lattice.candidates,
+            compiled_lookahead=self.structural_lookahead,
+            **({'replay_budget': self.checkpoint_budget} if self.checkpoint_budget else {}),
+        )
         outcome = machine.read()
         t2 = perf_counter()
         item = self.adapter._materialize(memo[id(outcome.root)]) if outcome.root else None
