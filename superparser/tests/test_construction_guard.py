@@ -70,6 +70,15 @@ class TestConstructionGuard(unittest.TestCase):
         self.assertTrue(self.check(nominal("The", "cats", "plural")))
         self.assertTrue(self.check(nominal("A", "cat", "singular")))
 
+    def test_non_determiner_homograph_does_not_invent_agreement(self):
+        malformed = Node("NP", (leaf("These", "PROPER-NOUN"),
+                                leaf("small", "N", number="singular")))
+        self.assertTrue(self.check(malformed))
+
+    def test_nonbase_surface_cannot_be_lexically_base(self):
+        self.assertFalse(self.check(leaf("did", "V", "do", vform="base")))
+        self.assertTrue(self.check(leaf("do", "V", "do", vform="base")))
+
     def test_open_class_present_s_vs_plural(self):
         plural = nominal("The", "children", "plural")
         self.assertFalse(self.check(clause(plural, leaf("plays", "V", "play"))))
