@@ -36,8 +36,8 @@ class SemanCompiledReader:
                  verbnet_index: Any | None = None, verbnet_mode: str = 'exact',
                  structural_lookahead: int = 1):
         self.resources = resources
-        if structural_lookahead not in (1, 2):
-            raise ValueError('structural_lookahead must be 1 or 2')
+        if structural_lookahead not in (1, 2, 3):
+            raise ValueError('structural_lookahead must be 1, 2 or 3')
         self.structural_lookahead = structural_lookahead
         self.compiled = CompiledGrammar(resources.grammar)
         # Reuse production's unification and ChartItem materialization only.
