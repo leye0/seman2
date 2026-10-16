@@ -70,8 +70,19 @@ def recognize_upper_bound(rules, categories, *, goal="CLAUSE",
                     if lhs == goal and start == 0:
                         furthest_goal = max(furthest_goal, at)
                         if at == n:
-                            status = "ACCEPTED"
-                            # Keep processing to allow consistent diagnostics.
+                            # Recognition is existential. Stop on the first
+                            # full-span derivation; exploring other trees
+                            # wastes the item budget and can turn an already
+                            # demonstrated ACCEPT into UNKNOWN.
+                            return {
+                                "status": "ACCEPTED",
+                                "complete": True,
+                                "reason": "",
+                                "items": count,
+                                "furthest_goal_prefix": n,
+                                "elapsed_ms": round((perf_counter() - begun) * 1000, 3),
+                                "max_chart_items": max(map(len, chart)),
+                            }
                     for parent_idx, parent_dot, parent_start in waiting[start][lhs]:
                         add(at, (parent_idx, parent_dot + 1, parent_start))
                     continue

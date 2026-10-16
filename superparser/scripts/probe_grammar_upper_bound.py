@@ -17,7 +17,7 @@ from seman_parser.segmentation import build_lattice
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(*, wordnet_dir=None, corpus=None, max_items=200_000, max_seconds=2.5):
+def run(*, wordnet_dir=None, corpus=None, max_items=500_000, max_seconds=2.5):
     path = Path(corpus or ROOT / "research" / "verbnet_lr" / "long_sentence_stress.jsonl")
     cases = [json.loads(line) for line in path.read_text(encoding="utf8").splitlines()
              if line.strip()]
@@ -44,7 +44,7 @@ def run(*, wordnet_dir=None, corpus=None, max_items=200_000, max_seconds=2.5):
             **outcome,
         })
     return {
-        "schema": 1, "mode": "feature_agnostic_CGF_upper_bound",
+        "schema": 1, "mode": "feature_agnostic_CFG_upper_bound",
         "limitations": [
             "An ACCEPTED upper bound may fail all feature unifications.",
             "A REJECTED upper bound establishes missing structural/lexical coverage only "
@@ -65,7 +65,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wordnet-dir")
     parser.add_argument("--corpus")
-    parser.add_argument("--max-items", type=int, default=200000)
+    parser.add_argument("--max-items", type=int, default=500000)
     parser.add_argument("--max-seconds", type=float, default=2.5)
     parser.add_argument("--report", default=str(
         ROOT / "research" / "verbnet_lr" / "grammar_upper_bound.json"))
