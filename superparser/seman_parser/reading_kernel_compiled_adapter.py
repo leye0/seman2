@@ -145,18 +145,24 @@ class SemanCompiledReader:
             multiword_max=1 if self.token_only_lattice else 4,
         )
         t1 = perf_counter()
-        memo: dict[int, CompactNode] = {}
+        # Keep each ReadNode alive for the duration of this parse.
+        # A failed checkpoint may discard an entire derivation. If memo is
+        # keyed only by id(node) without owning that node, Python can reuse
+        # the integer id for a new node on a restored path, returning a
+        # stale semantic materialization from the discarded derivation.
+        # The owning tuple makes identity reuse impossible until parse exits.
+        memo: dict[int, tuple[ReadNode, CompactNode]] = {}
 
         def combine(rule: Any, children: tuple[ReadNode, ...]) -> ReadNode | None:
             # Children passed through the *real* syntax unification logic.
-            child_nodes = tuple(memo[id(ch)] if id(ch) in memo else self._leaf(ch)
+            child_nodes = tuple(memo[id(ch)][1] if id(ch) in memo else self._leaf(ch)
                                 for ch in children)
             result = PredictiveParser._reduce(rule, child_nodes)
             if result is None:
                 return None
             node = ReadNode(rule.lhs.category, children[0].start, children[-1].end,
                                rule=rule, children=children)
-            memo[id(node)] = result
+            memo[id(node)] = (node, result)
             return node
 
         ranker = self.verbnet_ranker
@@ -223,7 +229,7 @@ class SemanCompiledReader:
 
             def _consume(self, category: str, hints=()):
                 node = super()._consume(category, hints)
-                memo[id(node)] = SemanCompiledReader._leaf(node)
+                memo[id(node)] = (node, SemanCompiledReader._leaf(node))
                 return node
 
         machine = _TracedReader(
@@ -240,6 +246,6 @@ class SemanCompiledReader:
         )
         outcome = machine.read()
         t2 = perf_counter()
-        item = self.adapter._materialize(memo[id(outcome.root)]) if outcome.root else None
+        item = self.adapter._materialize(memo[id(outcome.root)][1]) if outcome.root else None
         t3 = perf_counter()
         return CompiledKernelReport(outcome, item, (t1-t0)*1000, (t2-t1)*1000, (t3-t2)*1000)
