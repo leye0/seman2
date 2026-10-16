@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "method": "A/B/C compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
+  "cases": 36,
+  "repetitions": 2,
+  "splits": {
+    "dev": 12,
+    "holdout": 12,
+    "validation": 12
+  },
+  "index_lemmas": 4567,
+  "summary": {
+    "A_baseline": {
+      "evaluations": 72,
+      "complete": 28,
+      "coverage_percent": 38.89,
+      "total_ms": {
+        "p50": 5.22642,
+        "p95": 10.01637,
+        "p99": 14.00899
+      },
+      "reading_ms": {
+        "p50": 3.86424,
+        "p95": 7.87715,
+        "p99": 9.99735
+      },
+      "mean_unifications": 3.028,
+      "mean_events": 12.833,
+      "verbnet_scoring_calls": 0,
+      "verbnet_positive_hints": 0,
+      "stop_reasons": {
+        "unconsumed_3_opened": 2,
+        "unconsumed_4_unlocked": 2,
+        "unconsumed_4_closed": 2,
+        "expected_continuation_PP_at_4_state_387": 6,
+        "expected_continuation_PP_at_5_state_387": 2,
+        "expected_continuation_NP_at_3_state_0": 4,
+        "unconsumed_5_remember": 2,
+        "expected_continuation_ADJ_at_4_state_446": 8,
+        "unconsumed_5_arrive": 2,
+        "unconsumed_3_inspected": 2,
+        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "expected_continuation_ADVP_at_3_state_480": 2,
+        "expected_continuation_ADJ_at_5_state_446": 2,
+        "expected_continuation_PP_at_3_state_387": 2
+      }
+    },
+    "B_lemma_hints": {
+      "evaluations": 72,
+      "complete": 28,
+      "coverage_percent": 38.89,
+      "total_ms": {
+        "p50": 6.43744,
+        "p95": 13.2598,
+        "p99": 15.51766
+      },
+      "reading_ms": {
+        "p50": 5.38709,
+        "p95": 10.91439,
+        "p99": 12.86063
+      },
+      "mean_unifications": 3.028,
+      "mean_events": 12.833,
+      "verbnet_scoring_calls": 7880,
+      "verbnet_positive_hints": 5540,
+      "stop_reasons": {
+        "unconsumed_3_opened": 2,
+        "unconsumed_4_unlocked": 2,
+        "unconsumed_4_closed": 2,
+        "expected_continuation_PP_at_4_state_387": 6,
+        "expected_continuation_PP_at_5_state_387": 2,
+        "expected_continuation_NP_at_3_state_0": 4,
+        "unconsumed_5_remember": 2,
+        "expected_continuation_ADJ_at_4_state_446": 8,
+        "unconsumed_5_arrive": 2,
+        "unconsumed_3_inspected": 2,
+        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "expected_continuation_ADVP_at_3_state_480": 2,
+        "expected_continuation_ADJ_at_5_state_446": 2,
+        "expected_continuation_PP_at_3_state_387": 2
+      }
+    },
+    "C_sense_hints": {
+      "evaluations": 72,
+      "complete": 28,
+      "coverage_percent": 38.89,
+      "total_ms": {
+        "p50": 7.64005,
+        "p95": 15.79206,
+        "p99": 17.8243
+      },
+      "reading_ms": {
+        "p50": 6.29198,
+        "p95": 13.58158,
+        "p99": 15.06303
+      },
+      "mean_unifications": 3.028,
+      "mean_events": 12.833,
+      "verbnet_scoring_calls": 7880,
+      "verbnet_positive_hints": 2684,
+      "stop_reasons": {
+        "unconsumed_3_opened": 2,
+        "unconsumed_4_unlocked": 2,
+        "unconsumed_4_closed": 2,
+        "expected_continuation_PP_at_4_state_387": 6,
+        "expected_continuation_PP_at_5_state_387": 2,
+        "expected_continuation_NP_at_3_state_0": 4,
+        "unconsumed_5_remember": 2,
+        "expected_continuation_ADJ_at_4_state_446": 8,
+        "unconsumed_5_arrive": 2,
+        "unconsumed_3_inspected": 2,
+        "expected_continuation_NP_at_5_state_0": 2,
+        "expected_continuation_VP_at_6_state_147": 2,
+        "expected_continuation_N_at_5_state_438": 2,
+        "expected_continuation_ADVP_at_3_state_480": 2,
+        "expected_continuation_ADJ_at_5_state_446": 2,
+        "expected_continuation_PP_at_3_state_387": 2
+      }
+    }
+  },
+  "diffs": {
+    "B_lemma_hints": {
+      "changed_count": 0,
+      "changes": []
+    },
+    "C_sense_hints": {
+      "changed_count": 0,
+      "changes": []
+    }
+  },
+  "limits": [
+    "A path can stop without proving the sentence ungrammatical",
+    "Positive corpus completion is not gold structural accuracy",
+    "The lexical lookahead can only *rank*, never reject",
+    "No production parser or packed forest was invoked",
+    "Full-parser 5 ms target cannot be inferred from trie lookup timings",
+    "Mixed WordNet lexical cache is warmed before A/B/C measurements"
+  ]
+}
