@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from dataclasses import dataclass
+import gzip
 import json
 from pathlib import Path
 import re
@@ -166,13 +167,23 @@ def compile_directory(xml_dir: str | Path, wordnet_sense_index: str | Path | Non
 
 
 def write_index(path: str | Path, frames: Iterable[Frame], stats: Mapping | None = None) -> None:
+    """Write a portable index; .gz uses deterministic small gzip packaging."""
     payload = {"schema": 1, "source": "VerbNet 3.4", "stats": dict(stats or {}),
                "frames": [frame.as_dict() for frame in frames]}
-    Path(path).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+    if str(path).endswith(".gz"):
+        with gzip.open(path, "wt", encoding="utf-8", compresslevel=6) as output:
+            output.write(text)
+    else:
+        Path(path).write_text(text, encoding="utf-8")
 
 
 def read_index(path: str | Path) -> "PrefixIndex":
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if str(path).endswith(".gz"):
+        with gzip.open(path, "rt", encoding="utf-8") as source:
+            payload = json.load(source)
+    else:
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
     if payload.get("schema") != 1:
         raise ValueError("unsupported VerbNet index schema")
     return PrefixIndex(tuple(Frame.from_dict(row) for row in payload["frames"]))
