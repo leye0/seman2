@@ -63,6 +63,7 @@ class SparseAmbiguityMemory:
         self.min_margin = min_margin
         self._counts = OrderedDict()
         self._recovery_counts = OrderedDict()
+        self._recovery_seen = OrderedDict()
         self.recovery_observations = 0
         self.recovery_evictions = 0
         self.verified_observations = 0
@@ -89,7 +90,7 @@ class SparseAmbiguityMemory:
         return True
 
     def note_recovery(self, conflict: Conflict, *, failed: str,
-                      chosen: str) -> bool:
+                      chosen: str, observation_id: int | None = None) -> bool:
         """Record a successful local retry as weak *operational* evidence.
 
         The caller must only invoke this after an actually completed parse
@@ -99,12 +100,21 @@ class SparseAmbiguityMemory:
         if (failed == chosen or failed not in conflict.alternatives or
                 chosen not in conflict.alternatives):
             return False
+        if observation_id is not None and observation_id in self._recovery_seen.get(conflict, ()):
+            return False
         if conflict not in self._recovery_counts:
             if len(self._recovery_counts) >= self.max_contexts:
-                self._recovery_counts.popitem(last=False)
+                old, _ = self._recovery_counts.popitem(last=False)
+                self._recovery_seen.pop(old, None)
                 self.recovery_evictions += 1
             self._recovery_counts[conflict] = {}
+            self._recovery_seen[conflict] = []
         self._recovery_counts.move_to_end(conflict)
+        if observation_id is not None:
+            recent = self._recovery_seen[conflict]
+            recent.append(observation_id)
+            if len(recent) > self.max_votes:
+                del recent[0]
         counts = self._recovery_counts[conflict]
         if sum(counts.values()) >= self.max_votes:
             for choice in tuple(counts):
