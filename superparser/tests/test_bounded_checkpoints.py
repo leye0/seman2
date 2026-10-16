@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 import unittest
 
-from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader
+from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader, LazyCheckpointReader
 from seman_parser.reading_kernel_compiled import CompiledGrammar, IncrementalReader, ReadNode
 
 
@@ -42,7 +42,7 @@ class Candidate:
     score: float = 1.0
 
 
-def make_reader(tokens_with_categories, budget=0, *, ellipsis=True, passive=True):
+def make_reader(tokens_with_categories, budget=0, *, ellipsis=True, passive=True, lazy=False):
     spec = [
         ("np_det_n", "NP", "DET", "N"),
         ("clause_np_vp", "CLAUSE", "NP", "VP"),
@@ -67,7 +67,7 @@ def make_reader(tokens_with_categories, budget=0, *, ellipsis=True, passive=True
     def combine(rule, children):
         return ReadNode(rule.lhs.category, children[0].start, children[-1].end,
                         rule=rule, children=tuple(children))
-    cls = BoundedCheckpointReader if budget else IncrementalReader
+    cls = (LazyCheckpointReader if lazy else BoundedCheckpointReader) if budget else IncrementalReader
     kw = {"replay_budget": budget} if budget else {}
     return cls(CompiledGrammar(grammar), combine, tokens, lexical, **kw)
 
@@ -111,6 +111,25 @@ class TestBoundedCheckpoints(unittest.TestCase):
         result = make_reader(positive, budget=3).read()
         self.assertTrue(result.complete)
         self.assertEqual(result.counters["checkpoint_attempts"], 1)
+
+    def test_lazy_checkpoint_retains_positive_recovery(self):
+        eager = make_reader(self.sentence, budget=3).read()
+        lazy = make_reader(self.sentence, budget=3, lazy=True).read()
+        self.assertEqual(eager.complete, lazy.complete)
+        self.assertTrue(lazy.complete)
+        self.assertEqual(eager.root.children[1].rule.rule_id,
+                         lazy.root.children[1].rule.rule_id)
+        self.assertLessEqual(lazy.counters["checkpoint_attempts"], 4)
+
+    def test_lazy_success_has_no_alternative_probes(self):
+        positive = [("The", ("DET",)), ("door", ("N",)),
+                    ("was", ("AUX-BE",)), (".", ())]
+        lazy = make_reader(positive, budget=3, lazy=True).read()
+        baseline = make_reader(positive).read()
+        self.assertTrue(lazy.complete)
+        self.assertEqual(lazy.counters["checkpoint_attempts"], 1)
+        # No possible structural alternative must be forced by the guide.
+        self.assertEqual(lazy.root.rule.rule_id, baseline.root.rule.rule_id)
 
     def test_replay_budget_is_strict(self):
         zero = make_reader(self.sentence, budget=0)
