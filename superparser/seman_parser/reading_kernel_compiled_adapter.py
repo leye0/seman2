@@ -101,7 +101,7 @@ class SemanCompiledReader:
         if ranker is not None:
             from research.verbnet_lr.guidance import project_postverb_events
 
-        if self.checkpoint_budget and self.stack_checkpoints:
+        if self.stack_checkpoints:
             from research.verbnet_lr.stack_reader import LocalCheckpointReader
             reader_base = LocalCheckpointReader
         elif self.checkpoint_budget:
@@ -141,7 +141,7 @@ class SemanCompiledReader:
         machine = _TracedReader(
             self.compiled, combine, lattice.tokens, lattice.candidates,
             compiled_lookahead=self.structural_lookahead,
-            **({'replay_budget': self.checkpoint_budget} if self.checkpoint_budget else {}),
+            **({'replay_budget': self.checkpoint_budget} if (self.checkpoint_budget or self.stack_checkpoints) else {}),
         )
         outcome = machine.read()
         t2 = perf_counter()
