@@ -28,33 +28,33 @@
     "hybrid_snap_fastpath": 25,
     "hybrid_lr_fallback": 45,
     "baseline_explicit_gold_pass": 22,
-    "hybrid_explicit_gold_pass": 30,
+    "hybrid_explicit_gold_pass": 31,
     "new_gold_passes": 9,
-    "lost_gold_passes": 1,
+    "lost_gold_passes": 0,
     "multi_structure_hits": 6,
     "incomplete": 13,
     "no_hit": 45
   },
   "latency": {
     "snap_recognition_warmed_lattice": {
-      "p50_ms": 0.02957,
-      "p95_ms": 0.96978,
-      "p99_ms": 1.3259
+      "p50_ms": 0.03298,
+      "p95_ms": 0.92185,
+      "p99_ms": 1.2378
     },
     "snap_including_lexical_lattice": {
-      "p50_ms": 1.39165,
-      "p95_ms": 2.47085,
-      "p99_ms": 3.09542
+      "p50_ms": 1.46136,
+      "p95_ms": 2.38553,
+      "p99_ms": 3.02247
     },
     "lr_baseline_including_lattice": {
-      "p50_ms": 4.50681,
-      "p95_ms": 9.45066,
-      "p99_ms": 10.11695
+      "p50_ms": 4.53143,
+      "p95_ms": 8.82181,
+      "p99_ms": 11.06915
     },
     "hybrid_snap_then_lr_fallback": {
-      "p50_ms": 2.47869,
-      "p95_ms": 8.71947,
-      "p99_ms": 9.83457
+      "p50_ms": 2.63944,
+      "p95_ms": 8.41763,
+      "p99_ms": 9.10768
     }
   },
   "cases": [
@@ -1169,10 +1169,10 @@
       "candidate_templates": 2,
       "match_details": [
         {
-          "template_id": 33,
+          "template_id": 32,
           "root_rule": "clause_np_vp",
-          "score": 14.85,
-          "grammar_witness": true,
+          "score": 15.0,
+          "grammar_witness": false,
           "independently_verified": false,
           "gold_pass": true,
           "gold_checks": {
@@ -1186,10 +1186,10 @@
           "missing_required": []
         },
         {
-          "template_id": 32,
+          "template_id": 33,
           "root_rule": "clause_np_vp",
-          "score": 15.0,
-          "grammar_witness": false,
+          "score": 14.85,
+          "grammar_witness": true,
           "independently_verified": false,
           "gold_pass": true,
           "gold_checks": {
@@ -1263,10 +1263,10 @@
       "candidate_templates": 2,
       "match_details": [
         {
-          "template_id": 36,
+          "template_id": 35,
           "root_rule": "clause_np_vp",
-          "score": 8.15,
-          "grammar_witness": true,
+          "score": 12.15,
+          "grammar_witness": false,
           "independently_verified": false,
           "gold_pass": false,
           "gold_checks": {
@@ -1280,10 +1280,10 @@
           "missing_required": []
         },
         {
-          "template_id": 35,
+          "template_id": 36,
           "root_rule": "clause_np_vp",
-          "score": 12.15,
-          "grammar_witness": false,
+          "score": 8.15,
+          "grammar_witness": true,
           "independently_verified": false,
           "gold_pass": false,
           "gold_checks": {
@@ -1537,8 +1537,8 @@
     },
     {
       "baseline_gold_pass": true,
-      "hybrid_gold_pass": false,
-      "first_snap_gold_pass": false,
+      "hybrid_gold_pass": true,
+      "first_snap_gold_pass": true,
       "id": "h003",
       "split": "holdout",
       "any_explicit_gold_pass": true,
@@ -1549,25 +1549,6 @@
       "snap_reason": "budget_exhausted_or_lexical_variants_unexplored",
       "candidate_templates": 3,
       "match_details": [
-        {
-          "template_id": 3,
-          "root_rule": "clause_np_coord_aux_adv",
-          "score": 8.02,
-          "grammar_witness": true,
-          "independently_verified": false,
-          "gold_pass": false,
-          "gold_checks": {
-            "voice": true,
-            "predicate": false,
-            "required_rules": false,
-            "forbidden_rules": true,
-            "lexical_pos": true,
-            "constituents": true
-          },
-          "missing_required": [
-            "vp_ditransitive"
-          ]
-        },
         {
           "template_id": 2,
           "root_rule": "clause_np_vp",
@@ -1595,6 +1576,25 @@
           "gold_checks": {
             "voice": true,
             "predicate": true,
+            "required_rules": false,
+            "forbidden_rules": true,
+            "lexical_pos": true,
+            "constituents": true
+          },
+          "missing_required": [
+            "vp_ditransitive"
+          ]
+        },
+        {
+          "template_id": 3,
+          "root_rule": "clause_np_coord_aux_adv",
+          "score": 8.02,
+          "grammar_witness": true,
+          "independently_verified": false,
+          "gold_pass": false,
+          "gold_checks": {
+            "voice": true,
+            "predicate": false,
             "required_rules": false,
             "forbidden_rules": true,
             "lexical_pos": true,
