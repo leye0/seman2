@@ -1,0 +1,16 @@
+{"id":"give_dative","text":"She gave John a book.","lemma":"give","events":["NP","NP"],"expected":"attested"}
+{"id":"give_to","text":"She gave a book to John.","lemma":"give","events":["NP","PREP:to","NP"],"expected":"attested"}
+{"id":"lend_to","text":"They lent a bicycle to me.","lemma":"lend","events":["NP","PREP:to","NP"],"expected":"attested"}
+{"id":"lend_dative","text":"They lent me a bicycle.","lemma":"lend","events":["NP","NP"],"expected":"attested"}
+{"id":"lend_transitive","text":"They lent a bicycle.","lemma":"lend","events":["NP"],"expected":"attested"}
+{"id":"help_np","text":"I helped him.","lemma":"help","events":["NP"],"expected":"attested"}
+{"id":"help_with_np","text":"I helped him with homework.","lemma":"help","events":["NP","PREP:with","NP"],"expected":"attested"}
+{"id":"help_with_ing","text":"I helped with finishing the homework.","lemma":"help","events":["PREP:with","GERUND"],"expected":"attested"}
+{"id":"help_inf","text":"I helped him to finish the homework.","lemma":"help","events":["NP","TO_INF"],"expected":"attested"}
+{"id":"give_bad_prep","text":"She gave a book under John.","lemma":"give","events":["NP","PREP:under","NP"],"expected":"contrast"}
+{"id":"lend_bad_prep","text":"They lent a bicycle at me.","lemma":"lend","events":["NP","PREP:at","NP"],"expected":"contrast"}
+{"id":"lend_bad_sequence","text":"They lent to John a book.","lemma":"lend","events":["PREP:to","NP","NP"],"expected":"contrast"}
+{"id":"help_bad_prep","text":"I helped him under homework.","lemma":"help","events":["NP","PREP:under","NP"],"expected":"contrast"}
+{"id":"give_too_many","text":"She gave John a book a pen.","lemma":"give","events":["NP","NP","NP"],"expected":"contrast"}
+{"id":"give_bare_inf","text":"She gave John to walk.","lemma":"give","events":["NP","TO_INF"],"expected":"contrast"}
+{"id":"help_inf_bad_prep","text":"I helped him by to finish.","lemma":"help","events":["NP","PREP:by","TO_INF"],"expected":"contrast"}
