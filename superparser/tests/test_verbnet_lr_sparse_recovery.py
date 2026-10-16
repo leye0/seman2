@@ -130,6 +130,55 @@ class SparseRecoveryTests(unittest.TestCase):
         self.assertEqual(corrected.root.children[1].rule.rule_id, "vp_long")
         self.assertGreater(corrected.counters["checkpoint_restores_total"], 0)
 
+    def test_learned_finish_keeps_one_reversible_extension_checkpoint(self):
+        productions = [
+            ("clause", "CLAUSE", ("NP", "V")),
+            ("np_n", "NP", ("N",)),
+            ("np_pp", "NP", ("NP", "PP")),
+            ("pp", "PP", ("PREP", "NP")),
+        ]
+        grammar = Grammar([
+            Rule(name, Symbol(lhs), tuple(Symbol(cat) for cat in rhs))
+            for name, lhs, rhs in productions
+        ])
+        compiled = CompiledGrammar(grammar)
+        tokens, candidates, start = [], [], 0
+        for word, category in [
+                ("dogs", "N"), ("in", "PREP"), ("yard", "N"), ("run", "V")]:
+            tokens.append(Token(word, start, start + len(word)))
+            candidates.append(Candidate(category, start, start + len(word),
+                                        word.casefold()))
+            start += len(word) + 1
+
+        def combine(rule, children):
+            return ReadNode(rule.lhs.category, children[0].start,
+                            children[-1].end, rule=rule, children=tuple(children))
+
+        memory = SparseAmbiguityMemory()
+        def create(*, capture=False):
+            return SparseGuidedCheckpointReader(
+                compiled, combine, tokens, candidates,
+                sparse_memory=memory, replay_budget=2,
+                extension_checkpoints=True, capture_conflicts=capture)
+
+        probe = create(capture=True)
+        expected = probe.read()
+        self.assertTrue(expected.complete, expected.reason)
+        sites = [site for site, chosen in probe.conflict_trace
+                 if chosen == "$EXTEND"
+                 and site.alternatives == ("$EXTEND", "$FINISH")]
+        self.assertTrue(sites)
+        for _ in range(8):
+            memory.observe(sites[0], "$FINISH", source="gold")
+        guided = create()
+        guided.use_recovery_hints = True
+        outcome = guided.read()
+        self.assertTrue(outcome.complete, outcome.reason)
+        self.assertGreater(outcome.counters["sparse_finish_hints"], 0)
+        self.assertEqual(outcome.counters["checkpoint_extension_saves"], 1)
+        self.assertEqual(outcome.counters["checkpoint_restores_total"], 1)
+        self.assertEqual(outcome.root.rule.rule_id, "clause")
+
     def test_bounded_memory_and_no_false_training_on_failures(self):
         memory = SparseAmbiguityMemory(max_contexts=2, max_votes=12)
         site = Conflict("c", "CLAUSE", "VP", ("A", "B"))
