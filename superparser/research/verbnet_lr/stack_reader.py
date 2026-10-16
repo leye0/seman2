@@ -57,7 +57,8 @@ class LocalCheckpointReader(IncrementalReader):
     def __init__(self, *args, replay_budget: int = 2,
                  max_checkpoints: int = 24,
                  reduce_checkpoints: bool = False,
-                 parent_follow_reduce: bool = False, **kwargs):
+                 parent_follow_reduce: bool = False,
+                 reduce_follow_only: bool = False, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -69,6 +70,9 @@ class LocalCheckpointReader(IncrementalReader):
         if parent_follow_reduce and not reduce_checkpoints:
             raise ValueError("parent_follow_reduce requires reduce_checkpoints")
         self.parent_follow_reduce = parent_follow_reduce
+        if reduce_follow_only and not reduce_checkpoints:
+            raise ValueError("reduce_follow_only requires reduce_checkpoints")
+        self.reduce_follow_only = reduce_follow_only
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -108,7 +112,10 @@ class LocalCheckpointReader(IncrementalReader):
             frame.state.finals if frame.live is None
             else [r for r in frame.state.finals if id(r) in frame.live]
         )
-        has_reduce_choice = self.reduce_checkpoints and bool(eligible_finals)
+        has_reduce_choice = (
+            self.reduce_checkpoints and bool(eligible_finals)
+            and (not self.reduce_follow_only or self._parent_follow_witness())
+        )
         if self.replay_budget == 0 or (
             len(frame.state.edges) < 2 and not has_reduce_choice
         ):
@@ -320,6 +327,8 @@ class LocalCheckpointReader(IncrementalReader):
             alternative = self._select(
                 frame.state, frame.live, excluded=frozenset(point.tried))
             if (alternative is None and self.reduce_checkpoints
+                    and (not self.reduce_follow_only
+                         or self._parent_follow_witness())
                     and "$REDUCE" not in point.tried
                     and frame.state.finals
                     and (frame.live is None
