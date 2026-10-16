@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "mode": "offline_packed_earley_unification_witness",
+  "parameters": {
+    "max_seconds_per_case": 3.0,
+    "max_items": 500000,
+    "max_expansions": 100000,
+    "max_paths_per_item": 6,
+    "max_backpointers": 6
+  },
+  "summary": {
+    "found": 0,
+    "unknown": 8,
+    "category_rejected": 0
+  },
+  "limitations": [
+    "A feature-unified packed proof is not a gold linguistic tree.",
+    "The Earley backpointer cap and time/item budgets can hide valid derivations.",
+    "UNKNOWN never establishes agrammaticality.",
+    "No runtime parser decision or production grammar has been changed."
+  ],
+  "cases": [
+    {
+      "id": "stress_01",
+      "category_status": "ACCEPTED",
+      "category_items": 58659,
+      "category_ms": 443.918,
+      "tokens": 32,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "backpointer_limit,complete_item_limit,lexical_limit,partial_item_limit",
+      "witness": null,
+      "feature_expansions": 32324,
+      "unifications": 762,
+      "partial_rejections": 3140,
+      "guard_rejections": 0,
+      "packed_items": 46299,
+      "memo_items": 4611,
+      "feature_ms": 55.031,
+      "cutoffs": [
+        "backpointer_limit",
+        "complete_item_limit",
+        "lexical_limit",
+        "partial_item_limit"
+      ]
+    },
+    {
+      "id": "stress_02",
+      "category_status": "ACCEPTED",
+      "category_items": 75827,
+      "category_ms": 553.699,
+      "tokens": 44,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "backpointer_limit,complete_item_limit,lexical_limit,partial_item_limit",
+      "witness": null,
+      "feature_expansions": 46872,
+      "unifications": 2427,
+      "partial_rejections": 4342,
+      "guard_rejections": 0,
+      "packed_items": 59517,
+      "memo_items": 6213,
+      "feature_ms": 107.296,
+      "cutoffs": [
+        "backpointer_limit",
+        "complete_item_limit",
+        "lexical_limit",
+        "partial_item_limit"
+      ]
+    },
+    {
+      "id": "stress_03",
+      "category_status": "ACCEPTED",
+      "category_items": 108389,
+      "category_ms": 1807.722,
+      "tokens": 45,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "backpointer_limit,complete_item_limit,lexical_limit,partial_item_limit",
+      "witness": null,
+      "feature_expansions": 28679,
+      "unifications": 858,
+      "partial_rejections": 2575,
+      "guard_rejections": 0,
+      "packed_items": 91650,
+      "memo_items": 4280,
+      "feature_ms": 87.844,
+      "cutoffs": [
+        "backpointer_limit",
+        "complete_item_limit",
+        "lexical_limit",
+        "partial_item_limit"
+      ]
+    },
+    {
+      "id": "stress_04",
+      "category_status": "ACCEPTED",
+      "category_items": 152070,
+      "category_ms": 1800.469,
+      "tokens": 52,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "backpointer_limit,complete_item_limit,lexical_limit,partial_item_limit",
+      "witness": null,
+      "feature_expansions": 93541,
+      "unifications": 3539,
+      "partial_rejections": 15038,
+      "guard_rejections": 0,
+      "packed_items": 132014,
+      "memo_items": 10429,
+      "feature_ms": 750.389,
+      "cutoffs": [
+        "backpointer_limit",
+        "complete_item_limit",
+        "lexical_limit",
+        "partial_item_limit"
+      ]
+    },
+    {
+      "id": "stress_05",
+      "category_status": "ACCEPTED",
+      "category_items": 117797,
+      "category_ms": 1313.062,
+      "tokens": 47,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "backpointer_limit,complete_item_limit,lexical_limit,partial_item_limit",
+      "witness": null,
+      "feature_expansions": 97161,
+      "unifications": 3583,
+      "partial_rejections": 11318,
+      "guard_rejections": 0,
+      "packed_items": 100089,
+      "memo_items": 11599,
+      "feature_ms": 221.255,
+      "cutoffs": [
+        "backpointer_limit",
+        "complete_item_limit",
+        "lexical_limit",
+        "partial_item_limit"
+      ]
+    },
+    {
+      "id": "stress_06",
+      "category_status": "UNKNOWN",
+      "category_items": 182784,
+      "category_ms": 3059.112,
+      "tokens": 58,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "time_budget",
+      "witness": null,
+      "feature_expansions": 0,
+      "unifications": 0
+    },
+    {
+      "id": "stress_07",
+      "category_status": "UNKNOWN",
+      "category_items": 170624,
+      "category_ms": 3004.972,
+      "tokens": 62,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "time_budget",
+      "witness": null,
+      "feature_expansions": 0,
+      "unifications": 0
+    },
+    {
+      "id": "stress_08",
+      "category_status": "UNKNOWN",
+      "category_items": 204672,
+      "category_ms": 3060.027,
+      "tokens": 67,
+      "backpointer_truncated": true,
+      "status": "UNKNOWN",
+      "reason": "time_budget",
+      "witness": null,
+      "feature_expansions": 0,
+      "unifications": 0
+    }
+  ]
+}
