@@ -233,8 +233,34 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                              "gold": record["gold"],
                              "last_events": record["last_events"],
                              "trace": record["trace"]})
+    split_metrics = {}
+    for mode in modes:
+        split_metrics[mode] = {}
+        for split in sorted({case.get("split", "other") for case in cases}):
+            subset = [results[mode][case["id"]] for case in cases
+                      if case.get("split", "other") == split]
+            split_metrics[mode][split] = {
+                "cases": len(subset),
+                "complete": sum(r["complete"] for r in subset),
+                "explicit_gold_passed": sum(r["gold"]["pass"] is True for r in subset),
+                "verbnet_vp_observations": sum(len(r["verbnet_vp_observations"]) for r in subset),
+                "attested_vp_observations": sum(
+                    obs["status"] == "ATTESTED" for r in subset
+                    for obs in r["verbnet_vp_observations"]),
+            }
+    baseline_evidence = [
+        {"id": case["id"], "split": case.get("split", "other"),
+         "text": case["text"],
+         "complete": results["A_baseline"][case["id"]]["complete"],
+         "explicit_gold_pass": results["A_baseline"][case["id"]]["gold"]["pass"],
+         "verbnet_vp_observations": results["A_baseline"][case["id"]]["verbnet_vp_observations"]}
+        for case in cases
+        if results["A_baseline"][case["id"]]["verbnet_vp_observations"]
+    ]
     return {
         "schema": 1,
+        "per_split": split_metrics,
+        "baseline_verbnet_tree_evidence_by_case": baseline_evidence,
         "baseline_failure_diagnostics": failures,
         "method": "A/B/C/D/E/F/G compiled single-continuation Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
