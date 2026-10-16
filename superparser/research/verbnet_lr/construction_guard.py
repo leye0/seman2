@@ -47,7 +47,7 @@ def _subject(c):
     if c.category == "PROPER-NOUN": return ("singular","3")
     return (None,None)
 
-def _finite_agreement(subject, verb):
+def _finite_agreement(subject, verb, modal_forms=frozenset()):
     n, p = _subject(subject)
     if p is None: return Check(True)
     s = verb.surface.casefold()
@@ -66,6 +66,14 @@ def _finite_agreement(subject, verb):
                      "finite_do_subject_agreement")
     if verb.category == "V":
         lemma = verb.lemma.casefold()
+        # A surface with an attested MODAL analysis cannot also stand as
+        # uninflected third-person singular PRESENT of a regular lexical V.
+        # The alternate verb reading remains possible for other subjects.
+        # Closed-class membership is supplied by the lexical lattice.
+        if ((n,p) == ("singular","3")
+                and verb.surface.casefold() == lemma
+                and lemma in modal_forms):
+            return Check(False, "modal_homograph_uninflected_lexical_verb")
         if s != lemma and s.endswith("s") and not s.endswith("ss"):
             if (n,p) != ("singular","3"):
                 return Check(False, "lexical_verb_third_singular_agreement")
@@ -83,6 +91,9 @@ def _bare_after_aux(seq, start):
     return Check(True)
 
 class ConstructionGuard:
+    def __init__(self, modal_forms=frozenset()):
+        self.modal_forms = frozenset(modal_forms)
+
     def validate(self, root):
         if root is None: return Check(False, "missing_tree")
         for node in _walk(root):
@@ -113,7 +124,7 @@ class ConstructionGuard:
                                 {"V","COPULA","AUX-BE","HAVE","AUX","MODAL"}), None)
                     if verb is not None:
                         if verb.category != "MODAL":
-                            check = _finite_agreement(subj,verb)
+                            check = _finite_agreement(subj,verb,self.modal_forms)
                             if not check.acceptable: return check
                         break
             if node.category == "VP" and children:
