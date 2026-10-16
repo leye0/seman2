@@ -49,7 +49,7 @@ class Candidate:
     score: float = 1.0
 
 
-def make_reader(reduce_checkpoints, budget=2):
+def make_reader(reduce_checkpoints, budget=2, *, parent_follow_reduce=False):
     productions = [
         ("clause_svo", "CLAUSE", ("NP", "VP", "NP")),
         ("np_name", "NP", ("PROPER-NOUN",)),
@@ -77,7 +77,8 @@ def make_reader(reduce_checkpoints, budget=2):
         return ReadNode(rule.lhs.category, children[0].start, children[-1].end,
                         rule=rule, children=tuple(children))
 
-    kw = dict(replay_budget=budget, reduce_checkpoints=reduce_checkpoints)
+    kw = dict(replay_budget=budget, reduce_checkpoints=reduce_checkpoints,
+              parent_follow_reduce=parent_follow_reduce)
     return LocalCheckpointReader(CompiledGrammar(grammar), combine,
                                  tokens, lex, **kw)
 
@@ -92,6 +93,13 @@ class ReduceVersusExtendTests(unittest.TestCase):
         self.assertEqual(corrected.root.children[1].rule.rule_id, "vp_v")
         self.assertGreater(corrected.counters["checkpoint_forced_reductions"], 0)
         self.assertLessEqual(corrected.counters["checkpoint_restores_total"], 3)
+
+    def test_parent_follow_witness_reduces_without_backtracking(self):
+        parsed = make_reader(True, budget=1, parent_follow_reduce=True).read()
+        self.assertTrue(parsed.complete, parsed.reason)
+        self.assertEqual(parsed.root.children[1].rule.rule_id, "vp_v")
+        self.assertEqual(parsed.counters["checkpoint_restores_total"], 0)
+        self.assertGreater(parsed.counters["parent_follow_witness_reductions"], 0)
 
     def test_zero_budget_does_not_change_initial_decision(self):
         ordinary = make_reader(False, budget=0).read()
