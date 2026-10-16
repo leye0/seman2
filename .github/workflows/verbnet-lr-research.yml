@@ -113,6 +113,7 @@ jobs:
           PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_snap.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --max-train 50 --max-eval 70 --repetitions 3 \
+            --teacher-seconds 0.35 \
             --out superparser/research/verbnet_lr/snap_holdout_report.json
       - name: A/B/C benchmark on real Seman2 compiled left-to-right reader
         run: |

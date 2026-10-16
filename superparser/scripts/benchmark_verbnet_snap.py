@@ -15,6 +15,11 @@ from statistics import median
 from time import perf_counter
 
 from research.verbnet_lr.full_structure_snap import FullStructureSnapIndex
+from research.verbnet_lr.packed_witness import seek_packed_witness
+from research.verbnet_lr.construction_guard import ConstructionGuard
+from seman_parser.predictive import PredictiveParser
+from seman_parser.reading_kernel_compiled import Event
+from scripts.benchmark_verbnet_reader import syntax_assertions
 from seman_parser.engine import ParserResources
 from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 from seman_parser.segmentation import build_lattice
@@ -29,7 +34,8 @@ def quantile(values, fraction):
     return round(values[min(len(values)-1,int((len(values)-1)*fraction))],5)
 
 
-def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3):
+def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3,
+        teacher_seconds=0.35):
     corpus=ROOT / "data/syntax_correctness_validation.jsonl"
     rows=[json.loads(row) for row in corpus.read_text().splitlines() if row.strip()]
     train=[r for r in rows if r.get("split")=="dev"][:max_train]
@@ -39,18 +45,57 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3):
     snap=FullStructureSnapIndex(resources)
     training=Counter()
     for case in train:
+        lattice=build_lattice(case["text"],resources.lexicon,multiword_max=1)
         r=lr.parse(case["text"])
         if r.complete:
-            lattice=build_lattice(case["text"],resources.lexicon,multiword_max=1)
             try:
                 snap.observe(r.item, lattice=lattice, evidence="candidate")
-                training["accepted"]+=1
+                training["lr_candidate_added"]+=1
             except ValueError:
-                training["unsupported"]+=1
+                training["lr_unsupported"]+=1
         else:
-            training["incomplete"]+=1
+            training["lr_incomplete"]+=1
+        # Independent offline grammar derivation: grammar-unified but NOT gold.
+        # This teacher may find a structure even when greedy L-R failed.
+        # A timeout, cutoff or UNKNOWN adds no negative evidence.
+        if teacher_seconds > 0:
+            guard=ConstructionGuard(modal_forms={
+                c.surface.casefold() for c in lattice.candidates
+                if c.category == "MODAL"})
+            witness=seek_packed_witness(
+                resources.grammar,lattice,max_seconds=teacher_seconds,
+                max_items=60_000,max_expansions=30_000,
+                max_paths_per_item=4,max_backpointers=4,
+                validate_tree=guard.validate,return_compact_node=True)
+            if witness["status"] == "FOUND" and witness["witness_node"] is not None:
+                try:
+                    item=snap._materializer._materialize(witness["witness_node"])
+                    snap.observe(item,lattice=lattice,evidence="grammar_witness")
+                    training["grammar_witness_added"]+=1
+                    if not r.complete:
+                        training["teacher_rescued_lr_incomplete"]+=1
+                except ValueError:
+                    training["teacher_unsupported"]+=1
+            else:
+                training["teacher_"+witness["status"].lower()]+=1
     totals={"lr":[],"snap_recognition":[],"snap_including_lattice":[]}
     case_results=[]
+    def snapped_gold(case, item):
+        # Produce the same evidence representation consumed by the existing
+        # explicit annotation assessor; never call this proof of correctness.
+        events=[]
+        def visit(node):
+            if node.lexical_candidate is not None:
+                c=node.lexical_candidate
+                events.append(Event(0,c.surface,"CONSUME",c.category,""))
+            for ch in node.children:
+                visit(ch)
+            if node.rule_id:
+                events.append(Event(0,"","COMPLETE",node.category,node.rule_id))
+        visit(item)
+        from types import SimpleNamespace
+        return syntax_assertions(case,SimpleNamespace(
+            complete=True,item=item,outcome=SimpleNamespace(events=events)))
     for case in evaluation:
         lattice=build_lattice(case["text"],resources.lexicon,multiword_max=1)
         for _ in range(repetitions):
@@ -64,8 +109,14 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3):
         t=perf_counter()
         baseline=lr.parse(case["text"])
         totals["lr"].append((perf_counter()-t)*1000)
+        gold_scores=[snapped_gold(case,m.item) for m in hit.matches]
         case_results.append({
             "id":case["id"],"split":case.get("split"),
+            "any_explicit_gold_pass":any(g["pass"] is True for g in gold_scores),
+            "all_explicit_gold_pass":bool(gold_scores) and all(
+                g["pass"] is True for g in gold_scores),
+            "matched_grammar_witness_templates":sum(
+                m.grammar_witness_template for m in hit.matches),
             "snap_matches":len(hit.matches),
             "snap_incomplete":hit.incomplete,"snap_reason":hit.reason,
             "candidate_templates":hit.candidate_templates,
@@ -81,7 +132,16 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3):
         "evaluation_source":"non-dev unseen sentences; no online training",
         "training_cases":len(train),"evaluation_cases":len(evaluation),
         "training":dict(training),"index":snap.summary(),
+        "teacher_seconds_per_dev_case":teacher_seconds,
         "recognition":{"hits":sum(bool(r["snap_matches"]) for r in case_results),
+                       "fully_explored_hits":sum(bool(r["snap_matches"]) and
+                                                   not r["snap_incomplete"] for r in case_results),
+                       "hits_with_teacher_templates":sum(
+                           r["matched_grammar_witness_templates"]>0 for r in case_results),
+                       "hits_passing_explicit_gold":sum(
+                           r["any_explicit_gold_pass"] for r in case_results),
+                       "hits_all_matches_pass_explicit_gold":sum(
+                           r["all_explicit_gold_pass"] for r in case_results),
                        "multi_structure_hits":sum(r["snap_matches"]>1 for r in case_results),
                        "incomplete":sum(r["snap_incomplete"] for r in case_results),
                        "no_hit":sum(not r["snap_matches"] for r in case_results)},
@@ -94,7 +154,8 @@ def run(*, wordnet_dir, max_train=60, max_eval=60, repetitions=3):
         "limitations":[
             "Only previously observed full trees are indexed; zero hits do not disprove grammaticality.",
             "One-token lexical slots; trailing period and exclamation are excluded like current L-R.",
-            "Candidate templates come from L-R and have no independent grammatical verification.",
+            "Candidate templates come from L-R; grammar_witness templates come from independent bounded Earley+unification, NOT gold syntax.",
+            "The teacher tests only dev. UNKNOWN from its budgets is not evidence of invalid grammar.",
             "Only one lexical derivation is materialized per matched whole-tree template.",
             "Hard budgets can truncate lookup; such cases are marked incomplete.",
             "No 20-million-template memory or on-disk index performance has been claimed.",
@@ -108,10 +169,12 @@ if __name__=="__main__":
     p.add_argument("--max-train",type=int,default=60)
     p.add_argument("--max-eval",type=int,default=60)
     p.add_argument("--repetitions",type=int,default=3)
+    p.add_argument("--teacher-seconds",type=float,default=0.35)
     p.add_argument("--out",type=Path,required=True)
     a=p.parse_args()
     report=run(wordnet_dir=a.wordnet_dir,max_train=a.max_train,
-               max_eval=a.max_eval,repetitions=a.repetitions)
+               max_eval=a.max_eval,repetitions=a.repetitions,
+               teacher_seconds=a.teacher_seconds)
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({k:report[k] for k in ("training","index","recognition","latency")},indent=2))

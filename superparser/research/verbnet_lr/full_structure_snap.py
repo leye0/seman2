@@ -36,6 +36,7 @@ class Template:
     categories: tuple[str, ...]
     candidate_observations: int = 0
     verified_observations: int = 0
+    grammar_witness_observations: int = 0
 
 
 @dataclass(slots=True)
@@ -49,6 +50,7 @@ class SnapMatch:
     template_id: int
     item: Any
     independently_verified_template: bool
+    grammar_witness_template: bool = False
 
 
 @dataclass(slots=True)
@@ -126,8 +128,8 @@ class FullStructureSnapIndex:
         Never infer independent correctness from the fact that L-R completed.
         Unsupported multiword lexical spans are rejected, not silently split.
         """
-        if evidence not in {"candidate", "verified"}:
-            raise ValueError("Evidence must be candidate or externally verified")
+        if evidence not in {"candidate", "verified", "grammar_witness"}:
+            raise ValueError("Evidence must be candidate, grammar_witness, or externally verified")
         if item.category != self.goal:
             raise ValueError("Template must be a completed goal-category tree")
         shape = self._shape(item)
@@ -151,6 +153,8 @@ class FullStructureSnapIndex:
             template = self.templates[previous]
             if evidence == "verified":
                 template.verified_observations += 1
+            elif evidence == "grammar_witness":
+                template.grammar_witness_observations += 1
             else:
                 template.candidate_observations += 1
             return previous
@@ -161,7 +165,8 @@ class FullStructureSnapIndex:
         self._by_shape[shape] = key
         self.templates.append(Template(
             shape, categories, int(evidence == "candidate"),
-            int(evidence == "verified")))
+            int(evidence == "verified"),
+            int(evidence == "grammar_witness")))
         state = self._root
         for cat in categories:
             state = state.edges.setdefault(cat, _Trie())
@@ -273,7 +278,8 @@ class FullStructureSnapIndex:
                 item = self._materializer._materialize(variants[0])
                 matched.append(SnapMatch(
                     template_id, item,
-                    template.verified_observations > 0))
+                    template.verified_observations > 0,
+                    template.grammar_witness_observations > 0))
         if incomplete:
             reason = "budget_exhausted_or_lexical_variants_unexplored"
         elif matched:
@@ -290,7 +296,10 @@ class FullStructureSnapIndex:
             "templates": len(self.templates),
             "verified_templates": sum(t.verified_observations > 0
                                       for t in self.templates),
-            "candidate_templates": sum(t.verified_observations == 0
+            "grammar_witness_templates": sum(t.grammar_witness_observations > 0
+                                              for t in self.templates),
+            "candidate_templates": sum(t.verified_observations == 0 and
+                                       t.grammar_witness_observations == 0
                                        for t in self.templates),
         }
 

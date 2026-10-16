@@ -58,7 +58,7 @@ def _evidence(root, max_depth=9):
 def seek_packed_witness(grammar, lattice, *, goal="CLAUSE",
                         max_items=500_000, max_seconds=3.0,
                         max_expansions=100_000, max_paths_per_item=6,
-                        max_backpointers=6, validate_tree=None):
+                        max_backpointers=6, validate_tree=None, return_compact_node=False):
     if (max_items < 1 or max_seconds <= 0 or max_expansions < 1
             or max_paths_per_item < 1 or max_backpointers < 1):
         raise ValueError("search budgets must be positive")
@@ -237,7 +237,7 @@ def seek_packed_witness(grammar, lattice, *, goal="CLAUSE",
                 break
     except _Limit as exc:
         cutoffs.add(str(exc))
-    return {
+    report = {
         **result,
         "status": "FOUND" if witness is not None else "UNKNOWN",
         "reason": "" if witness is not None else
@@ -254,3 +254,8 @@ def seek_packed_witness(grammar, lattice, *, goal="CLAUSE",
                             - bound["elapsed_ms"], 3),
         "cutoffs": sorted(cutoffs),
     }
+    # Research-only internal witness retrieval. Ordinary serialized reports
+    # remain JSON-safe and do not retain full derivation objects.
+    if return_compact_node:
+        report["witness_node"] = witness
+    return report

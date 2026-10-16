@@ -8,6 +8,7 @@ from seman_parser.segmentation import LexicalCandidate, LexicalLattice, Token
 from seman_parser.predictive import CompactNode, PredictiveParser
 from seman_parser.symbols import intern
 from research.verbnet_lr.full_structure_snap import FullStructureSnapIndex
+from research.verbnet_lr.packed_witness import seek_packed_witness
 
 
 def S(cat, **features):
@@ -149,6 +150,26 @@ class FullStructureSnapTests(unittest.TestCase):
         self.assertTrue(self.index.match(src).matches[0].independently_verified_template)
         with self.assertRaises(ValueError):
             self.index.observe(t,lattice=src,evidence="parser_completion")
+
+    def test_independent_earley_witness_is_not_gold(self):
+        categories=[[("PRON",None,1)], [("V",None,1)],
+                    [("N","sg",1)]]
+        lattice=self.lattice(["I","saw","girl"],categories)
+        result=seek_packed_witness(
+            self.resources.grammar,lattice,
+            max_items=50000,max_seconds=1.0,
+            return_compact_node=True)
+        self.assertEqual(result["status"],"FOUND",result)
+        self.assertIsNotNone(result["witness_node"])
+        item=self.adapter._materialize(result["witness_node"])
+        template_id=self.index.observe(item,lattice=lattice,
+                                        evidence="grammar_witness")
+        snapped=self.index.match(lattice)
+        self.assertTrue(snapped.complete,snapped.reason)
+        match=next(m for m in snapped.matches if m.template_id==template_id)
+        self.assertTrue(match.grammar_witness_template)
+        self.assertFalse(match.independently_verified_template)
+        self.assertEqual(self.index.summary()["verified_templates"],0)
 
     def test_no_multiword_fabrication(self):
         rows = [[("PRON",None,1)], [("V",None,1)],
