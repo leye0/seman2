@@ -155,6 +155,14 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             resources, checkpoint_budget=3, stack_checkpoints=True),
         "Q_local_snapshot0": SemanCompiledReader(
             resources, checkpoint_budget=0, stack_checkpoints=True),
+        "R_guard0": SemanCompiledReader(
+            resources, checkpoint_budget=0, stack_checkpoints=True, construction_guard=True),
+        "S_guard1": SemanCompiledReader(
+            resources, checkpoint_budget=1, stack_checkpoints=True, construction_guard=True),
+        "T_guard2": SemanCompiledReader(
+            resources, checkpoint_budget=2, stack_checkpoints=True, construction_guard=True),
+        "U_guard3": SemanCompiledReader(
+            resources, checkpoint_budget=3, stack_checkpoints=True, construction_guard=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
@@ -208,6 +216,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
                     "edge_witness_probes": counters.get("edge_witness_probes", 0),
                     "checkpoint_attempts": counters.get("checkpoint_attempts", 1),
                     "checkpoint_replays": counters.get("checkpoint_replays", counters.get("checkpoint_restores_total", 0)),
+                    "construction_rejections": counters.get("construction_rejections", 0),
                     "checkpoint_saves": counters.get("checkpoint_saves", 0),
                     "checkpoint_peak_saved": counters.get("checkpoint_peak_saved", 0),
                     "checkpoint_options_seen": counters.get("checkpoint_options_seen", 0),
@@ -268,6 +277,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             "checkpoint_replays": sum(v["checkpoint_replays"] for v in entries),
             "checkpoint_attempts": sum(v["checkpoint_attempts"] for v in entries),
             "checkpoint_options_seen": sum(v["checkpoint_options_seen"] for v in entries),
+            "construction_rejections": sum(v["construction_rejections"] for v in entries),
             "checkpoint_saves": sum(v["checkpoint_saves"] for v in entries),
             "checkpoint_peak_saved_max": max(v["checkpoint_peak_saved"] for v in entries),
             "stop_reasons": dict(Counter(v["reason"] for v in entries if not v["complete"])),
@@ -340,7 +350,7 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
         "per_split": split_metrics,
         "baseline_verbnet_tree_evidence_by_case": baseline_evidence,
         "baseline_failure_diagnostics": failures,
-        "method": "A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
+        "method": "A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S/T/U compiled left-to-right Seman2 reader; fixed lexical resource and corpus",
         "cases": len(cases), "repetitions": repetitions, "splits": dict(Counter(c.get("split") for c in cases)),
         "index_lemmas": index.lemmas(),
         "summary": summary, "diffs": diffs,
