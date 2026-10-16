@@ -1,5 +1,5 @@
 """Stdlib tests for experimental bounded compact checkpoint replay."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import unittest
 
 from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader
@@ -9,7 +9,7 @@ from seman_parser.reading_kernel_compiled import CompiledGrammar, IncrementalRea
 @dataclass(frozen=True)
 class RuleSymbol:
     category: str
-    features: dict | None = None
+    features: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
