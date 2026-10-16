@@ -48,7 +48,8 @@ class SemanCompiledReader:
                  reduce_follow_only: bool = False,
                  reachable_checkpoints_only: bool = False,
                  terminal_prefix_preference: bool = False,
-                 extension_checkpoints: bool = False):
+                 extension_checkpoints: bool = False,
+                 sparse_memory: Any | None = None):
         self.resources = resources
         if structural_lookahead not in (1, 2, 3):
             raise ValueError('structural_lookahead must be 1, 2 or 3')
@@ -74,6 +75,9 @@ class SemanCompiledReader:
         self.reachable_checkpoints_only = reachable_checkpoints_only
         self.terminal_prefix_preference = terminal_prefix_preference
         self.extension_checkpoints = extension_checkpoints
+        if sparse_memory is not None and not stack_checkpoints:
+            raise ValueError('sparse_memory requires stack_checkpoints')
+        self.sparse_memory = sparse_memory
         if early_construction_guard and not construction_guard:
             raise ValueError("early_construction_guard requires construction_guard")
         self.early_construction_guard = early_construction_guard
@@ -110,7 +114,8 @@ class SemanCompiledReader:
                  reduce_follow_only: bool = False,
                  reachable_checkpoints_only: bool = False,
                  terminal_prefix_preference: bool = False,
-                 extension_checkpoints: bool = False):
+                 extension_checkpoints: bool = False,
+                 sparse_memory: Any | None = None):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,
@@ -126,7 +131,8 @@ class SemanCompiledReader:
                    reduce_follow_only=reduce_follow_only,
                    reachable_checkpoints_only=reachable_checkpoints_only,
                    terminal_prefix_preference=terminal_prefix_preference,
-                   extension_checkpoints=extension_checkpoints)
+                   extension_checkpoints=extension_checkpoints,
+                   sparse_memory=sparse_memory)
 
     @staticmethod
     def _leaf(node: ReadNode) -> CompactNode:
@@ -187,8 +193,12 @@ class SemanCompiledReader:
             from research.verbnet_lr.guidance import project_postverb_events
 
         if self.stack_checkpoints or self.construction_guard:
-            from research.verbnet_lr.stack_reader import LocalCheckpointReader
-            reader_base = LocalCheckpointReader
+            if self.sparse_memory is not None:
+                from research.verbnet_lr.sparse_guided_reader import SparseGuidedCheckpointReader
+                reader_base = SparseGuidedCheckpointReader
+            else:
+                from research.verbnet_lr.stack_reader import LocalCheckpointReader
+                reader_base = LocalCheckpointReader
         elif self.checkpoint_budget:
             from research.verbnet_lr.checkpoint_reader import BoundedCheckpointReader, LazyCheckpointReader
             reader_base = LazyCheckpointReader if self.lazy_checkpoints else BoundedCheckpointReader
@@ -255,6 +265,8 @@ class SemanCompiledReader:
                 if self.stack_checkpoints else
                 {'replay_budget': self.checkpoint_budget}
                 if (self.checkpoint_budget or self.construction_guard) else {}),
+            **({'sparse_memory': self.sparse_memory}
+               if self.sparse_memory is not None else {}),
         )
         outcome = machine.read()
         t2 = perf_counter()
