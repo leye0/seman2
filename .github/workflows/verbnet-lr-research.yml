@@ -1,0 +1,70 @@
+name: VerbNet Left-to-Right Research
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - '.github/workflows/verbnet-lr-research.yml'
+      - 'superparser/research/verbnet_lr/*.py'
+      - 'superparser/research/verbnet_lr/oracle_cases.jsonl'
+      - 'superparser/scripts/benchmark_verbnet_lr.py'
+      - 'superparser/tests/test_verbnet_lr*.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests (standard library only)
+        run: |
+          PYTHONPATH=superparser python -m unittest discover -s superparser/tests -p 'test_verbnet_lr*.py' -v
+      - name: Fetch WordNet 3.0 sense index
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          import os
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent':'Seman2-research'}), timeout=90) as src:
+              data = src.read()
+          with ZipFile(BytesIO(data)) as archive:
+              matches = [n for n in archive.namelist() if n.endswith('/index.sense')]
+              if len(matches) != 1:
+                  raise RuntimeError('Could not identify WordNet index.sense')
+              dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet-index.sense'
+              dest.write_bytes(archive.read(matches[0]))
+              print('WordNet sense index:', dest.stat().st_size, 'bytes')
+          PY
+      - name: Compile complete VerbNet 3.4 and benchmark
+        run: |
+          PYTHONPATH=superparser python superparser/scripts/benchmark_verbnet_lr.py \
+            --fetch \
+            --wordnet-sense-index "$RUNNER_TEMP/wordnet-index.sense" \
+            --report superparser/research/verbnet_lr/full_corpus_report.json \
+            --index-out superparser/research/verbnet_lr/verbnet34.compiled.json.gz \
+            --iterations 20000
+      - name: Commit report and compiled index to research branch
+        if: github.ref == 'refs/heads/research/verbnet-left-to-right-poc'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add superparser/research/verbnet_lr/full_corpus_report.json \
+                  superparser/research/verbnet_lr/verbnet34.compiled.json.gz
+          if ! git diff --cached --quiet; then
+            git commit -m "research: save pinned VerbNet 3.4 coverage and timings [skip ci]"
+            git push
+          fi
