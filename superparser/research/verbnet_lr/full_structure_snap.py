@@ -355,7 +355,8 @@ class SnappingResearchReader:
     """
     def __init__(self, resources, *, index: FullStructureSnapIndex,
                  fallback=None, max_templates_checked: int = 128,
-                 construction_guard: bool = True):
+                 construction_guard: bool = True,
+                 sampler: Any | None = None):
         if max_templates_checked < 1:
             raise ValueError("max_templates_checked must be positive")
         self.resources = resources
@@ -363,10 +364,14 @@ class SnappingResearchReader:
         self.fallback = fallback or SemanCompiledReader(resources)
         self.max_templates_checked = max_templates_checked
         self.construction_guard = construction_guard
+        self.sampler = sampler
 
     def parse(self, text: str, *, learn_candidate: bool = False):
         from seman_parser.segmentation import build_lattice
         lattice = build_lattice(text, self.resources.lexicon, multiword_max=1)
+        if self.sampler is not None:
+            # Just enqueue. The expensive verifier is NEVER called by parse.
+            self.sampler.enqueue(text, lattice)
         snapped = self.index.match(
             lattice, max_templates_checked=self.max_templates_checked)
         if snapped.complete and self.construction_guard:

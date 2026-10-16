@@ -47,6 +47,28 @@ class SamplingQueueTests(unittest.TestCase):
         self.assertEqual(index.summary()["grammar_witness_templates"],1)
         self.assertEqual(index.summary()["verified_templates"],0)
 
+    def test_fast_reader_only_enqueues_never_runs_teacher(self):
+        from unittest.mock import patch
+        from research.verbnet_lr.full_structure_snap import SnappingResearchReader
+        from types import SimpleNamespace
+        rules=Grammar((GrammarRule("clause_v",(RuleSymbol("V"),),
+                                   RuleSymbol("CLAUSE")),))
+        index=FullStructureSnapIndex(ParserResources(rules,None,None))
+        q=VerificationSamplingQueue(every=10,phase=0)
+        class Fallback:
+            def parse(self,text):
+                return SimpleNamespace(complete=False)
+        wrapper=SnappingResearchReader(index.resources,index=index,
+                                       fallback=Fallback(),sampler=q)
+        with patch("seman_parser.segmentation.build_lattice",
+                   return_value=self.lattice()), patch(
+                   "research.verbnet_lr.packed_witness.seek_packed_witness") as teacher:
+            for _ in range(10):
+                wrapper.parse("run")
+            teacher.assert_not_called()
+        self.assertEqual(q.summary()["seen"],10)
+        self.assertEqual(q.summary()["pending"],1)
+
     def test_arguments_rejected(self):
         for kwargs in ({"every":0},{"every":10,"phase":10},
                        {"max_pending":0}):
