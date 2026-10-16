@@ -96,7 +96,11 @@ class SemanCompiledReader:
                  construction_guard: bool = False,
                  fast_multiword: bool = False,
                  early_construction_guard: bool = False,
-                 token_only_lattice: bool = False):
+                 token_only_lattice: bool = False,
+                 infer_unary_promotions: bool = False,
+                 reduce_checkpoints: bool = False,
+                 parent_follow_reduce: bool = False,
+                 reduce_follow_only: bool = False):
         return cls(ParserResources.from_dir(directory, wordnet_dict=wordnet_dict),
                    verbnet_index=verbnet_index, verbnet_mode=verbnet_mode,
                    structural_lookahead=structural_lookahead, checkpoint_budget=checkpoint_budget,

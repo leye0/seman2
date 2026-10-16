@@ -84,6 +84,32 @@ MODES = (
 )
 
 
+def reader_options(name: str, budget: int) -> dict:
+    """Options shared in meaning with benchmark_verbnet_reader's modes.
+
+    Keep this explicit and regression-tested rather than using a separate
+    grammar/lattice configuration for the grammatical negative controls.
+    """
+    return dict(
+        checkpoint_budget=budget,
+        stack_checkpoints=bool(budget) or name.endswith("guard0"),
+        construction_guard=name.startswith((
+            "R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_",
+            "AC_", "AD_", "AF_", "AG_", "AH_", "AI_", "AJ_",
+            "AK_", "AL_", "AM_", "AN_", "AO_", "AP_")),
+        fast_multiword=name.startswith(("V_", "W_", "X_", "AE_", "AF_", "AG_")),
+        early_construction_guard=name.startswith(("Y_", "Z_", "AA_")),
+        token_only_lattice=name.startswith((
+            "AB_", "AC_", "AD_", "AE_", "AF_", "AG_", "AH_",
+            "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_")),
+        infer_unary_promotions=name.startswith((
+            "AH_", "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_")),
+        reduce_checkpoints=name.startswith(("AK_", "AL_", "AM_", "AN_", "AO_", "AP_")),
+        parent_follow_reduce=name.startswith(("AM_", "AN_")),
+        reduce_follow_only=name.startswith(("AO_", "AP_")),
+    )
+
+
 def run(wordnet_dir=None, corpus=None, repetitions=2):
     corpus = Path(corpus or ROOT / "research" / "verbnet_lr" / "negative_minimal_pairs.jsonl")
     cases = [json.loads(line) for line in corpus.read_text(encoding="utf-8").splitlines() if line.strip()]
@@ -93,18 +119,11 @@ def run(wordnet_dir=None, corpus=None, repetitions=2):
         if case["label"] != "ungrammatical_standard_written_english":
             raise ValueError("Negative labels must be explicit and separate")
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
+    # Keep these configurations identical to the positive benchmark.
+    # In particular, AK..AP *also* use token-only lexical lattices and
+    # inferred unary promotions; omitting either silently invalidates A/B.
     machines = {
-        name: SemanCompiledReader(
-            resources, checkpoint_budget=budget,
-            stack_checkpoints=bool(budget) or name.endswith("guard0"),
-            construction_guard=name.startswith(("R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_", "AC_", "AD_", "AF_", "AG_", "AH_", "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_")),
-            fast_multiword=name.startswith(("V_", "W_", "X_", "AE_", "AF_", "AG_")),
-            early_construction_guard=name.startswith(("Y_", "Z_", "AA_")),
-            token_only_lattice=name.startswith(("AB_", "AC_", "AD_", "AE_", "AF_", "AG_", "AH_", "AI_", "AJ_")),
-            infer_unary_promotions=name.startswith(("AH_", "AI_", "AJ_", "AK_", "AL_")),
-            reduce_checkpoints=name.startswith(("AK_", "AL_", "AM_", "AN_", "AO_", "AP_")),
-            parent_follow_reduce=name.startswith(("AM_", "AN_")),
-            reduce_follow_only=name.startswith(("AO_", "AP_")))
+        name: SemanCompiledReader(resources, **reader_options(name, budget))
         for name, budget in MODES
     }
     # Warm each unique sentence equally for all modes; measure end-to-end
