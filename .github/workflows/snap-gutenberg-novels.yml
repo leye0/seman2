@@ -8,6 +8,7 @@ on:
       - '.github/workflows/snap-gutenberg-novels.yml'
       - 'superparser/scripts/benchmark_snap_novels.py'
       - 'superparser/research/verbnet_lr/gutenberg_novels.py'
+      - 'superparser/tests/test_verbnet_lr_gutenberg_novels.py'
       - 'superparser/research/verbnet_lr/sampled_teacher.py'
   workflow_dispatch:
 
