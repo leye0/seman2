@@ -58,7 +58,8 @@ class LocalCheckpointReader(IncrementalReader):
                  max_checkpoints: int = 24,
                  reduce_checkpoints: bool = False,
                  parent_follow_reduce: bool = False,
-                 reduce_follow_only: bool = False, **kwargs):
+                 reduce_follow_only: bool = False,
+                 reachable_checkpoints_only: bool = False, **kwargs):
         if not isinstance(replay_budget, int) or not 0 <= replay_budget <= 6:
             raise ValueError("replay_budget must be in 0..6")
         if not isinstance(max_checkpoints, int) or not 1 <= max_checkpoints <= 128:
@@ -73,6 +74,7 @@ class LocalCheckpointReader(IncrementalReader):
         if reduce_follow_only and not reduce_checkpoints:
             raise ValueError("reduce_follow_only requires reduce_checkpoints")
         self.reduce_follow_only = reduce_follow_only
+        self.reachable_checkpoints_only = reachable_checkpoints_only
         self._stack: list[_Frame] = []
         self._snapshots: list[_Snapshot] = []
         self._forced: tuple[int, int, str] | None = None
@@ -127,7 +129,7 @@ class LocalCheckpointReader(IncrementalReader):
                 # This is the already-saved checkpoint being resumed.
                 self._forced = None
                 return
-        if not has_reduce_choice:
+        if self.reachable_checkpoints_only and not has_reduce_choice:
             # Static dispatch is a sound *necessary* condition for another
             # grammar edge. If no different RHS symbol is reachable from
             # the current lexical categories (under the live rule mask),
