@@ -87,15 +87,24 @@ class ConstructionGuard:
         if root is None: return Check(False, "missing_tree")
         for node in _walk(root):
             children = getattr(node, "children", ())
+            # Morphology must support the candidate's selected grammatical
+            # form: a surface such as "did" cannot be a BASE reading of "do".
+            candidate = getattr(node, "candidate", None)
+            if candidate is not None and candidate.category == "V":
+                vform = _features(candidate).get("vform")
+                if vform == "base" and (
+                    candidate.surface.casefold() != candidate.lemma.casefold()
+                ):
+                    return Check(False, "surface_not_base_verb")
             if node.category == "NP" and children:
                 lex = tuple(_leaves(node))
                 head = _head(node)
                 if lex and head is not None:
                     word = lex[0].surface.casefold()
                     n = _subject(head)[0]
-                    if word in {"a","an","this","that","each","every"} and n == "plural":
+                    if lex[0].category == "DET" and word in {"a","an","this","that","each","every"} and n == "plural":
                         return Check(False, "singular_determiner_plural_head")
-                    if word in {"these","those"} and n == "singular":
+                    if lex[0].category == "DET" and word in {"these","those"} and n == "singular":
                         return Check(False, "plural_determiner_singular_head")
             if node.category == "CLAUSE" and len(children) >= 2 and children[0].category == "NP":
                 subj = _head(children[0])
