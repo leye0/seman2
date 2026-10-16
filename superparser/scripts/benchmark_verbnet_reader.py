@@ -215,6 +215,16 @@ def run(index_file: str, *, wordnet_dir: str | None, max_cases: int,
             resources, stack_checkpoints=True, checkpoint_budget=3,
             construction_guard=True, token_only_lattice=True,
             infer_unary_promotions=True, reduce_checkpoints=True),
+        "AM_parent_follow1": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=1,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            parent_follow_reduce=True),
+        "AN_parent_follow3": SemanCompiledReader(
+            resources, stack_checkpoints=True, checkpoint_budget=3,
+            construction_guard=True, token_only_lattice=True,
+            infer_unary_promotions=True, reduce_checkpoints=True,
+            parent_follow_reduce=True),
     }
     cases = sentence_cases(corpus, max_cases)
     if not cases:
