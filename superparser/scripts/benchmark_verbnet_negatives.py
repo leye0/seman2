@@ -83,6 +83,8 @@ MODES = (
     ("AP_follow_only3", 3),
     ("AQ_reachable_guard1", 1),
     ("AR_reachable_guard3", 3),
+    ("AS_prefix_guard1", 1),
+    ("AT_prefix_guard3", 3),
 )
 
 
@@ -98,18 +100,19 @@ def reader_options(name: str, budget: int) -> dict:
         construction_guard=name.startswith((
             "R_", "S_", "T_", "U_", "W_", "X_", "Y_", "Z_", "AA_",
             "AC_", "AD_", "AF_", "AG_", "AH_", "AI_", "AJ_",
-            "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_")),
+            "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_")),
         fast_multiword=name.startswith(("V_", "W_", "X_", "AE_", "AF_", "AG_")),
         early_construction_guard=name.startswith(("Y_", "Z_", "AA_")),
         token_only_lattice=name.startswith((
             "AB_", "AC_", "AD_", "AE_", "AF_", "AG_", "AH_",
-            "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_")),
+            "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_")),
         infer_unary_promotions=name.startswith((
-            "AH_", "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_")),
-        reduce_checkpoints=name.startswith(("AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_")),
+            "AH_", "AI_", "AJ_", "AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_")),
+        reduce_checkpoints=name.startswith(("AK_", "AL_", "AM_", "AN_", "AO_", "AP_", "AQ_", "AR_", "AS_", "AT_")),
         parent_follow_reduce=name.startswith(("AM_", "AN_")),
         reduce_follow_only=name.startswith(("AO_", "AP_")),
-        reachable_checkpoints_only=name.startswith(("AQ_", "AR_")),
+        reachable_checkpoints_only=name.startswith(("AQ_", "AR_", "AS_", "AT_")),
+        terminal_prefix_preference=name.startswith(("AS_", "AT_")),
     )
 
 
