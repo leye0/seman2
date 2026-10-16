@@ -14,10 +14,10 @@ class GutenbergNovelTests(unittest.TestCase):
                          {b.author for b in TEST_BOOKS})
 
     def test_boilerplate_excluded(self):
-        book=("DO NOT TRAIN THIS HEADER\\n"
-              "*** START OF THE PROJECT GUTENBERG EBOOK TEST ***\\n"
-              + ("Elizabeth went to the garden. Darcy stayed inside.\\n\\n"*600)
-              + "*** END OF THE PROJECT GUTENBERG EBOOK TEST ***\\n"
+        book=("DO NOT TRAIN THIS HEADER\n"
+              "*** START OF THE PROJECT GUTENBERG EBOOK TEST ***\n"
+              + ("Elizabeth went to the garden. Darcy stayed inside.\n\n"*600)
+              + "*** END OF THE PROJECT GUTENBERG EBOOK TEST ***\n"
               "DO NOT TRAIN THIS LICENSE")
         core=strip_gutenberg(book)
         self.assertNotIn("LICENSE",core)
@@ -30,7 +30,7 @@ class GutenbergNovelTests(unittest.TestCase):
 
     def test_abbreviations_not_split_into_fake_sentences(self):
         core=("Dr. Watson saw Mr. Holmes approaching the house. "
-              "They entered and discussed their strange visitor.\\n\\n"*400)
+              "They entered and discussed their strange visitor.\n\n"*400)
         parts=list(sentences(core))
         self.assertIn("Dr. Watson saw Mr. Holmes approaching the house.",parts)
         self.assertIn("They entered and discussed their strange visitor.",parts)
