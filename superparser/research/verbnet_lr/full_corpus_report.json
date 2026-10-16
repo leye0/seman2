@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "source": {
+    "verbnet_repo": "cu-clear/verbnet",
+    "revision": "ae8e9cfdc2c0d3414b748763612f1a0a34194cc1",
+    "wordnet_sense_index": "/home/runner/work/_temp/wordnet-index.sense",
+    "sense_alignment_enabled": true
+  },
+  "compilation": {
+    "xml_files": 329,
+    "frames_seen": 1602,
+    "members": 6740,
+    "frames_unsupported": 42,
+    "members_exact": 2,
+    "compiled_frames": 28563,
+    "lemmas": 4567,
+    "duration_ms": 1011.808,
+    "peak_compilation_plus_warmup_memory_mb": 35.684,
+    "frames_with_exact_link": 5,
+    "frames_lemma_only": 4861,
+    "frames_unresolved": 23697
+  },
+  "coverage_on_seman2_validation": {
+    "total": 120,
+    "predicate_present": 120,
+    "predicate_in_verbnet": 120,
+    "by_split": {
+      "dev": {
+        "total": 50,
+        "predicate_present": 50,
+        "predicate_in_verbnet": 50
+      },
+      "validation": {
+        "total": 50,
+        "predicate_present": 50,
+        "predicate_in_verbnet": 50
+      },
+      "holdout": {
+        "total": 20,
+        "predicate_present": 20,
+        "predicate_in_verbnet": 20
+      }
+    },
+    "missing_predicates": []
+  },
+  "manual_event_cases": {
+    "totals": {
+      "cases": 16,
+      "positive": 9,
+      "attested_attested": 9,
+      "contrast": 7,
+      "unknown_contrast": 7
+    },
+    "observations": [
+      {
+        "id": "give_dative",
+        "text": "She gave John a book.",
+        "oracle_events": [
+          "NP",
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 3
+      },
+      {
+        "id": "give_to",
+        "text": "She gave a book to John.",
+        "oracle_events": [
+          "NP",
+          "PREP:to",
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 2
+      },
+      {
+        "id": "lend_to",
+        "text": "They lent a bicycle to me.",
+        "oracle_events": [
+          "NP",
+          "PREP:to",
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 1
+      },
+      {
+        "id": "lend_dative",
+        "text": "They lent me a bicycle.",
+        "oracle_events": [
+          "NP",
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 1
+      },
+      {
+        "id": "lend_transitive",
+        "text": "They lent a bicycle.",
+        "oracle_events": [
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 3
+      },
+      {
+        "id": "help_np",
+        "text": "I helped him.",
+        "oracle_events": [
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 4
+      },
+      {
+        "id": "help_with_np",
+        "text": "I helped him with homework.",
+        "oracle_events": [
+          "NP",
+          "PREP:with",
+          "NP"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 1
+      },
+      {
+        "id": "help_with_ing",
+        "text": "I helped with finishing the homework.",
+        "oracle_events": [
+          "PREP:with",
+          "GERUND"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 1
+      },
+      {
+        "id": "help_inf",
+        "text": "I helped him to finish the homework.",
+        "oracle_events": [
+          "NP",
+          "TO_INF"
+        ],
+        "expected": "attested",
+        "predicted": "ATTESTED",
+        "matching_frames": 1
+      },
+      {
+        "id": "give_bad_prep",
+        "text": "She gave a book under John.",
+        "oracle_events": [
+          "NP",
+          "PREP:under",
+          "NP"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      },
+      {
+        "id": "lend_bad_prep",
+        "text": "They lent a bicycle at me.",
+        "oracle_events": [
+          "NP",
+          "PREP:at",
+          "NP"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      },
+      {
+        "id": "lend_bad_sequence",
+        "text": "They lent to John a book.",
+        "oracle_events": [
+          "PREP:to",
+          "NP",
+          "NP"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      },
+      {
+        "id": "help_bad_prep",
+        "text": "I helped him under homework.",
+        "oracle_events": [
+          "NP",
+          "PREP:under",
+          "NP"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      },
+      {
+        "id": "give_too_many",
+        "text": "She gave John a book a pen.",
+        "oracle_events": [
+          "NP",
+          "NP",
+          "NP"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      },
+      {
+        "id": "give_bare_inf",
+        "text": "She gave John to walk.",
+        "oracle_events": [
+          "NP",
+          "TO_INF"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      },
+      {
+        "id": "help_inf_bad_prep",
+        "text": "I helped him by to finish.",
+        "oracle_events": [
+          "NP",
+          "PREP:by",
+          "TO_INF"
+        ],
+        "expected": "contrast",
+        "predicted": "UNKNOWN",
+        "matching_frames": 0
+      }
+    ],
+    "warning": "Manual event annotations, not parse outputs; contrast UNKNOWN does not imply ungrammaticality."
+  },
+  "lookup_benchmark": {
+    "calls": 20000,
+    "distinct_cases": 250,
+    "rate_calls_per_sec": 243093.57,
+    "median_us": 3.766,
+    "p95_us": 5.048,
+    "p99_us": 6.72,
+    "max_us": 200.369,
+    "note": "Isolated warmed index.lookup; excludes recognition, morphology and full parsing."
+  },
+  "limitations": [
+    "No full Seman2 parser invocation",
+    "No estimated precision/recall of grammaticality",
+    "VerbNet is incomplete; UNKNOWN is not rejection",
+    "Memory includes warmed tries and temporary allocations",
+    "The oracle examples are manually annotated, not automatically parsed"
+  ]
+}
