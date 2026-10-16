@@ -56,6 +56,10 @@ MODES = (
     ("N_local_snapshot1", 1),
     ("O_local_snapshot2", 2),
     ("P_local_snapshot3", 3),
+    ("R_guard0", 0),
+    ("S_guard1", 1),
+    ("T_guard2", 2),
+    ("U_guard3", 3),
 )
 
 
@@ -70,7 +74,9 @@ def run(wordnet_dir=None, corpus=None, repetitions=2):
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
     machines = {
         name: SemanCompiledReader(
-            resources, checkpoint_budget=budget, stack_checkpoints=bool(budget))
+            resources, checkpoint_budget=budget,
+            stack_checkpoints=bool(budget) or name.endswith("guard0"),
+            construction_guard=name.startswith(("R_", "S_", "T_", "U_")))
         for name, budget in MODES
     }
     # Warm each unique sentence equally for all modes; measure end-to-end
