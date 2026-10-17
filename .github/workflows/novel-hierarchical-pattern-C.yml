@@ -1,0 +1,67 @@
+name: Hierarchical Grammatical Pattern C Research
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/benchmark_novel_hierarchical_patterns.py'
+      - 'superparser/research/verbnet_lr/hierarchical_pattern_memory.py'
+      - 'superparser/tests/test_verbnet_lr_hierarchical_pattern_memory.py'
+      - '.github/workflows/novel-hierarchical-pattern-C.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check recursion and original unification rules
+        run: |
+          PYTHONPATH=superparser python -m unittest \
+            superparser.tests.test_verbnet_lr_hierarchical_pattern_memory \
+            superparser.tests.test_verbnet_lr_partial_structure_memory -v
+      - name: Fetch reproducible WordNet lexicon
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import urlopen,Request
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as f: raw=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          allowed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for n in ('noun','verb','adj','adv'):
+              allowed.update({f'index.{n}',f'data.{n}',f'{n}.exc'})
+          with ZipFile(BytesIO(raw)) as z:
+              for name in z.namelist():
+                  base=Path(name).name
+                  if name.startswith('wordnet/') and base in allowed:
+                      (dest/base).write_bytes(z.read(name))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Learn C structures and test unseen authors
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_hierarchical_patterns.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --train 2000 --eval-per-band 20 --max-span 18 \
+            --max-expansions 5000 --max-wall-ms 100 \
+            --out /tmp/seman2-hierarchical-C-report.json
+      - name: Preserve aggregate results, no book text
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-hierarchical-C-report
+          path: /tmp/seman2-hierarchical-C-report.json
+          if-no-files-found: warn
+          retention-days: 30
