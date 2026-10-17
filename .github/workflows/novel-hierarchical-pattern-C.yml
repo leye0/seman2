@@ -50,18 +50,49 @@ jobs:
                       (dest/base).write_bytes(z.read(name))
           assert (dest/'index.verb').exists()
           PY
-      - name: Learn C structures and test unseen authors
+      - name: Measure original 100 ms research horizon
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_hierarchical_patterns.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --train 2000 --eval-per-band 20 --max-span 18 \
-            --max-expansions 5000 --max-wall-ms 100 \
-            --out /tmp/seman2-hierarchical-C-report.json
-      - name: Preserve aggregate results, no book text
+            --max-expansions 20000 --max-wall-ms 100 \
+            --out /tmp/seman2-hierarchical-C-100ms.json
+      - name: Explore deeper matching with 500 ms horizon
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_hierarchical_patterns.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --train 2000 --eval-per-band 20 --max-span 18 \
+            --max-expansions 20000 --max-wall-ms 500 \
+            --out /tmp/seman2-hierarchical-C-500ms.json
+      - name: Compare on identical test cases and search budgets
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path('/tmp/seman2-hierarchical-C-100ms.json').read_text())
+          b=json.loads(Path('/tmp/seman2-hierarchical-C-500ms.json').read_text())
+          assert a['book_catalog']==b['book_catalog']
+          assert a['training_counts']==b['training_counts']
+          assert a['learned_pattern_system']==b['learned_pattern_system']
+          assert a['budget']['max_expansions']==b['budget']['max_expansions']
+          assert a['budget']['variants_per_cell']==b['budget']['variants_per_cell']
+          columns=['tested','NEW_tree_at_least_5_tokens','NEW_tree_at_least_8_tokens',
+                   'NEW_tree_at_least_12_tokens','budget_truncated',
+                   'grammar_unifications_attempted','grammar_unifications_passed']
+          result={name:{'budget_ms':x['budget']['max_wall_ms'],
+                        'metrics':{k:x['heldout_counts'][k] for k in columns},
+                        'latency_ms':x['latency_ms'],
+                        'cutoffs':x['search_cutoff_reason_counts']}
+                  for name,x in [('100ms',a),('500ms',b)]}
+          Path('/tmp/seman2-hierarchical-C-comparison.json').write_text(
+              json.dumps(result,indent=2)+'\\n')
+          print('C_BUDGET_COMPARISON '+json.dumps(result),flush=True)
+          PY
+      - name: Preserve both reports and controlled comparison
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: seman2-hierarchical-C-report
-          path: /tmp/seman2-hierarchical-C-report.json
+          name: seman2-hierarchical-C-100-vs-500-ms
+          path: /tmp/seman2-hierarchical-C-*.json
           if-no-files-found: warn
           retention-days: 30

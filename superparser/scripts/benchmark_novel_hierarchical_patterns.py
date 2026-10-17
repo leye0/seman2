@@ -40,8 +40,8 @@ def quantile(data,ratio):
 
 
 def run(*,wordnet_dir,train_size=2000,eval_per_band=20,
-        min_rule_support=2,max_span=18,max_expansions=5000,
-        max_wall_ms=100,variants_per_cell=2):
+        min_rule_support=2,max_span=18,max_expansions=20000,
+        max_wall_ms=500,variants_per_cell=2):
     train_books={};test_books={};catalog=[]
     for book in (*TRAIN_BOOKS,*TEST_BOOKS):
         body,meta=download(book)
@@ -93,6 +93,7 @@ def run(*,wordnet_dir,train_size=2000,eval_per_band=20,
     by_length=defaultdict(Counter)
     by_book=defaultdict(Counter)
     categories=Counter()
+    cutoffs=Counter()
     timings=[]
     longest_examples=Counter()
     for i,case in enumerate(evaluation,1):
@@ -100,6 +101,8 @@ def run(*,wordnet_dir,train_size=2000,eval_per_band=20,
         result=reader.parse(case["text"],lattice=lattice)
         matched=learner.match(lattice,min_report_tokens=3)
         timings.append(matched.elapsed_ms)
+        for reason in matched.cutoff_reasons:
+            cutoffs[reason]+=1
         novelty=any(h.structurally_novel for h in matched.hits)
         for b in (totals,by_length[length_band(case["tokens"])],
                   by_book[str(case["book_id"])]):
@@ -142,6 +145,7 @@ def run(*,wordnet_dir,train_size=2000,eval_per_band=20,
         "heldout_by_length":{k:dict(v) for k,v in sorted(by_length.items())},
         "heldout_by_book":dict(by_book),
         "long_novel_tree_categories":dict(categories),
+        "search_cutoff_reason_counts":dict(cutoffs),
         "longest_hit_length_distribution":dict(longest_examples),
         "latency_ms":{"p50":quantile(timings,.5),
                       "p95":quantile(timings,.95),
@@ -171,8 +175,8 @@ def main():
     p.add_argument("--wordnet-dir",required=True)
     p.add_argument("--train",type=int,default=2000)
     p.add_argument("--eval-per-band",type=int,default=20)
-    p.add_argument("--max-expansions",type=int,default=5000)
-    p.add_argument("--max-wall-ms",type=int,default=100)
+    p.add_argument("--max-expansions",type=int,default=20000)
+    p.add_argument("--max-wall-ms",type=int,default=500)
     p.add_argument("--max-span",type=int,default=18)
     p.add_argument("--out",type=Path,required=True)
     a=p.parse_args()
@@ -187,6 +191,7 @@ def main():
         "patterns":report["learned_pattern_system"],
         "holdout":report["heldout_counts"],
         "latency_ms":report["latency_ms"],
+        "cutoff_reasons":report["search_cutoff_reason_counts"],
     }),flush=True)
 
 

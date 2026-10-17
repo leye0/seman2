@@ -126,6 +126,7 @@ class HierarchicalPatternTests(unittest.TestCase):
         query=self.make(["the","dog","near","a","house","near","the","cat"])
         result=self.memory.match(query)
         self.assertTrue(result.incomplete)
+        self.assertIn("expansion_budget",result.cutoff_reasons)
 
 
 if __name__=="__main__":

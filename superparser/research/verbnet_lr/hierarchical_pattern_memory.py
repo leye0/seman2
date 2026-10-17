@@ -46,6 +46,7 @@ class HierarchicalMatchReport:
     incomplete: bool
     elapsed_ms: float
     input_tokens: int
+    cutoff_reasons: tuple[str, ...] = ()
 
     def longest(self) -> int:
         return max((x.tokens for x in self.hits), default=0)
@@ -67,7 +68,7 @@ class HierarchicalPatternMemory:
     def __init__(self, resources, *, min_rule_sentences=2,
                  max_span=18, max_rule_arity=4,
                  variants_per_cell=2, max_expansions=12_000,
-                 max_wall_ms=150):
+                 max_wall_ms=500):
         if min(min_rule_sentences,max_span,max_rule_arity,variants_per_cell,
                max_expansions,max_wall_ms)<1:
             raise ValueError("All budgets must be positive")
@@ -205,6 +206,7 @@ class HierarchicalPatternMemory:
         expansions=0
         successful=0
         incomplete=False
+        cutoff_reasons=set()
         hits=[]
         seen_hits=set()
         seen_cell_shapes=defaultdict(set)
@@ -219,6 +221,7 @@ class HierarchicalPatternMemory:
                 return False
             if len(cells[key])>=variants:
                 incomplete=True
+                cutoff_reasons.add("cell_variant_beam")
                 return False
             seen_cell_shapes[key].add(ident)
             cells[key].append(node)
@@ -242,9 +245,14 @@ class HierarchicalPatternMemory:
             for left in range(n-width+1):
                 if halted:break
                 right=left+width
-                if (perf_counter()>deadline or
-                        expansions>=self.max_expansions):
-                    incomplete=True;halted=True;break
+                if perf_counter()>deadline:
+                    incomplete=True;halted=True
+                    cutoff_reasons.add("wall_time")
+                    break
+                if expansions>=self.max_expansions:
+                    incomplete=True;halted=True
+                    cutoff_reasons.add("expansion_budget")
+                    break
                 if width>=2:
                     # Rules indexed by first grammatical category, not all
                     # productions scanned for each token/window.
@@ -255,8 +263,13 @@ class HierarchicalPatternMemory:
                             # Ordered contiguous RHS over a bounded span.
                             def choices(i,at,selected):
                                 nonlocal expansions,incomplete
-                                if expansions>=self.max_expansions or perf_counter()>deadline:
+                                if perf_counter()>deadline:
                                     incomplete=True
+                                    cutoff_reasons.add("wall_time")
+                                    return
+                                if expansions>=self.max_expansions:
+                                    incomplete=True
+                                    cutoff_reasons.add("expansion_budget")
                                     return
                                 if i==len(rule.rhs):
                                     if at!=right:return
@@ -278,7 +291,9 @@ class HierarchicalPatternMemory:
                             for _ in choices(0,left,[]):
                                 pass
                             if expansions>=self.max_expansions:
-                                incomplete=True;halted=True;break
+                                incomplete=True;halted=True
+                                cutoff_reasons.add("expansion_budget")
+                                break
                         if halted:break
                 # Unary closure is allowed only when the base constituent
                 # already exists, with an explicit cycle/budget bound.
@@ -287,7 +302,9 @@ class HierarchicalPatternMemory:
                     for rule in unary:
                         for node in tuple(cells.get((left,right,rule.rhs[0].category),())):
                             if expansions>=self.max_expansions:
-                                incomplete=True;halted=True;break
+                                incomplete=True;halted=True
+                                cutoff_reasons.add("expansion_budget")
+                                break
                             expansions+=1
                             result=PredictiveParser._reduce(rule,(node,))
                             if result is not None:
@@ -304,7 +321,7 @@ class HierarchicalPatternMemory:
                 filtered[key]=h
         return HierarchicalMatchReport(
             tuple(filtered.values()),expansions,successful,incomplete,
-            (perf_counter()-begin)*1000,n)
+            (perf_counter()-begin)*1000,n,tuple(sorted(cutoff_reasons)))
 
     @staticmethod
     def _compact_shape(node):
