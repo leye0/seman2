@@ -243,6 +243,11 @@ def run(wordnet_dir,*,size=50000,max_tokens=32,max_items=20000,
                 second["fallback_timeout"]+=1
             second["fallback_ms"]+=int((perf_counter()-parse_start)*1000)
         total_ms=(perf_counter()-total_start)*1000.
+        if snap is not None and snap.complete:
+            durations["replay_snap_hits"].append(total_ms)
+            durations["baseline_on_snap_hits"].append(durations["pass1"][i])
+        else:
+            durations["replay_fallbacks"].append(total_ms)
         cumulative_second+=total_ms
         durations["pass2"].append(total_ms)
         durations["snap_search"].append(match_ms)
@@ -270,6 +275,12 @@ def run(wordnet_dir,*,size=50000,max_tokens=32,max_items=20000,
                 "p50_replay_ms":quantile(durations["pass2"],.5),
                 "p75_replay_ms":quantile(durations["pass2"],.75),
                 "p90_replay_ms":quantile(durations["pass2"],.9),
+                "p95_replay_ms":quantile(durations["pass2"],.95),
+                "p50_baseline_ms":quantile(durations["pass1"][:i+1],.5),
+                "p95_baseline_ms":quantile(durations["pass1"][:i+1],.95),
+                "recall_of_indexed_pct":round(100*second["own_template_recovered"]/replayed_stored,3) if replayed_stored else None,
+                "lexical_fidelity_on_snap_hits_pct":round(100*second["chosen_lexical_identical"]/second["snap_hit"],3) if second["snap_hit"] else None,
+                "complete_tree_fidelity_on_snap_hits_pct":round(100*second["chosen_tree_identical"]/second["snap_hit"],3) if second["snap_hit"] else None,
             }
             curve.append(point)
             print("CURVE",json.dumps(point,separators=(",",":")),flush=True)
@@ -289,7 +300,7 @@ def run(wordnet_dir,*,size=50000,max_tokens=32,max_items=20000,
                 "by_length":{k:dict(v) for k,v in by_length.items()},
                 "time_percentiles_ms":{
                     name:{p:quantile(t,pct) for p,pct in (
-                        ("p50",.5),("p75",.75),("p90",.9))}
+                        ("p50",.5),("p75",.75),("p90",.9),("p95",.95))}
                     for name,t in durations.items()},
                 "curve":curve,
                 "clarifications":[
@@ -330,6 +341,8 @@ def main():
         "chosen_lexical_equal":s["chosen_lexical_identical"],
         "chosen_tree_equal":s["chosen_tree_identical"],
         "time":r["curve"][-1],
+        "baseline_latency_ms":r["time_percentiles_ms"]["pass1"],
+        "replay_latency_ms":r["time_percentiles_ms"]["pass2"],
     },separators=(",",":")),flush=True)
 
 
