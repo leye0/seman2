@@ -57,3 +57,56 @@ Short reproducibility smoke:
 .github/workflows/snap-gutenberg-online-smoke.yml.
 This smoke checks every one of 2,500 training sentence observations rather
 than only 250 sampled sentences, but skips the long full-novel evaluation.
+
+## Crucial correction: lexical-category alternatives denote disjunctions
+
+The 50k report originally claimed just 342 exact lexical fingerprints were
+repeated. **This was the wrong question and those figures must not be used
+as grammar pattern recurrence evidence.** It compared the full set of
+alternative categories at each position for literal equality.
+
+Example:
+
+  sentence A: {DET} {N,V} {V,N,ADJ}
+  sentence B: {DET,PRONOUN} {N,ADJ} {V,ADV}
+
+Both admit the SAME complete lexical enumeration: DET N V.
+Additional meanings or POS alternatives MUST NOT destroy this hit.
+
+The corrected code stores every observed per-token category DISJUNCTION
+and reports a hit if there exists at least one complete category assignment
+common to two previously distinct sentences. The query is exactly:
+
+  (A_1 intersection B_1 != empty) AND
+  (A_2 intersection B_2 != empty) AND ... AND
+  (A_N intersection B_N != empty)
+
+No Cartesian product needs to be explicitly materialized. The implementation
+in compatible_category_sequences.py uses integer bitset postings:
+at each word position OR the sets of observed sentences containing ANY
+of the candidate categories; then AND the bitsets across positions.
+Its memory is proportional to observed alternatives, NOT exponentially
+in the product of possible categories per word.
+
+The new report key is compatible_category_enumerations:
+- observations_with_at_least_one_prior_compatible_sequence;
+- total_prior_observations_compatible_across_queries;
+- number of sentences indexed, including those with unrecognized tokens.
+
+No phrase's lexical candidate list is modified or pruned by this index.
+Separately, FullStructureSnapIndex.match already navigates its trie using
+ANY available category edge at every position (not an exact set fingerprint).
+Once a known complete tree matches a lexical enumeration, it MUST still pass
+grammar feature unification, agreement/valency restrictions and the
+construction guard. A shared sequence of POS categories is not proof of
+a shared valid derivation or intended meaning.
+
+Tested by:
+  superparser/tests/test_verbnet_lr_compatible_category_sequences.py
+  superparser/tests/test_snap_novels_online.py
+  superparser/tests/test_verbnet_lr_full_structure_snap.py
+
+**Caveats**: this still relies on the categories actually emitted by the
+lexicon; WordNet's configured sense ceiling may limit which grammatical
+readings are available. The whole-tree cache still uses exact rule
+derivations and explicit exploration budgets. These are separate problems.
