@@ -20,7 +20,7 @@ import json
 
 from research.verbnet_lr.compiled_structure_snap import CompiledStructureReplayer
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, download, extract
-from scripts.benchmark_snap_50k_two_pass import deadline, Deadline, quantile
+from scripts.benchmark_snap_50k_two_pass import quantile
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
 
@@ -43,7 +43,7 @@ def occurrence_readings(occ):
         for c in occ.lexical_slots)
 
 
-def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
+def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
     # ONE genuine novel, not mixed Gutenberg texts; order in the novel retained.
     novel=TRAIN_BOOKS[0]
     raw,info=download(novel)
@@ -67,15 +67,14 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
     for i,row in enumerate(corpus):
         t=perf_counter_ns()
         lattice=build_lattice(row["text"],resources.lexicon,multiword_max=1)
-        try:
-            with deadline(timeout):
-                report=native._vector_grammar.parse_lattice(
-                    lattice,beam=native.beam,max_items=20000,
-                    goal_category=native.goal_category)
-                item=report.best() if report.completed else None
-        except Deadline:
-            item=None
-            stats["first_timeout"]+=1
+        # NO per-sentence time limit: a slow grammatical analysis is
+        # allowed to finish, even if it takes seconds or minutes.
+        report=native._vector_grammar.parse_lattice(
+            lattice,beam=native.beam,max_items=20000,
+            goal_category=native.goal_category)
+        item=report.best() if report.completed else None
+        if item is None:
+            stats["first_incomplete"]+=1
         timings["first_pass_ms"].append((perf_counter_ns()-t)/1e6)
         stats["first_seen"]+=1
         if item is not None:
@@ -87,8 +86,9 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
                 stats["indexed"]+=1
                 if memory.plans[template_id] is not None:
                     stats["compiled_safe"]+=1
-            except (ValueError,OverflowError):
+            except (ValueError,OverflowError) as exc:
                 stats["not_indexable"]+=1
+                stats["not_indexable_reason_"+str(exc)]+=1
             indexing_ns+=perf_counter_ns()-start
         if (i+1)%checkpoint==0:
             print("TRAIN",json.dumps({
@@ -104,7 +104,7 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
         lattice=build_lattice(row["text"],resources.lexicon,multiword_max=1)
         lex_ns=perf_counter_ns()-t
         start=perf_counter_ns()
-        hit=memory.replay(lattice,max_templates_checked=32)
+        hit=memory.replay(lattice)
         match_ns=perf_counter_ns()-start
         timings["compiled_lookup_all_ms"].append(match_ns/1e6)
         timings["lexing_ms"].append(lex_ns/1e6)
@@ -130,25 +130,41 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
         else:
             stats["fallback"]+=1
             stats["fallback_due_to_"+hit.reason]+=1
-            try:
-                with deadline(timeout):
-                    report=native._vector_grammar.parse_lattice(
-                        lattice,beam=native.beam,max_items=20000,
-                        goal_category=native.goal_category)
-                    if report.completed:
-                        stats["fallback_complete"]+=1
-            except Deadline:
-                stats["fallback_timeout"]+=1
+            report=native._vector_grammar.parse_lattice(
+                lattice,beam=native.beam,max_items=20000,
+                goal_category=native.goal_category)
+            if report.completed:
+                stats["fallback_complete"]+=1
             total_ns=perf_counter_ns()-t
             timings["fallback_ms"].append(total_ns/1e6)
             timings["second_pass_ms"].append(total_ns/1e6)
+            # Audit is intentionally outside the timed replay/fallback.
+            if i in source:
+                stats["indexed_but_missed"]+=1
+        # INDEPENDENT self-replay audit. No oracle guides the actual matcher.
+        if i in source:
+            template_id=source[i][0]
+            plan=memory.plans[template_id]
+            if plan is None:
+                stats["indexed_uncompiled"]+=1
+            else:
+                options=memory._lexical_slots(lattice)
+                own=memory._fill(plan,options,max_candidates_per_slot=None)
+                if own is None:
+                    stats["own_compiled_fill_failed"]+=1
+                else:
+                    stats["own_compiled_fill_valid"]+=1
+            if hit.complete:
+                stats["indexed_with_hit"]+=1
         if (i+1)%checkpoint==0:
             print("REPLAY",json.dumps({
                 "seen":i+1,"hits":stats["hits"],"fallback":stats["fallback"],
                 "hit_p50_ms":quantile(timings["hit_ms"],.5),
                 "hit_p95_ms":quantile(timings["hit_ms"],.95),
                 "hit_worst_ms":round(max(timings["hit_ms"]),5) if timings["hit_ms"] else None,
-                "hit_over_1ms":stats["hit_over_1ms"]
+                "hit_over_1ms":stats["hit_over_1ms"],
+                "indexed_but_missed":stats["indexed_but_missed"],
+                "own_compiled_fill_valid":stats["own_compiled_fill_valid"]
             }),flush=True)
 
     percentiles={
@@ -172,6 +188,9 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
         "training":dict(stats),
         "unique_structures":len(memory.index.templates),
         "compiled_plans":sum(x is not None for x in memory.plans),
+        "indexed_self_replayable_pct":round(
+            100*stats["own_compiled_fill_valid"]/stats["indexed"],3)
+            if stats["indexed"] else None,
         "time":percentiles,
         "reuse":{
             "cached_hit_rate_pct":round(100*hit/size,3),
@@ -195,6 +214,8 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,timeout=.35,checkpoint=250):
             "all_hits_under_1ms":stats["hit_over_1ms"]==0,
             "hit_p95_under_1ms":bool(hit and percentiles["hit_ms"]["p95_ms"]<1.0),
             "has_real_hits":hit>0,
+            "original_indexed_all_self_replayable":
+                stats["own_compiled_fill_valid"]==stats["indexed"],
         },
         "notes":[
             "Only safe precompiled atomic/variable equality plans can hit.",
@@ -217,11 +238,9 @@ def main():
     ap.add_argument("--wordnet-dir",required=True)
     ap.add_argument("--size",type=int,default=2000)
     ap.add_argument("--max-tokens",type=int,default=32)
-    ap.add_argument("--parse-timeout",type=float,default=.35)
     ap.add_argument("--out",type=Path,required=True)
     args=ap.parse_args()
-    result=measure(args.wordnet_dir,size=args.size,max_tokens=args.max_tokens,
-                   timeout=args.parse_timeout)
+    result=measure(args.wordnet_dir,size=args.size,max_tokens=args.max_tokens)
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf8")
     if not result["pass"]:
