@@ -91,6 +91,29 @@ class HierarchicalPatternTests(unittest.TestCase):
                         (matches, self.memory.summary()))
         self.assertEqual(matches.incomplete,False)
 
+    def test_reconstructed_C_witness_is_real_nested_syntax(self):
+        self.train()
+        query=self.make(["the","dog","near","a","house",
+                         "near","the","cat"])
+        result=self.memory.match(query,min_report_tokens=8,emit_trees=True)
+        found=[h for h in result.hits if h.category=="NP" and h.tokens==8]
+        self.assertTrue(found)
+        node=found[0].tree
+        self.assertIsNotNone(node)
+        self.assertEqual(node.category,"NP")
+        self.assertEqual(node.rule_id,"np_pp")
+        self.assertEqual((node.start,node.end),
+                         (query.tokens[0].start,query.tokens[-1].end))
+        self.assertTrue(hasattr(node.syntax,"anchors"))
+        seen=[]
+        stack=[node]
+        while stack:
+            item=stack.pop()
+            if item.lexical_candidate is not None:
+                seen.append(item.lexical_candidate.surface)
+            stack.extend(item.children)
+        self.assertCountEqual(seen,[t.text for t in query.tokens])
+
     def test_extra_lexical_categories_never_remove_a_valid_structure(self):
         self.train()
         words=["the","dog","near","a","house","near","the","cat"]
