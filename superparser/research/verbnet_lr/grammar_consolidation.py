@@ -41,8 +41,11 @@ def consolidate_grammar(original: Grammar):
             "V","COPULA","HAVE","AUX-BE","VP"):
             head=rhs[0]
             if "number" not in lhs.features.as_dict():
-                lhs=_symbol(lhs,features={"number":"?agr_n","person":"?agr_p"})
-                rhs[0]=_symbol(head,features={"number":"?agr_n","person":"?agr_p"})
+                # Distinct variable namespaces per original production;
+                # different embedded clauses must not share a binding.
+                agree={"number":"?agr_n_"+name,"person":"?agr_p_"+name}
+                lhs=_symbol(lhs,features=agree)
+                rhs[0]=_symbol(head,features=agree)
                 changed["vp_head_agreement_propagation"]+=1
 
         # Modal constructions require a bare verbal complement.
