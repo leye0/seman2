@@ -1,4 +1,4 @@
-name: Compiled Tree Snap — 2000 Genuine Novel Sentences
+name: Compiled Tree Snap — 5000 Genuine Novel Sentences
 
 on:
   push:
@@ -21,11 +21,11 @@ concurrency:
 jobs:
   compiled-replay:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
-        size: [250, 2000]
+        size: [5000]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -56,7 +56,7 @@ jobs:
       - name: Run compiled no-parser regression tests
         run: |
           PYTHONPATH=superparser python -m unittest -v superparser.tests.test_compiled_structure_snap
-      - name: Learn and replay authentic novel sentences without parsing timeouts
+      - name: Learn and replay 5000 authentic novel sentences twice; no per-sentence timeout
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_compiled_snap_2k.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
