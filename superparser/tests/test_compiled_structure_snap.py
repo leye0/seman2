@@ -138,6 +138,54 @@ class CompiledStructureSnapTests(unittest.TestCase):
             plan,CompiledStructureReplayer._lexical_slots(rejected)))
 
 
+    def test_contraction_two_leaves_inside_one_token_are_indexed_and_replayed(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN"),sym("V")),sym("CLAUSE"))])
+        source=LexicalLattice("she's",(Token(0,0,5,"she's"),),(
+            LexicalCandidate(0,3,"she","she","PRONOUN",FeatureStructure.empty()),
+            LexicalCandidate(3,5,"'s","be","V",FeatureStructure.empty()),
+        ))
+        parsed=VectorGrammar(grammar).parse_lattice(
+            source,beam=80,max_items=50000,goal_category="CLAUSE")
+        self.assertTrue(parsed.completed)
+        engine=CompiledStructureReplayer(ParserResources(grammar,None,None))
+        tid=engine.observe(parsed.best(),lattice=source)
+        self.assertEqual(len(engine.plans),1)
+        self.assertEqual(engine.plans[tid].token_category_groups,
+                         (("PRONOUN","V"),))
+        with patch.object(PredictiveParser,"_reduce",
+                          side_effect=AssertionError("No grammar reparse")), \
+             patch.object(PredictiveParser,"_materialize",
+                          side_effect=AssertionError("No tree materialization")):
+            same=engine.replay(source)
+            other=LexicalLattice("he's",(Token(0,0,4,"he's"),),(
+                LexicalCandidate(0,2,"he","he","PRONOUN",FeatureStructure.empty()),
+                LexicalCandidate(2,4,"'s","be","V",FeatureStructure.empty()),
+            ))
+            new=engine.replay(other)
+        self.assertTrue(same.complete,same.reason)
+        self.assertTrue(new.complete,new.reason)
+        self.assertEqual(same.occurrence.structure_id,tid)
+        self.assertEqual(new.occurrence.words,("he","'s"))
+        self.assertEqual(new.occurrence.original_text,"he's")
+        self.assertIs(new.occurrence.structure,same.occurrence.structure)
+        self.assertEqual(len(new.occurrence.tokens),1)
+
+    def test_contraction_does_not_fabricate_missing_segment(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN"),sym("V")),sym("CLAUSE"))])
+        src=LexicalLattice("she's",(Token(0,0,5,"she's"),),(
+            LexicalCandidate(0,3,"she","she","PRONOUN",FeatureStructure.empty()),
+            LexicalCandidate(3,5,"'s","be","V",FeatureStructure.empty()),
+        ))
+        parsed=VectorGrammar(grammar).parse_lattice(
+            src,beam=80,max_items=50000,goal_category="CLAUSE")
+        self.assertTrue(parsed.completed)
+        engine=CompiledStructureReplayer(ParserResources(grammar,None,None))
+        engine.observe(parsed.best(),lattice=src)
+        broken=LexicalLattice(src.text,src.tokens,src.candidates[:1])
+        self.assertFalse(engine.replay(broken).complete)
+
     def test_wordnet_disjunction_must_not_drop_valid_original_reading(self):
         grammar=Grammar([GrammarRule(
             "clause",(sym("PRONOUN",gender="feminine"),sym("V")),
