@@ -142,6 +142,9 @@ def run(sizes=(100,1000,10000,100000)):
         index._by_shape[shape]=template_id
         index.templates.append(Template(shape,cats))
         state.template_ids.append(template_id)
+        # Scaling fixtures bypass observe(); maintain the new positional
+        # index explicitly so lookups test the exact same templates.
+        index._positional_index.add(cats,template_id)
         counter+=1
         if counter in sizes:
             gc.collect()
