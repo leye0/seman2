@@ -78,10 +78,10 @@ def signature(result):
         "complete":result.completed,
         "tree":whole_tree(root),
         "score":round(root.score,8) if root else None,
-        "lexical":tuple(sorted((
+        "lexical":tuple(sorted(((
             c.span_start,c.span_end,c.category,c.lemma,
             freeze(c.features.as_dict()),
-        ) for c in lattice.candidates)),
+        ) for c in lattice.candidates), key=repr)),
         "forest":(
             result.stats.get("forest_nodes"),
             result.stats.get("structural_derivations"),
