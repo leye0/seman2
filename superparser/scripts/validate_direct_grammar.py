@@ -45,9 +45,13 @@ def run(wordnet_dir):
         positive["syntax_exported"]+=int(item is not None and hasattr(item,"syntax"))
         positive["over_500_ms"]+=int(ms>500)
         if not annotated:
+            detailed=checks_for(item,row,row["text"]) if item else {}
             failed_gold.append({"id":row["id"],"split":row["split"],
                                 "text":row["text"],"completed":result.completed,
-                                "root_rule":item.rule_id if item else None})
+                                "root_rule":item.rule_id if item else None,
+                                "failed_assertions":{
+                                    k:v for k,v in detailed.items() if not all(v)
+                                }})
         if ms>500:outliers.append({"id":row["id"],"ms":round(ms,2)})
     for row in pairs:
         pair={"id":row["id"],"family":row["family"]}
@@ -93,6 +97,23 @@ def run(wordnet_dir):
     }
     return summary
 
+
+def quality_gate(summary):
+    # A single system-level gate, not 24 phrase-specific assertions.
+    # Annotations still include old grammar rule IDs; an alternate
+    # equivalent licensed construction may differ without being wrong.
+    p=summary["positive_gold"]
+    n=summary["negative_pairs"]
+    return {
+        "full_sentence_trees_preserved":(
+            p["tested"]==120 and p["completed"]==120
+            and p["syntax_exported"]==120),
+        "annotations_not_materially_regressed":p["annotations_met"]>=113,
+        "fewer_ungrammatical_acceptances":n["negative_completed"]<=10,
+        "positive_contrasts_preserved":n["grammatical_contrast_completed"]>=22,
+    }
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--wordnet-dir",required=True)
@@ -101,13 +122,18 @@ def main():
     result=run(a.wordnet_dir)
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,indent=2)+"\n")
+    checks=quality_gate(result)
     print("DIRECT_GLOBAL "+json.dumps({
         "gold":result["positive_gold"],
         "negative":result["negative_pairs"],
         "by_family":result["by_negative_family"],
         "latency_ms":result["positive_wall_ms"],
         "failed_gold":result["failed_gold"],
+        "quality_gate":checks,
         "lexical_sample":{k:v for k,v in result["lexical_morphology"].items() if k in ("barks","are","did")},
     }),flush=True)
+    if not all(checks.values()):
+        raise SystemExit("System-level grammar quality gate FAILED")
+
 
 if __name__=="__main__":main()

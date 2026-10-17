@@ -467,7 +467,14 @@ def _candidate_from_sense(
             "am": {"number": "singular", "person": "1"},
         }.get(surface.casefold())
         if agreement:
-            features = FeatureStructure.build({**features.as_dict(), **agreement})
+            # The original shared BE sense can carry the agreement of a
+            # *different* surface (is/are/was/were). Replace both axes
+            # atomically: inherited 'person=3' must not leak into 'are'.
+            inflection_neutral = {
+                k: v for k, v in features.as_dict().items()
+                if k not in {"number", "person"}
+            }
+            features = FeatureStructure.build({**inflection_neutral, **agreement})
     if sense.category == "V" and (
         features.as_dict().get("vform") == "finite"
         and surface.casefold().endswith("s")
