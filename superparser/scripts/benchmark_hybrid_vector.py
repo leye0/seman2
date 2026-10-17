@@ -63,6 +63,7 @@ def run(wordnet_dir):
     results={}
     reference={}
     diffs=[]
+    lattice_diffs=[]
     for label,engine in (("original_vector",original),("learned_C_vector",hybrid)):
         counts=Counter()
         by_split=defaultdict(Counter)
@@ -99,6 +100,12 @@ def run(wordnet_dir):
                     report.result.stats.get("hybrid_guidance",{}).get(
                         "fallback_after_guided_budget",False))
                 if previous[0]!=k[0]:diffs.append(row["id"])
+                if previous[2]!=k[2]:
+                    lattice_diffs.append({
+                        "id":row["id"],"text":row["text"],
+                        "baseline_only":sorted(set(previous[2])-set(k[2])),
+                        "hybrid_only":sorted(set(k[2])-set(previous[2])),
+                    })
             if i%25==0:
                 print("EVAL "+label+" "+json.dumps({
                     "seen":i,"complete":counts["complete"],
@@ -122,6 +129,7 @@ def run(wordnet_dir):
         "training":dict(sources),"guided_rule_compilation":compiled,
         "memory":hybrid.guidance_summary(),
         "validation":results,"tree_differences":diffs,
+        "lexical_lattice_differences":lattice_diffs,
         "caveats":[
             "Only the production-rule agenda order is learned; forest outputs and grammar rules are canonical.",
             "The learned source tree agrees with selected dev assertions but is still candidate, not fully independent gold.",
@@ -149,6 +157,7 @@ def main():
         "compiled":report["guided_rule_compilation"],
         "comparison":report["validation"],
         "tree_differences":report["tree_differences"],
+        "lexical_lattice_differences":report["lexical_lattice_differences"],
     }),flush=True)
 
 
