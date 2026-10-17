@@ -351,14 +351,14 @@ class CompiledStructureReplayer:
         for candidate in lattice.candidates:
             present[(candidate.span_start,candidate.span_end)].add(
                 (candidate.category,candidate.lemma,
-                 tuple(sorted(candidate.features.as_dict().items()))))
+                 repr(sorted(candidate.features.as_dict().items()))))
         extra=[]
         for token in lattice.tokens:
             remembered=self._remembered_lexemes.get(token.text.casefold(),())
             signatures=present[(token.start,token.end)]
             for original in remembered:
                 signature=(original.category,original.lemma,
-                           tuple(sorted(original.features.as_dict().items())))
+                           repr(sorted(original.features.as_dict().items())))
                 if signature not in signatures:
                     extra.append(replace(original,
                         span_start=token.start,span_end=token.end,
