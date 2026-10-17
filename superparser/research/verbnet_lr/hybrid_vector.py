@@ -17,12 +17,15 @@ No independently labelled gold is inferred from an observed parse.
 from __future__ import annotations
 
 from collections import Counter
+from time import perf_counter
 from typing import Any
 
 from research.verbnet_lr.hierarchical_pattern_memory import HierarchicalPatternMemory
 from seman_parser.chart import ChartItem, ParseResult
 from seman_parser.engine import Parser, ParserResources, ParseReport
 from seman_parser.vector_chart import VectorGrammar
+from seman_parser.segmentation import build_lattice
+from research.verbnet_lr.prepacked_witnesses import PrepackedWitnessIndex
 
 
 class GuidedVectorGrammar(VectorGrammar):
@@ -63,8 +66,14 @@ class HybridVectorParser(Parser):
 
     def __init__(self, resources: ParserResources, *,
                  min_rule_sentences: int = 2,
+                 prepacked_witnesses: bool = False,
+                 min_witness_tokens: int = 2,
                  **kwargs: Any):
         super().__init__(resources, **kwargs)
+        if min_witness_tokens < 1:
+            raise ValueError("min_witness_tokens must be positive")
+        self.prepacked_witnesses = prepacked_witnesses
+        self.min_witness_tokens = min_witness_tokens
         self.patterns = HierarchicalPatternMemory(
             resources, min_rule_sentences=min_rule_sentences)
         self._original_vector = self._vector_grammar
@@ -151,7 +160,34 @@ class HybridVectorParser(Parser):
         return dict(self._guide_stats)
 
     def _parse_vector_text(self, text: str) -> ParseResult:
-        result = super()._parse_vector_text(text)
+        if self.prepacked_witnesses and self.patterns.active_rules():
+            # Exactly the same lexical lattice and canonical grammar as the
+            # baseline. C witnesses are computed independently, then admitted
+            # only when the COMPLETE vector forest certifies unique structure.
+            lexical_begin = perf_counter()
+            lattice = self._lattice_cache.get(text)
+            if lattice is None:
+                lattice = build_lattice(
+                    text, self.resources.lexicon,
+                    deduplicate=self.deduplicate_lexical,
+                )
+                self._lattice_cache.put(text, lattice)
+            lexical_ms = (perf_counter() - lexical_begin) * 1000
+            report = self.patterns.match(
+                lattice, min_report_tokens=self.min_witness_tokens,
+                emit_trees=True,
+            )
+            prepacked = PrepackedWitnessIndex(report.hits)
+            result = self._vector_grammar.parse_lattice(
+                lattice, beam=self.beam, max_items=self.max_items,
+                goal_category=self.goal_category, witness_cache=prepacked,
+            )
+            result.stats["lexical_ms"] = round(lexical_ms, 4)
+            result.stats["c_witness_match_ms"] = round(report.elapsed_ms, 4)
+            result.stats["c_witness_incomplete"] = report.incomplete
+            result.stats["c_witness_cutoffs"] = report.cutoff_reasons
+        else:
+            result = super()._parse_vector_text(text)
         stats = result.stats
         if not isinstance(stats, dict):
             return result
