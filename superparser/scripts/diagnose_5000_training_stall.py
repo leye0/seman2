@@ -18,6 +18,7 @@ def main():
     parser.add_argument("--wordnet-dir",required=True)
     parser.add_argument("--start",type=int,default=250)
     parser.add_argument("--stop",type=int,default=500)
+    parser.add_argument("--kbest-work-limit",type=int,default=100000)
     args=parser.parse_args()
     faulthandler.enable(file=sys.stderr)
     book=TRAIN_BOOKS[0]
@@ -38,10 +39,13 @@ def main():
                 "elapsed_s":round(time.perf_counter()-started,4)}),flush=True)
             report=native._vector_grammar.parse_lattice(
                 lattice,beam=native.beam,max_items=20000,
-                goal_category=native.goal_category)
+                goal_category=native.goal_category,
+                kbest_work_limit=args.kbest_work_limit)
             item=report.best() if report.completed else None
             print("END",json.dumps({"index":i,"elapsed_s":round(time.perf_counter()-started,4),
                 "complete":item is not None,
+                "kbest_budget_exceeded":report.stats.get("kbest_budget_exceeded"),
+                "kbest_work_units":report.stats.get("kbest_work_units"),
                 "stats":{k:report.stats.get(k) for k in (
                     "recognition_ms","best_ms","kbest_ms","forest_nodes",
                     "structural_derivations","partial_states","partial_derivations",
