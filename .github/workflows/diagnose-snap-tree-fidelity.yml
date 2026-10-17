@@ -1,0 +1,48 @@
+name: Snap Tree Fidelity Diagnosis
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - '.github/workflows/diagnose-snap-tree-fidelity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch WordNet
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          req=Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+              headers={'User-Agent':'Seman2-research'})
+          with urlopen(req,timeout=90) as r:data=r.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for s in ('noun','verb','adj','adv'):
+              keep.update((f'index.{s}',f'data.{s}',f'{s}.exc'))
+          with ZipFile(BytesIO(data)) as archive:
+              for member in archive.namelist():
+                  name=Path(member).name
+                  if member.startswith('wordnet/') and name in keep:
+                      (dest/name).write_bytes(archive.read(member))
+          PY
+      - name: Compare original versus snapped grammatical tree components
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_snap_tree_differences.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --count 150
