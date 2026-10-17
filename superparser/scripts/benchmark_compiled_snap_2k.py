@@ -185,12 +185,10 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
             if plan is None:
                 stats["indexed_uncompiled"]+=1
             else:
-                options=memory._lexical_slots(lattice)
-                own=memory._fill(plan,options,max_candidates_per_slot=None)
-                if own is None:
-                    stats["own_compiled_fill_failed"]+=1
-                else:
+                if memory.probe_original_template(lattice,template_id):
                     stats["own_compiled_fill_valid"]+=1
+                else:
+                    stats["own_compiled_fill_failed"]+=1
             if hit.complete:
                 stats["indexed_with_hit"]+=1
         if (i+1)%checkpoint==0:
