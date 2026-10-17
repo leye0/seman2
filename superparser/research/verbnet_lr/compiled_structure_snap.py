@@ -44,6 +44,7 @@ class CompiledOccurrence:
     original_text: str
     tokens: tuple[Any, ...]
     lexical_slots: tuple[Any, ...]
+    lexical_alternatives: tuple[tuple[Any, ...], ...]
     plan: CompiledPlan
     feature_bindings: tuple[tuple[int, int], ...]
 
@@ -216,29 +217,44 @@ class CompiledStructureReplayer:
         return options
 
     @staticmethod
-    def _fill(plan, options, *, max_candidates_per_slot):
+    def _fill(plan, options, *, max_candidates_per_slot=None):
+        """Iterative lexical backtracking with shared compiled feature groups.
+
+        The old algorithm picked a locally compatible reading and NEVER
+        revisited it when a later slot disagreed. A stored derivation could
+        therefore be unreplayable on its very own original lexical lattice.
+        Backtrack ONLY over lexical readings: no grammar rules are executed.
+        """
         if len(plan.slots)!=len(options):
             return None
+        stack=[]  # (slot index, next candidate, prior feature bindings)
         bindings=dict(plan.constants)
-        chosen=[]
-        for slot,by_cat in zip(plan.slots,options):
-            candidates=by_cat.get(slot.category,())
-            matched=None
-            for candidate in candidates[:max_candidates_per_slot]:
-                # Clone only the tiny feature-value environment, never an
-                # existing grammatical tree.
+        selected=[None]*len(plan.slots)
+        position=0
+        while True:
+            if position==len(plan.slots):
+                return tuple(selected),tuple(sorted(bindings.items()))
+            slot=plan.slots[position]
+            candidate_options=options[position].get(slot.category,())
+            if max_candidates_per_slot is not None:
+                candidate_options=candidate_options[:max_candidates_per_slot]
+            next_option=0
+            if stack and stack[-1][0]==position:
+                _,next_option,bindings=stack.pop()
+            found=False
+            for j in range(next_option,len(candidate_options)):
+                candidate=candidate_options[j]
                 trial=dict(bindings)
-                valid=True
-                for feature in slot.requires:
-                    value=candidate.features.features.get(feature)
-                    if value is None or isinstance(value,Variable):
-                        valid=False
-                        break
-                if not valid:
+                if any(feature not in candidate.features.features or
+                       isinstance(candidate.features.features[feature],Variable)
+                       for feature in slot.requires):
                     continue
+                valid=True
                 for feature,group in slot.checks:
                     value=candidate.features.features.get(feature)
-                    if value is None or value is TOP:
+                    if value is None or value is TOP or isinstance(value,Variable):
+                        # Unknown lexical traits must not be treated as a
+                        # contradictory value: grammar imposes its constraint.
                         continue
                     if not isinstance(value,Atom):
                         valid=False
@@ -248,39 +264,58 @@ class CompiledStructureReplayer:
                         valid=False
                         break
                     trial[group]=value.symbol
-                if valid:
-                    matched=candidate
-                    bindings=trial
-                    break
-            if matched is None:
+                if not valid:
+                    continue
+                stack.append((position,j+1,bindings))
+                selected[position]=candidate
+                bindings=trial
+                position+=1
+                found=True
+                break
+            if found:
+                continue
+            if not stack:
                 return None
-            chosen.append(matched)
-        return tuple(chosen),tuple(sorted(bindings.items()))
+            position,_,_=stack[-1]
 
-    def replay(self,lattice,*,max_templates_checked=32,
-               max_candidates_per_slot=8) -> CompiledReplay:
-        if max_templates_checked<1 or max_candidates_per_slot<1:
+    def replay(self,lattice,*,max_templates_checked=None,
+               max_candidates_per_slot=None) -> CompiledReplay:
+        """Page index candidates as needed. Never silently drop a learned ID.
+
+        Candidate cap is optional; exhaustive is the default for the exact
+        repeated-corpus experiment. Retrieval remains direct bitset lookup.
+        """
+        if max_templates_checked is not None and max_templates_checked<1:
+            raise ValueError("Candidate budgets must be positive")
+        if max_candidates_per_slot is not None and max_candidates_per_slot<1:
             raise ValueError("Candidate budgets must be positive")
         options=self._lexical_slots(lattice)
-        result=self.index._positional_index.lookup(
-            tuple(tuple(by_cat) for by_cat in options),
-            limit=max_templates_checked)
-        for tid in result.template_ids:
-            plan=self.plans[tid]
-            if plan is None:
-                continue
-            filled=self._fill(plan,options,
-                              max_candidates_per_slot=max_candidates_per_slot)
-            if filled is None:
-                continue
-            selected,bindings=filled
-            occurrence=CompiledOccurrence(
-                tid,plan.structure,lattice.text,tuple(lattice.tokens),
-                selected,plan,bindings)
-            return CompiledReplay(occurrence,result.total,
-                                  len(result.template_ids),
-                                  result.next_offset is not None,"matched")
-        return CompiledReplay(
-            None,result.total,len(result.template_ids),
-            result.next_offset is not None,
-            "unseen_pattern" if not result.total else "requires_fallback")
+        signatures=tuple(tuple(by_cat) for by_cat in options)
+        page_size=max_templates_checked or 128
+        offset=0
+        checked=0
+        while True:
+            result=self.index._positional_index.lookup(
+                signatures,limit=page_size,offset=offset)
+            for tid in result.template_ids:
+                checked+=1
+                plan=self.plans[tid]
+                if plan is None:
+                    continue
+                filled=self._fill(plan,options,
+                                  max_candidates_per_slot=max_candidates_per_slot)
+                if filled is None:
+                    continue
+                selected,bindings=filled
+                occurrence=CompiledOccurrence(
+                    tid,plan.structure,lattice.text,tuple(lattice.tokens),
+                    selected,tuple(tuple(by_cat.get(slot.category,()))
+                        for by_cat,slot in zip(options,plan.slots)),
+                    plan,bindings)
+                return CompiledReplay(occurrence,result.total,
+                                      checked,result.next_offset is not None,"matched")
+            if result.next_offset is None:
+                return CompiledReplay(
+                    None,result.total,checked,False,
+                    "unseen_pattern" if not result.total else "requires_fallback")
+            offset=result.next_offset
