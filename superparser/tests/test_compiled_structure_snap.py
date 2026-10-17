@@ -138,6 +138,38 @@ class CompiledStructureSnapTests(unittest.TestCase):
             plan,CompiledStructureReplayer._lexical_slots(rejected)))
 
 
+    def test_remembered_word_reading_survives_later_lexicon_change(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN"),sym("N")),sym("CLAUSE"))])
+        source=LexicalLattice(
+            "he mildest",(Token(0,0,2,"he"),Token(1,3,10,"mildest")),(
+                LexicalCandidate(0,2,"he","he","PRONOUN",FeatureStructure.empty()),
+                LexicalCandidate(3,10,"mildest","mildest","N",
+                                 FeatureStructure.build({"number":"singular"})),
+            ))
+        parsed=VectorGrammar(grammar).parse_lattice(
+            source,beam=80,max_items=50000,goal_category="CLAUSE")
+        self.assertTrue(parsed.completed)
+        engine=CompiledStructureReplayer(ParserResources(grammar,None,None))
+        tid=engine.observe(parsed.best(),lattice=source)
+        # WordNet's evolving lexical entries no longer propose the N reading.
+        # A lexical memory keyed by individual word, not full sentence,
+        # must preserve the previous interpretation.
+        replay=LexicalLattice(source.text,source.tokens,(
+            source.candidates[0],
+            LexicalCandidate(3,10,"mildest","mild","ADJ",FeatureStructure.empty()),
+        ))
+        with patch.object(PredictiveParser,"_reduce",
+                          side_effect=AssertionError("No grammar deduction")), \
+             patch.object(PredictiveParser,"_materialize",
+                          side_effect=AssertionError("No grammar reconstruction")):
+            found=engine.replay(replay)
+        self.assertTrue(found.complete,found.reason)
+        self.assertEqual(found.occurrence.structure_id,tid)
+        self.assertEqual(found.occurrence.lexical_slots[1].category,"N")
+        self.assertEqual(found.occurrence.original_text,"he mildest")
+        self.assertEqual(len(found.occurrence.lexical_alternatives[1]),1)
+
     def test_nonterminal_required_evidence_is_precompiled_not_reparsed(self):
         grammar=Grammar([
             GrammarRule("clause",(
