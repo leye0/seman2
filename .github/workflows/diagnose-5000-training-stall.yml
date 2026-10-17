@@ -5,6 +5,8 @@ on:
       - research/verbnet-left-to-right-poc
     paths:
       - 'superparser/scripts/diagnose_5000_training_stall.py'
+      - 'superparser/seman_parser/vector_chart.py'
+      - 'superparser/tests/test_vector_chart.py'
       - '.github/workflows/diagnose-5000-training-stall.yml'
   workflow_dispatch:
 permissions:
@@ -40,7 +42,10 @@ jobs:
                   if name.startswith('wordnet/') and leaf in keep:
                       (dest/leaf).write_bytes(z.read(name))
           PY
+      - name: Verify k-best effort bound preserves exact grammar on sufficient budget
+        run: |
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_vector_chart.VectorChartTests.test_kbest_work_budget_never_claims_incomplete_parse_as_success
       - name: Locate pathological sentence and print Python stack every 20 seconds
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_5000_training_stall.py \
-            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --start 250 --stop 500
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --start 260 --stop 285 --kbest-work-limit 100000
