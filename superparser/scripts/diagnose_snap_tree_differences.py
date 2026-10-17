@@ -93,6 +93,17 @@ def main():
         match=memory.match(lattice,max_templates_checked=512,
             max_states=16384,max_variants=32,max_reductions=8192)
         own=next((m.item for m in match.matches if m.template_id==idx),None)
+        if own is None and match.incomplete:
+            # A bounded beam is UNKNOWN, not a grammar contradiction.
+            # A wider pass can distinguish true contextual unification
+            # failure from a deliberately truncated lexical combination.
+            expanded=memory.match(lattice,max_templates_checked=2048,
+                max_states=65536,max_variants=256,max_reductions=131072)
+            own=next((m.item for m in expanded.matches if m.template_id==idx),None)
+            if own is not None:
+                totals["recovered_after_widening"]+=1
+            else:
+                match=expanded
         if own is None:
             totals["unmatched"]+=1
             failed.append({
