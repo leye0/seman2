@@ -367,15 +367,24 @@ class FullStructureSnapIndex:
                 break
             template = self.templates[template_id]
             variants = build(template.shape, 0)
-            if variants:
-                item = self._materializer._materialize(variants[0])
+            # A bottom-up viable variant may conflict with an inherited
+            # contextual constraint, while a later lexical variant of
+            # the SAME complete rule tree is valid. Do not discard the
+            # entire stored template after testing only variants[0].
+            # The explicit max_variants / reductions budgets remain intact.
+            best_item = None
+            for compact in variants:
+                item = self._materializer._materialize(compact)
                 contextual = self._restore_contextual_features(
                     item, FeatureStructure.empty(), {})
                 if contextual is None:
                     continue
-                item, _bindings = contextual
+                restored, _bindings = contextual
+                if best_item is None or restored.score > best_item.score:
+                    best_item = restored
+            if best_item is not None:
                 matched.append(SnapMatch(
-                    template_id, item,
+                    template_id, best_item,
                     template.verified_observations > 0,
                     template.grammar_witness_observations > 0))
         # An Earley witness proves a derivation EXISTS, NOT that it is
