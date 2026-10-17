@@ -1,4 +1,4 @@
-"""Actual 2,000-sentence Gutenberg two-pass compiled structure snap benchmark.
+"""Gutenberg novel two-pass compiled structure snap benchmark (250–5000+).
 
 Pass 1: canonical VectorGrammar, observe real grammar derivations, compile
 structural plans once. Pass 2: lex original text again, read ONLY compiled
@@ -86,7 +86,8 @@ def occurrence_readings(occ):
         for c in occ.lexical_slots)
 
 
-def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
+def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=50,
+            kbest_work_limit=100000):
     # ONE genuine novel, not mixed Gutenberg texts; order in the novel retained.
     novel=TRAIN_BOOKS[0]
     raw,info=download(novel)
@@ -116,7 +117,11 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
         # allowed to finish, even if it takes seconds or minutes.
         report=native._vector_grammar.parse_lattice(
             lattice,beam=native.beam,max_items=20000,
-            goal_category=native.goal_category)
+            goal_category=native.goal_category,
+            kbest_work_limit=kbest_work_limit)
+        stats["first_kbest_work_units"]+=report.stats.get("kbest_work_units",0)
+        if report.stats.get("kbest_budget_exceeded"):
+            stats["first_kbest_budget_exhausted"]+=1
         item=report.best() if report.completed else None
         if item is None:
             stats["first_incomplete"]+=1
@@ -145,7 +150,8 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
             print("TRAIN",json.dumps({
                 "seen":i+1,"completed":stats["first_complete"],
                 "indexed":stats["indexed"],"compiled_safe":stats["compiled_safe"],
-                "unique_structures":len(memory.index.templates)
+                "unique_structures":len(memory.index.templates),
+                "kbest_budget_exhausted":stats["first_kbest_budget_exhausted"]
             }),flush=True)
 
     # Different LexicalCandidate instances, same original text. No
@@ -183,7 +189,11 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
             stats["fallback_due_to_"+hit.reason]+=1
             report=native._vector_grammar.parse_lattice(
                 lattice,beam=native.beam,max_items=20000,
-                goal_category=native.goal_category)
+                goal_category=native.goal_category,
+                kbest_work_limit=kbest_work_limit)
+            stats["fallback_kbest_work_units"]+=report.stats.get("kbest_work_units",0)
+            if report.stats.get("kbest_budget_exceeded"):
+                stats["fallback_kbest_budget_exhausted"]+=1
             if report.completed:
                 stats["fallback_complete"]+=1
             total_ns=perf_counter_ns()-t
@@ -278,6 +288,8 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
         "alignment_rejection_samples":alignment_failures,
         "self_replay_failures":exact_replay_failures,
         "compiled_plans":sum(x is not None for x in memory.plans),
+        "kbest_work_limit_per_sentence":kbest_work_limit,
+        "uncertified_kbest_cases_are_not_counted_as_completed":True,
         "indexed_self_replayable_pct":round(
             100*stats["own_compiled_fill_valid"]/stats["indexed"],3)
             if stats["indexed"] else None,
@@ -316,6 +328,8 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
             "A grammar-compatible structural pattern does not establish independent human semantic correctness.",
             "Full Layer 2 consumption has not yet been integrated or measured.",
             "Cross-template score competition is not solved by first eligible index hit.",
+            "K-best effort ceiling is a computational budget, not a wall time timeout.",
+            "If the effort ceiling is exhausted the case is explicitly marked unproven (incomplete).", 
         ]
     }
     report["pass"]=all(report["criteria"].values())
@@ -328,9 +342,12 @@ def main():
     ap.add_argument("--wordnet-dir",required=True)
     ap.add_argument("--size",type=int,default=2000)
     ap.add_argument("--max-tokens",type=int,default=32)
+    ap.add_argument("--kbest-work-limit",type=int,default=100000)
+    ap.add_argument("--checkpoint",type=int,default=50)
     ap.add_argument("--out",type=Path,required=True)
     args=ap.parse_args()
-    result=measure(args.wordnet_dir,size=args.size,max_tokens=args.max_tokens)
+    result=measure(args.wordnet_dir,size=args.size,max_tokens=args.max_tokens,
+                   checkpoint=args.checkpoint,kbest_work_limit=args.kbest_work_limit)
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(result,indent=2)+"\n",encoding="utf8")
     if not result["pass"]:
