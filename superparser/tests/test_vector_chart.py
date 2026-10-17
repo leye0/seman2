@@ -115,6 +115,32 @@ class VectorChartTests(unittest.TestCase):
         relations = [edge.relation for edge in report.interpret(best).graph.relations]
         self.assertGreaterEqual(relations.count("CONJUNCT"), 2)
 
+    def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        text="John opened the box."
+        parser=self.parser
+        lattice=build_lattice(text,parser.resources.lexicon,multiword_max=1)
+        engine=parser._vector_grammar
+        limited=engine.parse_lattice(
+            lattice,beam=parser.beam,max_items=20000,
+            goal_category=parser.goal_category,kbest_work_limit=1)
+        self.assertFalse(limited.completed)
+        self.assertTrue(limited.stats["kbest_budget_exceeded"])
+        self.assertEqual(limited.stats["kbest_work_limit"],1)
+        self.assertIsNone(limited.best())
+        # A sufficient budget must recover precisely the normal complete
+        # parse, not change the scorer or grammar.
+        unlimited=engine.parse_lattice(
+            lattice,beam=parser.beam,max_items=20000,
+            goal_category=parser.goal_category)
+        full=engine.parse_lattice(
+            lattice,beam=parser.beam,max_items=20000,
+            goal_category=parser.goal_category,kbest_work_limit=1_000_000)
+        self.assertTrue(unlimited.completed)
+        self.assertTrue(full.completed)
+        self.assertFalse(full.stats["kbest_budget_exceeded"])
+        self.assertEqual(full.best().signature(),unlimited.best().signature())
+
     def test_required_evidence_prunes_impossible_kbest_branches(self) -> None:
         sentinels = (
             "In the first, everybody followed her initial idea.",
