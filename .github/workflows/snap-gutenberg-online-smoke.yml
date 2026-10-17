@@ -6,6 +6,9 @@ on:
       - research/verbnet-left-to-right-poc
     paths:
       - '.github/workflows/snap-gutenberg-online-smoke.yml'
+      - 'superparser/research/verbnet_lr/compatible_category_sequences.py'
+      - 'superparser/tests/test_verbnet_lr_compatible_category_sequences.py'
+      - 'superparser/scripts/benchmark_snap_novels_online.py'
   workflow_dispatch:
 
 permissions:
@@ -41,6 +44,12 @@ jobs:
                       (d/base).write_bytes(z.read(name))
           assert (d/'index.verb').exists()
           PY
+      - name: Test existential category compatibility
+        run: |
+          PYTHONPATH=superparser python -m unittest \
+            superparser.tests.test_verbnet_lr_compatible_category_sequences \
+            superparser.tests.test_snap_novels_online \
+            superparser.tests.test_verbnet_lr_full_structure_snap -v
       - name: Process ALL 2500 sentences through lattice then snap/L-R
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_novels_online.py \
