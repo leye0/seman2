@@ -48,4 +48,4 @@ jobs:
       - name: Locate pathological sentence and print Python stack every 20 seconds
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_5000_training_stall.py \
-            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --start 260 --stop 285 --kbest-work-limit 100000
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --start 0 --stop 500 --kbest-work-limit 100000
