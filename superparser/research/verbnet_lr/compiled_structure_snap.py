@@ -372,6 +372,89 @@ class CompiledStructureReplayer:
                 return None
             position,_,_=stack[-1]
 
+    @staticmethod
+    def _token_segmentations(lattice):
+        """Generate lexical paths through one token, not text cache keys.
+
+        One token can be a grammatical path (V,NEG) or (N,POSS).
+        Every lexical alternative is preserved at each span. Distinct
+        contraction spellings can therefore share the same structure.
+        """
+        tokens=tuple(lattice.tokens)
+        while tokens and tokens[-1].text in (".","!","?"):
+            tokens=tokens[:-1]
+        all_edges=[defaultdict(list) for _ in tokens]
+        for cand in lattice.candidates:
+            for i,tok in enumerate(tokens):
+                if (tok.start<=cand.span_start<cand.span_end<=tok.end):
+                    all_edges[i][(cand.span_start,cand.span_end,
+                                  cand.category)].append(cand)
+                    break
+        paths=[]
+        for tok,edges in zip(tokens,all_edges):
+            by_start=defaultdict(list)
+            for (start,end,cat),variants in edges.items():
+                variants.sort(key=lambda c:c.score,reverse=True)
+                by_start[start].append((end,cat,variants))
+            groups=defaultdict(list)
+            def visit(cursor,parts):
+                if cursor==tok.end:
+                    key="\x1f".join(p[0] for p in parts)
+                    groups[key].append(tuple(parts))
+                    return
+                if len(parts)>=6:
+                    return
+                for end,cat,variants in by_start.get(cursor,()):
+                    visit(end,parts+((cat,variants),))
+            visit(tok.start,())
+            paths.append(groups)
+        return paths
+
+    def _replay_segmented(self,lattice,*,page_size,max_candidates_per_slot):
+        if not self._segmented_by_signature:
+            return CompiledReplay(None,0,0,False,"unseen_pattern")
+        paths=self._token_segmentations(lattice)
+        choices=tuple(tuple(by_key) for by_key in paths)
+        checked=0
+        offset=0
+        while True:
+            found=self._segmented_index.lookup(
+                choices,limit=page_size,offset=offset)
+            for tid in found.template_ids:
+                checked+=1
+                plan=self.plans[tid]
+                if plan is None:
+                    continue
+                keys=tuple("\x1f".join(group) for group in plan.token_category_groups)
+                group_choices=[paths[i].get(key,()) for i,key in enumerate(keys)]
+                if any(not group for group in group_choices):
+                    continue
+                # Separate lexical edge/segmentation choices, never splice
+                # incompatible half-contraction candidates.
+                for choice in product(*group_choices):
+                    options=[]
+                    for segments in choice:
+                        options.extend({cat:variants} for cat,variants in segments)
+                    filled=self._fill(
+                        plan,options,
+                        max_candidates_per_slot=max_candidates_per_slot)
+                    if filled is None:
+                        continue
+                    selected,bindings=filled
+                    occurrence=CompiledOccurrence(
+                        tid,plan.structure,lattice.text,tuple(lattice.tokens),
+                        selected,tuple(tuple(by_cat.get(slot.category,()))
+                            for by_cat,slot in zip(options,plan.slots)),
+                        plan,bindings)
+                    return CompiledReplay(
+                        occurrence,found.total,checked,
+                        found.next_offset is not None,"matched")
+            if found.next_offset is None:
+                return CompiledReplay(
+                    None,found.total,checked,False,
+                    "unseen_pattern" if not found.total else "requires_fallback")
+            offset=found.next_offset
+
     def replay(self,lattice,*,max_templates_checked=None,
                max_candidates_per_slot=None) -> CompiledReplay:
         """Page index candidates as needed. Never silently drop a learned ID.
@@ -409,7 +492,15 @@ class CompiledStructureReplayer:
                 return CompiledReplay(occurrence,result.total,
                                       checked,result.next_offset is not None,"matched")
             if result.next_offset is None:
-                return CompiledReplay(
-                    None,result.total,checked,False,
-                    "unseen_pattern" if not result.total else "requires_fallback")
+                break
             offset=result.next_offset
+        segmented=self._replay_segmented(
+            lattice,page_size=page_size,
+            max_candidates_per_slot=max_candidates_per_slot)
+        if segmented.complete:
+            return segmented
+        return CompiledReplay(
+            None,result.total+segmented.candidate_templates,
+            checked+segmented.checked_templates,False,
+            "unseen_pattern" if not result.total and
+                not segmented.candidate_templates else "requires_fallback")
