@@ -100,7 +100,7 @@ class SnapContextualFeatureTests(unittest.TestCase):
         resources=ParserResources(grammar,None,None)
         memory=FullStructureSnapIndex(resources)
         row=lattice("they walk",{"person":"3"},{"aspect":"simple"})
-        result=parser.parse_lattice(row,goal_category="CLAUSE")
+        result=parser.parse_lattice(row,beam=80,max_items=50000,goal_category="CLAUSE")
         self.assertTrue(result.completed)
         initial=result.best()
         memory.observe(initial,lattice=row)
