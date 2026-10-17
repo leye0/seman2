@@ -1,0 +1,59 @@
+name: Gutenberg L-R Failure Diagnostics
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/diagnose_novel_lr_failures.py'
+      - '.github/workflows/diagnose-novel-lr.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch WordNet dictionary
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          import os
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              raw=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          allowed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for n in ('noun','verb','adj','adv'):
+              allowed.update((f'index.{n}',f'data.{n}',f'{n}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for path in z.namelist():
+                  base=Path(path).name
+                  if path.startswith('wordnet/') and base in allowed:
+                      (dest/base).write_bytes(z.read(path))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Classify parsing failures on 3000 novel sentences
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_novel_lr_failures.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --sample 3000 --out /tmp/lr-novel-failures.json
+      - name: Preserve failure breakdown
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gutenberg-lr-failure-breakdown
+          path: /tmp/lr-novel-failures.json
+          if-no-files-found: warn
+          retention-days: 14
