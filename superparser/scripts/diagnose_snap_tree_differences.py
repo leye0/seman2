@@ -87,6 +87,7 @@ def main():
             continue
         original[i]=(idx,item)
     details={}
+    failed=[]
     for i,(idx,item) in original.items():
         lattice=build_lattice(corpus[i]["text"],resources.lexicon,multiword_max=1)
         match=memory.match(lattice,max_templates_checked=512,
@@ -94,6 +95,15 @@ def main():
         own=next((m.item for m in match.matches if m.template_id==idx),None)
         if own is None:
             totals["unmatched"]+=1
+            failed.append({
+                "book":corpus[i]["book_id"],"ordinal":corpus[i]["ordinal"],
+                "tokens":corpus[i]["tokens"],"template_id":idx,
+                "reason":match.reason,"incomplete":match.incomplete,
+                "candidate_templates":match.candidate_templates,
+                "checked_templates":match.checked_templates,
+                "matched_other_ids":[m.template_id for m in match.matches],
+                "original_lexical_categories":memory.templates[idx].categories,
+            })
             continue
         totals["matched"]+=1
         for part in ("topology","lexical","feature","syntax"):
@@ -103,6 +113,7 @@ def main():
                 details[part]=first_difference(item,own,part)
     print("FINAL",json.dumps({
         "indexed":len(original),"totals":dict(totals),"first_differences":details,
+        "misses":failed[:10],
     }),flush=True)
     if a.strict:
         n=len(original)
