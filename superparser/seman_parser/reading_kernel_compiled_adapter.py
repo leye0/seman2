@@ -27,6 +27,10 @@ class CompiledKernelReport:
     materialization_ms: float
     failure_sites: tuple[dict, ...] = ()
     recovery_trace: tuple = ()
+    # Opt-in observations of locally *unified*, completed reductions;
+    # NOT proof that a failed enclosing clause was parsed correctly.
+    partial_constituents: tuple[Any, ...] = ()
+    partial_truncated: bool = False
 
     @property
     def complete(self) -> bool:
@@ -156,7 +160,11 @@ class SemanCompiledReader:
                            cand.score, candidate=cand)
 
     def parse(self, text: str, *, diagnose: bool = False,
-              lattice: Any | None = None) -> CompiledKernelReport:
+              lattice: Any | None = None,
+              capture_partials: bool = False,
+              max_partial_constituents: int = 256) -> CompiledKernelReport:
+        if max_partial_constituents < 1:
+            raise ValueError("max_partial_constituents must be positive")
         t0 = perf_counter()
         if lattice is not None:
             # Opt-in reuse of an already constructed lexical lattice for the
@@ -182,6 +190,8 @@ class SemanCompiledReader:
         # stale semantic materialization from the discarded derivation.
         # The owning tuple makes identity reuse impossible until parse exits.
         memo: dict[int, tuple[ReadNode, CompactNode]] = {}
+        partial_compact: list[CompactNode] = []
+        partial_truncated = False
 
         def combine(rule: Any, children: tuple[ReadNode, ...]) -> ReadNode | None:
             # Children passed through the *real* syntax unification logic.
@@ -193,6 +203,14 @@ class SemanCompiledReader:
             node = ReadNode(rule.lhs.category, children[0].start, children[-1].end,
                                rule=rule, children=children)
             memo[id(node)] = (node, result)
+            if capture_partials:
+                nonlocal partial_truncated
+                if len(partial_compact) < max_partial_constituents:
+                    # Only actual successful grammar-unified reductions,
+                    # never raw lexical nodes or parser guesses.
+                    partial_compact.append(result)
+                else:
+                    partial_truncated = True
             return node
 
         ranker = self.verbnet_ranker
@@ -289,8 +307,13 @@ class SemanCompiledReader:
         t2 = perf_counter()
         item = self.adapter._materialize(memo[id(outcome.root)][1]) if outcome.root else None
         t3 = perf_counter()
+        partial_items = (
+            tuple(self.adapter._materialize(node) for node in partial_compact)
+            if capture_partials else ()
+        )
         return CompiledKernelReport(
             outcome, item, (t1-t0)*1000, (t2-t1)*1000, (t3-t2)*1000,
             tuple(getattr(machine, "failure_sites", ())),
             tuple(getattr(machine, "recovery_trace", ())),
+            partial_items, partial_truncated,
         )
