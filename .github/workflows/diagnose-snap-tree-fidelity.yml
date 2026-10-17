@@ -8,6 +8,7 @@ on:
       - '.github/workflows/diagnose-snap-tree-fidelity.yml'
       - 'superparser/research/verbnet_lr/full_structure_snap.py'
       - 'superparser/tests/test_snap_contextual_features.py'
+      - 'superparser/scripts/diagnose_snap_tree_differences.py'
   workflow_dispatch:
 
 permissions:
@@ -52,4 +53,4 @@ jobs:
       - name: Compare original versus snapped grammatical tree components
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_snap_tree_differences.py \
-            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --count 150
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --count 300 --strict
