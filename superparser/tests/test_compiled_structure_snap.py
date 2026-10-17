@@ -138,6 +138,30 @@ class CompiledStructureSnapTests(unittest.TestCase):
             plan,CompiledStructureReplayer._lexical_slots(rejected)))
 
 
+    def test_nonterminal_required_evidence_is_precompiled_not_reparsed(self):
+        grammar=Grammar([
+            GrammarRule("clause",(
+                sym("PRONOUN"),
+                RuleSymbol("VP",FeatureStructure.empty(),
+                           requires=("voice",))
+            ),sym("CLAUSE")),
+            GrammarRule("vp",(sym("V",voice="?v"),),
+                        sym("VP",voice="?v")),
+        ])
+        row=sample("they walk",{},{"voice":"active"})
+        engine,tid,_=learn(grammar,row)
+        self.assertIsNotNone(engine.plans[tid])
+        self.assertTrue(engine.plans[tid].evidence_any)
+        with patch.object(PredictiveParser,"_reduce",
+                          side_effect=AssertionError("No grammar deduction")), \
+             patch.object(PredictiveParser,"_materialize",
+                          side_effect=AssertionError("No tree reconstruction")):
+            replay=engine.replay(sample(
+                "we move",{},{"voice":"passive"}))
+            invalid=engine.replay(sample("we move",{},{}))
+        self.assertTrue(replay.complete,replay.reason)
+        self.assertFalse(invalid.complete)
+
     def test_hyphenated_compound_leaf_spans_multiple_tokens(self):
         grammar=Grammar([GrammarRule(
             "clause",(sym("ADJ"),sym("N")),sym("CLAUSE"))])
