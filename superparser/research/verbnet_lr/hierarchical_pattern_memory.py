@@ -36,6 +36,9 @@ class HierarchicalHit:
     structurally_novel: bool
     rule_id: str
     score: float
+    # Optional real ChartItem with children, rule IDs and syntax exports.
+    # A LOCAL constituent witness is not a complete CLAUSE parse.
+    tree: Any | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -157,7 +160,8 @@ class HierarchicalPatternMemory:
                 for k,r in self.all_rules.items()),
         }
 
-    def match(self, lattice, *, min_report_tokens=3, max_span=None):
+    def match(self, lattice, *, min_report_tokens=3, max_span=None,
+              emit_trees: bool = False):
         """Recognize reusable constituents on ALL lexical alternatives.
 
         Each reported hit is a newly feature-unified derivation under the
@@ -174,6 +178,7 @@ class HierarchicalPatternMemory:
             return HierarchicalMatchReport((),0,0,False,0,0)
         max_span=min(n,max_span or self.max_span)
         variants=self.variants_per_cell
+        materializer=PredictiveParser(self.resources) if emit_trees else None
         rules=self.active_rules()
         by_first=defaultdict(list)
         unary=[]
@@ -236,7 +241,8 @@ class HierarchicalPatternMemory:
                         hits.append(HierarchicalHit(
                             node.category,start,end,width,
                             shape not in self.shape_sentence_count,
-                            node.rule.rule_id,node.score))
+                            node.rule.rule_id,node.score,
+                            materializer._materialize(node) if materializer else None))
             return True
 
         halted=False
