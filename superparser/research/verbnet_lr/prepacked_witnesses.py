@@ -125,6 +125,12 @@ class PrepackedWitnessIndex:
         tree = self.eligible.get(node_id)
         if tree is None:
             return None
+        # An outer binding environment may constrain unexported descendants.
+        # Until replay supports contextual re-unification, bypass ONLY closed
+        # contexts: this never swallows an unresolved agreement dependency.
+        if state.bindings or _contains_variable(state.constraint):
+            self.stats["contextual_skips"] += 1
+            return None
         # Parent context still has to unify with this particular constituent.
         result = unify(state.constraint, tree.features, state.bindings)
         if result is None:
