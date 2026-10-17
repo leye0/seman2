@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from seman_parser.features import Atom, Variable, TOP
+from seman_parser.features import Atom, Variable, Disjunction, FeatureStructure, TOP
 from seman_parser.symbols import intern
 from .full_structure_snap import FullStructureSnapIndex, Structure
 
@@ -24,7 +24,7 @@ from .full_structure_snap import FullStructureSnapIndex, Structure
 @dataclass(frozen=True, slots=True)
 class CompiledSlot:
     category: str
-    checks: tuple[tuple[int, int], ...]  # (feature ID, precompiled equality group)
+    checks: tuple[tuple[tuple[int, ...], int], ...]  # (feature path, equality group)
     requires: tuple[int, ...]
 
 
@@ -46,7 +46,7 @@ class CompiledOccurrence:
     lexical_slots: tuple[Any, ...]
     lexical_alternatives: tuple[tuple[Any, ...], ...]
     plan: CompiledPlan
-    feature_bindings: tuple[tuple[int, int], ...]
+    feature_bindings: tuple[tuple[int, object], ...]
 
     @property
     def words(self) -> tuple[str, ...]:
@@ -117,20 +117,23 @@ def compile_plan(shape: Structure, rules: dict[str, Any]) -> CompiledPlan | None
     serial = 0
     unsupported = False
 
-    def attach(node_id, features, rule_instance):
+    def attach(node_id, features, rule_instance, prefix=()):
         nonlocal unsupported
         for attr, value in features.items():
-            key = ("node", node_id, attr)
-            union.root(key)
-            if isinstance(value, Atom):
+            path=prefix+(attr,)
+            key = ("node", node_id, path)
+            if isinstance(value, FeatureStructure):
+                # Flatten nested agreement/feature structures at compile time.
+                attach(node_id,value,rule_instance,path)
+            elif isinstance(value, Atom):
                 union.constant(key, value.symbol)
             elif isinstance(value, Variable):
                 union.join(key, ("var", rule_instance, value.name))
             elif value is TOP:
                 continue
             else:
-                # Nested structures/disjunctions need a separate fast-path
-                # compiler; never silently drop constraints.
+                # A grammar disjunction is not a universal constraint;
+                # defer if not yet compilable, never quietly ignore it.
                 unsupported = True
 
     def visit(node):
@@ -217,23 +220,34 @@ class CompiledStructureReplayer:
         return options
 
     @staticmethod
-    def _fill(plan, options, *, max_candidates_per_slot=None):
-        """Iterative lexical backtracking with shared compiled feature groups.
+    def _feature_at(candidate, path):
+        value=candidate.features
+        for feature in path:
+            if not isinstance(value, FeatureStructure):
+                return None
+            value=value.features.get(feature)
+        return value
 
-        The old algorithm picked a locally compatible reading and NEVER
-        revisited it when a later slot disagreed. A stored derivation could
-        therefore be unreplayable on its very own original lexical lattice.
-        Backtrack ONLY over lexical readings: no grammar rules are executed.
+    @staticmethod
+    def _fill(plan, options, *, max_candidates_per_slot=None):
+        """Backtrack lexical readings; intersect atom/disjunction domains.
+
+        Preserve lexical alternatives and unresolved constraints instead of
+        rejecting a valid vector parse merely because WordNet supplied a
+        disjunction. No grammar rule reduction or ChartItem is instantiated.
         """
         if len(plan.slots)!=len(options):
             return None
-        stack=[]  # (slot index, next candidate, prior feature bindings)
-        bindings=dict(plan.constants)
+        stack=[]
+        bindings={group:frozenset((atom,)) for group,atom in plan.constants}
         selected=[None]*len(plan.slots)
         position=0
         while True:
             if position==len(plan.slots):
-                return tuple(selected),tuple(sorted(bindings.items()))
+                return tuple(selected),tuple(sorted(
+                    (group,next(iter(values)) if len(values)==1
+                     else tuple(sorted(values)))
+                    for group,values in bindings.items()))
             slot=plan.slots[position]
             candidate_options=options[position].get(slot.category,())
             if max_candidates_per_slot is not None:
@@ -250,20 +264,29 @@ class CompiledStructureReplayer:
                        for feature in slot.requires):
                     continue
                 valid=True
-                for feature,group in slot.checks:
-                    value=candidate.features.features.get(feature)
+                for path,group in slot.checks:
+                    value=CompiledStructureReplayer._feature_at(candidate,path)
                     if value is None or value is TOP or isinstance(value,Variable):
-                        # Unknown lexical traits must not be treated as a
-                        # contradictory value: grammar imposes its constraint.
                         continue
-                    if not isinstance(value,Atom):
+                    if isinstance(value, Atom):
+                        allowed=frozenset((value.symbol,))
+                    elif isinstance(value,Disjunction):
+                        # An unbound option imposes no lexical restriction.
+                        if any(v is TOP or isinstance(v,Variable) for v in value.options):
+                            continue
+                        if not all(isinstance(v,Atom) for v in value.options):
+                            valid=False
+                            break
+                        allowed=frozenset(v.symbol for v in value.options)
+                    else:
                         valid=False
                         break
                     known=trial.get(group)
-                    if known is not None and known!=value.symbol:
+                    intersection=allowed if known is None else known & allowed
+                    if not intersection:
                         valid=False
                         break
-                    trial[group]=value.symbol
+                    trial[group]=intersection
                 if not valid:
                     continue
                 stack.append((position,j+1,bindings))
