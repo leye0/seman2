@@ -347,23 +347,35 @@ class CompiledStructureReplayer:
         visit(item)
 
     def _restore_lexical_readings(self,lattice):
-        present=defaultdict(set)
-        for candidate in lattice.candidates:
-            present[(candidate.span_start,candidate.span_end)].add(
-                (candidate.category,candidate.lemma,
-                 repr(sorted(candidate.features.as_dict().items()))))
+        """Only compare remembered readings at applicable token spans.
+
+        The previous implementation serialized EVERY lattice candidate's
+        nested features on EVERY hit. That alone could exceed 1ms. Filter
+        to relevant tokens and compare interned feature structures directly.
+        """
+        relevant=[(tok,self._remembered_lexemes[tok.text.casefold()])
+                  for tok in lattice.tokens
+                  if tok.text.casefold() in self._remembered_lexemes]
+        if not relevant:
+            return lattice
+        needed={(tok.start,tok.end) for tok,_ in relevant}
+        current=defaultdict(list)
+        for cand in lattice.candidates:
+            span=(cand.span_start,cand.span_end)
+            if span in needed:
+                current[span].append(cand)
         extra=[]
-        for token in lattice.tokens:
-            remembered=self._remembered_lexemes.get(token.text.casefold(),())
-            signatures=present[(token.start,token.end)]
-            for original in remembered:
-                signature=(original.category,original.lemma,
-                           repr(sorted(original.features.as_dict().items())))
-                if signature not in signatures:
-                    extra.append(replace(original,
-                        span_start=token.start,span_end=token.end,
-                        surface=token.text))
-                    signatures.add(signature)
+        for tok,readings in relevant:
+            span=(tok.start,tok.end)
+            existing=current[span]
+            for old in readings:
+                if any(c.category==old.category and c.lemma==old.lemma and
+                       c.features==old.features for c in existing):
+                    continue
+                recovered=replace(old,span_start=tok.start,
+                                  span_end=tok.end,surface=tok.text)
+                extra.append(recovered)
+                existing.append(recovered)
         if not extra:
             return lattice
         return LexicalLattice(lattice.text,lattice.tokens,
