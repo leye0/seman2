@@ -13,13 +13,14 @@ asserted to be valid snaps. This is deliberately conservative.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from itertools import product
 from collections import defaultdict
 from typing import Any
 
 from seman_parser.features import Atom, Variable, Disjunction, FeatureStructure, TOP
 from seman_parser.symbols import intern
+from seman_parser.segmentation import LexicalLattice
 from .full_structure_snap import FullStructureSnapIndex, Structure, Template, _Trie
 from .positional_template_index import PositionalTemplateIndex
 
@@ -247,6 +248,10 @@ class CompiledStructureReplayer:
         self._spanning_root=_Trie()
         self._spanning_by_shape={}
         self._spanning_ids=set()
+        # Lexical knowledge is per surface form, NEVER a sentence->parse cache.
+        # Recall must preserve readings that WordNet's lazy indexing or an
+        # online vocabulary update could otherwise remove between passes.
+        self._remembered_lexemes=defaultdict(list)
 
     @staticmethod
     def _source_token_groups(item,lattice):
@@ -322,8 +327,51 @@ class CompiledStructureReplayer:
             raise ValueError("Lexical tree fails to cover the source sentence")
         return tuple(c.category for c in leaves)
 
+    def _remember_lexical_readings(self,item,lattice):
+        tokens={(t.start,t.end):t for t in lattice.tokens}
+        def visit(node):
+            if node.lexical_candidate is not None:
+                cand=node.lexical_candidate
+                token=tokens.get((cand.span_start,cand.span_end))
+                if token is not None:
+                    key=token.text.casefold()
+                    readings=self._remembered_lexemes[key]
+                    if not any(
+                        p.category==cand.category and p.lemma==cand.lemma and
+                        p.features.as_dict()==cand.features.as_dict()
+                        for p in readings):
+                        readings.append(cand)
+            else:
+                for ch in node.children:
+                    visit(ch)
+        visit(item)
+
+    def _restore_lexical_readings(self,lattice):
+        present=defaultdict(set)
+        for candidate in lattice.candidates:
+            present[(candidate.span_start,candidate.span_end)].add(
+                (candidate.category,candidate.lemma,
+                 tuple(sorted(candidate.features.as_dict().items()))))
+        extra=[]
+        for token in lattice.tokens:
+            remembered=self._remembered_lexemes.get(token.text.casefold(),())
+            signatures=present[(token.start,token.end)]
+            for original in remembered:
+                signature=(original.category,original.lemma,
+                           tuple(sorted(original.features.as_dict().items())))
+                if signature not in signatures:
+                    extra.append(replace(original,
+                        span_start=token.start,span_end=token.end,
+                        surface=token.text))
+                    signatures.add(signature)
+        if not extra:
+            return lattice
+        return LexicalLattice(lattice.text,lattice.tokens,
+                              lattice.candidates+tuple(extra))
+
     def observe(self, item, *, lattice, evidence="candidate") -> int:
         shape=self.index._shape(item)
+        self._remember_lexical_readings(item,lattice)
         try:
             groups=self._source_token_groups(item,lattice)
         except ValueError:
@@ -630,6 +678,7 @@ class CompiledStructureReplayer:
 
     def probe_original_template(self,lattice,template_id):
         """Independent reproducibility audit only. Never used to rank hits."""
+        lattice=self._restore_lexical_readings(lattice)
         plan=self.plans[template_id]
         if plan is None:
             return False
@@ -664,6 +713,7 @@ class CompiledStructureReplayer:
             raise ValueError("Candidate budgets must be positive")
         if max_candidates_per_slot is not None and max_candidates_per_slot<1:
             raise ValueError("Candidate budgets must be positive")
+        lattice=self._restore_lexical_readings(lattice)
         options=self._lexical_slots(lattice)
         signatures=tuple(tuple(by_cat) for by_cat in options)
         page_size=max_templates_checked or 128
