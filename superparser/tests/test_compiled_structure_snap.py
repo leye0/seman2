@@ -117,19 +117,42 @@ class CompiledStructureSnapTests(unittest.TestCase):
         self.assertNotEqual(a.original_text,b.original_text)
         self.assertIsNot(a.lexical_slots,b.lexical_slots)
 
-    def test_nested_feature_constraints_are_conservatively_deferred(self):
+    def test_nested_feature_constraints_are_compiled_once(self):
         grammar=Grammar([
             GrammarRule("clause",(sym("PRONOUN",agreement={"number":"plural"}),
                                     sym("V")),sym("CLAUSE"))
         ])
-        # Intentionally without reading a corresponding VectorGrammar parse:
-        # the rule's nested feature cannot be compiled into atom checks.
+        # Nested feature agreement is checked directly during replay,
+        # without reconstructing a grammatical tree.
         resources=ParserResources(grammar,None,None)
         from research.verbnet_lr.compiled_structure_snap import compile_plan
         from research.verbnet_lr.full_structure_snap import Structure
         tree=Structure("CLAUSE","clause",(Structure("PRONOUN"),Structure("V")))
-        self.assertIsNone(compile_plan(tree,{"clause":grammar.rules[0]}))
+        plan=compile_plan(tree,{"clause":grammar.rules[0]})
+        self.assertIsNotNone(plan)
+        qualified=sample("they sing",{"agreement":{"number":"plural"}},{})
+        rejected=sample("they sing",{"agreement":{"number":"singular"}},{})
+        self.assertIsNotNone(CompiledStructureReplayer._fill(
+            plan,CompiledStructureReplayer._lexical_slots(qualified)))
+        self.assertIsNone(CompiledStructureReplayer._fill(
+            plan,CompiledStructureReplayer._lexical_slots(rejected)))
 
+
+    def test_wordnet_disjunction_must_not_drop_valid_original_reading(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN",gender="feminine"),sym("V")),
+            sym("CLAUSE"))])
+        row=sample("she sings",{"gender":"feminine"},{})
+        engine,tid,_=learn(grammar,row)
+        c=row.candidates[0]
+        ambiguous=LexicalCandidate(c.span_start,c.span_end,c.surface,
+            c.lemma,c.category,FeatureStructure.build({
+                "gender":["masculine","feminine"]}),score=100)
+        updated=LexicalLattice(row.text,row.tokens,(ambiguous,)+row.candidates)
+        res=engine.replay(updated)
+        self.assertTrue(res.complete,res.reason)
+        self.assertEqual(res.occurrence.structure_id,tid)
+        self.assertIs(res.occurrence.lexical_slots[0],ambiguous)
 
     def test_backtrack_earlier_reading_when_later_agreement_conflicts(self):
         # Regression: greedy _fill() chose masculine at position 0 and
