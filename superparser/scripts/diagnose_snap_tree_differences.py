@@ -61,6 +61,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--wordnet-dir",required=True)
     parser.add_argument("--count",type=int,default=150)
+    parser.add_argument("--strict",action="store_true",help="Fail if any remembered tree is lost or has any changed features/syntax")
     a=parser.parse_args()
     corpus,_=spread_novel_corpus(a.count,32)
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=a.wordnet_dir)
@@ -100,10 +101,16 @@ def main():
             totals[part+"_same"]+=int(same)
             if not same and part not in details:
                 details[part]=first_difference(item,own,part)
-        if len(details)>=3:
-            print("CHECK",json.dumps({"matched":totals["matched"],"differences":details}),flush=True)
-            break
-    print("FINAL",json.dumps({"totals":dict(totals),"first_differences":details}),flush=True)
+    print("FINAL",json.dumps({
+        "indexed":len(original),"totals":dict(totals),"first_differences":details,
+    }),flush=True)
+    if a.strict:
+        n=len(original)
+        if n==0 or totals["matched"]!=n or any(
+            totals[f"{part}_same"]!=n
+            for part in ("topology","lexical","feature","syntax")
+        ):
+            raise SystemExit("STRICT FIDELITY FAILURE: stored grammatical variables or syntax not fully restored")
 
 
 if __name__=="__main__":
