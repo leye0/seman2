@@ -343,10 +343,15 @@ def _surface_matches_morphology(
     lemma: str,
 ) -> bool:
     """Reject WordNet feature variants contradicted by the written form."""
-    if entry.provenance.get("source") != "wordnet":
-        return True
     written = surface.casefold()
     base = lemma.replace("_", " ").casefold()
+    # Closed-class forms share seed entries; a base-form DO sense is
+    # not licensed on an inflected 'did' or 'does' surface.
+    if base == "do" and sense.category == "V":
+        if written in {"does", "did"} and sense.features.as_dict().get("vform") == "base":
+            return False
+    if entry.provenance.get("source") != "wordnet":
+        return True
     features = sense.features
     vform = features.get("vform")
     if isinstance(vform, Atom):
@@ -449,6 +454,31 @@ def _candidate_from_sense(
 ) -> LexicalCandidate:
     constraints = _sense_syntactic_constraints(sense)
     features = _project_syntactic_features(sense)
+    # Attach *surface-proven* agreement rather than treating all inflected
+    # forms in a shared BE lexical entry as interchangeable.
+    if sense.category in {"COPULA", "AUX-BE"} and (
+        lemma.casefold() in {"be", "was", "is", "are"} or sense.semantic_type == "BE"
+    ):
+        agreement = {
+            "is": {"number": "singular", "person": "3"},
+            "are": {"number": "plural"},
+            "was": {"number": "singular"},
+            "were": {"number": "plural"},
+            "am": {"number": "singular", "person": "1"},
+        }.get(surface.casefold())
+        if agreement:
+            features = FeatureStructure.build({**features.as_dict(), **agreement})
+    if sense.category == "V" and (
+        features.as_dict().get("vform") == "finite"
+        and surface.casefold().endswith("s")
+        and surface.casefold() != lemma.casefold()
+        and not lemma.casefold().endswith("s")
+    ):
+        # Productive present third singular. Leave base and past
+        # morphology open instead of inventing a number/person constraint.
+        features = FeatureStructure.build({
+            **features.as_dict(), "number": "singular", "person": "3",
+        })
     interpretation = LexicalInterpretation(
         sense_id=sense.sense_id,
         lemma=lemma,
