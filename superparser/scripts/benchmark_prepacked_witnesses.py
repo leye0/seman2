@@ -116,9 +116,11 @@ def run(wordnet_dir, *, limit=70):
         measurements[label]={
             "tested":len(data),
             "complete":sum(x["completed"] for x in data),
-            "by_kind":{kind:sum(x["completed"] for x in data if key[0]==kind)
-                       for kind in ("holdout","invalid","contrast")
-                       for key,x in results[label].items() if key[0]==kind},
+            "by_kind":{
+                kind:sum(value["completed"] for key,value in results[label].items()
+                         if key[0]==kind)
+                for kind in ("holdout","invalid","contrast")
+            },
             "p50_ms":_quantile([x["ms"] for x in data],.5),
             "p95_ms":_quantile([x["ms"] for x in data],.95),
             "total_ms":round(sum(x["ms"] for x in data),2),
