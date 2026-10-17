@@ -20,7 +20,7 @@ from typing import Any
 
 from seman_parser.features import Atom, Variable, Disjunction, FeatureStructure, TOP
 from seman_parser.symbols import intern
-from .full_structure_snap import FullStructureSnapIndex, Structure, Template
+from .full_structure_snap import FullStructureSnapIndex, Structure, Template, _Trie
 from .positional_template_index import PositionalTemplateIndex
 
 
@@ -215,6 +215,9 @@ class CompiledStructureReplayer:
         # pattern: categories of every lexical segment within each token.
         self._segmented_index = PositionalTemplateIndex()
         self._segmented_by_signature = {}
+        self._spanning_root=_Trie()
+        self._spanning_by_shape={}
+        self._spanning_ids=set()
 
     @staticmethod
     def _source_token_groups(item,lattice):
@@ -254,9 +257,70 @@ class CompiledStructureReplayer:
             raise ValueError("Lexical tree has leaves outside the sentence tokens")
         return tuple(groups)
 
+    @staticmethod
+    def _spanning_lexical_path(item,lattice):
+        """Accept a complete lexical EDGE path across multiple tokens.
+
+        One leaf may span a hyphenated compound or multiword expression.
+        Only actual lattice candidates and whitespace gaps are allowed.
+        """
+        leaves=[]
+        def collect(node):
+            if node.lexical_candidate is not None:
+                leaves.append(node.lexical_candidate)
+            else:
+                for child in node.children:
+                    collect(child)
+        collect(item)
+        tokens=tuple(lattice.tokens)
+        while tokens and tokens[-1].text in (".","!","?"):
+            tokens=tokens[:-1]
+        if not tokens or not leaves:
+            raise ValueError("Empty sentence or lexical tree")
+        start=tokens[0].start
+        end=tokens[-1].end
+        cursor=start
+        actual={(c.span_start,c.span_end,c.category)
+                for c in lattice.candidates}
+        for c in leaves:
+            if (c.span_start,c.span_end,c.category) not in actual:
+                raise ValueError("Tree uses a lexical edge not in the lattice")
+            if (c.span_start<cursor or c.span_end>end or
+                  lattice.text[cursor:c.span_start].strip()):
+                raise ValueError("Lexical edge path overlaps or skips words")
+            cursor=c.span_end
+        if lattice.text[cursor:end].strip():
+            raise ValueError("Lexical tree fails to cover the source sentence")
+        return tuple(c.category for c in leaves)
+
     def observe(self, item, *, lattice, evidence="candidate") -> int:
-        groups=self._source_token_groups(item,lattice)
         shape=self.index._shape(item)
+        try:
+            groups=self._source_token_groups(item,lattice)
+        except ValueError:
+            # A real lexical edge may traverse a sequence of tokens, e.g.
+            # a hyphenated compound. Preserve the entire lexical edge path
+            # rather than treating the tree as invalid.
+            categories=self._spanning_lexical_path(item,lattice)
+            signature=(shape,categories)
+            prior=self._spanning_by_shape.get(signature)
+            if prior is not None:
+                self.index.templates[prior].candidate_observations+=1
+                return prior
+            if len(self.index.templates)>=self.index.max_templates:
+                raise OverflowError("Template capacity reached")
+            key=len(self.index.templates)
+            self._spanning_by_shape[signature]=key
+            self._spanning_ids.add(key)
+            self.index.templates.append(
+                Template(shape,categories,candidate_observations=1))
+            state=self._spanning_root
+            for category in categories:
+                state=state.edges.setdefault(category,_Trie())
+            state.template_ids.append(key)
+            self.plans.append(compile_plan(shape,self.index.rules))
+            return key
+
         segmented=any(len(group)!=1 for group in groups)
         if not segmented:
             key=self.index.observe(item,lattice=lattice,evidence=evidence)
