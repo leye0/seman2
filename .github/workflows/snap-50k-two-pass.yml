@@ -48,7 +48,7 @@ jobs:
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_50k_two_pass.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --size 50000 --max-tokens 32 \
+            --size 50000 --max-tokens 45 \
             --max-items 20000 --parse-timeout 0.35 --match-timeout 0.2 \
             --checkpoint 1000 --out /tmp/seman2-50k-vector-snap.json
       - name: Upload raw measurements including latest completed checkpoint
