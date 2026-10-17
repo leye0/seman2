@@ -1,0 +1,46 @@
+name: Diagnose Stalled Novel Parsing 251–500
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/diagnose_5000_training_stall.py'
+      - '.github/workflows/diagnose-5000-training-stall.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose-parser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+                 headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              data=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(name))
+          PY
+      - name: Locate pathological sentence and print Python stack every 20 seconds
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_5000_training_stall.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --start 250 --stop 500
