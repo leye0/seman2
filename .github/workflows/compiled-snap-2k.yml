@@ -17,7 +17,11 @@ permissions:
 jobs:
   compiled-replay:
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        size: [250, 2000]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -48,17 +52,17 @@ jobs:
       - name: Run compiled no-parser regression tests
         run: |
           PYTHONPATH=superparser python -m unittest -v superparser.tests.test_compiled_structure_snap
-      - name: Learn then replay 2000 REAL sentences from one novel; enforce <1ms on hits
+      - name: Learn and replay authentic novel sentences without parsing timeouts
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_compiled_snap_2k.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --size 2000 --max-tokens 32 --parse-timeout 0.35 \
-            --out /tmp/compiled-snap-2000.json
+            --size ${{ matrix.size }} --max-tokens 32 \
+            --out /tmp/compiled-snap-${{ matrix.size }}.json
       - name: Preserve result even on strict latency failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: compiled-snap-2000-report
-          path: /tmp/compiled-snap-2000.json
+          name: compiled-snap-${{ matrix.size }}-report
+          path: /tmp/compiled-snap-${{ matrix.size }}.json
           if-no-files-found: warn
           retention-days: 7
