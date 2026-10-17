@@ -1,0 +1,38 @@
+name: Snap Direct Index — Hard 1ms p95
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/research/verbnet_lr/positional_template_index.py'
+      - 'superparser/research/verbnet_lr/full_structure_snap.py'
+      - 'superparser/scripts/benchmark_snap_index_only.py'
+      - 'superparser/scripts/benchmark_snap_full_match.py'
+      - '.github/workflows/snap-index-1ms.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lookup-1ms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify existing complete-tree snapping tests (no WordNet download)
+        run: |
+          PYTHONPATH=superparser python -m unittest -v \
+            superparser.tests.test_snap_contextual_features \
+            superparser.tests.test_verbnet_lr_full_structure_snap
+      - name: Hard-gated direct index lookup 17391 patterns, 10000 queries
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_index_only.py \
+            --templates 17391 --queries 10000 --max-ms 1.0
+      - name: Report full grammatical snap separate from direct lookup
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_full_match.py
