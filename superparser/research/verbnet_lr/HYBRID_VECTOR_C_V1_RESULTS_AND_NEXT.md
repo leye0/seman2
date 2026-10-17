@@ -1,64 +1,64 @@
 # Seman2 Layer 1 — premier hybride grammatical C + forêt vectorielle
 
 Date: 17 octobre 2026. **Travail expérimental uniquement** dans
-\`research/verbnet-left-to-right-poc\`. La branche \`main\` et le chemin
-de production \`Parser\` n'ont PAS été remplacés.
+`research/verbnet-left-to-right-poc`. La branche `main` et le chemin
+de production `Parser` n'ont PAS été remplacés.
 
 ## Contrat NON NÉGOCIABLE
 
 Chaque analyse réputée complète doit rester un vrai
-\`ParseResult / ChartItem\` : arbre de dérivations hiérarchique classique,
-\`NP/VP/PP/CLAUSE\`, règles, spans, traits et unification, dépendances
+`ParseResult / ChartItem` : arbre de dérivations hiérarchique classique,
+`NP/VP/PP/CLAUSE`, règles, spans, traits et unification, dépendances
 d'ancrage sujet/objet, ambiguïtés et liens vers les candidats lexicaux.
 Les événements, agents, patients, instruments, anaphores et changements
 d'état ne sont interprétés qu'au Layer sémantique via
-\`ParseReport.interpret\`.
+`ParseReport.interpret`.
 
 Une correspondance de séquence POS, de regex ou de sous-arbre local
 ne suffit PAS à classer une phrase entière « analysée ».
 
 ## Code construit (vertical slice v1)
 
-1. \`superparser/research/verbnet_lr/hybrid_vector.py\`:
-   - \`HybridVectorParser(Parser)\` réutilise le vrai moteur
-     \`VectorGrammar\` et toute sa logique de forêt partagée.
-   - \`observe(report, source_id, evidence)\` extrait les productions
+1. `superparser/research/verbnet_lr/hybrid_vector.py`:
+   - `HybridVectorParser(Parser)` réutilise le vrai moteur
+     `VectorGrammar` et toute sa logique de forêt partagée.
+   - `observe(report, source_id, evidence)` extrait les productions
      **ORIGINALES**, complètes et localement unifiées d'un arbre.
-     Le \`source_id\` empêche le double vote. \`candidate\` et
-     \`verified\` sont deux provenances différentes; jamais de
-     promotion automatique vers \`verified\`.
-   - \`HierarchicalPatternMemory\` apprend les alternatives et les
+     Le `source_id` empêche le double vote. `candidate` et
+     `verified` sont deux provenances différentes; jamais de
+     promotion automatique vers `verified`.
+   - `HierarchicalPatternMemory` apprend les alternatives et les
      extensions grammaticales récursives licenciées.
-   - \`compile_guidance()\` indexe les règles apprises par leur nombre
+   - `compile_guidance()` indexe les règles apprises par leur nombre
      de phrases-témoins et ne **change que l'ordre** de l'agenda
-     \`VectorGrammar.first\`. Toutes les productions restent présentes;
+     `VectorGrammar.first`. Toutes les productions restent présentes;
      aucune catégorie/lecture/sous-catégorisation n'est supprimée.
-   - Le \`ParseResult\` public reste celui du moteur vectoriel canonique.
+   - Le `ParseResult` public reste celui du moteur vectoriel canonique.
      Si le chart guidé dépasse son budget, repli explicite sur l'agenda
      original avec les mêmes limites, sans déclarer une dérivation
      potentiellement tronquée comme complète par optimisation.
    - Recompiler les priorités invalide le cache des analyses, afin
      d'éviter un résultat de configuration périmée.
 
-2. \`hierarchical_pattern_memory.py\`: l'option \`emit_trees=True\`
-   matérialise maintenant un VRAI \`ChartItem\` grammatical pour chaque
+2. `hierarchical_pattern_memory.py`: l'option `emit_trees=True`
+   matérialise maintenant un VRAI `ChartItem` grammatical pour chaque
    constituant C revalidé, avec enfants, offsets, traits et exports
    syntaxiques. Par défaut aucun arbre n'est construit pendant le
-   matching rapide. Ces \`ChartItem\` C **sont des témoins LOCAUX**;
+   matching rapide. Ces `ChartItem` C **sont des témoins LOCAUX**;
    leur injection dans la forêt principale et leur validité de
    rattachement global ne sont PAS encore réalisées.
 
 3. Tests:
-   - \`test_verbnet_lr_hybrid_vector.py\`: complétion et vrais arbres,
+   - `test_verbnet_lr_hybrid_vector.py`: complétion et vrais arbres,
      données lexicales alternatives, rôles sémantiques de base,
      repli sur budget, interdiction de provenance inventée, aucune
      suppression de règles.
-   - \`test_verbnet_lr_hierarchical_pattern_memory.py\`: C reconstruit
+   - `test_verbnet_lr_hierarchical_pattern_memory.py`: C reconstruit
      un arbre NP de 8 tokens avec deux PP successifs, alors qu'un
      exemple d'entraînement n'en contenait qu'un; contrôle des
      enfants/feuilles et de l'unification.
-   - \`benchmark_hybrid_vector.py\`: entraînement sur 50 phrases
-     \`dev\`, test sur 50 \`validation\` +20 \`holdout\` sans fuite,
+   - `benchmark_hybrid_vector.py`: entraînement sur 50 phrases
+     `dev`, test sur 50 `validation` +20 `holdout` sans fuite,
      24 négatives avec leurs 24 contrastes, mêmes ressources.
 
 ## Résultats mesurés v1
@@ -98,11 +98,11 @@ est garantie.
 
 ### Interface de transition C ↔ forêt canonique
 
-La méthode recherche \`HybridVectorParser.parse_with_local_witnesses(
-text, min_report_tokens=3, emit_trees=True)\` retourne maintenant **deux
-résultats distincts** : (a) \`ParseReport\` canonique avec forêt de
-phrase entière, et (b) \`HierarchicalMatchReport\` contenant des
-\`HierarchicalHit.tree\` (vrais \`ChartItem\` de constituants locaux
+La méthode recherche `HybridVectorParser.parse_with_local_witnesses(
+text, min_report_tokens=3, emit_trees=True)` retourne maintenant **deux
+résultats distincts** : (a) `ParseReport` canonique avec forêt de
+phrase entière, et (b) `HierarchicalMatchReport` contenant des
+`HierarchicalHit.tree` (vrais `ChartItem` de constituants locaux
 unifiés). Les deux résultats utilisent **le même treillis lexical**.
 Les témoins locaux restent provisoires et ne sont PAS fusionnés
 automatiquement à la forêt canonique. C'est la frontière d'intégration
@@ -121,11 +121,11 @@ arbre gagnant** pour les 19 cas à corriger :
 | Déterminant/nom | 1/2 |
 | Valence et sélection des compléments | 4/5 |
 
-Exemples diagnostiques: \`The dogs barks loudly.\` est accepté avec
-\`clause_np_vp + np_det_n + vp_intransitive + vp_adv\`;
-\`Mary will buys milk.\` est accepté via \`vp_modal\`;
-\`She explained John the problem.\` est lu via \`vp_obj_pred\`;
-\`She depends of her friends.\` via \`vp_intransitive + vp_pp\`.
+Exemples diagnostiques: `The dogs barks loudly.` est accepté avec
+`clause_np_vp + np_det_n + vp_intransitive + vp_adv`;
+`Mary will buys milk.` est accepté via `vp_modal`;
+`She explained John the problem.` est lu via `vp_obj_pred`;
+`She depends of her friends.` via `vp_intransitive + vp_pp`.
 
 Le problème n'est pas un nombre insuffisant de patterns mémorisés,
 mais l'absence ou la propagation incomplète de certaines
@@ -139,9 +139,9 @@ Ce v1 constitue la base conservatrice et reproductible, PAS le meilleur
 hybride final. Il faut ensuite construire les vraies accélérations:
 
 **A — Témoins C comme nœuds de forêt partagée.**
-Convertir les \`ChartItem\` locaux C revalidés en dérivations alternatives
+Convertir les `ChartItem` locaux C revalidés en dérivations alternatives
 packées de la même forêt, avec des signatures
-\`(span, category, feature-interface, original-rule-id, child-provenance)\`.
+`(span, category, feature-interface, original-rule-id, child-provenance)`.
 Jamais ne remplacer tous les arbres d'un span par un seul arbre; préserver
 les alternatives et les sous-catégorisations. Une dérivation accélérée
 doit être reconstruisible intégralement avec enfants et exports.
