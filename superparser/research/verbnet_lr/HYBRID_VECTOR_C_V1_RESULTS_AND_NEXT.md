@@ -63,8 +63,8 @@ ne suffit PAS à classer une phrase entière « analysée ».
 
 ## Résultats mesurés v1
 
-Workflow hybride vert:
-https://github.com/leye0/seman2/actions/runs/39040479561
+Workflow hybride vert (12 tests unitaires, validation complète):
+https://github.com/leye0/seman2/actions/runs/39040972064
 
 48/50 phrases de développement passent les assertions disponibles
 et deviennent sources **candidates** des règles, non oracles gold.
@@ -94,6 +94,44 @@ Les catégories lexicales ont été comparées comme ENSEMBLES par span;
 la multiplicité fluctuante de lectures lexicales redondantes est
 mesurée séparément. Ne pas prétendre que l'égalité des multiensembles
 est garantie.
+
+
+### Interface de transition C ↔ forêt canonique
+
+La méthode recherche \`HybridVectorParser.parse_with_local_witnesses(
+text, min_report_tokens=3, emit_trees=True)\` retourne maintenant **deux
+résultats distincts** : (a) \`ParseReport\` canonique avec forêt de
+phrase entière, et (b) \`HierarchicalMatchReport\` contenant des
+\`HierarchicalHit.tree\` (vrais \`ChartItem\` de constituants locaux
+unifiés). Les deux résultats utilisent **le même treillis lexical**.
+Les témoins locaux restent provisoires et ne sont PAS fusionnés
+automatiquement à la forêt canonique. C'est la frontière d'intégration
+explicite pour le prochain sprint d'injection packée.
+
+### Causes des fausses acceptations (diagnostic réel)
+
+Le benchmark a exporté les **règles et les lectures lexicales de chaque
+arbre gagnant** pour les 19 cas à corriger :
+
+| Famille | Négatives acceptées / total |
+|---|---:|
+| Accord sujet/verbe, copule et auxiliaires | 7/8 |
+| Verbe sous modal | 4/5 |
+| Auxiliaire et base verbale | 3/4 |
+| Déterminant/nom | 1/2 |
+| Valence et sélection des compléments | 4/5 |
+
+Exemples diagnostiques: \`The dogs barks loudly.\` est accepté avec
+\`clause_np_vp + np_det_n + vp_intransitive + vp_adv\`;
+\`Mary will buys milk.\` est accepté via \`vp_modal\`;
+\`She explained John the problem.\` est lu via \`vp_obj_pred\`;
+\`She depends of her friends.\` via \`vp_intransitive + vp_pp\`.
+
+Le problème n'est pas un nombre insuffisant de patterns mémorisés,
+mais l'absence ou la propagation incomplète de certaines
+contraintes morphosyntaxiques et de valence dans les analyses
+autorisées par la grammaire. **Il ne faut pas traiter ces sorties
+comme des témoins gold d'apprentissage sans vérification.**
 
 ## Prochaine étape technique précise: réutiliser, pas seulement prioriser
 
