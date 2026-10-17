@@ -14,11 +14,14 @@ asserted to be valid snaps. This is deliberately conservative.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import product
+from collections import defaultdict
 from typing import Any
 
 from seman_parser.features import Atom, Variable, Disjunction, FeatureStructure, TOP
 from seman_parser.symbols import intern
-from .full_structure_snap import FullStructureSnapIndex, Structure
+from .full_structure_snap import FullStructureSnapIndex, Structure, Template
+from .positional_template_index import PositionalTemplateIndex
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,6 +37,7 @@ class CompiledPlan:
     slots: tuple[CompiledSlot, ...]
     constants: tuple[tuple[int, int], ...]  # (group, interned atom)
     rules: tuple[str, ...]
+    token_category_groups: tuple[tuple[str, ...], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -103,7 +107,7 @@ class _Union:
         self.value[a] = value
 
 
-def compile_plan(shape: Structure, rules: dict[str, Any]) -> CompiledPlan | None:
+def compile_plan(shape: Structure, rules: dict[str, Any], *, token_groups=None) -> CompiledPlan | None:
     """Precompile the entire rule graph to equality groups once, on observe.
 
     A variable name is local to the RULE OCCURRENCE, not global to the tree.
@@ -186,7 +190,9 @@ def compile_plan(shape: Structure, rules: dict[str, Any]) -> CompiledPlan | None
                      tuple(sorted(evidence.get(leaf_id,()))))
         for leaf_id,category in leaves
     )
-    return CompiledPlan(shape,slots,constants,tuple(rule_ids))
+    if token_groups is None:
+        token_groups=tuple((slot.category,) for slot in slots)
+    return CompiledPlan(shape,slots,constants,tuple(rule_ids),tuple(token_groups))
 
 
 class CompiledStructureReplayer:
@@ -195,12 +201,77 @@ class CompiledStructureReplayer:
     def __init__(self, resources, *, max_templates=20_000_000):
         self.index = FullStructureSnapIndex(resources,max_templates=max_templates)
         self.plans: list[CompiledPlan | None] = []
+        # One token may legitimately contain several grammatical leaves
+        # (contractions, possessives). Keep a separate indexed morphology
+        # pattern: categories of every lexical segment within each token.
+        self._segmented_index = PositionalTemplateIndex()
+        self._segmented_by_signature = {}
+
+    @staticmethod
+    def _source_token_groups(item,lattice):
+        """Exact lexical coverage, allowing multiple leaves per token.
+
+        Unlike the old validator, a contraction may yield two separate
+        leaves inside one token. No missing, overlapping, or fabricated
+        word parts can be silently indexed.
+        """
+        leaves=[]
+        def collect(node):
+            if node.lexical_candidate is not None:
+                leaves.append((node.start,node.end,node.category))
+            else:
+                for child in node.children:
+                    collect(child)
+        collect(item)
+        tokens=tuple(lattice.tokens)
+        while tokens and tokens[-1].text in (".","!","?"):
+            tokens=tokens[:-1]
+        groups=[]
+        cursor=0
+        for tok in tokens:
+            boundary=tok.start
+            categories=[]
+            while cursor<len(leaves) and leaves[cursor][0]<tok.end:
+                start,end,category=leaves[cursor]
+                if start!=boundary or end>tok.end or end<=start:
+                    raise ValueError("Cannot index noncontiguous or overlapping lexical leaves")
+                categories.append(category)
+                boundary=end
+                cursor+=1
+            if not categories or boundary!=tok.end:
+                raise ValueError("A word in the sentence has no grammatical lexical leaf")
+            groups.append(tuple(categories))
+        if cursor!=len(leaves):
+            raise ValueError("Lexical tree has leaves outside the sentence tokens")
+        return tuple(groups)
 
     def observe(self, item, *, lattice, evidence="candidate") -> int:
-        key=self.index.observe(item,lattice=lattice,evidence=evidence)
-        if key==len(self.plans):
-            template=self.index.templates[key]
-            self.plans.append(compile_plan(template.shape,self.index.rules))
+        groups=self._source_token_groups(item,lattice)
+        shape=self.index._shape(item)
+        segmented=any(len(group)!=1 for group in groups)
+        if not segmented:
+            key=self.index.observe(item,lattice=lattice,evidence=evidence)
+            if key==len(self.plans):
+                self.plans.append(compile_plan(
+                    self.index.templates[key].shape,self.index.rules,
+                    token_groups=groups))
+            return key
+        signature=(shape,groups)
+        prior=self._segmented_by_signature.get(signature)
+        if prior is not None:
+            self.index.templates[prior].candidate_observations+=1
+            return prior
+        if len(self.index.templates)>=self.index.max_templates:
+            raise OverflowError("Template capacity reached")
+        key=len(self.index.templates)
+        self._segmented_by_signature[signature]=key
+        self.index.templates.append(Template(
+            shape,tuple(cat for group in groups for cat in group),
+            candidate_observations=1))
+        self._segmented_index.add(
+            tuple("\x1f".join(group) for group in groups),key)
+        self.plans.append(compile_plan(
+            shape,self.index.rules,token_groups=groups))
         return key
 
     @staticmethod
