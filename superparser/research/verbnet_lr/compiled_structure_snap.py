@@ -528,11 +528,75 @@ class CompiledStructureReplayer:
                     "unseen_pattern" if not found.total else "requires_fallback")
             offset=found.next_offset
 
+    def _replay_spanning(self,lattice,*,expected_id=None):
+        """Follow indexed POS edges in the original lexical lattice graph.
+
+        A trie transition consumes an EXISTING lexical candidate edge,
+        possibly across several tokens. No grammar reductions, syntax trees,
+        word/text cache, or invented lexical edges are involved.
+        """
+        if not self._spanning_ids:
+            return CompiledReplay(None,0,0,False,"unseen_pattern")
+        tokens=tuple(lattice.tokens)
+        while tokens and tokens[-1].text in (".","!","?"):
+            tokens=tokens[:-1]
+        if not tokens:
+            return CompiledReplay(None,0,0,False,"unseen_pattern")
+        edges=defaultdict(lambda:defaultdict(list))
+        for c in lattice.candidates:
+            if tokens[0].start<=c.span_start<c.span_end<=tokens[-1].end:
+                edges[c.span_start][(c.span_end,c.category)].append(c)
+        end=tokens[-1].end
+        checked=0
+        found=None
+        def traverse(cursor,node,slots):
+            nonlocal checked,found
+            if found is not None:
+                return
+            if cursor==end:
+                for tid in node.template_ids:
+                    if expected_id is not None and tid!=expected_id:
+                        continue
+                    checked+=1
+                    plan=self.plans[tid]
+                    if plan is None:
+                        continue
+                    opts=tuple({cat:candidates} for cat,candidates in slots)
+                    filled=self._fill(plan,opts)
+                    if filled is None:
+                        continue
+                    selected,bindings=filled
+                    found=CompiledOccurrence(
+                        tid,plan.structure,lattice.text,tuple(lattice.tokens),
+                        selected,tuple(tuple(options) for _,options in slots),
+                        plan,bindings)
+                    return
+                return
+            for (span_end,category),candidates in edges.get(cursor,{}).items():
+                child=node.edges.get(category)
+                if child is None:
+                    continue
+                next_cursor=span_end
+                while next_cursor<end and lattice.text[next_cursor].isspace():
+                    next_cursor+=1
+                traverse(next_cursor,child,slots+((category,candidates),))
+                if found is not None:
+                    return
+        traverse(tokens[0].start,self._spanning_root,())
+        if found is not None:
+            return CompiledReplay(found,len(self._spanning_ids),checked,
+                                  False,"matched")
+        return CompiledReplay(None,len(self._spanning_ids),checked,
+                              False,"requires_fallback")
+
     def probe_original_template(self,lattice,template_id):
         """Independent reproducibility audit only. Never used to rank hits."""
         plan=self.plans[template_id]
         if plan is None:
             return False
+        if template_id in self._spanning_ids:
+            return self._replay_spanning(
+                lattice,expected_id=template_id).complete
         if all(len(group)==1 for group in plan.token_category_groups):
             return self._fill(plan,self._lexical_slots(lattice)) is not None
         paths=self._token_segmentations(lattice)
@@ -594,8 +658,12 @@ class CompiledStructureReplayer:
             max_candidates_per_slot=max_candidates_per_slot)
         if segmented.complete:
             return segmented
+        spanning=self._replay_spanning(lattice)
+        if spanning.complete:
+            return spanning
+        candidate_count=(result.total+segmented.candidate_templates+
+                         spanning.candidate_templates)
         return CompiledReplay(
-            None,result.total+segmented.candidate_templates,
-            checked+segmented.checked_templates,False,
-            "unseen_pattern" if not result.total and
-                not segmented.candidate_templates else "requires_fallback")
+            None,candidate_count,
+            checked+segmented.checked_templates+spanning.checked_templates,
+            False,"unseen_pattern" if not candidate_count else "requires_fallback")
