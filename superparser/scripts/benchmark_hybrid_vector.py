@@ -75,9 +75,12 @@ def run(wordnet_dir):
             latency=(perf_counter()-start)*1000
             lat.append(latency)
             ok=bool(tree is not None and all_pass(checks_for(tree,row,row["text"])))
-            categories=sorted((x.span_start,x.span_end,x.category)
-                              for x in report.result.lattice.candidates)
-            k=(shape(tree),contract(tree),categories)
+            categories=sorted(set((x.span_start,x.span_end,x.category)
+                                  for x in report.result.lattice.candidates))
+            forest_metrics={key:report.result.stats.get(key) for key in (
+                "forest_nodes","structural_derivations",
+                "partial_states","partial_derivations")}
+            k=(shape(tree),contract(tree),categories,forest_metrics)
             for bucket in (counts,by_split[row["split"]]):
                 bucket["tested"]+=1
                 bucket["complete"]+=int(report.result.completed)
@@ -94,7 +97,8 @@ def run(wordnet_dir):
                     ("same_complete",old_complete==report.result.completed),
                     ("same_best_tree",previous[0]==k[0]),
                     ("same_syntax",previous[1]==k[1]),
-                    ("same_lexical_categories",previous[2]==k[2])):
+                    ("same_lexical_categories",previous[2]==k[2]),
+                    ("same_forest_size",previous[3]==k[3])):
                     counts[name]+=int(match)
                 counts["budget_fallback"]+=int(
                     report.result.stats.get("hybrid_guidance",{}).get(
