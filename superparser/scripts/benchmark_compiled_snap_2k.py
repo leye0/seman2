@@ -218,6 +218,27 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
                                 memory._fill(plan,forced) is not None,
                             "candidate_count":len(original_candidates),
                             "slot_count":len(plan.slots),
+                            "lexical_slot_differences":[
+                                {
+                                    "slot":j,
+                                    "category":original.category,
+                                    "original_feature_names":list(
+                                        original.features.as_dict()),
+                                    "original_lemma":original.lemma,
+                                    "current_candidate_count":len(
+                                        memory._lexical_slots(lattice)[j].get(
+                                            original.category,())) if
+                                            j<len(memory._lexical_slots(lattice)) else 0,
+                                    "reading_still_in_lattice":any(
+                                        c.span_start==original.span_start and
+                                        c.span_end==original.span_end and
+                                        c.category==original.category and
+                                        c.lemma==original.lemma and
+                                        c.features.as_dict()==original.features.as_dict()
+                                        for c in lattice.candidates),
+                                }
+                                for j,original in enumerate(original_candidates)
+                            ],
                             "required_features":tuple(tuple(slot.requires)
                                 for slot in plan.slots),
                             "rules":list(plan.rules)[:20]})
