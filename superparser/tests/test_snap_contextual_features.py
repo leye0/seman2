@@ -55,7 +55,7 @@ class SnapContextualFeatureTests(unittest.TestCase):
         self.memory=FullStructureSnapIndex(self.resources)
 
     def analyze(self, row):
-        result=self.parser.parse_lattice(row,goal_category="CLAUSE")
+        result=self.parser.parse_lattice(row,beam=80,max_items=50000,goal_category="CLAUSE")
         self.assertTrue(result.completed)
         item=result.best()
         self.assertIsNotNone(item)
@@ -119,7 +119,7 @@ class SnapContextualFeatureTests(unittest.TestCase):
         memory=FullStructureSnapIndex(resources)
         masculine=lattice("he walks",{"gender":"masculine"},{})
         feminine=lattice("she walks",{"gender":"feminine"},{})
-        native=VectorGrammar(grammar).parse_lattice(masculine,goal_category="CLAUSE")
+        native=VectorGrammar(grammar).parse_lattice(masculine,beam=80,max_items=50000,goal_category="CLAUSE")
         self.assertTrue(native.completed)
         memory.observe(native.best(),lattice=masculine)
         result=memory.match(feminine)
