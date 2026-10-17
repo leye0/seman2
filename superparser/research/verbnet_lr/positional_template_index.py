@@ -66,13 +66,26 @@ class PositionalTemplateIndex:
         total = mask.bit_count()
         if offset >= total:
             return IndexedCandidates((), total, None)
-        # Discard the offset lowest bits without constructing every ID.
-        for _ in range(offset):
-            mask &= mask-1
+        # Jump over packed blocks with bit_count(), never iterate
+        # template-by-template to implement large pagination offsets.
+        base = 0
+        skip = offset
+        block_bits = 1024
+        block_mask = (1 << block_bits) - 1
+        while skip:
+            count = (mask & block_mask).bit_count()
+            if count <= skip:
+                mask >>= block_bits
+                base += block_bits
+                skip -= count
+            else:
+                for _ in range(skip):
+                    mask &= mask-1
+                skip = 0
         found = []
         while mask and len(found) < limit:
             lowest = mask & -mask
-            local_id = lowest.bit_length() - 1
+            local_id = base + lowest.bit_length() - 1
             found.append(bucket.template_ids[local_id])
             mask &= mask-1
         next_offset = offset+len(found) if mask else None
