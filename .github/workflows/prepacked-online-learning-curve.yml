@@ -1,0 +1,64 @@
+name: Progressive 20000 Gutenberg Parses — Online C Savings
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - '.github/workflows/prepacked-online-learning-curve.yml'
+      - 'superparser/scripts/benchmark_prepacked_online_long.py'
+      - 'superparser/research/verbnet_lr/prepacked_witnesses.py'
+      - 'superparser/research/verbnet_lr/hybrid_vector.py'
+      - 'superparser/seman_parser/vector_chart.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  long-running:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as res:
+              data=res.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          required={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              required.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as archive:
+              for member in archive.namelist():
+                  name=Path(member).name
+                  if member.startswith('wordnet/') and name in required:
+                      (dest/name).write_bytes(archive.read(member))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Read 20,000 real novel sentences online, record cumulative net gain
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_prepacked_online_long.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-sentences 20000 --max-tokens 24 \
+            --checkpoint 500 --recompile-every 500 \
+            --out /tmp/prepacked-online-20000.json
+      - name: Store raw actual long-run curve
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-progressive-online-20000
+          path: /tmp/prepacked-online-20000.json
+          if-no-files-found: warn
+          retention-days: 30
