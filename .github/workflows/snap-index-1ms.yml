@@ -9,6 +9,7 @@ on:
       - 'superparser/research/verbnet_lr/full_structure_snap.py'
       - 'superparser/scripts/benchmark_snap_index_only.py'
       - 'superparser/scripts/benchmark_snap_full_match.py'
+      - 'superparser/scripts/benchmark_snap_50000_direct_hits.py'
       - '.github/workflows/snap-index-1ms.yml'
   workflow_dispatch:
 
@@ -33,6 +34,9 @@ jobs:
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_index_only.py \
             --templates 17391 --queries 10000 --max-ms 1.0
+      - name: Hard-gated 1000 matched structures in 100ms, 50000 in 5s
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_50000_direct_hits.py
       - name: Report full grammatical snap separate from direct lookup
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_full_match.py
