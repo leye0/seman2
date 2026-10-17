@@ -11,12 +11,13 @@ trees remain explicitly tagged as candidates. No words/lemmas are indexed.
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from itertools import product
 from functools import lru_cache
 from typing import Any
 
-from seman_parser.features import Variable
+from seman_parser.chart import ChartItem, _compose_syntax
+from seman_parser.features import FeatureStructure, Variable, substitute_structure, unify
 from seman_parser.predictive import CompactNode, PredictiveParser
 from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 from seman_parser.symbols import intern
@@ -181,6 +182,60 @@ class FullStructureSnapIndex:
         state.template_ids.append(key)
         return key
 
+    def _restore_contextual_features(
+        self,
+        item: ChartItem,
+        constraint: FeatureStructure,
+        inherited: dict[str, object],
+    ) -> tuple[ChartItem, dict[str, object]] | None:
+        """Reconstruct the original *contextual* feature path, top down.
+
+        A bottom-up PredictiveParser._reduce() validates that the selected
+        rules/lexical readings unify. It does NOT, however, push RHS feature
+        requirements down into children's exported ChartItems. VectorGrammar
+        does: a PRONOUN with no lexical gender can inherit gender=?g from
+        its parent's slot. Losing ?g would erase an unresolved agreement/
+        coreference constraint even though the tree and lexical senses match.
+
+        Use the SAME feature unifier and substitute only legitimate grammar
+        bindings. Never copy a recorded training sentence's feature values:
+        a new sentence must re-unify its own lexical alternatives.
+        """
+        if item.lexical_candidate is not None:
+            matched = unify(constraint, item.lexical_candidate.features, inherited)
+            if matched is None:
+                return None
+            merged, bindings = matched
+            return replace(item, features=merged, bindings=dict(bindings), _sig=None), bindings
+
+        rule = self.rules.get(item.rule_id)
+        if rule is None or len(rule.rhs) != len(item.children):
+            return None
+        matched = unify(constraint, rule.lhs.features, inherited)
+        if matched is None:
+            return None
+        lhs, env = matched
+        children = []
+        for symbol, child in zip(rule.rhs, item.children):
+            # The vector materializer visits each RHS child under precisely
+            # the feature constraint declared by that grammar slot.
+            if symbol.category != child.category:
+                return None
+            result = self._restore_contextual_features(child, symbol.features, env)
+            if result is None:
+                return None
+            updated, env = result
+            children.append(updated)
+        restored_children = tuple(children)
+        return replace(
+            item,
+            features=substitute_structure(lhs, env),
+            bindings=dict(env),
+            children=restored_children,
+            syntax=_compose_syntax(rule, restored_children),
+            _sig=None,
+        ), env
+
     @staticmethod
     def _lexical_slots(lattice):
         tokens = tuple(lattice.tokens)
@@ -302,6 +357,11 @@ class FullStructureSnapIndex:
             variants = build(template.shape, 0)
             if variants:
                 item = self._materializer._materialize(variants[0])
+                contextual = self._restore_contextual_features(
+                    item, FeatureStructure.empty(), {})
+                if contextual is None:
+                    continue
+                item, _bindings = contextual
                 matched.append(SnapMatch(
                     template_id, item,
                     template.verified_observations > 0,
