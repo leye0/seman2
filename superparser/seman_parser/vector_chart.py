@@ -317,6 +317,7 @@ class VectorGrammar:
         max_items: int,
         goal_category: str,
         diagnostic_k: int | None = None,
+        witness_cache: Any | None = None,
     ) -> ParseResult:
         recognition_start = perf_counter()
         forest = _VectorForest(self, lattice, max_items=max_items)
@@ -334,6 +335,9 @@ class VectorGrammar:
             else min(beam, 2 if length > 160 else 4 if length > 80 else 8)
         )
         materializer = _LazyMaterializer(self, forest)
+        if witness_cache is not None:
+            witness_cache.bind(self, forest, lattice)
+            materializer.witness_cache = witness_cache
         packed: dict[tuple[int, int, int], PackedNode] = {}
 
         def pack(item: ChartItem) -> None:
@@ -398,6 +402,8 @@ class VectorGrammar:
         stats["nodes_visited_for_best"] = materializer.nodes_initialized
         stats["combinations_visited_for_best"] = materializer.combinations_visited
         root_provider.refresh_stats()
+        if witness_cache is not None:
+            stats["prepacked_witnesses"] = witness_cache.summary()
         roots = LazyRootSequence(root_provider)
         return ParseResult(
             text=lattice.text,
@@ -614,6 +620,7 @@ class _LazyMaterializer:
     def __init__(self, compiled: VectorGrammar, forest: _VectorForest) -> None:
         self.compiled = compiled
         self.forest = forest
+        self.witness_cache: Any | None = None
         self.node_states: dict[tuple[int, Hashable], _NodeState] = {}
         self.path_states: dict[int, _PathState] = {}
         self.item_cache: dict[tuple[str, int], ChartItem] = {}
@@ -723,6 +730,17 @@ class _LazyMaterializer:
             self.context_cache_hits += 1
         if state.initializing:
             return None
+        if not state.initialized and self.witness_cache is not None:
+            shortcut = self.witness_cache.take(node_id, state, self)
+            if shortcut is not None:
+                # Certified unique constituent: no other analysis of this
+                # chart node is hidden by the fast path. All other nodes
+                # still follow the canonical lazy materializer.
+                state.results.append(shortcut)
+                state.initialized = True
+                state.exhausted = True
+                self.analysis_count += 1
+                self.nodes_initialized += 1
         if not state.initialized:
             self._initialize_node(node_id, state)
         while len(state.results) <= rank and state.heap:
