@@ -21,6 +21,7 @@ from seman_parser.features import FeatureStructure, Variable, substitute_structu
 from seman_parser.predictive import CompactNode, PredictiveParser
 from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 from seman_parser.symbols import intern
+from seman_parser.vector_chart import _project_bindings
 
 
 @dataclass(frozen=True, slots=True)
@@ -221,10 +222,21 @@ class FullStructureSnapIndex:
             # the feature constraint declared by that grammar slot.
             if symbol.category != child.category:
                 return None
-            result = self._restore_contextual_features(child, symbol.features, env)
+            # The vector chart projects parent bindings onto the variables
+            # actually used by this RHS interface. Carrying the entire
+            # environment down would alias unrelated local ?g/?p variables,
+            # spuriously resolve open features and reject valid templates.
+            projected, relevant = _project_bindings(symbol.features, env)
+            inherited_before = dict(env)
+            result = self._restore_contextual_features(
+                child, symbol.features, projected)
             if result is None:
                 return None
-            updated, env = result
+            updated, child_env = result
+            env = dict(child_env)
+            for name, value in inherited_before.items():
+                if name not in relevant:
+                    env[name] = value
             children.append(updated)
         restored_children = tuple(children)
         return replace(
