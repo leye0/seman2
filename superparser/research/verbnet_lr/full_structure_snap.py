@@ -22,6 +22,7 @@ from seman_parser.predictive import CompactNode, PredictiveParser
 from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 from seman_parser.symbols import intern
 from seman_parser.vector_chart import _project_bindings
+from .positional_template_index import PositionalTemplateIndex
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,6 +106,7 @@ class FullStructureSnapIndex:
         self.templates: list[Template] = []
         self._by_shape: dict[Structure, int] = {}
         self._root = _Trie()
+        self._positional_index = PositionalTemplateIndex()
         # Only materialization and the real grammar unifier are reused.
         # There is no call to the production search parser.
         self._materializer = PredictiveParser(resources)
@@ -181,6 +183,7 @@ class FullStructureSnapIndex:
             int(evidence == "verified"),
             int(evidence == "grammar_witness")))
         state.template_ids.append(key)
+        self._positional_index.add(categories, key)
         return key
 
     def _restore_contextual_features(
@@ -278,44 +281,18 @@ class FullStructureSnapIndex:
         if template_offset < 0:
             raise ValueError("template_offset must be nonnegative")
         options = self._lexical_slots(lattice)
-        active = [self._root]
-        incomplete = False
-        for lexical in options:
-            available = lexical.keys()
-            upcoming = []
-            for state in active:
-                for category in available:
-                    child = state.edges.get(category)
-                    if child is not None:
-                        upcoming.append(child)
-            if len(upcoming) > max_states:
-                incomplete = True
-                upcoming = upcoming[:max_states]
-            active = upcoming
-            if not active:
-                return SnapResult((), lattice, 0, 0, 0, incomplete,
-                                  "trie_budget" if incomplete else "unseen_pattern")
-        # A category trie has no merging transitions: each reachable state
-        # represents one distinct lexical prefix. Template IDs are stored
-        # at exactly one terminal. Hence no O(bucket_size) deduplication or
-        # full traversal of a potentially multimillion-ID bucket is needed.
-        count = sum(len(state.template_ids) for state in active)
-        ids = []
-        skip = template_offset
-        for state in active:
-            length = len(state.template_ids)
-            if skip >= length:
-                skip -= length
-                continue
-            remaining = max_templates_checked - len(ids)
-            if remaining <= 0:
-                break
-            ids.extend(state.template_ids[skip:skip + remaining])
-            skip = 0
-        next_offset = (template_offset + len(ids)
-                       if template_offset + len(ids) < count else None)
-        if next_offset is not None:
-            incomplete = True
+        # Direct inverted-index intersection replaces the former
+        # branching trie traversal. A category lookup is NOT a grammatical
+        # proof; actual unification remains in the bounded build below.
+        found = self._positional_index.lookup(
+            tuple(tuple(by_category) for by_category in options),
+            limit=max_templates_checked, offset=template_offset)
+        ids = found.template_ids
+        count = found.total
+        next_offset = found.next_offset
+        incomplete = next_offset is not None or count > max_states
+        if not ids and count == 0:
+            return SnapResult((), lattice, 0, 0, 0, False, "unseen_pattern")
         reductions = 0
         matched = []
 
