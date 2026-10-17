@@ -318,6 +318,7 @@ class VectorGrammar:
         goal_category: str,
         diagnostic_k: int | None = None,
         witness_cache: Any | None = None,
+        kbest_work_limit: int | None = None,
     ) -> ParseResult:
         recognition_start = perf_counter()
         forest = _VectorForest(self, lattice, max_items=max_items)
@@ -334,7 +335,7 @@ class VectorGrammar:
             if diagnostic_k is not None
             else min(beam, 2 if length > 160 else 4 if length > 80 else 8)
         )
-        materializer = _LazyMaterializer(self, forest)
+        materializer = _LazyMaterializer(self, forest, work_limit=kbest_work_limit)
         if witness_cache is not None:
             witness_cache.bind(self, forest, lattice)
             materializer.witness_cache = witness_cache
@@ -397,7 +398,25 @@ class VectorGrammar:
             root_nodes, materializer, pack, requested_k=requested_k, stats=stats,
         )
         best_start = perf_counter()
-        root_provider.ensure(1, charge_kbest=False)
+        try:
+            root_provider.ensure(1, charge_kbest=False)
+        except KBestWorkBudgetExceeded:
+            # There may be a derivation somewhere in the packed forest, but
+            # no optimal grammatical witness was certified within budget.
+            # Never expose a partial or unranked candidate as success.
+            stats["kbest_budget_exceeded"] = True
+            stats["kbest_work_units"] = materializer.work_units
+            stats["kbest_work_limit"] = kbest_work_limit
+            stats["best_ms"] = round((perf_counter() - best_start) * 1000, 4)
+            root_provider.refresh_stats()
+            return ParseResult(
+                text=lattice.text, lattice=lattice, packed=packed,
+                roots=(), completed=False, stats=stats,
+                shared_forest=forest,
+            )
+        stats["kbest_budget_exceeded"] = False
+        stats["kbest_work_units"] = materializer.work_units
+        stats["kbest_work_limit"] = kbest_work_limit
         stats["best_ms"] = round((perf_counter() - best_start) * 1000, 4)
         stats["nodes_visited_for_best"] = materializer.nodes_initialized
         stats["combinations_visited_for_best"] = materializer.combinations_visited
@@ -607,6 +626,10 @@ class _NodeState:
     seen_results: set[Hashable] = field(default_factory=set)
 
 
+class KBestWorkBudgetExceeded(RuntimeError):
+    """A full best-tree proof was not obtained within a measured work budget."""
+
+
 class _LazyMaterializer:
     """Demand-driven k-best extraction with feature-aware failure recovery."""
 
@@ -617,7 +640,12 @@ class _LazyMaterializer:
     # for shallower, grammatically incoherent trees.
     RULE_COST = 2.0
 
-    def __init__(self, compiled: VectorGrammar, forest: _VectorForest) -> None:
+    def __init__(self, compiled: VectorGrammar, forest: _VectorForest,
+                 *, work_limit: int | None = None) -> None:
+        if work_limit is not None and work_limit < 1:
+            raise ValueError("k-best work limit must be positive")
+        self.work_limit = work_limit
+        self.work_units = 0
         self.compiled = compiled
         self.forest = forest
         self.witness_cache: Any | None = None
@@ -658,6 +686,13 @@ class _LazyMaterializer:
         # allocation-free key.  Cache only the boolean answer: contextual
         # unification and its bindings still happen on the real path.
         self._hint_compatibility: dict[tuple[int, int], bool] = {}
+
+    def _charge(self) -> None:
+        """Bound ranking effort without a wall-clock timeout or silent beam."""
+        self.work_units += 1
+        if self.work_limit is not None and self.work_units > self.work_limit:
+            raise KBestWorkBudgetExceeded(
+                f"k-best work budget {self.work_limit} exhausted")
 
     def _hint_compatible(
         self,
@@ -744,6 +779,7 @@ class _LazyMaterializer:
         if not state.initialized:
             self._initialize_node(node_id, state)
         while len(state.results) <= rank and state.heap:
+            self._charge()
             negative_bound, _, kind, payload = heappop(state.heap)
             if kind == "lexical":
                 candidate, merged, env = payload
@@ -827,6 +863,7 @@ class _LazyMaterializer:
         self.nodes_initialized += 1
         node = self.forest.nodes[node_id]
         for derivation_index, derivation in enumerate(node.derivations):
+            self._charge()
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
                     if isinstance(candidate.interface, SegmentInterface):
@@ -919,6 +956,7 @@ class _LazyMaterializer:
         # Count every combination we actually inspect, including candidates
         # that are subsequently rejected by a contextual unification.
         self.combinations_visited += 1
+        self._charge()
         combo: list[CompactAnalysis] = []
         rule = self.compiled.rules[derivation.rule_index].rule
         self.unification_attempts += 1
@@ -1008,6 +1046,7 @@ class _LazyMaterializer:
             for derivation_index in range(len(partial.derivations)):
                 self._push_path(partial, state, derivation_index, 0)
         while len(state.results) <= rank and state.heap:
+            self._charge()
             _, _, derivation_index, previous_rank, path, score = heappop(state.heap)
             derivation = partial.derivations[derivation_index]
             if derivation.previous_id is not None:
@@ -1065,6 +1104,7 @@ class _LazyMaterializer:
         self._hint_nodes_active.add(node_id)
         best = float("-inf")
         for derivation in self.forest.nodes[node_id].derivations:
+            self._charge()
             if isinstance(derivation, LexicalDerivation):
                 if derivation.candidates:
                     best = max(best, max(candidate.score for candidate in derivation.candidates))
@@ -1115,6 +1155,7 @@ class _LazyMaterializer:
         self._hint_nodes_active.add(node_id)
         best = float("-inf")
         for derivation in self.forest.nodes[node_id].derivations:
+            self._charge()
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
                     if (
