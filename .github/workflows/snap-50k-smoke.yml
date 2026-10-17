@@ -6,6 +6,7 @@ on:
       - research/verbnet-left-to-right-poc
     paths:
       - '.github/workflows/snap-50k-smoke.yml'
+      - 'superparser/scripts/benchmark_snap_50k_two_pass.py'
   workflow_dispatch:
 
 permissions:
@@ -42,18 +43,18 @@ jobs:
                   if name.startswith('wordnet/') and leaf in keep:
                       (dest/leaf).write_bytes(z.read(name))
           PY
-      - name: Smoke check 250 genuine parses and 250 snaps
+      - name: Replay 1000 novel sentences twice with p50/p95
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_50k_two_pass.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --size 250 --max-tokens 32 --max-items 20000 \
+            --size 1000 --max-tokens 45 --max-items 20000 \
             --parse-timeout 0.35 --match-timeout 0.2 \
-            --checkpoint 50 --out /tmp/seman2-250-snap-smoke.json
+            --checkpoint 250 --out /tmp/seman2-1000-snap-smoke.json
       - name: Preserve results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: seman2-250-snap-smoke
-          path: /tmp/seman2-250-snap-smoke.json
+          name: seman2-1000-snap-smoke
+          path: /tmp/seman2-1000-snap-smoke.json
           if-no-files-found: warn
           retention-days: 7
