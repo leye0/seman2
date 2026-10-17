@@ -1,6 +1,7 @@
 """Regression contracts for opt-in C-guided canonical vector parse forest."""
 from __future__ import annotations
 import unittest
+import os
 from pathlib import Path
 
 from seman_parser.engine import Parser, ParserResources
@@ -20,7 +21,7 @@ def structure(node):
 class HybridVectorTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        resources=ParserResources.from_dir(DATA)
+        resources=ParserResources.from_dir(DATA,wordnet_dict=os.environ.get('WORDNET_DICT'))
         cls.reference=Parser(resources,cache_size=0)
         cls.hybrid=HybridVectorParser(resources,cache_size=0)
 
