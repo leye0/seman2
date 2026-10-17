@@ -36,6 +36,36 @@ def lexical_readings(item):
     return tuple(x for child in item.children for x in lexical_readings(child))
 
 
+def alignment_diagnostic(item,lattice):
+    leaves=[]
+    def walk(node):
+        if node.lexical_candidate is not None:
+            leaves.append((node.start,node.end,node.category))
+        else:
+            for child in node.children:
+                walk(child)
+    walk(item)
+    tokens=tuple(lattice.tokens)
+    while tokens and tokens[-1].text in (".","!","?"):
+        tokens=tokens[:-1]
+    token_spans={(x.start,x.end):i for i,x in enumerate(tokens)}
+    aligned=[token_spans.get((a,b)) for a,b,_ in leaves]
+    counts=Counter()
+    counts["token_count"]=len(tokens)
+    counts["leaf_count"]=len(leaves)
+    counts["aligned_leaves"]=sum(i is not None for i in aligned)
+    counts["non_token_spans"]=sum(i is None for i in aligned)
+    counts["unused_tokens"]=len(set(range(len(tokens)))-set(
+        i for i in aligned if i is not None))
+    counts["index_reordered"]=int(aligned!=sorted(
+        (i for i in aligned if i is not None)))
+    counts["root_starts_before_first_token"]=int(bool(tokens) and
+        item.start<tokens[0].start)
+    counts["root_ends_before_last_token"]=int(bool(tokens) and
+        item.end<tokens[-1].end)
+    return dict(counts)
+
+
 def occurrence_readings(occ):
     return tuple(
         (c.span_start,c.span_end,c.category,c.lemma,
@@ -63,6 +93,7 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
     stats=Counter()
     timings=defaultdict(list)
     indexing_ns=0
+    alignment_failures=[]
 
     for i,row in enumerate(corpus):
         t=perf_counter_ns()
@@ -89,6 +120,12 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
             except (ValueError,OverflowError) as exc:
                 stats["not_indexable"]+=1
                 stats["not_indexable_reason_"+str(exc)]+=1
+                if len(alignment_failures)<12:
+                    alignment_failures.append({
+                        "sentence_number":i,
+                        "reason":str(exc),
+                        "alignment":alignment_diagnostic(item,lattice)
+                    })
             indexing_ns+=perf_counter_ns()-start
         if (i+1)%checkpoint==0:
             print("TRAIN",json.dumps({
@@ -187,6 +224,7 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
                   "max_tokens":max_tokens},
         "training":dict(stats),
         "unique_structures":len(memory.index.templates),
+        "alignment_rejection_samples":alignment_failures,
         "compiled_plans":sum(x is not None for x in memory.plans),
         "indexed_self_replayable_pct":round(
             100*stats["own_compiled_fill_valid"]/stats["indexed"],3)
