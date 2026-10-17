@@ -125,6 +125,24 @@ class HybridVectorTests(unittest.TestCase):
         self.assertTrue(result.stats["hybrid_guidance"].get("fallback_after_guided_budget",False))
         self.assertTrue(result.stats["budget_exceeded"])
 
+    def test_06_canonical_full_tree_and_tentative_C_witnesses_coexist(self):
+        text="John gave Mary the box."
+        full,witnesses=self.hybrid.parse_with_local_witnesses(
+            text,min_report_tokens=2,emit_trees=True)
+        self.assertTrue(full.result.completed)
+        self.assertEqual(full.result.best().category,"CLAUSE")
+        self.assertGreaterEqual(witnesses.count_at_least(2),1)
+        for hit in witnesses.hits:
+            self.assertIsNotNone(hit.tree)
+            self.assertEqual(hit.tree.category,hit.category)
+            self.assertTrue(hasattr(hit.tree,"syntax"))
+            self.assertGreater(hit.tree.end,hit.tree.start)
+            self.assertLessEqual(hit.tree.end,len(text))
+        self.assertIsNotNone(full.result.shared_forest)
+        self.assertEqual(
+            structure(self.reference.parse(text).result.best()),
+            structure(full.result.best()))
+
 
 if __name__=="__main__":
     unittest.main()
