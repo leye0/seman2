@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
-from hashlib import blake2b
 import json
 from pathlib import Path
 from time import perf_counter
@@ -23,6 +22,7 @@ from research.verbnet_lr.full_structure_snap import (
     FullStructureSnapIndex, SnappingResearchReader,
 )
 from research.verbnet_lr.sampled_teacher import VerificationSamplingQueue
+from research.verbnet_lr.compatible_category_sequences import CompatibleCategorySequenceIndex
 from research.verbnet_lr.gutenberg_novels import (
     TRAIN_BOOKS, TEST_BOOKS, download, extract, spread_training,
 )
@@ -32,33 +32,6 @@ from seman_parser.reading_kernel_compiled_adapter import SemanCompiledReader
 from seman_parser.segmentation import build_lattice
 
 ROOT = Path(__file__).resolve().parents[1]
-
-
-def category_signature(lattice, *, coarse=False):
-    """Categories from ALL candidate senses per token; NEVER pick one POS.
-
-    This is a *lexical ambiguity fingerprint*, not a syntactic derivation:
-    measuring its recurrence tests how many reusable POS-patterns the user
-    expected, independent of the strict cache's full-rule-ID tree definition.
-    """
-    spans = {}
-    for cand in lattice.candidates:
-        spans.setdefault((cand.span_start,cand.span_end), set()).add(
-            cand.category)
-    tokens = lattice.tokens
-    while tokens and tokens[-1].text in (".","!"):
-        tokens = tokens[:-1]
-    def grouping(cat):
-        if not coarse:
-            return cat
-        return cat.split("-",1)[0]
-    return tuple(tuple(sorted({
-        grouping(cat) for cat in spans.get((t.start,t.end),())
-    })) for t in tokens)
-
-
-def digest_signature(value):
-    return blake2b(repr(value).encode("utf8"),digest_size=16).digest()
 
 
 def _percentile(data,portion):
@@ -136,10 +109,8 @@ def run(*,wordnet_dir,max_train=50_000,
         resources,index=index,
         fallback=SemanCompiledReader(resources,token_only_lattice=True),
         sampler=sampler)
-    fine_seen=set()
-    coarse_seen=set()
+    lexical_patterns=CompatibleCategorySequenceIndex()
     data=Counter()
-    lexical_dist=Counter()
     lengths=defaultdict(Counter)
     timings=[]
     reports=[]
@@ -168,13 +139,13 @@ def run(*,wordnet_dir,max_train=50_000,
             "max_trees_sharing_one_category_sequence":max(
                 full_shapes.values(),default=0),
             "total_cached_structure_observations":totals,
-            "lexical_fingerprint_uniques":{
-                "all_senses_full_categories":len(fine_seen),
-                "all_senses_coarse_categories":len(coarse_seen),
-            },
-            "lexical_fingerprint_repeats":{
-                "all_senses_full_categories":data["fine_signature_repeat"],
-                "all_senses_coarse_categories":data["coarse_signature_repeat"],
+            "compatible_category_enumerations":{
+                "observations_with_at_least_one_prior_compatible_sequence":
+                    data["compatible_category_sequence_repeat"],
+                "total_prior_observations_compatible_across_queries":
+                    data["compatible_prior_observation_pairs"],
+                "index":lexical_patterns.summary(),
+                "definition":"Exists one shared full positional category assignment with an earlier sentence; other readings never prevent compatibility. A lexical retrieval signal, not a grammar-verified tree.",
             },
             "by_token_length":{k:dict(v) for k,v in sorted(lengths.items())},
             "sampler":sampler.summary(),
@@ -191,8 +162,10 @@ def run(*,wordnet_dir,max_train=50_000,
         print("MILESTONE "+json.dumps({
             "observed":n,"snaps":data["snap_hit"],
             "lr_completed":data["lr_complete"],
-            "lexical_repeats":data["fine_signature_repeat"],
-            "coarse_repeats":data["coarse_signature_repeat"],
+            "compatible_sequence_repeats":
+                data["compatible_category_sequence_repeat"],
+            "compatible_prior_pairs":
+                data["compatible_prior_observation_pairs"],
             "patterns":len(index.templates),
             "teacher_witnesses":sampler.grammar_witnesses,
             "novel_snaps_600":snap_eval["novel_holdout"]["snapped"],
@@ -208,14 +181,14 @@ def run(*,wordnet_dir,max_train=50_000,
         started=perf_counter()
         # CRUCIAL: lexicalize and parse *every* selected sentence.
         lattice=build_lattice(text,resources.lexicon,multiword_max=1)
-        for coarsen, target, key in (
-                (False,fine_seen,"fine_signature_repeat"),
-                (True,coarse_seen,"coarse_signature_repeat")):
-            fp=digest_signature(category_signature(lattice,coarse=coarsen))
-            if fp in target:
-                data[key]+=1
-            else:
-                target.add(fp)
+        # Union possible choices at each token, intersect compatible
+        # observations across positions; no eager Cartesian product.
+        lexical_match=lexical_patterns.observe(
+            lexical_patterns.lattice_slots(lattice))
+        data["compatible_category_sequence_repeat"]+=int(
+            lexical_match.has_match)
+        data["compatible_prior_observation_pairs"]+=(
+            lexical_match.compatible_prior_observations)
         before=len(index.templates)
         result,route=reader.parse(
             text,learn_candidate=True,lattice=lattice)
@@ -237,6 +210,8 @@ def run(*,wordnet_dir,max_train=50_000,
               "13-24" if case["tokens"]<=24 else
               "25-40" if case["tokens"]<=40 else "41-45")
         lengths[band]["seen"]+=1
+        lengths[band]["candidate_sequence_repeat"]+=int(
+            lexical_match.has_match)
         lengths[band]["snapped"]+=int(route=="snap")
         lengths[band]["completed"]+=int(result.complete)
 
@@ -263,7 +238,8 @@ def run(*,wordnet_dir,max_train=50_000,
                 "seen":number,"snaps":data["snap_hit"],
                 "lr_complete":data["lr_complete"],
                 "lattices":data["processed_with_lattice_and_parser"],
-                "fine_repeated":data["fine_signature_repeat"],
+                "compatible_category_sequence_repeats":
+                    data["compatible_category_sequence_repeat"],
                 "earley_found":data["earley_found"],
                 "templates":len(index.templates),
             }),flush=True)
@@ -272,7 +248,7 @@ def run(*,wordnet_dir,max_train=50_000,
 
     return {
         "schema":"seman2-gutenberg-all-sentences-online-snap-v1",
-        "goal":"Test recurrence of full categories and complete-tree structures on ALL input sentences, not 10% only.",
+        "goal":"Measure compatibility of all possible lexical-category enumerations across ALL input sentences, separately from whole-tree snapping.",
         "catalog":catalog,
         "seed":seeded,
         "initial_templates":starter_templates,
@@ -290,7 +266,7 @@ def run(*,wordnet_dir,max_train=50_000,
         "limitations":[
             "All training sentences get lexical lattice, snap and L-R fallback; only 1/10 is deeply sampled.",
             "Successful L-R fallbacks create provisional candidate whole-tree patterns; no independent gold claimed.",
-            "Lexical fingerprints contain every candidate category per token and omit lemmas; category repetition is NOT tree repetition.",
+            "Candidate category sequences match existentially across all lexical alternatives; this is not grammatical validation.",
             "Strict structures include full grammar rule IDs and all attachment topology; may over-distinguish linguistic skeletons.",
             "Public-domain prose extraction is heuristic; not manually verified segmentation.",
             "Cross-author heldout novels lack explicit syntactic gold; matches measure recognition, not linguistic accuracy.",
@@ -325,7 +301,7 @@ def main():
         "training_count":report["training_count"],
         "latest":report["checkpoints"][-1]["sentence_operation_counts"],
         "templates":report["checkpoints"][-1]["full_structure_cache"],
-        "fingerprint_repeats":report["checkpoints"][-1]["lexical_fingerprint_repeats"],
+        "candidate_sequence_matches":report["checkpoints"][-1]["compatible_category_enumerations"],
     }),flush=True)
 
 

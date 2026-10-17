@@ -275,6 +275,27 @@ class FullStructureSnapTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             wrapper.parse("wrong",lattice=lattice)
 
+    def test_extra_lexical_categories_can_never_block_snap(self):
+        base=[("PRON",None,1),("V",None,1),("N","sg",1),
+              ("PREP",None,1),("N","sg",1)]
+        training=self.lattice(["I","saw","girl","with","hat"],
+                              [[x] for x in base])
+        for item in self.two_attached_trees(training):
+            self.index.observe(item,lattice=training)
+        abundant=[
+            [base[0],("N",None,2),("ADJ",None,5)],
+            [base[1],("N",None,10),("ADV",None,7)],
+            [base[2],("ADJ",None,11),("V",None,9)],
+            [base[3],("N",None,3)],
+            [base[4],("ADV",None,8)],
+        ]
+        query=self.lattice(["we","met","pilot","near","town"],abundant)
+        matching=self.index.match(query)
+        self.assertEqual(len(matching.matches),2)
+        self.assertEqual({m.template_id for m in matching.matches},{0,1})
+        self.assertIs(matching.lattice,query)
+        self.assertEqual(len(query.candidates),sum(map(len,abundant)))
+
     def test_unknown_and_explicit_budgets(self):
         cats = [[("PRON",None,1)], [("V",None,1)],
                 [("N","sg",1)], [("PREP",None,1)],

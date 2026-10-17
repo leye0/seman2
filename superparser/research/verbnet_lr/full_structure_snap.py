@@ -144,7 +144,7 @@ class FullStructureSnapIndex:
                     walk(child)
         walk(item)
         tokens = tuple(lattice.tokens)
-        while tokens and tokens[-1].text in (".", "!"):
+        while tokens and tokens[-1].text in (".", "!", "?"):
             tokens = tokens[:-1]
         if (len(leaves) != len(tokens) or
                 any((start, end) != (t.start, t.end)
@@ -184,7 +184,7 @@ class FullStructureSnapIndex:
     @staticmethod
     def _lexical_slots(lattice):
         tokens = tuple(lattice.tokens)
-        while tokens and tokens[-1].text in (".", "!"):
+        while tokens and tokens[-1].text in (".", "!", "?"):
             tokens = tokens[:-1]
         spans = {(t.start, t.end): i for i, t in enumerate(tokens)}
         entries = [defaultdict(list) for _ in tokens]
