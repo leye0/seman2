@@ -6,6 +6,8 @@ on:
       - research/verbnet-left-to-right-poc
     paths:
       - '.github/workflows/diagnose-snap-tree-fidelity.yml'
+      - 'superparser/research/verbnet_lr/full_structure_snap.py'
+      - 'superparser/tests/test_snap_contextual_features.py'
   workflow_dispatch:
 
 permissions:
@@ -42,6 +44,11 @@ jobs:
                   if member.startswith('wordnet/') and name in keep:
                       (dest/name).write_bytes(archive.read(member))
           PY
+      - name: Check feature-variable preservation and existing snapping regressions
+        run: |
+          PYTHONPATH=superparser python -m unittest -v \
+            superparser.tests.test_snap_contextual_features \
+            superparser.tests.test_verbnet_lr_full_structure_snap
       - name: Compare original versus snapped grammatical tree components
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_snap_tree_differences.py \
