@@ -258,7 +258,7 @@ class HierarchicalPatternMemory:
                     # productions scanned for each token/window.
                     observed={cat for (at,cat),nodes in by_start.items()
                               if at==left and nodes}
-                    for cat in observed:
+                    for cat in sorted(observed):
                         for rule in by_first.get(cat,()):
                             # Ordered contiguous RHS over a bounded span.
                             def choices(i,at,selected):

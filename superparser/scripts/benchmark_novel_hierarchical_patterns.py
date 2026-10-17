@@ -178,12 +178,14 @@ def main():
     p.add_argument("--max-expansions",type=int,default=20000)
     p.add_argument("--max-wall-ms",type=int,default=500)
     p.add_argument("--max-span",type=int,default=18)
+    p.add_argument("--variants-per-cell",type=int,default=2)
     p.add_argument("--out",type=Path,required=True)
     a=p.parse_args()
     report=run(wordnet_dir=a.wordnet_dir,
                train_size=a.train,eval_per_band=a.eval_per_band,
                max_expansions=a.max_expansions,
-               max_wall_ms=a.max_wall_ms,max_span=a.max_span)
+               max_wall_ms=a.max_wall_ms,max_span=a.max_span,
+               variants_per_cell=a.variants_per_cell)
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(report,indent=2)+"\n",encoding="utf8")
     print("FINAL "+json.dumps({

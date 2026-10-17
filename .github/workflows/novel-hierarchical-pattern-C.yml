@@ -18,6 +18,8 @@ jobs:
   evaluate:
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    env:
+      PYTHONHASHSEED: '0'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -55,15 +57,22 @@ jobs:
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_hierarchical_patterns.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --train 2000 --eval-per-band 20 --max-span 18 \
-            --max-expansions 20000 --max-wall-ms 100 \
+            --max-expansions 20000 --max-wall-ms 100 --variants-per-cell 2 \
             --out /tmp/seman2-hierarchical-C-100ms.json
       - name: Explore deeper matching with 500 ms horizon
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_hierarchical_patterns.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --train 2000 --eval-per-band 20 --max-span 18 \
-            --max-expansions 20000 --max-wall-ms 500 \
+            --max-expansions 20000 --max-wall-ms 500 --variants-per-cell 2 \
             --out /tmp/seman2-hierarchical-C-500ms.json
+      - name: Explore four variants per constituent under 500 ms
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_hierarchical_patterns.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --train 2000 --eval-per-band 20 --max-span 18 \
+            --max-expansions 20000 --max-wall-ms 500 --variants-per-cell 4 \
+            --out /tmp/seman2-hierarchical-C-500ms-beam4.json
       - name: Compare on identical test cases and search budgets
         run: |
           python - <<'PY'
@@ -71,19 +80,22 @@ jobs:
           from pathlib import Path
           a=json.loads(Path('/tmp/seman2-hierarchical-C-100ms.json').read_text())
           b=json.loads(Path('/tmp/seman2-hierarchical-C-500ms.json').read_text())
-          assert a['book_catalog']==b['book_catalog']
-          assert a['training_counts']==b['training_counts']
-          assert a['learned_pattern_system']==b['learned_pattern_system']
-          assert a['budget']['max_expansions']==b['budget']['max_expansions']
+          c=json.loads(Path('/tmp/seman2-hierarchical-C-500ms-beam4.json').read_text())
+          assert a['book_catalog']==b['book_catalog']==c['book_catalog']
+          assert a['training_counts']==b['training_counts']==c['training_counts']
+          assert a['learned_pattern_system']==b['learned_pattern_system']==c['learned_pattern_system']
+          assert a['budget']['max_expansions']==b['budget']['max_expansions']==c['budget']['max_expansions']
           assert a['budget']['variants_per_cell']==b['budget']['variants_per_cell']
           columns=['tested','NEW_tree_at_least_5_tokens','NEW_tree_at_least_8_tokens',
                    'NEW_tree_at_least_12_tokens','budget_truncated',
                    'grammar_unifications_attempted','grammar_unifications_passed']
           result={name:{'budget_ms':x['budget']['max_wall_ms'],
+                        'variants_per_cell':x['budget']['variants_per_cell'],
                         'metrics':{k:x['heldout_counts'][k] for k in columns},
                         'latency_ms':x['latency_ms'],
                         'cutoffs':x['search_cutoff_reason_counts']}
-                  for name,x in [('100ms',a),('500ms',b)]}
+                  for name,x in [('100ms_beam2',a),('500ms_beam2',b),
+                                 ('500ms_beam4',c)]}
           Path('/tmp/seman2-hierarchical-C-comparison.json').write_text(
               json.dumps(result,indent=2)+'\\n')
           print('C_BUDGET_COMPARISON '+json.dumps(result),flush=True)
@@ -92,7 +104,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: seman2-hierarchical-C-100-vs-500-ms
+          name: seman2-hierarchical-C-budget-and-beam-exploration
           path: /tmp/seman2-hierarchical-C-*.json
           if-no-files-found: warn
           retention-days: 30
