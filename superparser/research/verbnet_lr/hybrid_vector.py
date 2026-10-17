@@ -178,6 +178,23 @@ class HybridVectorParser(Parser):
             return fallback
         return result
 
+    def parse_with_local_witnesses(self, text: str, *,
+                                   min_report_tokens: int = 3,
+                                   emit_trees: bool = True):
+        """Return the canonical complete parse PLUS tentative local C trees.
+
+        This opt-in method shares the exact lexical lattice used by the
+        canonical vector parser. The C matcher reconstructs genuine locally
+        unified ChartItems when requested. A constituent witness is never
+        injected into the complete forest or called a complete sentence.
+        """
+        from dataclasses import dataclass
+        full = self.parse(text)
+        witnesses = self.patterns.match(
+            full.result.lattice, min_report_tokens=min_report_tokens,
+            emit_trees=emit_trees)
+        return full, witnesses
+
     def guidance_summary(self):
         return {
             **self._guide_stats,
