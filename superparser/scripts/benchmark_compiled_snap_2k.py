@@ -36,6 +36,19 @@ def lexical_readings(item):
     return tuple(x for child in item.children for x in lexical_readings(child))
 
 
+def _walk_rule_nodes(item):
+    if item.rule_id is not None:
+        yield item
+    for ch in item.children:
+        yield from _walk_rule_nodes(ch)
+
+
+def source_candidates(item):
+    if item.lexical_candidate is not None:
+        return (item.lexical_candidate,)
+    return tuple(c for child in item.children for c in source_candidates(child))
+
+
 def alignment_diagnostic(item,lattice):
     leaves=[]
     def walk(node):
@@ -94,6 +107,7 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
     timings=defaultdict(list)
     indexing_ns=0
     alignment_failures=[]
+    exact_replay_failures=[]
 
     for i,row in enumerate(corpus):
         t=perf_counter_ns()
@@ -184,11 +198,29 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
             plan=memory.plans[template_id]
             if plan is None:
                 stats["indexed_uncompiled"]+=1
+                if len(exact_replay_failures)<12:
+                    exact_replay_failures.append({
+                        "sentence_number":i,"cause":"unsupported_plan",
+                        "rules":list(
+                            dict.fromkeys(rule.rule_id for rule in
+                            _walk_rule_nodes(source[i][1])))[:20]})
             else:
                 if memory.probe_original_template(lattice,template_id):
                     stats["own_compiled_fill_valid"]+=1
                 else:
                     stats["own_compiled_fill_failed"]+=1
+                    if len(exact_replay_failures)<12:
+                        original_candidates=source_candidates(source[i][1])
+                        forced=tuple({c.category:(c,)} for c in original_candidates)
+                        exact_replay_failures.append({
+                            "sentence_number":i,"cause":"fill_failed",
+                            "original_selected_readings_valid":
+                                memory._fill(plan,forced) is not None,
+                            "candidate_count":len(original_candidates),
+                            "slot_count":len(plan.slots),
+                            "required_features":tuple(tuple(slot.requires)
+                                for slot in plan.slots),
+                            "rules":list(plan.rules)[:20]})
             if hit.complete:
                 stats["indexed_with_hit"]+=1
         if (i+1)%checkpoint==0:
@@ -223,6 +255,7 @@ def measure(wordnet_dir,*,size=2000,max_tokens=32,checkpoint=250):
         "training":dict(stats),
         "unique_structures":len(memory.index.templates),
         "alignment_rejection_samples":alignment_failures,
+        "self_replay_failures":exact_replay_failures,
         "compiled_plans":sum(x is not None for x in memory.plans),
         "indexed_self_replayable_pct":round(
             100*stats["own_compiled_fill_valid"]/stats["indexed"],3)
