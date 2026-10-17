@@ -1,0 +1,80 @@
+name: Canonical Vector Two-Pass Gutenberg — Coverage and Savings
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/benchmark_vector_replay_gutenberg.py'
+      - 'superparser/scripts/plot_vector_replay_gutenberg.py'
+      - '.github/workflows/vector-two-pass-gutenberg.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    name: Vector ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: initial-30
+            per_band: 15
+            checkpoint: 5
+          - label: novel-160
+            per_band: 80
+            checkpoint: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as reply:
+              content=reply.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          names={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              names.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(content)) as archive:
+              for member in archive.namelist():
+                  name=Path(member).name
+                  if member.startswith('wordnet/') and name in names:
+                      (dest/name).write_bytes(archive.read(member))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Run canonical VectorGrammar and independent exact-replay and C comparison
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_vector_replay_gutenberg.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --per-band ${{ matrix.per_band }} --max-tokens 18 \
+            --max-items 30000 --matcher-ms 30 \
+            --checkpoint ${{ matrix.checkpoint }} \
+            --out /tmp/seman2-vector-${{ matrix.label }}.json
+      - name: Render measured graphs
+        run: |
+          python -m pip install --disable-pip-version-check matplotlib
+          PYTHONPATH=superparser python superparser/scripts/plot_vector_replay_gutenberg.py \
+            --report /tmp/seman2-vector-${{ matrix.label }}.json \
+            --prefix /tmp/seman2-vector-${{ matrix.label }}
+      - name: Archive coverage, parity and cumulative time
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-canonical-vector-${{ matrix.label }}
+          path: /tmp/seman2-vector-${{ matrix.label }}*
+          if-no-files-found: warn
+          retention-days: 30
