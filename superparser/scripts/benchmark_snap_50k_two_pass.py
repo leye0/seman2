@@ -135,8 +135,10 @@ def run(wordnet_dir,*,size=50000,max_tokens=32,max_items=20000,
     durations=defaultdict(list)
     by_length=defaultdict(Counter)
     cumulative_original=0.
+    cumulative_baseline_replayed=0.
     cumulative_second=0.
     training_index_ms=0.
+    replayed_stored=0
     curve=[]
 
     # Pass 1: always genuine VectorGrammar. No grammar analysis is invented
@@ -202,6 +204,8 @@ def run(wordnet_dir,*,size=50000,max_tokens=32,max_items=20000,
             second["match_timeout"]+=1
         match_ms=(perf_counter()-match_start)*1000
         second["seen"]+=1
+        cumulative_baseline_replayed+=durations["pass1"][i]
+        replayed_stored+=int(i in original)
         if snap is not None and snap.complete:
             second["snap_hit"]+=1
             second["snap_incomplete_search"]+=int(snap.incomplete)
@@ -249,20 +253,20 @@ def run(wordnet_dir,*,size=50000,max_tokens=32,max_items=20000,
         by_length[band]["snap_hit"]+=int(snap is not None and snap.complete)
         by_length[band]["stored"]+=int(i in original)
         if (i+1)%checkpoint==0 or i+1==size:
-            saved=cumulative_original-cumulative_second
+            saved=cumulative_baseline_replayed-cumulative_second
             point={
                 "sentences":i+1,
-                "stored":first["stored"],
+                "stored":replayed_stored,
                 "snap_hits":second["snap_hit"],
                 "recall_of_prior_stored":second["own_template_recovered"],
                 "lexical_identical":second["chosen_lexical_identical"],
-                "baseline_parse_total_s":round(cumulative_original/1000,3),
+                "baseline_parse_total_s":round(cumulative_baseline_replayed/1000,3),
                 "replay_snap_plus_fallback_total_s":round(cumulative_second/1000,3),
                 "net_saved_s":round(saved/1000,3),
-                "pass2_saved_pct":round(100*saved/cumulative_original,3),
+                "pass2_saved_pct":round(100*saved/cumulative_baseline_replayed,3),
                 "two_pass_net_saved_pct":round(
                     100*(saved-training_index_ms)/
-                    (2*cumulative_original),3),
+                    (2*cumulative_baseline_replayed),3),
                 "p50_replay_ms":quantile(durations["pass2"],.5),
                 "p75_replay_ms":quantile(durations["pass2"],.75),
                 "p90_replay_ms":quantile(durations["pass2"],.9),
