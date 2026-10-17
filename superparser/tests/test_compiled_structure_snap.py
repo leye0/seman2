@@ -138,6 +138,46 @@ class CompiledStructureSnapTests(unittest.TestCase):
             plan,CompiledStructureReplayer._lexical_slots(rejected)))
 
 
+    def test_hyphenated_compound_leaf_spans_multiple_tokens(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("ADJ"),sym("N")),sym("CLAUSE"))])
+        def compound(adjective,noun):
+            text=adjective+" "+noun
+            hyphen=adjective.index("-")
+            nstart=len(adjective)+1
+            tokens=(
+                Token(0,0,hyphen,adjective[:hyphen]),
+                Token(1,hyphen,hyphen+1,"-"),
+                Token(2,hyphen+1,len(adjective),adjective[hyphen+1:]),
+                Token(3,nstart,len(text),noun),
+            )
+            candidates=(
+                LexicalCandidate(0,len(adjective),adjective,adjective,"ADJ",
+                                 FeatureStructure.empty()),
+                LexicalCandidate(nstart,len(text),noun,noun,"N",
+                                 FeatureStructure.empty()),
+            )
+            return LexicalLattice(text,tokens,candidates)
+        source=compound("well-known","cat")
+        parsed=VectorGrammar(grammar).parse_lattice(
+            source,beam=80,max_items=50000,goal_category="CLAUSE")
+        self.assertTrue(parsed.completed)
+        engine=CompiledStructureReplayer(ParserResources(grammar,None,None))
+        tid=engine.observe(parsed.best(),lattice=source)
+        self.assertIn(tid,engine._spanning_ids)
+        replay=compound("deep-rooted","tree")
+        with patch.object(PredictiveParser,"_reduce",
+                          side_effect=AssertionError("No parsing")), \
+             patch.object(PredictiveParser,"_materialize",
+                          side_effect=AssertionError("No materializing")):
+            result=engine.replay(replay)
+        self.assertTrue(result.complete,result.reason)
+        self.assertEqual(result.occurrence.structure_id,tid)
+        self.assertEqual(result.occurrence.words,("deep-rooted","tree"))
+        self.assertEqual(len(result.occurrence.tokens),4)
+        self.assertIs(result.occurrence.structure,engine.plans[tid].structure)
+        self.assertTrue(engine.probe_original_template(replay,tid))
+
     def test_contraction_two_leaves_inside_one_token_are_indexed_and_replayed(self):
         grammar=Grammar([GrammarRule(
             "clause",(sym("PRONOUN"),sym("V")),sym("CLAUSE"))])
