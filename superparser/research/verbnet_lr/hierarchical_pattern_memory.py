@@ -196,6 +196,9 @@ class HierarchicalPatternMemory:
             # Lexical variants are not restricted by the beam until a
             # genuine grammatical combination is explored.
             by_start[(at,candidate.category)].append((at+1,node))
+            # Unary productions must be able to consume lexical leaves, too.
+            # Lexical ambiguity stays available: do not beam-prune leaves.
+            cells[(at,at+1,candidate.category)].append(node)
 
         # For completed cells use a bounded beam with different rule shapes.
         # It is deliberately an INCOMPLETE recognizer under explicit bounds.
