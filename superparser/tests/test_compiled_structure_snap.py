@@ -131,5 +131,75 @@ class CompiledStructureSnapTests(unittest.TestCase):
         self.assertIsNone(compile_plan(tree,{"clause":grammar.rules[0]}))
 
 
+    def test_backtrack_earlier_reading_when_later_agreement_conflicts(self):
+        # Regression: greedy _fill() chose masculine at position 0 and
+        # wrongly rejected a grammatical feminine alternative at position 1.
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN",gender="?g"),sym("V",gender="?g")),
+            sym("CLAUSE"))])
+        row=sample("she sings",{"gender":"feminine"},{"gender":"feminine"})
+        engine,tid,_=learn(grammar,row)
+        first=row.candidates[0]
+        wrong=LexicalCandidate(first.span_start,first.span_end,
+            first.surface,"wrong-reading","PRONOUN",
+            FeatureStructure.build({"gender":"masculine"}),score=200.0)
+        replay=LexicalLattice(row.text,row.tokens,(wrong,)+row.candidates)
+        with patch.object(PredictiveParser,"_reduce",side_effect=AssertionError), \
+             patch.object(PredictiveParser,"_materialize",side_effect=AssertionError):
+            found=engine.replay(replay)
+        self.assertTrue(found.complete,found.reason)
+        self.assertEqual(found.occurrence.structure_id,tid)
+        self.assertEqual(found.occurrence.lexical_slots[0].lemma,"she")
+
+    def test_ninth_lexical_reading_is_not_artificially_excluded(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN",gender="feminine"),sym("V")),
+            sym("CLAUSE"))])
+        source=sample("she sings",{"gender":"feminine"},{})
+        engine,tid,_=learn(grammar,source)
+        base=source.candidates[0]
+        wrong=tuple(LexicalCandidate(base.span_start,base.span_end,
+            base.surface,"bad"+str(i),"PRONOUN",
+            FeatureStructure.build({"gender":"masculine"}),score=100-i)
+            for i in range(9))
+        replay=LexicalLattice(source.text,source.tokens,wrong+source.candidates)
+        result=engine.replay(replay)
+        self.assertTrue(result.complete,result.reason)
+        self.assertEqual(result.occurrence.structure_id,tid)
+        self.assertEqual(result.occurrence.lexical_slots[0].lemma,"she")
+
+    def test_index_pagination_checks_template_beyond_first_32(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN"),sym("V")),sym("CLAUSE"))])
+        source=sample("they sing",{}, {})
+        engine,tid,_=learn(grammar,source)
+        # Simulate many same-POS patterns already in the structural index,
+        # all of which require unsupported plans. The genuine plan is at
+        # the end: old code stopped at the first 32 and claimed a miss.
+        from research.verbnet_lr.positional_template_index import PositionalTemplateIndex
+        idx=PositionalTemplateIndex()
+        engine.plans=[None]*40+[engine.plans[0]]
+        for i in range(41):
+            idx.add(("PRONOUN","V"),i)
+        engine.index._positional_index=idx
+        result=engine.replay(source,max_templates_checked=8)
+        self.assertTrue(result.complete,result.reason)
+        self.assertEqual(result.occurrence.structure_id,40)
+        self.assertGreater(result.checked_templates,32)
+        self.assertTrue(result.incomplete is False)
+
+    def test_lexical_ambiguities_remain_accessible_for_layer2(self):
+        grammar=Grammar([GrammarRule(
+            "clause",(sym("PRONOUN"),sym("V")),sym("CLAUSE"))])
+        row=sample("they sing",{}, {})
+        engine,_,_=learn(grammar,row)
+        alternative=LexicalCandidate(0,4,"they","other","PRONOUN",
+                                     FeatureStructure.empty(),score=1)
+        replay=LexicalLattice(row.text,row.tokens,row.candidates+(alternative,))
+        result=engine.replay(replay)
+        self.assertTrue(result.complete)
+        self.assertEqual(len(result.occurrence.lexical_alternatives[0]),2)
+
+
 if __name__=="__main__":
     unittest.main()
