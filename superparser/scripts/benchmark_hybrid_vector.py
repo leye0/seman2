@@ -31,6 +31,15 @@ def contract(root):
             root.syntax.as_dict(),root.features.as_dict())
 
 
+def _walk(node):
+    if node is None:return
+    stack=[node]
+    while stack:
+        item=stack.pop()
+        yield item
+        stack.extend(reversed(item.children))
+
+
 def pct(data,p):
     if not data:return None
     v=sorted(data)
@@ -115,16 +124,39 @@ def run(wordnet_dir):
                     "seen":i,"complete":counts["complete"],
                     "annotations_met":counts["annotations_met"]}),flush=True)
         neg=Counter()
+        negative_families=defaultdict(Counter)
+        false_accept_examples=[]
         for row in negatives:
             for kind,sentence in (("ungrammatical",row["text"]),
                                   ("grammatical_contrast",row["contrast"])):
                 result=engine.parse(sentence).result
+                accepted=bool(result.completed)
                 neg[kind+"_tested"]+=1
-                neg[kind+"_complete"]+=int(result.completed)
+                neg[kind+"_complete"]+=int(accepted)
+                negative_families[row["family"]][kind+"_tested"]+=1
+                negative_families[row["family"]][kind+"_complete"]+=int(accepted)
+                if kind=="ungrammatical" and accepted:
+                    root=result.best()
+                    false_accept_examples.append({
+                        "id":row["id"],"family":row["family"],
+                        "text":sentence,
+                        "best_root_rule":root.rule_id if root else None,
+                        "used_rules":sorted({
+                            node.rule_id for node in _walk(root)
+                            if node.rule_id}) if root else [],
+                        "lexical_readings":[
+                            (node.lexical_candidate.surface,
+                             node.lexical_candidate.category)
+                            for node in _walk(root)
+                            if node.lexical_candidate is not None
+                        ] if root else [],
+                    })
         results[label]={
             "scores":dict(counts),
             "split_scores":{k:dict(v) for k,v in by_split.items()},
             "negatives":dict(neg),
+            "negative_by_family":{k:dict(v) for k,v in negative_families.items()},
+            "false_accept_examples":false_accept_examples,
             "latency_ms":{"p50":pct(lat,.5),"p95":pct(lat,.95),
                           "p99":pct(lat,.99),"max":round(max(lat),3)},
         }
