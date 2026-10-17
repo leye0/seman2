@@ -1,0 +1,61 @@
+name: Seman2 50000 Two-Pass Structural Snap, Lexicon, Time
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/benchmark_snap_50k_two_pass.py'
+      - '.github/workflows/snap-50k-two-pass.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  two-pass-50000:
+    runs-on: ubuntu-latest
+    timeout-minutes: 160
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as response:
+              payload=response.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          needed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              needed.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(payload)) as archive:
+              for member in archive.namelist():
+                  name=Path(member).name
+                  if member.startswith('wordnet/') and name in needed:
+                      (dest/name).write_bytes(archive.read(member))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Read exactly 50000 novel sentences twice — measure true structural snap
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_snap_50k_two_pass.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --size 50000 --max-tokens 32 \
+            --max-items 20000 --parse-timeout 0.35 --match-timeout 0.2 \
+            --checkpoint 1000 --out /tmp/seman2-50k-vector-snap.json
+      - name: Upload raw measurements including latest completed checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-50000-structural-snap-lexical-time
+          path: /tmp/seman2-50k-vector-snap.json
+          if-no-files-found: warn
+          retention-days: 30
