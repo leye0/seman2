@@ -104,7 +104,9 @@ def measure(n=17391, queries=10000, max_ms=1.0):
     result["pass"]=(
         not fail_count and
         result["hit"]["p95_ms"]<max_ms and
-        result["miss"]["p95_ms"]<max_ms
+        result["miss"]["p95_ms"]<max_ms and
+        result["hit"]["over_1ms"] == 0 and
+        result["miss"]["over_1ms"] == 0
     )
     print("FINAL",json.dumps(result,separators=(",",":")),flush=True)
     return result
