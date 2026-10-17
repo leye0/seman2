@@ -38,6 +38,7 @@ class CompiledPlan:
     constants: tuple[tuple[int, int], ...]  # (group, interned atom)
     rules: tuple[str, ...]
     token_category_groups: tuple[tuple[str, ...], ...] = ()
+    evidence_any: tuple[tuple[tuple[int, int], ...], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,6 +121,36 @@ def compile_plan(shape: Structure, rules: dict[str, Any], *, token_groups=None) 
     rule_ids = []
     serial = 0
     unsupported = False
+    evidence_any=[]
+
+    def leaf_count(node):
+        return 1 if node.rule_id is None else sum(
+            leaf_count(ch) for ch in node.children)
+
+    def inherited_evidence(node, feature_id, leaf_offset):
+        """Compile the exact rule-local evidence propagation, not the
+        grammar reduction. None = guaranteed by a fixed rule feature;
+        tuple = alternative lexical evidence witnesses.
+        """
+        if node.rule_id is None:
+            return ((leaf_offset,feature_id),)
+        rule=rules[node.rule_id]
+        lhs=rule.lhs.features.get(feature_id)
+        if lhs is None:
+            return ()
+        if not isinstance(lhs,Variable):
+            return None
+        options=[]
+        offset=leaf_offset
+        for sym,ch in zip(rule.rhs,node.children):
+            for rhs_name,rhs_value in sym.features.items():
+                if isinstance(rhs_value,Variable) and rhs_value.name==lhs.name:
+                    witness=inherited_evidence(ch,rhs_name,offset)
+                    if witness is None:
+                        return None
+                    options.extend(witness)
+            offset+=leaf_count(ch)
+        return tuple(sorted(set(options)))
 
     def attach(node_id, features, rule_instance, prefix=()):
         nonlocal unsupported
@@ -156,22 +187,19 @@ def compile_plan(shape: Structure, rules: dict[str, Any], *, token_groups=None) 
         for child, symbol in zip(node.children, rule.rhs):
             if symbol.category != child.category:
                 unsupported = True
+            first_leaf=len(leaves)
             child_id = visit(child)
             attach(child_id, symbol.features, node_id)
             if symbol.requires:
                 if child.rule_id is not None:
-                    # A grammar rule with a fixed LHS atom *guarantees* its
-                    # evidence, without depending on the new lexical words.
-                    # For variable-derived evidence we still defer, rather
-                    # than spuriously claiming a confirmed grammar witness.
-                    child_rule=rules.get(child.rule_id)
-                    if child_rule is None:
-                        unsupported=True
-                    else:
-                        for needed in symbol.requires:
-                            value=child_rule.lhs.features.get(intern(needed))
-                            if not isinstance(value,Atom):
-                                unsupported=True
+                    for needed in symbol.requires:
+                        witness=inherited_evidence(child,intern(needed),first_leaf)
+                        if witness is None:
+                            continue
+                        if not witness:
+                            unsupported=True
+                        else:
+                            evidence_any.append(tuple(witness))
                 else:
                     evidence.setdefault(child_id,set()).update(intern(k) for k in symbol.requires)
         return node_id
@@ -201,7 +229,8 @@ def compile_plan(shape: Structure, rules: dict[str, Any], *, token_groups=None) 
     )
     if token_groups is None:
         token_groups=tuple((slot.category,) for slot in slots)
-    return CompiledPlan(shape,slots,constants,tuple(rule_ids),tuple(token_groups))
+    return CompiledPlan(shape,slots,constants,tuple(rule_ids),
+                        tuple(token_groups),tuple(evidence_any))
 
 
 class CompiledStructureReplayer:
@@ -388,10 +417,20 @@ class CompiledStructureReplayer:
         position=0
         while True:
             if position==len(plan.slots):
-                return tuple(selected),tuple(sorted(
-                    (group,next(iter(values)) if len(values)==1
-                     else tuple(sorted(values)))
-                    for group,values in bindings.items()))
+                if all(any(
+                    feature in selected[leaf_id].features.features and
+                    not isinstance(
+                        selected[leaf_id].features.features[feature],Variable)
+                    for leaf_id,feature in group)
+                    for group in plan.evidence_any):
+                    return tuple(selected),tuple(sorted(
+                        (group,next(iter(values)) if len(values)==1
+                         else tuple(sorted(values)))
+                        for group,values in bindings.items()))
+                if not stack:
+                    return None
+                position,_,_=stack[-1]
+                continue
             slot=plan.slots[position]
             candidate_options=options[position].get(slot.category,())
             if max_candidates_per_slot is not None:
