@@ -1,0 +1,66 @@
+name: Direct Grammar Consolidation — One Global Gate
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/data/grammar.jsonl'
+      - 'superparser/seman_parser/segmentation.py'
+      - 'superparser/scripts/validate_direct_grammar.py'
+      - '.github/workflows/direct-grammar-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          import os
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as f: raw=f.read()
+          dst=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dst.mkdir(parents=True,exist_ok=True)
+          needed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              needed.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for name in z.namelist():
+                  k=Path(name).name
+                  if name.startswith('wordnet/') and k in needed:
+                      (dst/k).write_bytes(z.read(name))
+          assert (dst/'index.verb').exists()
+          PY
+      - name: Full 120 syntax annotations and 24 negative/positive contrasts
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/validate_direct_grammar.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --out /tmp/direct-grammar-global-validation.json
+      - name: Verify classical syntax and semantic exports
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            python -m unittest \
+              superparser.tests.test_verbnet_lr_hybrid_vector \
+              superparser.tests.test_verbnet_lr_hierarchical_pattern_memory -v
+      - name: Preserve detailed impact, not just totals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-direct-grammar-global-gate
+          path: /tmp/direct-grammar-global-validation.json
+          if-no-files-found: warn
+          retention-days: 21
