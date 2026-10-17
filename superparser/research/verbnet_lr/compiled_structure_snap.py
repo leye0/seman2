@@ -160,9 +160,18 @@ def compile_plan(shape: Structure, rules: dict[str, Any], *, token_groups=None) 
             attach(child_id, symbol.features, node_id)
             if symbol.requires:
                 if child.rule_id is not None:
-                    # RHS evidence on a nonlexical child depends on grammar
-                    # exports; do not treat it as a simple leaf check.
-                    unsupported = True
+                    # A grammar rule with a fixed LHS atom *guarantees* its
+                    # evidence, without depending on the new lexical words.
+                    # For variable-derived evidence we still defer, rather
+                    # than spuriously claiming a confirmed grammar witness.
+                    child_rule=rules.get(child.rule_id)
+                    if child_rule is None:
+                        unsupported=True
+                    else:
+                        for needed in symbol.requires:
+                            value=child_rule.lhs.features.get(intern(needed))
+                            if not isinstance(value,Atom):
+                                unsupported=True
                 else:
                     evidence.setdefault(child_id,set()).update(intern(k) for k in symbol.requires)
         return node_id
@@ -454,6 +463,28 @@ class CompiledStructureReplayer:
                     None,found.total,checked,False,
                     "unseen_pattern" if not found.total else "requires_fallback")
             offset=found.next_offset
+
+    def probe_original_template(self,lattice,template_id):
+        """Independent reproducibility audit only. Never used to rank hits."""
+        plan=self.plans[template_id]
+        if plan is None:
+            return False
+        if all(len(group)==1 for group in plan.token_category_groups):
+            return self._fill(plan,self._lexical_slots(lattice)) is not None
+        paths=self._token_segmentations(lattice)
+        keys=tuple("\x1f".join(g) for g in plan.token_category_groups)
+        if len(keys)!=len(paths):
+            return False
+        combos=[paths[i].get(k,()) for i,k in enumerate(keys)]
+        if any(not choice for choice in combos):
+            return False
+        for choice in product(*combos):
+            opts=[]
+            for segments in choice:
+                opts.extend({cat:variants} for cat,variants in segments)
+            if self._fill(plan,opts) is not None:
+                return True
+        return False
 
     def replay(self,lattice,*,max_templates_checked=None,
                max_candidates_per_slot=None) -> CompiledReplay:
