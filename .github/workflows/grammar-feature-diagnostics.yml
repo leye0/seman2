@@ -1,0 +1,57 @@
+name: Grammar Feature Diagnostics One Pass
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/diagnose_grammar_constraints.py'
+      - '.github/workflows/grammar-feature-diagnostics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch WordNet
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from io import BytesIO
+          from urllib.request import urlopen,Request
+          from zipfile import ZipFile
+          import os
+          uri='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(uri,headers={'User-Agent':'Seman2-research'}),timeout=90) as r: raw=r.read()
+          dst=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dst.mkdir(parents=True,exist_ok=True)
+          needed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for p in ('noun','verb','adj','adv'):
+              needed.update({f'index.{p}',f'data.{p}',f'{p}.exc'})
+          with ZipFile(BytesIO(raw)) as z:
+              for n in z.namelist():
+                  if n.startswith('wordnet/') and Path(n).name in needed:
+                      (dst/Path(n).name).write_bytes(z.read(n))
+          assert (dst/'index.verb').exists()
+          PY
+      - name: Export grammar proof paths for all 24 pairs
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_grammar_constraints.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --out /tmp/grammar-feature-diagnostics.json
+      - name: Retain complete diagnostic, not just scores
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-one-pass-grammar-diagnostic
+          path: /tmp/grammar-feature-diagnostics.json
+          if-no-files-found: warn
+          retention-days: 21
