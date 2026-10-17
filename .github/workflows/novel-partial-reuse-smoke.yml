@@ -1,0 +1,61 @@
+name: Research Novel Partial Salvage Smoke
+
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - '.github/workflows/novel-partial-reuse-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test salvage and revalidation
+        run: |
+          PYTHONPATH=superparser python -m unittest \
+            superparser.tests.test_verbnet_lr_partial_structure_memory -v
+      - name: Install WordNet corpus for research
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          u='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(u,headers={'User-Agent':'Seman2-research'}),timeout=90) as r: raw=r.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          allowed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for n in ('noun','verb','adj','adv'): allowed.update((f'index.{n}',f'data.{n}',f'{n}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for name in z.namelist():
+                  base=Path(name).name
+                  if name.startswith('wordnet/') and base in allowed:
+                      (dest/base).write_bytes(z.read(name))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Recover 500 training sentences and check 80 from unseen authors
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_novel_partial_structures.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --train 500 --eval-per-band 10 --max-validations 40 \
+            --out /tmp/novel-partial-smoke.json
+      - name: Save smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-novel-partial-smoke
+          path: /tmp/novel-partial-smoke.json
+          if-no-files-found: warn
+          retention-days: 14
