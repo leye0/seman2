@@ -64,6 +64,68 @@ class ContinuationIndex:
         self.skeleton_count=len(set(self.skeletons.values()))
         self.compiler_slots=sum(len(v) for v in self.start.values())+sum(
             len(v) for v in self.follow.values())
+        # Category-only bitset automaton: compile once, then union compatible
+        # rule starts with cheap OR operations. Original rule variants remain
+        # represented by separate bits (no grammar information deleted).
+        skeleton_ids={shape:i for i,shape in enumerate(
+            sorted(set(self.skeletons.values())))}
+        self.fast_start={}
+        self.fast_follow={}
+        self.fast_skeleton={}
+        for category,slots in self.start.items():
+            mask=0
+            skeleton_mask=0
+            for slot in slots:
+                mask|=1<<slot.index
+                skeleton_mask|=1<<skeleton_ids[slot.skeleton]
+            self.fast_start[category]=mask
+            self.fast_skeleton[category]=skeleton_mask
+        for category,slots in self.follow.items():
+            mask=0
+            for slot in slots:
+                mask|=1<<slot.index
+            self.fast_follow[category]=mask
+
+    def fast_signal(self,lattice):
+        """Cheap upper-bound structural risk, without feature unification.
+
+        This estimates category-compatible rule fanout only. It must never
+        be used to prune, and indirect FIRST spans are still approximate.
+        """
+        start=perf_counter_ns()
+        grouped=defaultdict(set)
+        for candidate in lattice.candidates:
+            grouped[(candidate.span_start,candidate.span_end)].add(candidate.category)
+        start_masks=[]
+        follow_masks=[]
+        start_counts=[]
+        excess=0
+        for token in lattice.tokens:
+            categories=grouped.get((token.start,token.end),())
+            first=second=skels=0
+            for category in categories:
+                first|=self.fast_start.get(category,0)
+                second|=self.fast_follow.get(category,0)
+                skels|=self.fast_skeleton.get(category,0)
+            start_masks.append(first)
+            follow_masks.append(second)
+            n=first.bit_count()
+            start_counts.append(n)
+            excess+=n-skels.bit_count()
+        pairs=[
+            (a & b).bit_count()
+            for a,b in zip(start_masks,follow_masks[1:])
+        ]
+        result={
+            "fast_start_sum":sum(start_counts),
+            "fast_start_peak":max(start_counts,default=0),
+            "fast_pair_sum":sum(pairs),
+            "fast_pair_peak":max(pairs,default=0),
+            "fast_variant_excess":excess,
+            "fast_pair_log_sum":round(sum(log2(1+n) for n in pairs),5),
+        }
+        result["fast_probe_ms"]=(perf_counter_ns()-start)/1e6
+        return result
 
     @staticmethod
     def _matches(slot, candidates):
