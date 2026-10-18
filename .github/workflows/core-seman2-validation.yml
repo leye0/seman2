@@ -61,9 +61,10 @@ jobs:
         run: |
           python - <<'PY'
           from seman_parser import Parser
+from seman_parser.engine import ParserResources
           from seman_parser.segmentation import build_lattice
           from pathlib import Path
-          p=Parser.from_dir(Path('superparser/data'),cache_size=0)
+          p=Parser(ParserResources.from_dir(Path('superparser/data'),wordnet_dict=__import__('os').environ['WORDNET_DICT']),cache_size=0)
           for text in ('John gave Mary the box.', 'Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late.'):
               report=p.parse(text)
               result=report.result

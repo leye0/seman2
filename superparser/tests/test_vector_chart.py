@@ -2,8 +2,10 @@
 
 from pathlib import Path
 import unittest
+import os
 
 from seman_parser import Parser
+from seman_parser.engine import ParserResources
 
 
 DATA = Path(__file__).resolve().parents[1] / "data"
@@ -12,7 +14,7 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 class VectorChartTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.parser = Parser.from_dir(DATA, cache_size=0)
+        cls.parser = Parser(ParserResources.from_dir(DATA, wordnet_dict=os.environ.get('WORDNET_DICT')), cache_size=0)
 
     def test_parser_uses_vector_engine_and_retains_shared_forest(self) -> None:
         result = self.parser.parse("John opened the box.").result
