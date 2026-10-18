@@ -75,4 +75,5 @@ jobs:
             superparser.tests.test_online_prefix_edges \
             superparser.tests.test_complexity_routing \
             superparser.tests.test_category_prefix_trie \
+            superparser.tests.test_shared_trie_forest \
             superparser.tests.test_continuation_probe
