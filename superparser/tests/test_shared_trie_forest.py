@@ -68,10 +68,16 @@ class SharedTrieForestTests(unittest.TestCase):
                              forest.nodes[d.child_id].end)
                             for d in p.derivations}
                     return result
+                self.assertTrue(lazy.stats["lazy_trie_recognition"])
+                # The parser completed without allocating eager rule partials.
+                # The full-edge oracle walk below *intentionally* forces
+                # every virtual partial to be materialized for comparison.
+                self.assertLess(
+                    len(lazy.shared_forest.partials.cached),
+                    len(lazy.shared_forest.partials))
                 self.assertEqual(normalized(original.shared_forest),
                                  normalized(lazy.shared_forest))
-                self.assertTrue(lazy.stats["lazy_trie_recognition"])
-                self.assertLess(
+                self.assertEqual(
                     len(lazy.shared_forest.partials.cached),
                     len(lazy.shared_forest.partials))
 
