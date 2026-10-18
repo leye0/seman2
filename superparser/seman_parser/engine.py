@@ -199,6 +199,7 @@ class Parser:
                 self._vector_grammar.grammar,
                 online_prefix_edges=complexity_policy.difficult_strategy == "online",
                 flat_prefix_edges=complexity_policy.difficult_strategy == "flat",
+                lazy_trie_recognition=complexity_policy.difficult_strategy == "trie",
             )
             if complexity_policy is not None else None
         )
