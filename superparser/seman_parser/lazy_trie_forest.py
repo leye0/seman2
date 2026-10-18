@@ -32,12 +32,15 @@ class LazyGroup:
 class LazyRuleDerivations(Sequence):
     """Original partial derivations projected from group edges on demand."""
 
-    __slots__=("table","group_id","rule_index")
+    __slots__=("table","group_id","rule_index","_edge_cache")
 
     def __init__(self,table:"VirtualPartials",group_id:int,rule_index:int):
         self.table=table
         self.group_id=group_id
         self.rule_index=rule_index
+        # Allocate nothing until the k-best materializer really accesses
+        # this rule's edges; repeated rank probes reuse the same objects.
+        self._edge_cache=None
 
     def __len__(self)->int:
         return len(self.table.forest.trie_states[self.group_id].edges)
@@ -46,6 +49,12 @@ class LazyRuleDerivations(Sequence):
         edges=self.table.forest.trie_states[self.group_id].edges
         if isinstance(index,slice):
             return [self[i] for i in range(*index.indices(len(edges)))]
+        if self._edge_cache is None:
+            self._edge_cache=[None]*len(edges)
+        else:
+            cached=self._edge_cache[index]
+            if cached is not None:
+                return cached
         prev,child=edges[index]
         if prev is None:
             pid=None
@@ -56,7 +65,9 @@ class LazyRuleDerivations(Sequence):
             if offset is None:
                 raise AssertionError("Trie rule variant predecessor missing")
             pid=previous.first_partial+offset
-        return PartialDerivation(pid,child)
+        decoded=PartialDerivation(pid,child)
+        self._edge_cache[index]=decoded
+        return decoded
 
     def __iter__(self)->Iterator[PartialDerivation]:
         for index in range(len(self)):
