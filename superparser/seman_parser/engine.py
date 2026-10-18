@@ -228,13 +228,25 @@ class Parser:
 
     def parse(self, text: str) -> ParseReport:
         original = text.strip()
+        # Dialogue results are expensive and must be cached separately from
+        # the unquoted fallback which intentionally has another source span.
+        dialogue_key = (original, self.goal_category)
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
-            dialogue = self._parse_dialogue_text(original)
-            if dialogue is not None and dialogue.completed:
-                return ParseReport(
-                    result=dialogue,
-                    resources=self._dialogue_resources or self.resources,
-                )
+            from .dialogue import quotation_boundaries
+            if quotation_boundaries(original):
+                cached_dialogue = self._parse_cache.get(dialogue_key)
+                if cached_dialogue is not None and cached_dialogue.stats.get("dialogue_scoped"):
+                    return ParseReport(
+                        result=cached_dialogue,
+                        resources=self._dialogue_resources or self.resources,
+                    )
+                dialogue = self._parse_dialogue_text(original)
+                if dialogue is not None and dialogue.completed:
+                    self._parse_cache.put(dialogue_key, dialogue)
+                    return ParseReport(
+                        result=dialogue,
+                        resources=self._dialogue_resources or self.resources,
+                    )
         # Legacy parsing still accepts isolated outer-quoted clauses.
         text = original.strip('"\u201c\u201d\u2018\u2019').strip()
         cache_key = (text, self.goal_category)
@@ -255,6 +267,43 @@ class Parser:
             result.stats["segmentation_fallback"] = True
         self._parse_cache.put(cache_key, result)
         return ParseReport(result=result, resources=self.resources)
+
+    def parse_grammar_lattice(
+        self,
+        lattice: Any,
+        *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+    ) -> ParseResult:
+        """Canonical sentence-level entry point for future corpus benchmarks.
+
+        The prior research scripts call _vector_grammar.parse_lattice
+        directly, bypassing speech. New experiments should use this wrapper
+        to include marked dialogues in coverage statistics without adding
+        unquoted dialogue rules to the ordinary grammar.
+        """
+        budget = self.max_items if max_items is None else max_items
+        if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
+            extended = dialogue_lattice(lattice)
+            if extended is not None:
+                spoken = self._dialogue_vector_grammar.parse_lattice(
+                    extended, beam=self.beam, max_items=budget,
+                    goal_category=self.goal_category,
+                    kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k,
+                )
+                if spoken.completed:
+                    if isinstance(spoken.stats,dict):
+                        spoken.stats["dialogue_scoped"]=True
+                        spoken.stats["dialogue_source"]="explicit_balanced_quotes"
+                    return spoken
+        return self._vector_grammar.parse_lattice(
+            lattice, beam=self.beam, max_items=budget,
+            goal_category=self.goal_category,
+            kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,
+        )
 
     def _parse_dialogue_text(self, text: str) -> ParseResult | None:
         """Parse marked speech using only balanced, explicit quote terminals.
