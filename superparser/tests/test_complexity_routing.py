@@ -120,6 +120,35 @@ class AdaptiveRouterTests(unittest.TestCase):
             lattice,max_items=20000,kbest_work_limit=100000)
         self.assertFalse(result.stats["online_prefix_edges_enabled"])
 
+    def test_explicit_length_band_thresholds_are_enforced(self):
+        long_text=HARD[0]
+        lattice=build_lattice(long_text,self.resources.lexicon,multiword_max=1)
+        n=len(lattice.tokens)
+        self.assertGreaterEqual(n,17)
+        high=ComplexityPolicy(
+            rule_start_threshold=1,min_tokens=17,
+            band_thresholds=((17,100,10**12),))
+        self.assertEqual(high.threshold_for(n),10**12)
+        self.assertEqual(high.threshold_for(101),1)
+        decision=StructuralRiskRouter(
+            self.reference._vector_grammar.grammar,high).choose(lattice)
+        self.assertEqual(decision.strategy,"canonical")
+        self.assertEqual(decision.reason,"risk_below_threshold")
+        low=ComplexityPolicy(
+            rule_start_threshold=10**12,min_tokens=17,
+            band_thresholds=((17,100,1),))
+        self.assertEqual(
+            StructuralRiskRouter(self.reference._vector_grammar.grammar,low
+            ).choose(lattice).strategy,"flat")
+
+    def test_banded_policy_rejects_overlap_or_under_min_tokens(self):
+        with self.assertRaises(ValueError):
+            ComplexityPolicy(1,band_thresholds=((17,24,20),(24,32,30)))
+        with self.assertRaises(ValueError):
+            ComplexityPolicy(1,band_thresholds=((8,16,20),))
+        with self.assertRaises(ValueError):
+            ComplexityPolicy(1,band_thresholds=((17,20,0),))
+
     def test_no_invented_default_threshold_or_bad_policy(self):
         self.assertIsNone(self.reference._complexity_router)
         for cutoff in (0,-1):
