@@ -149,6 +149,54 @@ class AdaptiveRouterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ComplexityPolicy(1,band_thresholds=((17,20,0),))
 
+    def test_indexed_recognition_preserves_all_rule_paths_on_difficult_prose(self):
+        fast=Parser(self.resources,cache_size=0,max_items=20000,
+            complexity_policy=ComplexityPolicy(
+                rule_start_threshold=1,min_tokens=17,
+                difficult_strategy="indexed"))
+        for text in HARD:
+            with self.subTest(text=text):
+                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
+                canonical=self.reference.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                indexed=fast.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                self.assertEqual(indexed.stats["complexity_route"],"indexed")
+                self.assertTrue(indexed.stats["indexed_recognition_enabled"])
+                self.assertFalse(indexed.stats["online_prefix_edges_enabled"])
+                for field in ("forest_nodes","partial_states",
+                              "partial_derivations","structural_derivations",
+                              "partial_proposals","duplicate_partial_proposals",
+                              "recognition_operations","budget_exceeded",
+                              "kbest_budget_exceeded"):
+                    self.assertEqual(canonical.stats[field],indexed.stats[field],field)
+                self.assertEqual(canonical.completed,indexed.completed)
+                self.assertEqual(
+                    [x.as_dict() for x in canonical.alternatives(limit=3)],
+                    [x.as_dict() for x in indexed.alternatives(limit=3)])
+                self.assertEqual(len(canonical.shared_forest.partials),
+                                 len(indexed.shared_forest.partials))
+                for old,new in zip(canonical.shared_forest.partials,
+                                   indexed.shared_forest.partials):
+                    self.assertEqual(
+                        (old.rule_index,old.dot,old.start,old.end),
+                        (new.rule_index,new.dot,new.start,new.end))
+                    self.assertEqual(
+                        [(d.previous_id,d.child_id) for d in old.derivations],
+                        [(d.previous_id,d.child_id) for d in new.derivations])
+
+    def test_indexed_recognition_never_processes_easy_or_dialogue_sentences(self):
+        indexed=Parser(self.resources,cache_size=0,max_items=20000,
+            complexity_policy=ComplexityPolicy(
+                rule_start_threshold=1,min_tokens=17,
+                difficult_strategy="indexed"))
+        for text in (*EASY, '"Hello," said Mary.'):
+            lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
+            result=indexed.parse_grammar_lattice(
+                lattice,max_items=20000,kbest_work_limit=100000)
+            self.assertFalse(result.stats["indexed_recognition_enabled"])
+            self.assertEqual(result.stats["complexity_route"],"canonical")
+
     def test_no_invented_default_threshold_or_bad_policy(self):
         self.assertIsNone(self.reference._complexity_router)
         for cutoff in (0,-1):
