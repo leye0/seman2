@@ -271,10 +271,13 @@ def _project_bindings(
 class VectorGrammar:
     """Compile category symbols and all grammar transitions once."""
 
-    def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False) -> None:
+    def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False,
+                 preserve_quote_delimiters: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
+        # Scoped dialogue grammar consumes quotation punctuation explicitly.
+        self.preserve_quote_delimiters = preserve_quote_delimiters
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -504,7 +507,8 @@ class _VectorForest:
         return False
 
     def _next_start(self, end: int) -> int:
-        separators = ' \t\r\n"\u201c\u201d\u2018\u2019'
+        separators = (' \\t\\r\\n' if self.compiled.preserve_quote_delimiters
+                      else ' \\t\\r\\n"\\u201c\\u201d\\u2018\\u2019')
         while end < len(self.text) and self.text[end] in separators:
             end += 1
         return end
