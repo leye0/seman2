@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/indexed-recognition-risk.yml'
+      - 'superparser/seman_parser/vector_chart.py'
+      - 'superparser/scripts/benchmark_adaptive_routing.py'
+      - 'superparser/tests/test_complexity_routing.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,17 +48,17 @@ jobs:
         run: |
           python -m py_compile superparser/scripts/benchmark_adaptive_routing.py superparser/seman_parser/complexity_routing.py
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_complexity_routing
-      - name: Compare indexed grammar recognition and k-best over 64 novels
+      - name: Compare 128 indexed grammar decisions with CPU timings
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_adaptive_routing.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --per-book-per-band 4 --minimum-tokens 17 --hard-share 0.25 --difficult-strategy indexed \
+            --per-book-per-band 8 --minimum-tokens 17 --hard-share 0.25 --difficult-strategy indexed \
             --out-dir /tmp/indexed-recognition-risk
       - name: Preserve per-sentence results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: indexed-recognition-risk-64
+          name: indexed-recognition-risk-128
           path: /tmp/indexed-recognition-risk/
           retention-days: 14
           if-no-files-found: warn
