@@ -1,9 +1,11 @@
-name: Research — Lazy Trie Adaptive Speed
+name: Research — Cached Lazy Trie Adaptive Speed
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/adaptive-lazy-trie-speed.yml'
+      - 'superparser/seman_parser/lazy_trie_forest.py'
+      - 'superparser/scripts/benchmark_adaptive_routing.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,17 +47,17 @@ jobs:
         run: |
           python -m py_compile superparser/scripts/benchmark_adaptive_routing.py superparser/seman_parser/complexity_routing.py
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_complexity_routing superparser.tests.test_shared_trie_forest
-      - name: Measure 128 routed lazy-trie sentences with A/B/A CPU controls
+      - name: Re-evaluate 128 phrases with demand-only k-best cache
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_adaptive_routing.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --per-book-per-band 8 --minimum-tokens 17 --hard-share 0.75 --difficult-strategy trie --isolate-gc \
-            --out-dir /tmp/adaptive-lazy-trie-speed
+            --out-dir /tmp/adaptive-lazy-trie-cached
       - name: Preserve per-sentence results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: adaptive-lazy-trie-speed-128
-          path: /tmp/adaptive-lazy-trie-speed/
+          name: adaptive-lazy-trie-cached-128
+          path: /tmp/adaptive-lazy-trie-cached/
           retention-days: 14
           if-no-files-found: warn
