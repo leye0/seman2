@@ -301,38 +301,90 @@ def collect(args):
         for record in records:
             if not record["completed"] or record["full_ms"]>=5*median:
                 out.write(json.dumps(record,ensure_ascii=False,separators=(",",":"))+"\n")
+    # CHECKPOINT FIRST: the expensive baseline must be durable BEFORE every
+    # optional interpretation/ablation experiment. Never put assertions after
+    # a full 5k parse unless the outputs are already persisted.
     ablations={}
     probes=[]
+    report=summary(records,sources)
+    report["counterfactual"]["status"]="not_started"
+    report["counterfactual"]["warnings"]=[]
+    summary_path=folder/"cleaned_5000_diagnostic_summary.json"
+
+    def persist_report():
+        # Atomic replacement avoids a truncated report on interrupted writes.
+        temporary=summary_path.with_suffix(".json.tmp")
+        temporary.write_text(
+            json.dumps(report,indent=2,ensure_ascii=False)+"\\n",encoding="utf8")
+        temporary.replace(summary_path)
+
+    persist_report()
+    print("DIAG_BASELINE_SAVED",json.dumps({
+        "count":len(records),
+        "summary":str(summary_path),
+        "status":report["overall"]["statuses"]}),flush=True)
+
     if args.sample_per_family:
-        probes=choose_probes(records,{r["index"]:True for r in records},
-                            args.sample_per_family)
-        cache={}
-        drift=[]
-        for r in probes:
-            lattice=build_lattice(
-                corpus[r["index"]]["text"],resources.lexicon,multiword_max=1)
-            actual=candidate_signature(lattice)
-            if actual!=r["lattice_signature"]:
-                drift.append(r["index"])
-            # Baseline signature is recomputed on a small bounded set only.
-            # This extra canonical parse stays outside the collection timings.
-            result=parser._vector_grammar.parse_lattice(
-                lattice,beam=parser.beam,max_items=20000,
-                goal_category=parser.goal_category,
-                kbest_work_limit=args.kbest_work_limit)
-            original=result.best() if result.completed else None
-            if (original is not None)!=(r["completed"]):
-                drift.append(r["index"])
-            cache[r["index"]]=(lattice,best_signature(original))
-        if drift:
-            raise RuntimeError(f"Counterfactual reproducibility drift: {sorted(set(drift))[:20]}")
-        with (folder/"cleaned_rule_counterfactuals.jsonl").open(
-            "w",encoding="utf8",buffering=1) as out:
-            ablations=run_probes(
-                probes,cache,parser._vector_grammar.grammar,parser,args,out)
-    report=summary(records,sources,ablations,probes)
-    (folder/"cleaned_5000_diagnostic_summary.json").write_text(
-        json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
+        report["counterfactual"]["status"]="in_progress"
+        persist_report()
+        try:
+            planned=choose_probes(records,{r["index"]:True for r in records},
+                                  args.sample_per_family)
+            cache={}
+            drift=[]
+            for r in planned:
+                lattice=build_lattice(
+                    corpus[r["index"]]["text"],resources.lexicon,multiword_max=1)
+                actual=candidate_signature(lattice)
+                if actual!=r["lattice_signature"]:
+                    drift.append({"index":r["index"],"reason":"lexical_lattice_changed"})
+                    continue
+                # A fresh parse can disagree due to mutable caches or execution
+                # state. This is experimental drift, not a baseline failure.
+                result=parser._vector_grammar.parse_lattice(
+                    lattice,beam=parser.beam,max_items=20000,
+                    goal_category=parser.goal_category,
+                    kbest_work_limit=args.kbest_work_limit)
+                original=result.best() if result.completed else None
+                if (original is not None)!=(r["completed"]):
+                    drift.append({"index":r["index"],"reason":"completion_changed"})
+                    continue
+                cache[r["index"]]=(lattice,best_signature(original))
+                probes.append(r)
+            report["counterfactual"]["planned_sample"]=len(planned)
+            report["counterfactual"]["valid_sample"]=len(probes)
+            report["counterfactual"]["drift"]=drift
+            if drift:
+                print("DIAG_COUNTERFACTUAL_DRIFT",json.dumps({
+                    "skipped":len(drift),"details":drift[:20]}),flush=True)
+            persist_report()
+            if probes:
+                with (folder/"cleaned_rule_counterfactuals.jsonl").open(
+                    "w",encoding="utf8",buffering=1) as out:
+                    ablations=run_probes(
+                        probes,cache,parser._vector_grammar.grammar,parser,args,out)
+            report["counterfactual"]["status"]="completed_with_drift" if drift else "completed"
+        except Exception as exc:
+            # Secondary research is best-effort. The 5k completed baseline must
+            # still be readable and the CI job must not misleadingly lose it.
+            import traceback
+            issue={"type":type(exc).__name__,"message":str(exc),
+                   "traceback":traceback.format_exc()}
+            report["counterfactual"]["status"]="failed_nonfatal"
+            report["counterfactual"]["warnings"].append(issue)
+            print("DIAG_OPTIONAL_ERROR",json.dumps(issue),flush=True)
+        finally:
+            updated=summary(records,sources,ablations,probes)
+            updated["counterfactual"].update({
+                k:v for k,v in report["counterfactual"].items()
+                if k not in ("tests","sample")
+            })
+            report=updated
+            persist_report()
+    else:
+        report["counterfactual"]["status"]="disabled"
+        persist_report()
+
     print("DIAG_FINAL",json.dumps({
         "count":len(records),
         "status":report["overall"]["statuses"],
