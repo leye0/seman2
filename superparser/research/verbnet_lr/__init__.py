@@ -1,5 +1,7 @@
-"""Experimental VerbNet compiler + left-to-right valency hints. No production imports."""
-from .compiler import compile_directory, read_index, write_index, Frame, PrefixIndex, Prediction
-from .adapter import predict_candidate, CandidateHint
+"""Retained research utilities for the canonical Layer 1.
 
-__all__ = ["compile_directory", "read_index", "write_index", "Frame", "PrefixIndex", "Prediction", "predict_candidate", "CandidateHint"]
+Public here: cleaned Gutenberg corpus helpers and a read-only structural
+continuation predictor. Historical compiled VerbNet/snap readers are retired;
+see docs/RESEARCH_HISTORY_AND_DECISIONS.md and git history at e8322eb7fdb6.
+There are deliberately no implicit imports of abandoned code.
+"""
