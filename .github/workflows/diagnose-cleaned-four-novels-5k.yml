@@ -1,0 +1,76 @@
+name: Cleaned Four Novels — 5000 Sentence Failure Forensics
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/diagnose_cleaned_four_novels_5k.py'
+      - 'superparser/tests/test_diagnose_cleaned_four_novels_5k.py'
+      - '.github/workflows/diagnose-cleaned-four-novels-5k.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: diagnose-cleaned-four-novels-5k-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+                 headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              data=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(name))
+          PY
+      - name: Verify cleaned corpus, sample identity, and diagnosis unit tests
+        run: |
+          PYTHONPATH=superparser python -m research.verbnet_lr.clean_novel_corpus --check
+          PYTHONPATH=superparser python -m unittest -v \
+            superparser.tests.test_clean_novel_corpus \
+            superparser.tests.test_benchmark_cleaned_four_novels_5k \
+            superparser.tests.test_diagnose_cleaned_four_novels_5k
+      - name: Diagnostic smoke run on 40 cleaned sentences
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_cleaned_four_novels_5k.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --size 40 --sample-per-family 0 --checkpoint 20 \
+            --out-dir /tmp/cleaned-forensics-smoke
+      - name: Characterize the exact same 5000 cleaned sentences as the successful benchmark
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_cleaned_four_novels_5k.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --size 5000 --max-tokens 32 --kbest-work-limit 100000 \
+            --sample-per-family 10 --checkpoint 50 \
+            --out-dir /tmp/cleaned-four-novels-5000-forensics
+      - name: Preserve full per-sentence diagnosis and counterfactuals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cleaned-four-novels-5000-forensic-corpus
+          path: |
+            /tmp/cleaned-four-novels-5000-forensics/
+            /tmp/cleaned-forensics-smoke/
+          if-no-files-found: warn
+          retention-days: 21
