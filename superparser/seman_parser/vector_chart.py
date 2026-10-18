@@ -330,6 +330,19 @@ class VectorGrammar:
             first.setdefault(rhs_ids[0], []).append(index)
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
+        # A unique integer offset for each (rule, dot) slot in experimental
+        # indexed recognition. Avoid allocating/hashing a four-item tuple
+        # on every partial proposal (many proposals repeat the same state).
+        self._slot_base: tuple[int, ...] = ()
+        self._slot_stride = 0
+        if indexed_recognition:
+            offsets: list[int] = []
+            cursor = 0
+            for item in self.rules:
+                offsets.append(cursor)
+                cursor += len(item.rhs_ids) + 1
+            self._slot_base = tuple(offsets)
+            self._slot_stride = cursor
         self.prefix_ids: tuple[tuple[int, ...], ...] = ()
         if self.online_prefix_edges:
             # Compile all consumed-symbol signatures ONCE per grammar, not
@@ -513,7 +526,9 @@ class _VectorForest:
         self.by_key: dict[tuple[int, int, int], ForestNode] = {}
         self.by_start_category: dict[tuple[int, int], list[ForestNode]] = {}
         self.partials: list[PackedPartial] = []
-        self.partial_by_key: dict[tuple[int, int, int, int], PackedPartial] = {}
+        self.partial_by_key: dict[tuple[int, int, int, int] | int, PackedPartial] = {}
+        self._indexed_position_bits = len(self.text).bit_length()
+        self._indexed_slot_stride = compiled._slot_stride
         self.waiting: dict[tuple[int, int], list[int]] = {}
         self.agenda: list[int] = []
         self.operations = 0
@@ -658,7 +673,18 @@ class _VectorForest:
         child_id: int,
     ) -> None:
         self.partial_proposals += 1
-        key = (rule_index, dot, start, end)
+        if self.compiled.indexed_recognition:
+            # Injective encoding for all valid character spans and rule
+            # slots, with position width derived from the actual sentence.
+            # A production with a different rule identity retains its own
+            # key and therefore every grammatical interpretation.
+            key = (
+                (((start << self._indexed_position_bits) | end)
+                 * self._indexed_slot_stride)
+                + self.compiled._slot_base[rule_index] + dot
+            )
+        else:
+            key = (rule_index, dot, start, end)
         partial = self.partial_by_key.get(key)
         is_new = partial is None
         if partial is None:
