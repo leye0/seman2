@@ -279,7 +279,8 @@ class VectorGrammar:
                  preserve_quote_delimiters: bool = False,
                  cache_boundaries: bool = False,
                  online_prefix_edges: bool = False,
-                 flat_prefix_edges: bool = False) -> None:
+                 flat_prefix_edges: bool = False,
+                 indexed_recognition: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
@@ -292,6 +293,12 @@ class VectorGrammar:
         # byte-for-byte equivalent and is still the default.
         self.online_prefix_edges = online_prefix_edges or flat_prefix_edges
         self.flat_prefix_edges = flat_prefix_edges
+        # Category masks are guaranteed by the existing indexed agenda.
+        # This experimental fast path elides redundant checks, not grammar.
+        if indexed_recognition and early_lexical_filter:
+            raise ValueError(
+                "Indexed recognition cannot bypass an active lexical feature filter")
+        self.indexed_recognition = indexed_recognition
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -419,6 +426,7 @@ class VectorGrammar:
             "partial_derivations": forest.partial_derivation_count,
             "online_prefix_edges_enabled": self.online_prefix_edges,
             "online_prefix_flat_enabled": self.flat_prefix_edges,
+            "indexed_recognition_enabled": self.indexed_recognition,
             **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
                {"online_prefix_groups":0,"online_prefix_unique_edges":0,
                 "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
@@ -702,7 +710,40 @@ class _VectorForest:
                 partial.partial_id, node.node_id,
             )
 
+    def _recognize_indexed(self, goal_category: str) -> tuple[ForestNode, ...]:
+        """Same agenda order and budget, minus already-proven category masks.
+
+        self.compiled.first[node.category_id] guarantees that the first RHS
+        category matches that node; waiting[(start, category_id)] likewise
+        guarantees that the next RHS category matches. The ordinary parser
+        redundantly rechecks both masks and calls a disabled lexical filter.
+        No feature unification takes place in recognition in either version.
+        """
+        self._seed_lexicon()
+        cursor = 0
+        while cursor < len(self.agenda) and not self.budget_exceeded:
+            node = self.nodes[self.agenda[cursor]]
+            cursor += 1
+            self.operations += 1
+            for rule_index in self.compiled.first.get(node.category_id, ()):
+                self._add_partial(
+                    rule_index, 1, node.start, node.end, None, node.node_id)
+            waiting = self.waiting.get((node.start, node.category_id), ())
+            self.duplicate_transitions_avoided += len(waiting) - node.waiting_cutoff
+            for partial_id in tuple(waiting[:node.waiting_cutoff]):
+                partial = self.partials[partial_id]
+                self._add_partial(
+                    partial.rule_index, partial.dot + 1, partial.start, node.end,
+                    partial.partial_id, node.node_id)
+        goal_id = intern(goal_category)
+        return tuple(
+            node for node in self.nodes
+            if node.category_id == goal_id and self._root_span(node.start, node.end)
+        )
+
     def recognize(self, goal_category: str) -> tuple[ForestNode, ...]:
+        if self.compiled.indexed_recognition:
+            return self._recognize_indexed(goal_category)
         self._seed_lexicon()
         cursor = 0
         while cursor < len(self.agenda) and not self.budget_exceeded:
