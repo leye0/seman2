@@ -1,0 +1,29 @@
+# Current limitations and progress gates
+
+This is the working list of **what remains hard** for Layer 1. Completing more sentences is not sufficient if the parses are grammatically incorrect or too expensive for live ingestion.
+
+## Current measured limits (not goals)
+
+- Historical four-novel 5,000-sentence forensic baseline: **3,013/5,000** complete, with **1,077** forest-budget hits at a 20,000-item research cap. The longest 25–32-token band achieved **30.6%** completion. This measurement was taken before the final dialogue/quotation fixes, so it is not today's total coverage.
+- In the length-stratified dialogue audit (160 quote-bearing snippets), **74/160** received a dialogue-scoped parse, **13/160** a general-grammar fallback and **73/160** no complete parse. Quotes are not automatically direct speech; samples require human-label validation.
+- In a paired 256-case experimental A/B, the early lexical filter rescued **14** incomplete parses but lost **1** earlier success and changed **15** previously successful best-tree signatures. **Not safe to enable by default.**
+- Post-budget split recovery saved **6** cases with no changes to successful reference trees, but increased aggregate processing cost by approximately **9.7%** on that sample. It is recovery, not a speedup.
+- The compiled structural-prefix risk diagnostic is promising for *forest saturation*, but has not demonstrated robust prediction of k-best tails or overall runtime; authors and sample size are limited. **It is still opt-in research.**
+- Syntax quality is not 100%: a direct-grammar validation of 120 positive and 24 negative cases recorded 120 complete positive analyses and **10/24** incorrectly accepted negative cases. Completion and approximate structural assertions are not an independent treebank gold standard.
+- Context-sensitive quotation handling, fractured sentence boundaries and attribution spans still need broader author-held-out human verification; the quote-aware fallback currently strips outer quotes before ordinary parse, which can shift text-relative positions.
+
+## Development work, in priority order
+
+1. **Stable reference quality gate.** Pin clean novel and external grammar corpus fixtures with tree structures, syntax roles, quotation spans, lexical subtypes and negative controls. Distinguish parsing completeness, syntactic correctness, semantic roles, forest saturation and latency.
+2. **Safe forest compaction.** Share recognition states for grammatical skeletons while *retaining rule IDs, feature constraints, evidence, scores and semantic actions*. Never change selected best tree or suppress valid alternatives without explicit verification.
+3. **Length-safe decomposition.** Identify independent clause boundaries from positive grammatical evidence; assemble them through real grammatical rules with original character spans and punctuation. A comma alone is not evidence of an independent clause.
+4. **Cheap conditional routing.** Validate the bitset prefix-risk signal on unseen authors. Measure false triggers and speed on easy sentences; routing must be cheaper than unnecessary alternatives, and it must not make risky sentences silently appear correct.
+5. **Dialogue/quotation robustness.** Preserve paired, nested and interrupted quotes, incises, reporting verbs, multi-clause spoken content; avoid turning incidental quoted terms into direct speech.
+6. **Full evidence handoff.** Ensure the serialized Layer 1 interface can reconstruct exact analyzed surface tokens and offsets, syntax alternatives, morphosyntactic features and provenance for future Layer 2.
+7. **Later semantic and memory layer.** Build entity/reference, event, temporal/modal and episodic storage downstream; do not prematurely cram world knowledge into grammar patterns.
+
+## Non-negotiable acceptance criteria
+
+No release of an experimental optimization on the canonical path unless it demonstrates (a) no lost valid parses or subtypes on control suites, (b) syntax/semantic parity or independently verified improvements, (c) reduced total/p95 cost on author-held-out text, and (d) no meaningful degradation of fast sentences. A performance ceiling is a measurement limitation, never evidence of linguistic impossibility.
+
+Pointers: `superparser/research/verbnet_lr/{PARSER_LINEAGE_AND_HYBRID_AUDIT,HEAVY_SENTENCE_ADAPTIVE_FINDINGS,PREPARSE_LEXICAL_AMBIGUITY_AUDIT,STRUCTURAL_CONTINUATION_PROBE_FINDINGS,DIALOGUE_GRAMMAR_STATUS}.md`.
