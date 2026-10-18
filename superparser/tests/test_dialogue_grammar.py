@@ -118,6 +118,30 @@ class DialogueGrammarTests(unittest.TestCase):
                 result=self.parser.parse(text).result
                 self.assertFalse(result.stats.get("dialogue_scoped",False))
 
+    def test_dialogue_cache_returns_same_certified_tree(self):
+        parser=Parser.from_dir(DATA,cache_size=32,max_items=20000)
+        text='"John walks," said Mary.'
+        first=parser.parse(text)
+        second=parser.parse(text)
+        self.assertIs(first.result,second.result)
+        self.assertIs(first.result.best(),second.result.best())
+        self.assertTrue(second.result.stats.get("dialogue_scoped"))
+
+    def test_future_corpus_lattice_dispatch_recognizes_dialogue(self):
+        from seman_parser.segmentation import build_lattice
+        text='"John walks," Mary said.'
+        raw=build_lattice(text,self.parser.resources.lexicon,multiword_max=1)
+        scoped=self.parser.parse_grammar_lattice(
+            raw,kbest_work_limit=100000,max_items=20000)
+        self.assertTrue(scoped.completed,scoped.stats)
+        self.assertTrue(scoped.stats.get("dialogue_scoped"))
+        self.assertIn("dialogue_post_tag",descendant_ids(scoped.best()))
+        ordinary=self.parser._vector_grammar.parse_lattice(
+            raw,beam=self.parser.beam,max_items=20000,
+            goal_category=self.parser.goal_category,
+            kbest_work_limit=100000)
+        self.assertFalse(ordinary.stats.get("dialogue_scoped",False))
+
     def test_unquoted_prose_keeps_canonical_grammar(self):
         report=self.parser.parse("John walks.")
         self.assertFalse(report.result.stats.get("dialogue_scoped",False))
