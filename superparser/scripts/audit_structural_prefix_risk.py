@@ -18,7 +18,8 @@ from seman_parser.segmentation import build_lattice
 ROOT=Path(__file__).resolve().parents[1]
 METRICS=("tokens","category_bits","syntactic_bits",
          "struct_start_sum","struct_start_peak","struct_pair_sum",
-         "struct_pair_peak","struct_pair_log_sum","struct_variant_excess")
+         "struct_pair_peak","struct_pair_log_sum","struct_variant_excess",
+         "fast_start_sum","fast_pair_sum","fast_pair_log_sum","fast_variant_excess")
 
 
 def matched_auc(rows,key,target):
@@ -50,6 +51,7 @@ def evaluate(rows):
                    "slow_exact_length_auc":matched_auc(group,m,"slow_150ms")[0]}
                 for m in METRICS}
     times=[r["struct_probe_ms"] for r in rows]
+    fast_times=[r["fast_probe_ms"] for r in rows]
     parse=[r["parse_ms"] for r in rows]
     return {
         "schema":"structural-prefix-risk-v1",
@@ -68,6 +70,15 @@ def evaluate(rows):
             "forest_budget":matched_auc(rows,"struct_pair_sum","forest_budget")[1],
             "slow_150ms":matched_auc(rows,"struct_pair_sum","slow_150ms")[1],
         },
+        "fast_probe_cost_ms":{
+            "median":round(median(fast_times),5) if fast_times else None,
+            "p95":quantile(fast_times,.95),
+            "max":round(max(fast_times),5) if fast_times else None,
+            "total":round(sum(fast_times),3),
+            "total_parse_ms":round(sum(parse),3),
+            "whole_corpus_ratio":round(sum(fast_times)/sum(parse),5) if sum(parse) else None,
+            "slow_probe_over_1ms":sum(t>1 for t in fast_times),
+        },
         "probe_cost_ms":{
             "median":round(median(times),5) if times else None,
             "p95":quantile(times,.95),"max":round(max(times),5) if times else None,
@@ -84,6 +95,7 @@ def evaluate(rows):
             "Exact-length AUC compares ONLY opposite-outcome sentences with identical token counts.",
             "No success/timeout measured by this study implies correctness of a grammar tree.",
             "Full compiler startup work is excluded from per-sentence probe cost and must be amortized.",
+            "Fast category-bitset path ignores feature compatibility and returns optimistic scores only.",
             "The corpus is stratified, not a representative population of running text.",
             "No grammar changes, altered parses, active router, or runtime optimization."
         ],
@@ -113,6 +125,7 @@ def run(args):
         for i,case in enumerate(cases):
             lattice=build_lattice(case["text"],resources.lexicon,multiword_max=1)
             lexical=lexical_ambiguity(lattice)
+            fast=predictor.fast_signal(lattice)
             structural=predictor.signal(lattice)
             begin=perf_counter_ns()
             result=parser.parse_grammar_lattice(
@@ -126,7 +139,7 @@ def run(args):
                 "category_bits":lexical["category_bits"],
                 "syntactic_bits":lexical["syntactic_bits"],
                 "lexical_candidates":lexical["candidate_count"],
-                **structural,
+                **structural,**fast,
                 "forest_budget":bool(stats.get("budget_exceeded")),
                 "kbest_budget":bool(stats.get("kbest_budget_exceeded")),
                 "partial_states":int(stats.get("partial_states",0)),
@@ -158,6 +171,7 @@ def run(args):
     print("STRUCT_PREFIX_FINAL",json.dumps({
         "count":summary["count"],"ranking":summary["ranking"],
         "probe_cost_ms":summary["probe_cost_ms"],
+        "fast_probe_cost_ms":summary["fast_probe_cost_ms"],
         "matched_pairs":summary["matched_positive_negative_pairs"],
         "grammar_compiler":summary["grammar_compiler"],
     }),flush=True)
