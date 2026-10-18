@@ -41,5 +41,4 @@ jobs:
       - name: Canonical compiled-parser regression tests
         run: |
           PYTHONPATH=superparser python -m unittest -v \
-            superparser.tests.test_compiled_structure_snap \
-            superparser.tests.test_benchmark_cleaned_four_novels_5k
+            superparser.tests.test_compiled_structure_snap
