@@ -1,12 +1,7 @@
 name: Cleaned Four Novels — 5000 Sentence Failure Forensics
+# Expensive 5000-sentence profiling is opt-in: source fixes must not
+# accidentally consume another full 13-minute run on every push.
 on:
-  push:
-    branches:
-      - research/verbnet-left-to-right-poc
-    paths:
-      - 'superparser/scripts/diagnose_cleaned_four_novels_5k.py'
-      - 'superparser/tests/test_diagnose_cleaned_four_novels_5k.py'
-      - '.github/workflows/diagnose-cleaned-four-novels-5k.yml'
   workflow_dispatch:
 permissions:
   contents: read
