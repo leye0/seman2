@@ -280,7 +280,8 @@ class VectorGrammar:
                  cache_boundaries: bool = False,
                  online_prefix_edges: bool = False,
                  flat_prefix_edges: bool = False,
-                 shared_trie_recognition: bool = False) -> None:
+                 shared_trie_recognition: bool = False,
+                 lazy_trie_recognition: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
@@ -294,6 +295,7 @@ class VectorGrammar:
         self.online_prefix_edges = online_prefix_edges or flat_prefix_edges
         self.flat_prefix_edges = flat_prefix_edges
         self.shared_trie_recognition = shared_trie_recognition
+        self.lazy_trie_recognition = lazy_trie_recognition
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -326,11 +328,16 @@ class VectorGrammar:
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
         # Separate experimental recognizer; compilation is amortized once.
-        if shared_trie_recognition:
+        if shared_trie_recognition or lazy_trie_recognition:
             from .shared_trie_forest import compile_category_trie
             self.trie_nodes = compile_category_trie(self.rules)
+            self.trie_variant_offsets = tuple(
+                {rule_index: offset for offset,(rule_index,dot)
+                 in enumerate(node.variants)}
+                for node in self.trie_nodes)
         else:
             self.trie_nodes = ()
+            self.trie_variant_offsets = ()
         self.prefix_ids: tuple[tuple[int, ...], ...] = ()
         if self.online_prefix_edges:
             # Compile all consumed-symbol signatures ONCE per grammar, not
@@ -376,7 +383,10 @@ class VectorGrammar:
         kbest_work_limit: int | None = None,
     ) -> ParseResult:
         recognition_start = perf_counter()
-        if self.shared_trie_recognition:
+        if self.lazy_trie_recognition:
+            from .lazy_trie_forest import LazySharedTrieForest
+            forest = LazySharedTrieForest(self,lattice,max_items=max_items)
+        elif self.shared_trie_recognition:
             from .shared_trie_forest import SharedTrieForest
             forest = SharedTrieForest(self, lattice, max_items=max_items)
         else:
@@ -432,10 +442,13 @@ class VectorGrammar:
             "online_prefix_edges_enabled": self.online_prefix_edges,
             "online_prefix_flat_enabled": self.flat_prefix_edges,
             "shared_trie_recognition": self.shared_trie_recognition,
+            "lazy_trie_recognition": self.lazy_trie_recognition,
             "shared_trie_states": len(forest.trie_states)
-                if self.shared_trie_recognition else 0,
+                if self.shared_trie_recognition or self.lazy_trie_recognition else 0,
             "shared_trie_edges": forest.trie_edges
-                if self.shared_trie_recognition else 0,
+                if self.shared_trie_recognition or self.lazy_trie_recognition else 0,
+            "lazy_rule_partials_materialized": len(forest.partials.cached)
+                if self.lazy_trie_recognition else 0,
             **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
                {"online_prefix_groups":0,"online_prefix_unique_edges":0,
                 "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
