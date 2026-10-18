@@ -31,9 +31,32 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Fetch WordNet
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              content=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          allowed={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              allowed.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(content)) as z:
+              for item in z.namelist():
+                  base=Path(item).name
+                  if item.startswith('wordnet/') and base in allowed:
+                      (dest/base).write_bytes(z.read(item))
+          assert (dest/'index.verb').exists()
+          PY
       - name: Regressions — parser, quotations and structural diagnostics
         run: |
-          PYTHONPATH=superparser python -m unittest -v \
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v \
             superparser.tests.test_verbnet_lr_hybrid_vector \
             superparser.tests.test_dialogue_grammar \
             superparser.tests.test_vector_chart \
