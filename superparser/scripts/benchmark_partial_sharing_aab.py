@@ -14,7 +14,6 @@ from pathlib import Path
 from statistics import median
 from time import perf_counter_ns
 
-from research.verbnet_lr.continuation_probe import ContinuationIndex
 from scripts.benchmark_heavy_sentence_ab import BANDS,choose_cases
 from seman_parser.engine import Parser,ParserResources
 from seman_parser.segmentation import build_lattice
@@ -48,19 +47,33 @@ def structural_duplication(result):
     """
     forest=result.shared_forest
     if forest is None:
-        return {"partials":0,"skeleton_slots":0,"potential_duplicates":0}
-    unique=set()
+        return {"partials":0,"skeleton_slots":0,"potential_duplicates":0,
+                "prefix_slots":0,"potential_prefix_reuse":0}
+    full_skeleton=set()
+    prefix_slots=set()
+    prefix_cache={}
     for partial in forest.partials:
         rule=forest.compiled.rules[partial.rule_index].rule
-        signature=(
+        full_skeleton.add((
             partial.start,partial.end,partial.dot,
-            rule.lhs.category,tuple(slot.category for slot in rule.rhs),
-        )
-        unique.add(signature)
+            rule.lhs.category,tuple(slot.category for slot in rule.rhs)))
+        key=(partial.rule_index,partial.dot)
+        prefix=prefix_cache.get(key)
+        if prefix is None:
+            # A matched rule prefix may be shared only if *all its own*
+            # constraints and named exports are identical. RHS suffix,
+            # rule identity/score and semantic actions remain independent.
+            prefix=tuple(json.dumps(slot.as_dict(),sort_keys=True,
+                                    separators=(",",":"),ensure_ascii=False)
+                         for slot in rule.rhs[:partial.dot])
+            prefix_cache[key]=prefix
+        prefix_slots.add((partial.start,partial.end,partial.dot,prefix))
     return {
         "partials":len(forest.partials),
-        "skeleton_slots":len(unique),
-        "potential_duplicates":len(forest.partials)-len(unique),
+        "skeleton_slots":len(full_skeleton),
+        "potential_duplicates":len(forest.partials)-len(full_skeleton),
+        "prefix_slots":len(prefix_slots),
+        "potential_prefix_reuse":len(forest.partials)-len(prefix_slots),
     }
 
 
@@ -129,10 +142,16 @@ def summarize(rows,sources):
             "logical_partial_states":sum(r["sharing"]["partials"] for r in rows),
             "category_skeleton_slots":sum(r["sharing"]["skeleton_slots"] for r in rows),
             "optimistic_duplicate_slots":sum(r["sharing"]["potential_duplicates"] for r in rows),
+            "feature_exact_prefix_slots":sum(r["sharing"]["prefix_slots"] for r in rows),
+            "potential_feature_exact_prefix_reuse":sum(
+                r["sharing"]["potential_prefix_reuse"] for r in rows),
             "by_length":{label:{
                 "partial_states":sum(r["sharing"]["partials"] for r in rows if r["band"]==label),
                 "category_skeleton_duplicates":sum(r["sharing"]["potential_duplicates"]
-                                                     for r in rows if r["band"]==label)}
+                                                     for r in rows if r["band"]==label),
+                "potential_feature_exact_prefix_reuse":sum(
+                    r["sharing"]["potential_prefix_reuse"]
+                    for r in rows if r["band"]==label)}
                  for label,_,_ in BANDS},
         },
         "boundary_cache":{
@@ -143,7 +162,8 @@ def summarize(rows,sources):
             "A/A/B same one lexical lattice; order counterbalanced on alternating samples.",
             "Baseline parser and grammar unchanged; memoization research-only, default OFF.",
             "Every completed tree, syntax anchor, lexical source, completion, forest count and budget must agree.",
-            "Category skeleton duplicates are an *upper bound* for possible reuse; rule features/semantics differ.",
+            "Category skeleton duplicates are optimistic, not sound shared states.",
+            "Feature-exact matched prefixes can share recognition evidence only; future rule variants and semantic actions remain distinct.",
             "Measure separate fast-sentence cohort and A/A noise before enabling any optimization.",
             "Timings exclude lattice building and structural-duplication audit.",
             "Corpus stratification is not a representative web/text workload.",
