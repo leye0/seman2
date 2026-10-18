@@ -61,7 +61,7 @@ jobs:
         run: |
           python - <<'PY'
           from seman_parser import Parser
-from seman_parser.engine import ParserResources
+          from seman_parser.engine import ParserResources
           from seman_parser.segmentation import build_lattice
           from pathlib import Path
           p=Parser(ParserResources.from_dir(Path('superparser/data'),wordnet_dict=__import__('os').environ['WORDNET_DICT']),cache_size=0)
