@@ -63,6 +63,7 @@ jobs:
             superparser.tests.test_coverage \
             superparser.tests.test_data \
             superparser.tests.test_syntax_semantics_boundary \
+            superparser.tests.test_layer1_output_contract \
             superparser.tests.test_heavy_sentence_ab \
             superparser.tests.test_lexical_ambiguity_risk \
             superparser.tests.test_dialogue_grammar \
