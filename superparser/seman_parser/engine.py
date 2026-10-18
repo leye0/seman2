@@ -9,6 +9,7 @@ never destroys the analyses produced here.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import os
 from pathlib import Path
 from time import perf_counter
 from typing import Any, Mapping, Sequence
@@ -615,9 +616,19 @@ def _read_json_rows(path: Path) -> list[Mapping[str, Any]]:
 def discover_wordnet(data_dir: Path) -> Path | None:
     """Find the WordNet dict directory.
 
-    Checks, in order: ``data/wordnet_path`` (one-line path file), then the
-    project-local install used by the TRIPS setup.
+    Checks, in order: explicit ``WORDNET_DICT`` environment variable,
+    ``data/wordnet_path`` (one-line pointer), then historical local install.
+    Invalid explicit configuration must fail loudly, not silently fall back.
     """
+    data_dir = data_dir.resolve()
+    configured = os.environ.get("WORDNET_DICT")
+    if configured:
+        explicit = Path(configured).expanduser()
+        if not explicit.is_dir():
+            raise FileNotFoundError(
+                f"WORDNET_DICT is configured but not a directory: {explicit}"
+            )
+        return explicit.resolve()
     pointer = data_dir / "wordnet_path"
     if pointer.exists():
         candidate = Path(pointer.read_text(encoding="utf-8").strip())

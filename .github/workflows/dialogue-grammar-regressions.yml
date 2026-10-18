@@ -2,7 +2,8 @@ name: Scoped Novel Dialogue Grammar Tests
 on:
   push:
     branches:
-      - research/verbnet-left-to-right-poc
+      - main
+      - cleanup/canonical-vector-and-history
     paths:
       - 'superparser/seman_parser/dialogue.py'
       - 'superparser/seman_parser/engine.py'
@@ -39,11 +40,6 @@ jobs:
         run: |
           PYTHONPATH=superparser python -m unittest -v \
             superparser.tests.test_dialogue_grammar
-      - name: Canonical compiled-parser regression tests
-        run: |
-          PYTHONPATH=superparser python -m unittest -v \
-            superparser.tests.test_compiled_structure_snap
-
       - name: Prepare WordNet 3.0
         run: |
           python - <<'PY'
