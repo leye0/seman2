@@ -440,6 +440,7 @@ class VectorGrammar:
             "online_prefix_edges_enabled": self.online_prefix_edges,
             "online_prefix_flat_enabled": self.flat_prefix_edges,
             "indexed_recognition_enabled": self.indexed_recognition,
+            "indexed_masks_elided": forest.indexed_masks_elided,
             **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
                {"online_prefix_groups":0,"online_prefix_unique_edges":0,
                 "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
@@ -537,6 +538,7 @@ class _VectorForest:
         self.partial_proposals = 0
         self.duplicate_partial_proposals = 0
         self.duplicate_transitions_avoided = 0
+        self.indexed_masks_elided = 0
         self.lexical_spans = 0
         self.budget_exceeded = False
         self.early_lexical_considered = 0
@@ -751,11 +753,14 @@ class _VectorForest:
             node = self.nodes[self.agenda[cursor]]
             cursor += 1
             self.operations += 1
-            for rule_index in self.compiled.first.get(node.category_id, ()):
+            starts = self.compiled.first.get(node.category_id, ())
+            self.indexed_masks_elided += len(starts)
+            for rule_index in starts:
                 self._add_partial(
                     rule_index, 1, node.start, node.end, None, node.node_id)
             waiting = self.waiting.get((node.start, node.category_id), ())
             self.duplicate_transitions_avoided += len(waiting) - node.waiting_cutoff
+            self.indexed_masks_elided += node.waiting_cutoff
             for partial_id in tuple(waiting[:node.waiting_cutoff]):
                 partial = self.partials[partial_id]
                 self._add_partial(
