@@ -66,7 +66,7 @@ class CleanedFourNovelDiagnosisTests(unittest.TestCase):
         self.assertEqual(s["overall"]["forest_budget"],2)
         self.assertEqual(s["overall"]["total_ms"]["p50"],25)
         self.assertEqual(s["by_book"]["1342"]["data"]["n"],1)
-        self.assertEqual(s["partial_rule_cohorts"]["forest_saturated"]["top_partial_producers"],[["r",8]])
+        self.assertEqual(s["partial_rule_cohorts"]["forest_saturated"]["top_partial_producers"],[("r",8)])
 
 
 if __name__=="__main__":
