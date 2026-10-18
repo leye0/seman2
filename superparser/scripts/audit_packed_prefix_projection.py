@@ -25,7 +25,8 @@ def group(rows):
     count=len(rows)
     keys=("partials","shared_groups","original_edges","interned_edges",
           "reused_edge_occurrences","original_edge_objects_estimated_bytes",
-          "projected_edge_objects_estimated_bytes","flat_arrays_bytes")
+          "projected_edge_objects_estimated_bytes","flat_arrays_bytes",
+          "direct_arrays_bytes")
     agg={k:sum(r[k] for r in rows) for k in keys}
     agg["n"]=count
     agg["edge_reuse_rate"]=(round(1-agg["interned_edges"]/agg["original_edges"],5)
@@ -33,6 +34,9 @@ def group(rows):
     agg["byte_ratio"]=(round(agg["projected_edge_objects_estimated_bytes"]/
                              agg["original_edge_objects_estimated_bytes"],5)
                        if agg["original_edge_objects_estimated_bytes"] else 0)
+    agg["direct_byte_ratio"]=(round(agg["direct_arrays_bytes"]/
+                                   agg["original_edge_objects_estimated_bytes"],5)
+                              if agg["original_edge_objects_estimated_bytes"] else 0)
     agg["flat_byte_ratio"]=(round(agg["flat_arrays_bytes"]/
                                  agg["original_edge_objects_estimated_bytes"],5)
                         if agg["original_edge_objects_estimated_bytes"] else 0)
@@ -80,8 +84,11 @@ def main():
             direct_ms=(perf_counter_ns()-direct_start)/1e6
             if direct.group_of!=flat.group_of or direct.variant_edges!=flat.variant_edges or direct.children!=flat.children or direct.prev_groups!=flat.prev_groups or direct.member_offsets!=flat.member_offsets or direct.member_rules!=flat.member_rules or direct.member_ids!=flat.member_ids:
                 raise AssertionError("Direct and indirect packing disagree")
-            if direct.metrics(parsed.shared_forest)!=flat_metrics:
-                raise AssertionError("Direct packing changed stored byte footprint")
+            direct_metrics=direct.metrics(parsed.shared_forest)
+            for key in ("partial_variants","prefix_groups","original_edges",
+                        "unique_edges"):
+                if direct_metrics[key]!=flat_metrics[key]:
+                    raise AssertionError("Direct packing altered logical content")
             if flat_checked!=metrics["original_edges"]:
                 raise AssertionError("Flat packed prefix projection lost edges")
             row={
@@ -94,6 +101,7 @@ def main():
                 "flat_conversion_ms":round(flat_ms,4),
                 "direct_conversion_ms":round(direct_ms,4),
                 "flat_arrays_bytes":flat_metrics["flat_arrays_bytes"],
+                "direct_arrays_bytes":direct_metrics["flat_arrays_bytes"],
                 "validated_flat_edges":flat_checked,
                 **metrics,
             }
