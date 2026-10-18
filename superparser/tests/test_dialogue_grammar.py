@@ -142,6 +142,16 @@ class DialogueGrammarTests(unittest.TestCase):
             kbest_work_limit=100000)
         self.assertFalse(ordinary.stats.get("dialogue_scoped",False))
 
+    def test_diagnostic_mode_preserves_dialogue_tree_and_roles(self):
+        text='"John walks," said Mary.'
+        report=self.parser.parse_diagnostic(text,alternatives=2,max_items=20000)
+        self.assertTrue(report.result.completed)
+        self.assertTrue(report.result.stats["dialogue_scoped"])
+        self.assertTrue(report.result.stats["diagnostic_mode"])
+        self.assertIn("dialogue_post_tag",descendant_ids(report.result.best()))
+        self.assertIn("REPORTED_CONTENT",
+                      [edge.relation for edge in report.interpret().graph.relations])
+
     def test_unquoted_prose_keeps_canonical_grammar(self):
         report=self.parser.parse("John walks.")
         self.assertFalse(report.result.stats.get("dialogue_scoped",False))
