@@ -67,7 +67,7 @@ Earlier unconditional shared-prefix experiments showed **+27.6% overhead on 4–
 5. Verify grammar trees, complete top-k, categories, morphological constraints, quotation spans, original words and future Layer 2 semantic action identity. Budget exhaustion is never proof of ungrammaticality.
 6. Keep `complexity_policy=None` as the production default until **independent** evidence shows real total latency wins without losing accuracy or slowing easy sentences.
 
-**Decision:** the original prediction-first conditional architecture now exists and has parity tests. The routing mechanism works. The current specialized algorithm has not yet demonstrated a stable net speedup.
+**Decision:** the original prediction-first conditional architecture now exists and has parity tests. The routing mechanism works. The current specialized algorithm has not yet demonstrated a stable net speedup. The next structurally grounded candidate is the [category-prefix trie replay experiment](CATEGORY_PREFIX_TRIE_FINDINGS.md), not a revival of the discarded indexed shortcut.
 
 
 ## Follow-up, 18 October: the failed indexed-transition shortcut

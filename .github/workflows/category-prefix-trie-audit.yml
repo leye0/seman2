@@ -1,9 +1,5 @@
 name: Research — Grammar Prefix Trie Audit
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/category-prefix-trie-audit.yml'
   workflow_dispatch:
 permissions:
   contents: read

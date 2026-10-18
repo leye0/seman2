@@ -10,6 +10,7 @@ Start here:
 - [Corpus preservation policy](docs/CORPORA_AND_DATA.md)
 - [Lossless shared-prefix storage prototype](docs/SHARED_PREFIX_STORAGE_PROTOTYPE.md)
 - [Prediction-first adaptive complexity routing and its research limits](docs/ADAPTIVE_COMPLEXITY_ROUTING.md)
+- [Category-prefix trie recognition: proof, measured potential and remaining work](docs/CATEGORY_PREFIX_TRIE_FINDINGS.md)
 
 ## The active execution path
 
