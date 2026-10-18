@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/online-prefix-aab.yml'
+      - 'superparser/scripts/benchmark_online_prefix_aab.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,7 +46,7 @@ jobs:
         run: |
           python -m py_compile superparser/scripts/benchmark_online_prefix_aab.py
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_online_prefix_edges
-      - name: AAB parsing and 4 sampled Python memory traces
+      - name: AAB flat/object prefix parsing and 4 peak-memory samples
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_online_prefix_aab.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
