@@ -236,7 +236,7 @@ class Parser:
                     resources=self._dialogue_resources or self.resources,
                 )
         # Legacy parsing still accepts isolated outer-quoted clauses.
-        text = original.strip('"\\u201c\\u201d\\u2018\\u2019').strip()
+        text = original.strip('"\u201c\u201d\u2018\u2019').strip()
         cache_key = (text, self.goal_category)
         cached = self._parse_cache.get(cache_key)
         if cached is not None:
