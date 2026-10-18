@@ -1,5 +1,9 @@
 name: Research — Shared Prefix Projection
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/packed-prefix-projection.yml'
   workflow_dispatch:
 permissions:
   contents: read
