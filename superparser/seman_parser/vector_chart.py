@@ -16,7 +16,7 @@ from .features import (
     substitute_structure, unify,
 )
 from .grammar import Grammar, GrammarRule
-from .prefix_edges import OnlinePrefixEdges
+from .prefix_edges import OnlinePrefixEdges, FlatOnlinePrefixEdges
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern
@@ -278,7 +278,8 @@ class VectorGrammar:
     def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False,
                  preserve_quote_delimiters: bool = False,
                  cache_boundaries: bool = False,
-                 online_prefix_edges: bool = False) -> None:
+                 online_prefix_edges: bool = False,
+                 flat_prefix_edges: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
@@ -289,7 +290,8 @@ class VectorGrammar:
         self.cache_boundaries = cache_boundaries
         # Experimental online group edge interning; canonical mode remains
         # byte-for-byte equivalent and is still the default.
-        self.online_prefix_edges = online_prefix_edges
+        self.online_prefix_edges = online_prefix_edges or flat_prefix_edges
+        self.flat_prefix_edges = flat_prefix_edges
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -416,6 +418,7 @@ class VectorGrammar:
             "partial_states": len(forest.partials),
             "partial_derivations": forest.partial_derivation_count,
             "online_prefix_edges_enabled": self.online_prefix_edges,
+            "online_prefix_flat_enabled": self.flat_prefix_edges,
             **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
                {"online_prefix_groups":0,"online_prefix_unique_edges":0,
                 "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
@@ -519,7 +522,8 @@ class _VectorForest:
         self.boundary_cache_misses = 0
         self._next_start_cache: dict[int, int] = {}
         self.prefix_store = (
-            OnlinePrefixEdges(compiled.prefix_ids, PartialDerivation)
+            (FlatOnlinePrefixEdges if compiled.flat_prefix_edges else
+             OnlinePrefixEdges)(compiled.prefix_ids, PartialDerivation)
             if compiled.online_prefix_edges else None
         )
         if compiled.cache_boundaries:
