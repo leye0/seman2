@@ -354,7 +354,10 @@ class Parser:
         changing its grammar.
         """
         original = text.strip()
-        if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
+        from .dialogue import quotation_boundaries
+        if (self.goal_category == "CLAUSE"
+                and self._dialogue_vector_grammar is not None
+                and quotation_boundaries(original)):
             extended = dialogue_lattice(build_lattice(
                 original, self.resources.lexicon,
                 deduplicate=self.deduplicate_lexical,
