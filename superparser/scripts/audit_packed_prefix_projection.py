@@ -13,7 +13,7 @@ from pathlib import Path
 from statistics import median
 from time import perf_counter_ns
 
-from research.verbnet_lr.packed_prefix_projection import build_projection, FlatPrefixProjection
+from research.verbnet_lr.packed_prefix_projection import build_projection, FlatPrefixProjection, pack_flat_direct
 from scripts.benchmark_heavy_sentence_ab import BANDS,choose_cases
 from seman_parser.engine import Parser,ParserResources
 from seman_parser.segmentation import build_lattice
@@ -39,6 +39,7 @@ def group(rows):
     agg["p50_projection_ms"]=round(median(r["projection_ms"] for r in rows),4) if rows else None
     agg["projection_total_ms"]=round(sum(r["projection_ms"] for r in rows),3)
     agg["flat_conversion_total_ms"]=round(sum(r["flat_conversion_ms"] for r in rows),3)
+    agg["direct_conversion_total_ms"]=round(sum(r["direct_conversion_ms"] for r in rows),3)
     agg["parser_total_ms"]=round(sum(r["parse_ms"] for r in rows),3)
     agg["saturation_count"]=sum(r["budget_exceeded"] for r in rows)
     return agg
@@ -74,6 +75,13 @@ def main():
             flat_checked=flat.verify(parsed.shared_forest)
             flat_ms=(perf_counter_ns()-flat_start)/1e6
             flat_metrics=flat.metrics(parsed.shared_forest)
+            direct_start=perf_counter_ns()
+            direct=pack_flat_direct(parsed.shared_forest,validate=True)
+            direct_ms=(perf_counter_ns()-direct_start)/1e6
+            if direct.group_of!=flat.group_of or direct.variant_edges!=flat.variant_edges or direct.children!=flat.children or direct.prev_groups!=flat.prev_groups or direct.member_offsets!=flat.member_offsets or direct.member_rules!=flat.member_rules or direct.member_ids!=flat.member_ids:
+                raise AssertionError("Direct and indirect packing disagree")
+            if direct.metrics(parsed.shared_forest)!=flat_metrics:
+                raise AssertionError("Direct packing changed stored byte footprint")
             if flat_checked!=metrics["original_edges"]:
                 raise AssertionError("Flat packed prefix projection lost edges")
             row={
@@ -84,6 +92,7 @@ def main():
                 "budget_exceeded":bool(parsed.stats.get("budget_exceeded")),
                 "parse_ms":round(parse_ms,4),"projection_ms":round(projection_ms,4),
                 "flat_conversion_ms":round(flat_ms,4),
+                "direct_conversion_ms":round(direct_ms,4),
                 "flat_arrays_bytes":flat_metrics["flat_arrays_bytes"],
                 "validated_flat_edges":flat_checked,
                 **metrics,
@@ -108,6 +117,8 @@ def main():
             "Python object-based prefix groups increase storage despite deduplicating recognition edges.",
             "Flat packed arrays include per-rule membership and ordered edge references but exclude live hash indexes.",
             "Flat storage is post-build and read-only, NOT an online memory benchmark or production optimizer.",
+            "Direct packer uses temporary dictionaries, but no intermediary PrefixGroup objects; indexes are discarded on completion.",
+            "Direct and indirect flat array contents are compared byte-for-byte using Python array equality.",
             "Compression ratios are specific to this encoding, not promised future parser speedups.",
             "The full grammar tree and lexical lattice remain untouched; no rules or corpus text changed.",
             "All sources are pinned novels; no author-held-out validation in this pilot.",
