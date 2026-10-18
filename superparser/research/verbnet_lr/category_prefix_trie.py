@@ -13,6 +13,7 @@ semantic actions are NEVER merged: they remain in compiled.rules.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from string import whitespace
 from typing import Any
 
 
@@ -58,8 +59,7 @@ class CategoryPrefixTrie:
         """
         text=forest.text
         preserve=forest.compiled.preserve_quote_delimiters
-        separators=(' \\t\\r\\n' if preserve
-                    else ' \\t\\r\\n"\\u201c\\u201d\\u2018\\u2019')
+        separators = whitespace if preserve else whitespace + '"“”‘’'
         next_start=[0]*(len(text)+1)
         next_start[len(text)]=len(text)
         for pos in range(len(text)-1,-1,-1):
