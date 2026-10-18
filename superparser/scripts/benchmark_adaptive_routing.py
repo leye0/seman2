@@ -50,6 +50,25 @@ def calibrate(rows,router,min_tokens,share):
     return learned,scores
 
 
+def calibrate_bands(rows,scores,min_tokens,share):
+    """Length-conditioned thresholds, learned from other books' scores only."""
+    bounds=((17,24),(25,32))
+    results={}
+    for book in sorted({row["book_id"] for row in rows}):
+        calibrated=[]
+        for lower,upper in bounds:
+            if upper<min_tokens:
+                continue
+            other=[score for i,score in scores.items()
+                   if rows[i]["book_id"]!=book
+                   and lower<=rows[i]["tokens"]<=upper]
+            if other:
+                calibrated.append((max(min_tokens,lower),upper,
+                                   max(1,percentile(other,1-share))))
+        results[book]=tuple(calibrated)
+    return results
+
+
 def timed(parser,lattice):
     tick=perf_counter_ns()
     parsed=parser.parse_grammar_lattice(
@@ -131,6 +150,19 @@ def group(rows):
     result["reference_b"]["ratio_vs_a"]=(
         round(result["reference_b"]["total_ms"]/a,4) if a else None)
     result["probe_total_ms"]=round(sum(r["adaptive"]["probe_ms"] for r in rows),3)
+    # Baseline A/A alone is noisy on shared runners; bracket adaptive latency
+    # with the geometric mean of two same-sentence canonical passes.
+    paired=[math.sqrt(r["reference_a"]["ms"]*r["reference_b"]["ms"])
+            for r in rows]
+    total_paired=sum(paired)
+    result["bracketed_baseline_ms"]=round(total_paired,3)
+    result["adaptive"]["ratio_vs_bracketed_baseline"]=(
+        round(result["adaptive"]["total_ms"]/total_paired,4)
+        if total_paired else None)
+    result["baseline_aa_drift_over_20pct"]=sum(
+        abs(math.log(r["reference_a"]["ms"]/r["reference_b"]["ms"]))
+        >math.log(1.2) for r in rows
+        if r["reference_a"]["ms"] and r["reference_b"]["ms"])
     return result
 
 
@@ -155,13 +187,18 @@ def main():
            for item in raw]
     learned,training_scores=calibrate(
         cases,prototype,args.minimum_tokens,args.hard_share)
+    learned_bands=calibrate_bands(
+        cases,training_scores,args.minimum_tokens,args.hard_share)
+    policies={book:ComplexityPolicy(
+        rule_start_threshold=cutoff,
+        min_tokens=args.minimum_tokens,
+        difficult_strategy="flat",
+        band_thresholds=learned_bands[book])
+        for book,cutoff in learned.items()}
     parsers={book:Parser(
         resources,cache_size=0,max_items=20000,
-        complexity_policy=ComplexityPolicy(
-            rule_start_threshold=cutoff,
-            min_tokens=args.minimum_tokens,
-            difficult_strategy="flat"))
-        for book,cutoff in learned.items()}
+        complexity_policy=policy)
+        for book,policy in policies.items()}
     args.out_dir.mkdir(parents=True,exist_ok=True)
     records=[]
     with (args.out_dir/"per_sentence.jsonl").open(
@@ -190,7 +227,7 @@ def main():
                 "index":i,"book_id":item["book_id"],"band":item["band"],
                 "tokens":item["tokens"],"text":item["text"],
                 "sha256":sha256(item["text"].encode()).hexdigest(),
-                "threshold":learned[item["book_id"]],
+                "threshold":policies[item["book_id"]].threshold_for(item["tokens"]),
                 "train_score":training_scores.get(i),
                 "verified_edges":checked,
                 **{k:{f:v for f,v in record.items()
@@ -208,7 +245,8 @@ def main():
     result={
         "schema":"adaptive-grammar-risk-routing-aab-v1",
         "thresholds":{str(k):v for k,v in learned.items()},
-        "threshold_training":"top-quartile of preparse score on other 3 novels, no outcomes",
+        "band_thresholds":{str(k):v for k,v in learned_bands.items()},
+        "threshold_training":"top-quartile of preparse score within each 17-24 / 25-32 length band on other 3 novels, no outcomes",
         "sources":sources,
         "all":group(records),
         "easy":group([r for r in records if r["tokens"]<args.minimum_tokens]),
@@ -227,6 +265,8 @@ def main():
             "Every selected case has every rule-specific partial edge checked for equivalence.",
             "Fast/default sentences keep canonical mode; runtime policy is not enabled by default.",
             "Four-book exploratory sample has historical leakage into research decisions.",
+            "Length-conditioned thresholds prevent raw length dominating all hard-case picks.",
+            "Each result also reports A/A drift and geometric-mean bracketed baseline timing.",
             "The performance verdict requires repeated independent authors and fast-sentence safeguards.",
         ],
     }
