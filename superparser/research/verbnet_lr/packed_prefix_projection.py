@@ -13,6 +13,7 @@ semantics remain rule-specific. A group is never a grammatical derivation.
 from __future__ import annotations
 
 from array import array
+from bisect import bisect_left
 from dataclasses import dataclass, field
 import json
 import sys
@@ -173,3 +174,117 @@ def build_projection(forest:Any,*,validate:bool=True) -> PrefixProjection:
                     "Prefix projection changed ordered derivation "
                     f"for partial_id={partial.partial_id}")
     return view
+
+
+class FlatPrefixProjection:
+    """Read-only *physical* packing using contiguous fixed-width integer arrays.
+
+    A previous group and a rule index identify the exact predecessor partial.
+    Each group maintains a SORTED, flat membership index to resolve it. Edge
+    indices remain in their per-variant original order (important for tied
+    k-best scores and reproducible derivation enumeration).
+
+    This representation is not itself a live forest recognizer: its mutable
+    insert/lookup indexes are discarded. Runtime integration will need an
+    efficient transient build index, budget discipline and online updates.
+    """
+    __slots__=(
+        "group_of","variant_rule","variant_offsets","variant_edges",
+        "group_edge_offsets","prev_groups","children",
+        "member_offsets","member_rules","member_ids")
+
+    def __init__(self,source:PrefixProjection):
+        self.group_of=array("i",source.group_of)
+        self.variant_rule=array("i",source.variant_rule)
+        self.variant_offsets=array("I",[0])
+        self.variant_edges=array("I")
+        for edges in source.variant_edges:
+            self.variant_edges.extend(edges)
+            self.variant_offsets.append(len(self.variant_edges))
+        self.group_edge_offsets=array("I",[0])
+        self.prev_groups=array("i")
+        self.children=array("i")
+        self.member_offsets=array("I",[0])
+        self.member_rules=array("i")
+        self.member_ids=array("i")
+        for group in source.groups:
+            self.prev_groups.extend(group.previous_groups)
+            self.children.extend(group.children)
+            self.group_edge_offsets.append(len(self.children))
+            # Rule IDs are unique per (shared group,variant). Preserve sorted
+            # membership for binary-search resolution without hash maps.
+            members=sorted(
+                ((source.variant_rule[pid],pid) for pid in group.members))
+            for rule,pid in members:
+                self.member_rules.append(rule)
+                self.member_ids.append(pid)
+            self.member_offsets.append(len(self.member_rules))
+
+    def reconstruct(self,partial_id:int)->list[tuple[int|None,int]]:
+        gid=self.group_of[partial_id]
+        rule=self.variant_rule[partial_id]
+        start=self.variant_offsets[partial_id]
+        stop=self.variant_offsets[partial_id+1]
+        base=self.group_edge_offsets[gid]
+        result=[]
+        for offset in self.variant_edges[start:stop]:
+            eid=base+offset
+            prev_group=self.prev_groups[eid]
+            if prev_group < 0:
+                prev=None
+            else:
+                left=self.member_offsets[prev_group]
+                right=self.member_offsets[prev_group+1]
+                idx=bisect_left(self.member_rules,rule,left,right)
+                if idx==right or self.member_rules[idx]!=rule:
+                    raise KeyError(
+                        f"No predecessor variant for group={prev_group}, "
+                        f"rule={rule}")
+                prev=self.member_ids[idx]
+            result.append((prev,self.children[eid]))
+        return result
+
+    def metrics(self,forest:Any)->dict[str,int|float]:
+        original=sum(len(p.derivations) for p in forest.partials)
+        interned=len(self.children)
+        fields=self.__slots__
+        # Include ALL owned storage in the read-only representation,
+        # including rule-group membership and ordered variant edges.
+        bytes_allocated=sum(sys.getsizeof(getattr(self,key)) for key in fields)
+        original_edge_bytes=sum(
+            sys.getsizeof(p.derivations)
+            +sum(sys.getsizeof(edge) for edge in p.derivations)
+            for p in forest.partials)
+        return {
+            "partial_variants":len(self.variant_rule),
+            "prefix_groups":len(self.member_offsets)-1,
+            "original_edges":original,
+            "unique_edges":interned,
+            "flat_arrays_bytes":bytes_allocated,
+            "original_list_and_edge_bytes":original_edge_bytes,
+            "flat_over_original_edge_bytes":round(
+                bytes_allocated/original_edge_bytes,5)
+                if original_edge_bytes else 0.0,
+            "unique_edge_ratio":round(interned/original,5)
+                if original else 0.0,
+        }
+
+    def verify(self,forest:Any)->int:
+        checked=0
+        for partial in forest.partials:
+            expected=[(d.previous_id,d.child_id) for d in partial.derivations]
+            if self.reconstruct(partial.partial_id)!=expected:
+                raise AssertionError(
+                    f"Flat prefix packing changed ordered edges for "
+                    f"partial {partial.partial_id}")
+            checked+=len(expected)
+        return checked
+
+
+def pack_flat(forest:Any,*,validate:bool=True)->FlatPrefixProjection:
+    """Offline conversion, for evidence only; leaves canonical forest intact."""
+    view=build_projection(forest,validate=validate)
+    flat=FlatPrefixProjection(view)
+    if validate:
+        flat.verify(forest)
+    return flat
