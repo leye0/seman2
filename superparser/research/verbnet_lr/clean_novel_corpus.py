@@ -110,7 +110,7 @@ def clean_source(raw: str, ebook_id: int) -> tuple[str, dict]:
         ):
             skip("letter_signature")
             continue
-        normalized = flat.translate(str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'"}))
+        normalized = flat  # Quotes/apostrophes are linguistic evidence: retain the originals.
         normalized = re.sub(r"_([^_\n]+)_", r"\1", normalized)
         if normalized:
             clean.append(normalized)

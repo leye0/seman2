@@ -14,8 +14,8 @@ from typing import Any, Iterable, Sequence
 
 from .engine import Parser
 from .reader import DiscourseProcessor
+from .sentence_boundaries import has_final_punctuation, split_prose_sentences
 
-_SENTENCE_SPLIT = re.compile(r"(?<=[.!?])[\"\u201c\u201d]*\s+(?=[A-Z\"'(\[])")
 _NOISE = re.compile(r"^[\s\"'“”‘’\-–—*•>]*$")
 # Abbreviations that end with a period but do not end a sentence.
 _ABBREV = re.compile(
@@ -94,26 +94,8 @@ _ABBREV_TOKEN = re.compile(
 
 
 def _split_sentences(line: str) -> list[str]:
-    """Split on [.!?] boundaries, skipping abbreviation periods and
-    handling quotation marks around sentence boundaries."""
-    # Normalize quotes so they don't interfere with boundary detection.
-    cleaned = line.replace('\u201c', '"').replace('\u201d', '"')
-    cleaned = cleaned.replace('\u2018', "'").replace('\u2019', "'")
-    out: list[str] = []
-    start = 0
-    for match in _SENTENCE_SPLIT.finditer(cleaned):
-        end = match.start() + 1
-        chunk = cleaned[start:end].strip().strip('"').strip()
-        if not chunk:
-            continue
-        if _ABBREV_TOKEN.search(chunk):
-            continue
-        out.append(chunk)
-        start = match.end()
-    tail = cleaned[start:].strip().strip('"').strip()
-    if tail:
-        out.append(tail)
-    return out
+    """Lossless dialogue-aware splitter shared with the novel extractor."""
+    return split_prose_sentences(line)
 
 
 def extract_sentences(path: str | Path, *, limit: int | None = None) -> list[SentenceCase]:
@@ -130,14 +112,14 @@ def extract_sentences(path: str | Path, *, limit: int | None = None) -> list[Sen
         if line.startswith("#"):
             continue
         for piece in _split_sentences(line):
-            piece = piece.strip().strip("\"'“”‘’")
-            if len(piece) < 8 or _NOISE.match(piece):
+            piece = piece.strip()
+            if not re.search(r"[A-Za-z]", piece) or _NOISE.match(piece):
                 continue
             # Drop sentence fragments that are only an abbreviation + name.
             if _ABBREV.search(piece) and len(piece.split()) <= 3:
                 continue
             # Keep only pieces that look like a sentence.
-            if not re.search(r"[.!?]$", piece) and len(piece) > 200:
+            if not has_final_punctuation(piece) and len(piece) > 200:
                 continue
             sentences.append(SentenceCase(index=index, text=piece, source_line=line_no))
             index += 1

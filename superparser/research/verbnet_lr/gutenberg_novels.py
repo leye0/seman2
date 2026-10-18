@@ -17,6 +17,9 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from seman_parser.segmentation import tokenize
+from seman_parser.sentence_boundaries import (
+    has_final_punctuation, split_prose_sentences,
+)
 
 
 @dataclass(frozen=True)
@@ -48,13 +51,10 @@ TEST_BOOKS = (
 
 START = re.compile(r"(?im)^\*{3}\s*START OF (?:THE|THIS) PROJECT GUTENBERG EBOOK.*?\*{3}\s*$")
 END = re.compile(r"(?im)^\*{3}\s*END OF (?:THE|THIS) PROJECT GUTENBERG EBOOK.*?\*{3}\s*$")
-BOUNDARY = re.compile(r'(?<=[.!?])\s+(?=(?:["\x27(]?[A-Z]))')
-CHAPTER = re.compile(r"(?i)^(?:chapter|book|volume|contents|part|preface|illustration|index)\b")
-ABBREVIATIONS = ("Mr.", "Mrs.", "Ms.", "Dr.", "Prof.", "Capt.", "St.", "Rev.", "Gen.")
-NORMALIZE = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"',
-                           "\u201d": '"', "\u2014": " - ", "\u2013": " - ",
-                           "\u2026": "..."})
-
+CHAPTER = re.compile(
+    r"(?i)^(?:(?:chapter|book|volume|part)\s+(?:\d+|[ivxlcdm]+)\b"
+    r"|(?:contents|preface|illustrations?|index)\s*$)"
+)
 
 def download(book: Book, *, timeout: int = 75):
     urls = (
@@ -97,26 +97,22 @@ def strip_gutenberg(text: str):
 
 
 def sentences(core: str):
-    # Paragraph separation is important for preserving actual prose.
-    # Gutenberg line wrapping is rejoined, but chapter/title paragraphs,
-    # ASCII-art, tabular material and very short fragments are not trained.
+    """Extract verbatim sentence spans without amputating dialogue quotes.
+
+    Editorial headings are skipped, but short authentic dialogue is retained.
+    Initials and abbreviations are protected by the shared conservative
+    boundary detector.
+    """
     for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
         if not lines or CHAPTER.match(lines[0]):
             continue
-        if len(lines) == 1 and (lines[0].isupper() or len(lines[0]) < 45):
+        joined = re.sub(r"\s+", " ", " ".join(lines))
+        if not has_final_punctuation(joined) and (
+            joined.isupper() or len(joined) < 45
+        ):
             continue
-        joined = " ".join(lines).translate(NORMALIZE)
-        joined = re.sub(r"\s+", " ", joined)
-        for abbreviation in ABBREVIATIONS:
-            joined = re.sub(r"(?i)\b" + re.escape(abbreviation),
-                            lambda m: m.group(0).replace(".", "\uFFFF"), joined)
-        for fragment in BOUNDARY.split(joined):
-            fragment = fragment.replace("\uFFFF", ".").strip()
-            fragment = fragment.strip(' "\x27([{')
-            fragment = fragment.strip(' "\x27)]}')
-            if fragment:
-                yield fragment
+        yield from split_prose_sentences(joined)
 
 
 def extract(book: Book, core: str, *, length_min=4, length_max=45):
@@ -127,7 +123,9 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
     seen = set()
     for number, sentence in enumerate(sentences(core)):
         counters["fragments"] += 1
-        if not sentence.isascii():
+        # Unicode literary punctuation (including “ ” ‘ ’) is legitimate
+        # text, not a reason to delete an entire dialogue sentence.
+        if "\ufffd" in sentence:
             counters["non_ascii"] += 1
             continue
         tokens = tokenize(sentence)
@@ -137,7 +135,7 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
         if len(tokens) > length_max:
             counters["too_long"] += 1
             continue
-        if not sentence.endswith((".", "!", "?")):
+        if not has_final_punctuation(sentence):
             counters["non_sentence"] += 1
             continue
         normalized = " ".join(sentence.lower().split())

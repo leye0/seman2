@@ -1,6 +1,6 @@
 {
-  "schema": "seman2-clean-novel-corpus-v1",
-  "format": "UTF-8 plaintext; one unwrapped original paragraph per line, separated by a blank line; no prefaces, tables of contents, chapter headings or Gutenberg apparatus",
+  "schema": "seman2-clean-novel-corpus-v2",
+  "format": "UTF-8 prose paragraphs, no Gutenberg paratext; original dialogue quotes preserved; lossless sentence segmentation is separate",
   "books": [
     {
       "ebook_id": 766,
@@ -10,7 +10,7 @@
       "source_repo": "GITenberg/David-Copperfield_766",
       "source_file": "766-0.txt",
       "source_git_blob_sha": "4c3abb9f7d3a7e14e4675584bfecfbd66b032b4d",
-      "clean_git_blob_sha": "c90fd41e68c146db27b9830b70958c815d979052",
+      "clean_git_blob_sha": "a2014e83c76ed27f187976f0fa14b5a4ea679ed5",
       "paragraphs": 7107,
       "chapters": 64,
       "letters": 0,
@@ -25,7 +25,7 @@
       "source_repo": "GITenberg/Pride-and-Prejudice_1342",
       "source_file": "1342-0.txt",
       "source_git_blob_sha": "20c3737a33af2501e4c0597285ad630ef42e8e46",
-      "clean_git_blob_sha": "7454447f3a6ec62cccc853e1448e87fea53d338e",
+      "clean_git_blob_sha": "a5a0e0026cf14130b9fa3d8ee45d9dbf451df1cc",
       "paragraphs": 2057,
       "chapters": 61,
       "letters": 0,
