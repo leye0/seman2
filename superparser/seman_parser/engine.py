@@ -353,6 +353,30 @@ class Parser:
         merely lose in ranking, without replacing the packed recognizer or
         changing its grammar.
         """
+        original = text.strip()
+        if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
+            extended = dialogue_lattice(build_lattice(
+                original, self.resources.lexicon,
+                deduplicate=self.deduplicate_lexical,
+            ))
+            if extended is not None:
+                result = self._dialogue_vector_grammar.parse_lattice(
+                    extended, beam=max(self.beam,alternatives),
+                    max_items=max(max_items,self.max_items),
+                    goal_category=self.goal_category,diagnostic_k=alternatives,
+                )
+                if result.completed:
+                    if isinstance(result.stats,dict):
+                        result.stats.update({
+                            "dialogue_scoped":True,
+                            "dialogue_source":"explicit_balanced_quotes",
+                            "diagnostic_mode":True,
+                            "diagnostic_k":alternatives,
+                        })
+                    return ParseReport(
+                        result=result,
+                        resources=self._dialogue_resources or self.resources,
+                    )
         text = text.strip().strip('"\u201c\u201d\u2018\u2019').strip()
         lattice = build_lattice(
             text, self.resources.lexicon,
