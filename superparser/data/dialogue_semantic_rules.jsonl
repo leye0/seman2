@@ -8,3 +8,7 @@
 {"id":"dialogue_split_tag","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"content"},{"relation":"CONTINUED_SPEECH","source":"content","target":"continuation"}]}}]}
 {"id":"dialogue_split_tag_comma","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"content"},{"relation":"CONTINUED_SPEECH","source":"content","target":"continuation"}]}}]}
 {"id":"dialogue_post_tag_comma","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"content"}]}}]}
+{"id":"dialogue_speech_tag_post_pp","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
+{"id":"dialogue_speech_tag_inverted_pp","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
+{"id":"dialogue_speech_tag_post_adverb","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
+{"id":"dialogue_speech_tag_inverted_adverb","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
