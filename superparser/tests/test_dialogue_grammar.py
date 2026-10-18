@@ -5,6 +5,9 @@ from pathlib import Path
 import unittest
 
 from seman_parser.dialogue import dialogue_lattice, quotation_boundaries
+from scripts.smoke_cleaned_novel_dialogues import (
+    choose_stratified, quote_surface_layout, token_length_band,
+)
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import LexicalLattice
 
@@ -21,6 +24,27 @@ class DialogueGrammarTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.parser=Parser.from_dir(DATA,cache_size=0,max_items=20000)
+
+    def test_real_novel_audit_layout_labels_only_visible_quotes(self):
+        self.assertEqual(quote_surface_layout('"Hello!"'),"quote_only")
+        self.assertEqual(quote_surface_layout('Mary said, "Hello!"'),
+                         "narration_before_quote")
+        self.assertEqual(quote_surface_layout('"Hello!" Mary said.'),
+                         "narration_after_quote")
+        self.assertEqual(quote_surface_layout('"Hello," said Mary, "Goodbye."'),
+                         "multiple_quoted_spans")
+        self.assertEqual(quote_surface_layout("I'm leaving."),
+                         "no_balanced_double_quotes")
+
+    def test_audit_stratification_is_deterministic_and_lossless(self):
+        rows=[{"ordinal":i,"tokens":(5,12,20,29)[i%4]} for i in range(160)]
+        first=choose_stratified(rows,40)
+        self.assertEqual(first,choose_stratified(rows,40))
+        self.assertEqual(len(first),40)
+        self.assertEqual(len({r["ordinal"] for r in first}),40)
+        self.assertEqual({token_length_band(r["tokens"]) for r in first},
+                         {"04-08","09-16","17-24","25-32"})
+        self.assertEqual(choose_stratified(rows[:2],10),rows[:2])
 
     def test_quote_boundaries_not_confused_with_apostrophes(self):
         sentence='"I am here," said Mary.'

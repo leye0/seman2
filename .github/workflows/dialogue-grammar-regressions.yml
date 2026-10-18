@@ -73,6 +73,23 @@ jobs:
             --per-book 5 --max-tokens 32 --max-items 20000 \
             --kbest-work-limit 100000 \
             --out /tmp/novel-dialogue-smoke-summary.json
+      - name: Audit 160 genuine dialogues stratified by sentence length
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/smoke_cleaned_novel_dialogues.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --per-book 40 --stratify-length --max-tokens 32 --max-items 20000 \
+            --kbest-work-limit 100000 \
+            --out /tmp/dialogue-audit/novel-dialogue-audit-summary.json
+      - name: Preserve large dialogue audit even on error
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-cleaned-novel-dialogue-audit-160
+          path: |
+            /tmp/dialogue-audit/novel-dialogue-audit-summary.json
+            /tmp/dialogue-audit/cleaned_novel_dialogue_individual.jsonl
+          if-no-files-found: warn
+          retention-days: 14
       - name: Preserve novel-dialogue smoke diagnostic even on error
         if: always()
         uses: actions/upload-artifact@v4
