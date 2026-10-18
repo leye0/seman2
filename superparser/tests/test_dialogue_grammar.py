@@ -78,6 +78,46 @@ class DialogueGrammarTests(unittest.TestCase):
         self.assertTrue(report.result.stats.get("dialogue_scoped"))
         self.assertIn("dialogue_unattributed",descendant_ids(report.result.best()))
 
+    def test_split_quotation_with_attribution_and_continuation(self):
+        text='"John walks," said Mary, "John listens."'
+        report=self.parser.parse(text)
+        best=report.result.best()
+        self.assertIsNotNone(best, report.result.stats)
+        self.assertIn("dialogue_split_tag", descendant_ids(best))
+        relations=[edge.relation for edge in report.interpret().graph.relations]
+        self.assertIn("REPORTED_CONTENT", relations)
+        self.assertIn("CONTINUED_SPEECH", relations)
+
+    def test_reporting_tag_with_prepositional_complement(self):
+        text='Mary said to John, "John walks."'
+        report=self.parser.parse(text)
+        best=report.result.best()
+        self.assertIsNotNone(best,report.result.stats)
+        self.assertIn("dialogue_speech_tag_post_pp",descendant_ids(best))
+
+    def test_quoted_fragment_with_reporting_tag(self):
+        text='"Hello!" said Mary.'
+        report=self.parser.parse(text)
+        best=report.result.best()
+        self.assertIsNotNone(best,report.result.stats)
+        self.assertIn("dialogue_post_tag",descendant_ids(best))
+
+    def test_semantic_speaker_is_not_the_reporting_verb(self):
+        text='"John walks," said Mary.'
+        report=self.parser.parse(text)
+        graph=report.interpret().graph
+        relations=graph.relations
+        agents=[edge for edge in relations if edge.relation=="AGENT"]
+        self.assertTrue(agents)
+        target_nodes=[graph.nodes[edge.target] for edge in agents]
+        self.assertIn("Mary",{node.surface for node in target_nodes})
+
+    def test_single_apostrophes_do_not_enable_dialogue_grammar(self):
+        for text in ["I'm leaving.", "John's book is here."]:
+            with self.subTest(text=text):
+                result=self.parser.parse(text).result
+                self.assertFalse(result.stats.get("dialogue_scoped",False))
+
     def test_unquoted_prose_keeps_canonical_grammar(self):
         report=self.parser.parse("John walks.")
         self.assertFalse(report.result.stats.get("dialogue_scoped",False))
