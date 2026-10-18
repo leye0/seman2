@@ -41,6 +41,43 @@ class OnlinePrefixParityTests(unittest.TestCase):
                 dialog.grammar,online_prefix_edges=True,
                 preserve_quote_delimiters=True)
 
+    def test_flat_global_array_matches_all_canonical_derivations(self):
+        flat=Parser(self.resources,cache_size=0,max_items=20000)
+        standard=flat._vector_grammar
+        flat._vector_grammar=VectorGrammar(
+            standard.grammar,flat_prefix_edges=True)
+        dialog=flat._dialogue_vector_grammar
+        if dialog is not None:
+            flat._dialogue_vector_grammar=VectorGrammar(
+                dialog.grammar,preserve_quote_delimiters=True,
+                flat_prefix_edges=True)
+        recovered=0
+        for sentence in CASES:
+            with self.subTest(sentence=sentence):
+                lattice=build_lattice(sentence,self.resources.lexicon,multiword_max=1)
+                a=self.reference.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                b=flat.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                self.assertEqual(a.completed,b.completed)
+                for key in ("forest_nodes","partial_states",
+                            "partial_derivations","structural_derivations",
+                            "budget_exceeded","kbest_budget_exceeded"):
+                    self.assertEqual(a.stats[key],b.stats[key],key)
+                self.assertEqual(a.best().as_dict() if a.best() else None,
+                                 b.best().as_dict() if b.best() else None)
+                self.assertEqual(
+                    [t.as_dict() for t in a.alternatives(limit=3)],
+                    [t.as_dict() for t in b.alternatives(limit=3)])
+                for original,compact in zip(a.shared_forest.partials,
+                                            b.shared_forest.partials):
+                    self.assertEqual(
+                        [(d.previous_id,d.child_id) for d in original.derivations],
+                        [(d.previous_id,d.child_id) for d in compact.derivations])
+                    recovered+=len(original.derivations)
+                self.assertTrue(b.stats["online_prefix_flat_enabled"])
+        self.assertGreater(recovered,100)
+
     def test_complete_canonical_forests_and_kbest_identical(self):
         hits=0
         for sentence in CASES:
