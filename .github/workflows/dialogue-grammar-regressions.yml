@@ -11,6 +11,7 @@ on:
       - 'superparser/data/dialogue_grammar.jsonl'
       - 'superparser/data/dialogue_semantic_rules.jsonl'
       - 'superparser/tests/test_dialogue_grammar.py'
+      - 'superparser/scripts/smoke_cleaned_novel_dialogues.py'
       - '.github/workflows/dialogue-grammar-regressions.yml'
   workflow_dispatch:
 permissions:
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   dialogue:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,3 +43,43 @@ jobs:
         run: |
           PYTHONPATH=superparser python -m unittest -v \
             superparser.tests.test_compiled_structure_snap
+
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+                 headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              data=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(name))
+          PY
+      - name: Smoke 20 genuine balanced quotations from checked-in novels
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/smoke_cleaned_novel_dialogues.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --per-book 5 --max-tokens 32 --max-items 20000 \
+            --kbest-work-limit 100000 \
+            --out /tmp/novel-dialogue-smoke-summary.json
+      - name: Preserve novel-dialogue smoke diagnostic even on error
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-cleaned-novel-dialogue-smoke
+          path: |
+            /tmp/novel-dialogue-smoke-summary.json
+            /tmp/cleaned_novel_dialogue_individual.jsonl
+          if-no-files-found: warn
+          retention-days: 14
