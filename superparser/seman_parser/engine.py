@@ -17,6 +17,7 @@ from typing import Any, Mapping, Sequence
 from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
 from .dialogue import dialogue_lattice
+from .complexity_routing import ComplexityPolicy, RoutingDecision, StructuralRiskRouter
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
 from .perf import LRU
 from .segmentation import (
@@ -151,6 +152,7 @@ class Parser:
         goal_category: str = "CLAUSE",
         cache_size: int = 2048,
         deduplicate_lexical: bool = True,
+        complexity_policy: ComplexityPolicy | None = None,
     ) -> None:
         self.resources = resources
         self.beam = beam
@@ -184,6 +186,22 @@ class Parser:
             if rule.rule_id not in hierarchical_only
         )
         self._vector_grammar = VectorGrammar(Grammar(syntax_rules))
+        # Opt-in dispatch, not a second parser invoked for every sentence.
+        # These two grammar variants are precompiled at initialization;
+        # short sentences retain the ordinary recognizer with no probe.
+        self._complexity_policy = complexity_policy
+        self._complexity_router = (
+            StructuralRiskRouter(self._vector_grammar.grammar, complexity_policy)
+            if complexity_policy is not None else None
+        )
+        self._difficult_vector_grammar = (
+            VectorGrammar(
+                self._vector_grammar.grammar,
+                online_prefix_edges=complexity_policy.difficult_strategy == "online",
+                flat_prefix_edges=complexity_policy.difficult_strategy == "flat",
+            )
+            if complexity_policy is not None else None
+        )
         # Quotation rules exist only in a quote-aware forest, preserving the
         # baseline's canonical ranking and runtime on ordinary novel prose.
         dialogue_path = resources.metadata.get("dialogue_rules")
@@ -269,6 +287,37 @@ class Parser:
         self._parse_cache.put(cache_key, result)
         return ParseReport(result=result, resources=self.resources)
 
+    def _select_vector_grammar(
+        self, lattice: Any, *, dialogue: bool = False,
+    ) -> tuple[VectorGrammar, RoutingDecision | None]:
+        """Select before forest recognition; never repeat the completed parse."""
+        if self._complexity_router is None:
+            return self._vector_grammar, None
+        decision = self._complexity_router.choose(
+            lattice, dialogue=dialogue or any(
+                quote in lattice.text for quote in ('"', '“', '”', '‘', '’')
+            ),
+        )
+        if decision.strategy == "canonical":
+            return self._vector_grammar, decision
+        if self._difficult_vector_grammar is None:
+            raise AssertionError("Missing precompiled hard-sentence grammar")
+        return self._difficult_vector_grammar, decision
+
+    @staticmethod
+    def _attach_complexity_route(
+        result: ParseResult, decision: RoutingDecision | None,
+    ) -> ParseResult:
+        if decision is not None and isinstance(result.stats, dict):
+            result.stats.update({
+                "complexity_route": decision.strategy,
+                "complexity_reason": decision.reason,
+                "complexity_score": decision.score,
+                "complexity_probe_ms": round(decision.measured_ms, 5),
+                "complexity_tokens": decision.token_count,
+            })
+        return result
+
     def parse_grammar_lattice(
         self,
         lattice: Any,
@@ -285,9 +334,11 @@ class Parser:
         unquoted dialogue rules to the ordinary grammar.
         """
         budget = self.max_items if max_items is None else max_items
+        is_dialogue = False
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
             extended = dialogue_lattice(lattice)
             if extended is not None:
+                is_dialogue = True
                 spoken = self._dialogue_vector_grammar.parse_lattice(
                     extended, beam=self.beam, max_items=budget,
                     goal_category=self.goal_category,
@@ -298,13 +349,18 @@ class Parser:
                     if isinstance(spoken.stats,dict):
                         spoken.stats["dialogue_scoped"]=True
                         spoken.stats["dialogue_source"]="explicit_balanced_quotes"
+                    if self._complexity_router is not None:
+                        _, choice = self._select_vector_grammar(lattice, dialogue=True)
+                        self._attach_complexity_route(spoken, choice)
                     return spoken
-        return self._vector_grammar.parse_lattice(
+        grammar, decision = self._select_vector_grammar(
+            lattice, dialogue=is_dialogue)
+        return self._attach_complexity_route(grammar.parse_lattice(
             lattice, beam=self.beam, max_items=budget,
             goal_category=self.goal_category,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,
-        )
+        ), decision)
 
     def _parse_dialogue_text(self, text: str) -> ParseResult | None:
         """Parse marked speech using only balanced, explicit quote terminals.
@@ -409,12 +465,14 @@ class Parser:
             self._lattice_cache.put(text, lattice)
         lexical_ms = (perf_counter() - lexical_start) * 1000
 
-        result = self._vector_grammar.parse_lattice(
+        grammar, decision = self._select_vector_grammar(lattice)
+        result = grammar.parse_lattice(
             lattice,
             beam=self.beam,
             max_items=self.max_items,
             goal_category=self.goal_category,
         )
+        self._attach_complexity_route(result, decision)
         if isinstance(result.stats, dict):
             result.stats["lexical_ms"] = round(lexical_ms, 4)
         return result
