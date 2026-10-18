@@ -1,0 +1,67 @@
+name: Characterize 5000 Slow Novel Parses
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/profile_gutenberg_slow_sentences.py'
+      - 'superparser/tests/test_slow_sentence_profiler.py'
+      - '.github/workflows/profile-slow-sentences.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: profile-slow-sentences-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  characterize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+                 headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              data=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(name))
+          PY
+      - name: Test profiling statistics and lexical features
+        run: |
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_slow_sentence_profiler
+      - name: Profile every sentence and separate lexical, forest and k-best costs
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/profile_gutenberg_slow_sentences.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --size 5000 --max-tokens 32 --checkpoint 25 \
+            --kbest-work-limit 100000 \
+            --out-dir /tmp/profile-slow-sentences
+      - name: Preserve granular profile even if profiling fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-5000-novel-parsing
+          path: /tmp/profile-slow-sentences/
+          if-no-files-found: warn
+          retention-days: 14
