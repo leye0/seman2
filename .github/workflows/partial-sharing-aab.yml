@@ -1,0 +1,61 @@
+name: Research — Partial Sharing AAB
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/partial-sharing-aab.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: partial-sharing-aab-main
+  cancel-in-progress: true
+jobs:
+  paired:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+                 headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              data=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(name))
+          PY
+      - name: Compile and verify selective guards
+        run: |
+          python -m py_compile superparser/scripts/benchmark_partial_sharing_aab.py
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_vector_chart
+      - name: Benchmark 128 matched novel sentences with A/A control
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_partial_sharing_aab.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --per-book-per-band 8 \
+            --out-dir /tmp/partial-sharing-aab
+      - name: Preserve per-sentence results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: partial-sharing-aab-128
+          path: /tmp/partial-sharing-aab/
+          retention-days: 14
+          if-no-files-found: warn
