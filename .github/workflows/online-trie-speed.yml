@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/online-trie-speed.yml'
+      - 'superparser/scripts/benchmark_online_trie.py'
+      - 'superparser/seman_parser/lazy_trie_forest.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,17 +47,17 @@ jobs:
         run: |
           python -m py_compile superparser/scripts/benchmark_online_trie.py
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_shared_trie_forest
-      - name: Compare trie and canonical recognition on difficult nonquoted novels
+      - name: Benchmark lazy rule projection against canonical difficult prose
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_online_trie.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --per-book-per-band 6 --minimum-tokens 17 \
+            --per-book-per-band 8 --minimum-tokens 17 --strategy lazy \
             --out-dir /tmp/online-trie-speed
       - name: Preserve per-sentence results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: online-trie-speed-difficult
+          name: online-lazy-trie-speed
           path: /tmp/online-trie-speed/
           retention-days: 14
           if-no-files-found: warn
