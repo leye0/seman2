@@ -100,6 +100,7 @@ def timed(parser,lattice):
         "best_ms":parsed.stats.get("best_ms",0),
         "kbest_work_units":parsed.stats.get("kbest_work_units",0),
         "flat":bool(parsed.stats.get("online_prefix_flat_enabled")),
+        "trie":bool(parsed.stats.get("lazy_trie_recognition")),
     }
 
 
@@ -130,6 +131,24 @@ def complete_edge_parity(a,b):
     return count
 
 
+def normalized_forest_edges(result):
+    forest=result.shared_forest
+    normalized={}
+    for p in forest.partials:
+        key=(p.rule_index,p.dot,p.start,p.end)
+        edges=set()
+        for d in p.derivations:
+            if d.previous_id is None:
+                prev=None
+            else:
+                parent=forest.partials[d.previous_id]
+                prev=(parent.rule_index,parent.dot,parent.start,parent.end)
+            child=forest.nodes[d.child_id]
+            edges.add((prev,child.category_id,child.start,child.end))
+        normalized[key]=edges
+    return normalized
+
+
 def quantile(xs,p):
     v=sorted(xs)
     if not v:
@@ -142,7 +161,10 @@ def quantile(xs,p):
 def group(rows):
     result={"n":len(rows),"selection":dict(Counter(r["adaptive"]["reason"] for r in rows)),
             "routed":sum(r["adaptive"]["route"] not in (None,"canonical") for r in rows),
-            "verified_edges":sum(r["verified_edges"] for r in rows)}
+            "verified_edges":sum(r["verified_edges"] for r in rows),
+            "strict_trie_cases":sum(r["strict_trie_parity"] for r in rows),
+            "saturated_uncertified":sum(r["saturated_uncertified"] for r in rows),
+            "saturated_tree_mismatches":sum(r["saturated_tree_mismatch"] for r in rows)}
     for arm in ARMS:
         time=[r[arm]["ms"] for r in rows]
         result[arm]={
@@ -194,7 +216,7 @@ def main():
     p.add_argument("--per-book-per-band",type=int,default=4)
     p.add_argument("--minimum-tokens",type=int,default=17)
     p.add_argument("--hard-share",type=float,default=.25)
-    p.add_argument("--difficult-strategy",choices=("flat","online"),
+    p.add_argument("--difficult-strategy",choices=("flat","online","trie"),
                    default="flat")
     p.add_argument("--isolate-gc",action="store_true",
                    help="Collect before each sentence and suspend cyclic GC only for A/B/A timing")
@@ -253,15 +275,39 @@ def main():
             finally:
                 if args.isolate_gc and was_gc_enabled:
                     gc.enable()
-            parity(reports["reference_a"],reports["adaptive"])
             parity(reports["reference_a"],reports["reference_b"])
             routed=reports["adaptive"]["route"]==args.difficult_strategy
-            checked=(complete_edge_parity(
-                results["reference_a"],results["adaptive"]) if routed else 0)
+            strict=False
+            saturated_uncertified=False
+            saturated_tree_mismatch=False
+            checked=0
+            if routed and args.difficult_strategy=="trie":
+                original=reports["reference_a"]
+                candidate=reports["adaptive"]
+                saturated_uncertified=bool(original["budget"] or candidate["budget"])
+                same_trees=(
+                    original["completed"]==candidate["completed"]
+                    and original["best"]==candidate["best"]
+                    and original["alternatives"]==candidate["alternatives"])
+                if not saturated_uncertified:
+                    if not same_trees:
+                        raise AssertionError("Unsaturated trie changed best/top-k")
+                    left=normalized_forest_edges(results["reference_a"])
+                    right=normalized_forest_edges(results["adaptive"])
+                    if left!=right:
+                        raise AssertionError("Unsaturated trie lost original rule derivations")
+                    checked=sum(len(edges) for edges in left.values())
+                    strict=True
+                else:
+                    saturated_tree_mismatch=not same_trees
+            else:
+                parity(reports["reference_a"],reports["adaptive"])
+                checked=(complete_edge_parity(
+                    results["reference_a"],results["adaptive"]) if routed else 0)
             if not routed:
                 # Critical: low-risk uses unmodified canonical grammar and
-                # has exactly zero work from the specialized recognizer.
-                if reports["adaptive"]["flat"]:
+                # incurs zero specialized recognition.
+                if reports["adaptive"]["flat"] or reports["adaptive"]["trie"]:
                     raise AssertionError("Unselected parse entered alternative engine")
             row={
                 "index":i,"book_id":item["book_id"],"band":item["band"],
@@ -270,6 +316,9 @@ def main():
                 "threshold":policies[item["book_id"]].threshold_for(item["tokens"]),
                 "train_score":training_scores.get(i),
                 "verified_edges":checked,
+                "strict_trie_parity":strict,
+                "saturated_uncertified":saturated_uncertified,
+                "saturated_tree_mismatch":saturated_tree_mismatch,
                 "gc_setup_ms":round(gc_setup_ms,4),
                 **{k:{f:v for f,v in record.items()
                       if f not in ("best","alternatives")}
@@ -310,6 +359,8 @@ def main():
             "Four-book exploratory sample has historical leakage into research decisions.",
             "Length-conditioned thresholds prevent raw length dominating all hard-case picks.",
             "Each result also reports A/A drift and geometric-mean bracketed baseline timing.",
+            "Lazy trie is fully certified only when neither forest saturated.",
+            "Saturated routed cases report differences separately, without claiming full equivalence.",
             "If isolate-gc set, cyclic GC is suspended during A/B/A but GC setup is measured separately; this is NOT inclusive production throughput.",
             "The performance verdict requires repeated independent authors and fast-sentence safeguards.",
         ],
