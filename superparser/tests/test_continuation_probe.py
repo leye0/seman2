@@ -61,6 +61,25 @@ class ContinuationProbeTests(unittest.TestCase):
         self.assertEqual(probe["struct_zero_leaf_tokens"],2)
         self.assertEqual(probe["struct_nonexact_spans"],1)
 
+    def test_fast_category_bitsets_are_optimistic_and_cheap(self):
+        lattice=LexicalLattice("the dog",
+            (Token(0,0,3,"the"),Token(1,4,7,"dog")),
+            (lexical(0,3,"DET"),lexical(4,7,"N")))
+        full=self.index.signal(lattice)
+        fast=self.index.fast_signal(lattice)
+        self.assertGreaterEqual(fast["fast_start_sum"],full["struct_start_sum"])
+        self.assertGreaterEqual(fast["fast_pair_sum"],full["struct_pair_sum"])
+        self.assertGreaterEqual(fast["fast_variant_excess"],full["struct_variant_excess"])
+        self.assertGreaterEqual(fast["fast_probe_ms"],0.0)
+
+    def test_fast_path_preserves_feature_conflict_as_unproven(self):
+        lattice=LexicalLattice("running",
+            (Token(0,0,7,"running"),),
+            (lexical(0,7,"V",{"vform":"ing"}),))
+        full=self.index.signal(lattice)
+        fast=self.index.fast_signal(lattice)
+        self.assertGreater(fast["fast_start_sum"],full["struct_start_sum"])
+
     def test_recursive_first_closure_terminates(self):
         recursive=load_grammar_rows([
             {"id":"self","lhs":sym("NP"),"rhs":[sym("NP"),sym("PP")]},
