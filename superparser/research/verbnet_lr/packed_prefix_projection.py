@@ -288,3 +288,117 @@ def pack_flat(forest:Any,*,validate:bool=True)->FlatPrefixProjection:
     if validate:
         flat.verify(forest)
     return flat
+
+
+def pack_flat_direct(forest:Any,*,validate:bool=True)->FlatPrefixProjection:
+    """Construct the same read-only packed layout DIRECTLY from the forest.
+
+    Unlike pack_flat(), this never instantiates a PrefixGroup or one small
+    array per original rule variant. It uses temporary indexes while packing,
+    then keeps only fixed-width contiguous arrays in the returned object.
+    This is still an offline conversion and does not alter recognition.
+    """
+    partials=forest.partials
+    rule_prefixes={}
+    group_ids={}
+    group_of=array("i")
+    variant_rule=array("i")
+    # Pass 1: assign a shared consumed-prefix group to every old state.
+    for part in partials:
+        if part.partial_id!=len(group_of):
+            raise ValueError("Expected densely indexed partial IDs")
+        rk=(part.rule_index,part.dot)
+        prefix=rule_prefixes.get(rk)
+        if prefix is None:
+            rule=forest.compiled.rules[part.rule_index].rule
+            prefix=json.dumps(
+                [s.as_dict() for s in rule.rhs[:part.dot]],sort_keys=True,
+                separators=(",",":"),ensure_ascii=False)
+            rule_prefixes[rk]=prefix
+        key=(part.start,part.end,part.dot,prefix)
+        gid=group_ids.get(key)
+        if gid is None:
+            gid=len(group_ids)
+            group_ids[key]=gid
+        group_of.append(gid)
+        variant_rule.append(part.rule_index)
+    n_groups=len(group_ids)
+    del group_ids,rule_prefixes
+
+    # Pass 2: intern edge evidence globally while retaining its original
+    # per-variant ordering. Intermediate edge IDs are global, not yet local
+    # to groups; contiguous packing happens in pass 3.
+    edge_ids={}
+    edge_triples=[]
+    old_edge_refs=array("I")
+    variant_offsets=array("I",[0])
+    for part in partials:
+        gid=group_of[part.partial_id]
+        for derivation in part.derivations:
+            prev=(-1 if derivation.previous_id is None
+                  else group_of[derivation.previous_id])
+            key=(gid,prev,derivation.child_id)
+            eid=edge_ids.get(key)
+            if eid is None:
+                eid=len(edge_triples)
+                edge_ids[key]=eid
+                edge_triples.append(key)
+            old_edge_refs.append(eid)
+        variant_offsets.append(len(old_edge_refs))
+    del edge_ids
+
+    # Pass 3: physically lay out edges by group; remap original variant
+    # references to local edge offsets. No small Python per-group objects.
+    counts=array("I",[0])*n_groups
+    for gid,_,_ in edge_triples:
+        counts[gid]+=1
+    starts=array("I",[0])
+    for n in counts:
+        starts.append(starts[-1]+n)
+    cursor=array("I",[0])*n_groups
+    remap=array("I",[0])*len(edge_triples)
+    prev_groups=array("i",[0])*len(edge_triples)
+    children=array("i",[0])*len(edge_triples)
+    for eid,(gid,prev,child) in enumerate(edge_triples):
+        local=cursor[gid]
+        cursor[gid]+=1
+        position=starts[gid]+local
+        remap[eid]=local
+        prev_groups[position]=prev
+        children[position]=child
+    variant_edges=array("I",(remap[eid] for eid in old_edge_refs))
+    del edge_triples,old_edge_refs,remap,counts,cursor
+
+    # Pass 4: flat sorted membership records permit rule-specific parent
+    # projection by binary search (previous_group, same_rule_index).
+    members=sorted((group_of[p.partial_id],p.rule_index,p.partial_id)
+                   for p in partials)
+    member_offsets=array("I",[0])
+    member_rules=array("i")
+    member_ids=array("i")
+    at=0
+    for gid in range(n_groups):
+        while at<len(members) and members[at][0]==gid:
+            _,rule,pid=members[at]
+            member_rules.append(rule)
+            member_ids.append(pid)
+            at+=1
+        member_offsets.append(at)
+    if at!=len(members):
+        raise AssertionError("Unassigned shared-prefix variants")
+
+    # Construct without an object-based PrefixProjection intermediary.
+    flat=FlatPrefixProjection.__new__(FlatPrefixProjection)
+    flat.group_of=group_of
+    flat.variant_rule=variant_rule
+    flat.variant_offsets=variant_offsets
+    flat.variant_edges=variant_edges
+    flat.group_edge_offsets=starts
+    flat.prev_groups=prev_groups
+    flat.children=children
+    flat.member_offsets=member_offsets
+    flat.member_rules=member_rules
+    flat.member_ids=member_ids
+    if validate:
+        flat.verify(forest)
+    return flat
