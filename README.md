@@ -8,6 +8,7 @@ Start here:
 - [Current limitations and measured roadmap](docs/KNOWN_LIMITS_AND_ROADMAP.md)
 - [Why this architecture: research history and abandoned approaches](docs/RESEARCH_HISTORY_AND_DECISIONS.md)
 - [Corpus preservation policy](docs/CORPORA_AND_DATA.md)
+- [Lossless shared-prefix storage prototype](docs/SHARED_PREFIX_STORAGE_PROTOTYPE.md)
 
 ## The active execution path
 

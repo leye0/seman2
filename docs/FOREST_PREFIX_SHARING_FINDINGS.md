@@ -35,6 +35,10 @@ The 128-case study ([per-sentence artifact](https://github.com/leye0/seman2/acti
 
 Small explicit tests also ensure matching-prefix counts do not merge different consumed features, word positions or dot depths, and verify canonical forest/tree parity for normal and quoted sentences. The original novel text, punctuation and lexical alternatives are unchanged.
 
+## Measured physical storage follow-up
+
+The [lossless shared-prefix storage prototype](SHARED_PREFIX_STORAGE_PROTOTYPE.md) interns 58.4% of derivation-edge occurrences and reconstructs every original edge. Directly built flat integer arrays reduce edge-representation size by ~77.2% in a post-parse sample, but this has not yet reduced runtime forest memory or latency. Online recognition and lazy materialization remain separate tasks.
+
 ## Next implementation experiment: shared prefix recognition with variant projection
 
 1. Add a **research-only** packed-prefix coordinator indexed by `(start, end, dot, consumed RHS constraint signature)`. It should store shared recognition evidence once, but keep a list of **distinct** `(rule_index, binding context, child derivation path)` variants. Do not erase scored alternatives or semantic recipes.
