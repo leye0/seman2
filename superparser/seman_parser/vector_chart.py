@@ -271,8 +271,17 @@ def _project_bindings(
 class VectorGrammar:
     """Compile category symbols and all grammar transitions once."""
 
-    def __init__(self, grammar: Grammar) -> None:
+    def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False) -> None:
         self.grammar = grammar
+        # Research A/B switch. Default OFF: canonical behaviour is unchanged.
+        self.early_lexical_filter = early_lexical_filter
+        # Lexical nodes of a category built by a grammar LHS can later acquire
+        # nonlexical derivations; they must NEVER be rejected on lexical evidence.
+        self._pure_lexical_categories = frozenset(
+            intern(symbol.category)
+            for rule in grammar for symbol in rule.rhs
+            if symbol.category not in {r.lhs.category for r in grammar}
+        )
         self._bits: dict[int, int] = {}
         for rule in grammar:
             self._bit(rule.lhs.category)
@@ -362,6 +371,9 @@ class VectorGrammar:
             "best_ms": 0.0,
             "kbest_ms": 0.0,
             "lexical_spans": forest.lexical_spans,
+            "early_lexical_filter": self.early_lexical_filter,
+            "early_lexical_pruned": forest.early_lexical_pruned,
+            "early_lexical_considered": forest.early_lexical_considered,
             "category_bits": len(self._bits),
             "forest_nodes": len(forest.nodes),
             "structural_derivations": forest.derivation_count,
@@ -458,6 +470,38 @@ class _VectorForest:
         self.duplicate_transitions_avoided = 0
         self.lexical_spans = 0
         self.budget_exceeded = False
+        self.early_lexical_considered = 0
+        self.early_lexical_pruned = 0
+
+    def _lexical_first_slot_possible(self, node: ForestNode, rule_index: int, dot: int) -> bool:
+        """Sound *necessary* test for a pure lexical symbol.
+
+        No child bindings are assumed. Disjunctive/unbound feature values
+        remain possible. If any candidate might unify, keep the transition.
+        Grammar-derived or interface-backed nodes are never pruned here.
+        """
+        if not self.compiled.early_lexical_filter:
+            return True
+        if node.category_id not in self.compiled._pure_lexical_categories:
+            return True
+        if any(not isinstance(d, LexicalDerivation) for d in node.derivations):
+            return True
+        rule = self.compiled.rules[rule_index].rule
+        if dot >= len(rule.rhs):
+            return True
+        symbol = rule.rhs[dot]
+        self.early_lexical_considered += 1
+        required = set(_required_feature_ids(symbol.requires))
+        for derivation in node.derivations:
+            for candidate in derivation.candidates:
+                if candidate.interface is not None:
+                    return True
+                if not required.issubset(_feature_evidence(candidate.features)):
+                    continue
+                if unify(symbol.features, candidate.features) is not None:
+                    return True
+        self.early_lexical_pruned += 1
+        return False
 
     def _next_start(self, end: int) -> int:
         separators = ' \t\r\n"\u201c\u201d\u2018\u2019'
@@ -572,7 +616,8 @@ class _VectorForest:
 
     def _advance(self, partial: PackedPartial, node: ForestNode) -> None:
         rule = self.compiled.rules[partial.rule_index]
-        if partial.dot < len(rule.rhs_masks) and node.mask & rule.rhs_masks[partial.dot]:
+        if (partial.dot < len(rule.rhs_masks) and node.mask & rule.rhs_masks[partial.dot]
+                and self._lexical_first_slot_possible(node, partial.rule_index, partial.dot)):
             self._add_partial(
                 partial.rule_index, partial.dot + 1, partial.start, node.end,
                 partial.partial_id, node.node_id,
@@ -587,7 +632,8 @@ class _VectorForest:
             self.operations += 1
             for rule_index in self.compiled.first.get(node.category_id, ()):
                 rule = self.compiled.rules[rule_index]
-                if node.mask & rule.rhs_masks[0]:
+                if (node.mask & rule.rhs_masks[0]
+                        and self._lexical_first_slot_possible(node, rule_index, 0)):
                     self._add_partial(rule_index, 1, node.start, node.end, None, node.node_id)
             waiting = self.waiting.get((node.start, node.category_id), ())
             self.duplicate_transitions_avoided += len(waiting) - node.waiting_cutoff
