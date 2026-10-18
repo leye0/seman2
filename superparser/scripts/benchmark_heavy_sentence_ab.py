@@ -22,7 +22,7 @@ from seman_parser.vector_chart import VectorGrammar
 
 ROOT=Path(__file__).resolve().parents[1]
 BANDS=(("04-08",4,8),("09-16",9,16),("17-24",17,24),("25-32",25,32))
-ARMS=("baseline","early","split")
+ARMS=("baseline","early","split","rescue")
 
 
 def choose_cases(per_book_per_band):
@@ -52,7 +52,7 @@ def early_filter_eligible(text,tokens):
     return len(tokens)>=17 and not has_quotation(text)
 
 
-def split_plan(text,tokens,parser):
+def split_plan(text,tokens,parser,*,allow_multiple=False):
     """Explore two lossless clause-interface routes, both grammar-validated.
 
     Comma-separated clause lists use the pre-existing conservative planner.
@@ -87,11 +87,18 @@ def split_plan(text,tokens,parser):
         spans=((left[0].start,left[-1].end),
                (right[0].start,right[-1].end))
         choices.append((abs(len(left)-len(right)),index,(spans,(token,))))
-    if len(choices)!=1:
-        # Multiple plausible conjunctions are too ambiguous for an
-        # upfront speculative parse: retain the original shared forest.
+    if not choices or (len(choices)!=1 and not allow_multiple):
+        # Ambiguous boundaries are only permitted *after* a budget-capped
+        # failed baseline, never before a known-successful standard parse.
         return None
-    return choices[0][2]
+    return min(choices,key=lambda x:(x[0],x[1]))[2]
+
+
+def rescue_eligible(baseline_result,text,tokens):
+    """Never redo a successful parse; try recovery only after a budget failure."""
+    return (not baseline_result["completed"]
+            and (baseline_result["budget"] or baseline_result["kbest_budget"])
+            and len(tokens)>=22 and not has_quotation(text))
 
 
 def timed(action):
@@ -156,6 +163,7 @@ def summarize(rows,source):
         "groups":{name:{a:cohort(items,a) for a in ARMS}
                   for name,items in groups.items()},
         "split_routes":dict(Counter(r["split_route"] for r in rows)),
+        "rescue_routes":dict(Counter(r["rescue_route"] for r in rows)),
         "notes":[
             "All three arms receive the same real novel text and prebuilt lattice.",
             "No modifications to canonical grammar or default parser.",
@@ -165,6 +173,8 @@ def summarize(rows,source):
             "Split reconstructions use the existing SegmentInterface assembly grammar.",
             "Completeness/signature matching are NOT human grammatical correctness.",
             "Both strategies report losses and structural changes before any promotion.",
+            "Rescue only attempts a full-budget split after a baseline budget failure.",
+            "Rescue never changes a completed baseline tree; additional cost belongs solely to hard failures.",
             "Observed-baseline fast/slow strata are offline labels, not runtime shortcuts.",
             "Parse and best materialization are timed; shared lexing excluded.",
         ],
@@ -177,6 +187,7 @@ def run(args):
     parser=Parser(resources,cache_size=0,max_items=args.max_items)
     early_parser=Parser(resources,cache_size=0,max_items=args.max_items)
     split_parser=Parser(resources,cache_size=0,max_items=min(4500,args.max_items),beam=4)
+    rescue_parser=Parser(resources,cache_size=0,max_items=args.max_items)
     early_parser._vector_grammar=VectorGrammar(
         parser._vector_grammar.grammar,early_lexical_filter=True)
     if parser._dialogue_vector_grammar is not None:
@@ -216,11 +227,38 @@ def run(args):
             tasks=[("baseline",baseline),("early",filter_first),("split",split_first)]
             if i%2:tasks.reverse()
             observed={name:timed(callback) for name,callback in tasks}
+            # Rescue mode executes *after* the same canonical baseline. It
+            # never changes or reparses a successful case, so inexpensive
+            # successful sentences retain their exact original analysis.
+            rescued=dict(observed["baseline"])
+            rescue_route="not_applicable"
+            rescue_extra_ms=0.0
+            if rescue_eligible(rescued,text,lattice.tokens):
+                recovery_plan=split_plan(
+                    text,lattice.tokens,rescue_parser,allow_multiple=True)
+                if recovery_plan is not None:
+                    rescue_route="attempted_fallback"
+                    # No second canonical parse on failure: preserve the
+                    # baseline result, adding only the speculative cost.
+                    tick=perf_counter_ns()
+                    candidate=rescue_parser._parse_hierarchical(
+                        text,lattice.tokens,recovery_plan)
+                    rescue_extra_ms=(perf_counter_ns()-tick)/1e6
+                    if candidate is not None and candidate.completed:
+                        best=candidate.best()
+                        rescued["completed"]=best is not None
+                        rescued["signature"]=best_signature(best)
+                        rescued["budget"]=bool(candidate.stats.get("budget_exceeded"))
+                        rescued["kbest_budget"]=bool(candidate.stats.get("kbest_budget_exceeded"))
+                        rescue_route="rescued"
+            rescued["ms"]=round(rescued["ms"]+rescue_extra_ms,5)
+            observed["rescue"]=rescued
             record={"index":i,"book_id":row["book_id"],"ordinal":row["ordinal"],
                     "text":text,"sha256":sha256(text.encode()).hexdigest(),
                     "tokens":row["tokens"],"band":row["band"],
                     "quoted":has_quotation(text),"early_eligible":is_early,
                     "split_eligible":plan is not None,"split_route":split_route[0],
+                    "rescue_route":rescue_route,"rescue_extra_ms":round(rescue_extra_ms,5),
                     **observed}
             rows.append(record)
             stream.write(json.dumps(record,ensure_ascii=False,default=str)+"\n")
@@ -233,7 +271,8 @@ def run(args):
     (args.out_dir/"summary.json").write_text(
         json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
     print("HEAVY_AB_FINAL",json.dumps({"groups":summary["groups"],
-          "split_routes":summary["split_routes"]}),flush=True)
+          "split_routes":summary["split_routes"],
+          "rescue_routes":summary["rescue_routes"]}),flush=True)
 
 
 def main():
