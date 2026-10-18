@@ -2,7 +2,7 @@
 import unittest
 from types import SimpleNamespace
 
-from research.verbnet_lr.packed_prefix_projection import build_projection
+from research.verbnet_lr.packed_prefix_projection import build_projection, pack_flat
 from seman_parser.grammar import load_grammar_rows
 from seman_parser.vector_chart import PartialDerivation
 
@@ -52,6 +52,12 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         self.assertEqual(stats["partials"],6)
         self.assertEqual(stats["shared_groups"],3)
         self.assertLess(stats["interned_edges"],stats["original_edges"])
+        flat=pack_flat(forest)
+        self.assertEqual(flat.reconstruct(4),[(0,7),(0,8)])
+        self.assertEqual(flat.reconstruct(5),[(1,8),(1,7)])
+        self.assertEqual(flat.verify(forest),sum(len(x.derivations) for x in forest.partials))
+        self.assertLess(flat.metrics(forest)["flat_arrays_bytes"],
+                        stats["projected_edge_objects_estimated_bytes"])
 
     def test_segment_boundaries_and_rule_features_are_not_conflated(self):
         forest=self.forest([
@@ -62,6 +68,8 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         ])
         view=build_projection(forest)
         self.assertEqual(len(view.groups),4)
+        flat=pack_flat(forest)
+        self.assertEqual(flat.metrics(forest)["prefix_groups"],4)
 
     def test_validation_rejects_invalid_projection_ancestry(self):
         forest=self.forest([
@@ -76,6 +84,7 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         view=build_projection(forest)
         self.assertEqual(view.metrics(forest)["shared_groups"],0)
         self.assertEqual(view.metrics(forest)["original_edges"],0)
+        self.assertEqual(pack_flat(forest).verify(forest),0)
 
 
 if __name__=="__main__":
