@@ -71,12 +71,13 @@ def summary(rows):
         "by_band":{band:{"n":sum(r["band"]==band for r in rows),
             "auc":compare([r for r in rows if r["band"]==band])}
             for band,_,_ in BANDS},
-        "book_holdout_auc":{str(book):compare([r for r in rows if r["book_id"]==book])
+        "within_book_auc":{str(book):compare([r for r in rows if r["book_id"]==book])
             for book in sorted({r["book_id"] for r in rows})},
         "notes":["No grammar changes; all measurements are before parsing",
             "Log2 products are not packed-forest counts",
             "Cross-token candidates are counted separately, not multiplied",
             "AUC quantifies rank correlation, not causal improvement",
+            "Per-book AUC is within-author descriptive evaluation, not a trained held-out predictor",
             "Four authors are too few to establish external generalization"],
     }
 
