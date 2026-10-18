@@ -1,7 +1,7 @@
 """Non-regression guards for selective expensive-sentence experiments."""
 import unittest
 from scripts.benchmark_heavy_sentence_ab import (
-    early_filter_eligible, has_quotation, split_plan, quantile, summarize,
+    early_filter_eligible, has_quotation, split_plan, quantile, summarize, rescue_eligible,
 )
 from seman_parser.segmentation import tokenize
 
@@ -52,6 +52,14 @@ class HeavySentenceTests(unittest.TestCase):
         self.assertEqual(spans,((tokens[0].start,tokens[11].end),
                                 (tokens[13].start,tokens[-1].end)))
 
+    def test_rescue_gate_protects_all_successful_baselines(self):
+        completed={"completed":True,"budget":True,"kbest_budget":True}
+        failed={"completed":False,"budget":True,"kbest_budget":False}
+        self.assertFalse(rescue_eligible(completed,"some text",tuple(range(30))))
+        self.assertFalse(rescue_eligible(failed,"some text",tuple(range(12))))
+        self.assertFalse(rescue_eligible(failed,'"quoted"',tuple(range(30))))
+        self.assertTrue(rescue_eligible(failed,"unquoted text",tuple(range(30))))
+
     def test_quantile(self):
         self.assertIsNone(quantile([],.5))
         self.assertEqual(quantile([1,3,5,7],.5),4)
@@ -60,14 +68,16 @@ class HeavySentenceTests(unittest.TestCase):
         def arm(ms,done,sig):
             return {"ms":ms,"completed":done,"signature":sig,"budget":False}
         a={"band":"04-08","baseline":arm(10,True,"a"),
-           "early":arm(11,True,"a"),"split":arm(12,True,"b"),
-           "early_eligible":False,"split_eligible":False,"split_route":"not_eligible"}
+           "early":arm(11,True,"a"),"split":arm(12,True,"b"),"rescue":arm(10,True,"a"),
+           "early_eligible":False,"split_eligible":False,"split_route":"not_eligible","rescue_route":"not_applicable"}
         b={"band":"25-32","baseline":arm(90,False,None),
-           "early":arm(60,True,"c"),"split":arm(90,False,None),
-           "early_eligible":True,"split_eligible":True,"split_route":"failed_then_fallback"}
+           "early":arm(60,True,"c"),"split":arm(90,False,None),"rescue":arm(110,True,"d"),
+           "early_eligible":True,"split_eligible":True,"split_route":"failed_then_fallback","rescue_route":"rescued"}
         report=summarize([a,b],[])
         self.assertEqual(report["groups"]["all"]["early"]["rescued"],1)
         self.assertEqual(report["groups"]["all"]["split"]["changed_signature"],1)
+        self.assertEqual(report["groups"]["all"]["rescue"]["rescued"],1)
+        self.assertEqual(report["groups"]["all"]["rescue"]["lost"],0)
 
 
 if __name__=="__main__":unittest.main()
