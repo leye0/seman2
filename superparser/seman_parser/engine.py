@@ -15,6 +15,7 @@ from typing import Any, Mapping, Sequence
 
 from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
+from .dialogue import dialogue_lattice
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
 from .perf import LRU
 from .segmentation import (
@@ -63,7 +64,11 @@ class ParserResources:
             from .semantic_rules import load_semantic_rules
 
             path = self.metadata.get("semantic_rules")
-            self._semantic_rules_cache = load_semantic_rules(path) if path else {}
+            actions = load_semantic_rules(path) if path else {}
+            extra = self.metadata.get("dialogue_semantic_rules")
+            if extra:
+                actions = {**actions, **load_semantic_rules(extra)}
+            self._semantic_rules_cache = actions
         return self._semantic_rules_cache
 
     @classmethod
@@ -96,6 +101,8 @@ class ParserResources:
             metadata={
                 "source": str(directory),
                 "semantic_rules": str(semantic_path),
+                "dialogue_rules": str(directory / "dialogue_grammar.jsonl"),
+                "dialogue_semantic_rules": str(directory / "dialogue_semantic_rules.jsonl"),
             },
         )
 
@@ -176,6 +183,24 @@ class Parser:
             if rule.rule_id not in hierarchical_only
         )
         self._vector_grammar = VectorGrammar(Grammar(syntax_rules))
+        # Quotation rules exist only in a quote-aware forest, preserving the
+        # baseline's canonical ranking and runtime on ordinary novel prose.
+        dialogue_path = resources.metadata.get("dialogue_rules")
+        self._dialogue_resources: ParserResources | None = None
+        self._dialogue_vector_grammar: VectorGrammar | None = None
+        if dialogue_path and Path(dialogue_path).is_file():
+            dialogue_rules = tuple(load_grammar(dialogue_path))
+            if dialogue_rules:
+                dialogue_grammar = Grammar((*syntax_rules, *dialogue_rules))
+                self._dialogue_vector_grammar = VectorGrammar(
+                    dialogue_grammar, preserve_quote_delimiters=True,
+                )
+                self._dialogue_resources = ParserResources(
+                    grammar=dialogue_grammar,
+                    lexicon=resources.lexicon,
+                    types=resources.types,
+                    metadata=resources.metadata,
+                )
         # Derived solely from the static function-word inventory.  Looking
         # for an early boundary must never wake WordNet up.
         self._coord_surfaces = frozenset(
@@ -202,8 +227,16 @@ class Parser:
         return cls(ParserResources.from_dir(directory), **kwargs)
 
     def parse(self, text: str) -> ParseReport:
-        # Quotation marks are delimiters, not linguistic material.
-        text = text.strip().strip('"\u201c\u201d\u2018\u2019').strip()
+        original = text.strip()
+        if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
+            dialogue = self._parse_dialogue_text(original)
+            if dialogue is not None and dialogue.completed:
+                return ParseReport(
+                    result=dialogue,
+                    resources=self._dialogue_resources or self.resources,
+                )
+        # Legacy parsing still accepts isolated outer-quoted clauses.
+        text = original.strip('"\\u201c\\u201d\\u2018\\u2019').strip()
         cache_key = (text, self.goal_category)
         cached = self._parse_cache.get(cache_key)
         if cached is not None:
@@ -222,6 +255,40 @@ class Parser:
             result.stats["segmentation_fallback"] = True
         self._parse_cache.put(cache_key, result)
         return ParseReport(result=result, resources=self.resources)
+
+    def _parse_dialogue_text(self, text: str) -> ParseResult | None:
+        """Parse marked speech using only balanced, explicit quote terminals.
+
+        Every quotation mark is a syntax edge, not a discarded character.
+        No permissive speech productions enter the ordinary vector grammar.
+        """
+        if self._dialogue_vector_grammar is None:
+            return None
+        from .dialogue import quotation_boundaries
+        if not quotation_boundaries(text):
+            return None
+        lattice = self._lattice_cache.get(text)
+        if lattice is None:
+            lattice = build_lattice(
+                text, self.resources.lexicon,
+                deduplicate=self.deduplicate_lexical,
+            )
+            self._lattice_cache.put(text, lattice)
+        extended = dialogue_lattice(lattice)
+        if extended is None:
+            return None
+        result = self._dialogue_vector_grammar.parse_lattice(
+            extended, beam=self.beam, max_items=self.max_items,
+            goal_category=self.goal_category,
+        )
+        if isinstance(result.stats, dict):
+            result.stats.update({
+                "dialogue_scoped": True,
+                "dialogue_quotation_count": sum(
+                    c.category == "OPEN-QUOTE" for c in extended.candidates),
+                "dialogue_source": "explicit_balanced_quotes",
+            })
+        return result
 
     def parse_diagnostic(
         self,
