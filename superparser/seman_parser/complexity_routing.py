@@ -21,12 +21,29 @@ class ComplexityPolicy:
     rule_start_threshold: int
     min_tokens: int = 17
     difficult_strategy: Literal["online", "flat"] = "flat"
+    # (minimum length, maximum length, min rule starts), fitted offline;
+    # never derive thresholds from a test phrase's parsing outcome.
+    band_thresholds: tuple[tuple[int, int, int], ...] = ()
 
     def __post_init__(self) -> None:
         if self.rule_start_threshold < 1 or self.min_tokens < 1:
             raise ValueError("Complexity routing requires positive explicit thresholds")
         if self.difficult_strategy not in ("online", "flat"):
             raise ValueError("Unrecognized difficult-sentence strategy")
+        occupied = set()
+        for lower, upper, threshold in self.band_thresholds:
+            if lower < self.min_tokens or upper < lower or threshold < 1:
+                raise ValueError("Invalid explicit length-band threshold")
+            for n in range(lower, upper + 1):
+                if n in occupied:
+                    raise ValueError("Overlapping length-band thresholds")
+                occupied.add(n)
+
+    def threshold_for(self, token_count: int) -> int:
+        for low, high, cutoff in self.band_thresholds:
+            if low <= token_count <= high:
+                return cutoff
+        return self.rule_start_threshold
 
 
 @dataclass(frozen=True)
@@ -90,7 +107,7 @@ class StructuralRiskRouter:
         start = perf_counter_ns()
         value = self.score(lattice)
         elapsed = (perf_counter_ns() - start) / 1e6
-        if value < self.policy.rule_start_threshold:
+        if value < self.policy.threshold_for(count):
             return RoutingDecision("canonical", "risk_below_threshold", value, elapsed, count)
         return RoutingDecision(self.policy.difficult_strategy, "risk_above_threshold", value,
                                elapsed, count)
