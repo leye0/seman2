@@ -54,6 +54,29 @@ jobs:
                       (dest/base).write_bytes(z.read(item))
           assert (dest/'index.verb').exists()
           PY
+      - name: Diagnose complete syntax and semantic roles
+        env:
+          WORDNET_DICT: ${{ runner.temp }}/wordnet3/dict
+          PYTHONPATH: superparser
+        run: |
+          python - <<'PY'
+          from seman_parser import Parser
+          from seman_parser.segmentation import build_lattice
+          from pathlib import Path
+          p=Parser.from_dir(Path('superparser/data'),cache_size=0)
+          for text in ('John gave Mary the box.', 'Mom worked during the day, Dad sometimes worked from home, Eli was learning to read longer sentences, and somebody always needed the bathroom when somebody else was late.'):
+              report=p.parse(text)
+              result=report.result
+              best=result.best()
+              print('DIAGNOSTIC',text,'completed',result.completed,'best',best.rule_id if best else None,'stats',{k:result.stats.get(k) for k in ('budget_exceeded','kbest_budget_exceeded','forest_nodes','partial_states','best_ms','engine')})
+              if best:
+                  print('ROLES',[(r.relation,r.source,r.target) for r in report.interpret(best).graph.relations])
+              if text.startswith('John'):
+                  l=build_lattice(text,p.resources.lexicon,multiword_max=1)
+                  for x in l.candidates:
+                      if x.surface.casefold() in ('gave','mary'):
+                          print('LEX',x.surface,x.category,x.features.as_dict(),x.sense_ids)
+          PY
       - name: Regressions — parser, quotations and structural diagnostics
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v \
