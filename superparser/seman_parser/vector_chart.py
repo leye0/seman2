@@ -324,7 +324,7 @@ class VectorGrammar:
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
         self.prefix_ids: tuple[tuple[int, ...], ...] = ()
-        if online_prefix_edges:
+        if self.online_prefix_edges:
             # Compile all consumed-symbol signatures ONCE per grammar, not
             # once per partial state. Keep variant-specific rule indices.
             names: dict[tuple[str, ...], int] = {}
