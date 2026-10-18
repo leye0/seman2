@@ -73,4 +73,5 @@ jobs:
             superparser.tests.test_partial_sharing_aab \
             superparser.tests.test_packed_prefix_projection \
             superparser.tests.test_online_prefix_edges \
+            superparser.tests.test_complexity_routing \
             superparser.tests.test_continuation_probe
