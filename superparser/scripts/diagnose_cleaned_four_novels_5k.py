@@ -315,7 +315,7 @@ def collect(args):
         # Atomic replacement avoids a truncated report on interrupted writes.
         temporary=summary_path.with_suffix(".json.tmp")
         temporary.write_text(
-            json.dumps(report,indent=2,ensure_ascii=False)+"\\n",encoding="utf8")
+            json.dumps(report,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
         temporary.replace(summary_path)
 
     persist_report()
