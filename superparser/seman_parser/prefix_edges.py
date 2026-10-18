@@ -131,3 +131,145 @@ class OnlinePrefixEdges:
                 + sum(getsizeof(g.prev_groups)+getsizeof(g.child_ids)
                       for g in self.groups)),
         }
+
+
+
+class FlatOnlineEdgeView(Sequence):
+    """Ordered per-rule derivations projected lazily from global arrays."""
+
+    __slots__=("store","partial_id")
+
+    def __init__(self,store:"FlatOnlinePrefixEdges",partial_id:int):
+        self.store=store
+        self.partial_id=partial_id
+
+    def __len__(self)->int:
+        return self.store.variant_count[self.partial_id]
+
+    def _decode(self,occurrence:int)->Any:
+        store=self.store
+        edge=store.occurrence_edges[occurrence]
+        prev_group=store.edge_prev_groups[edge]
+        previous=(None if prev_group<0 else store.members[
+            (prev_group,store.variant_rules[self.partial_id])])
+        return store.edge_factory(previous,store.edge_children[edge])
+
+    def __getitem__(self,index:int|slice)->Any:
+        if isinstance(index,slice):
+            return [self[i] for i in range(*index.indices(len(self)))]
+        total=len(self)
+        if index<0:
+            index+=total
+        if index<0 or index>=total:
+            raise IndexError(index)
+        cursor=self.store.variant_first[self.partial_id]
+        for _ in range(index):
+            cursor=self.store.occurrence_next[cursor]
+        return self._decode(cursor)
+
+    def __iter__(self)->Iterator[Any]:
+        store=self.store
+        cursor=store.variant_first[self.partial_id]
+        while cursor>=0:
+            yield self._decode(cursor)
+            cursor=store.occurrence_next[cursor]
+
+    def append(self,previous_id:int|None,child_id:int)->bool:
+        store=self.store
+        pid=self.partial_id
+        group=store.group_of[pid]
+        previous_group=(-1 if previous_id is None
+                        else store.group_of[previous_id])
+        if previous_id is not None and store.members.get(
+            (previous_group,store.variant_rules[pid]))!=previous_id:
+            raise AssertionError("Rule-specific predecessor mismatch")
+        signature=(group,previous_group,child_id)
+        edge=store.edge_lookup.get(signature)
+        if edge is None:
+            edge=len(store.edge_children)
+            store.edge_lookup[signature]=edge
+            store.edge_prev_groups.append(previous_group)
+            store.edge_children.append(child_id)
+        else:
+            store.shared_edge_hits+=1
+        cursor=store.variant_first[pid]
+        while cursor>=0:
+            if store.occurrence_edges[cursor]==edge:
+                return False
+            cursor=store.occurrence_next[cursor]
+        occurrence=len(store.occurrence_edges)
+        store.occurrence_edges.append(edge)
+        store.occurrence_next.append(-1)
+        if store.variant_first[pid]<0:
+            store.variant_first[pid]=occurrence
+        else:
+            store.occurrence_next[store.variant_last[pid]]=occurrence
+        store.variant_last[pid]=occurrence
+        store.variant_count[pid]+=1
+        return True
+
+
+class FlatOnlinePrefixEdges:
+    """Incremental interned edge DAG using GLOBAL arrays, not group objects.
+
+    Temporary hash indexes are still needed for deduplication. A live
+    conversion is compared against a canonical forest, including every edge
+    and all lazy k-best candidates, before considering production use.
+    """
+    __slots__=(
+        "prefix_ids","edge_factory","group_by_key","members","group_of",
+        "variant_rules","variant_first","variant_last","variant_count",
+        "edge_lookup","edge_prev_groups","edge_children",
+        "occurrence_edges","occurrence_next","shared_edge_hits")
+
+    def __init__(self,prefix_ids:tuple[tuple[int,...],...],
+                 edge_factory:Callable[[int|None,int],Any])->None:
+        self.prefix_ids=prefix_ids
+        self.edge_factory=edge_factory
+        self.group_by_key:dict[tuple[int,int,int,int],int]={}
+        self.members:dict[tuple[int,int],int]={}
+        self.group_of=array("i")
+        self.variant_rules=array("i")
+        self.variant_first=array("i")
+        self.variant_last=array("i")
+        self.variant_count=array("I")
+        self.edge_lookup:dict[tuple[int,int,int],int]={}
+        self.edge_prev_groups=array("i")
+        self.edge_children=array("i")
+        self.occurrence_edges=array("I")
+        self.occurrence_next=array("i")
+        self.shared_edge_hits=0
+
+    def register(self,partial:Any)->FlatOnlineEdgeView:
+        pid=partial.partial_id
+        if pid!=len(self.group_of):
+            raise AssertionError("Expected densely indexed rule partials")
+        prefix=self.prefix_ids[partial.rule_index][partial.dot]
+        key=(partial.start,partial.end,partial.dot,prefix)
+        group=self.group_by_key.get(key)
+        if group is None:
+            group=len(self.group_by_key)
+            self.group_by_key[key]=group
+        member=(group,partial.rule_index)
+        if member in self.members:
+            raise AssertionError("Rule variants must not be merged")
+        self.members[member]=pid
+        self.group_of.append(group)
+        self.variant_rules.append(partial.rule_index)
+        self.variant_first.append(-1)
+        self.variant_last.append(-1)
+        self.variant_count.append(0)
+        return FlatOnlineEdgeView(self,pid)
+
+    def diagnostics(self)->dict[str,int]:
+        return {
+            "online_prefix_groups":len(self.group_by_key),
+            "online_prefix_unique_edges":len(self.edge_children),
+            "online_prefix_shared_edge_hits":self.shared_edge_hits,
+            "online_prefix_member_count":len(self.variant_rules),
+            "online_prefix_array_bytes":sum(getsizeof(getattr(self,key))
+                     for key in ("group_of","variant_rules","variant_first",
+                                 "variant_last","variant_count","edge_prev_groups",
+                                 "edge_children","occurrence_edges",
+                                 "occurrence_next")),
+        }
