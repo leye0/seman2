@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+import os
 from pathlib import Path
 
 from seman_parser.grammar import Grammar, load_grammar, load_grammar_rows, parse_rule
@@ -11,7 +12,9 @@ from seman_parser.features import Variable
 from seman_parser.segmentation import build_lattice
 
 DATA = Path(__file__).resolve().parents[1] / "data"
-WN_DICT = Path(__file__).resolve().parents[2] / ".local" / "share" / "wordnet" / "WordNet-3.0" / "dict"
+WN_DICT = Path(os.environ.get("WORDNET_DICT", str(
+    Path(__file__).resolve().parents[2] / ".local" / "share" / "wordnet" / "WordNet-3.0" / "dict"
+)))
 
 
 class GrammarTests(unittest.TestCase):
