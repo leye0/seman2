@@ -3,7 +3,8 @@ name: Clean Novel Corpus Integrity
 on:
   push:
     branches:
-      - research/verbnet-left-to-right-poc
+      - main
+      - cleanup/canonical-vector-and-history
     paths:
       - '.github/workflows/clean-novel-corpus-ci.yml'
       - 'superparser/seman_parser/sentence_boundaries.py'

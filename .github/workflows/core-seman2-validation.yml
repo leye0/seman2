@@ -3,16 +3,17 @@ on:
   push:
     branches:
       - main
-      - research/verbnet-left-to-right-poc
+      - cleanup/canonical-vector-and-history
     paths:
       - 'superparser/seman_parser/**'
       - 'superparser/data/**'
-      - 'superparser/tests/test_verbnet_lr_hybrid_vector.py'
-      - 'superparser/tests/test_dialogue_grammar.py'
+      - 'superparser/tests/**'
       - 'superparser/tests/test_vector_chart.py'
       - 'superparser/tests/test_sentence_boundaries.py'
       - 'superparser/tests/test_structural_prefix_risk.py'
       - 'superparser/tests/test_continuation_probe.py'
+      - 'superparser/scripts/benchmark_heavy_sentence_ab.py'
+      - 'superparser/research/verbnet_lr/continuation_probe.py'
       - '.github/workflows/core-seman2-validation.yml'
   pull_request:
     branches: [main]
@@ -57,7 +58,13 @@ jobs:
       - name: Regressions — parser, quotations and structural diagnostics
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v \
-            superparser.tests.test_verbnet_lr_hybrid_vector \
+            superparser.tests.test_parser_integration \
+            superparser.tests.test_features \
+            superparser.tests.test_coverage \
+            superparser.tests.test_data \
+            superparser.tests.test_syntax_semantics_boundary \
+            superparser.tests.test_heavy_sentence_ab \
+            superparser.tests.test_lexical_ambiguity_risk \
             superparser.tests.test_dialogue_grammar \
             superparser.tests.test_vector_chart \
             superparser.tests.test_sentence_boundaries \

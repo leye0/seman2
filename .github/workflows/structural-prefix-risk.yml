@@ -1,14 +1,5 @@
 name: Grammar Continuation Prefix Risk Audit
 on:
-  push:
-    branches:
-      - research/verbnet-left-to-right-poc
-    paths:
-      - 'superparser/scripts/audit_structural_prefix_risk.py'
-      - 'superparser/tests/test_continuation_probe.py'
-      - 'superparser/tests/test_structural_prefix_risk.py'
-      - 'superparser/research/verbnet_lr/continuation_probe.py'
-      - '.github/workflows/structural-prefix-risk.yml'
   workflow_dispatch:
 permissions:
   contents: read
