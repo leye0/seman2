@@ -119,6 +119,7 @@ def main():
     parser.add_argument("--wordnet-dir",required=True)
     parser.add_argument("--per-book-per-band",type=int,default=6)
     parser.add_argument("--minimum-tokens",type=int,default=17)
+    parser.add_argument("--strategy",choices=("project","lazy"),default="lazy")
     parser.add_argument("--max-examples",type=int,default=96)
     parser.add_argument("--out-dir",type=Path,required=True)
     args=parser.parse_args()
@@ -132,7 +133,10 @@ def main():
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=args.wordnet_dir)
     p=Parser(resources,cache_size=0,max_items=20000)
     standard=p._vector_grammar
-    trie=VectorGrammar(standard.grammar,shared_trie_recognition=True)
+    trie=VectorGrammar(
+        standard.grammar,
+        shared_trie_recognition=args.strategy=="project",
+        lazy_trie_recognition=args.strategy=="lazy")
     args.out_dir.mkdir(parents=True,exist_ok=True)
     rows=[]
     with (args.out_dir/"per_sentence.jsonl").open(
@@ -195,6 +199,7 @@ def main():
     summary={
         "schema":"online-trie-recognizer-paired-aab-v1",
         "sources":sources,
+        "strategy":args.strategy,
         "all":group(rows),
         "by_band":{name:group([r for r in rows if r["band"]==name])
                    for name,_,_ in BANDS},
@@ -204,6 +209,7 @@ def main():
             "Online trie constructs its own lexical and grammatical forest; no reference oracle used.",
             "Canonical and trie operate on the exact same lexical lattice, budgets and grammar.",
             "Only unsaturated cases have strict all-derivation and top-k equivalence certification.",
+            "Lazy strategy projects original rule partials only as needed by k-best, not during recognition.",
             "Saturated results are NOT certified even when best analyses coincide.",
             "Cyclic garbage collection is disabled around all timed A/B/A arms and setup is excluded.",
             "This run measures hard nonquoted prose only; easy sentences remain protected by separate router tests.",
