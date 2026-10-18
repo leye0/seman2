@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/adaptive-complexity-routing.yml'
+      - 'superparser/scripts/benchmark_adaptive_routing.py'
+      - 'superparser/seman_parser/complexity_routing.py'
+      - 'superparser/tests/test_complexity_routing.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,7 +48,7 @@ jobs:
         run: |
           python -m py_compile superparser/scripts/benchmark_adaptive_routing.py superparser/seman_parser/complexity_routing.py
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_complexity_routing
-      - name: Evaluate label-free threshold routing on 64 matched novel sentences
+      - name: Evaluate within-length risk thresholds on 64 novel sentences
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/benchmark_adaptive_routing.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
