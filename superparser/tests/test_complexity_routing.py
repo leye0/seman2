@@ -149,6 +149,33 @@ class AdaptiveRouterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ComplexityPolicy(1,band_thresholds=((17,20,0),))
 
+    def test_lazy_trie_strategy_only_runs_on_predicted_nonquoted_text(self):
+        adaptive=Parser(
+            self.resources,cache_size=0,max_items=20000,
+            complexity_policy=ComplexityPolicy(
+                rule_start_threshold=1,min_tokens=17,
+                difficult_strategy="trie"))
+        for text in (*EASY, '"Hello," said Mary.'):
+            with self.subTest(ordinary_or_dialogue=text):
+                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
+                result=adaptive.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                self.assertEqual(result.stats["complexity_route"],"canonical")
+                self.assertFalse(result.stats["lazy_trie_recognition"])
+        for text in HARD:
+            with self.subTest(long_prose=text):
+                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
+                original=self.reference.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                shared=adaptive.parse_grammar_lattice(
+                    lattice,max_items=20000,kbest_work_limit=100000)
+                self.assertEqual(shared.stats["complexity_route"],"trie")
+                self.assertTrue(shared.stats["lazy_trie_recognition"])
+                self.assertEqual(original.completed,shared.completed)
+                self.assertEqual(
+                    [t.as_dict() for t in original.alternatives(limit=2)],
+                    [t.as_dict() for t in shared.alternatives(limit=2)])
+
     def test_no_invented_default_threshold_or_bad_policy(self):
         self.assertIsNone(self.reference._complexity_router)
         for cutoff in (0,-1):
