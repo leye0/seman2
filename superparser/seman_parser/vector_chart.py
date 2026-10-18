@@ -507,8 +507,8 @@ class _VectorForest:
         return False
 
     def _next_start(self, end: int) -> int:
-        separators = (' \\t\\r\\n' if self.compiled.preserve_quote_delimiters
-                      else ' \\t\\r\\n"\\u201c\\u201d\\u2018\\u2019')
+        separators = (' \t\r\n' if self.compiled.preserve_quote_delimiters
+                      else ' \t\r\n"\u201c\u201d\u2018\u2019')
         while end < len(self.text) and self.text[end] in separators:
             end += 1
         return end
