@@ -92,7 +92,11 @@ def timed(parser,lattice):
         "score":parsed.stats.get("complexity_score"),
         "reason":parsed.stats.get("complexity_reason"),
         "probe_ms":parsed.stats.get("complexity_probe_ms",0),
+        "recognition_ms":parsed.stats.get("recognition_ms",0),
+        "best_ms":parsed.stats.get("best_ms",0),
+        "kbest_work_units":parsed.stats.get("kbest_work_units",0),
         "flat":bool(parsed.stats.get("online_prefix_flat_enabled")),
+        "indexed":bool(parsed.stats.get("indexed_recognition_enabled")),
     }
 
 
@@ -134,7 +138,7 @@ def quantile(xs,p):
 
 def group(rows):
     result={"n":len(rows),"selection":dict(Counter(r["adaptive"]["reason"] for r in rows)),
-            "routed":sum(r["adaptive"]["route"]=="flat" for r in rows),
+            "routed":sum(r["adaptive"]["route"] not in (None,"canonical") for r in rows),
             "verified_edges":sum(r["verified_edges"] for r in rows)}
     for arm in ARMS:
         time=[r[arm]["ms"] for r in rows]
@@ -150,6 +154,15 @@ def group(rows):
     result["reference_b"]["ratio_vs_a"]=(
         round(result["reference_b"]["total_ms"]/a,4) if a else None)
     result["probe_total_ms"]=round(sum(r["adaptive"]["probe_ms"] for r in rows),3)
+    result["recognition_totals_ms"]={
+        arm:round(sum(r[arm]["recognition_ms"] for r in rows),3)
+        for arm in ARMS}
+    result["kbest_totals_ms"]={
+        arm:round(sum(r[arm]["best_ms"] for r in rows),3)
+        for arm in ARMS}
+    result["kbest_work_totals"]={
+        arm:sum(r[arm]["kbest_work_units"] for r in rows)
+        for arm in ARMS}
     # Baseline A/A alone is noisy on shared runners; bracket adaptive latency
     # with the geometric mean of two same-sentence canonical passes.
     paired=[math.sqrt(r["reference_a"]["ms"]*r["reference_b"]["ms"])
@@ -172,6 +185,8 @@ def main():
     p.add_argument("--per-book-per-band",type=int,default=4)
     p.add_argument("--minimum-tokens",type=int,default=17)
     p.add_argument("--hard-share",type=float,default=.25)
+    p.add_argument("--difficult-strategy",choices=("flat","online","indexed"),
+                   default="flat")
     p.add_argument("--out-dir",type=Path,required=True)
     args=p.parse_args()
     if not 0<args.hard_share<1:
@@ -192,7 +207,7 @@ def main():
     policies={book:ComplexityPolicy(
         rule_start_threshold=cutoff,
         min_tokens=args.minimum_tokens,
-        difficult_strategy="flat",
+        difficult_strategy=args.difficult_strategy,
         band_thresholds=learned_bands[book])
         for book,cutoff in learned.items()}
     parsers={book:Parser(
@@ -215,13 +230,13 @@ def main():
                 results[name],reports[name]=timed(parser,lattice)
             parity(reports["reference_a"],reports["adaptive"])
             parity(reports["reference_a"],reports["reference_b"])
-            routed=reports["adaptive"]["route"]=="flat"
+            routed=reports["adaptive"]["route"]==args.difficult_strategy
             checked=(complete_edge_parity(
                 results["reference_a"],results["adaptive"]) if routed else 0)
             if not routed:
                 # Critical: low-risk uses unmodified canonical grammar and
                 # has exactly zero work from the specialized recognizer.
-                if reports["adaptive"]["flat"]:
+                if reports["adaptive"]["flat"] or reports["adaptive"]["indexed"]:
                     raise AssertionError("Unselected parse entered alternative engine")
             row={
                 "index":i,"book_id":item["book_id"],"band":item["band"],
@@ -239,11 +254,12 @@ def main():
             if (i+1)%8==0:
                 print("ADAPTIVE_PROGRESS",json.dumps({
                     "seen":i+1,"routed":sum(
-                        r["adaptive"]["route"]=="flat" for r in records),
+                        r["adaptive"]["route"]==args.difficult_strategy for r in records),
                     "verified_edges":sum(r["verified_edges"] for r in records),
                 }),flush=True)
     result={
         "schema":"adaptive-grammar-risk-routing-aab-v1",
+        "strategy":args.difficult_strategy,
         "thresholds":{str(k):v for k,v in learned.items()},
         "band_thresholds":{str(k):v for k,v in learned_bands.items()},
         "threshold_training":"top-quartile of preparse score within each 17-24 / 25-32 length band on other 3 novels, no outcomes",
@@ -251,8 +267,8 @@ def main():
         "all":group(records),
         "easy":group([r for r in records if r["tokens"]<args.minimum_tokens]),
         "eligible":group([r for r in records if r["tokens"]>=args.minimum_tokens]),
-        "routed":group([r for r in records if r["adaptive"]["route"]=="flat"]),
-        "not_routed":group([r for r in records if r["adaptive"]["route"]!="flat"]),
+        "routed":group([r for r in records if r["adaptive"]["route"]==args.difficult_strategy]),
+        "not_routed":group([r for r in records if r["adaptive"]["route"]!=args.difficult_strategy]),
         "by_band":{band:group([r for r in records if r["band"]==band])
                    for band,_,_ in BANDS},
         "notes":[
