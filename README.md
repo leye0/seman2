@@ -9,6 +9,7 @@ Start here:
 - [Why this architecture: research history and abandoned approaches](docs/RESEARCH_HISTORY_AND_DECISIONS.md)
 - [Corpus preservation policy](docs/CORPORA_AND_DATA.md)
 - [Lossless shared-prefix storage prototype](docs/SHARED_PREFIX_STORAGE_PROTOTYPE.md)
+- [Prediction-first adaptive complexity routing and its research limits](docs/ADAPTIVE_COMPLEXITY_ROUTING.md)
 
 ## The active execution path
 

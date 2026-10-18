@@ -1,12 +1,5 @@
 name: Research — Adaptive Complexity Routing
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/adaptive-complexity-routing.yml'
-      - 'superparser/scripts/benchmark_adaptive_routing.py'
-      - 'superparser/seman_parser/complexity_routing.py'
-      - 'superparser/tests/test_complexity_routing.py'
   workflow_dispatch:
 permissions:
   contents: read
