@@ -241,7 +241,8 @@ def characterize_tail(records, baseline=None):
             "n_present":len(positive),
             "p95_slow_rate_if_present_pct":round(100*pos_rate,3) if pos_rate is not None else None,
             "p95_slow_rate_if_absent_pct":round(100*neg_rate,3) if neg_rate is not None else None,
-            "unadjusted_risk_ratio":round(pos_rate/neg_rate,3) if neg_rate else None,
+            "unadjusted_risk_ratio":round(pos_rate/neg_rate,3)
+                if pos_rate is not None and neg_rate else None,
         }
     by_length={}
     for band in ("04-08","09-16","17-24","25-32"):
