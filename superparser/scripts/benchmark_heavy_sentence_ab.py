@@ -53,20 +53,43 @@ def early_filter_eligible(text,tokens):
 
 
 def split_plan(text,tokens,parser):
-    """Only try genuine potential clause lists, never arbitrary commas."""
-    if len(tokens)<24 or has_quotation(text) or text.count(",")<2:
+    """Explore two lossless clause-interface routes, both grammar-validated.
+
+    Comma-separated clause lists use the pre-existing conservative planner.
+    A *single* coordinating conjunction can also be a safe boundary when
+    the same compiled grammar verifies both segments and their composition.
+    Apparent boundaries inside phrases simply fail and fall back. Never
+    delete the separator or replace incomplete fragments with full clauses.
+    """
+    if len(tokens)<22 or has_quotation(text):
         return None
-    plan=parser._clause_plan(text,tokens)
-    if plan is None:
+    if len(tokens)>=24 and text.count(",")>=2:
+        plan=parser._clause_plan(text,tokens)
+        if plan is not None:
+            spans,_=plan
+            lengths=[sum(start<=tok.start and tok.end<=end for tok in tokens)
+                     for start,end in spans]
+            if 2<=len(spans)<=4 and all(4<=n<=18 for n in lengths):
+                return plan
+    # Choose the least unbalanced coordination split. All surviving
+    # candidates undergo the *same* clause grammar; no invented derivations.
+    choices=[]
+    for index,token in enumerate(tokens):
+        if token.text.casefold() not in {"and","but","or","yet"}:
+            continue
+        if token.text.casefold() not in parser._coord_surfaces:
+            continue
+        left=tokens[:index]
+        right=tokens[index+1:]
+        if not (7<=len(left)<=24 and 7<=len(right)<=24):
+            continue
+        # Preserve commas and punctuation inside each original segment.
+        spans=((left[0].start,left[-1].end),
+               (right[0].start,right[-1].end))
+        choices.append((abs(len(left)-len(right)),index,(spans,(token,))))
+    if not choices:
         return None
-    spans,_=plan
-    if not 2<=len(spans)<=4:
-        return None
-    lengths=[sum(start<=tok.start and tok.end<=end for tok in tokens)
-             for start,end in spans]
-    if any(n<4 or n>18 for n in lengths):
-        return None
-    return plan
+    return min(choices,key=lambda x:(x[0],x[1]))[2]
 
 
 def timed(action):
