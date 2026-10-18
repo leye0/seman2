@@ -294,9 +294,15 @@ class Parser:
         """Select before forest recognition; never repeat the completed parse."""
         if self._complexity_router is None:
             return self._vector_grammar, None
+        # The cheap path MUST not scan for quotations or inspect lexical
+        # ambiguity when token count alone already proves canonical routing.
+        # This matters more than any micro-optimization inside the slow path.
+        short = len(lattice.tokens) < self._complexity_policy.min_tokens
         decision = self._complexity_router.choose(
-            lattice, dialogue=dialogue or any(
-                quote in lattice.text for quote in ('"', '“', '”', '‘', '’')
+            lattice, dialogue=(
+                False if short else dialogue or any(
+                    quote in lattice.text for quote in ('"', '“', '”', '‘', '’')
+                )
             ),
         )
         if decision.strategy == "canonical":
