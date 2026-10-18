@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/packed-prefix-projection.yml'
+      - 'superparser/scripts/audit_packed_prefix_projection.py'
+      - 'superparser/research/verbnet_lr/packed_prefix_projection.py'
+      - 'superparser/tests/test_packed_prefix_projection.py'
   workflow_dispatch:
 permissions:
   contents: read
