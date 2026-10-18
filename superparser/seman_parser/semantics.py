@@ -316,6 +316,9 @@ class SemanticInterpreter:
             if candidate is None:
                 # Compatibility for externally constructed syntax fixtures.
                 return SemanticPackage(SemanticGraph(), {})
+            # Structural dialogue punctuation is not an event or entity.
+            if candidate.source == "dialogue-delimiter":
+                return SemanticPackage(SemanticGraph(), {})
             graph = SemanticGraph()
             anchor = item.syntax.anchors.get("head", "")
             selected_id = self.sense_selection.get(anchor)
