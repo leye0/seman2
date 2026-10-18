@@ -52,7 +52,7 @@ jobs:
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/audit_lexical_ambiguity_risk.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --per-book-per-band 16 --checkpoint 16 \
+            --per-book-per-band 16 \
             --out-dir /tmp/lexical-risk
       - name: Preserve per-sentence results
         if: always()
