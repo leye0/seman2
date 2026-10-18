@@ -279,8 +279,7 @@ class VectorGrammar:
                  preserve_quote_delimiters: bool = False,
                  cache_boundaries: bool = False,
                  online_prefix_edges: bool = False,
-                 flat_prefix_edges: bool = False,
-                 indexed_recognition: bool = False) -> None:
+                 flat_prefix_edges: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
@@ -293,12 +292,6 @@ class VectorGrammar:
         # byte-for-byte equivalent and is still the default.
         self.online_prefix_edges = online_prefix_edges or flat_prefix_edges
         self.flat_prefix_edges = flat_prefix_edges
-        # Category masks are guaranteed by the existing indexed agenda.
-        # This experimental fast path elides redundant checks, not grammar.
-        if indexed_recognition and early_lexical_filter:
-            raise ValueError(
-                "Indexed recognition cannot bypass an active lexical feature filter")
-        self.indexed_recognition = indexed_recognition
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -330,19 +323,6 @@ class VectorGrammar:
             first.setdefault(rhs_ids[0], []).append(index)
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
-        # A unique integer offset for each (rule, dot) slot in experimental
-        # indexed recognition. Avoid allocating/hashing a four-item tuple
-        # on every partial proposal (many proposals repeat the same state).
-        self._slot_base: tuple[int, ...] = ()
-        self._slot_stride = 0
-        if indexed_recognition:
-            offsets: list[int] = []
-            cursor = 0
-            for item in self.rules:
-                offsets.append(cursor)
-                cursor += len(item.rhs_ids) + 1
-            self._slot_base = tuple(offsets)
-            self._slot_stride = cursor
         self.prefix_ids: tuple[tuple[int, ...], ...] = ()
         if self.online_prefix_edges:
             # Compile all consumed-symbol signatures ONCE per grammar, not
@@ -439,8 +419,6 @@ class VectorGrammar:
             "partial_derivations": forest.partial_derivation_count,
             "online_prefix_edges_enabled": self.online_prefix_edges,
             "online_prefix_flat_enabled": self.flat_prefix_edges,
-            "indexed_recognition_enabled": self.indexed_recognition,
-            "indexed_masks_elided": forest.indexed_masks_elided,
             **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
                {"online_prefix_groups":0,"online_prefix_unique_edges":0,
                 "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
@@ -527,9 +505,7 @@ class _VectorForest:
         self.by_key: dict[tuple[int, int, int], ForestNode] = {}
         self.by_start_category: dict[tuple[int, int], list[ForestNode]] = {}
         self.partials: list[PackedPartial] = []
-        self.partial_by_key: dict[tuple[int, int, int, int] | int, PackedPartial] = {}
-        self._indexed_position_bits = len(self.text).bit_length()
-        self._indexed_slot_stride = compiled._slot_stride
+        self.partial_by_key: dict[tuple[int, int, int, int], PackedPartial] = {}
         self.waiting: dict[tuple[int, int], list[int]] = {}
         self.agenda: list[int] = []
         self.operations = 0
@@ -538,7 +514,6 @@ class _VectorForest:
         self.partial_proposals = 0
         self.duplicate_partial_proposals = 0
         self.duplicate_transitions_avoided = 0
-        self.indexed_masks_elided = 0
         self.lexical_spans = 0
         self.budget_exceeded = False
         self.early_lexical_considered = 0
@@ -675,18 +650,7 @@ class _VectorForest:
         child_id: int,
     ) -> None:
         self.partial_proposals += 1
-        if self.compiled.indexed_recognition:
-            # Injective encoding for all valid character spans and rule
-            # slots, with position width derived from the actual sentence.
-            # A production with a different rule identity retains its own
-            # key and therefore every grammatical interpretation.
-            key = (
-                (((start << self._indexed_position_bits) | end)
-                 * self._indexed_slot_stride)
-                + self.compiled._slot_base[rule_index] + dot
-            )
-        else:
-            key = (rule_index, dot, start, end)
+        key = (rule_index, dot, start, end)
         partial = self.partial_by_key.get(key)
         is_new = partial is None
         if partial is None:
@@ -738,43 +702,7 @@ class _VectorForest:
                 partial.partial_id, node.node_id,
             )
 
-    def _recognize_indexed(self, goal_category: str) -> tuple[ForestNode, ...]:
-        """Same agenda order and budget, minus already-proven category masks.
-
-        self.compiled.first[node.category_id] guarantees that the first RHS
-        category matches that node; waiting[(start, category_id)] likewise
-        guarantees that the next RHS category matches. The ordinary parser
-        redundantly rechecks both masks and calls a disabled lexical filter.
-        No feature unification takes place in recognition in either version.
-        """
-        self._seed_lexicon()
-        cursor = 0
-        while cursor < len(self.agenda) and not self.budget_exceeded:
-            node = self.nodes[self.agenda[cursor]]
-            cursor += 1
-            self.operations += 1
-            starts = self.compiled.first.get(node.category_id, ())
-            self.indexed_masks_elided += len(starts)
-            for rule_index in starts:
-                self._add_partial(
-                    rule_index, 1, node.start, node.end, None, node.node_id)
-            waiting = self.waiting.get((node.start, node.category_id), ())
-            self.duplicate_transitions_avoided += len(waiting) - node.waiting_cutoff
-            self.indexed_masks_elided += node.waiting_cutoff
-            for partial_id in tuple(waiting[:node.waiting_cutoff]):
-                partial = self.partials[partial_id]
-                self._add_partial(
-                    partial.rule_index, partial.dot + 1, partial.start, node.end,
-                    partial.partial_id, node.node_id)
-        goal_id = intern(goal_category)
-        return tuple(
-            node for node in self.nodes
-            if node.category_id == goal_id and self._root_span(node.start, node.end)
-        )
-
     def recognize(self, goal_category: str) -> tuple[ForestNode, ...]:
-        if self.compiled.indexed_recognition:
-            return self._recognize_indexed(goal_category)
         self._seed_lexicon()
         cursor = 0
         while cursor < len(self.agenda) and not self.budget_exceeded:

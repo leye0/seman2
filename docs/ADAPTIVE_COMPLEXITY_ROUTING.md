@@ -68,3 +68,42 @@ Earlier unconditional shared-prefix experiments showed **+27.6% overhead on 4–
 6. Keep `complexity_policy=None` as the production default until **independent** evidence shows real total latency wins without losing accuracy or slowing easy sentences.
 
 **Decision:** the original prediction-first conditional architecture now exists and has parity tests. The routing mechanism works. The current specialized algorithm has not yet demonstrated a stable net speedup.
+
+
+## Follow-up, 18 October: the failed indexed-transition shortcut
+
+A separate *discarded* strategy, named `indexed`, tried to avoid duplicate
+category-mask checks already guaranteed by the recognition agenda and to
+encode four-part partial-state lookup keys as collision-free integers.
+It preserved all grammatical rule variants and all ordered derivations,
+but it **did not share the underlying rule-prefix recognition work**.
+
+- Initial [128-case audit](https://github.com/leye0/seman2/actions/runs/39175285966):
+  11 selected and **176,573 redundant mask checks removed**; apparent
+  overall **+8.5%** time, with large canonical A/A and nonrouted outliers.
+  Cannot infer causation from this noisy run.
+- Controlled [128-case repeat](https://github.com/leye0/seman2/actions/runs/39175507714),
+  [individual result artifact](https://github.com/leye0/seman2/actions/runs/39175507714/artifacts/12154087888):
+  when cyclic garbage collection was excluded from each A/B/A timed
+  window, reference A total **7.0809 s**, conditional indexed **7.0771 s**,
+  reference A repeat **7.0707 s**. On the 11 routed cases specifically:
+  **739.2 ms** reference A, **757.3 ms** indexed, **743.0 ms** repeat.
+  Thus routed performance was **2.45% worse**, despite eliminating the
+  176,573 checks. The 64 short cases had no predictor work and practically
+  identical median runtime. Completion, forest budgets and all rule-specific
+  derivations remained equal.
+- The audit deliberately performed explicit full garbage collections
+  **outside** the timed arms (their total setup cost was substantial).
+  Those timings measure isolated parse work, **not fully inclusive
+  production throughput**; this distinction matters.
+
+**Decision: reject and remove `indexed` from the current runtime and policy.**
+Historical source remains recoverable in Git history, before this cleanup.
+Do not resurrect it merely to count avoided cheap tests.
+
+A genuine next attempt must compile a shared **category-prefix automaton**
+for the grammar, advance one common prefix state for multiple rule variants
+*before* duplicating rule-specific state creation, and only project matched
+rule variants and their feature/semantic constraints when evidence requires
+them. Compare recognition CPU, materializer work, peak RSS and all original
+rule-specific derivations, especially under the fixed forest budget.

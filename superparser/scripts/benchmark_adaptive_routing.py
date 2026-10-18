@@ -82,7 +82,6 @@ def timed(parser,lattice):
     return parsed,{
         "ms":round(ms,5),
         "cpu_ms":round(cpu_ms,5),
-        "indexed_masks_elided":parsed.stats.get("indexed_masks_elided",0),
         "completed":parsed.completed,
         "best":best.as_dict() if best else None,
         "alternatives":trees,
@@ -101,7 +100,6 @@ def timed(parser,lattice):
         "best_ms":parsed.stats.get("best_ms",0),
         "kbest_work_units":parsed.stats.get("kbest_work_units",0),
         "flat":bool(parsed.stats.get("online_prefix_flat_enabled")),
-        "indexed":bool(parsed.stats.get("indexed_recognition_enabled")),
     }
 
 
@@ -164,8 +162,6 @@ def group(rows):
         result[arm]["cpu_ratio_vs_a"]=round(
             result[arm]["cpu_total_ms"]/cpu_a,4) if cpu_a else None
     result["probe_total_ms"]=round(sum(r["adaptive"]["probe_ms"] for r in rows),3)
-    result["indexed_masks_elided"]=sum(
-        r["adaptive"]["indexed_masks_elided"] for r in rows)
     result["gc_setup_ms"]=round(sum(r["gc_setup_ms"] for r in rows),3)
     result["recognition_totals_ms"]={
         arm:round(sum(r[arm]["recognition_ms"] for r in rows),3)
@@ -198,7 +194,7 @@ def main():
     p.add_argument("--per-book-per-band",type=int,default=4)
     p.add_argument("--minimum-tokens",type=int,default=17)
     p.add_argument("--hard-share",type=float,default=.25)
-    p.add_argument("--difficult-strategy",choices=("flat","online","indexed"),
+    p.add_argument("--difficult-strategy",choices=("flat","online"),
                    default="flat")
     p.add_argument("--isolate-gc",action="store_true",
                    help="Collect before each sentence and suspend cyclic GC only for A/B/A timing")
@@ -265,7 +261,7 @@ def main():
             if not routed:
                 # Critical: low-risk uses unmodified canonical grammar and
                 # has exactly zero work from the specialized recognizer.
-                if reports["adaptive"]["flat"] or reports["adaptive"]["indexed"]:
+                if reports["adaptive"]["flat"]:
                     raise AssertionError("Unselected parse entered alternative engine")
             row={
                 "index":i,"book_id":item["book_id"],"band":item["band"],

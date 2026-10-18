@@ -199,7 +199,6 @@ class Parser:
                 self._vector_grammar.grammar,
                 online_prefix_edges=complexity_policy.difficult_strategy == "online",
                 flat_prefix_edges=complexity_policy.difficult_strategy == "flat",
-                indexed_recognition=complexity_policy.difficult_strategy == "indexed",
             )
             if complexity_policy is not None else None
         )
@@ -294,9 +293,8 @@ class Parser:
         """Select before forest recognition; never repeat the completed parse."""
         if self._complexity_router is None:
             return self._vector_grammar, None
-        # The cheap path MUST not scan for quotations or inspect lexical
-        # ambiguity when token count alone already proves canonical routing.
-        # This matters more than any micro-optimization inside the slow path.
+        # The fast path is decided by token count first: it must not
+        # inspect lexical ambiguity or even scan quotation characters.
         short = len(lattice.tokens) < self._complexity_policy.min_tokens
         decision = self._complexity_router.choose(
             lattice, dialogue=(
