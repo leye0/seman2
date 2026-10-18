@@ -2,7 +2,7 @@
 import unittest
 from types import SimpleNamespace
 
-from research.verbnet_lr.packed_prefix_projection import build_projection, pack_flat
+from research.verbnet_lr.packed_prefix_projection import build_projection, pack_flat, pack_flat_direct
 from seman_parser.grammar import load_grammar_rows
 from seman_parser.vector_chart import PartialDerivation
 
@@ -53,6 +53,14 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         self.assertEqual(stats["shared_groups"],3)
         self.assertLess(stats["interned_edges"],stats["original_edges"])
         flat=pack_flat(forest)
+        direct=pack_flat_direct(forest)
+        self.assertEqual(direct.verify(forest),sum(
+            len(x.derivations) for x in forest.partials))
+        self.assertEqual(direct.group_of,flat.group_of)
+        self.assertEqual(direct.variant_edges,flat.variant_edges)
+        self.assertEqual(direct.children,flat.children)
+        self.assertEqual(direct.prev_groups,flat.prev_groups)
+        self.assertEqual(direct.metrics(forest),flat.metrics(forest))
         self.assertEqual(flat.reconstruct(4),[(0,7),(0,8)])
         self.assertEqual(flat.reconstruct(5),[(1,8),(1,7)])
         self.assertEqual(flat.verify(forest),sum(len(x.derivations) for x in forest.partials))
@@ -68,6 +76,7 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         ])
         view=build_projection(forest)
         self.assertEqual(len(view.groups),4)
+        self.assertEqual(pack_flat_direct(forest).metrics(forest)["prefix_groups"],4)
         flat=pack_flat(forest)
         self.assertEqual(flat.metrics(forest)["prefix_groups"],4)
 
@@ -78,6 +87,8 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         ])
         with self.assertRaises(KeyError):
             build_projection(forest)
+        with self.assertRaises(KeyError):
+            pack_flat_direct(forest)
 
     def test_empty_forest_is_supported(self):
         forest=self.forest([])
@@ -85,6 +96,7 @@ class SharedPrefixProjectionTests(unittest.TestCase):
         self.assertEqual(view.metrics(forest)["shared_groups"],0)
         self.assertEqual(view.metrics(forest)["original_edges"],0)
         self.assertEqual(pack_flat(forest).verify(forest),0)
+        self.assertEqual(pack_flat_direct(forest).verify(forest),0)
 
 
 if __name__=="__main__":
