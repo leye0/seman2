@@ -272,12 +272,16 @@ class VectorGrammar:
     """Compile category symbols and all grammar transitions once."""
 
     def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False,
-                 preserve_quote_delimiters: bool = False) -> None:
+                 preserve_quote_delimiters: bool = False,
+                 cache_boundaries: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
         # Scoped dialogue grammar consumes quotation punctuation explicitly.
         self.preserve_quote_delimiters = preserve_quote_delimiters
+        # Research A/B: memoize identical punctuation/whitespace boundary
+        # scans within a sentence. Default off pending paired benchmarks.
+        self.cache_boundaries = cache_boundaries
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -385,6 +389,8 @@ class VectorGrammar:
             "partial_proposals": forest.partial_proposals,
             "duplicate_partial_proposals": forest.duplicate_partial_proposals,
             "duplicate_transitions_avoided": forest.duplicate_transitions_avoided,
+            "boundary_cache_hits": forest.boundary_cache_hits,
+            "boundary_cache_misses": forest.boundary_cache_misses,
             "recognition_operations": forest.operations,
             "unification_attempts": 0,
             "unification_rejections": 0,
@@ -475,6 +481,13 @@ class _VectorForest:
         self.budget_exceeded = False
         self.early_lexical_considered = 0
         self.early_lexical_pruned = 0
+        self.boundary_cache_hits = 0
+        self.boundary_cache_misses = 0
+        self._next_start_cache: dict[int, int] = {}
+        if compiled.cache_boundaries:
+            # Assign a cached implementation once, avoiding an extra branch
+            # at each hot-path call in the *uncached* reference parser.
+            self._next_start = self._next_start_cached
 
     def _lexical_first_slot_possible(self, node: ForestNode, rule_index: int, dot: int) -> bool:
         """Sound *necessary* test for a pure lexical symbol.
@@ -512,6 +525,18 @@ class _VectorForest:
         while end < len(self.text) and self.text[end] in separators:
             end += 1
         return end
+
+    def _next_start_cached(self, end: int) -> int:
+        # Cache is forest-local: quotes and separators follow the compiled
+        # grammar's mode, so no value can leak between different sentences.
+        previous = self._next_start_cache.get(end)
+        if previous is not None:
+            self.boundary_cache_hits += 1
+            return previous
+        result = _VectorForest._next_start(self, end)
+        self._next_start_cache[end] = result
+        self.boundary_cache_misses += 1
+        return result
 
     def _root_span(self, start: int, end: int) -> bool:
         if start != 0:
