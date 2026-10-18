@@ -497,6 +497,8 @@ class VectorGrammar:
             stats["kbest_work_limit"] = kbest_work_limit
             stats["best_ms"] = round((perf_counter() - best_start) * 1000, 4)
             root_provider.refresh_stats()
+            if self.lazy_trie_recognition:
+                stats["lazy_rule_partials_materialized"]=len(forest.partials.cached)
             return ParseResult(
                 text=lattice.text, lattice=lattice, packed=packed,
                 roots=(), completed=False, stats=stats,
@@ -509,6 +511,8 @@ class VectorGrammar:
         stats["nodes_visited_for_best"] = materializer.nodes_initialized
         stats["combinations_visited_for_best"] = materializer.combinations_visited
         root_provider.refresh_stats()
+        if self.lazy_trie_recognition:
+            stats["lazy_rule_partials_materialized"]=len(forest.partials.cached)
         if witness_cache is not None:
             stats["prepacked_witnesses"] = witness_cache.summary()
         roots = LazyRootSequence(root_provider)
