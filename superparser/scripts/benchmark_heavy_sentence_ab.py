@@ -14,11 +14,41 @@ from time import perf_counter_ns
 
 from research.verbnet_lr.clean_novel_corpus import load_cleaned, read_manifest
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, extract
-from scripts.benchmark_cleaned_four_novels_5k import sample_spread
-from scripts.characterize_failed_10k import best_signature
+
+
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
 from seman_parser.vector_chart import VectorGrammar
+
+def sample_spread(rows, n):
+    """Deterministically sample across the full cleaned book; zero duplicates."""
+    if n < 0 or n > len(rows):
+        raise ValueError(f"Need {n} distinct sentences, available {len(rows)}")
+    indices=[((2*i+1)*len(rows))//(2*n) for i in range(n)] if n else []
+    if len(set(indices)) != n:
+        raise AssertionError("Duplicate sample index")
+    return [rows[i] for i in indices]
+
+
+def best_signature(item):
+    """Preserve structure and lexical witnesses when comparing A/B trees."""
+    if item is None:
+        return None
+    lex=[]
+    stack=[item]
+    ids=Counter()
+    while stack:
+        node=stack.pop()
+        if node.rule_id:
+            ids[node.rule_id]+=1
+        if node.lexical_candidate is not None:
+            c=node.lexical_candidate
+            lex.append((c.span_start,c.span_end,c.category,c.lemma))
+        stack.extend(node.children)
+    return {"root_rule":item.rule_id,
+            "rule_ids":list(ids.elements()),
+            "lexical":sorted(lex)}
+
 
 ROOT=Path(__file__).resolve().parents[1]
 BANDS=(("04-08",4,8),("09-16",9,16),("17-24",17,24),("25-32",25,32))
