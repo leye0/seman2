@@ -13,7 +13,7 @@ from pathlib import Path
 from statistics import median
 from time import perf_counter_ns
 
-from research.verbnet_lr.packed_prefix_projection import build_projection
+from research.verbnet_lr.packed_prefix_projection import build_projection, FlatPrefixProjection
 from scripts.benchmark_heavy_sentence_ab import BANDS,choose_cases
 from seman_parser.engine import Parser,ParserResources
 from seman_parser.segmentation import build_lattice
@@ -25,7 +25,7 @@ def group(rows):
     count=len(rows)
     keys=("partials","shared_groups","original_edges","interned_edges",
           "reused_edge_occurrences","original_edge_objects_estimated_bytes",
-          "projected_edge_objects_estimated_bytes")
+          "projected_edge_objects_estimated_bytes","flat_arrays_bytes")
     agg={k:sum(r[k] for r in rows) for k in keys}
     agg["n"]=count
     agg["edge_reuse_rate"]=(round(1-agg["interned_edges"]/agg["original_edges"],5)
@@ -33,8 +33,12 @@ def group(rows):
     agg["byte_ratio"]=(round(agg["projected_edge_objects_estimated_bytes"]/
                              agg["original_edge_objects_estimated_bytes"],5)
                        if agg["original_edge_objects_estimated_bytes"] else 0)
+    agg["flat_byte_ratio"]=(round(agg["flat_arrays_bytes"]/
+                                 agg["original_edge_objects_estimated_bytes"],5)
+                        if agg["original_edge_objects_estimated_bytes"] else 0)
     agg["p50_projection_ms"]=round(median(r["projection_ms"] for r in rows),4) if rows else None
     agg["projection_total_ms"]=round(sum(r["projection_ms"] for r in rows),3)
+    agg["flat_conversion_total_ms"]=round(sum(r["flat_conversion_ms"] for r in rows),3)
     agg["parser_total_ms"]=round(sum(r["parse_ms"] for r in rows),3)
     agg["saturation_count"]=sum(r["budget_exceeded"] for r in rows)
     return agg
@@ -65,6 +69,13 @@ def main():
             projection=build_projection(parsed.shared_forest,validate=True)
             projection_ms=(perf_counter_ns()-start)/1e6
             metrics=projection.metrics(parsed.shared_forest)
+            flat_start=perf_counter_ns()
+            flat=FlatPrefixProjection(projection)
+            flat_checked=flat.verify(parsed.shared_forest)
+            flat_ms=(perf_counter_ns()-flat_start)/1e6
+            flat_metrics=flat.metrics(parsed.shared_forest)
+            if flat_checked!=metrics["original_edges"]:
+                raise AssertionError("Flat packed prefix projection lost edges")
             row={
                 "index":i,"book_id":item["book_id"],"ordinal":item["ordinal"],
                 "band":item["band"],"tokens":item["tokens"],
@@ -72,6 +83,9 @@ def main():
                 "text":item["text"],"completed":best is not None,
                 "budget_exceeded":bool(parsed.stats.get("budget_exceeded")),
                 "parse_ms":round(parse_ms,4),"projection_ms":round(projection_ms,4),
+                "flat_conversion_ms":round(flat_ms,4),
+                "flat_arrays_bytes":flat_metrics["flat_arrays_bytes"],
+                "validated_flat_edges":flat_checked,
                 **metrics,
             }
             records.append(row)
@@ -91,7 +105,9 @@ def main():
             "All canonical PackedPartial derivations were reconstructed exactly in original order.",
             "Variant indices and rule-specific previous partial IDs remain independently recoverable.",
             "This builds a SECOND projection after parsing; it does NOT reduce the memory of the active parser.",
-            "Projected edge object estimates omit allocator overhead and some backing structures.",
+            "Python object-based prefix groups increase storage despite deduplicating recognition edges.",
+            "Flat packed arrays include per-rule membership and ordered edge references but exclude live hash indexes.",
+            "Flat storage is post-build and read-only, NOT an online memory benchmark or production optimizer.",
             "Compression ratios are specific to this encoding, not promised future parser speedups.",
             "The full grammar tree and lexical lattice remain untouched; no rules or corpus text changed.",
             "All sources are pinned novels; no author-held-out validation in this pilot.",
