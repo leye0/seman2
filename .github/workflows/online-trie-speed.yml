@@ -47,7 +47,7 @@ jobs:
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_shared_trie_forest
       - name: Compare trie and canonical recognition on difficult nonquoted novels
         run: |
-          PYTHONPATH=superparser python -u superparser/scripts/audit_category_prefix_trie.py \
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_online_trie.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --per-book-per-band 6 --minimum-tokens 17 \
             --out-dir /tmp/online-trie-speed
