@@ -53,6 +53,58 @@ for spoken-text snap hits.
   - **Total: 12/20**. Zero runtime exceptions. These are deliberately a
     tiny smoke cohort, **not** a population coverage estimate.
 
+## Larger real-novel quote-bearing audit (2026-10-18)
+
+[Run 39136905334](https://github.com/leye0/seman2/actions/runs/39136905334)
+succeeded: 17 bounded dialogue-unit tests, 16 canonical regression tests and
+both corpus checks. The new deterministic length-stratified research cohort has
+40 sentence spans per checked-in novel (160 total), drawn from 4–32 token
+sentences containing balanced explicit **double** quotation boundaries.
+This is **not** a human-validated corpus of 160 true direct-speech utterances.
+Not every quoted span is dialogue (quoted titles, words, verse, etc.); some
+selected sentence spans still have truncated surrounding speech punctuation.
+
+- 74/160 (46.25%) yielded a completed dialogue-scoped parse.
+- 13/160 yielded a completed **ordinary-grammar fallback**, which does not
+  establish that the quotation or speaker was represented.
+- 73/160 yielded no completed parse. There were **zero runtime exceptions**.
+- Per book (scoped/fallback/unparsed): Dickens **11/8/21**; Austen **16/0/24**;
+  Shelley **19/5/16**; Stevenson **28/0/12**.
+- Per sentence length: 4–8 tokens **25/36**, 9–16 **22/41**,
+  17–24 **15/41**, 25–32 **12/42** dialogue-scoped.
+- By visible punctuation layout (not a linguistic label):
+  * quote alone **16/36**;
+  * narration after quoted span **33/54**;
+  * narration before quoted span **6/18**;
+  * narration both before and after quoted span **5/21**;
+  * multiple quoted spans **14/31**.
+
+The original 20-item smoke still runs separately, unchanged. Its 12/20 and
+this audit's 74/160 **cannot be interpreted as a before/after regression**
+because the samples and length distribution differ.
+
+Representative failures include authentic interrogatives (e.g.
+`“Can you come to-morrow?”`), subordinate-only speech fragments, interleaved
+narrative, embedded direct quotations and multi-clause utterances; some long
+items hit the 20,000-item forest ceiling. Other failures are not necessarily
+grammar bugs: a Dickens example `‘And, “pretty.”’` uses nested typographic
+single and double quotations, while individual extracted sentence boundaries
+can have unpaired outer single quotes. Distinguish corpus segmentation,
+quotation recognition, grammatical completeness, and correct semantic roles
+before changing production rules.
+
+Next research priorities:
+1. Manually label a small held-out cross-book sample with **true dialogue vs
+   quoted mention**, original paragraph boundaries, exact quote spans,
+   speaker, reporting predicate and expected semantic links.
+2. Fix residual dialogue-aware sentence segmentation where original paragraph
+   context shows a mistaken cut. Do not normalize away literary punctuation.
+3. Repair independently confirmed syntactic constructions (interrogative,
+   vocative, multi-clause, split quoted utterance), with negative controls to
+   reject false dialogue and preserve ordinary prose analyses.
+4. Re-run **the same frozen samples** to measure coverage and semantic
+   correctness, rather than comparing unrelated smoke samples.
+
 ## Confirmed remaining cases
 
 - Direct-speech spans containing subordinate-only fragments (`"because ..."`),
