@@ -52,10 +52,10 @@ class SentenceBoundaryTests(unittest.TestCase):
         from pathlib import Path
         with TemporaryDirectory() as folder:
             p = Path(folder) / "dialogue.txt"
-            p.write_text("“No!”\n\n“Yes?”\n\n“Go!”\n", encoding="utf-8")
+            p.write_text("“No!”\n\n“Yes?”\n\n“Go!”\n\n“STOP!”\n\nPart of the crew marched.\n", encoding="utf-8")
             self.assertEqual(
                 [r.text for r in extract_sentences(p)],
-                ["“No!”", "“Yes?”", "“Go!”"],
+                ["“No!”", "“Yes?”", "“Go!”", "“STOP!”", "Part of the crew marched."],
             )
 
     def test_research_extract_keeps_quote_marks(self):

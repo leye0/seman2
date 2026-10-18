@@ -107,7 +107,9 @@ def extract_sentences(path: str | Path, *, limit: int | None = None) -> list[Sen
         line = raw.strip()
         if not line or _NOISE.match(line):
             continue
-        if line.isupper() or re.match(r"^(PART|CHAPTER)\b", line, re.I):
+        if ((line.isupper() and not has_final_punctuation(line)) or re.match(
+                r"^(?:PART|CHAPTER)\s+(?:[IVXLCDM]+|\d+)\b", line, re.I
+        )):
             continue
         if line.startswith("#"):
             continue
