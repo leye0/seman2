@@ -34,6 +34,8 @@ def quantile(values, portion):
     if not values:
         return None
     ordered=sorted(values)
+    if len(ordered)==1:
+        return ordered[0]
     point=(len(ordered)-1)*portion
     lo=int(point)
     hi=min(lo+1,len(ordered)-1)
