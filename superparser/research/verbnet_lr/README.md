@@ -1,140 +1,20 @@
-# VerbNet → WordNet → Left-to-Right hints (experimental)
+# Canonical Layer 1 research utilities
 
-This module **does not** replace or modify the Seman2 runtime. It compiles
-VerbNet 3.4 XML, optionally joins VerbNet *WordNet sense keys* to WordNet 3.0
-`dict/index.sense`, and exposes ordered post-verbal grammatical expectations.
-It does not create a parse forest or generate Python grammar rules.
+The directory name `verbnet_lr` is **historical**, not the name of the current parser. The compiled left-to-right VerbNet reader, template snapping, partial witness and hybrid C alternatives were explicitly retired from the active tree during cleanup. Their code is recoverable from Git history at `e8322eb7fdb6ab1213c1a44f9b3d032f29d4d7a8`; their research findings remain summarized in [docs/RESEARCH_HISTORY_AND_DECISIONS.md](../../../docs/RESEARCH_HISTORY_AND_DECISIONS.md). Do not import removed modules or treat a template hit as a grammatical analysis.
 
-## Build (once, offline)
+The **retained executable helpers** are:
 
-~~~bash
-cd superparser
-python -m research.verbnet_lr /path/to/verbnet/verbnet3.4 \
-  --wordnet-sense-index /path/to/WordNet-3.0/dict/index.sense \
-  --output /tmp/verbnet_lr.json
-~~~
+- `clean_novel_corpus.py`: manifest-based integrity and loading of the **four checked-in cleaned public-domain novels** in `corpora/`. Their punctuation and quote evidence must remain untouched.
+- `gutenberg_novels.py`: reproducible Gutenberg extraction and sentence-band selection (dependent on the canonical sentence segmenter).
+- `continuation_probe.py`: a read-only grammar-prefix risk analyzer compiled from the same rules as the authoritative vector parser. It does **not** alter parsing, remove lexical alternatives or certify grammatical correctness.
 
-Obtain the XML from https://github.com/cu-clear/verbnet. No XML is vendored.
-If `--wordnet-sense-index` is absent, alignment is **lemma-only**, not verified.
-Frames marked `unresolved` have VerbNet keys but no matching WordNet offsets;
-they are not used as sense-verified hints.
+The actual Layer 1 parser remains `superparser/seman_parser/engine.py` + `vector_chart.py`, with `segmentation.py` and the declarative grammar in `superparser/data/`.
 
-## Read-only query
-
-~~~python
-from research.verbnet_lr import read_index
-from research.verbnet_lr.adapter import predict_candidate
-
-index = read_index('/tmp/verbnet_lr.json')
-# LexicalCandidate is produced by Seman2's existing morphology/WordNet lattice.
-hint = predict_candidate(index, candidate, ('NP', 'PREP:to'))
-print(hint.status, hint.confidence, hint.next_events)
-~~~
-
-`observed` is a stream of **completed category events** since the lexical verb,
-not surface words. Example: *give John a book* → `NP, NP`; *give a book to John*
-→ `NP, PREP:to, NP`. The caller owns event recognition, including morphology,
-auxiliaries, co-reference, head selection and ambiguity. `PREFIX` is provisional;
-`ATTESTED` means some VerbNet frame ends here, not that the sentence is valid.
-`UNKNOWN` **never** means ungrammatical. `next_events` provides priorities, not
-hard constraints. Sense-filtered predictions (`sense_verified`) may be more
-trustworthy but are still not exhaustive.
-
-## Current boundary and limitations
-
-- An exact match requires WordNet's `index.sense`; Seman2's lexical sense IDs
-  contain a synset offset, and the adapter joins without creating new candidates.
-- VerbNet members in nested subclasses inherit **ancestor** frames; a parent
-  member does not inherit its children's frames.
-- XML syntax not understood by the prototype is **skipped and counted**, not
-  silently reduced into a misleading pattern.
-- Some VerbNet `SYNRESTRS` are projected to infinitive/gerund/clause categories;
-  the remaining restrictions are *not* fully enforced. No negative syntax claims.
-- An underspecified `<PREP>` is represented as `PREP:*`; it is weak evidence.
-- `WordNet 3.0` vs VerbNet sense mappings may not cover every key. Track this
-  alignment coverage before enabling the hints on any parser hot path.
-- Prefix index is a shared trie per verb, built lazily. It is not a packed
-  parse forest, and does no global search or backtracking.
-- Requires controlled evaluation on the full VerbNet corpus and the Seman2
-  positive/negative/holdout sets **before** any production integration.
-
-## Fast tests
-
-~~~bash
-cd superparser
-python -m unittest discover -s tests -p 'test_verbnet_lr.py' -v
-~~~
-
-## Full-corpus, reproducible benchmark
-
-The branch includes the pinned upstream VerbNet 3.4 revision
-`ae8e9cfdc2c0d3414b748763612f1a0a34194cc1`.
-GitHub Actions runs the tests and compiler on the full XML source, joins the
-WordNet 3.0 `index.sense`, and **commits** both outputs into this research
-branch, not into main:
-
-- `full_corpus_report.json`: counts, exact-sense coverage, Seman2 validation
-  predicate coverage, manually annotated frame hints, and lookup p50/p95/p99.
-- `verbnet34.compiled.json.gz`: portable compiled lexical hints, not VerbNet XML.
-
-[Research workflow](https://github.com/leye0/seman2/actions/workflows/verbnet-lr-research.yml)
-
-To reproduce using your project's WordNet path automatically (works without
-installing pytest, nltk, or new runtime dependencies):
+## Tests
 
 ```bash
-PYTHONPATH=superparser .venv-popper/bin/python superparser/scripts/benchmark_verbnet_lr.py \
-  --fetch \
-  --report superparser/research/verbnet_lr/full_corpus_report.json \
-  --index-out superparser/research/verbnet_lr/verbnet34.compiled.json.gz
+PYTHONPATH=superparser python -m research.verbnet_lr.clean_novel_corpus --check
+PYTHONPATH=superparser python -m unittest -v superparser.tests.test_continuation_probe superparser.tests.test_structural_prefix_risk
 ```
 
-For an already-cloned VerbNet checkout, replace `--fetch` with
-`--verbnet-dir /path/to/verbnet/verbnet3.4`. For a nonstandard WordNet
-installation, pass `--wordnet-sense-index /path/to/dict/index.sense`.
-Compilation works without the WordNet index but then **exact sense alignment
-is unavailable**. For rapid targeted tests, use:
-
-```bash
-PYTHONPATH=superparser .venv-popper/bin/python -m unittest discover \
-  -s superparser/tests -p 'test_verbnet_lr*.py' -v
-```
-
-The case fixture `oracle_cases.jsonl` explicitly annotates the **events**
-following the verb. They are not generated by the real Seman2 parser. Thus
-the report measures lexical coverage and hint latency, **not end-to-end
-parsing accuracy or improved 5 ms sentence parsing**. Production parsing
-remains unchanged until an A/B test justifies integration.
-
-## Next experiment
-
-Measure coverage, index size, time per `predict_candidate()`, prefix memory,
-mutant discrimination *without hard rejection*, and compare A=baseline,
-B=lemma-only, C=exact WordNet-sense hints on held-out sentences. Then wire the
-hint interface into the existing predictive Left-to-Right research engine,
-not into `vector_chart.py`.
-
-## Whole-structure snapping experiment (opt-in, no production changes)
-
-`full_structure_snap.FullStructureSnapIndex` indexes **entire derivation
-trees**, keyed by each full sequence of lexical categories. Multiple different
-attachments with exactly the same lexical sequence remain separate templates.
-All original lexical alternatives stay in the lattice. For each compatible
-template, the original Seman2 feature unifier checks the grammar and yields a
-materialized tree; no NP/PP subtree *search* runs on this recognition path.
-
-Templates tagged `candidate` originate from an ordinary completed parse and
-are NOT assumed independently correct. Only an external verifier may supply
-`evidence="verified"`. A lexical or structural mismatch means *no recognized
-template*, not an ungrammatical sentence. Explicit budgets mark incomplete
-results, and `SnappingResearchReader` falls back to the unchanged L-R reader
-when a match is missing or the result is incomplete. The initial prototype
-supports single-token lexical slots, not multiword matching, persistence,
-or 20-million-template performance claims.
-
-The GitHub workflow runs
-`superparser/scripts/benchmark_verbnet_snap.py` with 50 DEV sentences as the
-candidate source, then measures syntax recognition and latency on the 70
-unseen VALIDATION/HOLDOUT sentences. It produces
-`snap_holdout_report.json` and reports distinct lattice-building and
-recognition-only timings. No held-out sentence trains the index.
+For the architecture, output contract, limitations and future Layer 2 interface, see the [root README](../../../README.md) and [Layer 1 architecture](../../../docs/ARCHITECTURE_LAYER1.md).
