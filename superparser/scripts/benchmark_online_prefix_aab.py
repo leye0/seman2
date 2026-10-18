@@ -21,7 +21,7 @@ from seman_parser.segmentation import build_lattice
 from seman_parser.vector_chart import VectorGrammar
 
 ROOT=Path(__file__).resolve().parents[1]
-ARMS=("reference_a","online","reference_b")
+ARMS=("reference_a","online","flat","reference_b")
 METRICS=(
     "completed","budget_exceeded","kbest_budget_exceeded",
     "forest_nodes","partial_states","partial_derivations",
@@ -30,16 +30,17 @@ METRICS=(
 )
 
 
-def parser_for(resources,*,online:bool):
+def parser_for(resources,*,online:bool,flat:bool=False):
     p=Parser(resources,cache_size=0,max_items=20000)
     if online:
         old=p._vector_grammar
-        p._vector_grammar=VectorGrammar(old.grammar,online_prefix_edges=True)
+        p._vector_grammar=VectorGrammar(
+            old.grammar,online_prefix_edges=not flat,flat_prefix_edges=flat)
         dialog=p._dialogue_vector_grammar
         if dialog is not None:
             p._dialogue_vector_grammar=VectorGrammar(
                 dialog.grammar,preserve_quote_delimiters=True,
-                online_prefix_edges=True)
+                online_prefix_edges=not flat,flat_prefix_edges=flat)
     return p
 
 
@@ -58,6 +59,7 @@ def run_one(parser,lattice):
         "alternatives":[x.as_dict() for x in alt],
         **{key:(result.completed if key=="completed" else stats.get(key))
            for key in METRICS},
+        "online_prefix_flat_enabled":stats["online_prefix_flat_enabled"],
         "online_prefix_groups":stats["online_prefix_groups"],
         "online_prefix_unique_edges":stats["online_prefix_unique_edges"],
         "online_prefix_shared_edge_hits":stats["online_prefix_shared_edge_hits"],
@@ -132,11 +134,13 @@ def cohort(rows):
             "saturations":sum(bool(r[arm]["budget_exceeded"]) for r in rows),
         }
     base=o["reference_a"]["sum_ms"]
-    for arm in ("online","reference_b"):
+    for arm in ("online","flat","reference_b"):
         o[arm]["ratio_vs_a"]=round(o[arm]["sum_ms"]/base,5) if base else None
     o["edge_count"]=sum(r["edges_verified"] for r in rows)
     o["unique_online_edges"]=sum(r["online"]["online_prefix_unique_edges"]
                                  for r in rows)
+    o["unique_flat_edges"]=sum(r["flat"]["online_prefix_unique_edges"]
+                               for r in rows)
     o["group_count"]=sum(r["online"]["online_prefix_groups"] for r in rows)
     return o
 
@@ -152,6 +156,7 @@ def main():
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=args.wordnet_dir)
     baseline=parser_for(resources,online=False)
     experimental=parser_for(resources,online=True)
+    compact=parser_for(resources,online=True,flat=True)
     args.out_dir.mkdir(parents=True,exist_ok=True)
     rows=[]
     with (args.out_dir/"per_sentence.jsonl").open(
@@ -159,7 +164,7 @@ def main():
         for i,item in enumerate(cases):
             lattice=build_lattice(item["text"],resources.lexicon,multiword_max=1)
             tasks=[("reference_a",baseline),("online",experimental),
-                   ("reference_b",baseline)]
+                   ("flat",compact),("reference_b",baseline)]
             if i%2:
                 tasks.reverse()
             runs={}
@@ -167,9 +172,12 @@ def main():
             for name,parser in tasks:
                 result[name],runs[name]=run_one(parser,lattice)
             checked_equal(runs["reference_a"],runs["online"])
+            checked_equal(runs["reference_a"],runs["flat"])
             checked_equal(runs["reference_a"],runs["reference_b"])
             verified=all_derivations_equal(
                 result["reference_a"],result["online"])
+            if all_derivations_equal(result["reference_a"],result["flat"])!=verified:
+                raise AssertionError("Flat online storage changed ordered edges")
             if verified!=runs["online"]["partial_derivations"]:
                 raise AssertionError("Missing original partial derivations")
             for parsed in result.values():
@@ -180,6 +188,7 @@ def main():
                 traced={
                     "reference":memory_once(baseline,lattice),
                     "online":memory_once(experimental,lattice),
+                    "flat":memory_once(compact,lattice),
                 }
             row={
                 "index":i,"book_id":item["book_id"],"band":item["band"],
@@ -209,13 +218,19 @@ def main():
             "band":r["band"],"book_id":r["book_id"],
             "reference_peak_bytes":r["memory_sample"]["reference"]["peak_allocated_bytes"],
             "online_peak_bytes":r["memory_sample"]["online"]["peak_allocated_bytes"],
+            "flat_peak_bytes":r["memory_sample"]["flat"]["peak_allocated_bytes"],
+            "flat_over_reference":round(
+                r["memory_sample"]["flat"]["peak_allocated_bytes"]/
+                r["memory_sample"]["reference"]["peak_allocated_bytes"],5)
+              if r["memory_sample"]["reference"]["peak_allocated_bytes"] else None,
             "online_over_reference":round(
                 r["memory_sample"]["online"]["peak_allocated_bytes"]/
                 r["memory_sample"]["reference"]["peak_allocated_bytes"],5)
               if r["memory_sample"]["reference"]["peak_allocated_bytes"] else None,
         } for r in memory],
         "notes":[
-            "The live recognizer now interns edges AS THEY ARE CREATED; this is not posthoc compaction.",
+            "Both optional modes intern edges AS THEY ARE CREATED, not as posthoc compaction.",
+            "Flat mode avoids per-group Python objects and per-variant Python arrays.",
             "Every canonical partial and every ordered derivation was reconstructed and compared.",
             "Grammatical trees and first two k-best analyses were matched before timing summary.",
             "Original state-count and forest-budget accounting remains unchanged.",
