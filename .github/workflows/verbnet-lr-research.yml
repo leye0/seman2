@@ -1,38 +1,7 @@
-name: VerbNet Left-to-Right Research
-
+name: Archived VerbNet Left-to-Right Benchmark (manual only)
+# Historical, expensive left-to-right experiments. No automatic push CI.
+# Kept for reproducibility until the legacy-research cleanup is completed.
 on:
-  push:
-    branches:
-      - research/verbnet-left-to-right-poc
-    paths:
-      - '.github/workflows/verbnet-lr-research.yml'
-      - 'superparser/research/verbnet_lr/*.py'
-      - 'superparser/scripts/probe_feature_witness.py'
-      - 'superparser/scripts/probe_packed_witness.py'
-      - 'superparser/tests/test_feature_witness.py'
-      - 'superparser/research/verbnet_lr/oracle_cases.jsonl'
-      - 'superparser/scripts/benchmark_verbnet_lr.py'
-      - 'superparser/scripts/benchmark_verbnet_reader.py'
-      - 'superparser/scripts/benchmark_verbnet_negatives.py'
-      - 'superparser/scripts/assess_verbnet_grammar_quality.py'
-      - 'superparser/scripts/benchmark_verbnet_long.py'
-      - 'superparser/scripts/probe_grammar_upper_bound.py'
-      - 'superparser/scripts/benchmark_ud_ewt_lr.py'
-      - 'superparser/research/verbnet_lr/long_sentence_stress.jsonl'
-      - 'superparser/research/verbnet_lr/negative_minimal_pairs.jsonl'
-      - 'superparser/seman_parser/reading_kernel_compiled.py'
-      - 'superparser/seman_parser/reading_kernel_compiled_adapter.py'
-      - 'superparser/tests/test_verbnet_lr*.py'
-      - 'superparser/tests/test_verbnet_guidance.py'
-      - 'superparser/tests/test_verbnet_tree_evidence.py'
-      - 'superparser/tests/test_compiled_lookahead2.py'
-      - 'superparser/tests/test_bounded_checkpoints.py'
-      - 'superparser/tests/test_construction_guard.py'
-      - 'superparser/tests/test_fast_multiword.py'
-      - 'superparser/tests/test_token_only_lattice.py'
-      - 'superparser/tests/test_unary_promotions.py'
-      - 'superparser/tests/test_reduce_checkpoints.py'
-      - 'superparser/tests/test_grammar_upper_bound.py'
   workflow_dispatch:
 
 concurrency:
