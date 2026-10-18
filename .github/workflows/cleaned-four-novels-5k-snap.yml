@@ -1,0 +1,79 @@
+name: Cleaned Four Novels — 5000 x 2 Compiled Snap
+on:
+  push:
+    branches:
+      - research/verbnet-left-to-right-poc
+    paths:
+      - 'superparser/scripts/benchmark_cleaned_four_novels_5k.py'
+      - 'superparser/tests/test_benchmark_cleaned_four_novels_5k.py'
+      - '.github/workflows/cleaned-four-novels-5k-snap.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cleaned-four-novels-snap-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cleaned-snap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+                 headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              data=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(name))
+          PY
+      - name: Validate all four cleaned novel sources and sampling
+        run: |
+          PYTHONPATH=superparser python -m research.verbnet_lr.clean_novel_corpus --check
+          PYTHONPATH=superparser python -m unittest -v \
+            superparser.tests.test_clean_novel_corpus \
+            superparser.tests.test_benchmark_cleaned_four_novels_5k \
+            superparser.tests.test_compiled_structure_snap
+      - name: Smoke benchmark 40 cleaned sentences twice
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_cleaned_four_novels_5k.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --size 40 --max-tokens 32 --checkpoint 10 \
+            --out /tmp/cleaned-four-novels-smoke.json
+      - name: Learn and replay 5000 cleaned sentences across four authors
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/benchmark_cleaned_four_novels_5k.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --size 5000 --max-tokens 32 --checkpoint 50 \
+            --kbest-work-limit 100000 \
+            --out /tmp/cleaned-four-novels-5000x2.json
+      - name: Preserve results even on strict latency failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cleaned-four-novels-5000x2-results
+          path: |
+            /tmp/cleaned-four-novels-smoke.json
+            /tmp/cleaned-four-novels-5000x2.json
+          if-no-files-found: warn
+          retention-days: 21
