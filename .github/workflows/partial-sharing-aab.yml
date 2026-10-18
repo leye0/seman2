@@ -1,10 +1,5 @@
 name: Research — Partial Sharing AAB
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/partial-sharing-aab.yml'
-      - 'superparser/scripts/benchmark_partial_sharing_aab.py'
   workflow_dispatch:
 permissions:
   contents: read

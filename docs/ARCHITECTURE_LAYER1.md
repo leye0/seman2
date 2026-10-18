@@ -61,6 +61,8 @@ Pilot on 256 real sentences: bitset probe median **0.0339 ms**, p95 **0.0561 ms*
 
 **Intended next iteration:** predict actual risk cheaply, then selectively use *provably safe* shared-state factoring, clause decomposition or post-budget recovery, protecting the default fast path. A lower search budget is not itself a correctness improvement.
 
+**Latest forest experiment (18 Oct):** 64 real-novel examples contain many states with exactly matched consumed grammar prefixes, but the packed derivation structure still distinguishes individual rules. Research-only `VectorGrammar(cache_boundaries=True)` avoids recomputing the same inter-token whitespace/quote scan, yet shows unstable timing relative to A/A controls and is disabled by default. See [prefix-sharing audit](FOREST_PREFIX_SHARING_FINDINGS.md).
+
 ## 5. Layer 2: what is intentionally out of scope
 
 Layer 1's responsibility is syntactic analyses **plus lexical evidence**, not deciding that two mentions refer to the same real-world person or that a remembered event is true. Downstream work should resolve entities/individuals, events and temporal/modality relations, build persistent episodes and apply memory/induction and learning while retaining provenance to original tokens and grammatical choices.

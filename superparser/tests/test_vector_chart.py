@@ -50,6 +50,10 @@ class VectorChartTests(unittest.TestCase):
                 new_best = new.best()
                 self.assertEqual(old_best.as_dict() if old_best else None,
                                  new_best.as_dict() if new_best else None)
+                self.assertEqual(
+                    [item.as_dict() for item in old.alternatives(limit=2)],
+                    [item.as_dict() for item in new.alternatives(limit=2)],
+                    "The first two derivations, syntax and lexical leaves must agree")
                 self.assertEqual(old.stats["boundary_cache_hits"],0)
                 self.assertEqual(old.stats["boundary_cache_misses"],0)
                 self.assertGreater(new.stats["boundary_cache_hits"],0)

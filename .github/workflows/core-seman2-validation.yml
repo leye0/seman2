@@ -70,4 +70,5 @@ jobs:
             superparser.tests.test_vector_chart \
             superparser.tests.test_sentence_boundaries \
             superparser.tests.test_structural_prefix_risk \
+            superparser.tests.test_partial_sharing_aab \
             superparser.tests.test_continuation_probe
