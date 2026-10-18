@@ -1,0 +1,66 @@
+{
+  "schema": "seman2-clean-novel-corpus-v1",
+  "format": "UTF-8 plaintext; one unwrapped original paragraph per line, separated by a blank line; no prefaces, tables of contents, chapter headings or Gutenberg apparatus",
+  "books": [
+    {
+      "ebook_id": 766,
+      "title": "David Copperfield",
+      "author": "Charles Dickens",
+      "path": "superparser/research/verbnet_lr/corpora/david_copperfield_766.txt",
+      "source_repo": "GITenberg/David-Copperfield_766",
+      "source_file": "766-0.txt",
+      "source_git_blob_sha": "4c3abb9f7d3a7e14e4675584bfecfbd66b032b4d",
+      "clean_git_blob_sha": "c90fd41e68c146db27b9830b70958c815d979052",
+      "paragraphs": 7107,
+      "chapters": 64,
+      "letters": 0,
+      "source_url": "https://github.com/GITenberg/David-Copperfield_766/blob/master/766-0.txt",
+      "source_raw_url": "https://raw.githubusercontent.com/GITenberg/David-Copperfield_766/master/766-0.txt"
+    },
+    {
+      "ebook_id": 1342,
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "path": "superparser/research/verbnet_lr/corpora/pride_and_prejudice_1342.txt",
+      "source_repo": "GITenberg/Pride-and-Prejudice_1342",
+      "source_file": "1342-0.txt",
+      "source_git_blob_sha": "20c3737a33af2501e4c0597285ad630ef42e8e46",
+      "clean_git_blob_sha": "7454447f3a6ec62cccc853e1448e87fea53d338e",
+      "paragraphs": 2057,
+      "chapters": 61,
+      "letters": 0,
+      "source_url": "https://github.com/GITenberg/Pride-and-Prejudice_1342/blob/master/1342-0.txt",
+      "source_raw_url": "https://raw.githubusercontent.com/GITenberg/Pride-and-Prejudice_1342/master/1342-0.txt"
+    },
+    {
+      "ebook_id": 84,
+      "title": "Frankenstein",
+      "author": "Mary Shelley",
+      "path": "superparser/research/verbnet_lr/corpora/frankenstein_84.txt",
+      "source_repo": "GITenberg/Frankenstein_84",
+      "source_file": "84.txt",
+      "source_git_blob_sha": "176b1be39b6d925277c2d3bf413959a5dae8f095",
+      "clean_git_blob_sha": "d48b9e881b583c2ce36bc747ebd8df3c19a46582",
+      "paragraphs": 677,
+      "chapters": 24,
+      "letters": 4,
+      "source_url": "https://github.com/GITenberg/Frankenstein_84/blob/master/84.txt",
+      "source_raw_url": "https://raw.githubusercontent.com/GITenberg/Frankenstein_84/master/84.txt"
+    },
+    {
+      "ebook_id": 120,
+      "title": "Treasure Island",
+      "author": "Robert Louis Stevenson",
+      "path": "superparser/research/verbnet_lr/corpora/treasure_island_120.txt",
+      "source_repo": "GITenberg/Treasure-Island_120",
+      "source_file": "120.txt",
+      "source_git_blob_sha": "5489be98377a7b4bac93b55bfb518d17cae6e68b",
+      "clean_git_blob_sha": "ab18d4971b820ae1742b53c2d84a81b746bbc25b",
+      "paragraphs": 1375,
+      "chapters": 34,
+      "letters": 0,
+      "source_url": "https://github.com/GITenberg/Treasure-Island_120/blob/master/120.txt",
+      "source_raw_url": "https://raw.githubusercontent.com/GITenberg/Treasure-Island_120/master/120.txt"
+    }
+  ]
+}
