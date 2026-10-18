@@ -87,9 +87,11 @@ def split_plan(text,tokens,parser):
         spans=((left[0].start,left[-1].end),
                (right[0].start,right[-1].end))
         choices.append((abs(len(left)-len(right)),index,(spans,(token,))))
-    if not choices:
+    if len(choices)!=1:
+        # Multiple plausible conjunctions are too ambiguous for an
+        # upfront speculative parse: retain the original shared forest.
         return None
-    return min(choices,key=lambda x:(x[0],x[1]))[2]
+    return choices[0][2]
 
 
 def timed(action):
@@ -158,7 +160,8 @@ def summarize(rows,source):
             "All three arms receive the same real novel text and prebuilt lattice.",
             "No modifications to canonical grammar or default parser.",
             "The early filter only applies to unquoted 17+ token sentences.",
-            "Clause splitting only applies to unquoted 24+ token structurally plausible lists.",
+            "Clause splitting only applies to unquoted 22+ token guarded lists or a single coordination.",
+            "Speculative segment parses use a separate 4500-item forest cap and beam 4; failure falls back.",
             "Split reconstructions use the existing SegmentInterface assembly grammar.",
             "Completeness/signature matching are NOT human grammatical correctness.",
             "Both strategies report losses and structural changes before any promotion.",
@@ -173,6 +176,7 @@ def run(args):
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=args.wordnet_dir)
     parser=Parser(resources,cache_size=0,max_items=args.max_items)
     early_parser=Parser(resources,cache_size=0,max_items=args.max_items)
+    split_parser=Parser(resources,cache_size=0,max_items=min(4500,args.max_items),beam=4)
     early_parser._vector_grammar=VectorGrammar(
         parser._vector_grammar.grammar,early_lexical_filter=True)
     if parser._dialogue_vector_grammar is not None:
@@ -202,7 +206,7 @@ def run(args):
 
             def split_first():
                 if plan is not None:
-                    candidate=parser._parse_hierarchical(text,lattice.tokens,plan)
+                    candidate=split_parser._parse_hierarchical(text,lattice.tokens,plan)
                     if candidate is not None and candidate.completed:
                         split_route[0]="segmented"
                         return candidate
