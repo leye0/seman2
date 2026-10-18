@@ -164,6 +164,14 @@ class AdaptiveRouterTests(unittest.TestCase):
                 self.assertEqual(indexed.stats["complexity_route"],"indexed")
                 self.assertTrue(indexed.stats["indexed_recognition_enabled"])
                 self.assertFalse(indexed.stats["online_prefix_edges_enabled"])
+                self.assertGreater(indexed.stats["indexed_masks_elided"],0)
+                self.assertEqual(canonical.stats["indexed_masks_elided"],0)
+                self.assertTrue(all(
+                    isinstance(key,int)
+                    for key in indexed.shared_forest.partial_by_key))
+                self.assertEqual(
+                    len(indexed.shared_forest.partial_by_key),
+                    len(indexed.shared_forest.partials))
                 for field in ("forest_nodes","partial_states",
                               "partial_derivations","structural_derivations",
                               "partial_proposals","duplicate_partial_proposals",
