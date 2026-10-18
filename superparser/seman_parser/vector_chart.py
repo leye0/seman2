@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+import json
 from dataclasses import dataclass, field, replace
 from heapq import heappop, heappush
 from itertools import count
@@ -15,6 +16,7 @@ from .features import (
     substitute_structure, unify,
 )
 from .grammar import Grammar, GrammarRule
+from .prefix_edges import OnlinePrefixEdges
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern
@@ -70,8 +72,10 @@ class PackedPartial:
     dot: int
     start: int
     end: int
-    derivations: list[PartialDerivation] = field(default_factory=list)
-    seen: set[tuple[int | None, int]] = field(default_factory=set)
+    # When online_prefix_edges is enabled, 'derivations' is a lazy
+    # rule-specific PrefixEdgeView instead of a Python object list.
+    derivations: Sequence[PartialDerivation] = field(default_factory=list)
+    seen: set[tuple[int | None, int]] | None = field(default_factory=set)
 
 
 @dataclass(frozen=True, slots=True)
@@ -273,7 +277,8 @@ class VectorGrammar:
 
     def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False,
                  preserve_quote_delimiters: bool = False,
-                 cache_boundaries: bool = False) -> None:
+                 cache_boundaries: bool = False,
+                 online_prefix_edges: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
         self.early_lexical_filter = early_lexical_filter
@@ -282,6 +287,9 @@ class VectorGrammar:
         # Research A/B: memoize identical punctuation/whitespace boundary
         # scans within a sentence. Default off pending paired benchmarks.
         self.cache_boundaries = cache_boundaries
+        # Experimental online group edge interning; canonical mode remains
+        # byte-for-byte equivalent and is still the default.
+        self.online_prefix_edges = online_prefix_edges
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
         self._pure_lexical_categories = frozenset(
@@ -313,6 +321,27 @@ class VectorGrammar:
             first.setdefault(rhs_ids[0], []).append(index)
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
+        self.prefix_ids: tuple[tuple[int, ...], ...] = ()
+        if online_prefix_edges:
+            # Compile all consumed-symbol signatures ONCE per grammar, not
+            # once per partial state. Keep variant-specific rule indices.
+            names: dict[tuple[str, ...], int] = {}
+            prefixes: list[tuple[int, ...]] = []
+            for item in self.rules:
+                consumed: tuple[str, ...] = ()
+                per_rule: list[int] = []
+                for dot in range(len(item.rule.rhs) + 1):
+                    if dot:
+                        symbol = item.rule.rhs[dot - 1]
+                        consumed += (json.dumps(symbol.as_dict(),sort_keys=True,
+                                               separators=(",",":"),ensure_ascii=False),)
+                    idx = names.get(consumed)
+                    if idx is None:
+                        idx = len(names)
+                        names[consumed] = idx
+                    per_rule.append(idx)
+                prefixes.append(tuple(per_rule))
+            self.prefix_ids = tuple(prefixes)
 
     def _bit(self, category: str) -> int:
         category_id = intern(category)
@@ -386,6 +415,11 @@ class VectorGrammar:
             "structural_derivations": forest.derivation_count,
             "partial_states": len(forest.partials),
             "partial_derivations": forest.partial_derivation_count,
+            "online_prefix_edges_enabled": self.online_prefix_edges,
+            **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
+               {"online_prefix_groups":0,"online_prefix_unique_edges":0,
+                "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
+                "online_prefix_array_bytes":0}),
             "partial_proposals": forest.partial_proposals,
             "duplicate_partial_proposals": forest.duplicate_partial_proposals,
             "duplicate_transitions_avoided": forest.duplicate_transitions_avoided,
@@ -484,6 +518,10 @@ class _VectorForest:
         self.boundary_cache_hits = 0
         self.boundary_cache_misses = 0
         self._next_start_cache: dict[int, int] = {}
+        self.prefix_store = (
+            OnlinePrefixEdges(compiled.prefix_ids, PartialDerivation)
+            if compiled.online_prefix_edges else None
+        )
         if compiled.cache_boundaries:
             # Assign a cached implementation once, avoiding an extra branch
             # at each hot-path call in the *uncached* reference parser.
@@ -618,11 +656,19 @@ class _VectorForest:
             partial = PackedPartial(len(self.partials), rule_index, dot, start, end)
             self.partials.append(partial)
             self.partial_by_key[key] = partial
+            if self.prefix_store is not None:
+                partial.derivations = self.prefix_store.register(partial)
+                partial.seen = None
             self.operations += 1
-        signature = (previous_id, child_id)
-        if signature not in partial.seen:
-            partial.seen.add(signature)
-            partial.derivations.append(PartialDerivation(previous_id, child_id))
+        if self.prefix_store is None:
+            signature = (previous_id, child_id)
+            if signature not in partial.seen:
+                partial.seen.add(signature)
+                partial.derivations.append(PartialDerivation(previous_id, child_id))
+                self.partial_derivation_count += 1
+            else:
+                self.duplicate_partial_proposals += 1
+        elif partial.derivations.append(previous_id, child_id):
             self.partial_derivation_count += 1
         else:
             self.duplicate_partial_proposals += 1
