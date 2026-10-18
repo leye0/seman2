@@ -10,6 +10,7 @@ generalized author-held-out production model.
 """
 from __future__ import annotations
 import argparse
+import gc
 from collections import Counter
 from hashlib import sha256
 import json
@@ -165,6 +166,7 @@ def group(rows):
     result["probe_total_ms"]=round(sum(r["adaptive"]["probe_ms"] for r in rows),3)
     result["indexed_masks_elided"]=sum(
         r["adaptive"]["indexed_masks_elided"] for r in rows)
+    result["gc_setup_ms"]=round(sum(r["gc_setup_ms"] for r in rows),3)
     result["recognition_totals_ms"]={
         arm:round(sum(r[arm]["recognition_ms"] for r in rows),3)
         for arm in ARMS}
@@ -198,6 +200,8 @@ def main():
     p.add_argument("--hard-share",type=float,default=.25)
     p.add_argument("--difficult-strategy",choices=("flat","online","indexed"),
                    default="flat")
+    p.add_argument("--isolate-gc",action="store_true",
+                   help="Collect before each sentence and suspend cyclic GC only for A/B/A timing")
     p.add_argument("--out-dir",type=Path,required=True)
     args=p.parse_args()
     if not 0<args.hard_share<1:
@@ -237,8 +241,22 @@ def main():
                 tasks.reverse()
             results={}
             reports={}
-            for name,parser in tasks:
-                results[name],reports[name]=timed(parser,lattice)
+            # Research timing only: never let an unpredictable cyclic-GC
+            # scan land inside one of the three timed arms. We still
+            # measure aggregate cleanup separately, not as an optimization.
+            setup_ns=perf_counter_ns()
+            if args.isolate_gc:
+                gc.collect()
+            gc_setup_ms=(perf_counter_ns()-setup_ns)/1e6
+            was_gc_enabled=gc.isenabled()
+            if args.isolate_gc:
+                gc.disable()
+            try:
+                for name,parser in tasks:
+                    results[name],reports[name]=timed(parser,lattice)
+            finally:
+                if args.isolate_gc and was_gc_enabled:
+                    gc.enable()
             parity(reports["reference_a"],reports["adaptive"])
             parity(reports["reference_a"],reports["reference_b"])
             routed=reports["adaptive"]["route"]==args.difficult_strategy
@@ -256,6 +274,7 @@ def main():
                 "threshold":policies[item["book_id"]].threshold_for(item["tokens"]),
                 "train_score":training_scores.get(i),
                 "verified_edges":checked,
+                "gc_setup_ms":round(gc_setup_ms,4),
                 **{k:{f:v for f,v in record.items()
                       if f not in ("best","alternatives")}
                    for k,record in reports.items()},
@@ -271,6 +290,7 @@ def main():
     result={
         "schema":"adaptive-grammar-risk-routing-aab-v1",
         "strategy":args.difficult_strategy,
+        "isolated_cyclic_gc":args.isolate_gc,
         "thresholds":{str(k):v for k,v in learned.items()},
         "band_thresholds":{str(k):v for k,v in learned_bands.items()},
         "threshold_training":"top-quartile of preparse score within each 17-24 / 25-32 length band on other 3 novels, no outcomes",
@@ -294,6 +314,7 @@ def main():
             "Four-book exploratory sample has historical leakage into research decisions.",
             "Length-conditioned thresholds prevent raw length dominating all hard-case picks.",
             "Each result also reports A/A drift and geometric-mean bracketed baseline timing.",
+            "If isolate-gc set, cyclic GC is suspended during A/B/A but GC setup is measured separately; this is NOT inclusive production throughput.",
             "The performance verdict requires repeated independent authors and fast-sentence safeguards.",
         ],
     }
