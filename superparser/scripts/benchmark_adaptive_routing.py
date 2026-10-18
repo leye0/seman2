@@ -16,7 +16,7 @@ import json
 import math
 from pathlib import Path
 from statistics import median
-from time import perf_counter_ns
+from time import perf_counter_ns, process_time_ns
 
 from scripts.benchmark_heavy_sentence_ab import BANDS,choose_cases
 from seman_parser.complexity_routing import ComplexityPolicy, StructuralRiskRouter
@@ -71,13 +71,17 @@ def calibrate_bands(rows,scores,min_tokens,share):
 
 def timed(parser,lattice):
     tick=perf_counter_ns()
+    cpu_tick=process_time_ns()
     parsed=parser.parse_grammar_lattice(
         lattice,max_items=20000,kbest_work_limit=100000)
     best=parsed.best()
     trees=[x.as_dict() for x in parsed.alternatives(limit=2)]
     ms=(perf_counter_ns()-tick)/1e6
+    cpu_ms=(process_time_ns()-cpu_tick)/1e6
     return parsed,{
         "ms":round(ms,5),
+        "cpu_ms":round(cpu_ms,5),
+        "indexed_masks_elided":parsed.stats.get("indexed_masks_elided",0),
         "completed":parsed.completed,
         "best":best.as_dict() if best else None,
         "alternatives":trees,
@@ -144,6 +148,7 @@ def group(rows):
         time=[r[arm]["ms"] for r in rows]
         result[arm]={
             "total_ms":round(sum(time),3),
+            "cpu_total_ms":round(sum(r[arm]["cpu_ms"] for r in rows),3),
             "p50_ms":quantile(time,.5),"p95_ms":quantile(time,.95),
             "completed":sum(r[arm]["completed"] for r in rows),
             "forest_budget":sum(r[arm]["budget"] for r in rows),
@@ -153,7 +158,13 @@ def group(rows):
         round(result["adaptive"]["total_ms"]/a,4) if a else None)
     result["reference_b"]["ratio_vs_a"]=(
         round(result["reference_b"]["total_ms"]/a,4) if a else None)
+    cpu_a=result["reference_a"]["cpu_total_ms"]
+    for arm in ("adaptive","reference_b"):
+        result[arm]["cpu_ratio_vs_a"]=round(
+            result[arm]["cpu_total_ms"]/cpu_a,4) if cpu_a else None
     result["probe_total_ms"]=round(sum(r["adaptive"]["probe_ms"] for r in rows),3)
+    result["indexed_masks_elided"]=sum(
+        r["adaptive"]["indexed_masks_elided"] for r in rows)
     result["recognition_totals_ms"]={
         arm:round(sum(r[arm]["recognition_ms"] for r in rows),3)
         for arm in ARMS}
