@@ -159,6 +159,7 @@ def run_arm(name, rows, parser, reference):
                 mismatch = {"arm":name, "index":i, "book_id":row["book_id"],
                             "ordinal":row["ordinal"], "text":row["text"],
                             "expected":reference[i], "observed":digest}
+                write("mismatch.json", mismatch)
                 raise AssertionError(f"Grammar/output parity mismatch {name}, sentence #{i}")
             per_case.append({
                 "i":i, "sha256":row["text_sha256"],"book":row["book_id"],
@@ -250,7 +251,32 @@ def main():
         r=parser.parse_grammar_lattice(lattice,max_items=20_000,kbest_work_limit=100_000)
         digest_of(r)
         del lattice,r
+    # Lexicon builds and indexes WordNet-derived lexical entries lazily.
+    # Bring all 1000 selected surfaces and morphological variants into memory
+    # BEFORE ANY MEASURED ARM so a second arm cannot benefit from entries
+    # learned/indexed only by the first one.
+    for row in rows:
+        lattice = build_lattice(row["text"], resources.lexicon)
+        del lattice
     gc.collect(2)
+    # Cheap deterministic control before spending CPU on four 1000-case runs.
+    # Same data, no gc.freeze yet: catch changing lexical outcomes early.
+    for index in range(0, 1000, 67):
+        row = rows[index]
+        digests = []
+        for _ in range(2):
+            lattice = build_lattice(row["text"], resources.lexicon)
+            check = parser.parse_grammar_lattice(
+                lattice, max_items=20_000, kbest_work_limit=100_000)
+            digests.append(digest_of(check)[0])
+            del lattice, check
+        if digests[0] != digests[1]:
+            write("lexical_preflight_failure.json",
+                  {"index": index, "book": row["book_id"],
+                   "text": row["text"], "digests": digests})
+            raise AssertionError(f"Repeated parse not deterministic after warm-up: {index}")
+    gc.collect(2)
+    print("PREFLIGHT PASS: all 1000 surfaces warmed; 15 repeated sentence checks identical",flush=True)
     print("START: 1000 unique phrases, 4 matched passes, real lexical+canonical parse+outputs",flush=True)
     baseline=None
     all_summaries={}
