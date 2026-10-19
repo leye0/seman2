@@ -120,7 +120,7 @@ class VectorChartTests(unittest.TestCase):
 
     def test_coordinated_bare_imperatives_are_full_clauses(self) -> None:
         # Shared subject belongs to both imperatives; no dummy finite verb.
-        for sentence in ("Come and see him.",):
+        for sentence in ("Come and see him.", "Open the box and close it."):
             with self.subTest(sentence=sentence):
                 report = self.parser.parse(sentence)
                 self.assertTrue(report.result.completed, report.result.stats)
@@ -144,6 +144,20 @@ class VectorChartTests(unittest.TestCase):
                     rules.add(item.rule_id)
                     agenda.extend(item.children)
                 self.assertIn("clause_post_adv_comma", rules)
+
+    def test_imperative_with_manner_adverb_is_preferred_over_fake_subject(self) -> None:
+        # The ambiguous word 'Open' is a base-form imperative here,
+        # not a noun subject to which 'the' somehow attaches.
+        report = self.parser.parse("Open the box carefully.")
+        self.assertTrue(report.result.completed, report.result.stats)
+        queue = [report.result.best()]
+        rules = set()
+        while queue:
+            item = queue.pop()
+            rules.add(item.rule_id)
+            queue.extend(item.children)
+        self.assertIn("vpnp_post_adv", rules)
+        self.assertIn("clause_imperative", rules)
 
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
