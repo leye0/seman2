@@ -20,8 +20,9 @@ from statistics import median
 from time import perf_counter_ns, process_time_ns
 
 from research.verbnet_lr.subtree_signature_cache import (
-    SubtreeSignatureCache, witnessed_matches,
+    SubtreeSignatureCache, SignatureScan, witnessed_matches,
 )
+from research.verbnet_lr.subtree_feature_replay import SubtreeFeatureReplayer
 from scripts.benchmark_heavy_sentence_ab import BANDS, choose_cases
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
@@ -67,6 +68,9 @@ def main():
     p.add_argument("--per-book-per-band",type=int,default=12)
     p.add_argument("--max-signature-tokens",type=int,default=8)
     p.add_argument("--max-templates",type=int,default=20000)
+    p.add_argument("--replay-min-tokens",type=int,default=4)
+    p.add_argument("--replay-max-hints",type=int,default=30)
+    p.add_argument("--replay-work-limit",type=int,default=400)
     p.add_argument("--out-dir",type=Path,required=True)
     args=p.parse_args()
     raw,sources=choose_cases(args.per_book_per_band)
@@ -115,6 +119,9 @@ def main():
             **cache.summary(),
         }
 
+    replayers={book:SubtreeFeatureReplayer(
+        index_per_book[book].templates,parser._vector_grammar.grammar)
+        for book in holdout_books}
     rows=[]
     args.out_dir.mkdir(parents=True,exist_ok=True)
     with (args.out_dir/"per_sentence.jsonl").open(
@@ -131,12 +138,33 @@ def main():
             scan=cache.scan(lattice,max_transitions=25000,max_matches=2000)
             scan_cpu_ms=(process_time_ns()-cpu_start)/1e6
             scan_wall_ms=(perf_counter_ns()-begin)/1e6
+            # Check the longest, most informative hints first. Only a
+            # capped selection is replayed; skipped hints stay UNKNOWN,
+            # not ungrammatical. No data or decision enters the parser.
+            eligible=sorted(
+                (hint for hint in scan.matches
+                 if hint.end_token-hint.start_token>=args.replay_min_tokens),
+                key=lambda h:(-(h.end_token-h.start_token),h.start_token,
+                              h.template_id))
+            attempted=eligible[:args.replay_max_hints]
+            replay_start=process_time_ns()
+            replay=[replayers[heldout].replay(
+                hint,lattice,max_steps=args.replay_work_limit)
+                for hint in attempted]
+            replay_cpu_ms=(process_time_ns()-replay_start)/1e6
+            replay_statuses=Counter(result.status for result in replay)
             parse_start=process_time_ns()
             result=parser.parse_grammar_lattice(
                 lattice,max_items=20000,kbest_work_limit=100000)
             tree=result.best()
             parse_ms=(process_time_ns()-parse_start)/1e6
             witnessed=witnessed_matches(scan,cache,tree,lattice) if tree else 0
+            selected_scan=SignatureScan(tuple(
+                hint for hint,result in zip(attempted,replay)
+                if result.status=="WITNESS"),
+                scan.transitions,scan.saturated,scan.lexical_tokens)
+            replay_witnessed=(witnessed_matches(
+                selected_scan,cache,tree,lattice) if tree else 0)
             unique_spans={(hint.start_token,hint.end_token)
                           for hint in scan.matches}
             kinds=Counter(hint.root_category for hint in scan.matches)
@@ -152,6 +180,13 @@ def main():
                 "test_completed":result.completed,
                 "forest_saturated":bool(result.stats.get("budget_exceeded")),
                 "full_shape_witnesses":witnessed,
+                "replay_eligible_count":len(eligible),
+                "replay_attempted_count":len(attempted),
+                "replay_skipped_count":len(eligible)-len(attempted),
+                "replay_statuses":dict(replay_statuses),
+                "replay_cpu_ms":round(replay_cpu_ms,5),
+                "replay_rule_steps":sum(x.unification_attempts for x in replay),
+                "replay_witnesses_confirmed_in_best":replay_witnessed,
                 "root_hint_counts":dict(kinds),
                 "matched_template_ids":sorted({h.template_id for h in scan.matches}),
             }
@@ -166,6 +201,22 @@ def main():
     report={
         "schema":"read-only-cross-author-subtree-signatures-v1",
         "sources":sources,
+        "feature_replay": {
+            "minimum_tokens":args.replay_min_tokens,
+            "max_hints_per_sentence":args.replay_max_hints,
+            "work_limit_per_hint":args.replay_work_limit,
+            "selection":"longest eligible spans first, not selected by parse outcome",
+        },
+        "feature_replay_totals": {
+            "eligible_hints":sum(r["replay_eligible_count"] for r in rows),
+            "attempted_hints":sum(r["replay_attempted_count"] for r in rows),
+            "skipped_hints":sum(r["replay_skipped_count"] for r in rows),
+            "statuses":dict(sum(
+                (Counter(r["replay_statuses"]) for r in rows),Counter())),
+            "cpu_ms":round(sum(r["replay_cpu_ms"] for r in rows),4),
+            "witnesses_confirmed_in_best":sum(
+                r["replay_witnesses_confirmed_in_best"] for r in rows),
+        },
         "training_by_heldout_book":training_info,
         "all":overall,
         "by_band":{label:aggregate([r for r in rows if r["band"]==label])
@@ -182,6 +233,8 @@ def main():
             "No timing speedup is claimed: the probe currently adds its measured cost on a hit or miss.",
             "The four novels are historically explored; independent authors are required before rollout.",
             "No lexical candidate, quote or punctuation has been modified or pruned.",
+            "Fixed-shape feature witnesses are not contextual/exhaustive; this probe does NOT skip parser recognition.",
+            "Only bounded hints of length >= replay-min-tokens are checked; other hits remain UNKNOWN.",
         ],
     }
     (args.out_dir/"summary.json").write_text(
