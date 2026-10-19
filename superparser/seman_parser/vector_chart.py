@@ -383,6 +383,7 @@ class VectorGrammar:
             "kbest_ms": 0.0,
             "lexical_spans": forest.lexical_spans,
             "category_bits": len(self._bits),
+            "structural_root_nodes": len(root_nodes),
             "forest_nodes": len(forest.nodes),
             "structural_derivations": forest.derivation_count,
             "partial_states": len(forest.partials),
@@ -434,6 +435,8 @@ class VectorGrammar:
             stats["kbest_budget_exceeded"] = True
             stats["kbest_work_units"] = materializer.work_units
             stats["kbest_work_limit"] = kbest_work_limit
+            stats["nodes_visited_for_best"] = materializer.nodes_initialized
+            stats["combinations_visited_for_best"] = materializer.combinations_visited
             stats["best_ms"] = round((perf_counter() - best_start) * 1000, 4)
             root_provider.refresh_stats()
             if self.lazy_trie_recognition:

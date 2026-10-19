@@ -22,6 +22,7 @@ class VectorChartTests(unittest.TestCase):
         self.assertEqual(result.stats["engine"], "vector-lazy-kbest")
         self.assertIsNotNone(result.shared_forest)
         self.assertGreater(result.stats["structural_derivations"], 1)
+        self.assertGreater(result.stats["structural_root_nodes"], 0)
         self.assertEqual(result.stats["duplicate_partial_proposals"], 0)
         self.assertGreater(result.stats["duplicate_transitions_avoided"], 0)
         self.assertEqual(result.stats["kbest_ms"], 0.0)
@@ -128,6 +129,8 @@ class VectorChartTests(unittest.TestCase):
             goal_category=parser.goal_category,kbest_work_limit=1)
         self.assertFalse(limited.completed)
         self.assertTrue(limited.stats["kbest_budget_exceeded"])
+        self.assertGreater(limited.stats["structural_root_nodes"], 0)
+        self.assertGreater(limited.stats["combinations_visited_for_best"], 0)
         self.assertEqual(limited.stats["kbest_work_limit"],1)
         self.assertIsNone(limited.best())
         # A sufficient budget must recover precisely the normal complete

@@ -1,0 +1,65 @@
+name: Seman2 - Novel parse diagnostics (50 sentences)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/scripts/diagnose_novel_parses.py'
+      - 'superparser/seman_parser/vector_chart.py'
+      - 'superparser/tests/test_novel_parse_diagnostics.py'
+      - '.github/workflows/novel-parse-diagnostics.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: novel-parse-diagnostics-main
+  cancel-in-progress: true
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          import os
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent': 'Seman2-research'}), timeout=90) as f:
+              raw = f.read()
+          dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict'
+          dest.mkdir(parents=True, exist_ok=True)
+          keep = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb', 'sents.vrb', 'cntlist.rev'}
+          for part in ('noun', 'verb', 'adj', 'adv'):
+              keep.update((f'index.{part}', f'data.{part}', f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf = Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (dest / leaf).write_bytes(z.read(item))
+          assert (dest / 'index.verb').exists()
+          PY
+      - name: Validate diagnostic reporting
+        run: |
+          python -m py_compile superparser/scripts/diagnose_novel_parses.py superparser/seman_parser/vector_chart.py
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics
+      - name: Diagnose 50 cleaned novel sentences, once each
+        run: |
+          PYTHONPATH=superparser python -u superparser/scripts/diagnose_novel_parses.py \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --count 50 --max-items 50000 --kbest-work-limit 500000 \
+            --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
+      - name: Preserve per-sentence diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: novel-parse-diagnostics-50
+          path: /tmp/novel-parse-diagnostics/
+          retention-days: 14
+          if-no-files-found: warn
