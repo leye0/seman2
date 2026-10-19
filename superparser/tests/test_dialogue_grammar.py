@@ -177,7 +177,7 @@ class DialogueGrammarTests(unittest.TestCase):
                 self.assertIn("dialogue_split_subject_predicate_tag", ids)
                 self.assertIn(
                     "dialogue_quoted_subject_focus_fragment"
-                    if focused else "dialogue_quoted_subject_fragment", ids,
+                    if focused else "dialogue_quoted_subject_pronoun_fragment", ids,
                 )
 
     def test_parser_preposed_speaker(self):

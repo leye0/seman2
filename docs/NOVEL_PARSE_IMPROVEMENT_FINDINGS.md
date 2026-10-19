@@ -216,3 +216,5 @@ sur la limite de travail k-best et sur les rôles sémantiques des incises.
 Une insertion précédente avait accidentellement fusionné leurs corps
 avec un nouveau test, réduisant la couverture des assertions malgré un
 CI vert. Cette erreur est corrigée avant toute nouvelle validation.
+
+Le test de paroles interrompues a mis en évidence une ambiguïté de rang : sans précision du sujet, `"She," ... "walks."` préférait deux groupes nominaux cités, alors que l'analyse correcte est PRONOUN (sujet) puis VP (prédicat). Une production **exclusivement dialogique** de fragment de sujet pronominal vient concurrencer cette lecture, sans transformer les pronoms en étiquettes nominales permissives et sans modifier le transfert de guillemets.
