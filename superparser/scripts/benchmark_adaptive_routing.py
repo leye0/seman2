@@ -99,7 +99,6 @@ def timed(parser,lattice):
         "recognition_ms":parsed.stats.get("recognition_ms",0),
         "best_ms":parsed.stats.get("best_ms",0),
         "kbest_work_units":parsed.stats.get("kbest_work_units",0),
-        "flat":bool(parsed.stats.get("online_prefix_flat_enabled")),
         "trie":bool(parsed.stats.get("lazy_trie_recognition")),
     }
 
@@ -111,24 +110,6 @@ def parity(reference,variant):
     bad=[key for key in keys if reference[key]!=variant[key]]
     if bad:
         raise AssertionError("Canonical grammatical/budget parity failed: "+str(bad))
-
-
-def complete_edge_parity(a,b):
-    x,y=a.shared_forest,b.shared_forest
-    if len(x.partials)!=len(y.partials):
-        raise AssertionError("Different partial counts")
-    count=0
-    for original,alternative in zip(x.partials,y.partials):
-        if (original.rule_index,original.start,original.end,original.dot)!=(
-            alternative.rule_index,alternative.start,alternative.end,
-            alternative.dot):
-            raise AssertionError("Partial identity changed")
-        left=[(d.previous_id,d.child_id) for d in original.derivations]
-        right=[(d.previous_id,d.child_id) for d in alternative.derivations]
-        if left!=right:
-            raise AssertionError("Rule-specific derivations changed")
-        count+=len(left)
-    return count
 
 
 def normalized_forest_edges(result):
@@ -216,8 +197,7 @@ def main():
     p.add_argument("--per-book-per-band",type=int,default=4)
     p.add_argument("--minimum-tokens",type=int,default=17)
     p.add_argument("--hard-share",type=float,default=.25)
-    p.add_argument("--difficult-strategy",choices=("flat","online","trie"),
-                   default="flat")
+
     p.add_argument("--isolate-gc",action="store_true",
                    help="Collect before each sentence and suspend cyclic GC only for A/B/A timing")
     p.add_argument("--out-dir",type=Path,required=True)
@@ -240,7 +220,7 @@ def main():
     policies={book:ComplexityPolicy(
         rule_start_threshold=cutoff,
         min_tokens=args.minimum_tokens,
-        difficult_strategy=args.difficult_strategy,
+        difficult_strategy="trie",
         band_thresholds=learned_bands[book])
         for book,cutoff in learned.items()}
     parsers={book:Parser(
@@ -276,12 +256,12 @@ def main():
                 if args.isolate_gc and was_gc_enabled:
                     gc.enable()
             parity(reports["reference_a"],reports["reference_b"])
-            routed=reports["adaptive"]["route"]==args.difficult_strategy
+            routed=reports["adaptive"]["route"]=="trie"
             strict=False
             saturated_uncertified=False
             saturated_tree_mismatch=False
             checked=0
-            if routed and args.difficult_strategy=="trie":
+            if routed:
                 original=reports["reference_a"]
                 candidate=reports["adaptive"]
                 saturated_uncertified=bool(original["budget"] or candidate["budget"])
@@ -302,12 +282,10 @@ def main():
                     saturated_tree_mismatch=not same_trees
             else:
                 parity(reports["reference_a"],reports["adaptive"])
-                checked=(complete_edge_parity(
-                    results["reference_a"],results["adaptive"]) if routed else 0)
             if not routed:
                 # Critical: low-risk uses unmodified canonical grammar and
                 # incurs zero specialized recognition.
-                if reports["adaptive"]["flat"] or reports["adaptive"]["trie"]:
+                if reports["adaptive"]["trie"]:
                     raise AssertionError("Unselected parse entered alternative engine")
             row={
                 "index":i,"book_id":item["book_id"],"band":item["band"],
@@ -329,12 +307,12 @@ def main():
             if (i+1)%8==0:
                 print("ADAPTIVE_PROGRESS",json.dumps({
                     "seen":i+1,"routed":sum(
-                        r["adaptive"]["route"]==args.difficult_strategy for r in records),
+                        r["adaptive"]["route"]=="trie" for r in records),
                     "verified_edges":sum(r["verified_edges"] for r in records),
                 }),flush=True)
     result={
         "schema":"adaptive-grammar-risk-routing-aab-v1",
-        "strategy":args.difficult_strategy,
+        "strategy":"trie",
         "isolated_cyclic_gc":args.isolate_gc,
         "thresholds":{str(k):v for k,v in learned.items()},
         "band_thresholds":{str(k):v for k,v in learned_bands.items()},
@@ -343,8 +321,8 @@ def main():
         "all":group(records),
         "easy":group([r for r in records if r["tokens"]<args.minimum_tokens]),
         "eligible":group([r for r in records if r["tokens"]>=args.minimum_tokens]),
-        "routed":group([r for r in records if r["adaptive"]["route"]==args.difficult_strategy]),
-        "not_routed":group([r for r in records if r["adaptive"]["route"]!=args.difficult_strategy]),
+        "routed":group([r for r in records if r["adaptive"]["route"]=="trie"]),
+        "not_routed":group([r for r in records if r["adaptive"]["route"]!="trie"]),
         "by_band":{band:group([r for r in records if r["band"]==band])
                    for band,_,_ in BANDS},
         "notes":[
