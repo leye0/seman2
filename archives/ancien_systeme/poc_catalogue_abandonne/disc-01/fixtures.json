@@ -1,9 +1,0 @@
-[
-  {"id":"en-short","language":"en","category":"short","text":"It rained. Therefore, we stayed home."},
-  {"id":"fr-short","language":"fr","category":"short","text":"Il pleuvait. Nous sommes donc restés chez nous."},
-  {"id":"en-multiturn","language":"en","category":"multi_turn","text":"A: Did you submit the report?\nB: Not yet. I was waiting for the figures.\nA: Send it tomorrow, then."},
-  {"id":"fr-multiturn","language":"fr","category":"multi_turn","text":"A : Tu viens ce soir ?\nB : Peut-être. Je dois finir ce travail.\nA : D'accord, préviens-moi."},
-  {"id":"en-long","language":"en","category":"long","text":"The prototype passed its unit tests. However, the integration environment was unavailable. We preserved every raw result because the failure was external. When the service returned, the same inputs produced a complete report. Therefore, the team accepted the experiment with an explicit infrastructure limitation."},
-  {"id":"fr-ambiguous","language":"fr","category":"ambiguous","text":"Paul a parlé à Marc après la réunion. Il était inquiet, mais personne ne savait pourquoi."},
-  {"id":"empty-adversarial","language":"und","category":"invalid","text":""}
-]

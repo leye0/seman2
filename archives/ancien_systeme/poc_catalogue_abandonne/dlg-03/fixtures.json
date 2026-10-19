@@ -1,8 +1,0 @@
-[
- {"id":"complete","text":"John likes Mary.","ds_text":"john likes mary","phenomenon":"complete"},
- {"id":"nominal-fragment","text":"John.","ds_text":"john","phenomenon":"fragment"},
- {"id":"incomplete-transitive","text":"John likes.","ds_text":"john likes","phenomenon":"extension_point"},
- {"id":"scope","text":"Every student likes a teacher.","ds_text":"every student likes a teacher","phenomenon":"scope"},
- {"id":"unknown","text":"John frobnitz Mary.","ds_text":"john frobnitz mary","phenomenon":"unknown_word"},
- {"id":"reprise","text":"John likes Mary, John.","ds_text":"john likes mary john","phenomenon":"reprise"}
-]
