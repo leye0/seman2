@@ -1,59 +1,30 @@
-# Shared category-prefix trie: grammar recognition without per-rule duplication
+# Reconnaissance par préfixes communs : LE trie lazy retenu
 
-Date: 18 October 2026. Branch: **main**. Research-only; no changes to the canonical parser or production routing.
+Ce document explique **la seule implémentation de préfixes partagés restant dans `main`**. Pour l'exécution et les règles de routage, voir [RUN_CURRENT_LAYER1.md](RUN_CURRENT_LAYER1.md).
 
-## Why we changed direction
+## Pourquoi ce moteur ?
 
-We originally reduced Python storage by interning repeated per-rule derivations. The unconditional versions slowed easy sentences by 27–42%, because the same rule-specific recognition work still happened and then extra indirections were added.
+Le parseur canonique construit un état partiel par `(rule_index, dot, start, end)`. Quand plusieurs règles ont un début de RHS catégorie identique, cette reconnaissance peut être répétée. Plutôt que compresser les objets *après* leur création, nous partageons réellement la progression grammaticale des **catégories et spans**.
 
-Next we tested a conditional `indexed` version that skipped **176,573 redundant category checks** and used compact integer partial keys on a 128-sentence sample. With cyclic GC controlled, it was **2.45% slower** on the 11 risk-routed cases and essentially equal overall. It was removed from the active parser; original source remains in commit history. Merely removing cheap checks did not remove the expensive repeated matching.
+Un automate compilé regroupe les préfixes RHS de toutes les règles et garde, pour chaque nœud, la liste **distincte des variantes `(rule_index,dot)`**. L'identité complète de chaque règle, son suffixe, ses traits, `requires`, sa valuation et ses relations sémantiques restent accessibles.
 
-The genuinely new candidate is a **category-prefix trie of the grammar**. At the *recognition* stage, the original vector algorithm matches categories and spans; morphosyntactic traits are validated later by the lazy materializer. Therefore two rules with the same consumed RHS categories can, *at this stage*, share one prefix traversal **without being treated as the same grammatical rule**.
+## Code actif (aucun concurrent)
 
-The static compiled trie has **521 nodes** for the **383 effective ordinary rules**. Each node retains its corresponding set of *(original rule index, dot position)* variants; suffixes, features, required evidence, scores, valence and semantic actions remain independent.
+- `shared_trie_forest.py` : `compile_category_trie`, `TrieRecognitionBase`. Il n'existe **aucun mode eager** à sélectionner.
+- `lazy_trie_forest.py` : `LazySharedTrieForest`, `LazyGroup`, `VirtualPartials`, `LazyRuleDerivations`. Seules les progressions partagées sont créées pendant la reconnaissance; les partials d'une règle donnée deviennent des objets `PackedPartial` uniquement lorsque nécessaires à la matérialisation d'une analyse.
+- `vector_chart.py` : `VectorGrammar(...,lazy_trie_recognition=True)` donne ce seul moteur alternatif; son `k-best` est le même que pour le canonique.
+- `complexity_routing.py` et `engine.py` : le trie n'est **jamais** le défaut et reste exclu des phrases courtes / dialogues.
 
-## Exact prototype semantics
+Ce trie ne permet **pas** de jeter d'autres variantes lexicales, de partager des traits s'ils divergent, ni de réduire arbitrairement le plafond original de 20 000 états.
 
-`superparser/research/verbnet_lr/category_prefix_trie.py` currently REPLAYS recognized node categories and spans from a **completed canonical vector forest**. It is a non-autonomous **oracle experiment**:
+## Preuves et mesures
 
-- Start a trie state on one recognized category node, rather than one partial per compatible grammar rule.
-- Advance that state once for each matching category/span continuation and accumulate logical child links.
-- When needed, project a trie state back onto every distinct original rule/dot belonging to that prefix, without merging the rule identities.
-- On nonsaturated canonical forests, compare the **set** of each rule's predecessor-group/child-node derivations against the trie group's edges.
-- Do not report equivalence for forests cut short by the 20,000-item reference budget. Those can contain incomplete evidence.
-- No independent lexical-lattice recognition, tree/rule materializer or standalone k-best has been implemented yet. Original grammar/lexical outputs remain the only authoritative ones.
+L'ancien audit oracle de 64 phrases non saturées avait montré une possibilité théorique de regrouper **88,3 % des états de préfixes**; ce chiffre ne mesurait PAS de temps économisé. Ensuite, le véritable moteur autonome lazy a économisé **43 % CPU** dans un essai sur 42 phrases longues. Le système complet avec routage a atteint **−15,6 % CPU** dans un audit A/adaptatif/A sur 128 phrases (Action [39177896708](https://github.com/leye0/seman2/actions/runs/39177896708)).
 
-**Critical distinction:** this replay checks projection of *logical derivation-edge sets*. It does NOT establish per-rule derivation **ordering**, binding-context equivalence, identical k-best scores, semantic graph parity or budget behavior of a hypothetical online trie. Every one of those is required before replacing the recognizer.
+L'équivalence des analyses du canonique et du trie est couverte par `superparser/tests/test_shared_trie_forest.py` sur des cas sans saturation. **Les forêts saturées ne possèdent toujours pas une preuve générale d'équivalence ou de correction.** Ne pas interpréter le gain de vitesse comme un gain de couverture grammaticale.
 
-## Measured on real preserved Gutenberg novels
+## Approches explicitement refusées
 
-[CI audit 39176251584](https://github.com/leye0/seman2/actions/runs/39176251584);
-[full 64-row artifact](https://github.com/leye0/seman2/actions/runs/39176251584/artifacts/12154427860).
-Four books × four length bands (4–8, 9–16, 17–24, 25–32 tokens) × four deterministic cases per band; WordNet 3.0; 20,000 forest-item and 100,000 k-best-work caps.
+Les modes expérimentaux `online_prefix_edges`, `flat_prefix_edges`, `indexed_recognition`, `shared_trie_recognition` eager, le cache de frontières, les snapshots de signatures et autres replayers ne sont plus présents dans `main`. L'ancien code reste accessible dans [archive/pre-simplification-2026-10-18](https://github.com/leye0/seman2/tree/archive/pre-simplification-2026-10-18) et dans les commits Git.
 
-| Metric | Result |
-|---|---:|
-| Total attempted sentences | 64 |
-| Nonsaturated cases with strict state/edge projection parity | **50/50** |
-| Saturated cases excluded from strict state parity | **14** |
-| Original rule-specific partial states, on verified cases | **311,260** |
-| Distinct trie prefix/span states on verified cases | **36,363** |
-| **Theoretical prefix-state reduction from grouping** | **274,897 (88.3%)** |
-| Canonical partial derivation edges matched as sets | **334,684** |
-| Projection mismatches in verified cases | **0** |
-| Compiled category-prefix trie nodes | 521 |
-
-Within bands, theoretical state grouping ranged from **87.7%** for 17–24 tokens to **91.3%** for 4–8 tokens. This is **not 88% fewer live parser allocations** and **not an 88% reduction in runtime**: the replay runs *after* the canonical recognizer has already built all rule-specific forest nodes. Nor is category-only grouping permission to erase syntactic subtype/feature distinctions — every variant remains a separate downstream alternative.
-
-Canonical recognition across all 64 took ~4.54 s and offline trie replay took ~1.17 s, but these are **not comparable** end-to-end parsers: the replay is supplied with already-recognized canonical constituents and avoids their construction. No acceleration claim is justified by those numbers.
-
-## Required next milestones
-
-1. Compile category-prefix trie transitions directly from the same canonical rules; retain a mapping to **every** original rule variant, its feature constraints, required evidence and semantics.
-2. Build an **online category-node and shared-prefix forest**, using real lexical candidate spans as inputs, with the same treatment of punctuation, dialogue scopes, grammatical cycles and negative evidence. Do not use a canonical forest as an oracle.
-3. On carefully bounded, nonsaturated cases, project **ordered** rule-specific derivations and verify full forest and top-k tree/semantic equivalence. The projection must not invent new interpretations, drop lexical subtypes or bypass grammatical constraints.
-4. Define a budget-equivalence policy before testing saturated sentences: one shared trie state represents multiple original rule partials; counting it as a single state under the old 20,000 cap would artificially inflate coverage.
-5. On new authors/books, compare total CPU, peak RSS, fast-path p50/p95/p99 and completion against repeated canonical A/A controls, with GC effects isolated for diagnosis and included for eventual throughput.
-6. **Route only prediagnosed hard sentences** through this prototype if its hard-path benefit survives testing; easy prose and dialogue stay canonical. The ~0.034-ms predictor from previous research remains a separate, cheap decision stage.
-
-**Decision:** grouping real grammatical recognition into a category-prefix trie is structurally plausible and projects correctly on the 50 verified oracle-based cases. It is the next major research direction, **not yet a deployed optimization or complete parser**.
+**Cap actuel :** conserver ces deux moteurs et leur routage, puis travailler sur la justesse des analyses lourdes et des dialogues.
