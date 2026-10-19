@@ -98,3 +98,7 @@ corrigées au niveau de la segmentation ou évaluées comme fragments.
 ## Première personne du verbe *be*
 
 L'inventaire préexistant contenait `is`, `are`, `was`, `were` mais pas la copule `am`, à l'origine d'absences de lecture COPULA dans plusieurs dialogues (`I am sure`, `am I not alone`). Ajout de lectures distinctes COPULA et AUX-BE, avec accord singulier première personne, afin de ne pas étendre incorrectement la catégorie à d'autres sujets.
+
+## Négation non standard `ain't`
+
+Quatre cas dans *Treasure Island* présentent la graphie dialectale `ain't`. C'est un auxiliaire/copule négatif vernaculaire attesté, pas une faute à exclure du corpus. Une entrée explicite `COPULA`/`AUX-BE` négative est ajoutée, ainsi qu'un modèle étroit de question-étiquette négative `ain't you?` et de prédicat adjectival négatif `He ain't ready.`. Les règles exigent le trait `negation=true`, afin de ne pas élargir l'analyse de toutes les copules.

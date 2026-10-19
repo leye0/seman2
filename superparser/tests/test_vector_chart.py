@@ -249,6 +249,22 @@ class VectorChartTests(unittest.TestCase):
                 result=self.parser.parse(phrase).result
                 self.assertTrue(result.completed,result.stats)
 
+    def test_colloquial_aint_is_negative_copula_and_tag_question(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for sentence in ("Ain't you?", "He ain't ready."):
+            with self.subTest(sentence=sentence):
+                lattice=build_lattice(sentence,self.parser.resources.lexicon,multiword_max=1)
+                tokens=[c for c in lattice.candidates if c.surface.lower()=="ain't"]
+                self.assertTrue(any(c.category=="COPULA" and
+                    c.features.as_dict().get("negation")=="true" for c in tokens))
+                result=self.parser.parse(sentence).result
+                self.assertTrue(result.completed,result.stats)
+        # A standard copula without negation cannot trigger this tag rule.
+        lattice=build_lattice("Is John?",self.parser.resources.lexicon,multiword_max=1)
+        self.assertFalse(any(c.surface.lower()=="is" and
+            c.features.as_dict().get("negation")=="true"
+            for c in lattice.candidates))
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
