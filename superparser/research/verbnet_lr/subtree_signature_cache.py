@@ -22,7 +22,6 @@ future engineering of sound reuse. Unknown/missing evidence remains UNKNOWN.
 """
 from __future__ import annotations
 
-from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Hashable
 
@@ -258,14 +257,12 @@ def witnessed_matches(scan: SignatureScan, cache: SubtreeSignatureCache,
     if tree is None:
         return 0
     by_location: dict[tuple[int,int,ObservedSubtree],bool] = {}
-    token_index={(t.start,t.end):i for i,t in enumerate(lattice.tokens)}
     stack=[tree]
     while stack:
         node=stack.pop()
         observed=_observed(node,lattice,min_tokens=cache.min_tokens,
                            max_tokens=cache.max_tokens)
         if observed is not None:
-            start=token_index.get((node.start,node.children[0].start)) if False else None
             # Root [start,end) corresponds exactly to an uninterrupted
             # token interval by the _observed() contract.
             beginning=next((i for i,t in enumerate(lattice.tokens)
