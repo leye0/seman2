@@ -72,10 +72,10 @@ def write(name, obj):
 
 def make_variant(key):
     method, old, new = CHANGES[key]
-    source = textwrap.dedent(inspect.getsource(ORIGINALS[method]))
+    source = inspect.getsource(ORIGINALS[method])
     if source.count(old) != 1:
         raise AssertionError(f"Expected one exact source match for {key}")
-    source = source.replace(old, new)
+    source = textwrap.dedent(source.replace(old, new))
     ns = dict(vars(vc))
     exec(compile(source, f"<equivalent-low-level-{key}>", "exec"), ns)
     return method, ns[method]
@@ -283,6 +283,7 @@ def main():
     cli = argparse.ArgumentParser()
     cli.add_argument("--per-book-per-band", type=int, default=8)
     cli.add_argument("--ab-per-book-per-band", type=int, default=4)
+    cli.add_argument("--skip-large-profile", action="store_true")
     args = cli.parse_args()
     assert 1 <= args.ab_per_book_per_band <= args.per_book_per_band <= 12
     OUTPUT.mkdir(exist_ok=True)
@@ -303,7 +304,8 @@ def main():
     parser = Parser(resources,cache_size=0)
     lattices = [build_lattice(r["text"],resources.lexicon) for r in rows]
     print("Loaded", len(lattices), "canonical lexical lattices",flush=True)
-    profile_large_cohort(parser,rows,lattices)
+    if not args.skip_large_profile:
+        profile_large_cohort(parser,rows,lattices)
 
     # Sample cases spaced deterministically across all four books and bands.
     by_group = defaultdict(list)
