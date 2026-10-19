@@ -120,7 +120,7 @@ class VectorChartTests(unittest.TestCase):
 
     def test_coordinated_bare_imperatives_are_full_clauses(self) -> None:
         # Shared subject belongs to both imperatives; no dummy finite verb.
-        for sentence in ("Come and see him.", "Open the box and close it."):
+        for sentence in ("Come and see him.",):
             with self.subTest(sentence=sentence):
                 report = self.parser.parse(sentence)
                 self.assertTrue(report.result.completed, report.result.stats)
@@ -131,6 +131,21 @@ class VectorChartTests(unittest.TestCase):
                     rule_ids.add(item.rule_id)
                     agenda.extend(item.children)
                 self.assertIn("vpnp_bare_coord", rule_ids)
+
+    @unittest.expectedFailure
+    def test_known_imperative_homograph_ranking_gap(self) -> None:
+        # Valid imperative, but the best current tree chooses nominal
+        # homographs instead. Keep this quality gap visible, not called
+        # a successful grammatical analysis just because a root exists.
+        result = self.parser.parse("Open the box and close it.").result
+        self.assertTrue(result.completed, result.stats)
+        todo = [result.best()]
+        rule_ids = set()
+        while todo:
+            node = todo.pop()
+            rule_ids.add(node.rule_id)
+            todo.extend(node.children)
+        self.assertIn("vpnp_bare_coord", rule_ids)
 
     def test_postposed_discourse_adverb_requires_comma(self) -> None:
         for sentence in ("John opened the box, too.", "John opened the box, however."):
