@@ -1,0 +1,96 @@
+# Seman2 — carnet de recherche sur les 500 phrases de romans
+
+## Protocole
+
+La cohorte est fixée par l'empreinte SHA-256 de `cohort.jsonl` :
+`cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a`.
+
+Chaque unité est analysée une fois, avec 50 000 états de reconnaissance,
+500 000 unités de travail k-best et un plafond de 10 s par cas.
+Ces unités k-best **ne sont pas** un comptage direct de combinaisons.
+Pour chaque échec, le JSONL exporte les hypothèses lexicales, sous-types,
+sens, provenances, traits, contraintes et candidats multi-mots.
+`pattern_contrasts.json` compare les signatures parmi les succès et échecs.
+Les archives GitHub Actions expirent après 90 jours ; le code et la
+sélection demeurent reproductibles.
+
+## Résultats mesurés sur la cohorte figée
+
+| Expérience | Complètes | Remarques |
+|---|---:|---|
+| Baseline initiale | 316/500 (63,2 %) | Avant nouveaux correctifs |
+| Guillemets typographiques et règles localisées | 330/500 (66 %) | Surtout dialogues Dickens |
+| Ajout de lecture syntaxique de `--` / tiret long | 341/500 (68,2 %) | Reconnaissance de séquences ponctuées |
+| Analyse contrastive et audit sous-tokens | 340/500 (68 %) | Une phrase longue a expiré différemment |
+| Copule contractée `'re`, quantificateur `many` | 342/500 (68,4 %) | Exécution CI vérifiée |
+
+Le nombre de timeouts est sensible à l'exécution Linux ; des variations
+de 1–3 cas aux budgets de 10 s ne sont pas une preuve de régression
+grammaticale. Les améliorations doivent être inspectées phrase par phrase,
+et une racine complète ne prouve pas que le meilleur arbre soit correct.
+
+## Changements effectivement intégrés à `main`
+
+1. `vpnp_bare_coord` : coordination de prédicats impératifs à forme de base
+   (« Come and see him. »). `vpnp_post_adv` : adverbe postverbal au sein
+   d'un prédicat nu ; `clause_post_adv_comma` : adverbe détaché final
+   (« Steerforth was considerate, too. »).
+2. Reconnaissance des dialogues délimités par `‘…’`, distincts des
+   apostrophes internes de `don’t`.
+3. Un candidat de ponctuation couvrant tout `--`, `---`, `—` ou `–`,
+   sans promouvoir un tiret simple au rang de virgule et sans modifier le
+   corpus source.
+4. Lexique fonctionnel : `'re` comme copule contractée et `many` comme
+   pronom quantificateur pluriel / déterminant.
+5. Diagnostic contrastif des bigrams et trigrams de catégories lexicales :
+   fréquence dans les succès **et** dans les échecs, en excluant les
+   budgets et délais non conclusifs.
+6. Séparation entre mot sans candidat et token dont l'analyse passe par
+   plusieurs sous-arêtes (possessifs et clitiques). Les graphies lexicales
+   doivent correspondre à la source ; un nom `ai` suivi du clitique
+   négatif `n't` ne démontre pas qu'une négation dialectale `ain't` soit
+   correctement analysée.
+
+Les poids de classement des impératifs ont été expérimentés puis **rétablis** :
+le gain d'un exemple isolé changeait indûment les meilleurs arbres de phrases
+non concernées. Des tests d'échec connu suivent ces ambiguïtés au lieu de
+considérer tout arbre complet comme correct.
+
+## Prochaines familles à investiguer avec rigueur
+
+**Dialogues tronqués ou citations fragmentaires.** Plusieurs extraits
+sélectionnés commencent avec une citation ouverte et finissent après une
+attribution/reprise. Un fragment comme « ‘Come and prove it. » ne doit pas
+être traité comme preuve d'une lacune du langage grammatical sans vérifier
+le paragraphe original. Le texte d'origine et l'unité normalisée sont
+conservés séparément.
+
+**Questions, exclamations, vocatifs et ellipses.** Les exemples courts
+non analysés doivent être répartis entre interrogative elliptique,
+apostrophe/vocatif, NP isolé et clause finie, avec des contre-exemples.
+
+**Compléments de l'adjectif.** La signature `ADJ + PREP` apparaissait dans
+8 cas échoués et 0 cas réussis sur une campagne, mais les contextes
+(« afraid of him », « aware of », « different from », « sorry for »)
+comportent souvent d'autres dépendances. La règle
+`adjp_adj_pp` existe déjà : ne pas créer un doublon ou un raccourci
+permissif avant d'avoir isolé le premier sous-arbre réellement manquant.
+
+**Contractions et négations historiques.** `ain't`, `unfort'nate`,
+`I’ve`, `that's` et autres élisions demandent une analyse de la
+morphologie et de leurs graphies historiques. `ain't` est du dialogue
+vernaculaire, **pas** une phrase objectivement erronée. Ajouter une lecture
+syntaxique motivée par la forme, non une règle générique permettant de
+reclasser n'importe quel fragment comme auxiliaire.
+
+**Arbres complets incorrects.** « Open the box and close it. » est un
+impératif grammatical dont le meilleur arbre du parseur privilégie encore
+une interprétation nominale improbable. Cette catégorie demande des
+améliorations de préférence structurelle, pas seulement une augmentation du
+pourcentage de couverture.
+
+**Cas objectivement fautifs.** Ne jamais déduire qu'une phrase est erronée
+du seul fait qu'elle échoue. Établir une catégorie explicite, révisable et
+appuyée par l'extrait d'origine avant de retirer un cas des statistiques.
+Les citations incomplètes produites par le segmentateur doivent être
+corrigées au niveau de la segmentation ou évaluées comme fragments.
