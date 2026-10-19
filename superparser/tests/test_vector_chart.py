@@ -351,7 +351,14 @@ class VectorChartTests(unittest.TestCase):
         # A common noun after a plural demonstrative cannot become a
         # pretend "verbal predicate" through clause_np_coord_aux_adv.
         negative=self.parser.parse("Those child are sleeping.").result
-        self.assertFalse(negative.completed,negative.stats)
+        def tree(item):
+            if item is None:
+                return None
+            return (item.rule_id,item.category,
+                    item.lexical_candidate.surface if item.lexical_candidate else None,
+                    [tree(c) for c in item.children])
+        self.assertFalse(negative.completed,
+                         (negative.stats,tree(negative.best())))
 
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
