@@ -141,6 +141,79 @@ def lexical_diagnostics(lattice) -> dict:
     }
 
 
+def recurring_issues(rows: list[dict], *, minimum_cases: int = 3) -> dict:
+    """Descriptive frequencies in failed cases, without claiming causality.
+
+    Count DISTINCT sentences supporting a lexical gap or category n-gram,
+    so repeated tokens in one sentence cannot dominate the report.
+    """
+    failures = [row for row in rows if row["status"] != "complete"]
+    categories = (
+        "word_without_candidate",
+        "word_without_exact_candidate",
+        "category_bigram",
+        "category_trigram",
+    )
+    counts = {name: Counter() for name in categories}
+    examples = {name: {} for name in categories}
+    for row in failures:
+        lex = row.get("lexical_diagnostic")
+        if not lex:
+            continue
+        tokens = [t for t in lex["tokens"] if t["is_word"]]
+        patterns = {
+            "word_without_candidate": {
+                token["surface"].casefold() for token in tokens
+                if token["no_candidate_or_cover"]
+            },
+            "word_without_exact_candidate": {
+                token["surface"].casefold() for token in tokens
+                if token["no_exact_candidate"]
+            },
+        }
+        sequence = tuple(
+            "/".join(token["categories"]) or "NO_EXACT_LEXICAL_CANDIDATE"
+            for token in tokens
+        )
+        for n, name in ((2, "category_bigram"), (3, "category_trigram")):
+            patterns[name] = {
+                " + ".join(sequence[i:i + n])
+                for i in range(len(sequence) - n + 1)
+            }
+        for name, keys in patterns.items():
+            for pattern in keys:
+                counts[name][pattern] += 1
+                identifiers = examples[name].setdefault(pattern, [])
+                if len(identifiers) < 3:
+                    identifiers.append(row["case_id"])
+    def report(name):
+        return [
+            {"pattern": key, "failed_sentence_count": count,
+             "example_case_ids": examples[name][key]}
+            for key, count in sorted(
+                counts[name].items(), key=lambda item: (-item[1], item[0])
+            )
+            if count >= minimum_cases
+        ]
+    return {
+        "schema": "seman2-novel-recurring-failure-signals-v1",
+        "denominator": {
+            "sampled": len(rows), "failed": len(failures),
+            "with_lexical_evidence": sum(
+                row.get("lexical_diagnostic") is not None for row in failures
+            ),
+        },
+        "minimum_distinct_failed_sentences": minimum_cases,
+        **{name: report(name) for name in categories},
+        "notes": [
+            "Counts distinct failed sentences, not token occurrences.",
+            "Correlations are not established causes of grammar failure.",
+            "Post-filter lattice candidates are not the full raw WordNet inventory.",
+            "Word frequencies are not controlled for successful cases.",
+        ],
+    }
+
+
 def compact_stats(stats: dict) -> dict:
     names = (
         "engine", "structural_root_nodes", "forest_nodes", "partial_states",
@@ -233,6 +306,36 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
         "doivent pas être confondus avec une absence certaine de grammaire.",
         "",
     ])
+    patterns = summary["recurrent_issues"]
+    output.extend([
+        "",
+        "## Motifs récurrents parmi les échecs",
+        "",
+        f"Seuil : {patterns['minimum_distinct_failed_sentences']} phrases "
+        "échouées distinctes. Cooccurrences seulement, sans causalité prouvée. "
+        "Un motif courant aussi dans les réussites peut être non discriminant.",
+        "",
+    ])
+    for key, title in (
+        ("word_without_candidate", "Mots sans candidat lexical"),
+        ("word_without_exact_candidate", "Mots sans candidat exact"),
+        ("category_bigram", "Bigrams de catégories candidates"),
+        ("category_trigram", "Trigrams de catégories candidates"),
+    ):
+        output.extend([
+            f"### {title}", "",
+            "| Motif | Phrases échouées | Exemples |",
+            "|---|---:|---|",
+        ])
+        for item in patterns[key][:25]:
+            name = item["pattern"].replace("|", "\\|")
+            ids = ", ".join(item["example_case_ids"])
+            output.append(
+                f"| {name} | {item['failed_sentence_count']} | {ids} |"
+            )
+        if not patterns[key]:
+            output.append("| Aucun motif répétitif au seuil choisi | 0 | — |")
+        output.append("")
     output.extend([
         "",
         "## Corpus de cas échoués — détail lexical intégral",
@@ -301,6 +404,23 @@ def run(args: argparse.Namespace) -> dict:
     if args.max_items < 1 or args.kbest_work_limit < 1 or args.deadline_seconds <= 0:
         raise ValueError("Budgets and deadline must be positive")
     selected, sources = select_cases(args.count)
+    if len(selected) != args.count:
+        raise AssertionError("The cohort must contain exactly the requested count")
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    with (args.out_dir / "cohort.jsonl").open(
+        "w", encoding="utf8"
+    ) as cohort_stream:
+        for index, case in enumerate(selected):
+            cohort_stream.write(json.dumps({
+                "index": index, "book_id": case["book_id"],
+                "ordinal": case["ordinal"], "band": case["band"],
+                "tokens": case["tokens"], "sentence": case["text"],
+                "source_text": case.get("source_text", case["text"]),
+                "semicolon_split": bool(case.get("semicolon_split")),
+                "synthetic_prefix": case.get("synthetic_prefix", ""),
+                "synthetic_suffix": case.get("synthetic_suffix", ""),
+                "synthetic_terminal": bool(case.get("synthetic_terminal")),
+            }, ensure_ascii=False) + "\n")
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=args.wordnet_dir)
     parser = Parser(resources, cache_size=0, max_items=args.max_items)
     # Warm lexical lookup before any per-sentence deadline.
@@ -388,7 +508,7 @@ def run(args: argparse.Namespace) -> dict:
         for book_id in sorted({r["book_id"] for r in rows})
     }
     summary = {
-        "schema": "seman2-novel-parse-diagnostics-v2",
+        "schema": "seman2-novel-parse-diagnostics-v3",
         "selection": "deterministic four-book/four-band cleaned Gutenberg sample",
         "sources": sources,
         "limits": {
@@ -405,6 +525,8 @@ def run(args: argparse.Namespace) -> dict:
             "Timeouts and errors are not grammatical coverage failures.",
             "A completed parse can still have an interrupted forest.",
             "Each sentence is parsed once, without A/B comparisons.",
+            "Full 500-case cohort is exported before parsing begins.",
+            "Repeated lexical patterns are exploratory, not causal evidence.",
         ],
     }
     with (args.out_dir / "failed_sentences.jsonl").open(
@@ -413,6 +535,12 @@ def run(args: argparse.Namespace) -> dict:
         for row in rows:
             if row["status"] != "complete":
                 failed_stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+    patterns = recurring_issues(rows)
+    (args.out_dir / "recurrent_issues.json").write_text(
+        json.dumps(patterns, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf8",
+    )
+    summary["recurrent_issues"] = patterns
     (args.out_dir / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
@@ -423,6 +551,7 @@ def run(args: argparse.Namespace) -> dict:
     print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
+        "recurrent_missing_lexical_words": patterns["word_without_candidate"][:10],
     }, ensure_ascii=False), flush=True)
     return summary
 
@@ -430,7 +559,7 @@ def run(args: argparse.Namespace) -> dict:
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--wordnet-dir", required=True)
-    p.add_argument("--count", type=int, default=50)
+    p.add_argument("--count", type=int, default=500)
     p.add_argument("--max-items", type=int, default=50_000)
     p.add_argument("--kbest-work-limit", type=int, default=500_000)
     p.add_argument("--deadline-seconds", type=float, default=10.0)

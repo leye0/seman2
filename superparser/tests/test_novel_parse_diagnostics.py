@@ -1,7 +1,10 @@
-"""Fast, data-independent tests for the 50-sentence diagnostic labels."""
+"""Fast, data-independent tests for the 500-sentence diagnostic corpus."""
 import unittest
 
-from scripts.diagnose_novel_parses import classify, compact_stats, tally, lexical_diagnostics
+from scripts.diagnose_novel_parses import (
+    classify, compact_stats, tally, lexical_diagnostics, recurring_issues,
+    select_cases,
+)
 
 
 class NovelDiagnosticsTests(unittest.TestCase):
@@ -51,6 +54,48 @@ class NovelDiagnosticsTests(unittest.TestCase):
         self.assertEqual(result["tokens"][0]["candidates"][0]["features"]["subcat"], "intransitive")
         self.assertEqual(result["words_without_any_candidate"], ["now"])
         self.assertFalse(result["tokens"][2]["no_candidate_or_cover"])
+
+    def test_recurring_patterns_count_distinct_failed_sentences(self):
+        lex = lambda surface: {
+            "tokens": [
+                {"surface": surface, "is_word": True, "categories": [],
+                 "no_candidate_or_cover": True, "no_exact_candidate": True},
+                {"surface": surface, "is_word": True, "categories": [],
+                 "no_candidate_or_cover": True, "no_exact_candidate": True},
+            ]
+        }
+        rows = [
+            {"case_id": f"test:{i}", "status": "no_structural_root",
+             "lexical_diagnostic": lex("Missing")}
+            for i in range(4)
+        ]
+        rows.append({
+            "case_id": "test:ok", "status": "complete",
+            "lexical_diagnostic": lex("Missing"),
+        })
+        report = recurring_issues(rows, minimum_cases=3)
+        self.assertEqual(report["denominator"]["sampled"], 5)
+        self.assertEqual(report["denominator"]["failed"], 4)
+        self.assertEqual(report["word_without_candidate"][0]["pattern"], "missing")
+        self.assertEqual(
+            report["word_without_candidate"][0]["failed_sentence_count"], 4
+        )
+        self.assertEqual(
+            report["category_bigram"][0]["failed_sentence_count"], 4
+        )
+        self.assertEqual(len(report["word_without_candidate"][0]["example_case_ids"]), 3)
+
+    def test_select_exactly_500_from_stratified_pool(self):
+        from unittest.mock import patch
+        pool = [{"book_id": i // 128, "band": str((i % 128) // 32),
+                 "text": f"Case {i}", "tokens": 8} for i in range(512)]
+        with patch("scripts.diagnose_novel_parses.choose_cases",
+                   return_value=(pool, [])) as choose:
+            cases, sources = select_cases(500)
+        self.assertEqual(choose.call_args.args, (32,))
+        self.assertEqual(len(cases), 500)
+        self.assertEqual(len(set(row["text"] for row in cases)), 500)
+        self.assertEqual(sources, [])
 
     def test_exclusive_statuses_and_overlapping_flags(self):
         rows = [

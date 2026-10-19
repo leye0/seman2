@@ -1,4 +1,4 @@
-name: Seman2 - Novel parse diagnostics (50 sentences)
+name: Seman2 - Novel parse diagnostics (500 sentences)
 on:
   push:
     branches: [main]
@@ -18,7 +18,7 @@ concurrency:
 jobs:
   diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -55,13 +55,13 @@ jobs:
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_novel_parses.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --count 50 --max-items 50000 --kbest-work-limit 500000 \
+            --count 500 --max-items 50000 --kbest-work-limit 500000 \
             --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
       - name: Preserve per-sentence diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: novel-parse-diagnostics-50
+          name: novel-parse-diagnostics-500
           path: /tmp/novel-parse-diagnostics/
           retention-days: 90
           if-no-files-found: warn

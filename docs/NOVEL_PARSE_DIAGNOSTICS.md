@@ -1,4 +1,4 @@
-# Diagnostic de 50 phrases de romans
+# Diagnostic de 500 phrases de romans
 
 Le workflow GitHub Actions [novel-parse-diagnostics.yml](../.github/workflows/novel-parse-diagnostics.yml) est disponible sur main. Il s'exécute lors des changements apportés à ce diagnostic et manuellement.
 
@@ -6,10 +6,10 @@ Commande équivalente (avec WordNet 3.0 installé) :
 
     PYTHONPATH=superparser python -u superparser/scripts/diagnose_novel_parses.py \
       --wordnet-dir /chemin/vers/wordnet/dict \
-      --count 50 --max-items 50000 --kbest-work-limit 500000 \
+      --count 500 --max-items 50000 --kbest-work-limit 500000 \
       --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
 
-**50 phrases au total**, pas par roman, à travers quatre romans Gutenberg nettoyés et quatre bandes de longueur (4–8, 9–16, 17–24, 25–32 tokens). Sélection déterministe. Chaque phrase est analysée une seule fois, sans comparaison A/B. Aucun changement aux règles grammaticales ni aux scores.
+**500 phrases au total**, pas par roman, à travers quatre romans Gutenberg nettoyés et quatre bandes de longueur (4–8, 9–16, 17–24, 25–32 tokens). Sélection déterministe. Chaque phrase est analysée une seule fois, sans comparaison A/B. Aucun changement aux règles grammaticales ni aux scores.
 
 ## Interprétation
 
@@ -48,7 +48,30 @@ l'absence d'une hypothèse après filtrage ne prouve pas que WordNet soit
 incomplet.
 
 report.md énumère chaque phrase échouée avec un tableau mot/catégories,
-sans limitation aux 15 premiers. Les 50 phrases demeurent dans
+sans limitation aux 15 premiers. Les 500 phrases demeurent dans
 per_sentence.jsonl et seules les non complètes dans failed_sentences.jsonl.
 Le texte nettoyé original n'est jamais modifié. Les rapports GitHub Actions
 sont conservés 90 jours ; les corpus sont reproductibles depuis main.
+
+
+## Échantillon de 500 cas et problèmes redondants
+
+La cohorte passe de 50 à 500 unités d'analyse, déterministes et réparties
+entre quatre romans et quatre bandes de longueur. Un fichier cohort.jsonl
+est exporté avant l'analyse ; il fixe les 500 cas et leur provenance.
+La comparaison du pourcentage de succès avec celui du précédent échantillon
+de 50 cas ne constitue pas une mesure d'amélioration à corpus constant.
+
+Le fichier recurrent_issues.json décrit les motifs présents dans au moins
+trois phrases échouées distinctes : mots sans candidat lexical, sans
+candidat exact, bigrams et trigrams des ensembles de catégories candidates.
+Chaque motif possède son compte de phrases et des identifiants de cas.
+La synthèse lisible présente les 25 premiers signaux de chaque famille et
+garde l'ensemble des analyses mot à mot. Les nombres sont descriptifs :
+un motif fréquent parmi les échecs n'est pas nécessairement une cause et
+devra être confronté aux réussites avant toute généralisation.
+
+La taille de 500 est distincte des deux plafonds moteurs : 50 000 états
+de reconnaissance et 500 000 unités de travail k-best. Le délai reste
+de 10 secondes maximum par phrase. Les résultats d'exécution restent des
+artefacts GitHub Actions conservés pendant 90 jours.
