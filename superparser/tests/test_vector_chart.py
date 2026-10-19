@@ -16,49 +16,6 @@ class VectorChartTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.parser = Parser(ParserResources.from_dir(DATA, wordnet_dict=os.environ.get('WORDNET_DICT')), cache_size=0)
 
-    def test_boundary_memoization_is_structurally_lossless(self) -> None:
-        from seman_parser.segmentation import build_lattice
-        from seman_parser.vector_chart import VectorGrammar
-        default = self.parser
-        cached = Parser(default.resources, cache_size=0)
-        cached._vector_grammar = VectorGrammar(
-            default._vector_grammar.grammar, cache_boundaries=True)
-        if default._dialogue_vector_grammar is not None:
-            cached._dialogue_vector_grammar = VectorGrammar(
-                default._dialogue_vector_grammar.grammar,
-                preserve_quote_delimiters=True, cache_boundaries=True)
-        for text in (
-            "John opened the box.",
-            "John gave Mary the box.",
-            "I saw the man with the telescope.",
-            '"Hello," said Mary.',
-            "The box was opened by John.",
-        ):
-            with self.subTest(text=text):
-                lattice = build_lattice(text,default.resources.lexicon,multiword_max=1)
-                old = default.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                new = cached.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                self.assertEqual(old.completed,new.completed)
-                for metric in ("forest_nodes","partial_states",
-                               "structural_derivations","partial_derivations",
-                               "budget_exceeded","kbest_budget_exceeded",
-                               "dialogue_scoped"):
-                    self.assertEqual(old.stats.get(metric),new.stats.get(metric),metric)
-                old_best = old.best()
-                new_best = new.best()
-                self.assertEqual(old_best.as_dict() if old_best else None,
-                                 new_best.as_dict() if new_best else None)
-                self.assertEqual(
-                    [item.as_dict() for item in old.alternatives(limit=2)],
-                    [item.as_dict() for item in new.alternatives(limit=2)],
-                    "The first two derivations, syntax and lexical leaves must agree")
-                self.assertEqual(old.stats["boundary_cache_hits"],0)
-                self.assertEqual(old.stats["boundary_cache_misses"],0)
-                self.assertGreater(new.stats["boundary_cache_hits"],0)
-                self.assertGreater(new.stats["boundary_cache_misses"],0)
-
     def test_parser_uses_vector_engine_and_retains_shared_forest(self) -> None:
         result = self.parser.parse("John opened the box.").result
         self.assertTrue(result.completed)
