@@ -139,7 +139,18 @@ class DialogueGrammarTests(unittest.TestCase):
                 for rule in required:
                     self.assertIn(rule, ids)
 
-    def test_parser_reports_inverted_speaker_and_spoken_content(self):
+    def test_vocative_discourse_marker_in_quoted_question(self):
+        text = "“Well, Jane, who is it from?”"
+        result = self.parser.parse(text).result
+        self.assertTrue(result.completed, result.stats)
+        self.assertTrue(result.stats.get("dialogue_scoped"), result.stats)
+        ids = set(descendant_ids(result.best()))
+        self.assertIn("dialogue_discourse_vocative_clause", ids)
+        self.assertIn("clause_wh_copula_stranded_prep_question", ids)
+        unquoted = self.parser.parse("Well, Jane, who is it from?")
+        self.assertFalse(unquoted.result.stats.get("dialogue_scoped", False))
+
+
         text='"John walks," said Mary.'
         report=self.parser.parse(text)
         best=report.result.best()

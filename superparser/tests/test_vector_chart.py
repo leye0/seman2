@@ -475,7 +475,35 @@ class VectorChartTests(unittest.TestCase):
                     pending.extend(node.children)
                 self.assertIn(required, ids)
 
-    def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
+    def test_stranded_preposition_wh_copular_and_repeated_predicate(self) -> None:
+        for text, required in (
+            ("Who is it from?", "clause_wh_copula_stranded_prep_question"),
+            ("Am I not alone, miserably alone?",
+             "clause_copular_neg_repeated_adjp_question"),
+        ):
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                pending = [result.best()]
+                ids = set()
+                while pending:
+                    node = pending.pop()
+                    ids.add(node.rule_id)
+                    pending.extend(node.children)
+                self.assertIn(required, ids)
+
+    def test_wh_stranded_preposition_requires_question_mark(self) -> None:
+        result = self.parser.parse("Who is it from.").result
+        if result.completed:
+            pending = [result.best()]
+            ids = set()
+            while pending:
+                node = pending.pop()
+                ids.add(node.rule_id)
+                pending.extend(node.children)
+            self.assertNotIn("clause_wh_copula_stranded_prep_question", ids)
+
+
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
         parser=self.parser

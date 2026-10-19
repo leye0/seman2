@@ -180,3 +180,16 @@ asyndétique des trois PP est également scopée aux citations. La provenance
 du texte et les marqueurs transférés ne changent pas.
 
 L'inventaire fonctionnel associe maintenant explicitement le lemme `much` au type `ADV` (lecture quantitative), pour que la réponse « Very, very much. » soit reconnue avec ou sans WordNet. Le test de l'ellipse négative requiert la règle de négation et la lecture comme parole directe, mais n'impose pas arbitrairement une des lectures de ponctuation finales (`SPEECH-STOP` et `COMMA` se concurrencent dans la forêt existante).
+
+## Interrogatives en dialogue : préposition orpheline, vocatif et attribut répété
+
+Le motif `“Well, Jane, who is it from?”` échouait alors que `who`,
+`is`, `it`, `from` et `?` sont bien identifiés. Nouvelle règle
+interrogative à préposition finale `WH-NOM COPULA NP PREP QMARK`,
+explicitement bornée par `QMARK`. L'adverbe introducteur `well`
+est identifié lexicalement comme marqueur discursif; `ADV COMMA NP COMMA
+CLAUSE` est limité à la grammaire **des dialogues** pour conserver
+le vocatif `Jane` et l'événement principal de la question. Une autre
+construction `COPULA NP NEG ADJP COMMA ADJP QMARK` conserve l'attribut
+emphatiquement répété dans `but am I not alone, miserably alone?`.
+Le transfert original des guillemets est conservé exactement à l'identique.
