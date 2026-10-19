@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "seman2"
 version = "0.1.0"
-description = "Runtime symbolique fondé sur un flux d'évidence rejouable"
+description = "Layer 1 symbolic grammar parser with adaptive shared-prefix recognition"
 requires-python = ">=3.12"
 dependencies = []
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "superparser"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["superparser"]
 
