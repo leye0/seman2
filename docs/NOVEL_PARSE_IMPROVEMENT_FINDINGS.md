@@ -160,3 +160,7 @@ Une réplique comme « With all my heart. » est un groupe prépositionnel ellip
 ## Adverbes précédant un prédicat nu sous auxiliaire ou modal
 
 Dans des interrogatives comme « Do you really know all this? », la lecture `VP-NP` du prédicat principal était présente, mais l'adverbe `really` placé **avant** ce prédicat ne pouvait pas s'y adjoindre. `advp_vp` ne fonctionne que pour les groupes verbaux finis `VP`, tandis que l'ordre symétrique `VP-NP ADV` existait déjà. Nouvelle construction `VP-NP → ADV VP-NP`, limitée à la voix active, avec tests sur auxiliaire *do* et modal *can*. La règle n'est pas limitée aux dialogues, car l'adjonction adverbiale est productive en anglais ordinaire.
+
+## Interrogatives à objet extrait et complément prépositionnel
+
+La phrase « What would you like for dinner? » n'avait pas de racine après restauration des citations malgré toutes ses catégories lexicales : *like* possède déjà un sens V(base) dont la sous-catégorie est `transitive`, `for dinner` est un PP. Il manquait une combinaison `VP-GAP(object) → V(base, subcat=transitive) PP`, avec *what* comme objet manquant. La contrainte transitive empêche de généraliser cette lecture à toutes les séquences verbe + PP, notamment aux verbes purement intransitifs.

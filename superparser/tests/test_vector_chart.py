@@ -443,6 +443,21 @@ class VectorChartTests(unittest.TestCase):
                     nodes.extend(item.children)
                 self.assertIn("vpnp_front_adv", rules)
 
+    def test_wh_extracted_transitive_object_can_precede_pp_adjunct(self) -> None:
+        # The object of LIKE is 'what'; FOR DINNER modifies the verb,
+        # and cannot be mistaken for the extracted direct object.
+        sentence = "What would you like for dinner?"
+        result = self.parser.parse(sentence).result
+        self.assertTrue(result.completed, result.stats)
+        pending = [result.best()]
+        seen = set()
+        while pending:
+            node = pending.pop()
+            seen.add(node.rule_id)
+            pending.extend(node.children)
+        self.assertIn("clause_wh_obj_modal", seen)
+        self.assertIn("vp_gap_object_after_pp", seen)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
