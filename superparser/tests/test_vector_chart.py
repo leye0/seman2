@@ -360,6 +360,28 @@ class VectorChartTests(unittest.TestCase):
         self.assertFalse(negative.completed,
                          (negative.stats,tree(negative.best())))
 
+    def test_head_determiner_number_agreement_across_np_templates(self) -> None:
+        import json
+        rule_ids = (
+            "np_det_adj_n", "np_det_det_n", "np_det_det_adj_n",
+            "np_det_adv_n", "np_det_degree_n", "np_det_n_clause",
+            "np_det_n_adv", "np_det_n_of", "np_det_ved_n",
+        )
+        rows = [json.loads(line) for line in (DATA/"grammar.jsonl").read_text().splitlines()]
+        by_id = {r["id"]:r for r in rows}
+        for rule_id in rule_ids:
+            with self.subTest(rule_id=rule_id):
+                rule = by_id[rule_id]
+                self.assertEqual(rule["lhs"]["features"]["number"],"?n")
+                for symbol in rule["rhs"]:
+                    if symbol["category"] in ("DET","N"):
+                        self.assertEqual(symbol["features"]["number"],"?n")
+        for phrase in ("The old dog barked.", "Those old dogs barked.",
+                       "Both these books arrived."):
+            with self.subTest(phrase=phrase):
+                result = self.parser.parse(phrase).result
+                self.assertTrue(result.completed,result.stats)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

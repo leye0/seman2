@@ -126,3 +126,7 @@ L'ajout de pronoms/déterminants pluriels a révélé qu'une ancienne règle `cl
 ## Accord des noms à déterminant temporel
 
 La règle héritée `np_temporal` (DET N) acceptait un déterminant pluriel avec un nom singulier car elle ne contrôlait que le nombre du nom. Elle produisait ainsi une fausse lecture de « Those child are sleeping », classée comme NP temporel (!). Le trait de nombre est maintenant unifié entre DET et N pour toute construction `np_temporal`. Cela élimine une cause véritable d'acceptation de phrases grammaticalement fautives, au lieu de supprimer la catégorie plurielle correcte de « those ».
+
+## Harmonisation du nombre à travers neuf autres règles nominales
+
+Un audit de toutes les productions NP comprenant DET et N révèle neuf variantes où le nombre n'était vérifié que sur le nom (adjectifs, deux déterminants, adverbes, compléments en of, relative, participiale, etc.). Dans chaque variante, tous les DET du groupe sont maintenant unifiés avec le nombre du nom (variable `?n`). Les déterminants postposés distributifs (comme « the children each ») sont **exclus** de cette contrainte, car leur nombre peut légitimement différer.
