@@ -124,6 +124,13 @@ def _advance_quotes(text: str, stack: list[tuple[str, str]]) -> None:
         after = text[index + 1] if index + 1 < len(text) else ""
         if char in {"'", "’"} and before.isalnum() and after.isalnum():
             continue
+        # A trailing English possessive ("three days' rest") is not an
+        # opening dialogue delimiter. Likewise, a closing double quote
+        # stranded at a fragment's end must not become a new opening quote.
+        if char == "'" and before.isalnum() and not stack:
+            continue
+        if char == '"' and not stack and before in ".!?" and not after:
+            continue
         if char in {'”', '’'}:
             if stack and stack[-1][1] == char:
                 stack.pop()

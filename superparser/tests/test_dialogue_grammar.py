@@ -76,6 +76,22 @@ class DialogueGrammarTests(unittest.TestCase):
                 self.assertTrue(result.stats.get("dialogue_scoped"),result.stats)
                 self.assertIn("dialogue_unattributed",descendant_ids(result.best()))
 
+    def test_balanced_ascii_single_quotes_but_not_possessives(self):
+        for text in ("'Who are you?'", "'John walks.'", "\"'I have food.'\""):
+            with self.subTest(text=text):
+                marks=quotation_boundaries(text)
+                self.assertEqual(
+                    [(item.side, item.surface) for item in marks if item.surface=="'"],
+                    [("open", "'"), ("close", "'")],
+                )
+        for unquoted in ("John's book.", "a few minutes' conversation.",
+                         "They've returned.", "M'Graw arrived."):
+            with self.subTest(unquoted=unquoted):
+                self.assertEqual(quotation_boundaries(unquoted), ())
+        result=self.parser.parse("'John walks.'").result
+        self.assertTrue(result.completed,result.stats)
+        self.assertTrue(result.stats.get("dialogue_scoped"),result.stats)
+
     def test_marker_overlay_preserves_original_lexical_edges(self):
         from seman_parser.segmentation import build_lattice
         raw='"John goes."'

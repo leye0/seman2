@@ -121,6 +121,9 @@ class SentenceBoundaryTests(unittest.TestCase):
             ("“I came; I saw.”", "“I came; I saw.”", ""),
             ("He answered.", "He answered.", ""),
             ("‘And I had", "‘And I had", ""),
+            ("I spent a few minutes' conversation with Jane.",
+             "I spent a few minutes' conversation with Jane.", ""),
+            ('I saw him."', 'I saw him."', ""),
         ]:
             with self.subTest(original=original):
                 fixed, actual = repair_unclosed_quotation_for_analysis(original)

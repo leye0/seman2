@@ -134,3 +134,7 @@ Un audit de toutes les productions NP comprenant DET et N révèle neuf variante
 ## Contrôle de la segmentation des citations
 
 Le diagnostic réexamine en seconde passe uniquement les phrases sans racine syntaxique contenant une citation ouvrante sans fermeture. Une proposition de fermeture est ajoutée **dans l'unité d'analyse expérimentale**, jamais dans le texte Gutenberg et jamais dans les 500 cas de référence. Les résultats appariés sont exportés dans `quote_repair_trials.jsonl` et résumés séparément des 500 diagnostics bruts. Une réussite après ajout d'un guillemet n'est pas une preuve de bonne segmentation contextuelle, mais isole un facteur d'échec transversal.
+
+## Citations ASCII simples et faux guillemets possessifs
+
+L'overlay de dialogue reconnaît les citations ASCII simples `'Who are you?'` en plus des guillemets doubles et typographiques, sans convertir les apostrophes intérieures de `don't`, `John's` ou `M'Graw` en frontières. Le protocole expérimental de fermeture des guillemets ne réparera plus à tort un apostrophe possessive finale (`minutes' conversation`) ni un guillemet fermant orphelin après la ponctuation.

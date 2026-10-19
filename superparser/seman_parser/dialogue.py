@@ -26,14 +26,28 @@ class QuoteBoundary:
 def quotation_boundaries(text: str) -> tuple[QuoteBoundary, ...]:
     """Recognize balanced dialogue quotes without inventing missing ones.
 
-    Double quotes and typographic single quote pairs are delimiters.
-    Word-internal U+2019 apostrophes are not quote boundaries.
-    ASCII single quotes remain ignored because contractions are ambiguous.
+    Double and paired single quotes (ASCII or curly) are delimiters.
+    Internal apostrophes in contractions/possessives are never quote
+    boundaries; a lone trailing possessive apostrophe is also ignored.
     """
     stack: list[tuple[str, int]] = []
     boundaries: list[QuoteBoundary] = []
     for pos, char in enumerate(text):
-        if char not in {'"', '“', '”', '‘', '’'}:
+        if char not in {'"', "'", '“', '”', '‘', '’'}:
+            continue
+        if char == "'":
+            previous = text[pos - 1] if pos else ""
+            following = text[pos + 1] if pos + 1 < len(text) else ""
+            if previous.isalnum() and following.isalnum():
+                continue
+            if stack and stack[-1][0] == "'":
+                stack.pop()
+                boundaries.append(QuoteBoundary(pos, pos + 1, "close", char))
+                continue
+            if previous.isalnum() or not following or not following.isalnum():
+                continue
+            stack.append((char, pos))
+            boundaries.append(QuoteBoundary(pos, pos + 1, "open", char))
             continue
         if char == '’' and 0 < pos < len(text)-1:
             if text[pos-1].isalnum() and text[pos+1].isalnum():
