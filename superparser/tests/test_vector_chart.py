@@ -265,6 +265,28 @@ class VectorChartTests(unittest.TestCase):
             c.features.as_dict().get("negation")=="true"
             for c in lattice.candidates))
 
+    def test_curly_apostrophe_clitics_keep_source_offsets(self) -> None:
+        from seman_parser.segmentation import build_lattice, tokenize
+        cases = (
+            ("You don’t know.", "n’t", "NEG"),
+            ("I’ll see you.", "’ll", "MODAL"),
+            ("Peggotty’s house stood.", "’s", "POSS"),
+            ("We’re ready.", "’re", "COPULA"),
+        )
+        for text, morpheme, category in cases:
+            with self.subTest(text=text):
+                lattice=build_lattice(text,self.parser.resources.lexicon,multiword_max=1)
+                matching=[
+                    c for c in lattice.candidates
+                    if c.surface==morpheme and c.category==category
+                    and c.source.startswith("typographic-")
+                ]
+                self.assertTrue(matching,[(x.surface,x.category) for x in lattice.candidates])
+                self.assertTrue(all(text[c.span_start:c.span_end]==c.surface
+                                    for c in matching))
+        self.assertEqual([tok.text for tok in tokenize("You don’t know.")],
+                         ["You","don","t","know","."])
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

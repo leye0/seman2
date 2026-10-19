@@ -102,3 +102,7 @@ L'inventaire préexistant contenait `is`, `are`, `was`, `were` mais pas la copul
 ## Négation non standard `ain't`
 
 Quatre cas dans *Treasure Island* présentent la graphie dialectale `ain't`. C'est un auxiliaire/copule négatif vernaculaire attesté, pas une faute à exclure du corpus. Une entrée explicite `COPULA`/`AUX-BE` négative est ajoutée, ainsi qu'un modèle étroit de question-étiquette négative `ain't you?` et de prédicat adjectival négatif `He ain't ready.`. Les règles exigent le trait `negation=true`, afin de ne pas élargir l'analyse de toutes les copules.
+
+## Apostrophes typographiques dans les contractions
+
+Les formes avec U+2019 (don’t, I’ll, we’re, Peggotty’s) obtenaient des candidats lexicaux fragmentaires. Le treillis ajoute les sous-unités morphologiques à partir de la graphie normalisée, mais garde tous les offsets et les surfaces réels du texte original. La tokenisation ne change pas : l’empreinte de la cohorte de 500 phrases est préservée.

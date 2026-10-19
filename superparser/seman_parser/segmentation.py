@@ -205,6 +205,20 @@ def build_lattice(
                 for candidate in _contraction_candidates(span_start, span_end, surface, lexicon):
                     candidates.append(candidate)
 
+    # Project Gutenberg's curly apostrophes ('don’t', 'I’ll', 'John’s')
+    # must have the same productive morpheme hypotheses as ASCII clitics.
+    # Keep tokenize() unchanged for stable corpus offsets and cohort SHA.
+    for match in re.finditer(r"[A-Za-z]+\u2019[A-Za-z]+", text):
+        normalized = match.group(0).replace("\u2019", "'")
+        for candidate in _contraction_candidates(
+            match.start(), match.end(), normalized, lexicon,
+        ):
+            source = text[candidate.span_start:candidate.span_end]
+            candidates.append(replace(
+                candidate, surface=source,
+                source="typographic-" + candidate.source,
+            ))
+
     # Preserve the ordinary word / punctuation path, but also offer one
     # lexical edge across contiguous hyphenated compounds.  This handles
     # productive forms absent from WordNet (``third-grade``) without a word
