@@ -13,7 +13,7 @@
 {"lemma":"on","surfaces":["on"],"senses":[{"id":"on-1","category":"PREP","features":{},"semantic_type":"LOCATED-ON","score":1},{"id":"on-part","category":"PARTICLE","features":{},"score":0.9}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"in","surfaces":["in"],"senses":[{"id":"in-1","category":"PREP","features":{},"semantic_type":"LOCATED-IN","score":1},{"id":"in-part","category":"PARTICLE","features":{},"score":0.9}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"with","surfaces":["with"],"senses":[{"id":"with-1","category":"PREP","features":{},"semantic_type":"ACCOMPANIED-BY","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
-{"lemma":"for","surfaces":["for"],"senses":[{"id":"for-1","category":"PREP","features":{"infinitival_subject_marker":"true"},"semantic_type":"BENEFICIARY","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
+{"lemma":"for","surfaces":["for"],"senses":[{"id":"for-1","category":"PREP","features":{"infinitival_subject_marker":"true"},"semantic_type":"BENEFICIARY","score":1},{"id":"for-coordinating-causal","category":"COORD","features":{},"semantic_type":"CAUSE","score":0.75}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"by","surfaces":["by"],"senses":[{"id":"by-agent","category":"PREP-BY","semantic_type":"BY-MEANS-OF","score":1.2},{"id":"by-prep","category":"PREP","semantic_type":"BY-MEANS-OF","score":0.8}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"near","surfaces":["near"],"senses":[{"id":"near-1","category":"PREP","features":{},"semantic_type":"NEAR","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"toward","surfaces":["toward"],"senses":[{"id":"toward-1","category":"PREP","features":{},"semantic_type":"DIRECTION","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
@@ -62,7 +62,7 @@
 {"lemma":"on","surfaces":["on"],"senses":[{"id":"on-1","category":"PREP","semantic_type":"LOCATED-ON","score":1},{"id":"on-part","category":"PARTICLE","features":{},"score":0.9}],"provenance":{"source":"seed"}}
 {"lemma":"with","surfaces":["with"],"senses":[{"id":"with-1","category":"PREP","semantic_type":"ACCOMPANIED-BY","score":1}],"provenance":{"source":"seed"}}
 {"lemma":"to","surfaces":["to"],"senses":[{"id":"to-1","category":"PREP","semantic_type":"DIRECTION","score":1},{"id":"to-2","category":"TO","score":0.9}],"provenance":{"source":"seed"}}
-{"lemma":"for","surfaces":["for"],"senses":[{"id":"for-1","category":"PREP","features":{"infinitival_subject_marker":"true"},"semantic_type":"BENEFICIARY","score":1}],"provenance":{"source":"seed"}}
+{"lemma":"for","surfaces":["for"],"senses":[{"id":"for-1","category":"PREP","features":{"infinitival_subject_marker":"true"},"semantic_type":"BENEFICIARY","score":1},{"id":"for-coordinating-causal","category":"COORD","features":{},"semantic_type":"CAUSE","score":0.75}],"provenance":{"source":"seed"}}
 {"lemma":"by","surfaces":["by"],"senses":[{"id":"by-agent","category":"PREP-BY","semantic_type":"BY-MEANS-OF","score":1.2},{"id":"by-prep","category":"PREP","semantic_type":"BY-MEANS-OF","score":0.8}],"provenance":{"source":"seed"}}
 {"lemma":"near","surfaces":["near"],"senses":[{"id":"near-1","category":"PREP","semantic_type":"NEAR","score":1}],"provenance":{"source":"seed"}}
 {"lemma":"because","surfaces":["because"],"senses":[{"id":"because-1","category":"CONJ","semantic_type":"REASON","score":1}],"provenance":{"source":"seed"}}

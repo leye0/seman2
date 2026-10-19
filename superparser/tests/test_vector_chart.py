@@ -602,6 +602,35 @@ class VectorChartTests(unittest.TestCase):
                 self.assertIn("adjp_degree_adverb_adjp", rules)
                 self.assertIn("adjp_adjective_pp_infinitive", rules)
 
+    def test_speech_exclaim_intransitive_and_long_subject_control(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        positive = (
+            ("I joyfully exclaimed.", "vp_intransitive"),
+            ("I longed to see my friends.", "vp_to_inf"),
+            ("for I longed to see my native town and my beloved friends.",
+             "coord_clause"),
+        )
+        for sentence, required in positive:
+            with self.subTest(sentence=sentence):
+                result = self.parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                todo = [result.best()]
+                rules = set()
+                while todo:
+                    node = todo.pop()
+                    rules.add(node.rule_id)
+                    todo.extend(node.children)
+                self.assertIn(required, rules)
+        lattice = build_lattice(
+            "I joyfully exclaimed.", self.parser.resources.lexicon,
+            multiword_max=1,
+        )
+        self.assertTrue(any(
+            c.surface == "exclaimed" and c.category == "V"
+            and c.features.as_dict().get("subcat") == "intransitive"
+            for c in lattice.candidates
+        ))
+
     def test_required_evidence_prunes_impossible_kbest_branches(self) -> None:
         sentinels = (
             "In the first, everybody followed her initial idea.",
