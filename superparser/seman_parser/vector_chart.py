@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-import json
 from dataclasses import dataclass, field, replace
 from heapq import heappop, heappush
 from itertools import count
@@ -16,7 +15,6 @@ from .features import (
     substitute_structure, unify,
 )
 from .grammar import Grammar, GrammarRule
-from .prefix_edges import OnlinePrefixEdges, FlatOnlinePrefixEdges
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern
@@ -72,8 +70,8 @@ class PackedPartial:
     dot: int
     start: int
     end: int
-    # When online_prefix_edges is enabled, 'derivations' is a lazy
-    # rule-specific PrefixEdgeView instead of a Python object list.
+    # Canonical recognition stores a list; the lazy trie projects a
+    # read-only ordered view for each rule only on demand.
     derivations: Sequence[PartialDerivation] = field(default_factory=list)
     seen: set[tuple[int | None, int]] | None = field(default_factory=set)
 
@@ -278,9 +276,6 @@ class VectorGrammar:
     def __init__(self, grammar: Grammar, *, early_lexical_filter: bool = False,
                  preserve_quote_delimiters: bool = False,
                  cache_boundaries: bool = False,
-                 online_prefix_edges: bool = False,
-                 flat_prefix_edges: bool = False,
-                 shared_trie_recognition: bool = False,
                  lazy_trie_recognition: bool = False) -> None:
         self.grammar = grammar
         # Research A/B switch. Default OFF: canonical behaviour is unchanged.
@@ -290,11 +285,8 @@ class VectorGrammar:
         # Research A/B: memoize identical punctuation/whitespace boundary
         # scans within a sentence. Default off pending paired benchmarks.
         self.cache_boundaries = cache_boundaries
-        # Experimental online group edge interning; canonical mode remains
-        # byte-for-byte equivalent and is still the default.
-        self.online_prefix_edges = online_prefix_edges or flat_prefix_edges
-        self.flat_prefix_edges = flat_prefix_edges
-        self.shared_trie_recognition = shared_trie_recognition
+        # The single supported experimental alternate engine: common
+        # category-prefix recognition with lazy rule-specific projection.
         self.lazy_trie_recognition = lazy_trie_recognition
         # Lexical nodes of a category built by a grammar LHS can later acquire
         # nonlexical derivations; they must NEVER be rejected on lexical evidence.
@@ -328,7 +320,7 @@ class VectorGrammar:
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
         # Separate experimental recognizer; compilation is amortized once.
-        if shared_trie_recognition or lazy_trie_recognition:
+        if lazy_trie_recognition:
             from .shared_trie_forest import compile_category_trie
             self.trie_nodes = compile_category_trie(self.rules)
             self.trie_variant_offsets = tuple(
@@ -338,27 +330,6 @@ class VectorGrammar:
         else:
             self.trie_nodes = ()
             self.trie_variant_offsets = ()
-        self.prefix_ids: tuple[tuple[int, ...], ...] = ()
-        if self.online_prefix_edges:
-            # Compile all consumed-symbol signatures ONCE per grammar, not
-            # once per partial state. Keep variant-specific rule indices.
-            names: dict[tuple[str, ...], int] = {}
-            prefixes: list[tuple[int, ...]] = []
-            for item in self.rules:
-                consumed: tuple[str, ...] = ()
-                per_rule: list[int] = []
-                for dot in range(len(item.rule.rhs) + 1):
-                    if dot:
-                        symbol = item.rule.rhs[dot - 1]
-                        consumed += (json.dumps(symbol.as_dict(),sort_keys=True,
-                                               separators=(",",":"),ensure_ascii=False),)
-                    idx = names.get(consumed)
-                    if idx is None:
-                        idx = len(names)
-                        names[consumed] = idx
-                    per_rule.append(idx)
-                prefixes.append(tuple(per_rule))
-            self.prefix_ids = tuple(prefixes)
 
     def _bit(self, category: str) -> int:
         category_id = intern(category)
@@ -386,9 +357,6 @@ class VectorGrammar:
         if self.lazy_trie_recognition:
             from .lazy_trie_forest import LazySharedTrieForest
             forest = LazySharedTrieForest(self,lattice,max_items=max_items)
-        elif self.shared_trie_recognition:
-            from .shared_trie_forest import SharedTrieForest
-            forest = SharedTrieForest(self, lattice, max_items=max_items)
         else:
             forest = _VectorForest(self, lattice, max_items=max_items)
         root_nodes = forest.recognize(goal_category)
@@ -439,20 +407,13 @@ class VectorGrammar:
             "structural_derivations": forest.derivation_count,
             "partial_states": len(forest.partials),
             "partial_derivations": forest.partial_derivation_count,
-            "online_prefix_edges_enabled": self.online_prefix_edges,
-            "online_prefix_flat_enabled": self.flat_prefix_edges,
-            "shared_trie_recognition": self.shared_trie_recognition,
             "lazy_trie_recognition": self.lazy_trie_recognition,
             "shared_trie_states": len(forest.trie_states)
-                if self.shared_trie_recognition or self.lazy_trie_recognition else 0,
+                if self.lazy_trie_recognition else 0,
             "shared_trie_edges": forest.trie_edges
-                if self.shared_trie_recognition or self.lazy_trie_recognition else 0,
+                if self.lazy_trie_recognition else 0,
             "lazy_rule_partials_materialized": len(forest.partials.cached)
                 if self.lazy_trie_recognition else 0,
-            **(forest.prefix_store.diagnostics() if forest.prefix_store is not None else
-               {"online_prefix_groups":0,"online_prefix_unique_edges":0,
-                "online_prefix_shared_edge_hits":0,"online_prefix_member_count":0,
-                "online_prefix_array_bytes":0}),
             "partial_proposals": forest.partial_proposals,
             "duplicate_partial_proposals": forest.duplicate_partial_proposals,
             "duplicate_transitions_avoided": forest.duplicate_transitions_avoided,
@@ -555,11 +516,6 @@ class _VectorForest:
         self.boundary_cache_hits = 0
         self.boundary_cache_misses = 0
         self._next_start_cache: dict[int, int] = {}
-        self.prefix_store = (
-            (FlatOnlinePrefixEdges if compiled.flat_prefix_edges else
-             OnlinePrefixEdges)(compiled.prefix_ids, PartialDerivation)
-            if compiled.online_prefix_edges else None
-        )
         if compiled.cache_boundaries:
             # Assign a cached implementation once, avoiding an extra branch
             # at each hot-path call in the *uncached* reference parser.
@@ -694,19 +650,11 @@ class _VectorForest:
             partial = PackedPartial(len(self.partials), rule_index, dot, start, end)
             self.partials.append(partial)
             self.partial_by_key[key] = partial
-            if self.prefix_store is not None:
-                partial.derivations = self.prefix_store.register(partial)
-                partial.seen = None
             self.operations += 1
-        if self.prefix_store is None:
-            signature = (previous_id, child_id)
-            if signature not in partial.seen:
-                partial.seen.add(signature)
-                partial.derivations.append(PartialDerivation(previous_id, child_id))
-                self.partial_derivation_count += 1
-            else:
-                self.duplicate_partial_proposals += 1
-        elif partial.derivations.append(previous_id, child_id):
+        signature = (previous_id, child_id)
+        if signature not in partial.seen:
+            partial.seen.add(signature)
+            partial.derivations.append(PartialDerivation(previous_id, child_id))
             self.partial_derivation_count += 1
         else:
             self.duplicate_partial_proposals += 1

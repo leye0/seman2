@@ -20,7 +20,7 @@ class ComplexityPolicy:
     """Research policy. No unvalidated implicit complexity cutoff."""
     rule_start_threshold: int
     min_tokens: int = 17
-    difficult_strategy: Literal["online", "flat", "trie"] = "flat"
+    difficult_strategy: Literal["trie"] = "trie"
     # (minimum length, maximum length, min rule starts), fitted offline;
     # never derive thresholds from a test phrase's parsing outcome.
     band_thresholds: tuple[tuple[int, int, int], ...] = ()
@@ -28,7 +28,7 @@ class ComplexityPolicy:
     def __post_init__(self) -> None:
         if self.rule_start_threshold < 1 or self.min_tokens < 1:
             raise ValueError("Complexity routing requires positive explicit thresholds")
-        if self.difficult_strategy not in ("online", "flat", "trie"):
+        if self.difficult_strategy != "trie":
             raise ValueError("Unrecognized difficult-sentence strategy")
         occupied = set()
         for lower, upper, threshold in self.band_thresholds:
@@ -48,7 +48,7 @@ class ComplexityPolicy:
 
 @dataclass(frozen=True)
 class RoutingDecision:
-    strategy: Literal["canonical", "online", "flat", "trie"]
+    strategy: Literal["canonical", "trie"]
     reason: str
     score: int | None
     measured_ms: float

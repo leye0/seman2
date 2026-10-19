@@ -15,7 +15,7 @@ from collections.abc import Iterator,Sequence
 from dataclasses import dataclass,field
 from typing import Any
 
-from .shared_trie_forest import SharedTrieForest
+from .shared_trie_forest import TrieRecognitionBase
 from .vector_chart import PackedPartial,PartialDerivation,RuleDerivation
 
 
@@ -102,14 +102,13 @@ class VirtualPartials(Sequence):
         return partial
 
 
-class LazySharedTrieForest(SharedTrieForest):
+class LazySharedTrieForest(TrieRecognitionBase):
     """Recognize grammar prefixes ONCE; project original rule only for k-best."""
 
     def __init__(self,compiled,lattice,*,max_items:int):
         super().__init__(compiled,lattice,max_items=max_items)
         self.partials=VirtualPartials(self)
         self.trie_states:list[LazyGroup]=[]
-        self.trie_members.clear()
         self.virtual_complete_rules=0
         self.virtual_groups_allocated=0
 
