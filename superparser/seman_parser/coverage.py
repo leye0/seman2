@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Any, Iterable, Sequence
 
 from .engine import Parser
-from .reader import DiscourseProcessor
 from .sentence_boundaries import has_final_punctuation, split_prose_sentences
 
 _NOISE = re.compile(r"^[\s\"'“”‘’\-–—*•>]*$")
@@ -37,7 +36,6 @@ class CaseResult:
     category: str | None
     rule_id: str | None
     relations: tuple[str, ...]
-    mention_count: int
     error: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
@@ -48,7 +46,6 @@ class CaseResult:
             "category": self.category,
             "rule_id": self.rule_id,
             "relations": list(self.relations),
-            "mentions": self.mention_count,
             "error": self.error,
         }
 
@@ -164,18 +161,12 @@ def run_coverage(
             category = best.category if best else None
             semantic = report.interpret(best) if best else None
             relations = tuple(sorted({e.relation for e in semantic.graph.relations})) if semantic else ()
-            mentions = 0
-            if best is not None:
-                from .mentions import extract_event_mentions, extract_mentions
-
-                mentions = len(extract_mentions(best, 0)) + len(extract_event_mentions(best, 0))
             result = CaseResult(
                 case=case,
                 completed=ok,
                 category=category,
                 rule_id=rule_id,
                 relations=relations,
-                mention_count=mentions,
             )
         except Exception as exc:  # noqa: BLE001 — coverage harness must survive
             result = CaseResult(
@@ -184,7 +175,6 @@ def run_coverage(
                 category=None,
                 rule_id=None,
                 relations=(),
-                mention_count=0,
                 error=f"{type(exc).__name__}: {exc}",
             )
         results.append(result)
@@ -206,31 +196,3 @@ def run_coverage(
         by_rule=by_rule,
         by_relation=by_relation,
     )
-
-
-def run_discourse_sample(
-    corpus_path: str | Path,
-    *,
-    data_dir: str | Path,
-    window: int = 4,
-    windows: int = 5,
-) -> list[dict[str, Any]]:
-    """Run the discourse processor over a few multi-sentence windows."""
-    cases = extract_sentences(corpus_path, limit=window * windows + 20)
-    out: list[dict[str, Any]] = []
-    for start in range(0, min(len(cases), window * windows), window):
-        chunk = [c.text for c in cases[start : start + window]]
-        if len(chunk) < 2:
-            continue
-        proc = DiscourseProcessor.from_dir(data_dir)
-        report = proc.read_many(chunk)
-        chains = {eid: surfaces for eid, surfaces in report.entity_chains().items() if len(surfaces) > 1}
-        out.append(
-            {
-                "texts": chunk,
-                "chains": chains,
-                "entities": len(report.state.entities),
-                "mentions": len(report.state.mentions),
-            }
-        )
-    return out
