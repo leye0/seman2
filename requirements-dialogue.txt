@@ -1,3 +1,0 @@
-dynamicsyntax==0.2.6
-pydelphin==1.10.0
-networkx==3.5
