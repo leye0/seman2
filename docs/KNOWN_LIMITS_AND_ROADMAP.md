@@ -1,36 +1,27 @@
-# Current limitations and progress gates
+# Limites actuelles et feuille de route — seul Layer 1
 
-This is the working list of **what remains hard** for Layer 1. Completing more sentences is not sufficient if the parses are grammatically incorrect or too expensive for live ingestion.
+**État de main après nettoyage.** Le code à exécuter est décrit dans [RUN_CURRENT_LAYER1.md](RUN_CURRENT_LAYER1.md). Les anciennes expériences sont archivées dans Git, pas dans notre API.
 
-## Current measured limits (not goals)
+## Ce qui reste difficile
 
-- Historical four-novel 5,000-sentence forensic baseline: **3,013/5,000** complete, with **1,077** forest-budget hits at a 20,000-item research cap. The longest 25–32-token band achieved **30.6%** completion. This measurement was taken before the final dialogue/quotation fixes, so it is not today's total coverage.
-- In the length-stratified dialogue audit (160 quote-bearing snippets), **74/160** received a dialogue-scoped parse, **13/160** a general-grammar fallback and **73/160** no complete parse. Quotes are not automatically direct speech; samples require human-label validation.
-- In a paired 256-case experimental A/B, the early lexical filter rescued **14** incomplete parses but lost **1** earlier success and changed **15** previously successful best-tree signatures. **Not safe to enable by default.**
-- Post-budget split recovery saved **6** cases with no changes to successful reference trees, but increased aggregate processing cost by approximately **9.7%** on that sample. It is recovery, not a speedup.
-- The compiled structural-prefix risk diagnostic is promising for *forest saturation*, but has not demonstrated robust prediction of k-best tails or overall runtime; authors and sample size are limited. **It is still opt-in research.**
-- **Predict-first complexity routing is now wired into Parser as an opt-in strategy**, with a zero-probe short-sentence path, an explicit rule-start threshold and a protected canonical speech grammar. Length-conditioned benchmarks selected 10/64 snippets and left 54 canonical; risk scoring cost ~1.1 ms total, and all 193,983 ordered partial edges from selected cases matched the baseline. Severe A/A drift on the same CI runner means **no reliable net speedup has been established**. See [adaptive routing](ADAPTIVE_COMPLEXITY_ROUTING.md).
-- **18 October, prefix-sharing research:** a 128-sentence audit found 329,781 apparent category-skeleton duplicate partial states out of 1,230,617 (26.8%). A more precise 64-sentence audit found 356,830 repeated **feature-exact consumed prefixes** among 577,545 partial states (61.8%). These are potential shared *recognition computations*, **not** a proven reduction in physical packed-forest states or a safe merger of rules. Rule identity, future constraints, scores and semantic actions must remain separate. An opt-in boundary-scan memoizer matched forest counts and best trees on both samples, but A/A timing drift was large, so **it remains disabled by default**. See [the study](FOREST_PREFIX_SHARING_FINDINGS.md).
-- **Physical prefix storage POC (18 Oct):** 64 novel sentences have 625,555 canonical derivation edges but 260,443 unique shared-prefix edges. A reversible direct flat-array projection used 18.43 MB of edge-related vectors versus 80.9 MB for the corresponding original Python lists/objects (77.2% component-only reduction). This conversion is **after parsing**, and no runtime speed or total memory saving has been demonstrated. See [prototype and limitations](SHARED_PREFIX_STORAGE_PROTOTYPE.md).
-- Syntax quality is not 100%: a direct-grammar validation of 120 positive and 24 negative cases recorded 120 complete positive analyses and **10/24** incorrectly accepted negative cases. Completion and approximate structural assertions are not an independent treebank gold standard.
-- Context-sensitive quotation handling, fractured sentence boundaries and attribution spans still need broader author-held-out human verification; the quote-aware fallback currently strips outer quotes before ordinary parse, which can shift text-relative positions.
+- **Exactitude et complétion différentes :** une analyse complète peut être grammaticalement erronée (accord, valence, rattachement, coordination, temps, dialogue). Un parse réussi n'est pas une validation humaine.
+- **Forêts saturées :** sur des phrases longues, le plafond de 20 000 états peut être atteint; la limite de travail du `k-best` est distincte. Un budget épuisé n'est pas une preuve d'agrammaticalité.
+- **Deux voies seulement :** canonique par défaut; trie à préfixes communs et projection lazy seulement avec une politique préparse explicite. Sous `min_tokens`, aucune signature n'est calculée. Les dialogues restent sur leur grammaire spéciale.
+- **Performance contextualisée :** dans l'Action [39177896708](https://github.com/leye0/seman2/actions/runs/39177896708), 128 phrases de quatre romans : 5,13 s CPU canonique contre 4,33 s adaptatif, **−15,6 % sur cette cohorte**, dont 32 phrases routées. Ce chiffre ne prouve pas un gain pour d'autres auteurs, ni un gain de justesse.
+- **Saturations non certifiées :** 13 des 32 cas routés et non saturés avaient des preuves complètes comparées; les 19 cas saturés ne possèdent pas encore de preuve générale d'identité exhaustive, même si leurs arbres comparés concordaient. L'alternative reste opt-in.
+- **Dialogues et segmentation :** guillemets, initiales et dialogues de romans sont préservés, mais toutes les incises, citations non équilibrées et formes discursives ne sont pas encore correctement analysées.
+- **Généralisation :** seuls quatre romans historiquement étudiés ont servi de base à ces recherches. De nouveaux auteurs et des exemples positifs/négatifs annotés seront nécessaires.
+- **Layer 2 :** nous transmettons les mots, traits, spans, règles et structures. La mémoire épisodique, la coréférence persistante et l'apprentissage sémantique restent futurs et ne font pas partie de ce dépôt.
 
-- **Grammar prefix-trie proof (18 Oct):** an oracle-based trie replay on 64 novel snippets found 50 nonsaturated cases with **zero mismatches across 334,684 logical derivation edges**. It represented the verified **311,260** rule-specific partial states using **36,363** shared category-prefix states (88.3% fewer *theoretical recognition states*). These states depend on canonical recognized constituents and preserve rule identities only through projection: this is **not** a running parser, a guaranteed compression factor or a speedup. Fourteen saturated cases were excluded from the strict comparison. See [category trie findings](CATEGORY_PREFIX_TRIE_FINDINGS.md).
+## Ce que l'utilisateur veut développer ensuite
 
-- **Subtree signature cache pilot (18 Oct):** cross-book category/trie lookup on 67 quote-free long novel excerpts costs 0.181 ms CPU median (0.274 ms p95) and finds hints in 67/67; 109 of 1,511 hints occur in the canonical best trees of the 30 fully parsed test items. A *hint is not a valid parse*, 31 items saturate the canonical forest, and the cache currently **adds** lookup cost instead of saving recognition. This pilot proves an inexpensive lookup opportunity, NOT speedup, grammatical precision or external-author generalization. See [cache audit](SUBTREE_SIGNATURE_CACHE_FINDINGS.md) and [research handoff](CURRENT_RESEARCH_HANDOFF.md).
+**Pause explicite des nouvelles méthodes d'optimisation, patterns et caches.** Ne pas réintroduire les anciens moteurs supprimés. Nous améliorons **le Layer 1 existant** en traitant ses erreurs grammaticales et ses trous de couverture, sur les vraies phrases difficiles.
 
-## Development work, in priority order
+Étapes :
+1. Vérifier les trois parcours (canonique court, trie lazy opt-in long, dialogues) et les tests décrits dans [RUN_CURRENT_LAYER1.md](RUN_CURRENT_LAYER1.md).
+2. Séparer les vraies phrases littéraires des citations, initiales, erreurs de découpage, absences de règles, saturations de forêt et épuisement du `k-best`.
+3. Corriger les règles, sous-types et accords de façon ciblée; préserver les succès connus et créer des fixtures positives ET négatives.
+4. Garder tous les lexèmes originaux, les catégories alternatives, les traits, les preuves `requires`, les offsets et les dépendances syntaxiques pour le futur Layer 2.
+5. Mesurer couverture, **justesse** et budgets sur un corpus figé avec auteurs inédits; ne jamais augmenter artificiellement la couverture en affaiblissant les contraintes.
 
-1. **Stable reference quality gate.** Pin clean novel and external grammar corpus fixtures with tree structures, syntax roles, quotation spans, lexical subtypes and negative controls. Distinguish parsing completeness, syntactic correctness, semantic roles, forest saturation and latency.
-2. **Safe forest compaction.** Prototype a shared consumed-prefix recognizer with a separate list of rule-variant continuations and independent feature/binding, score and semantic projection. An *identical already-consumed* RHS prefix is eligible for recognition reuse, but not a license to merge complete rules or best trees. Compare all derivations, forest saturation, WordNet categories and fast-path p95 on held-out novels.
-3. **Length-safe decomposition.** Identify independent clause boundaries from positive grammatical evidence; assemble them through real grammatical rules with original character spans and punctuation. A comma alone is not evidence of an independent clause.
-4. **Cheap conditional routing and shared-prefix engine.** Validate the bitset prefix-risk signal on unseen authors. Measure false triggers and speed on easy sentences; routing must be cheaper than unnecessary alternatives, and it must not make risky sentences silently appear correct.
-5. **Dialogue/quotation robustness.** Preserve paired, nested and interrupted quotes, incises, reporting verbs, multi-clause spoken content; avoid turning incidental quoted terms into direct speech.
-6. **Full evidence handoff.** Ensure the serialized Layer 1 interface can reconstruct exact analyzed surface tokens and offsets, syntax alternatives, morphosyntactic features and provenance for future Layer 2.
-7. **Later semantic and memory layer.** Build entity/reference, event, temporal/modal and episodic storage downstream; do not prematurely cram world knowledge into grammar patterns.
-
-## Non-negotiable acceptance criteria
-
-No release of an experimental optimization on the canonical path unless it demonstrates (a) no lost valid parses or subtypes on control suites, (b) syntax/semantic parity or independently verified improvements, (c) reduced total/p95 cost on author-held-out text, and (d) no meaningful degradation of fast sentences. A performance ceiling is a measurement limitation, never evidence of linguistic impossibility.
-
-Pointers: `superparser/research/verbnet_lr/{PARSER_LINEAGE_AND_HYBRID_AUDIT,HEAVY_SENTENCE_ADAPTIVE_FINDINGS,PREPARSE_LEXICAL_AMBIGUITY_AUDIT,STRUCTURAL_CONTINUATION_PROBE_FINDINGS,DIALOGUE_GRAMMAR_STATUS}.md`.
+Voir [RESEARCH_HISTORY_AND_DECISIONS.md](RESEARCH_HISTORY_AND_DECISIONS.md) pour les résultats négatifs et la branche [archive/pre-simplification-2026-10-18](https://github.com/leye0/seman2/tree/archive/pre-simplification-2026-10-18) pour leur ancien code.

@@ -16,7 +16,13 @@
 | 17–18 Oct — clean novels, dialogue boundaries | Four cleaned public-domain novels; preserve quotation and initials; specialized dialogue grammar | Quote corruption and sentence-boundary artifacts masqueraded as grammar failures. New audit 74/160 dialogue-scoped parses in a length-stratified sample, not 160 verified speech turns | **Keep cleaned corpus + quote-aware parser** |
 | 18 Oct — inspect 5,000 slow sentences | Explain forest and k-best saturation, length vs complexity | Top 10% consume ~73% of processing time in historical run; forest often hits 20,000 states on 25–32 tokens; k-best has separate tail | Optimize selectively; do not penalize fast sentences |
 | 18 Oct — lexical category product | Precompute `Σ log2(k_i)` and feature-aware products | Category AUC ~0.940, subtype AUC ~0.960 for saturation overall, but token count ~0.975; raw ambiguity mostly recapitulated sentence length | Useful cheap diagnostic, insufficient as router |
-| 18 Oct — rule-continuation predictor | Compile FIRST-category/rule-prefix compatibility from existing grammar | Bitset prototype p50 ~0.034 ms, matched-length AUC ~0.841 for rule start pressure and saturation; predictor is neither a parser nor a correctness guarantee | **Current read-only research POC**, candidate for routing experiments |
+| 18 Oct — rule-continuation predictor | Compile FIRST-category/rule-prefix compatibility from current grammar | Bitset p50 ~0.034 ms, matched-length AUC ~0.841 for saturation; predictive cost not grammatical truth | INTEGRATED as opt-in preparse router |
+
+| 18 Oct — memory-focused online / flat prefix modes | Intern partial-edge objects after rule recognition | Some memory reductions, but first option as much as 2.4× slower; storage sharing is not computational sharing | REMOVED from main |
+| 18 Oct — indexed category checks and packed keys | Skip trivial category comparisons | Even with controlled GC, routed cohort about 2.45% slower; no robust benefit | REMOVED from main |
+| 18 Oct — shared category-prefix trie, lazy rule projection | Recognize grammatical prefix once, project rule-specific variants only for k-best | 42 long cases ~43% CPU saved; A/adapt/A on 128 cases ~15.6% CPU saved, with 19 saturated cases uncertified | ONLY opt-in heavy recognizer retained |
+| 18 Oct — cross-book signature/subtree caching | Lookup previously seen grammar shapes and replay their constraints | Lookup ~0.18ms median but useful long subtrees rare, no recognition work saved, risk of false acceptance if traits ignored | REMOVED from main |
+| 18 Oct — single-subject repository cleanup | Remove POCs, unused workflows, historical readers and induction systems | Future agents must know exactly ONE current Layer 1 architecture | main now contains the canonical and lazy-trie routes only |
 
 ## Six lessons we explicitly do NOT forget
 
@@ -27,15 +33,10 @@
 5. **Don't use punctuation as an unverified shortcut.** Dialogue quotation, punctuation, initials and cuts were genuine data-quality/segmentation failures, not necessarily rule deficits.
 6. **Don’t solve one benchmark by silently weakening the contract.** Over-aggressive early filters lost old successes; speculative pre-splits raised runtime or changed top trees; post-failure recovery was safe for successes but added cost.
 
-## Where the original evidence lives
+## Où sont les preuves originales ?
 
-The cleaned corpus and research notes remain versioned. Primary narrative:
-- `superparser/research/verbnet_lr/PARSER_LINEAGE_AND_HYBRID_AUDIT.md`
-- `.../CANONICAL_VECTOR_GUTENBERG_DECISION.md`
-- `.../DIRECT_GRAMMAR_CONSOLIDATION_RESULTS.md`
-- `.../DIALOGUE_GRAMMAR_STATUS.md`
-- `.../HEAVY_SENTENCE_ADAPTIVE_FINDINGS.md`
-- `.../PREPARSE_LEXICAL_AMBIGUITY_AUDIT.md`
-- `.../STRUCTURAL_CONTINUATION_PROBE_FINDINGS.md`
+**Les exécutables historiques ne sont PLUS dans main.** Ils restent récupérables dans [archive/pre-simplification-2026-10-18](https://github.com/leye0/seman2/tree/archive/pre-simplification-2026-10-18), au commit `d161e4bc34f2c344a7360d92329f2dd985133acd`, ainsi que dans l'historique de Git et les anciennes Actions. Les anciennes notes de `research/verbnet_lr`, moteurs compiled LR, snapping et autres doivent être consultés **sur la branche archivée**.
 
-Historical scripts removed during the cleanup are retrievable at the pre-cleanup commit `e8322eb7fdb6ab1213c1a44f9b3d032f29d4d7a8` or earlier history. Never replace a historical measurement with data from a different corpus, budget or parser version.
+Le SEUL code à exécuter et les commandes validées : [RUN_CURRENT_LAYER1.md](RUN_CURRENT_LAYER1.md). Architecture : [ARCHITECTURE_LAYER1.md](ARCHITECTURE_LAYER1.md). Limites actuelles : [KNOWN_LIMITS_AND_ROADMAP.md](KNOWN_LIMITS_AND_ROADMAP.md).
+
+**Décision actuelle du propriétaire :** suspendre pour le moment les optimisations par nouveaux patterns. Améliorer la correction et la couverture grammaticale des phrases difficiles et dialogues avec les moteurs présents.
