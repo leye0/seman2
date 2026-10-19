@@ -1,0 +1,125 @@
+name: Seman2 — 1000 phrases paramètres réels GC A/B
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gc-real-defaults-1000.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: seman2-gc-real-defaults-1000
+  cancel-in-progress: true
+jobs:
+  realistic-gc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-CPU-audit'}),timeout=90) as r:
+              data=r.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for item in z.namelist():
+                  leaf=Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(item))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Verify bench syntax
+        run: python -m py_compile tools/gc_real_defaults_1000.py
+      - name: Default GC / 1000 phrases — process 1
+        run: |
+          SEMAN2_DISABLE_GC_FREEZE=1 WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u tools/gc_real_defaults_1000.py --mode normal --run 1
+      - name: GC optimized / 1000 phrases — process 2
+        run: |
+          SEMAN2_DISABLE_GC_FREEZE=0 WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u tools/gc_real_defaults_1000.py --mode optimized --run 1
+      - name: GC optimized / 1000 phrases — process 3
+        run: |
+          SEMAN2_DISABLE_GC_FREEZE=0 WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u tools/gc_real_defaults_1000.py --mode optimized --run 2
+      - name: Default GC / 1000 phrases — process 4
+        run: |
+          SEMAN2_DISABLE_GC_FREEZE=1 WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u tools/gc_real_defaults_1000.py --mode normal --run 2
+      - name: Compare exact grammar outputs and CPU results
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from statistics import mean
+          root=Path("_gc_production_1000")
+          keys=["normal_1","optimized_1","optimized_2","normal_2"]
+          content={k:json.loads((root/(k+".json")).read_text()) for k in keys}
+          for k,data in content.items():
+              assert data["status"]=="success", k
+              assert data["statistics"]["cases_done"]==1000,(k,data["statistics"]["cases_done"])
+              assert data["meta"]["parser_max_items"]==50000,k
+              assert data["meta"]["parse_entrypoint"]=="Parser.parse",k
+              assert data["meta"]["parser_cache_capacity"]==2048,k
+          sources={data["meta"]["source_sha256"] for data in content.values()}
+          assert len(sources)==1,"Input corpus differs between independent processes"
+          parity=[]
+          first=content[keys[0]]["samples"]
+          for i in range(1000):
+              hashes={k:content[k]["samples"][i]["fingerprint"] for k in keys}
+              if len(set(hashes.values()))!=1:
+                  parity.append({"index":i,"hashes":hashes})
+          result={
+              "mode":"Production defaults, separate Python processes A/B/B/A",
+              "sentences":1000,
+              "total_parse_calls":4000,
+              "identical_outcomes":len(parity)==0,
+              "differences":parity[:20],
+              "differences_total":len(parity),
+              "input_sha256":next(iter(sources)),
+              "runs":{
+                  k:{
+                      "cpu_seconds":content[k]["statistics"]["cpu_seconds"],
+                      "wall_seconds":content[k]["statistics"]["wall_seconds"],
+                      "gc_cpu_seconds":content[k]["statistics"]["cpu_gc_seconds"],
+                      "completed":content[k]["statistics"]["completed"],
+                      "failure_causes":content[k]["statistics"]["failure_causes"],
+                      "rss_mib":content[k]["statistics"]["rss_mib"],
+                      "p95_cpu_ms":content[k]["statistics"]["p95_cpu_ms"],
+                      "engine_gc_freeze_applied":content[k]["statistics"]["freeze_applied_by_engine"],
+                      "frozen_object_count":content[k]["statistics"]["freeze_count"]
+                  } for k in keys
+              },
+          }
+          baseline=mean(content[k]["statistics"]["cpu_seconds"] for k in ("normal_1","normal_2"))
+          optimized=mean(content[k]["statistics"]["cpu_seconds"] for k in ("optimized_1","optimized_2"))
+          result["normal_cpu_mean_s"]=baseline
+          result["optimized_cpu_mean_s"]=optimized
+          result["cpu_change_pct"]=(optimized/baseline-1)*100
+          result["speedup_x"]=baseline/optimized
+          (root/"summary.json").write_text(json.dumps(result,ensure_ascii=False,sort_keys=True,indent=2))
+          print(json.dumps(result,sort_keys=True,indent=2))
+          assert not parity, f"{len(parity)} output differences; do not claim equivalence"
+          assert not result["runs"]["normal_1"]["engine_gc_freeze_applied"],"Normal opt out failed"
+          assert result["runs"]["optimized_1"]["engine_gc_freeze_applied"],"Optimized GC did not activate"
+          PY
+      - name: Preserve intermediate and final evidence even on interruption
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-gc-real-defaults-1000
+          path: _gc_production_1000/
+          retention-days: 30
+          if-no-files-found: warn
