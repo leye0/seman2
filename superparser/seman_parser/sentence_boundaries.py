@@ -150,7 +150,11 @@ def _supply_terminal(text: str) -> tuple[str, bool]:
     return text[:position] + "." + text[position:], True
 
 
-def split_analysis_units(sentence: str) -> list[AnalysisUnit]:
+def split_analysis_units(
+    sentence: str, *,
+    quote_context: tuple[tuple[str, str], ...] = (),
+    balance_sentence_boundary: bool = False,
+) -> list[AnalysisUnit]:
     """Split on every semicolon and rewrap quotations on both sides.
 
     No text is rewritten in the checked-in novels. The original punctuation
@@ -159,10 +163,11 @@ def split_analysis_units(sentence: str) -> list[AnalysisUnit]:
     text = sentence.strip()
     if not text:
         return []
-    if ';' not in text:
+    if ';' not in text and not balance_sentence_boundary:
         return [AnalysisUnit(text=text, source_text=text)]
+    is_semicolon_split = ';' in text
     units: list[AnalysisUnit] = []
-    stack: list[tuple[str, str]] = []
+    stack: list[tuple[str, str]] = list(quote_context)
     left = 0
     for index in range(len(text) + 1):
         if index < len(text) and text[index] != ';':
@@ -183,7 +188,7 @@ def split_analysis_units(sentence: str) -> list[AnalysisUnit]:
             units.append(AnalysisUnit(
                 text=opening + core + closing,
                 source_text=source,
-                semicolon_split=True,
+                semicolon_split=is_semicolon_split,
                 synthetic_prefix=opening,
                 synthetic_suffix=closing,
                 synthetic_terminal=synthetic_terminal,
@@ -192,19 +197,20 @@ def split_analysis_units(sentence: str) -> list[AnalysisUnit]:
     return units
 
 
-def repair_unclosed_quotation_for_analysis(text: str) -> tuple[str, str]:
-    """Propose an *analysis-only* closer for a fragment with open quotation.
 
-    This is a documented hypothesis, NOT a correction to Gutenberg prose.
-    Never consume, split, or rewrite source characters. Only try when a
-    sentence already ends in terminal punctuation. Return the appended
-    synthetic characters separately so success can be audited.
+def split_prose_analysis_units(paragraph: str) -> list[AnalysisUnit]:
+    """Reuse the semicolon quote balancer across .!? sentence boundaries.
+
+    The source spans stay verbatim; synthetic quotation marks appear only in
+    analysis text and are individually recorded. The quote stack advances
+    only through ORIGINAL characters, never through the synthetic delimiters.
     """
-    if not has_final_punctuation(text):
-        return text, ""
-    stack: list[tuple[str, str]] = []
-    _advance_quotes(text, stack)
-    if not stack:
-        return text, ""
-    closers = "".join(close for _, close in reversed(stack))
-    return text + closers, closers
+    context: list[tuple[str, str]] = []
+    units: list[AnalysisUnit] = []
+    for sentence in split_prose_sentences(paragraph):
+        units.extend(split_analysis_units(
+            sentence, quote_context=tuple(context),
+            balance_sentence_boundary=True,
+        ))
+        _advance_quotes(sentence, context)
+    return units

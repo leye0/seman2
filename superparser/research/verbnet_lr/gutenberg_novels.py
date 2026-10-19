@@ -19,6 +19,7 @@ from urllib.request import Request, urlopen
 from seman_parser.segmentation import tokenize
 from seman_parser.sentence_boundaries import (
     has_final_punctuation, split_prose_sentences, split_analysis_units,
+    split_prose_analysis_units,
 )
 
 
@@ -96,8 +97,12 @@ def strip_gutenberg(text: str):
     return core
 
 
-def analysis_units(core: str):
-    """Yield independent analysis units with text/quotation provenance."""
+def analysis_units(core: str, *, balance_sentence_quotes: bool = False):
+    """Yield source-stable units; optionally rewrap cross-sentence dialogue.
+
+    By default this retains the frozen 500-case cohort. Balanced alternatives
+    preserve the exact same order and source_text for paired evaluation.
+    """
     for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
         if not lines or CHAPTER.match(lines[0]):
@@ -107,8 +112,11 @@ def analysis_units(core: str):
             joined.isupper() or len(joined) < 45
         ):
             continue
-        for sentence in split_prose_sentences(joined):
-            yield from split_analysis_units(sentence)
+        if balance_sentence_quotes:
+            yield from split_prose_analysis_units(joined)
+        else:
+            for sentence in split_prose_sentences(joined):
+                yield from split_analysis_units(sentence)
 
 
 def sentences(core: str):
@@ -123,7 +131,11 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                 "non_ascii": 0, "non_sentence": 0, "duplicates": 0}
     eligible = []
     seen = set()
-    for number, unit in enumerate(analysis_units(core)):
+    for number, (unit, balanced) in enumerate(zip_longest(
+        analysis_units(core), analysis_units(core, balance_sentence_quotes=True),
+    )):
+        if unit is None or balanced is None or unit.source_text != balanced.source_text:
+            raise AssertionError("Balanced quote spans must preserve source segmentation")
         sentence = unit.text
         counters["fragments"] += 1
         # Unicode literary punctuation (including “ ” ‘ ’) is legitimate
@@ -153,6 +165,10 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                          "synthetic_prefix": unit.synthetic_prefix,
                          "synthetic_suffix": unit.synthetic_suffix,
                          "synthetic_terminal": unit.synthetic_terminal,
+                         "balanced_analysis_text": balanced.text,
+                         "balanced_synthetic_prefix": balanced.synthetic_prefix,
+                         "balanced_synthetic_suffix": balanced.synthetic_suffix,
+                         "balanced_synthetic_terminal": balanced.synthetic_terminal,
                          "tokens": len(tokens)})
     counters["eligible"] = len(eligible)
     return eligible, counters

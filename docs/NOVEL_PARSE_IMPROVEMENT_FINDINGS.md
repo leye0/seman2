@@ -142,3 +142,7 @@ L'overlay de dialogue reconnaît les citations ASCII simples `'Who are you?'` en
 ## Questions modales et graphies anciennes des adverbes temporels
 
 Deux productions étroitement motivées complètent les constructions interrogatives avec auxiliaire : `MODAL NP VP-NP QMARK` (ex. « Can you walk? ») et `WH-NOM MODAL NP VP-GAP(base) QMARK` (ex. « What could a man do? »). Elles exigent le signe interrogatif et, dans l'interrogation à objet extrait, un verbe à forme de base accompagné d'une position d'objet vide. Les graphies historiques « to-day », « to-night », « to-morrow » sont reliées lexicalement à today/tonight/tomorrow tout en conservant les offsets originaux et la cohorte fixe.
+
+## Rectification de la gestion des guillemets
+
+La séparation au point-virgule réappliquait **déjà** les guillemets via `split_analysis_units`. Le défaut venait de son invocation après `split_prose_sentences` sans transmettre l'état des citations entre phrases terminées par un point, un point d'interrogation ou un point d'exclamation. `split_prose_analysis_units` réutilise désormais exactement la même mécanique, avec une pile de citations portée entre les frontières de phrases et une provenance individuelle des caractères synthétiques. L'ancien `repair_unclosed_quotation_for_analysis` indépendant a été retiré. Pour ne pas trafiquer la cohorte SHA-256 des 500 phrases, les sorties corrigées sont évaluées en *essais appariés*, exportés dans `quote_boundary_trials.jsonl`; l'échantillon original reste intact jusqu'à une transition explicite vers un corpus nettoyé versionné.

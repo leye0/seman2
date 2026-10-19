@@ -17,7 +17,6 @@ from time import perf_counter
 from scripts.corpus_samples import BANDS, choose_cases, sample_spread
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
-from seman_parser.sentence_boundaries import repair_unclosed_quotation_for_analysis
 
 ROOT = Path(__file__).resolve().parents[1]
 # Fixed 500-case reference, computed from cohort.jsonl on the initial run.
@@ -441,19 +440,19 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
         "doivent pas être confondus avec une absence certaine de grammaire.",
         "",
     ])
-    repair = summary["quote_repair_experiment"]
+    repair = summary["quote_boundary_experiment"]
     output.extend([
         "",
-        "## Test contrôlé : fermer les citations tronquées sans modifier le corpus",
+        "## Test apparié du gestionnaire existant de guillemets",
         "",
         f"Tentatives : {repair['attempted']}; analyses supplémentaires avec "
         f"citation synthétique : {repair['newly_completed']}.",
         "",
-        "Ce sont des essais distincts, NON comptés comme réussites brutes des 500 phrases.",
+        "Les marqueurs synthétiques viennent du découpage source, et les essais ne changent pas les 500 résultats bruts.",
         "",
     ])
     for row in rows:
-        trial = row.get("quote_repair_trial")
+        trial = row.get("quote_boundary_trial")
         if trial is not None and trial["status"] == "complete":
             output.extend([
                 f"- Cas {row['case_id']} : {row['sentence']}",
@@ -666,16 +665,16 @@ def run(args: argparse.Namespace) -> dict:
                 finally:
                     signal.setitimer(signal.ITIMER_REAL, 0)
                 row["wall_ms"] = round((perf_counter() - began) * 1000, 2)
-                # Paired experiment: baseline remains unchanged and its
-                # headline coverage cannot be inflated by source repair.
-                if row["status"] == "no_structural_root":
-                    trial_text, synthetic_quotes = (
-                        repair_unclosed_quotation_for_analysis(case["text"])
-                    )
-                    if synthetic_quotes:
+                # Compare the EXISTING quote-balancing algorithm applied
+                # across sentence boundaries, never a second repair heuristic.
+                # Baseline text and 500-case SHA remain exactly unchanged.
+                trial_text = case.get("balanced_analysis_text", case["text"])
+                if trial_text != case["text"]:
                         trial = {
                             "analysis_text": trial_text,
-                            "synthetic_suffix": synthetic_quotes,
+                            "synthetic_prefix": case.get("balanced_synthetic_prefix", ""),
+                            "synthetic_suffix": case.get("balanced_synthetic_suffix", ""),
+                            "source_text": source_text,
                         }
                         trial_started = perf_counter()
                         signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
@@ -707,7 +706,7 @@ def run(args: argparse.Namespace) -> dict:
                         trial["wall_ms"] = round(
                             (perf_counter() - trial_started) * 1000, 2
                         )
-                        row["quote_repair_trial"] = trial
+                        row["quote_boundary_trial"] = trial
                 if row["status"] != "complete":
                     # A timeout can still retain an already-built lattice.
                     row["lexical_diagnostic"] = (
@@ -727,10 +726,10 @@ def run(args: argparse.Namespace) -> dict:
 
     quote_trials = [
         {"case_id": row["case_id"], "source_status": row["status"],
-         **row["quote_repair_trial"]}
-        for row in rows if row.get("quote_repair_trial") is not None
+         **row["quote_boundary_trial"]}
+        for row in rows if row.get("quote_boundary_trial") is not None
     ]
-    with (args.out_dir / "quote_repair_trials.jsonl").open(
+    with (args.out_dir / "quote_boundary_trials.jsonl").open(
         "w", encoding="utf8"
     ) as trial_stream:
         for trial in quote_trials:
@@ -740,8 +739,9 @@ def run(args: argparse.Namespace) -> dict:
         "newly_completed": sum(t["status"] == "complete" for t in quote_trials),
         "statuses": dict(Counter(t["status"] for t in quote_trials)),
         "caution": (
-            "Analysis-only hypothetical punctuation; never included in raw "
-            "cohort coverage or treated as an attested Gutenberg quote."
+            "Quote balancing is performed by the shared segmentation code, "
+            "not by post-hoc repair. Synthetic marks never change raw cohort "
+            "coverage or purport to be original Gutenberg punctuation."
         ),
     }
     totals = tally(rows)
@@ -762,7 +762,7 @@ def run(args: argparse.Namespace) -> dict:
             "deadline_seconds": args.deadline_seconds,
         },
         "totals": totals, "by_band": by_band, "by_book": by_book,
-        "quote_repair_experiment": trial_summary,
+        "quote_boundary_experiment": trial_summary,
         "coverage_percent": round(100 * totals["completed"] / len(rows), 2),
         "elapsed_seconds": round(perf_counter() - started, 2),
         "notes": [
@@ -804,7 +804,7 @@ def run(args: argparse.Namespace) -> dict:
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
         "recurrent_missing_lexical_words": patterns["word_without_candidate"][:10],
-        "quote_repair_experiment": trial_summary,
+        "quote_boundary_experiment": trial_summary,
     }, ensure_ascii=False), flush=True)
     return summary
 
