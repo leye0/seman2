@@ -289,7 +289,12 @@ def main():
         return
     # Warm up interpreter + lazy WordNet separately so warm/cold costs are not conflated.
     timing("first_lexical_lookup",lambda:build_lattice(cases[0]["text"],resources.lexicon))
-    lattices = timing("lexical_lattice_cpu",lambda:[
+    # Crucial non-instrumented CPU baseline; cProfile adds significant call overhead.
+    lattices = timing("lexical_uninstrumented",lambda:[
+        build_lattice(c["text"],resources.lexicon) for c in cases],profile=False)
+    timing("parser_uninstrumented",lambda:[
+        parser.parse_grammar_lattice(lattice) for lattice in lattices],profile=False)
+    timing("lexical_lattice_cpu",lambda:[
         build_lattice(c["text"],resources.lexicon) for c in cases])
     parsed = timing("parser_cpu",lambda:[
         parser.parse_grammar_lattice(lattice) for lattice in lattices])
