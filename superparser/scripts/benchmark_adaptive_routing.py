@@ -19,7 +19,7 @@ from pathlib import Path
 from statistics import median
 from time import perf_counter_ns, process_time_ns
 
-from scripts.benchmark_heavy_sentence_ab import BANDS,choose_cases
+from scripts.corpus_samples import BANDS,choose_cases
 from seman_parser.complexity_routing import ComplexityPolicy, StructuralRiskRouter
 from seman_parser.engine import Parser,ParserResources
 from seman_parser.segmentation import build_lattice
