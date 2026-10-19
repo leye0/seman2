@@ -39,6 +39,29 @@ class WordNetGcPolicyTests(unittest.TestCase):
             self.assertFalse(runtime_gc.freeze_loaded_wordnet_once(self.lexicon()))
             freeze.assert_called_once_with()
 
+    def test_public_parser_freezes_after_real_wordnet_load(self):
+        # Regression: the policy must run on the actual public parse path,
+        # not only when invoked manually with a fake lexical backend.
+        import os
+        from pathlib import Path
+
+        from seman_parser.engine import Parser, ParserResources
+
+        wordnet_dir = os.environ.get("WORDNET_DICT")
+        if not wordnet_dir:
+            self.skipTest("Requires WORDNET_DICT to validate the real WordNet load")
+        resources = ParserResources.from_dir(
+            Path(__file__).resolve().parents[1] / "data", wordnet_dict=wordnet_dir)
+        parser = Parser(resources, cache_size=0)
+        with patch.dict("os.environ", {"SEMAN2_DISABLE_GC_FREEZE": ""}), \
+             patch.object(runtime_gc.gc, "isenabled", return_value=True), \
+             patch.object(runtime_gc.gc, "collect", return_value=0), \
+             patch.object(runtime_gc.gc, "freeze") as freeze:
+            report = parser.parse("John opened the box.")
+            self.assertTrue(report.result.completed)
+            self.assertTrue(runtime_gc._frozen)
+            freeze.assert_called_once_with()
+
     def test_respects_disabled_automatic_gc(self):
         with patch.dict("os.environ", {"SEMAN2_DISABLE_GC_FREEZE": ""}), \
              patch.object(runtime_gc.gc, "isenabled", return_value=False), \
