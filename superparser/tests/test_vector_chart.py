@@ -404,7 +404,14 @@ class VectorChartTests(unittest.TestCase):
                 self.assertTrue(any(c.category in ("ADV","N") for c in candidates))
                 for candidate in candidates:
                     self.assertEqual(text[candidate.span_start:candidate.span_end],spelling)
-                    self.assertEqual(candidate.provenance["normalized_spelling"],lemma)
+                    # Deduplication may group lexically equivalent senses;
+                    # the spelling provenance then lives in the source trail.
+                    provenance = candidate.provenance
+                    sources = provenance.get("sources", (provenance,))
+                    self.assertTrue(any(
+                        source.get("normalized_spelling") == lemma
+                        for source in sources
+                    ), candidate.provenance)
 
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
