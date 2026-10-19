@@ -54,8 +54,8 @@ jobs:
           PY
       - name: Validate diagnostic reporting
         run: |
-          python -m py_compile superparser/scripts/diagnose_novel_parses.py superparser/seman_parser/vector_chart.py
-          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics
+          python -m py_compile superparser/scripts/diagnose_novel_parses.py superparser/seman_parser/vector_chart.py superparser/seman_parser/sentence_boundaries.py
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics superparser.tests.test_sentence_boundaries
       - name: Diagnose 500 cleaned novel sentences, once each
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_novel_parses.py \

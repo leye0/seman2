@@ -6,6 +6,7 @@ import unittest
 from seman_parser.coverage import _split_sentences
 from seman_parser.sentence_boundaries import (
     has_final_punctuation, split_prose_sentences, split_analysis_units,
+    repair_unclosed_quotation_for_analysis,
 )
 from research.verbnet_lr.gutenberg_novels import Book, extract, sentences
 
@@ -110,6 +111,22 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertTrue(rows[1]["synthetic_prefix"])
         self.assertTrue(rows[0]["synthetic_terminal"])
         self.assertEqual(counts["eligible"], 3)
+
+    def test_unclosed_dialogue_quoted_fragments_are_only_analysis_proposals(self):
+        for original, expected, suffix in [
+            ("‘Come and prove it.", "‘Come and prove it.’", "’"),
+            ("“Did not you?", "“Did not you?”", "”"),
+            ('"He struggled violently.', '"He struggled violently."', '"'),
+            ("‘I don’t know.", "‘I don’t know.’", "’"),
+            ("“I came; I saw.”", "“I came; I saw.”", ""),
+            ("He answered.", "He answered.", ""),
+            ("‘And I had", "‘And I had", ""),
+        ]:
+            with self.subTest(original=original):
+                fixed, actual = repair_unclosed_quotation_for_analysis(original)
+                self.assertEqual((fixed, actual), (expected, suffix))
+                self.assertTrue(fixed.startswith(original))
+                self.assertEqual(fixed[len(original):], suffix)
 
     def test_ambiguous_initial_prefers_not_to_split(self):
         text = "The witness was A. B. Carter. She knew D. E. Shaw."

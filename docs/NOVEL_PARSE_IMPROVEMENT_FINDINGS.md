@@ -130,3 +130,7 @@ La règle héritée `np_temporal` (DET N) acceptait un déterminant pluriel avec
 ## Harmonisation du nombre à travers neuf autres règles nominales
 
 Un audit de toutes les productions NP comprenant DET et N révèle neuf variantes où le nombre n'était vérifié que sur le nom (adjectifs, deux déterminants, adverbes, compléments en of, relative, participiale, etc.). Dans chaque variante, tous les DET du groupe sont maintenant unifiés avec le nombre du nom (variable `?n`). Les déterminants postposés distributifs (comme « the children each ») sont **exclus** de cette contrainte, car leur nombre peut légitimement différer.
+
+## Contrôle de la segmentation des citations
+
+Le diagnostic réexamine en seconde passe uniquement les phrases sans racine syntaxique contenant une citation ouvrante sans fermeture. Une proposition de fermeture est ajoutée **dans l'unité d'analyse expérimentale**, jamais dans le texte Gutenberg et jamais dans les 500 cas de référence. Les résultats appariés sont exportés dans `quote_repair_trials.jsonl` et résumés séparément des 500 diagnostics bruts. Une réussite après ajout d'un guillemet n'est pas une preuve de bonne segmentation contextuelle, mais isole un facteur d'échec transversal.

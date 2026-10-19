@@ -17,6 +17,7 @@ from time import perf_counter
 from scripts.corpus_samples import BANDS, choose_cases, sample_spread
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
+from seman_parser.sentence_boundaries import repair_unclosed_quotation_for_analysis
 
 ROOT = Path(__file__).resolve().parents[1]
 # Fixed 500-case reference, computed from cohort.jsonl on the initial run.
@@ -440,6 +441,24 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
         "doivent pas être confondus avec une absence certaine de grammaire.",
         "",
     ])
+    repair = summary["quote_repair_experiment"]
+    output.extend([
+        "",
+        "## Test contrôlé : fermer les citations tronquées sans modifier le corpus",
+        "",
+        f"Tentatives : {repair['attempted']}; analyses supplémentaires avec "
+        f"citation synthétique : {repair['newly_completed']}.",
+        "",
+        "Ce sont des essais distincts, NON comptés comme réussites brutes des 500 phrases.",
+        "",
+    ])
+    for row in rows:
+        trial = row.get("quote_repair_trial")
+        if trial is not None and trial["status"] == "complete":
+            output.extend([
+                f"- Cas {row['case_id']} : {row['sentence']}",
+                f"  - Texte proposé : {trial['analysis_text']}",
+            ])
     patterns = summary["recurrent_issues"]
     output.extend([
         "",
@@ -647,6 +666,48 @@ def run(args: argparse.Namespace) -> dict:
                 finally:
                     signal.setitimer(signal.ITIMER_REAL, 0)
                 row["wall_ms"] = round((perf_counter() - began) * 1000, 2)
+                # Paired experiment: baseline remains unchanged and its
+                # headline coverage cannot be inflated by source repair.
+                if row["status"] == "no_structural_root":
+                    trial_text, synthetic_quotes = (
+                        repair_unclosed_quotation_for_analysis(case["text"])
+                    )
+                    if synthetic_quotes:
+                        trial = {
+                            "analysis_text": trial_text,
+                            "synthetic_suffix": synthetic_quotes,
+                        }
+                        trial_started = perf_counter()
+                        signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
+                        try:
+                            fixed_lattice = build_lattice(
+                                trial_text, resources.lexicon, multiword_max=1
+                            )
+                            fixed_result = parser.parse_grammar_lattice(
+                                fixed_lattice, max_items=args.max_items,
+                                kbest_work_limit=args.kbest_work_limit,
+                            )
+                            trial["status"] = classify(
+                                fixed_result.completed, fixed_result.stats
+                            )
+                            trial["root_rule"] = (
+                                fixed_result.best().rule_id
+                                if fixed_result.completed else None
+                            )
+                            trial["structural_root_nodes"] = fixed_result.stats.get(
+                                "structural_root_nodes", 0
+                            )
+                        except SentenceDeadline:
+                            trial["status"] = "timeout"
+                        except Exception as error:
+                            trial["status"] = "error"
+                            trial["error"] = f"{type(error).__name__}: {error}"
+                        finally:
+                            signal.setitimer(signal.ITIMER_REAL, 0)
+                        trial["wall_ms"] = round(
+                            (perf_counter() - trial_started) * 1000, 2
+                        )
+                        row["quote_repair_trial"] = trial
                 if row["status"] != "complete":
                     # A timeout can still retain an already-built lattice.
                     row["lexical_diagnostic"] = (
@@ -664,6 +725,25 @@ def run(args: argparse.Namespace) -> dict:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, old_handler)
 
+    quote_trials = [
+        {"case_id": row["case_id"], "source_status": row["status"],
+         **row["quote_repair_trial"]}
+        for row in rows if row.get("quote_repair_trial") is not None
+    ]
+    with (args.out_dir / "quote_repair_trials.jsonl").open(
+        "w", encoding="utf8"
+    ) as trial_stream:
+        for trial in quote_trials:
+            trial_stream.write(json.dumps(trial, ensure_ascii=False) + "\n")
+    trial_summary = {
+        "attempted": len(quote_trials),
+        "newly_completed": sum(t["status"] == "complete" for t in quote_trials),
+        "statuses": dict(Counter(t["status"] for t in quote_trials)),
+        "caution": (
+            "Analysis-only hypothetical punctuation; never included in raw "
+            "cohort coverage or treated as an attested Gutenberg quote."
+        ),
+    }
     totals = tally(rows)
     by_band = {band: tally([r for r in rows if r["band"] == band])
                for band, _, _ in BANDS}
@@ -682,6 +762,7 @@ def run(args: argparse.Namespace) -> dict:
             "deadline_seconds": args.deadline_seconds,
         },
         "totals": totals, "by_band": by_band, "by_book": by_book,
+        "quote_repair_experiment": trial_summary,
         "coverage_percent": round(100 * totals["completed"] / len(rows), 2),
         "elapsed_seconds": round(perf_counter() - started, 2),
         "notes": [
@@ -723,6 +804,7 @@ def run(args: argparse.Namespace) -> dict:
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
         "recurrent_missing_lexical_words": patterns["word_without_candidate"][:10],
+        "quote_repair_experiment": trial_summary,
     }, ensure_ascii=False), flush=True)
     return summary
 

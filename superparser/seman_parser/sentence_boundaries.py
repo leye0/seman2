@@ -183,3 +183,21 @@ def split_analysis_units(sentence: str) -> list[AnalysisUnit]:
             ))
         left = index + 1
     return units
+
+
+def repair_unclosed_quotation_for_analysis(text: str) -> tuple[str, str]:
+    """Propose an *analysis-only* closer for a fragment with open quotation.
+
+    This is a documented hypothesis, NOT a correction to Gutenberg prose.
+    Never consume, split, or rewrite source characters. Only try when a
+    sentence already ends in terminal punctuation. Return the appended
+    synthetic characters separately so success can be audited.
+    """
+    if not has_final_punctuation(text):
+        return text, ""
+    stack: list[tuple[str, str]] = []
+    _advance_quotes(text, stack)
+    if not stack:
+        return text, ""
+    closers = "".join(close for _, close in reversed(stack))
+    return text + closers, closers
