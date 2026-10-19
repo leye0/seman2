@@ -1,29 +1,36 @@
-# Seman2
+# Seman2 — Layer 1 grammatical anglais
 
-**Canonical linguistic parser:** a token-preserving symbolic **Layer 1** that produces structured grammatical analyses for future semantic, referential and memory layers. The research focus is **high coverage and low latency on real-world text**, especially long, ambiguous, quoted and dialogue-heavy sentences.
+**Ce dépôt a un seul sujet : le parseur grammatical symbolique (Layer 1) actuel.**
+Il préserve les mots et leur surface, les alternatives lexicales, les traits morphosyntaxiques, la structure et les dérivations utilisables par un futur Layer 2. Il ne contient aucun ancien parseur concurrent exécutable.
 
-Start here:
+## Commencer ici
 
-- [Layer 1 architecture, output contract and boundaries](docs/ARCHITECTURE_LAYER1.md)
-- [Current limitations and measured roadmap](docs/KNOWN_LIMITS_AND_ROADMAP.md)
-- [Why this architecture: research history and abandoned approaches](docs/RESEARCH_HISTORY_AND_DECISIONS.md)
-- [Corpus preservation policy](docs/CORPORA_AND_DATA.md)
-- [Lossless shared-prefix storage prototype](docs/SHARED_PREFIX_STORAGE_PROTOTYPE.md)
-- [Prediction-first adaptive complexity routing and its research limits](docs/ADAPTIVE_COMPLEXITY_ROUTING.md)
-- [Category-prefix trie recognition: proof, measured potential and remaining work](docs/CATEGORY_PREFIX_TRIE_FINDINGS.md)
-- [Observed subtree signature cache: cross-book benchmark and limits](docs/SUBTREE_SIGNATURE_CACHE_FINDINGS.md)
-- [Current ChatGPT research handoff and exact next steps](docs/CURRENT_RESEARCH_HANDOFF.md)
+1. **[Exécuter le code actuel et connaître TOUS ses points d'entrée](docs/RUN_CURRENT_LAYER1.md)** — référence technique principale, commandes effectivement exécutées dans la CI.
+2. [Point de reprise pour une nouvelle conversation/agent](docs/CURRENT_RESEARCH_HANDOFF.md).
+3. [Architecture et sorties du Layer 1](docs/ARCHITECTURE_LAYER1.md).
+4. [Limites et priorités](docs/KNOWN_LIMITS_AND_ROADMAP.md).
+5. [Historique des erreurs et des choix](docs/RESEARCH_HISTORY_AND_DECISIONS.md).
+6. [Corpus et intégrité des données](docs/CORPORA_AND_DATA.md).
+7. [Manifest du nettoyage et code archivé](docs/CLEANUP_MANIFEST.md).
 
-## The active execution path
+## Le seul chemin exécuté
 
-`ParserResources.from_dir(superparser/data)` → lexical candidates and a lattice (`seman_parser/segmentation.py`) → **canonical** packed vector grammar (`seman_parser/vector_chart.py`, `engine.py`) → a `ParseResult` containing the lattice, original analyzed text, shared forest, derivation alternatives and complete syntax trees (when available). The selected tree can later be interpreted into semantic relations (`semantics.py`). This separation is deliberate.
+`Parser(resources)` est le **parseur canonique**, inchangé pour toutes les entrées par défaut. Lorsqu'une **`ComplexityPolicy` explicitement configurée** est fournie, seules les longues phrases *non citées* dépassant le seuil préparse empruntent **`LazySharedTrieForest`**, qui mutualise la reconnaissance des préfixes et projette les dérivations par règle à la demande. Les petites phrases conservent le chemin canonique **sans calcul de score**, et les dialogues utilisent leur grammaire spécialisée. Les deux moteurs partagent le même `k-best`.
 
-Quotation handling uses a separate quote-aware grammar and careful sentence segmentation. The structural-continuation predictor (`research/verbnet_lr/continuation_probe.py`) is **read-only and off the hot path** until independently validated.
+Aucun seuil automatique ou universel n'est activé par défaut. Le test historique de 128 phrases indiquait ~15,6 % de gain CPU adaptatif sur cette cohorte, mais les forêts saturées ne sont pas complètement certifiées; il ne faut pas généraliser la mesure.
 
-We are **not claiming Layer 2 is implemented**. The interface exposes syntax and lexical evidence that Layer 2 can consume; referential/discourse utilities already exist, but a complete understanding/learning/memory layer remains future work.
+### Vérifier que le dépôt fonctionne
 
-## Validation
+Depuis la racine du dépôt, avec Python 3.12+ et `WORDNET_DICT` pointant vers WordNet 3.0 `dict/` :
 
-The focused regression workflow `.github/workflows/core-seman2-validation.yml` checks grammatical completion, semantics, quotation and the structural diagnostics with WordNet 3.0. Research benchmarks are documented and reproducible as separate experiments rather than continuous heavy CI jobs.
+```bash
+WORDNET_DICT=/chemin/wordnet3/dict PYTHONPATH=superparser python -m scripts.smoke_layer1
+```
 
-The past experimental readers, template-snapping and C/hybrid approaches are not the canonical parser; see the historical decision record before reviving them.
+Cette commande teste un texte court, une phrase longue routée vers le trie et un dialogue, y compris l'identité des meilleurs arbres et alternatives avec le canonique.
+
+**Les seules CI pertinentes** sont `core-seman2-validation.yml` (tests et smoke), `dialogue-grammar-regressions.yml`, `clean-novel-corpus-ci.yml`, `direct-grammar-validation.yml` et le benchmark *manuel* `layer1-adaptive-benchmark.yml`.
+
+Les quatre romans nettoyés et l'intégralité de `data/` et `superparser/data/` sont conservés. L'ancien code reste accessible sur [`archive/pre-simplification-2026-10-18`](https://github.com/leye0/seman2/tree/archive/pre-simplification-2026-10-18), **pas** dans `main`.
+
+Le travail actuel se concentre sur la **justesse et la couverture grammaticale**, particulièrement les phrases lourdes et les dialogues, pas sur de nouvelles expérimentations d'optimisation.

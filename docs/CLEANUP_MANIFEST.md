@@ -1,44 +1,28 @@
-# Layer 1 repository cleanup — change and preservation manifest
+# Manifest du nettoyage de Seman2 sur `main`
 
-Date: 18 October 2026. Pre-cleanup reference: `e8322eb7fdb6ab1213c1a44f9b3d032f29d4d7a8`.
-Permanent, explicitly named archive: [`archive/legacy-parsers-2026-10-18`](https://github.com/leye0/seman2/tree/archive/legacy-parsers-2026-10-18).
+**Référence conservée AVANT ce nettoyage** : commit `d161e4bc34f2c344a7360d92329f2dd985133acd` sur la branche [`archive/pre-simplification-2026-10-18`](https://github.com/leye0/seman2/tree/archive/pre-simplification-2026-10-18). L'ancien code et les anciennes CI sont récupérables depuis cette branche et l'historique Git, **pas présents dans la branche `main` simplifiée**.
 
-## Removed from the active tree
+## Le principe
 
-The cleanup commit `37ed781e334cca5877f9447f8e31e71f3f2474dd` removed **160 legacy executable/CI files**:
+`main` contient uniquement **le Layer 1 grammatical actuel**, ses ressources linguistiques, ses tests et des outils d'évaluation de CE moteur. Nous n'entretenons plus de copies exécutables de paradigmes GLR, reading kernel, système cognitif initial, induction, C/hybride, snapping, stockage de préfixes alternatif ou analyse de discours/coréférence héritée.
 
-| Area | Removed | Reason |
-|---|---:|---|
-| GitHub Actions | 33 | Old snapping/GLR/left-to-right/hybrid pipelines and excessive duplicate CI |
-| Historical `research/verbnet_lr` implementations | 24 | Compiled LR, C/hybrid, partial witnesses, snapping and separate readers, not canonical |
-| Research scripts | 52 | One-off ablations, outdated benchmarks and redundant replay/snapping runs |
-| Historical alternatives within `seman_parser` | 8 | Competing predictive, expectation and reading-kernel implementations and a backup file |
-| Tests tied to those obsolete implementations | 43 | No longer describe the supported Layer 1 path |
+### Opérations réalisées
 
-**No corpus or resource deletions** were included in that 160-file cleanup. In particular, `Parser`, `VectorGrammar`, all grammatical rules, lexical alternatives, syntax/semantic interpretation and cleaned Gutenberg processing are kept. The structural-prefix risk probe remains a read-only research module, and its benchmarks no longer depend on abandoned snapping/relaxation scripts.
+- Supprimés : le répertoire `archives/` historique, les nombreux prototypes d'induction, les expériences GLR et anciennes analyses, les patches/rapports historiques, anciens fichiers racine et exigences non utilisées.
+- Supprimés : `seman_parser/prefix_edges.py` et les paramètres `online_prefix_edges` / `flat_prefix_edges`, `shared_trie_recognition` eager, `cache_boundaries` et `early_lexical_filter`, après leurs expériences sans gain suffisamment établi.
+- Supprimés : les scripts et tests propres aux méthodes abandonnées, les anciennes Actions de benchmarking à chaque push, les anciens modules de discours / coréférence non intégrés au Layer 1.
+- Conservés : `Parser`, `VectorGrammar`, `_VectorForest` et `LazySharedTrieForest`, prévision des débuts de règles, grammaire des dialogues, `k-best`, sorties syntaxiques/sémantiques.
+- Construit : `superparser/scripts/smoke_layer1.py`, la CI canonique + trie lazy + dialogue et une documentation de reprise technique [`RUN_CURRENT_LAYER1.md`](RUN_CURRENT_LAYER1.md).
+- Corrigé : `pyproject.toml` pointe vers `superparser` au lieu d'un ancien répertoire inexistant `src`.
 
-The commit history, not a collection of stale runnable duplicate parsers, is the definitive archive. In particular, use the named archive branch to recover experimental code or output rather than recreating approaches from memory.
+### Données préservées
 
-## Preserved corpus/data — content SHA verified
+**Aucune suppression intentionnelle** de `data/`, `superparser/data/` ni `superparser/research/verbnet_lr/corpora/`. Les fichiers Gutenberg nettoyés (David Copperfield, Pride and Prejudice, Frankenstein, Treasure Island), le manifeste, WordNet non versionné, les lexiques et grammaires restent à leur place. Pour les SHA historiques des romans, utiliser les manifests et l'ancienne branche sauvegardée.
 
-A tree-to-tree Git blob comparison against the pre-cleanup `main` confirmed **47 protected files unchanged (47/47)**. This includes `data/`, `superparser/data/`, the cleaned-novel corpus and the corpus loading/cleaning utilities.
+**Wikipédia :** aucun fichier dont le nom contenait wiki / Wikipédia / Wikidata n'a été repéré dans l'arbre Git précédent. Cette absence **n'est pas** une preuve de suppression ou d'inexistence ailleurs.
 
-| Cleaned novel | Git blob ID |
-|---|---|
-| `david_copperfield_766.txt` | `a2014e83c76ed27f187976f0fa14b5a4ea679ed5` |
-| `pride_and_prejudice_1342.txt` | `a5a0e0026cf14130b9fa3d8ee45d9dbf451df1cc` |
-| `frankenstein_84.txt` | `d48b9e881b583c2ce36bc747ebd8df3c19a46582` |
-| `treasure_island_120.txt` | `ab18d4971b820ae1742b53c2d84a81b746bbc25b` |
+### Vérifier
 
-**Wikipedia corpus:** no filename containing wiki/Wikipedia/Wikidata was present in the tracked repository tree at the reference revision. Previous discussions concerned an English Wikipedia corpus, but never established a concrete local tracked path. Therefore we have neither deleted nor migrated a wiki dataset. Find and register its actual storage location before any future data cleanup. Do not infer that its absence from this Git tree means the corpus does not exist elsewhere.
+Exécuter `WORDNET_DICT=/chemin/wordnet3/dict PYTHONPATH=superparser python -m scripts.smoke_layer1`. Lancer aussi la CI `.github/workflows/core-seman2-validation.yml`. Les autres workflows présents ne concernent que les romans nettoyés, la grammaire, les dialogues et le **benchmark manuel** du routeur courant.
 
-## New tests, checks and scope
-
-- Layer 1 output contract now tests original surface spans, lexical lattice retention, syntax serialization and post-parse semantic interpretation.
-- `WORDNET_DICT` is an explicit supported resource path (and tests no longer assume one developer's `.local` directory).
-- Regular CI tests the current canonical parser and corpus; the expensive 256-sentence risk audit is **manual**. The direct-grammar validation remains a distinct quality gate.
-- Current architecture and outstanding limitations are recorded in [`ARCHITECTURE_LAYER1.md`](ARCHITECTURE_LAYER1.md) and [`KNOWN_LIMITS_AND_ROADMAP.md`](KNOWN_LIMITS_AND_ROADMAP.md), with negative research findings in [`RESEARCH_HISTORY_AND_DECISIONS.md`](RESEARCH_HISTORY_AND_DECISIONS.md).
-
-### Still outside this cleanup
-
-`archives/` and `research/induction/` were deliberately left untouched: they are historical material and future downstream-learning research, not verified Layer 1 replacements. Additional old root-level POCs and experimental reports were not removed by the validated 160-file change. They remain historical clutter for a separate, explicitly scoped review; do not claim the entire repository contains only the canonical parser.
+**Règle de ménage future :** retirer de `main` toute expérience abandonnée et consigner les enseignements en prose dans [`RESEARCH_HISTORY_AND_DECISIONS.md`](RESEARCH_HISTORY_AND_DECISIONS.md). L'historique Git suffit à récupérer l'ancien code; pas besoin de laisser un deuxième moteur dans le dépôt.
