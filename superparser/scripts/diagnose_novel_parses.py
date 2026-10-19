@@ -86,6 +86,20 @@ def _json_lexical(value):
     return str(value)
 
 
+def _full_subtoken_path(start: int, end: int, candidates) -> bool:
+    """Whether lexical subedges tile a whole token without a missing span."""
+    allowed = [
+        edge for edge in candidates
+        if start <= edge.span_start < edge.span_end <= end
+        and (edge.span_start, edge.span_end) != (start, end)
+    ]
+    reachable = {start}
+    for edge in sorted(allowed, key=lambda row: (row.span_start, row.span_end)):
+        if edge.span_start in reachable:
+            reachable.add(edge.span_end)
+    return end in reachable
+
+
 def lexical_diagnostics(lattice) -> dict:
     """Return all parser-visible POS and sense alternatives, never just best."""
     candidates = lattice.candidates
@@ -118,19 +132,27 @@ def lexical_diagnostics(lattice) -> dict:
         covering = [c for c in candidates
                     if c.span_start <= token.start and c.span_end >= token.end
                     and (c.span_start, c.span_end) != (token.start, token.end)]
+        subtoken = [c for c in candidates
+                    if token.start <= c.span_start < c.span_end <= token.end
+                    and (c.span_start, c.span_end) != (token.start, token.end)]
+        split_coverage = _full_subtoken_path(token.start, token.end, subtoken)
         word = any(ch.isalpha() for ch in token.text)
         rows.append({
             "index": token.index, "surface": token.text,
             "span": [token.start, token.end], "is_word": word,
             "categories": sorted({c.category for c in exact}),
             "candidate_count": len(exact), "multiword_cover_count": len(covering),
+            "split_candidate_count": len(subtoken),
+            "has_split_candidate_path": split_coverage,
             "no_exact_candidate": word and not exact,
-            "no_candidate_or_cover": word and not exact and not covering,
+            "no_candidate_or_cover": word and not exact and not covering
+                                     and not split_coverage,
             "candidates": [detail(c) for c in exact],
             "covering_multiword_candidates": [detail(c) for c in covering],
+            "subtoken_candidates": [detail(c) for c in subtoken],
         })
     return {
-        "schema": "seman2-failed-sentence-lexicon-v1",
+        "schema": "seman2-failed-sentence-lexicon-v2",
         "scope": "parser-visible lexical candidates after lattice filters",
         "tokens": rows,
         "word_count": sum(row["is_word"] for row in rows),
@@ -222,11 +244,20 @@ def word_category_sequence(lattice) -> list[str]:
     categories = {}
     for c in lattice.candidates:
         categories.setdefault((c.span_start, c.span_end), set()).add(c.category)
-    return [
-        "/".join(sorted(categories.get((token.start, token.end), ())))
-        or "NO_EXACT_LEXICAL_CANDIDATE"
-        for token in lattice.tokens if any(ch.isalpha() for ch in token.text)
-    ]
+    result = []
+    for token in lattice.tokens:
+        if not any(ch.isalpha() for ch in token.text):
+            continue
+        direct = "/".join(sorted(
+            categories.get((token.start, token.end), ())
+        ))
+        if direct:
+            result.append(direct)
+        elif _full_subtoken_path(token.start, token.end, lattice.candidates):
+            result.append("SPLIT_LEXICAL_CANDIDATES")
+        else:
+            result.append("NO_EXACT_LEXICAL_CANDIDATE")
+    return result
 
 
 def contrast_category_patterns(rows: list[dict], *, min_support: int = 5) -> dict:
@@ -280,7 +311,7 @@ def contrast_category_patterns(rows: list[dict], *, min_support: int = 5) -> dic
         -x["enrichment_ratio"], -x["failed_sentence_count"], x["pattern"]
     ))
     return {
-        "schema": "seman2-novel-contrastive-patterns-v1",
+        "schema": "seman2-novel-contrastive-patterns-v2",
         "counts": {
             "usable": len(usable), "grammatical_failures": failure_n,
             "completed": success_n,

@@ -90,3 +90,7 @@ Les notations Project Gutenberg `--`, `---`, `—` et `–` reçoivent une hypot
 ## Comparaison contre les analyses réussies
 
 Chaque cas conserve une signature compacte de **toutes** ses catégories grammaticales lexicales candidates, y compris pour les phrases réussies. Le fichier `pattern_contrasts.json` compare la fréquence des séquences de deux et trois ensembles de catégories entre les réussites et les échecs grammaticaux conclusifs. Les timeouts, erreurs et budgets saturés sont exclus de ce contraste. Un seuil d'au moins 5 phrases concernées et 3 échecs évite certains faux signaux ; le rapport donne aussi les proportions par groupe et un ratio de surreprésentation lissé. Cette association statistique ne prouve ni erreur de WordNet ni règle manquante ; elle aide à prioriser des exemples à inspecter manuellement.
+
+## Possessifs et contractions à plusieurs arêtes lexicales
+
+Un token orthographique comme `father's` peut être entièrement analysé par les arêtes internes `father` et `'s` alors qu'aucune arête unique ne couvre le token. Le rapport `failed_sentences.jsonl` distingue désormais `no_exact_candidate` (vrai pour ce cas) de `no_candidate_or_cover` (faux si des sous-arêtes couvrent tout le token), avec `has_split_candidate_path` et les hypothèses de chaque sous-arête. Les signatures statistiques utilisent `SPLIT_LEXICAL_CANDIDATES` plutôt que de signaler faussement l'absence d'analyse WordNet.

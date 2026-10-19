@@ -84,6 +84,36 @@ class NovelDiagnosticsTests(unittest.TestCase):
         self.assertEqual(first["successful_sentence_count"], 0)
         self.assertGreater(first["enrichment_ratio"], 1)
 
+    def test_possessive_tokens_are_covered_by_two_lexical_edges(self):
+        from seman_parser.features import FeatureStructure
+        from seman_parser.segmentation import (
+            LexicalCandidate, LexicalLattice, tokenize,
+        )
+        sentence = "John's house."
+        def edge(left, right, category):
+            return LexicalCandidate(
+                span_start=left, span_end=right,
+                surface=sentence[left:right], lemma=sentence[left:right],
+                category=category, features=FeatureStructure.empty(),
+            )
+        lattice = LexicalLattice(
+            text=sentence, tokens=tokenize(sentence),
+            candidates=(
+                edge(0, 4, "PROPER-NOUN"), edge(4, 6, "POSS"),
+                edge(7, 12, "N"),
+            ),
+        )
+        lexical = lexical_diagnostics(lattice)
+        token = lexical["tokens"][0]
+        self.assertTrue(token["no_exact_candidate"])
+        self.assertTrue(token["has_split_candidate_path"])
+        self.assertFalse(token["no_candidate_or_cover"])
+        self.assertEqual(token["split_candidate_count"], 2)
+        self.assertEqual(lexical["words_without_any_candidate"], [])
+        self.assertEqual(
+            word_category_sequence(lattice)[0], "SPLIT_LEXICAL_CANDIDATES"
+        )
+
     def test_recurring_patterns_count_distinct_failed_sentences(self):
         lex = lambda surface: {
             "tokens": [
