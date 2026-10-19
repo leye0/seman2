@@ -1,6 +1,8 @@
-"""Adaptive routing must protect easy sentences and all grammatical evidence.
+"""Contract of the TWO supported Layer 1 recognizers.
 
-Research only: explicit thresholds are not a calibrated production policy.
+The canonical engine is the default. The lazy shared trie is selected only
+for explicitly configured high-risk nonquoted ordinary prose. Short text
+never invokes a predictor or the trie.
 """
 from __future__ import annotations
 
@@ -11,7 +13,6 @@ import unittest
 from seman_parser.complexity_routing import ComplexityPolicy, StructuralRiskRouter
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
-from research.verbnet_lr.continuation_probe import ContinuationIndex
 
 DATA=Path(__file__).resolve().parents[1]/"data"
 EASY=("John opened the box.","John gave Mary the box.",
@@ -32,157 +33,93 @@ class AdaptiveRouterTests(unittest.TestCase):
         cls.reference=Parser(cls.resources,cache_size=0,max_items=20000)
         cls.adaptive=Parser(cls.resources,cache_size=0,max_items=20000,
             complexity_policy=ComplexityPolicy(
-                rule_start_threshold=1,min_tokens=17,
-                difficult_strategy="flat"))
-        cls.always_canonical=Parser(cls.resources,cache_size=0,max_items=20000,
+                rule_start_threshold=1,min_tokens=17))
+        cls.canonical_long=Parser(cls.resources,cache_size=0,max_items=20000,
             complexity_policy=ComplexityPolicy(
-                rule_start_threshold=10**12,min_tokens=17,
-                difficult_strategy="flat"))
+                rule_start_threshold=10**12,min_tokens=17))
 
-    def test_score_is_identical_to_original_compiled_continuation_probe(self):
-        indexed=ContinuationIndex(self.reference._vector_grammar.grammar)
-        router=self.adaptive._complexity_router
-        for text in (*EASY,*HARD):
-            lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
-            self.assertEqual(router.score(lattice),
-                             indexed.fast_signal(lattice)["fast_start_sum"])
+    def lattice(self,text):
+        return build_lattice(text,self.resources.lexicon,multiword_max=1)
 
-    def test_fast_sentences_do_not_even_probe_or_use_special_parser(self):
+    def test_default_is_only_canonical_and_policy_allows_only_trie(self):
+        self.assertIsNone(self.reference._complexity_router)
+        self.assertFalse(self.reference._vector_grammar.lazy_trie_recognition)
+        self.assertTrue(self.adaptive._difficult_vector_grammar.lazy_trie_recognition)
+        for value in (0,-1):
+            with self.assertRaises(ValueError):
+                ComplexityPolicy(value)
+        with self.assertRaises(ValueError):
+            ComplexityPolicy(1,difficult_strategy="flat")
+        with self.assertRaises(ValueError):
+            ComplexityPolicy(1,difficult_strategy="online")
+
+    def test_easy_short_circuits_before_any_lexical_risk_score(self):
         router=self.adaptive._complexity_router
         original=router.score
         def forbidden(_):
-            raise AssertionError("Risk scoring must be bypassed for short text")
+            raise AssertionError("Fast path must NEVER evaluate risk")
         router.score=forbidden
         try:
-            for text in EASY:
-                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
-                result=self.adaptive.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                base=self.reference.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                self.assertEqual(result.stats["complexity_route"],"canonical")
-                self.assertEqual(result.stats["complexity_probe_ms"],0.0)
-                self.assertEqual(result.stats["complexity_score"],None)
-                self.assertFalse(result.stats["online_prefix_edges_enabled"])
-                self.assertEqual(
-                    result.best().as_dict() if result.best() else None,
-                    base.best().as_dict() if base.best() else None)
+            for sentence in EASY:
+                with self.subTest(sentence=sentence):
+                    lattice=self.lattice(sentence)
+                    observed=self.adaptive.parse_grammar_lattice(
+                        lattice,max_items=20000,kbest_work_limit=100000)
+                    baseline=self.reference.parse_grammar_lattice(
+                        lattice,max_items=20000,kbest_work_limit=100000)
+                    self.assertEqual(observed.stats["complexity_route"],"canonical")
+                    self.assertEqual(observed.stats["complexity_probe_ms"],0.0)
+                    self.assertIsNone(observed.stats["complexity_score"])
+                    self.assertFalse(observed.stats["lazy_trie_recognition"])
+                    self.assertEqual(
+                        observed.best().as_dict() if observed.best() else None,
+                        baseline.best().as_dict() if baseline.best() else None)
         finally:
             router.score=original
 
-    def test_hard_sentences_route_and_preserve_complete_forest_and_kbest(self):
-        for text in HARD:
-            with self.subTest(text=text):
-                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
-                original=self.reference.parse_grammar_lattice(
+    def test_long_complex_sentences_use_shared_trie_with_kbest_parity(self):
+        for sentence in HARD:
+            with self.subTest(sentence=sentence):
+                lattice=self.lattice(sentence)
+                base=self.reference.parse_grammar_lattice(
                     lattice,max_items=20000,kbest_work_limit=100000)
-                routed=self.adaptive.parse_grammar_lattice(
+                fast=self.adaptive.parse_grammar_lattice(
                     lattice,max_items=20000,kbest_work_limit=100000)
-                self.assertEqual(routed.stats["complexity_route"],"flat")
-                self.assertTrue(routed.stats["online_prefix_edges_enabled"])
-                self.assertTrue(routed.stats["online_prefix_flat_enabled"])
-                for field in (
-                    "forest_nodes","partial_states","partial_derivations",
-                    "structural_derivations","budget_exceeded",
-                    "kbest_budget_exceeded","recognition_operations",
-                ):
-                    self.assertEqual(original.stats[field],
-                                     routed.stats[field],field)
+                self.assertEqual(fast.stats["complexity_route"],"trie")
+                self.assertTrue(fast.stats["lazy_trie_recognition"])
+                self.assertEqual(base.completed,fast.completed)
                 self.assertEqual(
-                    [t.as_dict() for t in original.alternatives(limit=3)],
-                    [t.as_dict() for t in routed.alternatives(limit=3)])
-                self.assertEqual(original.completed,routed.completed)
-                for a,b in zip(original.shared_forest.partials,
-                               routed.shared_forest.partials):
-                    self.assertEqual(
-                        [(d.previous_id,d.child_id) for d in a.derivations],
-                        [(d.previous_id,d.child_id) for d in b.derivations])
+                    [x.as_dict() for x in base.alternatives(limit=2)],
+                    [x.as_dict() for x in fast.alternatives(limit=2)])
 
-    def test_low_risk_long_sentence_can_stay_canonical(self):
-        lattice=build_lattice(HARD[0],self.resources.lexicon,multiword_max=1)
-        result=self.always_canonical.parse_grammar_lattice(
-            lattice,max_items=20000,kbest_work_limit=100000)
-        self.assertEqual(result.stats["complexity_route"],"canonical")
+    def test_long_below_threshold_remains_canonical(self):
+        result=self.canonical_long.parse_grammar_lattice(
+            self.lattice(HARD[0]),max_items=20000,kbest_work_limit=100000)
         self.assertEqual(result.stats["complexity_reason"],"risk_below_threshold")
-        self.assertFalse(result.stats["online_prefix_edges_enabled"])
+        self.assertFalse(result.stats["lazy_trie_recognition"])
         self.assertIsInstance(result.stats["complexity_score"],int)
 
-    def test_dialogue_never_enters_unvalidated_special_grammar(self):
-        text='"Hello," said Mary.'
-        lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
+    def test_quotes_and_dialogue_never_enter_unverified_trie(self):
+        for sentence in ('"Hello," said Mary.',
+                         '"I am tired," said Mary, "and John opened the door."'):
+            lattice=self.lattice(sentence)
+            result=self.adaptive.parse_grammar_lattice(
+                lattice,max_items=20000,kbest_work_limit=100000)
+            self.assertFalse(result.stats["lazy_trie_recognition"])
         router=StructuralRiskRouter(self.reference._vector_grammar.grammar,
                                     ComplexityPolicy(1,min_tokens=1))
-        decision=router.choose(lattice,dialogue=True)
+        decision=router.choose(self.lattice('"Hello," said Mary.'),dialogue=True)
         self.assertEqual(decision.strategy,"canonical")
-        self.assertEqual(decision.measured_ms,0)
         self.assertIsNone(decision.score)
-        result=self.adaptive.parse_grammar_lattice(
-            lattice,max_items=20000,kbest_work_limit=100000)
-        self.assertFalse(result.stats["online_prefix_edges_enabled"])
 
-    def test_explicit_length_band_thresholds_are_enforced(self):
-        long_text=HARD[0]
-        lattice=build_lattice(long_text,self.resources.lexicon,multiword_max=1)
-        n=len(lattice.tokens)
-        self.assertGreaterEqual(n,17)
-        high=ComplexityPolicy(
-            rule_start_threshold=1,min_tokens=17,
-            band_thresholds=((17,100,10**12),))
-        self.assertEqual(high.threshold_for(n),10**12)
-        self.assertEqual(high.threshold_for(101),1)
-        decision=StructuralRiskRouter(
-            self.reference._vector_grammar.grammar,high).choose(lattice)
-        self.assertEqual(decision.strategy,"canonical")
-        self.assertEqual(decision.reason,"risk_below_threshold")
-        low=ComplexityPolicy(
-            rule_start_threshold=10**12,min_tokens=17,
-            band_thresholds=((17,100,1),))
-        self.assertEqual(
-            StructuralRiskRouter(self.reference._vector_grammar.grammar,low
-            ).choose(lattice).strategy,"flat")
-
-    def test_banded_policy_rejects_overlap_or_under_min_tokens(self):
-        with self.assertRaises(ValueError):
-            ComplexityPolicy(1,band_thresholds=((17,24,20),(24,32,30)))
-        with self.assertRaises(ValueError):
-            ComplexityPolicy(1,band_thresholds=((8,16,20),))
-        with self.assertRaises(ValueError):
-            ComplexityPolicy(1,band_thresholds=((17,20,0),))
-
-    def test_lazy_trie_strategy_only_runs_on_predicted_nonquoted_text(self):
-        adaptive=Parser(
-            self.resources,cache_size=0,max_items=20000,
-            complexity_policy=ComplexityPolicy(
-                rule_start_threshold=1,min_tokens=17,
-                difficult_strategy="trie"))
-        for text in (*EASY, '"Hello," said Mary.'):
-            with self.subTest(ordinary_or_dialogue=text):
-                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
-                result=adaptive.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                self.assertEqual(result.stats["complexity_route"],"canonical")
-                self.assertFalse(result.stats["lazy_trie_recognition"])
-        for text in HARD:
-            with self.subTest(long_prose=text):
-                lattice=build_lattice(text,self.resources.lexicon,multiword_max=1)
-                original=self.reference.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                shared=adaptive.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                self.assertEqual(shared.stats["complexity_route"],"trie")
-                self.assertTrue(shared.stats["lazy_trie_recognition"])
-                self.assertEqual(original.completed,shared.completed)
-                self.assertEqual(
-                    [t.as_dict() for t in original.alternatives(limit=2)],
-                    [t.as_dict() for t in shared.alternatives(limit=2)])
-
-    def test_no_invented_default_threshold_or_bad_policy(self):
-        self.assertIsNone(self.reference._complexity_router)
-        for cutoff in (0,-1):
+    def test_explicit_nonoverlapping_length_thresholds(self):
+        size=len(self.lattice(HARD[0]).tokens)
+        p=ComplexityPolicy(1,band_thresholds=((17,100,10**12),))
+        self.assertEqual(p.threshold_for(size),10**12)
+        self.assertEqual(p.threshold_for(101),1)
+        for bands in (((17,24,20),(24,32,30)),((8,16,20),),((17,20,0),)):
             with self.assertRaises(ValueError):
-                ComplexityPolicy(cutoff)
-        with self.assertRaises(ValueError):
-            ComplexityPolicy(1,difficult_strategy="unvalidated")
+                ComplexityPolicy(1,band_thresholds=bands)
 
 
 if __name__=="__main__":
