@@ -337,7 +337,6 @@ class VectorGrammar:
         max_items: int,
         goal_category: str,
         diagnostic_k: int | None = None,
-        witness_cache: Any | None = None,
         kbest_work_limit: int | None = None,
     ) -> ParseResult:
         recognition_start = perf_counter()
@@ -360,9 +359,6 @@ class VectorGrammar:
             else min(beam, 2 if length > 160 else 4 if length > 80 else 8)
         )
         materializer = _LazyMaterializer(self, forest, work_limit=kbest_work_limit)
-        if witness_cache is not None:
-            witness_cache.bind(self, forest, lattice)
-            materializer.witness_cache = witness_cache
         packed: dict[tuple[int, int, int], PackedNode] = {}
 
         def pack(item: ChartItem) -> None:
@@ -456,8 +452,6 @@ class VectorGrammar:
         root_provider.refresh_stats()
         if self.lazy_trie_recognition:
             stats["lazy_rule_partials_materialized"]=len(forest.partials.cached)
-        if witness_cache is not None:
-            stats["prepacked_witnesses"] = witness_cache.summary()
         roots = LazyRootSequence(root_provider)
         return ParseResult(
             text=lattice.text,
@@ -683,7 +677,6 @@ class _LazyMaterializer:
         self.work_units = 0
         self.compiled = compiled
         self.forest = forest
-        self.witness_cache: Any | None = None
         self.node_states: dict[tuple[int, Hashable], _NodeState] = {}
         self.path_states: dict[int, _PathState] = {}
         self.item_cache: dict[tuple[str, int], ChartItem] = {}
@@ -800,17 +793,6 @@ class _LazyMaterializer:
             self.context_cache_hits += 1
         if state.initializing:
             return None
-        if not state.initialized and self.witness_cache is not None:
-            shortcut = self.witness_cache.take(node_id, state, self)
-            if shortcut is not None:
-                # Certified unique constituent: no other analysis of this
-                # chart node is hidden by the fast path. All other nodes
-                # still follow the canonical lazy materializer.
-                state.results.append(shortcut)
-                state.initialized = True
-                state.exhausted = True
-                self.analysis_count += 1
-                self.nodes_initialized += 1
         if not state.initialized:
             self._initialize_node(node_id, state)
         while len(state.results) <= rank and state.heap:
