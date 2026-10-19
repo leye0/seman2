@@ -13,6 +13,7 @@ Il préserve les mots et leur surface, les alternatives lexicales, les traits mo
 6. [Corpus et intégrité des données](docs/CORPORA_AND_DATA.md).
 7. [Manifest du nettoyage et code archivé](docs/CLEANUP_MANIFEST.md).
 8. **[Audit CPU Python bas niveau — profilage et tests A/B](docs/LOW_LEVEL_PYTHON_CPU_AUDIT_2026_10_18.md)** — 131 phrases profilées; identification d'un coût majeur des collections GC (sans modifier les algorithmes).
+9. **[Benchmark CPU/GC sur 1 000 phrases](docs/GC_CPU_1000_SENTENCES_BENCHMARK_2026_10_18.md)** — test A/B/B/A, 4 000 analyses, mêmes résultats grammaticaux, gain CPU mesuré de ~40 % par `gc.freeze()` (expérimental).
 
 ## Le seul chemin exécuté
 
