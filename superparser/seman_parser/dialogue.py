@@ -3,8 +3,9 @@
 The ordinary tokenizer deliberately omits typographic quotation marks.
 Rather than changing the tokenization of all novels (or globally accepting
 speech-like clauses), add purely syntactic, zero-semantic-cost quote terminals
-to a separate lexical lattice. Only balanced double quotation marks are
-accepted. Single apostrophes remain contractions/possessives, not dialogue.
+to a separate lexical lattice. Balanced double quotes and typographic
+single quotes are accepted. Word-internal apostrophes remain contractions
+and possessives, not dialogue delimiters.
 """
 from __future__ import annotations
 
@@ -23,22 +24,28 @@ class QuoteBoundary:
 
 
 def quotation_boundaries(text: str) -> tuple[QuoteBoundary, ...]:
-    """Return all well-nested double quote pairs, or no boundaries.
+    """Recognize balanced dialogue quotes without inventing missing ones.
 
-    ASCII double quotes are alternated using stack context; Unicode left
-    and right quotes are kept distinct. Malformed/mismatched quotes fall
-    through to the established parser rather than fabricating a correction.
+    Double quotes and typographic single quote pairs are delimiters.
+    Word-internal U+2019 apostrophes are not quote boundaries.
+    ASCII single quotes remain ignored because contractions are ambiguous.
     """
     stack: list[tuple[str, int]] = []
     boundaries: list[QuoteBoundary] = []
     for pos, char in enumerate(text):
-        if char not in {'"', '“', '”'}:
+        if char not in {'"', '“', '”', '‘', '’'}:
             continue
-        if char == '“':
+        if char == '’' and 0 < pos < len(text)-1:
+            if text[pos-1].isalnum() and text[pos+1].isalnum():
+                continue  # don't, I've, John’s — lexical apostrophe
+        if char in {'“', '‘'}:
             stack.append((char, pos))
             boundaries.append(QuoteBoundary(pos, pos+1, "open", char))
-        elif char == '”':
-            if not stack or stack[-1][0] != '“':
+        elif char in {'”', '’'}:
+            expected = '“' if char == '”' else '‘'
+            if not stack or stack[-1][0] != expected:
+                if char == '’' and pos > 0 and text[pos-1].isalnum():
+                    continue  # plural possessive dogs’ outside single dialogue
                 return ()
             stack.pop()
             boundaries.append(QuoteBoundary(pos, pos+1, "close", char))

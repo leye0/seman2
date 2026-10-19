@@ -5,6 +5,8 @@ on:
     paths:
       - 'superparser/scripts/diagnose_novel_parses.py'
       - 'superparser/seman_parser/sentence_boundaries.py'
+      - 'superparser/seman_parser/dialogue.py'
+      - 'superparser/tests/test_dialogue_grammar.py'
       - 'superparser/research/verbnet_lr/gutenberg_novels.py'
       - 'superparser/seman_parser/vector_chart.py'
       - 'superparser/data/grammar.jsonl'

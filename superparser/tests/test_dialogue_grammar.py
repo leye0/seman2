@@ -56,6 +56,26 @@ class DialogueGrammarTests(unittest.TestCase):
         self.assertEqual([b.side for b in quotation_boundaries('“Hello,” she said.')],
                          ["open","close"])
 
+    def test_curly_single_quotes_are_dialogue_but_apostrophes_are_not(self):
+        text="‘I don’t know.’"
+        delimiters=quotation_boundaries(text)
+        self.assertEqual(
+            [(boundary.surface,boundary.side) for boundary in delimiters],
+            [("‘","open"),("’","close")],
+        )
+        self.assertEqual(quotation_boundaries("I don’t know."),())
+        self.assertEqual(quotation_boundaries("I know John’s family."),())
+        self.assertEqual(quotation_boundaries("‘Unfinished sentence"),())
+        self.assertEqual(quotation_boundaries("‘Broken”"),())
+
+    def test_curly_single_quoted_clauses_use_scoped_dialogue_grammar(self):
+        for text in ("‘John walks.’", "‘Come and see him.’"):
+            with self.subTest(text=text):
+                result=self.parser.parse(text).result
+                self.assertTrue(result.completed,result.stats)
+                self.assertTrue(result.stats.get("dialogue_scoped"),result.stats)
+                self.assertIn("dialogue_unattributed",descendant_ids(result.best()))
+
     def test_marker_overlay_preserves_original_lexical_edges(self):
         from seman_parser.segmentation import build_lattice
         raw='"John goes."'
