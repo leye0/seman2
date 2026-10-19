@@ -230,6 +230,28 @@ def build_lattice(
             provenance={"construction": "exclamative_delimiter"},
         ))
 
+    # Productive historical day compounds (to-day, to-night, to-morrow)
+    # have exactly the same lexical categories as today/tonight/tomorrow.
+    # Treat this as a lexical alias spanning the full original spelling;
+    # do not change tokenization or silently rewrite the novel text.
+    for match in re.finditer(r"\bto-(?:day|night|morrow)\b", text, re.I):
+        surface = match.group(0)
+        lookup = surface.replace("-", "").lower()
+        for _entry, sense, lemma in lexicon.lookup_morphology(lookup):
+            candidate = _candidate_from_sense(
+                span_start=match.start(), span_end=match.end(),
+                surface=surface, lemma=lemma, sense=sense,
+                source="historical-day-spelling",
+            )
+            candidates.append(replace(
+                candidate, provenance={
+                    **candidate.provenance,
+                    "source_spelling": surface,
+                    "normalized_spelling": lookup,
+                    "normalization": "historical_hyphenated_day",
+                },
+            ))
+
     # Preserve the ordinary word / punctuation path, but also offer one
     # lexical edge across contiguous hyphenated compounds.  This handles
     # productive forms absent from WordNet (``third-grade``) without a word

@@ -138,3 +138,7 @@ Le diagnostic réexamine en seconde passe uniquement les phrases sans racine syn
 ## Citations ASCII simples et faux guillemets possessifs
 
 L'overlay de dialogue reconnaît les citations ASCII simples `'Who are you?'` en plus des guillemets doubles et typographiques, sans convertir les apostrophes intérieures de `don't`, `John's` ou `M'Graw` en frontières. Le protocole expérimental de fermeture des guillemets ne réparera plus à tort un apostrophe possessive finale (`minutes' conversation`) ni un guillemet fermant orphelin après la ponctuation.
+
+## Questions modales et graphies anciennes des adverbes temporels
+
+Deux productions étroitement motivées complètent les constructions interrogatives avec auxiliaire : `MODAL NP VP-NP QMARK` (ex. « Can you walk? ») et `WH-NOM MODAL NP VP-GAP(base) QMARK` (ex. « What could a man do? »). Elles exigent le signe interrogatif et, dans l'interrogation à objet extrait, un verbe à forme de base accompagné d'une position d'objet vide. Les graphies historiques « to-day », « to-night », « to-morrow » sont reliées lexicalement à today/tonight/tomorrow tout en conservant les offsets originaux et la cohorte fixe.

@@ -382,6 +382,30 @@ class VectorChartTests(unittest.TestCase):
                 result = self.parser.parse(phrase).result
                 self.assertTrue(result.completed,result.stats)
 
+    def test_modal_yn_and_wh_object_questions_keep_a_bare_predicate(self) -> None:
+        for sentence in ("Can you walk?", "What can John see?",
+                         "What could a man do?", "Can you come to-morrow?"):
+            with self.subTest(sentence=sentence):
+                result = self.parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertGreater(result.stats.get("structural_root_nodes",0),0)
+
+    def test_historic_hyphenated_days_preserve_source_spans(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for spelling, lemma in (("to-day","today"),("to-night","tonight"),
+                                ("to-morrow","tomorrow")):
+            with self.subTest(spelling=spelling):
+                text="We returned " + spelling + "."
+                lattice=build_lattice(text,self.parser.resources.lexicon,multiword_max=1)
+                candidates=[c for c in lattice.candidates
+                            if c.source=="historical-day-spelling"
+                            and c.surface==spelling]
+                self.assertTrue(candidates, spelling)
+                self.assertTrue(any(c.category in ("ADV","N") for c in candidates))
+                for candidate in candidates:
+                    self.assertEqual(text[candidate.span_start:candidate.span_end],spelling)
+                    self.assertEqual(candidate.provenance["normalized_spelling"],lemma)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
