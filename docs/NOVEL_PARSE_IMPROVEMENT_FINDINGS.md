@@ -118,3 +118,7 @@ Les lectures lexicales classiques de « these », « those » et « both » manq
 ## Questions copulatives et interrogations elliptiques
 
 Les questions dont le sujet suit une copule et celles où le prédicat est sous-entendu avaient une couverture incomplète. Ajout de productions exigeant explicitement QMARK pour les structures « Who are you? », « Is she ready? », « Is she a doctor? », « Did you? », « Can you? », « Did not you? » (ordre négatif ancien) et « Am I not alone? ». L’ellipse est marquée comme telle; aucune production interrogative sans point d'interrogation n’a été ajoutée.
+
+## Gardes contre les faux positifs dans l'ellipse auxiliaire
+
+L'ajout de pronoms/déterminants pluriels a révélé qu'une ancienne règle `clause_np_coord_aux_adv` acceptait une combinaison arbitraire NP + VP-NP, y compris l'agrammatical « Those child are sleeping ». Elle exige maintenant explicitement le trait `ellipsis=true`, produit uniquement pour `AUX ADV` dans `vp_aux_adv` (« John did too »). Les interrogatives copulatives, déjà limitées aux phrases terminées par QMARK, préfèrent un vrai prédicat adjectival aux homographes nominaux; le prédicat nominal reste disponible lorsqu'il est grammatical.

@@ -343,6 +343,16 @@ class VectorChartTests(unittest.TestCase):
                     queue.extend(item.children)
                 self.assertIn(required,ids)
 
+    def test_auxiliary_adverb_ellipsis_does_not_license_arbitrary_vp_np(self) -> None:
+        for phrase in ("John did too.", "Mary did too."):
+            with self.subTest(phrase=phrase):
+                result=self.parser.parse(phrase).result
+                self.assertTrue(result.completed,result.stats)
+        # A common noun after a plural demonstrative cannot become a
+        # pretend "verbal predicate" through clause_np_coord_aux_adv.
+        negative=self.parser.parse("Those child are sleeping.").result
+        self.assertFalse(negative.completed,negative.stats)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
