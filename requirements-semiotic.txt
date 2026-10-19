@@ -1,4 +1,0 @@
-epitran==1.35.2
-panphon==0.22.2
-pynini==2.1.7
-phonetisaurus==0.3.0

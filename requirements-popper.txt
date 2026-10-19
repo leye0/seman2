@@ -1,2 +1,0 @@
-popper @ git+https://github.com/logic-and-learning-lab/Popper.git@5c608d3ec87e4975866042fe326e9a317277e021
-janus-swi==1.5.3
