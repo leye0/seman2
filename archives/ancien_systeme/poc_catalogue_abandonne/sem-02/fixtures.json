@@ -1,7 +1,0 @@
-[
-  {"id": "fr-homophones", "language_script": "fra-Latn", "left": "seau", "right": "sot", "expected": "phonology_distinct_from_graphy", "semantic_identity": false},
-  {"id": "en-homophones", "language_script": "eng-Latn", "left": "right", "right": "write", "expected": "phonology_distinct_from_graphy", "semantic_identity": false},
-  {"id": "minimal-voicing", "ipa_left": "pat", "ipa_right": "bat", "left": "pat", "right": "bat", "expected": "feature_local_difference", "semantic_identity": false},
-  {"id": "distant", "ipa_left": "pat", "ipa_right": "ʒu", "left": "pat", "right": "joue", "expected": "phonologically_distant", "semantic_identity": false},
-  {"id": "unknown-segment", "ipa_left": "a☃", "ipa_right": "a", "left": "a☃", "right": "a", "expected": "unknown_segment_reported", "semantic_identity": false}
-]
