@@ -99,6 +99,39 @@ class SubtreeFeatureReplayTests(unittest.TestCase):
         self.assertEqual(self.replayer.replay(
             replace(HINT,root_rule="other"),correct).status,"UNSUPPORTED")
 
+    def test_nested_rule_evidence_and_sibling_variable_context(self):
+        grammar=Grammar((
+            GRAMMAR.rules[0],
+            parse_rule({
+                "id":"clause_np_verb_agreement",
+                "lhs":{"category":"CLAUSE","features":{"number":"?n"}},
+                "rhs":[
+                    {"category":"NP","features":{"number":"?n"},
+                     "requires":["number"]},
+                    {"category":"V","features":{"number":"?n"},
+                     "requires":["number"]},
+                ],
+            }),
+        ))
+        shape=("rule","clause_np_verb_agreement","CLAUSE",(
+            SHAPE,("lex","V")))
+        template=ObservedSubtree(
+            ("DET","N","V"),"CLAUSE",
+            "clause_np_verb_agreement",shape)
+        replayer=SubtreeFeatureReplayer([template],grammar)
+        tokens=(Token(0,0,4,"this"),Token(1,5,8,"dog"),
+                Token(2,9,13,"runs"))
+        def lattice(verb_number):
+            return LexicalLattice("this dog runs",tokens,tuple(
+                LexicalCandidate(t.start,t.end,t.text,t.text,category,
+                    FeatureStructure.build({"number":value}))
+                for t,category,value in zip(tokens,("DET","N","V"),
+                                             ("sg","sg",verb_number))))
+        hint=SignatureHint(0,3,0,13,0,"CLAUSE",
+                           "clause_np_verb_agreement")
+        self.assertEqual(replayer.replay(hint,lattice("sg")).status,"WITNESS")
+        self.assertEqual(replayer.replay(hint,lattice("pl")).status,"NO_WITNESS")
+
     def test_routine_does_not_add_or_remove_candidates(self):
         lattice=sentence((
             [("DET",{"number":"sg"}),("ADV",{})],
