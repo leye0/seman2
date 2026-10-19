@@ -128,7 +128,7 @@ class DialogueGrammarTests(unittest.TestCase):
             ("“Letters of business, too!”",
              ("clause_nominal_exclamation_post_adv", "dialogue_quote_clause")),
             ("“Indeed, I could not.”",
-             ("clause_negative_modal_ellipsis", "dialogue_quote_clause_stop")),
+             ("clause_negative_modal_ellipsis", "dialogue_unattributed")),
         )
         for text, required in examples:
             with self.subTest(text=text):

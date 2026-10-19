@@ -178,3 +178,5 @@ Les adverbes intensifiés sont analysés de manière compositionnelle, mais leur
 acceptation comme réponse autonome reste réservée à DIRECT-SPEECH. L'énumération
 asyndétique des trois PP est également scopée aux citations. La provenance
 du texte et les marqueurs transférés ne changent pas.
+
+L'inventaire fonctionnel associe maintenant explicitement le lemme `much` au type `ADV` (lecture quantitative), pour que la réponse « Very, very much. » soit reconnue avec ou sans WordNet. Le test de l'ellipse négative requiert la règle de négation et la lecture comme parole directe, mais n'impose pas arbitrairement une des lectures de ponctuation finales (`SPEECH-STOP` et `COMMA` se concurrencent dans la forêt existante).
