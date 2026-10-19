@@ -218,3 +218,7 @@ avec un nouveau test, réduisant la couverture des assertions malgré un
 CI vert. Cette erreur est corrigée avant toute nouvelle validation.
 
 Le test de paroles interrompues a mis en évidence une ambiguïté de rang : sans précision du sujet, `"She," ... "walks."` préférait deux groupes nominaux cités, alors que l'analyse correcte est PRONOUN (sujet) puis VP (prédicat). Une production **exclusivement dialogique** de fragment de sujet pronominal vient concurrencer cette lecture, sans transformer les pronoms en étiquettes nominales permissives et sans modifier le transfert de guillemets.
+
+## Composition adjectivale et groupes nominaux dans les 500 phrases
+
+La comparaison des 96 échecs après rééquilibrage isolait des descriptions nominales courantes : « a bitter cold winter », « heavy gales », « long, hard frosts », « my beloved friends » et « the pale and distorted features ». Les règles préexistantes ne couvraient pas les adjectifs composés devant un nom possessif, ni les têtes plurielles sans déterminant. Deux constructions ADJP générales (adjectifs juxtaposés et séparés par virgule) s'intègrent désormais à trois cadres NP : déterminant + ADJP + N, possessif + ADJP + N, et ADJP + N sans déterminant exclusivement quand le nom est pluriel. L'accord de DET et N est conservé; le nombre du possesseur ne doit pas être unifié avec celui du nom possédé. Les tests négatifs rejettent toujours `a heavy gales` et `heavy gale` comme groupes nominaux complets.

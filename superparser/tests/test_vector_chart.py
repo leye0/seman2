@@ -556,6 +556,30 @@ class VectorChartTests(unittest.TestCase):
         self.assertFalse(any(c.surface == "He" and c.category == "INDEF-PRONOUN"
                              for c in personal.candidates))
 
+    def test_compositional_attributive_adjectives_with_agreement(self) -> None:
+        from seman_parser.engine import Parser
+        np_parser = Parser(self.parser.resources, goal_category="NP", cache_size=0)
+        for phrase, required in (
+            ("my beloved friends", "np_possessive_adjp_head"),
+            ("heavy gales", "np_plural_bare_adjp_head"),
+            ("long, hard frosts", "adjp_comma_separated_adjectives"),
+            ("a bitter cold winter", "adjp_adjective_stack"),
+            ("the pale and distorted features", "np_determiner_adjp_head"),
+        ):
+            with self.subTest(phrase=phrase):
+                parsed = np_parser.parse(phrase).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                pending = [parsed.best()]
+                seen = set()
+                while pending:
+                    item = pending.pop()
+                    seen.add(item.rule_id)
+                    pending.extend(item.children)
+                self.assertIn(required, seen)
+        # A bare singular count noun needs a determiner; agreement remains.
+        self.assertFalse(np_parser.parse("heavy gale").result.completed)
+        self.assertFalse(np_parser.parse("a heavy gales").result.completed)
+
     def test_required_evidence_prunes_impossible_kbest_branches(self) -> None:
         sentinels = (
             "In the first, everybody followed her initial idea.",
