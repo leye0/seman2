@@ -587,6 +587,21 @@ class VectorChartTests(unittest.TestCase):
         np_parser = Parser(self.parser.resources, goal_category="NP", cache_size=0)
         self.assertFalse(np_parser.parse("heavy gale").result.completed)
 
+    def test_degree_modified_adjective_with_pp_and_infinitive_complements(self) -> None:
+        for text in ("Kitty was too much afraid of him to talk.",
+                     "She was too deeply ashamed of herself to speak."):
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                todo = [result.best()]
+                rules = set()
+                while todo:
+                    item = todo.pop()
+                    rules.add(item.rule_id)
+                    todo.extend(item.children)
+                self.assertIn("adjp_degree_adverb_adjp", rules)
+                self.assertIn("adjp_adjective_pp_infinitive", rules)
+
     def test_required_evidence_prunes_impossible_kbest_branches(self) -> None:
         sentinels = (
             "In the first, everybody followed her initial idea.",
