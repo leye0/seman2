@@ -19,6 +19,9 @@ from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
 
 ROOT = Path(__file__).resolve().parents[1]
+# Fixed 500-case reference, computed from cohort.jsonl on the initial run.
+# Any altered sentence segmentation or sampling must be reviewed explicitly.
+EXPECTED_500_COHORT_SHA256 = "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a"
 STATUSES = (
     "complete", "both_budgets_exceeded", "forest_budget_exceeded",
     "kbest_budget_exceeded", "no_structural_root",
@@ -421,6 +424,15 @@ def run(args: argparse.Namespace) -> dict:
                 "synthetic_suffix": case.get("synthetic_suffix", ""),
                 "synthetic_terminal": bool(case.get("synthetic_terminal")),
             }, ensure_ascii=False) + "\n")
+    cohort_digest = sha256(
+        (args.out_dir / "cohort.jsonl").read_bytes()
+    ).hexdigest()
+    if args.count == 500 and cohort_digest != EXPECTED_500_COHORT_SHA256:
+        raise ValueError(
+            "The fixed 500-case reference cohort changed: "
+            f"expected {EXPECTED_500_COHORT_SHA256}, got {cohort_digest}. "
+            "Review corpus extraction/sampling changes before updating the pin."
+        )
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=args.wordnet_dir)
     parser = Parser(resources, cache_size=0, max_items=args.max_items)
     # Warm lexical lookup before any per-sentence deadline.
@@ -509,6 +521,7 @@ def run(args: argparse.Namespace) -> dict:
     }
     summary = {
         "schema": "seman2-novel-parse-diagnostics-v3",
+        "cohort_sha256": cohort_digest,
         "selection": "deterministic four-book/four-band cleaned Gutenberg sample",
         "sources": sources,
         "limits": {

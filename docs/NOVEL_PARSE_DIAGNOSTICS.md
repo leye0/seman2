@@ -75,3 +75,10 @@ La taille de 500 est distincte des deux plafonds moteurs : 50 000 états
 de reconnaissance et 500 000 unités de travail k-best. Le délai reste
 de 10 secondes maximum par phrase. Les résultats d'exécution restent des
 artefacts GitHub Actions conservés pendant 90 jours.
+
+## Empreinte immuable de la cohorte de référence
+
+Les 500 unités sont figées par SHA-256 du fichier exact `cohort.jsonl` :
+`cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a`. Le diagnostic 500 échoue **avant** de construire WordNet ou de parser les phrases si la segmentation ou la sélection déplace silencieusement la cohorte. Tout changement intentionnel doit être inspecté et l'empreinte modifiée explicitement, afin de ne jamais confondre progrès grammatical et changement d'échantillon.
+
+Les scores d'impératifs ont été remis à leur valeur initiale après un test montrant un classement instable des meilleurs arbres : la structure `Open the box and close it.` demeure un cas de régression de **qualité** connu, distinct d'une simple absence de racine grammaticale. Des tests `expectedFailure` la documentent sans déguiser l'analyse en succès.
