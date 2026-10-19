@@ -458,6 +458,23 @@ class VectorChartTests(unittest.TestCase):
         self.assertIn("clause_wh_obj_modal", seen)
         self.assertIn("vp_gap_object_after_pp", seen)
 
+    def test_elliptic_modal_negative_and_nominal_exclamations(self) -> None:
+        for text, required in (
+            ("I could not.", "clause_negative_modal_ellipsis"),
+            ("Indeed, I could not.", "clause_negative_modal_ellipsis"),
+            ("Letters of business, too!", "clause_nominal_exclamation_post_adv"),
+        ):
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                pending = [result.best()]
+                ids = set()
+                while pending:
+                    node = pending.pop()
+                    ids.add(node.rule_id)
+                    pending.extend(node.children)
+                self.assertIn(required, ids)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

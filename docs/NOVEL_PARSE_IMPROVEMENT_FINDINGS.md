@@ -164,3 +164,17 @@ Dans des interrogatives comme « Do you really know all this? », la lecture `VP
 ## Interrogatives à objet extrait et complément prépositionnel
 
 La phrase « What would you like for dinner? » n'avait pas de racine après restauration des citations malgré toutes ses catégories lexicales : *like* possède déjà un sens V(base) dont la sous-catégorie est `transitive`, `for dinner` est un PP. Il manquait une combinaison `VP-GAP(object) → V(base, subcat=transitive) PP`, avec *what* comme objet manquant. La contrainte transitive empêche de généraliser cette lecture à toutes les séquences verbe + PP, notamment aux verbes purement intransitifs.
+
+## Groupement des dialogues encore échoués — ellipses et listes
+
+Quatre motifs de la cohorte **strictement inchangée** ressortent des échecs après
+rééquilibrage des guillemets : `Letters of business, too!` (exclamation nominale
+suivie de `COMMA ADV EXCLMARK`), `Indeed, I could not.` (elliptique négative
+`NP MODAL NEG`), `Very, very much.` (répétition d'intensif devant ADVP), et
+`by reason, by reflection, by everything.` (liste ternaire de PP).
+Les constructions d'ellipse sont soit munies d'une ponctuation exclamative
+explicite, soit placées dans la grammaire **strictement scopée** aux guillemets.
+Les adverbes intensifiés sont analysés de manière compositionnelle, mais leur
+acceptation comme réponse autonome reste réservée à DIRECT-SPEECH. L'énumération
+asyndétique des trois PP est également scopée aux citations. La provenance
+du texte et les marqueurs transférés ne changent pas.

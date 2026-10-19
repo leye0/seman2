@@ -120,6 +120,25 @@ class DialogueGrammarTests(unittest.TestCase):
         plain = self.parser.parse("With all my heart.")
         self.assertFalse(plain.result.stats.get("dialogue_scoped", False))
 
+    def test_elliptical_dialogue_advp_and_asyndetic_pp_list(self):
+        examples = (
+            ("“Very, very much.”", ("advp_repeated_degree", "dialogue_quote_advp_stop")),
+            ("“by reason, by reflection, by everything.”",
+             ("dialogue_asyndetic_pp_triple", "dialogue_quote_pp_stop")),
+            ("“Letters of business, too!”",
+             ("clause_nominal_exclamation_post_adv", "dialogue_quote_clause")),
+            ("“Indeed, I could not.”",
+             ("clause_negative_modal_ellipsis", "dialogue_quote_clause_stop")),
+        )
+        for text, required in examples:
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(result.stats.get("dialogue_scoped"), result.stats)
+                ids = set(descendant_ids(result.best()))
+                for rule in required:
+                    self.assertIn(rule, ids)
+
     def test_parser_reports_inverted_speaker_and_spoken_content(self):
         text='"John walks," said Mary.'
         report=self.parser.parse(text)
