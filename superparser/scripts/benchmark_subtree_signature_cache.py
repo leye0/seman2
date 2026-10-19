@@ -66,6 +66,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--wordnet-dir",required=True)
     p.add_argument("--per-book-per-band",type=int,default=12)
+    p.add_argument("--train-per-book-per-band",type=int,default=12)
     p.add_argument("--max-signature-tokens",type=int,default=8)
     p.add_argument("--max-templates",type=int,default=20000)
     p.add_argument("--replay-min-tokens",type=int,default=4)
@@ -74,6 +75,7 @@ def main():
     p.add_argument("--out-dir",type=Path,required=True)
     args=p.parse_args()
     raw,sources=choose_cases(args.per_book_per_band)
+    training_raw,training_sources=choose_cases(args.train_per_book_per_band)
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=args.wordnet_dir)
     parser=Parser(resources,cache_size=0,max_items=20000)
 
@@ -82,7 +84,7 @@ def main():
     short_training={}
     training_attempts=Counter()
     training_completed=Counter()
-    for row in raw:
+    for row in training_raw:
         if row["tokens"]>16 or any(
             q in row["text"] for q in ('"','“','”','‘','’')):
             continue
@@ -170,9 +172,23 @@ def main():
             unique_spans={(hint.start_token,hint.end_token)
                           for hint in scan.matches}
             kinds=Counter(hint.root_category for hint in scan.matches)
+            occurrence_by_length=Counter(
+                str(hint.end_token-hint.start_token)
+                for hint in scan.matches)
+            witnessed_by_length={}
+            if tree is not None:
+                for size in range(2,args.max_signature_tokens+1):
+                    selected=SignatureScan(tuple(
+                        h for h in scan.matches
+                        if h.end_token-h.start_token==size),
+                        scan.transitions,scan.saturated,scan.lexical_tokens)
+                    witnessed_by_length[str(size)]=witnessed_matches(
+                        selected,cache,tree,lattice)
             rec={
                 "book_id":heldout,"band":item["band"],"tokens":item["tokens"],
                 "query_attempted":True,"hint_count":len(scan.matches),
+                "hints_by_length":dict(occurrence_by_length),
+                "witnesses_by_length":witnessed_by_length,
                 "span_count":len(unique_spans),
                 "signature_transitions":scan.transitions,
                 "signature_budget_exceeded":scan.saturated,
@@ -203,6 +219,14 @@ def main():
     report={
         "schema":"read-only-cross-author-subtree-signatures-v1",
         "sources":sources,
+        "training_sources":training_sources,
+        "hint_length_breakdown": {
+            "hits":dict(sum((Counter(r["hints_by_length"]) for r in rows),
+                            Counter())),
+            "witnesses_in_best":dict(sum(
+                (Counter(r["witnesses_by_length"]) for r in rows),
+                Counter())),
+        },
         "feature_replay": {
             "minimum_tokens":args.replay_min_tokens,
             "max_hints_per_sentence":args.replay_max_hints,
@@ -228,6 +252,7 @@ def main():
         "notes":[
             "Training observations are feature-unified canonical best trees, NOT human gold.",
             "Every held-out book is excluded from its own template cache.",
+            "Training may be denser than evaluation, but held-out books remain entirely excluded.",
             "The cache records complete subtree rule-ID shapes, not text, lemmas, personal information, or semantic truths.",
             "The query recognizes all candidate POS alternatives without materializing their cross product.",
             "A signature hit is a HINT ONLY and never creates a parse or skips the canonical parser.",
