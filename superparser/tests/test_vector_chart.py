@@ -235,6 +235,20 @@ class VectorChartTests(unittest.TestCase):
         result = self.parser.parse(sentence).result
         self.assertTrue(result.completed, result.stats)
 
+    def test_am_has_first_person_copula_and_auxiliary_categories(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        lattice=build_lattice("I am ready.",self.parser.resources.lexicon,multiword_max=1)
+        am=[c for c in lattice.candidates if c.surface == "am"]
+        self.assertEqual({c.category for c in am if c.category in ("COPULA","AUX-BE")},{"COPULA","AUX-BE"})
+        for c in am:
+            if c.category in ("COPULA","AUX-BE"):
+                self.assertEqual(c.features.as_dict().get("person"),"1")
+                self.assertEqual(c.features.as_dict().get("number"),"singular")
+        for phrase in ("I am ready.","I am a friend.","I am not ready."):
+            with self.subTest(phrase=phrase):
+                result=self.parser.parse(phrase).result
+                self.assertTrue(result.completed,result.stats)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
