@@ -86,3 +86,7 @@ Les scores d'impératifs ont été remis à leur valeur initiale après un test 
 ## Tirets de dialogue et d'incise
 
 Les notations Project Gutenberg `--`, `---`, `—` et `–` reçoivent une hypothèse lexicale `COMMA` couvrant tout le séparateur, afin que les règles existantes puissent analyser les propositions de chaque côté. Un tiret simple `-` ne devient **pas** automatiquement une virgule. Le flux original des tokens reste inchangé, pour préserver le SHA-256 de la cohorte figée.
+
+## Comparaison contre les analyses réussies
+
+Chaque cas conserve une signature compacte de **toutes** ses catégories grammaticales lexicales candidates, y compris pour les phrases réussies. Le fichier `pattern_contrasts.json` compare la fréquence des séquences de deux et trois ensembles de catégories entre les réussites et les échecs grammaticaux conclusifs. Les timeouts, erreurs et budgets saturés sont exclus de ce contraste. Un seuil d'au moins 5 phrases concernées et 3 échecs évite certains faux signaux ; le rapport donne aussi les proportions par groupe et un ratio de surreprésentation lissé. Cette association statistique ne prouve ni erreur de WordNet ni règle manquante ; elle aide à prioriser des exemples à inspecter manuellement.

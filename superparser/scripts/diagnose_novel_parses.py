@@ -217,6 +217,88 @@ def recurring_issues(rows: list[dict], *, minimum_cases: int = 3) -> dict:
     }
 
 
+def word_category_sequence(lattice) -> list[str]:
+    """Compact lexical signatures for BOTH successful and failed cases."""
+    categories = {}
+    for c in lattice.candidates:
+        categories.setdefault((c.span_start, c.span_end), set()).add(c.category)
+    return [
+        "/".join(sorted(categories.get((token.start, token.end), ())))
+        or "NO_EXACT_LEXICAL_CANDIDATE"
+        for token in lattice.tokens if any(ch.isalpha() for ch in token.text)
+    ]
+
+
+def contrast_category_patterns(rows: list[dict], *, min_support: int = 5) -> dict:
+    """Compare patterns in grammatical failures AND successful parses.
+
+    Saturations/timeouts cannot be treated as grammatical counterexamples.
+    These are exploratory enrichment ratios with smoothing, not causality.
+    """
+    usable = [
+        row for row in rows
+        if row.get("lexical_category_sequence") is not None
+        and row["status"] in (
+            "complete", "no_structural_root", "roots_without_valid_analysis"
+        )
+    ]
+    failures = [r for r in usable if r["status"] != "complete"]
+    successes = [r for r in usable if r["status"] == "complete"]
+    failure_n, success_n = len(failures), len(successes)
+    by_pattern = {}
+    for row in usable:
+        sequence = row["lexical_category_sequence"]
+        is_failure = row["status"] != "complete"
+        for width in (2, 3):
+            patterns = set(
+                " + ".join(sequence[i:i + width])
+                for i in range(len(sequence) - width + 1)
+            )
+            for pattern in patterns:
+                key = (width, pattern)
+                counts = by_pattern.setdefault(key, [0, 0, []])
+                counts[0 if is_failure else 1] += 1
+                if is_failure and len(counts[2]) < 3:
+                    counts[2].append(row["case_id"])
+    result = []
+    for (width, pattern), (fail, success, examples) in by_pattern.items():
+        if fail + success < min_support or fail < 3:
+            continue
+        # Smoothed shares prevent division by zero and reduce small-N noise.
+        fshare = (fail + 0.5) / (failure_n + 1)
+        sshare = (success + 0.5) / (success_n + 1)
+        result.append({
+            "gram_length": width, "pattern": pattern,
+            "failed_sentence_count": fail,
+            "successful_sentence_count": success,
+            "failure_share": round(fail / failure_n, 4) if failure_n else 0,
+            "success_share": round(success / success_n, 4) if success_n else 0,
+            "enrichment_ratio": round(fshare / sshare, 3),
+            "example_case_ids": examples,
+        })
+    result.sort(key=lambda x: (
+        -x["enrichment_ratio"], -x["failed_sentence_count"], x["pattern"]
+    ))
+    return {
+        "schema": "seman2-novel-contrastive-patterns-v1",
+        "counts": {
+            "usable": len(usable), "grammatical_failures": failure_n,
+            "completed": success_n,
+            "excluded_inconclusive": len(rows) - len(usable),
+        },
+        "min_combined_support": min_support,
+        "min_failed_support": 3,
+        "patterns": result,
+        "notes": [
+            "Sentence-level presence rather than token occurrence counts.",
+            "Uses ALL parser-visible POS candidates for every word.",
+            "Excludes timeout, error, and budget-saturated incompletes.",
+            "Patterns are not known grammatical-error causes.",
+            "Completion certifies a parse tree, not its semantic/gold correctness.",
+        ],
+    }
+
+
 def compact_stats(stats: dict) -> dict:
     names = (
         "engine", "structural_root_nodes", "forest_nodes", "partial_states",
@@ -348,6 +430,26 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
         "et analyses multi-mots sont conservés dans failed_sentences.jsonl.",
         "",
     ])
+    contrasts = summary["pattern_contrasts"]
+    output.extend([
+        "",
+        "## Signatures de catégories surreprésentées parmi les échecs",
+        "",
+        "Comparaison sur les mêmes 500 cas ; seuls les statuts grammaticaux "
+        "conclusifs sont inclus (pas les délais/budgets). Les ratios sont "
+        "lissés et exploratoires, sans preuve de cause.",
+        "",
+        "| Motif | Échecs | Réussites | Rapport enrichissement |",
+        "|---|---:|---:|---:|",
+    ])
+    for match in contrasts["patterns"][:30]:
+        pattern = match["pattern"].replace("|", "\\|")
+        output.append(
+            f"| {pattern} | {match['failed_sentence_count']} | "
+            f"{match['successful_sentence_count']} | "
+            f"{match['enrichment_ratio']} |"
+        )
+    output.append("")
     for row in rows:
         if row["status"] == "complete":
             continue
@@ -469,6 +571,7 @@ def run(args: argparse.Namespace) -> dict:
                     lattice = build_lattice(
                         case["text"], resources.lexicon, multiword_max=1
                     )
+                    row["lexical_category_sequence"] = word_category_sequence(lattice)
                     result = parser.parse_grammar_lattice(
                         lattice, max_items=args.max_items,
                         kbest_work_limit=args.kbest_work_limit,
@@ -554,6 +657,12 @@ def run(args: argparse.Namespace) -> dict:
         encoding="utf8",
     )
     summary["recurrent_issues"] = patterns
+    contrasts = contrast_category_patterns(rows)
+    (args.out_dir / "pattern_contrasts.json").write_text(
+        json.dumps(contrasts, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf8",
+    )
+    summary["pattern_contrasts"] = contrasts
     (args.out_dir / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",

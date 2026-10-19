@@ -3,7 +3,7 @@ import unittest
 
 from scripts.diagnose_novel_parses import (
     classify, compact_stats, tally, lexical_diagnostics, recurring_issues,
-    select_cases,
+    select_cases, word_category_sequence, contrast_category_patterns,
 )
 
 
@@ -54,6 +54,35 @@ class NovelDiagnosticsTests(unittest.TestCase):
         self.assertEqual(result["tokens"][0]["candidates"][0]["features"]["subcat"], "intransitive")
         self.assertEqual(result["words_without_any_candidate"], ["now"])
         self.assertFalse(result["tokens"][2]["no_candidate_or_cover"])
+
+    def test_pattern_contrasts_use_both_successes_and_failures(self):
+        rows = []
+        for number in range(5):
+            rows.append({
+                "case_id": f"bad:{number}", "status": "no_structural_root",
+                "lexical_category_sequence": ["N", "PREP", "N"],
+            })
+        for number in range(4):
+            rows.append({
+                "case_id": f"good:{number}", "status": "complete",
+                "lexical_category_sequence": ["N", "V", "N"],
+            })
+        rows.append({
+            "case_id": "timeout:0", "status": "timeout",
+            "lexical_category_sequence": ["N", "PREP", "N"],
+        })
+        result = contrast_category_patterns(rows, min_support=5)
+        self.assertEqual(result["counts"], {
+            "usable": 9, "grammatical_failures": 5,
+            "completed": 4, "excluded_inconclusive": 1,
+        })
+        first = next(
+            x for x in result["patterns"]
+            if x["gram_length"] == 2 and x["pattern"] == "N + PREP"
+        )
+        self.assertEqual(first["failed_sentence_count"], 5)
+        self.assertEqual(first["successful_sentence_count"], 0)
+        self.assertGreater(first["enrichment_ratio"], 1)
 
     def test_recurring_patterns_count_distinct_failed_sentences(self):
         lex = lambda surface: {
