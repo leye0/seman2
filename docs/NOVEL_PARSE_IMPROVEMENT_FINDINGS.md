@@ -106,3 +106,7 @@ Quatre cas dans *Treasure Island* présentent la graphie dialectale `ain't`. C'e
 ## Apostrophes typographiques dans les contractions
 
 Les formes avec U+2019 (don’t, I’ll, we’re, Peggotty’s) obtenaient des candidats lexicaux fragmentaires. Le treillis ajoute les sous-unités morphologiques à partir de la graphie normalisée, mais garde tous les offsets et les surfaces réels du texte original. La tokenisation ne change pas : l’empreinte de la cohorte de 500 phrases est préservée.
+
+## Exclamations nominales et vocatives sans verbe
+
+Une phrase littéraire peut être une exclamation complète en discours, sans verbe fini : par exemple « What a good, kind boy! » ou « Peace, peace! ». Introduction d'un terminal syntaxique EXCLMARK, offert en **plus** de l'ancienne lecture COMMA du point d'exclamation, puis de règles limitées par un vrai signe « ! ». La construction « what a ... » exige un déterminant indéfini et une lecture interrogative/exclamative du mot wh. Pas de règle universelle qui transforme n'importe quel NP en clause finie.

@@ -219,6 +219,17 @@ def build_lattice(
                 source="typographic-" + candidate.source,
             ))
 
+    # Keep exclamative punctuation distinct from commas (without removing
+    # the existing legacy COMMA hypothesis for '!').
+    for mark in re.finditer(r"!", text):
+        candidates.append(LexicalCandidate(
+            span_start=mark.start(), span_end=mark.end(), surface="!",
+            lemma="!", category="EXCLMARK",
+            features=FeatureStructure.empty(), score=0.8,
+            source="punctuation-exclamation",
+            provenance={"construction": "exclamative_delimiter"},
+        ))
+
     # Preserve the ordinary word / punctuation path, but also offer one
     # lexical edge across contiguous hyphenated compounds.  This handles
     # productive forms absent from WordNet (``third-grade``) without a word

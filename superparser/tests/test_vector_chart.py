@@ -287,6 +287,27 @@ class VectorChartTests(unittest.TestCase):
         self.assertEqual([tok.text for tok in tokenize("You don’t know.")],
                          ["You","don","t","know","."])
 
+    def test_exclamative_noun_phrases_require_visible_exclamation_mark(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for sentence,expected_rule in (
+            ("What a good boy!", "clause_what_exclam_det_adj_n"),
+            ("What a good, kind boy!", "clause_what_exclam_det_adj_comma_adj_n"),
+            ("Peace, peace!", "clause_repeated_nominal_exclamation"),
+        ):
+            with self.subTest(sentence=sentence):
+                lattice=build_lattice(sentence,self.parser.resources.lexicon,multiword_max=1)
+                self.assertTrue(any(c.category=="EXCLMARK" and c.surface=="!"
+                    for c in lattice.candidates))
+                result=self.parser.parse(sentence).result
+                self.assertTrue(result.completed,result.stats)
+                nodes=[result.best()]
+                observed=set()
+                while nodes:
+                    n=nodes.pop()
+                    observed.add(n.rule_id)
+                    nodes.extend(n.children)
+                self.assertIn(expected_rule,observed)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
