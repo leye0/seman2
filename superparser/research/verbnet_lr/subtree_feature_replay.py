@@ -107,7 +107,17 @@ class SubtreeFeatureReplayer:
         return PreparedShape(category, rule, children,
                              sum(child.leaf_count for child in children))
 
-    def replay(self, hint, lattice, *, max_steps: int = 1000) -> FeatureReplay:
+    @staticmethod
+    def prepare(lattice):
+        """Index lexical readings ONCE per sentence for repeated subspans."""
+        options={}
+        for candidate in lattice.candidates:
+            options.setdefault((candidate.span_start,candidate.span_end),[]
+                               ).append(candidate)
+        return options
+
+    def replay(self, hint, lattice, *, max_steps: int = 1000,
+               prepared_options=None) -> FeatureReplay:
         if max_steps < 1:
             raise ValueError("A positive replay work budget is required")
         root = self.compiled.get(hint.template_id)
@@ -124,10 +134,8 @@ class SubtreeFeatureReplayer:
             or root.rule is None
             or hint.root_rule != root.rule.rule_id):
             return FeatureReplay("UNSUPPORTED", 0, 0)
-        options: dict[tuple[int,int], list[Any]]={}
-        for candidate in lattice.candidates:
-            options.setdefault((candidate.span_start,candidate.span_end),[]
-                               ).append(candidate)
+        options = (prepared_options if prepared_options is not None
+                   else self.prepare(lattice))
         count=_Counter(max_steps)
 
         def walk(node: PreparedShape, offset: int, constraint: FeatureStructure,
