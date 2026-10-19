@@ -130,7 +130,13 @@ class VectorChartTests(unittest.TestCase):
         self.assertFalse(limited.completed)
         self.assertTrue(limited.stats["kbest_budget_exceeded"])
         self.assertGreater(limited.stats["structural_root_nodes"], 0)
-        self.assertGreater(limited.stats["combinations_visited_for_best"], 0)
+        # A one-unit budget may stop before the first combination.
+        # The failed branch must still export the actual counters.
+        self.assertEqual(
+            limited.stats["combinations_visited_for_best"],
+            limited.stats["combinations_visited_total"],
+        )
+        self.assertGreater(limited.stats["kbest_work_units"], 1)
         self.assertEqual(limited.stats["kbest_work_limit"],1)
         self.assertIsNone(limited.best())
         # A sufficient budget must recover precisely the normal complete
