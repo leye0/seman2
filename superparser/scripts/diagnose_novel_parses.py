@@ -736,7 +736,18 @@ def run(args: argparse.Namespace) -> dict:
             trial_stream.write(json.dumps(trial, ensure_ascii=False) + "\n")
     trial_summary = {
         "attempted": len(quote_trials),
-        "newly_completed": sum(t["status"] == "complete" for t in quote_trials),
+        "newly_completed": sum(
+            t["source_status"] != "complete" and t["status"] == "complete"
+            for t in quote_trials
+        ),
+        "previously_completed_retained": sum(
+            t["source_status"] == "complete" and t["status"] == "complete"
+            for t in quote_trials
+        ),
+        "previously_completed_regressed": sum(
+            t["source_status"] == "complete" and t["status"] != "complete"
+            for t in quote_trials
+        ),
         "statuses": dict(Counter(t["status"] for t in quote_trials)),
         "caution": (
             "Quote balancing is performed by the shared segmentation code, "

@@ -115,8 +115,17 @@ class AnalysisUnit:
 _QUOTE_PAIRS = {'“': '”', '‘': '’', '"': '"', "'": "'"}
 
 
-def _advance_quotes(text: str, stack: list[tuple[str, str]]) -> None:
-    """Track nested quotation boundaries, ignoring word-internal apostrophes."""
+def _advance_quotes(
+    text: str, stack: list[tuple[str, str]], *,
+    balance_sentence_boundary: bool = False,
+) -> None:
+    """Track quotation state across semicolons and, optionally, sentences.
+
+    The default keeps the already pinned source cohort exactly reproducible.
+    Stricter orphan-quote protection is used only by the prepared analysis
+    alternative, whose changes are explicitly recorded rather than silently
+    replacing reference data.
+    """
     for index, char in enumerate(text):
         if char not in _QUOTE_PAIRS and char not in {'”', '’'}:
             continue
@@ -127,9 +136,9 @@ def _advance_quotes(text: str, stack: list[tuple[str, str]]) -> None:
         # A trailing English possessive ("three days' rest") is not an
         # opening dialogue delimiter. Likewise, a closing double quote
         # stranded at a fragment's end must not become a new opening quote.
-        if char == "'" and before.isalnum() and not stack:
+        if balance_sentence_boundary and char == "'" and before.isalnum() and not stack:
             continue
-        if char == '"' and not stack and before in ".!?" and not after:
+        if balance_sentence_boundary and char == '"' and not stack and before in ".!?" and not after:
             continue
         if char in {'”', '’'}:
             if stack and stack[-1][1] == char:
@@ -175,7 +184,7 @@ def split_analysis_units(
         raw = text[left:index]
         source = (text[left:index + 1] if index < len(text) else raw).strip()
         active_before = tuple(stack)
-        _advance_quotes(raw, stack)
+        _advance_quotes(raw, stack, balance_sentence_boundary=balance_sentence_boundary)
         active_after = tuple(stack)
         opening = ''.join(pair[0] for pair in active_before)
         closing = ''.join(pair[1] for pair in reversed(active_after))
@@ -212,5 +221,5 @@ def split_prose_analysis_units(paragraph: str) -> list[AnalysisUnit]:
             sentence, quote_context=tuple(context),
             balance_sentence_boundary=True,
         ))
-        _advance_quotes(sentence, context)
+        _advance_quotes(sentence, context, balance_sentence_boundary=True)
     return units
