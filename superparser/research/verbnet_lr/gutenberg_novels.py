@@ -18,7 +18,7 @@ from urllib.request import Request, urlopen
 
 from seman_parser.segmentation import tokenize
 from seman_parser.sentence_boundaries import (
-    has_final_punctuation, split_prose_sentences,
+    has_final_punctuation, split_prose_sentences, split_analysis_units,
 )
 
 
@@ -96,13 +96,8 @@ def strip_gutenberg(text: str):
     return core
 
 
-def sentences(core: str):
-    """Extract verbatim sentence spans without amputating dialogue quotes.
-
-    Editorial headings are skipped, but short authentic dialogue is retained.
-    Initials and abbreviations are protected by the shared conservative
-    boundary detector.
-    """
+def analysis_units(core: str):
+    """Yield independent analysis units with text/quotation provenance."""
     for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
         if not lines or CHAPTER.match(lines[0]):
@@ -112,7 +107,14 @@ def sentences(core: str):
             joined.isupper() or len(joined) < 45
         ):
             continue
-        yield from split_prose_sentences(joined)
+        for sentence in split_prose_sentences(joined):
+            yield from split_analysis_units(sentence)
+
+
+def sentences(core: str):
+    """Return independently parseable novel units, splitting semicolons."""
+    for unit in analysis_units(core):
+        yield unit.text
 
 
 def extract(book: Book, core: str, *, length_min=4, length_max=45):
@@ -121,7 +123,8 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                 "non_ascii": 0, "non_sentence": 0, "duplicates": 0}
     eligible = []
     seen = set()
-    for number, sentence in enumerate(sentences(core)):
+    for number, unit in enumerate(analysis_units(core)):
+        sentence = unit.text
         counters["fragments"] += 1
         # Unicode literary punctuation (including “ ” ‘ ’) is legitimate
         # text, not a reason to delete an entire dialogue sentence.
@@ -145,6 +148,11 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
         seen.add(normalized)
         eligible.append({"book_id": book.ebook_id, "author": book.author,
                          "ordinal": number, "text": sentence,
+                         "source_text": unit.source_text,
+                         "semicolon_split": unit.semicolon_split,
+                         "synthetic_prefix": unit.synthetic_prefix,
+                         "synthetic_suffix": unit.synthetic_suffix,
+                         "synthetic_terminal": unit.synthetic_terminal,
                          "tokens": len(tokens)})
     counters["eligible"] = len(eligible)
     return eligible, counters

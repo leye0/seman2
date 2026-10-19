@@ -7,6 +7,7 @@ period over manufacturing a bogus sentence from an initial.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 
 # Abbreviations normally followed by names, locations or identifiers.
 _NONTERMINAL = frozenset({
@@ -98,3 +99,87 @@ def split_prose_sentences(paragraph: str) -> list[str]:
 def has_final_punctuation(sentence: str) -> bool:
     """Recognize terminal .!? followed by closing quotes or brackets."""
     return re.search(r"""[.!?]["'”’)\]}]*$""", sentence) is not None
+
+
+@dataclass(frozen=True)
+class AnalysisUnit:
+    """An analysis-ready text unit and its unmodified source segment."""
+    text: str
+    source_text: str
+    semicolon_split: bool = False
+    synthetic_prefix: str = ""
+    synthetic_suffix: str = ""
+    synthetic_terminal: bool = False
+
+
+_QUOTE_PAIRS = {'“': '”', '‘': '’', '"': '"', "'": "'"}
+
+
+def _advance_quotes(text: str, stack: list[tuple[str, str]]) -> None:
+    """Track nested quotation boundaries, ignoring word-internal apostrophes."""
+    for index, char in enumerate(text):
+        if char not in _QUOTE_PAIRS and char not in {'”', '’'}:
+            continue
+        before = text[index - 1] if index else ""
+        after = text[index + 1] if index + 1 < len(text) else ""
+        if char in {"'", "’"} and before.isalnum() and after.isalnum():
+            continue
+        if char in {'”', '’'}:
+            if stack and stack[-1][1] == char:
+                stack.pop()
+            continue
+        if char in {'"', "'"} and stack and stack[-1][1] == char:
+            stack.pop()
+        else:
+            stack.append((char, _QUOTE_PAIRS[char]))
+
+
+def _supply_terminal(text: str) -> tuple[str, bool]:
+    """Add an analysis-only period before any final dialogue closers."""
+    if has_final_punctuation(text):
+        return text, False
+    suffix = re.search(r"""["'”’)\]}]*$""", text)
+    position = suffix.start() if suffix else len(text)
+    return text[:position] + "." + text[position:], True
+
+
+def split_analysis_units(sentence: str) -> list[AnalysisUnit]:
+    """Split on every semicolon and rewrap quotations on both sides.
+
+    No text is rewritten in the checked-in novels. The original punctuation
+    and delimiters survive in source_text for error analysis and provenance.
+    """
+    text = sentence.strip()
+    if not text:
+        return []
+    if ';' not in text:
+        return [AnalysisUnit(text=text, source_text=text)]
+    units: list[AnalysisUnit] = []
+    stack: list[tuple[str, str]] = []
+    left = 0
+    for index in range(len(text) + 1):
+        if index < len(text) and text[index] != ';':
+            continue
+        raw = text[left:index]
+        source = (text[left:index + 1] if index < len(text) else raw).strip()
+        active_before = tuple(stack)
+        _advance_quotes(raw, stack)
+        active_after = tuple(stack)
+        opening = ''.join(pair[0] for pair in active_before)
+        closing = ''.join(pair[1] for pair in reversed(active_after))
+        core = raw.strip()
+        if core:
+            if index < len(text):
+                core, synthetic_terminal = _supply_terminal(core)
+            else:
+                synthetic_terminal = False
+            units.append(AnalysisUnit(
+                text=opening + core + closing,
+                source_text=source,
+                semicolon_split=True,
+                synthetic_prefix=opening,
+                synthetic_suffix=closing,
+                synthetic_terminal=synthetic_terminal,
+            ))
+        left = index + 1
+    return units

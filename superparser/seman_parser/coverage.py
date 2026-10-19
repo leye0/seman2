@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Iterable, Sequence
 
 from .engine import Parser
-from .sentence_boundaries import has_final_punctuation, split_prose_sentences
+from .sentence_boundaries import has_final_punctuation, split_prose_sentences, split_analysis_units
 
 _NOISE = re.compile(r"^[\s\"'“”‘’\-–—*•>]*$")
 # Abbreviations that end with a period but do not end a sentence.
@@ -92,7 +92,8 @@ _ABBREV_TOKEN = re.compile(
 
 def _split_sentences(line: str) -> list[str]:
     """Lossless dialogue-aware splitter shared with the novel extractor."""
-    return split_prose_sentences(line)
+    return [unit.text for original in split_prose_sentences(line)
+            for unit in split_analysis_units(original)]
 
 
 def extract_sentences(path: str | Path, *, limit: int | None = None) -> list[SentenceCase]:

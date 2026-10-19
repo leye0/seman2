@@ -5,7 +5,7 @@ import unittest
 
 from seman_parser.coverage import _split_sentences
 from seman_parser.sentence_boundaries import (
-    has_final_punctuation, split_prose_sentences,
+    has_final_punctuation, split_prose_sentences, split_analysis_units,
 )
 from research.verbnet_lr.gutenberg_novels import Book, extract, sentences
 
@@ -66,6 +66,50 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertEqual([c["text"] for c in cases], [
             "“Wait!” she cried.", "Mr. A. Smith stayed.", "“No!” he shouted."
         ])
+
+
+    def test_semicolon_split_is_lossless_with_quote_restoration(self):
+        cases = [
+            ("“I came; I saw; I conquered.”",
+             ["“I came.”", "“I saw.”", "“I conquered.”"],
+             ["“I came;", "I saw;", "I conquered.”"]),
+            ("He arrived; she left.",
+             ["He arrived.", "she left."],
+             ["He arrived;", "she left."]),
+            ('"I said"; she listened.',
+             ['"I said."', 'she listened.'],
+             ['"I said";', 'she listened.']),
+            ("‘I’m here; don’t go.’",
+             ["‘I’m here.’", "‘don’t go.’"],
+             ["‘I’m here;", "don’t go.’"]),
+            ("He stayed; she called; they laughed.",
+             ["He stayed.", "she called.", "they laughed."],
+             ["He stayed;", "she called;", "they laughed."]),
+        ]
+        for original, expected, sources in cases:
+            with self.subTest(original=original):
+                units = split_analysis_units(original)
+                self.assertEqual([u.text for u in units], expected)
+                self.assertEqual([u.source_text for u in units], sources)
+                self.assertEqual(" ".join(u.source_text for u in units), original)
+                self.assertTrue(all(";" not in u.text for u in units))
+                self.assertTrue(all(has_final_punctuation(u.text) for u in units))
+                self.assertTrue(all(u.semicolon_split for u in units))
+
+    def test_semicolon_units_reach_corpus_and_coverage(self):
+        original = "“I came; I saw; I conquered.”"
+        expected = ["“I came.”", "“I saw.”", "“I conquered.”"]
+        self.assertEqual(list(sentences(original)), expected)
+        self.assertEqual(_split_sentences(original), expected)
+        rows, counts = extract(
+            Book(999, "Example", "Example", "train"),
+            original, length_min=1, length_max=100,
+        )
+        self.assertEqual([r["text"] for r in rows], expected)
+        self.assertEqual(rows[0]["source_text"], "“I came;")
+        self.assertTrue(rows[1]["synthetic_prefix"])
+        self.assertTrue(rows[0]["synthetic_terminal"])
+        self.assertEqual(counts["eligible"], 3)
 
     def test_ambiguous_initial_prefers_not_to_split(self):
         text = "The witness was A. B. Carter. She knew D. E. Shaw."
