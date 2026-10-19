@@ -13,7 +13,13 @@ Il préserve les mots et leur surface, les alternatives lexicales, les traits mo
 6. [Corpus et intégrité des données](docs/CORPORA_AND_DATA.md).
 7. [Manifest du nettoyage et code archivé](docs/CLEANUP_MANIFEST.md).
 8. **[Audit CPU Python bas niveau — profilage et tests A/B](docs/LOW_LEVEL_PYTHON_CPU_AUDIT_2026_10_18.md)** — 131 phrases profilées; identification d'un coût majeur des collections GC (sans modifier les algorithmes).
-9. **[Benchmark CPU/GC sur 1 000 phrases](docs/GC_CPU_1000_SENTENCES_BENCHMARK_2026_10_18.md)** — test A/B/B/A, 4 000 analyses, mêmes résultats grammaticaux, gain CPU mesuré de ~40 % par `gc.freeze()` (expérimental).
+9. **[Benchmark CPU/GC sur 1 000 phrases](docs/GC_CPU_1000_SENTENCES_BENCHMARK_2026_10_18.md)** — test A/B/B/A, 4 000 analyses, mêmes résultats grammaticaux, réduction CPU mesurée de ~40 % sur ce corpus; détail et limites de la mise en production.
+
+## Gestion mémoire en production (CPython)
+
+Le parseur WordNet appelle **une fois par processus** `gc.collect(2)` puis `gc.freeze()` après que les quatre tables POS de WordNet ont été chargées et **avant** la construction d'une forêt d'analyse. Le GC automatique reste activé pour les objets construits ensuite. Aucun changement n'est apporté aux algorithmes grammaticaux, aux budgets ou au caching. Si WordNet n'est pas chargé ou si le GC est déjà désactivé, le gel n'est pas exécuté. **Désactivation immédiate** au démarrage : `SEMAN2_DISABLE_GC_FREEZE=1`.
+
+`gc.freeze()` est **global au processus** et peut prolonger la vie de cycles existants; ne pas l'appeler au hasard dans une application hôte. La réduction d'environ 40 % est mesurée sur 1 000 phrases *avec ressources préchargées*, et ne garantit pas le même gain au premier appel ni sur un million de phrases. Les artefacts historiques des mesures sont disponibles via les liens GitHub Actions des rapports; les scripts de benchmark expérimentaux ont été retirés de `main`.
 
 ## Le seul chemin exécuté
 
@@ -35,4 +41,4 @@ Cette commande teste un texte court, une phrase longue routée vers le trie et u
 
 Les quatre romans nettoyés et l'intégralité de `data/` et `superparser/data/` sont conservés. L'ancien code reste accessible sur [`archive/pre-simplification-2026-10-18`](https://github.com/leye0/seman2/tree/archive/pre-simplification-2026-10-18), **pas** dans `main`.
 
-Le travail actuel se concentre sur la **justesse et la couverture grammaticale**, particulièrement les phrases lourdes et les dialogues, pas sur de nouvelles expérimentations d'optimisation.
+Le travail actuel se concentre sur la **justesse et la couverture grammaticale**, particulièrement les phrases lourdes et les dialogues. La gestion mémoire CPython mesurée est intégrée, sans modifier le fonctionnement linguistique.

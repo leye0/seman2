@@ -2,10 +2,12 @@
 
 Date : 18 octobre 2026 (heure de Montréal; exécution GitHub Actions le 19 octobre UTC). Python 3.12.15 sur Linux x86-64, GitHub Actions hébergé.
 
+**Note après livraison :** `gc.freeze()` est désormais activé une fois en production après le chargement des quatre POS de WordNet, avant l'allocation d'une forêt grammaticale (`runtime_gc.py`). Option de désactivation : `SEMAN2_DISABLE_GC_FREEZE=1`. Les indications ci-dessous « code métier inchangé » concernent l'expérience historique. Les scripts de mesures ont été retirés de `main`; le code original demeure consultable dans un commit antérieur.
+
 **Exécution réussie :** https://github.com/leye0/seman2/actions/runs/39192349373
 
-**Code benchmark :** [tools/cpu_gc_1000_benchmark.py](../tools/cpu_gc_1000_benchmark.py)  
-**Workflow :** [.github/workflows/cpu-gc-1000-benchmark.yml](../.github/workflows/cpu-gc-1000-benchmark.yml)
+**Code benchmark :** [tools/cpu_gc_1000_benchmark.py](https://github.com/leye0/seman2/blob/8bb7565304316e212b5c1e5fa1f64020c132096a/tools/cpu_gc_1000_benchmark.py)  
+**Workflow :** [.github/workflows/cpu-gc-1000-benchmark.yml](https://github.com/leye0/seman2/blob/8bb7565304316e212b5c1e5fa1f64020c132096a/.github/workflows/cpu-gc-1000-benchmark.yml)
 
 ## Conclusion : amélioration reproductible de 40 % du CPU de parsing
 
@@ -81,7 +83,7 @@ L'exécution complète est disponible avec six fichiers JSON : métadonnées et 
 
 ## Conséquences techniques
 
-**Oui, l'optimisation runtime semble très prometteuse :** une réduction d'environ 40 % de CPU est reproductible sur ce corpus équilibré, sans modification sémantique. En revanche, **ne pas ajouter `gc.freeze()` dans `Parser.__init__` sans étude supplémentaire** : c'est une politique globale du processus Python, pas un gel sélectif de WordNet. Le moment précis du gel, sa durée et les ressources prises au piège peuvent provoquer de la rétention de cycles.
+**Résultat historique ayant motivé la livraison :** une réduction d'environ 40 % de CPU est reproductible sur ce corpus équilibré, sans modification sémantique. En revanche, **ne pas ajouter `gc.freeze()` dans `Parser.__init__` sans étude supplémentaire** : c'est une politique globale du processus Python, pas un gel sélectif de WordNet. Le moment précis du gel, sa durée et les ressources prises au piège peuvent provoquer de la rétention de cycles.
 
 Au-delà de 1 000 phrases et à 1 million, le gain n'est **pas démontré**; seul le principe général de diminution du travail du GC est compatible avec une montée en charge. Un audit de RSS avec processus indépendants, workload continu et collecte des objets temporaires est le prochain garde-fou.
 

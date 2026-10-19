@@ -19,6 +19,7 @@ from .grammar import Grammar, load_grammar, load_grammar_rows
 from .dialogue import dialogue_lattice
 from .complexity_routing import ComplexityPolicy, RoutingDecision, StructuralRiskRouter
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
+from .runtime_gc import freeze_loaded_wordnet_once
 from .perf import LRU
 from .segmentation import (
     LexicalCandidate, LexicalLattice, Token, _candidate_from_sense,
@@ -337,6 +338,9 @@ class Parser:
         to include marked dialogues in coverage statistics without adding
         unquoted dialogue rules to the ordinary grammar.
         """
+        # The input lattice is already built; keep transient forests out of
+        # CPython's frozen generation, including on this public entry point.
+        freeze_loaded_wordnet_once(self.resources.lexicon)
         budget = self.max_items if max_items is None else max_items
         is_dialogue = False
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
@@ -384,6 +388,7 @@ class Parser:
                 deduplicate=self.deduplicate_lexical,
             )
             self._lattice_cache.put(text, lattice)
+        freeze_loaded_wordnet_once(self.resources.lexicon)
         extended = dialogue_lattice(lattice)
         if extended is None:
             return None
@@ -424,6 +429,7 @@ class Parser:
                 deduplicate=self.deduplicate_lexical,
             ))
             if extended is not None:
+                freeze_loaded_wordnet_once(self.resources.lexicon)
                 result = self._dialogue_vector_grammar.parse_lattice(
                     extended, beam=max(self.beam,alternatives),
                     max_items=max(max_items,self.max_items),
@@ -446,6 +452,7 @@ class Parser:
             text, self.resources.lexicon,
             deduplicate=self.deduplicate_lexical,
         )
+        freeze_loaded_wordnet_once(self.resources.lexicon)
         result = self._vector_grammar.parse_lattice(
             lattice,
             beam=max(self.beam, alternatives),
@@ -468,6 +475,7 @@ class Parser:
             )
             self._lattice_cache.put(text, lattice)
         lexical_ms = (perf_counter() - lexical_start) * 1000
+        freeze_loaded_wordnet_once(self.resources.lexicon)
 
         grammar, decision = self._select_vector_grammar(lattice)
         result = grammar.parse_lattice(

@@ -53,6 +53,7 @@ jobs:
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v \
             superparser.tests.test_parser_integration \
+            superparser.tests.test_runtime_gc \
             superparser.tests.test_features \
             superparser.tests.test_coverage \
             superparser.tests.test_data \

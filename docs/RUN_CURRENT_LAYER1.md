@@ -19,6 +19,7 @@ L'option adaptative **n'est pas activée par défaut**, car les forêts atteigna
 
 | Chemin | Responsabilité |
 | --- | --- |
+| `superparser/seman_parser/runtime_gc.py` | Activation unique de `gc.freeze()` après chargement WordNet; garde-fous et variable de désactivation sans changer le parseur |
 | `superparser/seman_parser/engine.py` | `ParserResources`, `Parser`, entrée `parse`, dialogues, routage, budgets, sortie `ParseReport` |
 | `superparser/seman_parser/segmentation.py` | Tokenisation, `LexicalLattice`, toutes les lectures / sous-types / offsets |
 | `superparser/seman_parser/vector_chart.py` | Grammaire compilée, forêt canonique, analyses multiples et `k-best` commun |
@@ -30,6 +31,12 @@ L'option adaptative **n'est pas activée par défaut**, car les forêts atteigna
 | `superparser/seman_parser/chart.py`, `features.py`, `grammar.py`, `lexicon.py`, `lexicon_from_wordnet.py`, `wordnet.py`, `syntax.py`, `semantic_rules.py`, `semantics.py`, `symbols.py`, `types.py` | Contrats de données, grammaire, morphosyntaxe, traces lexicales et sémantiques |
 
 Le fichier `shared_trie_forest.py` n'est **pas un second moteur à choisir** : il constitue uniquement la base utilisée par `LazySharedTrieForest`.
+
+### Gestion du garbage collector CPython
+
+En exploitation, Seman2 appelle automatiquement `gc.freeze()` **une seule fois par processus** une fois les quatre parties principales des données WordNet chargées, au début d'un parsing et avant toute nouvelle forêt grammaticale. Le GC reste activé. Cette politique est **indépendante** de la complexité grammaticale et n'active aucun autre moteur. Les ressources sans WordNet et les exécutions où le GC est désactivé n'activent pas cette opération. Désactiver pour une application hôte qui gère elle-même ses objets : `SEMAN2_DISABLE_GC_FREEZE=1` avant le démarrage.
+
+Ce gel reste **global au processus** et n'est pas sélectif sur les seuls objets WordNet. Voir le [benchmark de 1 000 phrases](GC_CPU_1000_SENTENCES_BENCHMARK_2026_10_18.md) pour la mesure, ses conditions de préchauffe et les limites de durée de vie / mémoire. Les outils expérimentaux ont été supprimés de `main`, mais sont disponibles dans l'historique Git de l'audit.
 
 ## 3. Exécution depuis la RACINE du dépôt
 

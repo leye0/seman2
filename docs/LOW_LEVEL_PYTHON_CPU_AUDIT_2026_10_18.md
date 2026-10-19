@@ -2,6 +2,8 @@
 
 _Date des runs : 18 octobre 2026 (Montréal), 19 octobre UTC. Toutes les mesures sur GitHub Actions Ubuntu, Python 3.12.15, x86-64, 2 CPU visibles._
 
+**Note après intégration :** depuis le commit de livraison GC, les benchmarks restent archivés dans l'historique Git et les artefacts GitHub Actions, mais les scripts/workflows ponctuels ont été retirés de `main`. Le moteur active désormais `gc.freeze()` une fois lorsque les quatre tables WordNet sont chargées, avec opt-out `SEMAN2_DISABLE_GC_FREEZE=1`. Les passages indiquant « aucun code en production modifié » décrivent l'état **lors des mesures**, avant cette livraison.
+
 ## Résultat principal
 
 **Un coût majeur de CPython, pas un défaut de stratégie grammaticale, a été mesuré.**
@@ -184,11 +186,11 @@ Explorer la réduction de surcharge des appels `FeatureStructure.items`, `_deref
 ### Préserver le fonctionnement
 Aucun changement permanent dans `seman_parser/engine.py`, `vector_chart.py`, `features.py`, WordNet, grammaires ou données. Seuls les scripts sous `tools/` et workflows de mesure ont été ajoutés à `main`.
 
-## Scripts reproductibles
+## Scripts reproductibles (historique Git, retirés de main)
 
-- [CPU, ligne, allocations](../tools/cpu_implementation_profile.py)
-- [A/B variantes de code Python](../tools/cpu_implementation_ab.py)
-- [Coût CPU du GC avec nettoyages contrôlés](../tools/cpu_gc_audit.py)
-- [A/B `gc.freeze()` à GC automatique conservé](../tools/cpu_gc_freeze_audit.py)
+- [CPU, ligne, allocations](https://github.com/leye0/seman2/blob/8bb7565304316e212b5c1e5fa1f64020c132096a/tools/cpu_implementation_profile.py)
+- [A/B variantes de code Python](https://github.com/leye0/seman2/blob/8bb7565304316e212b5c1e5fa1f64020c132096a/tools/cpu_implementation_ab.py)
+- [Coût CPU du GC avec nettoyages contrôlés](https://github.com/leye0/seman2/blob/8bb7565304316e212b5c1e5fa1f64020c132096a/tools/cpu_gc_audit.py)
+- [A/B `gc.freeze()` à GC automatique conservé](https://github.com/leye0/seman2/blob/8bb7565304316e212b5c1e5fa1f64020c132096a/tools/cpu_gc_freeze_audit.py)
 
 **Notes de méthode** : les pourcentages A/B cités utilisent le CPU sans profileur et ne sont pas dérivés des temps cProfile, qui sont très perturbés par les appels Python. Il faut conserver le niveau d'intégrité des sorties (arbres, alternatives, compteurs) dans tout essai futur.
