@@ -413,6 +413,22 @@ class VectorChartTests(unittest.TestCase):
                         for source in sources
                     ), candidate.provenance)
 
+    def test_base_copula_after_modal_and_nominalized_gerund(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for text in ("It must be his own doing.", "He will be a doctor.",
+                     "Her endless worrying was exhausting."):
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+        lattice = build_lattice(
+            "It must be his own doing.", self.parser.resources.lexicon,
+            multiword_max=1,
+        )
+        senses = [c for c in lattice.candidates if c.surface == "be"
+                  and c.category == "COPULA"]
+        self.assertTrue(any(c.features.as_dict().get("vform") == "base"
+                            for c in senses))
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

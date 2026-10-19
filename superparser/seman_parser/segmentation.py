@@ -540,6 +540,14 @@ def _candidate_from_sense(
                 if k not in {"number", "person"}
             }
             features = FeatureStructure.build({**inflection_neutral, **agreement})
+    if (sense.category == "COPULA" and sense.semantic_type == "BE"
+            and surface.casefold() == "be"):
+        # The infinitive 'be' after modals has base form, unlike is/are.
+        # Preserve the original alternatives for all other surfaces.
+        features = FeatureStructure.build({
+            **{k: v for k, v in features.as_dict().items()
+               if k not in {"number", "person"}}, "vform": "base",
+        })
     if sense.category == "V" and (
         features.as_dict().get("vform") == "finite"
         and surface.casefold().endswith("s")
