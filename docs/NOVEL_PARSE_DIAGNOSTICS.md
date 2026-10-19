@@ -98,3 +98,7 @@ Un token orthographique comme `father's` peut être entièrement analysé par le
 ## Lectures grammaticales lexicales ciblées
 
 L'inventaire des formes fermées inclut maintenant `'re` comme copule contractée (p. ex. `you're`, `we're`, `they're`), plutôt que de ne proposer que l'homographe nominal `re`. `many` possède une lecture de pronom quantificateur pluriel (sujet autonome dans `Many stared`) et une lecture déterminative. Ce sont des lectures lexicales licites, non des règles grammaticales permissives inventées pour accepter des phrases défectueuses.
+
+## Garde-fous pour les sous-mots accidentels
+
+Une succession de sous-mots qui couvre graphiquement un token ne prouve pas que le mot ait une lecture grammaticale. Les arêtes doivent correspondre exactement à la graphie originale. La négation contractée `n't` doit suivre une hypothèse lexicale auxiliaire, copule, HAVE ou modale : les accidents tels que `ai` (nom) + `n't` ne masquent plus un manque de couverture pour `ain't`. Le diagnostic n'invente aucune lecture grammaticale pour ce dialectalisme et conserve les hypothèses originales pour l'investigation.

@@ -114,6 +114,49 @@ class NovelDiagnosticsTests(unittest.TestCase):
             word_category_sequence(lattice)[0], "SPLIT_LEXICAL_CANDIDATES"
         )
 
+    def test_nonauxiliary_negative_clitic_is_not_false_lexical_coverage(self):
+        from seman_parser.features import FeatureStructure
+        from seman_parser.segmentation import (
+            LexicalCandidate, LexicalLattice, tokenize,
+        )
+        def case(word, first_category, first_surface):
+            base_end = 2
+            candidates = (
+                LexicalCandidate(
+                    span_start=0, span_end=base_end, surface=first_surface,
+                    lemma=first_surface, category=first_category,
+                    features=FeatureStructure.empty(),
+                    source="contraction-base",
+                ),
+                LexicalCandidate(
+                    span_start=base_end, span_end=len(word),
+                    surface="n't", lemma="not", category="NEG",
+                    features=FeatureStructure.empty(),
+                    source="contraction-clitic",
+                ),
+            )
+            return LexicalLattice(
+                text=word, tokens=tokenize(word), candidates=candidates,
+            )
+        bogus = case("ain't", "N", "ai")
+        missing = lexical_diagnostics(bogus)
+        self.assertFalse(missing["tokens"][0]["has_split_candidate_path"])
+        self.assertEqual(missing["words_without_any_candidate"], ["ain't"])
+        self.assertEqual(
+            word_category_sequence(bogus)[0], "NO_EXACT_LEXICAL_CANDIDATE"
+        )
+        genuine = case("don't", "AUX", "do")
+        real = lexical_diagnostics(genuine)
+        self.assertTrue(real["tokens"][0]["has_split_candidate_path"])
+        self.assertFalse(real["tokens"][0]["no_candidate_or_cover"])
+        self.assertEqual(
+            word_category_sequence(genuine)[0], "SPLIT_LEXICAL_CANDIDATES"
+        )
+        mismatched = case("don't", "AUX", "du")
+        self.assertFalse(
+            lexical_diagnostics(mismatched)["tokens"][0]["has_split_candidate_path"]
+        )
+
     def test_recurring_patterns_count_distinct_failed_sentences(self):
         lex = lambda surface: {
             "tokens": [

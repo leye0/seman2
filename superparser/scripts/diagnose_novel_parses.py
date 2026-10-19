@@ -86,18 +86,32 @@ def _json_lexical(value):
     return str(value)
 
 
-def _full_subtoken_path(start: int, end: int, candidates) -> bool:
-    """Whether lexical subedges tile a whole token without a missing span."""
+def _full_subtoken_path(
+    start: int, end: int, candidates, source_text: str,
+) -> bool:
+    """Check that a sequence of actually licensed lexical edges covers a token.
+
+    Distinguish valid morphology from accidental WordNet subword readings.
+    In particular, N/ADJ + n't does NOT constitute an English auxiliary
+    negative, even though the substring spans the whole written token.
+    """
     allowed = [
         edge for edge in candidates
         if start <= edge.span_start < edge.span_end <= end
         and (edge.span_start, edge.span_end) != (start, end)
+        and edge.surface.casefold()
+        == source_text[edge.span_start:edge.span_end].casefold()
     ]
-    reachable = {start}
+    # Track the immediate predecessor's category, not just reachable spans.
+    categories_at = {start: {None}}
+    auxiliary_stems = {"AUX", "AUX-BE", "COPULA", "HAVE", "MODAL"}
     for edge in sorted(allowed, key=lambda row: (row.span_start, row.span_end)):
-        if edge.span_start in reachable:
-            reachable.add(edge.span_end)
-    return end in reachable
+        preceding = categories_at.get(edge.span_start, set())
+        if edge.source == "contraction-clitic" and edge.category == "NEG":
+            preceding = preceding.intersection(auxiliary_stems)
+        if preceding:
+            categories_at.setdefault(edge.span_end, set()).add(edge.category)
+    return end in categories_at
 
 
 def lexical_diagnostics(lattice) -> dict:
@@ -135,7 +149,9 @@ def lexical_diagnostics(lattice) -> dict:
         subtoken = [c for c in candidates
                     if token.start <= c.span_start < c.span_end <= token.end
                     and (c.span_start, c.span_end) != (token.start, token.end)]
-        split_coverage = _full_subtoken_path(token.start, token.end, subtoken)
+        split_coverage = _full_subtoken_path(
+            token.start, token.end, subtoken, lattice.text
+        )
         word = any(ch.isalpha() for ch in token.text)
         rows.append({
             "index": token.index, "surface": token.text,
@@ -253,7 +269,9 @@ def word_category_sequence(lattice) -> list[str]:
         ))
         if direct:
             result.append(direct)
-        elif _full_subtoken_path(token.start, token.end, lattice.candidates):
+        elif _full_subtoken_path(
+            token.start, token.end, lattice.candidates, lattice.text
+        ):
             result.append("SPLIT_LEXICAL_CANDIDATES")
         else:
             result.append("NO_EXACT_LEXICAL_CANDIDATE")
