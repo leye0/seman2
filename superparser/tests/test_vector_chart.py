@@ -118,6 +118,44 @@ class VectorChartTests(unittest.TestCase):
         relations = [edge.relation for edge in report.interpret(best).graph.relations]
         self.assertGreaterEqual(relations.count("CONJUNCT"), 2)
 
+    def test_coordinated_bare_imperatives_are_full_clauses(self) -> None:
+        # Shared subject belongs to both imperatives; no dummy finite verb.
+        for sentence in ("Come and see him.", "Open the box and close it."):
+            with self.subTest(sentence=sentence):
+                report = self.parser.parse(sentence)
+                self.assertTrue(report.result.completed, report.result.stats)
+                agenda = [report.result.best()]
+                rule_ids = set()
+                while agenda:
+                    item = agenda.pop()
+                    rule_ids.add(item.rule_id)
+                    agenda.extend(item.children)
+                self.assertIn("vpnp_bare_coord", rule_ids)
+
+    def test_postposed_discourse_adverb_requires_comma(self) -> None:
+        for sentence in ("John opened the box, too.", "John opened the box, however."):
+            with self.subTest(sentence=sentence):
+                result = self.parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                agenda = [result.best()]
+                rules = set()
+                while agenda:
+                    item = agenda.pop()
+                    rules.add(item.rule_id)
+                    agenda.extend(item.children)
+                self.assertIn("clause_post_adv_comma", rules)
+
+    def test_bare_imperative_accepts_regular_adverbial_modification(self) -> None:
+        report = self.parser.parse("Open the box carefully.")
+        self.assertTrue(report.result.completed, report.result.stats)
+        stack = [report.result.best()]
+        ids = set()
+        while stack:
+            item = stack.pop()
+            ids.add(item.rule_id)
+            stack.extend(item.children)
+        self.assertIn("vpnp_post_adv", ids)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

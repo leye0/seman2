@@ -7,6 +7,7 @@ on:
       - 'superparser/seman_parser/sentence_boundaries.py'
       - 'superparser/research/verbnet_lr/gutenberg_novels.py'
       - 'superparser/seman_parser/vector_chart.py'
+      - 'superparser/data/grammar.jsonl'
       - 'superparser/tests/test_novel_parse_diagnostics.py'
       - '.github/workflows/novel-parse-diagnostics.yml'
   workflow_dispatch:
