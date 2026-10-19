@@ -152,3 +152,7 @@ La séparation au point-virgule réappliquait **déjà** les guillemets via `spl
 ## Copules modales et nominalisation des gérondifs
 
 Les échecs comprennent « It must be his own doing. » : l'inventaire donnait à `be` des lectures nominales, verbales et de copule, mais la forme **base** n'était pas projetée explicitement pour la copule. Projection circonscrite au lexème de surface `be`, et ajout de `VP-NP → COPULA(base) NP`. Une nominalisation possessive productive `POSS ADJ V(ing)` (p. ex. « his own doing », « her endless worrying ») et `POSS V(ing)` est distinguée des compléments verbaux. Les exemples sont testés pour empêcher une généralisation à toutes les copules finies.
+
+## Réponses de dialogue sous forme de groupes prépositionnels
+
+Une réplique comme « With all my heart. » est un groupe prépositionnel elliptique parfaitement valide comme réponse, mais n'est pas une proposition finie autonome. Le corpus initial en contient un cas : `“With all my heart.”`. Le moteur de dialogue reconnaissait déjà les citations nominales, verbales et adjectivales, mais pas `PP`. Ajout uniquement à la grammaire **scopée aux citations**, avec des productions `OPEN-QUOTE PP SPEECH-STOP CLOSE-QUOTE`. La composition `all my heart` est permise par un quantificateur universel pluriel devant un NP possessif (`all/both my ...`). Le texte cité et les guillemets réels restent inchangés.

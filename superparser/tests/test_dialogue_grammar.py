@@ -105,6 +105,21 @@ class DialogueGrammarTests(unittest.TestCase):
             else [("OPEN-QUOTE",'"'),("CLOSE-QUOTE",'"'),("SPEECH-STOP",".")])
         self.assertIsNone(dialogue_lattice(LexicalLattice("Hello",(),())))
 
+    def test_quoted_prepositional_answer_as_direct_speech(self):
+        # Pride and Prejudice contains the same standalone elliptical PP.
+        original = '“With all my heart.”'
+        report = self.parser.parse(original)
+        self.assertTrue(report.result.completed, report.result.stats)
+        self.assertTrue(report.result.stats.get("dialogue_scoped"))
+        rules = descendant_ids(report.result.best())
+        self.assertIn("dialogue_quote_pp_stop", rules)
+        self.assertIn("np_universal_quantifier_possessive", rules)
+        self.assertEqual(report.result.text, original)
+        # Being a grammatical conversational answer does NOT imply that
+        # every isolated PP should become a finite clause in ordinary prose.
+        plain = self.parser.parse("With all my heart.")
+        self.assertFalse(plain.result.stats.get("dialogue_scoped", False))
+
     def test_parser_reports_inverted_speaker_and_spoken_content(self):
         text='"John walks," said Mary.'
         report=self.parser.parse(text)
