@@ -156,3 +156,7 @@ Les échecs comprennent « It must be his own doing. » : l'inventaire donnait �
 ## Réponses de dialogue sous forme de groupes prépositionnels
 
 Une réplique comme « With all my heart. » est un groupe prépositionnel elliptique parfaitement valide comme réponse, mais n'est pas une proposition finie autonome. Le corpus initial en contient un cas : `“With all my heart.”`. Le moteur de dialogue reconnaissait déjà les citations nominales, verbales et adjectivales, mais pas `PP`. Ajout uniquement à la grammaire **scopée aux citations**, avec des productions `OPEN-QUOTE PP SPEECH-STOP CLOSE-QUOTE`. La composition `all my heart` est permise par un quantificateur universel pluriel devant un NP possessif (`all/both my ...`). Le texte cité et les guillemets réels restent inchangés.
+
+## Adverbes précédant un prédicat nu sous auxiliaire ou modal
+
+Dans des interrogatives comme « Do you really know all this? », la lecture `VP-NP` du prédicat principal était présente, mais l'adverbe `really` placé **avant** ce prédicat ne pouvait pas s'y adjoindre. `advp_vp` ne fonctionne que pour les groupes verbaux finis `VP`, tandis que l'ordre symétrique `VP-NP ADV` existait déjà. Nouvelle construction `VP-NP → ADV VP-NP`, limitée à la voix active, avec tests sur auxiliaire *do* et modal *can*. La règle n'est pas limitée aux dialogues, car l'adjonction adverbiale est productive en anglais ordinaire.

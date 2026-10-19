@@ -429,6 +429,20 @@ class VectorChartTests(unittest.TestCase):
         self.assertTrue(any(c.features.as_dict().get("vform") == "base"
                             for c in senses))
 
+    def test_preverbal_adverb_inside_auxiliary_or_modal_clause(self) -> None:
+        for text in ("Do you really know John?", "Can you really walk?",
+                     "And do you really know all this?"):
+            with self.subTest(text=text):
+                report = self.parser.parse(text)
+                self.assertTrue(report.result.completed, report.result.stats)
+                nodes = [report.result.best()]
+                rules = set()
+                while nodes:
+                    item = nodes.pop()
+                    rules.add(item.rule_id)
+                    nodes.extend(item.children)
+                self.assertIn("vpnp_front_adv", rules)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
