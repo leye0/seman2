@@ -120,7 +120,7 @@ class VectorChartTests(unittest.TestCase):
 
     def test_coordinated_bare_imperatives_are_full_clauses(self) -> None:
         # Shared subject belongs to both imperatives; no dummy finite verb.
-        for sentence in ("Come and see him.",)::
+        for sentence in ("Come and see him.",):
             with self.subTest(sentence=sentence):
                 report = self.parser.parse(sentence)
                 self.assertTrue(report.result.completed, report.result.stats)
