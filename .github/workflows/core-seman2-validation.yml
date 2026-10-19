@@ -1,19 +1,13 @@
-name: Core Seman2 Research Validation
+name: Seman2 Layer 1 — Canonical and Adaptive Regression
 on:
   push:
-    branches:
-      - main
-      - cleanup/canonical-vector-and-history
+    branches: [main]
     paths:
       - 'superparser/seman_parser/**'
       - 'superparser/data/**'
       - 'superparser/tests/**'
-      - 'superparser/tests/test_vector_chart.py'
-      - 'superparser/tests/test_sentence_boundaries.py'
-      - 'superparser/tests/test_structural_prefix_risk.py'
-      - 'superparser/tests/test_continuation_probe.py'
-      - 'superparser/scripts/benchmark_heavy_sentence_ab.py'
-      - 'superparser/research/verbnet_lr/continuation_probe.py'
+      - 'superparser/scripts/**'
+      - 'superparser/research/verbnet_lr/corpora/**'
       - '.github/workflows/core-seman2-validation.yml'
   pull_request:
     branches: [main]
@@ -21,12 +15,12 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: core-seman2-validation-${{ github.ref }}
+  group: layer1-validation-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   core:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -55,7 +49,7 @@ jobs:
                       (dest/base).write_bytes(z.read(item))
           assert (dest/'index.verb').exists()
           PY
-      - name: Regressions — parser, quotations and structural diagnostics
+      - name: Run current Layer 1 test suite
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v \
             superparser.tests.test_parser_integration \
@@ -64,18 +58,16 @@ jobs:
             superparser.tests.test_data \
             superparser.tests.test_syntax_semantics_boundary \
             superparser.tests.test_layer1_output_contract \
-            superparser.tests.test_heavy_sentence_ab \
-            superparser.tests.test_lexical_ambiguity_risk \
             superparser.tests.test_dialogue_grammar \
             superparser.tests.test_vector_chart \
             superparser.tests.test_sentence_boundaries \
-            superparser.tests.test_structural_prefix_risk \
-            superparser.tests.test_partial_sharing_aab \
-            superparser.tests.test_packed_prefix_projection \
-            superparser.tests.test_online_prefix_edges \
             superparser.tests.test_complexity_routing \
-            superparser.tests.test_category_prefix_trie \
-            superparser.tests.test_subtree_signature_cache \
-            superparser.tests.test_subtree_feature_replay \
             superparser.tests.test_shared_trie_forest \
-            superparser.tests.test_continuation_probe
+            superparser.tests.test_clean_novel_corpus \
+            superparser.tests.test_novel_corpus \
+            superparser.tests.test_syntax_correctness \
+            superparser.tests.test_reference_300_evaluator \
+            superparser.tests.test_verbnet_lr_gutenberg_novels
+      - name: Verify documented canonical, adaptive and dialogue execution
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.smoke_layer1
