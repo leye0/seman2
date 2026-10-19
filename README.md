@@ -11,6 +11,8 @@ Start here:
 - [Lossless shared-prefix storage prototype](docs/SHARED_PREFIX_STORAGE_PROTOTYPE.md)
 - [Prediction-first adaptive complexity routing and its research limits](docs/ADAPTIVE_COMPLEXITY_ROUTING.md)
 - [Category-prefix trie recognition: proof, measured potential and remaining work](docs/CATEGORY_PREFIX_TRIE_FINDINGS.md)
+- [Observed subtree signature cache: cross-book benchmark and limits](docs/SUBTREE_SIGNATURE_CACHE_FINDINGS.md)
+- [Current ChatGPT research handoff and exact next steps](docs/CURRENT_RESEARCH_HANDOFF.md)
 
 ## The active execution path
 

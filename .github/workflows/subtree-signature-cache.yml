@@ -1,9 +1,5 @@
 name: Research — Observed Subtree Signature Cache
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/subtree-signature-cache.yml'
   workflow_dispatch:
 permissions:
   contents: read

@@ -65,6 +65,8 @@ Pilot on 256 real sentences: bitset probe median **0.0339 ms**, p95 **0.0561 ms*
 
 A separate [category-prefix trie experiment](CATEGORY_PREFIX_TRIE_FINDINGS.md) demonstrates that the canonical grammar's rule-specific *recognition prefixes* can be represented as shared category/span states and still projected to original rule identities in 50 nonsaturated oracle-based cases. **No autonomous trie recognizer is active**, and no feature constraints, lexical readings or semantic actions are removed. Once independently validated as an online recognizer, it should be activated **only** for prediagnosed difficult sentences.
 
+**Signature-cache experiment (18 Oct):** a read-only [subtree-signature cache](SUBTREE_SIGNATURE_CACHE_FINDINGS.md) observes completed canonical subtrees (full grammar rule shape + lexical POS sequence, no word/text) and finds cheap hints in long novel sentences, without accepting a parse. Unlike full-tree snapping, it is explicitly *not* an accepted tree shortcut. On 67 held-out-by-book long cases, scanning cost 0.181 ms CPU median and produced 1,511 ambiguous hints. It is **not integrated into the recognizer**, and no additional speedup is claimed. The [living research handoff](CURRENT_RESEARCH_HANDOFF.md) explains how to continue safely.
+
 ## 5. Layer 2: what is intentionally out of scope
 
 Layer 1's responsibility is syntactic analyses **plus lexical evidence**, not deciding that two mentions refer to the same real-world person or that a remembered event is true. Downstream work should resolve entities/individuals, events and temporal/modality relations, build persistent episodes and apply memory/induction and learning while retaining provenance to original tokens and grammatical choices.

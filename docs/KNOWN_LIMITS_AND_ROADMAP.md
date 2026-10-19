@@ -17,6 +17,8 @@ This is the working list of **what remains hard** for Layer 1. Completing more s
 
 - **Grammar prefix-trie proof (18 Oct):** an oracle-based trie replay on 64 novel snippets found 50 nonsaturated cases with **zero mismatches across 334,684 logical derivation edges**. It represented the verified **311,260** rule-specific partial states using **36,363** shared category-prefix states (88.3% fewer *theoretical recognition states*). These states depend on canonical recognized constituents and preserve rule identities only through projection: this is **not** a running parser, a guaranteed compression factor or a speedup. Fourteen saturated cases were excluded from the strict comparison. See [category trie findings](CATEGORY_PREFIX_TRIE_FINDINGS.md).
 
+- **Subtree signature cache pilot (18 Oct):** cross-book category/trie lookup on 67 quote-free long novel excerpts costs 0.181 ms CPU median (0.274 ms p95) and finds hints in 67/67; 109 of 1,511 hints occur in the canonical best trees of the 30 fully parsed test items. A *hint is not a valid parse*, 31 items saturate the canonical forest, and the cache currently **adds** lookup cost instead of saving recognition. This pilot proves an inexpensive lookup opportunity, NOT speedup, grammatical precision or external-author generalization. See [cache audit](SUBTREE_SIGNATURE_CACHE_FINDINGS.md) and [research handoff](CURRENT_RESEARCH_HANDOFF.md).
+
 ## Development work, in priority order
 
 1. **Stable reference quality gate.** Pin clean novel and external grammar corpus fixtures with tree structures, syntax roles, quotation spans, lexical subtypes and negative controls. Distinguish parsing completeness, syntactic correctness, semantic roles, forest saturation and latency.
