@@ -321,6 +321,28 @@ class VectorChartTests(unittest.TestCase):
                 result=self.parser.parse(sentence).result
                 self.assertTrue(result.completed,result.stats)
 
+    def test_explicit_interrogative_ellipsis_and_copular_questions(self) -> None:
+        examples = (
+            ("Did you?","clause_yn_aux_question_ellipsis"),
+            ("Did not you?","clause_yn_neg_aux_question_ellipsis"),
+            ("Can you?","clause_yn_modal_question_ellipsis"),
+            ("Who are you?","clause_wh_copular_nominal_question"),
+            ("Is she ready?","clause_yn_copular_adjp_question"),
+            ("Is she a doctor?","clause_yn_copular_np_question"),
+            ("Am I not alone?","clause_yn_copular_neg_adjp_question"),
+        )
+        for text, required in examples:
+            with self.subTest(text=text):
+                result=self.parser.parse(text).result
+                self.assertTrue(result.completed,result.stats)
+                queue=[result.best()]
+                ids=set()
+                while queue:
+                    item=queue.pop()
+                    ids.add(item.rule_id)
+                    queue.extend(item.children)
+                self.assertIn(required,ids)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

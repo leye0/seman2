@@ -114,3 +114,7 @@ Une phrase littéraire peut être une exclamation complète en discours, sans ve
 ## Démonstratifs et quantificateurs pluriels
 
 Les lectures lexicales classiques de « these », « those » et « both » manquaient comme DET/PRONOUN, empêchant ou compliquant les groupes nominaux « these questions » et « both these questions ». Ajout de lectures grammaticales plurielles explicites, sans règle syntaxique attrape-tout, avec tests de reconnaissance en contexte.
+
+## Questions copulatives et interrogations elliptiques
+
+Les questions dont le sujet suit une copule et celles où le prédicat est sous-entendu avaient une couverture incomplète. Ajout de productions exigeant explicitement QMARK pour les structures « Who are you? », « Is she ready? », « Is she a doctor? », « Did you? », « Can you? », « Did not you? » (ordre négatif ancien) et « Am I not alone? ». L’ellipse est marquée comme telle; aucune production interrogative sans point d'interrogation n’a été ajoutée.
