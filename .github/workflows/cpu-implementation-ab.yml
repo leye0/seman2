@@ -1,0 +1,58 @@
+name: Seman2 — CPU Python A/B code patterns
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cpu-implementation-ab.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: seman2-python-code-ab
+  cancel-in-progress: true
+jobs:
+  cpu-language-equivalence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url,headers={'User-Agent':'Seman2-CPU-audit'}),timeout=90) as r:
+              data=r.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for item in z.namelist():
+                  leaf=Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(item))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Syntax-check benchmark (zero parser source changes)
+        run: |
+          python -m py_compile tools/cpu_implementation_ab.py
+      - name: Profile 128 novel cases and run read-only A/B/B/A CPU tests
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u tools/cpu_implementation_ab.py --per-book-per-band 8 --ab-per-book-per-band 4
+      - name: Preserve logs, correctness digests, time series and cProfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-python-code-ab
+          path: _cpu_ab_results/
+          retention-days: 30
+          if-no-files-found: warn
