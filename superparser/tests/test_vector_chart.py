@@ -308,6 +308,19 @@ class VectorChartTests(unittest.TestCase):
                     nodes.extend(n.children)
                 self.assertIn(expected_rule,observed)
 
+    def test_plural_demonstratives_and_both_have_full_lexical_classes(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for word in ("these","those","both"):
+            lattice=build_lattice(word,self.parser.resources.lexicon,multiword_max=1)
+            categories={c.category for c in lattice.candidates if c.surface==word}
+            self.assertIn("DET",categories)
+            self.assertIn("PRONOUN",categories)
+        for sentence in ("These boxes are blue.","Those boxes are blue.",
+                         "Both these boxes are blue."):
+            with self.subTest(sentence=sentence):
+                result=self.parser.parse(sentence).result
+                self.assertTrue(result.completed,result.stats)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
