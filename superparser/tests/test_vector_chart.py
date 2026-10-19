@@ -503,7 +503,7 @@ class VectorChartTests(unittest.TestCase):
                 pending.extend(node.children)
             self.assertNotIn("clause_wh_copula_stranded_prep_question", ids)
 
-
+    def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."
         parser=self.parser
@@ -536,6 +536,25 @@ class VectorChartTests(unittest.TestCase):
         self.assertTrue(full.completed)
         self.assertFalse(full.stats["kbest_budget_exceeded"])
         self.assertEqual(full.best().signature(),unlimited.best().signature())
+
+    def test_postpositive_adjective_on_indefinite_pronoun(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        sentence = "I have nothing satisfactory to tell you."
+        lattice = build_lattice(sentence, self.parser.resources.lexicon, multiword_max=1)
+        self.assertTrue(any(c.surface == "nothing" and c.category == "INDEF-PRONOUN"
+                            for c in lattice.candidates))
+        result = self.parser.parse(sentence).result
+        self.assertTrue(result.completed, result.stats)
+        pending = [result.best()]
+        ids = set()
+        while pending:
+            node = pending.pop()
+            ids.add(node.rule_id)
+            pending.extend(node.children)
+        self.assertIn("np_indef_pron_postpositive_adj_inf", ids)
+        personal = build_lattice("He arrived.", self.parser.resources.lexicon)
+        self.assertFalse(any(c.surface == "He" and c.category == "INDEF-PRONOUN"
+                             for c in personal.candidates))
 
     def test_required_evidence_prunes_impossible_kbest_branches(self) -> None:
         sentinels = (

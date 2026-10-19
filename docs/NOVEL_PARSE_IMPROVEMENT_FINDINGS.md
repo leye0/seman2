@@ -193,3 +193,26 @@ le vocatif `Jane` et l'événement principal de la question. Une autre
 construction `COPULA NP NEG ADJP COMMA ADJP QMARK` conserve l'attribut
 emphatiquement répété dans `but am I not alone, miserably alone?`.
 Le transfert original des guillemets est conservé exactement à l'identique.
+
+## Pronoms indéfinis et propositions interrompues dans le discours direct
+
+Un pronom indéfini en anglais peut recevoir un adjectif **postpositif**
+et un infinitif : `nothing satisfactory to tell you`.
+La catégorie lexicale alternative `INDEF-PRONOUN` distingue ces pronoms
+des pronoms personnels avant d'autoriser les productions
+`INDEF-PRONOUN ADJP [TO VP-NP]`. La lecture antérieure `PRONOUN` reste
+présente, de sorte que les règles nominales historiques fonctionnent encore.
+
+Un autre échec attesté est l'incise qui sépare le sujet du prédicat :
+`"She most of all," said Ernest, "requires consolation."`.
+Les catégories `QUOTED-SUBJECT` et `QUOTED-PREDICATE`
+et leur assemblage par `SPEECH-TAG` sont réservés à la grammaire des
+dialogues. L'incise reste une incise et les guillemets demeurent ceux de
+l'unité d'analyse préparée. `most: ADV` et `all: PRONOUN`
+sont des alternatives lexicales régulières.
+
+**Audit des tests :** rétabli les déclarations de deux tests existants
+sur la limite de travail k-best et sur les rôles sémantiques des incises.
+Une insertion précédente avait accidentellement fusionné leurs corps
+avec un nouveau test, réduisant la couverture des assertions malgré un
+CI vert. Cette erreur est corrigée avant toute nouvelle validation.

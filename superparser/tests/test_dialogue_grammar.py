@@ -150,7 +150,7 @@ class DialogueGrammarTests(unittest.TestCase):
         unquoted = self.parser.parse("Well, Jane, who is it from?")
         self.assertFalse(unquoted.result.stats.get("dialogue_scoped", False))
 
-
+    def test_parser_reports_inverted_speaker_and_spoken_content(self):
         text='"John walks," said Mary.'
         report=self.parser.parse(text)
         best=report.result.best()
@@ -163,6 +163,22 @@ class DialogueGrammarTests(unittest.TestCase):
         relations=[r.as_dict() for r in package.graph.relations]
         self.assertTrue(any(r["relation"]=="AGENT" for r in relations),relations)
         self.assertTrue(any(r["relation"]=="REPORTED_CONTENT" for r in relations),relations)
+
+    def test_split_quoted_subject_and_predicate_after_speech_tag(self):
+        for sentence, focused in (
+            ('"She," said Mary, "walks."', False),
+            ('"She most of all," said Mary, "walks."', True),
+        ):
+            with self.subTest(sentence=sentence):
+                result = self.parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(result.stats.get("dialogue_scoped"), result.stats)
+                ids = set(descendant_ids(result.best()))
+                self.assertIn("dialogue_split_subject_predicate_tag", ids)
+                self.assertIn(
+                    "dialogue_quoted_subject_focus_fragment"
+                    if focused else "dialogue_quoted_subject_fragment", ids,
+                )
 
     def test_parser_preposed_speaker(self):
         text='Mary said, "John walks."'
