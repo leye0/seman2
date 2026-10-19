@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - 'superparser/scripts/diagnose_novel_parses.py'
+      - 'superparser/seman_parser/sentence_boundaries.py'
+      - 'superparser/research/verbnet_lr/gutenberg_novels.py'
       - 'superparser/seman_parser/vector_chart.py'
       - 'superparser/tests/test_novel_parse_diagnostics.py'
       - '.github/workflows/novel-parse-diagnostics.yml'
@@ -61,5 +63,5 @@ jobs:
         with:
           name: novel-parse-diagnostics-50
           path: /tmp/novel-parse-diagnostics/
-          retention-days: 14
+          retention-days: 90
           if-no-files-found: warn

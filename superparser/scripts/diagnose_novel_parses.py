@@ -72,6 +72,75 @@ def classify(completed: bool, stats: dict) -> str:
     return "roots_without_valid_analysis"
 
 
+
+def _json_lexical(value):
+    if isinstance(value, dict):
+        return {str(k): _json_lexical(v) for k, v in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [_json_lexical(v) for v in value]
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    return str(value)
+
+
+def lexical_diagnostics(lattice) -> dict:
+    """Return all parser-visible POS and sense alternatives, never just best."""
+    candidates = lattice.candidates
+
+    def detail(candidate):
+        return {
+            "span": [candidate.span_start, candidate.span_end],
+            "surface": candidate.surface,
+            "category": candidate.category,
+            "lemma": candidate.lemma,
+            "normalized": candidate.normalized,
+            "source": candidate.source,
+            "score": candidate.score,
+            "features": _json_lexical(candidate.features.as_dict()),
+            "syntactic_constraints": _json_lexical(candidate.syntactic_constraints),
+            "provenance": _json_lexical(dict(candidate.provenance)),
+            "sense_ids": list(candidate.sense_ids),
+            "interpretations": [{
+                "sense_id": option.sense_id,
+                "lemma": option.lemma,
+                "score": option.score,
+                "provenance": _json_lexical(dict(option.provenance)),
+            } for option in candidate.interpretations],
+        }
+
+    rows = []
+    for token in lattice.tokens:
+        exact = [c for c in candidates
+                 if (c.span_start, c.span_end) == (token.start, token.end)]
+        covering = [c for c in candidates
+                    if c.span_start <= token.start and c.span_end >= token.end
+                    and (c.span_start, c.span_end) != (token.start, token.end)]
+        word = any(ch.isalpha() for ch in token.text)
+        rows.append({
+            "index": token.index, "surface": token.text,
+            "span": [token.start, token.end], "is_word": word,
+            "categories": sorted({c.category for c in exact}),
+            "candidate_count": len(exact), "multiword_cover_count": len(covering),
+            "no_exact_candidate": word and not exact,
+            "no_candidate_or_cover": word and not exact and not covering,
+            "candidates": [detail(c) for c in exact],
+            "covering_multiword_candidates": [detail(c) for c in covering],
+        })
+    return {
+        "schema": "seman2-failed-sentence-lexicon-v1",
+        "scope": "parser-visible lexical candidates after lattice filters",
+        "tokens": rows,
+        "word_count": sum(row["is_word"] for row in rows),
+        "words_without_exact_candidate": [
+            row["surface"] for row in rows if row["no_exact_candidate"]
+        ],
+        "words_without_any_candidate": [
+            row["surface"] for row in rows if row["no_candidate_or_cover"]
+        ],
+        "lexical_candidate_count": len(candidates),
+    }
+
+
 def compact_stats(stats: dict) -> dict:
     names = (
         "engine", "structural_root_nodes", "forest_nodes", "partial_states",
@@ -164,6 +233,67 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
         "doivent pas être confondus avec une absence certaine de grammaire.",
         "",
     ])
+    output.extend([
+        "",
+        "## Corpus de cas échoués — détail lexical intégral",
+        "",
+        "Toutes les catégories candidates (post-filtrage du treillis), sous-types "
+        "et comptes de sens. Les identifiants de sens, provenances, contraintes "
+        "et analyses multi-mots sont conservés dans failed_sentences.jsonl.",
+        "",
+    ])
+    for row in rows:
+        if row["status"] == "complete":
+            continue
+        output.extend([
+            f"### Cas {row['case_id']} — {row['status']}",
+            "",
+            f"Roman {row['book_id']}, index {row['index'] + 1}",
+            "",
+            f"> {row['sentence']}",
+            "",
+        ])
+        if row.get("source_text") != row["sentence"]:
+            output.extend([
+                "Extrait original avant normalisation :",
+                "",
+                f"> {row.get('source_text', '')}",
+                "",
+            ])
+        lex = row.get("lexical_diagnostic")
+        if lex is None:
+            output.extend(["Treillis indisponible avant interruption.", ""])
+            continue
+        output.extend([
+            "| Mot | Catégories et traits syntaxiques | Sens |",
+            "|---|---|---:|",
+        ])
+        for token in lex["tokens"]:
+            labels = []
+            sense_count = 0
+            for candidate in token["candidates"]:
+                features = candidate["features"]
+                relevant = ("subcat", "vform", "number", "person",
+                            "voice", "tense", "wh", "negation")
+                desc = ",".join(
+                    f"{key}={features[key]}" for key in relevant if key in features
+                )
+                labels.append(candidate["category"] + (f" ({desc})" if desc else ""))
+                sense_count += len(candidate["sense_ids"])
+            if not labels:
+                labels = ["(aucun candidat exact)"]
+            if token["multiword_cover_count"]:
+                labels.append(
+                    f"+{token['multiword_cover_count']} couverture(s) multi-mots"
+                )
+            label = "; ".join(dict.fromkeys(labels)).replace("|", "\\|")
+            surface = token["surface"].replace("|", "\\|")
+            output.append(f"| {surface} | {label} | {sense_count} |")
+        output.extend([
+            "",
+            f"Mots sans aucun candidat : {lex['words_without_any_candidate']}",
+            "",
+        ])
     return "\n".join(output)
 
 
@@ -185,12 +315,22 @@ def run(args: argparse.Namespace) -> dict:
             "w", encoding="utf8", buffering=1
         ) as stream:
             for index, case in enumerate(selected):
+                source_text = case.get("source_text", case["text"])
                 row = {
                     "index": index, "book_id": case["book_id"],
                     "ordinal": case["ordinal"], "band": case["band"],
                     "tokens": case["tokens"], "sentence": case["text"],
+                    "source_text": source_text,
+                    "semicolon_split": bool(case.get("semicolon_split")),
+                    "synthetic_prefix": case.get("synthetic_prefix", ""),
+                    "synthetic_suffix": case.get("synthetic_suffix", ""),
+                    "synthetic_terminal": bool(case.get("synthetic_terminal")),
+                    "case_id": str(case["book_id"]) + ":" + sha256(
+                        source_text.encode("utf8")
+                    ).hexdigest()[:16],
                     "sha256": sha256(case["text"].encode("utf8")).hexdigest(),
                 }
+                lattice = None
                 began = perf_counter()
                 signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
                 try:
@@ -223,6 +363,11 @@ def run(args: argparse.Namespace) -> dict:
                 finally:
                     signal.setitimer(signal.ITIMER_REAL, 0)
                 row["wall_ms"] = round((perf_counter() - began) * 1000, 2)
+                if row["status"] != "complete":
+                    # A timeout can still retain an already-built lattice.
+                    row["lexical_diagnostic"] = (
+                        lexical_diagnostics(lattice) if lattice is not None else None
+                    )
                 rows.append(row)
                 stream.write(json.dumps(row, ensure_ascii=False) + "\n")
                 if (index + 1) % 5 == 0 or index + 1 == len(selected):
@@ -243,7 +388,7 @@ def run(args: argparse.Namespace) -> dict:
         for book_id in sorted({r["book_id"] for r in rows})
     }
     summary = {
-        "schema": "seman2-novel-parse-diagnostics-v1",
+        "schema": "seman2-novel-parse-diagnostics-v2",
         "selection": "deterministic four-book/four-band cleaned Gutenberg sample",
         "sources": sources,
         "limits": {
@@ -262,6 +407,12 @@ def run(args: argparse.Namespace) -> dict:
             "Each sentence is parsed once, without A/B comparisons.",
         ],
     }
+    with (args.out_dir / "failed_sentences.jsonl").open(
+        "w", encoding="utf8"
+    ) as failed_stream:
+        for row in rows:
+            if row["status"] != "complete":
+                failed_stream.write(json.dumps(row, ensure_ascii=False) + "\n")
     (args.out_dir / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",

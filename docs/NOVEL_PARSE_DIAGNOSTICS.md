@@ -29,3 +29,26 @@ Un manque de racine sous budget diffère de l'existence de racines dont toutes l
 - per_sentence.jsonl : toutes les phrases, origines, statuts, limites, racines, temps, unifications, combinaisons et éventuelles erreurs.
 
 Une limite de 10 secondes par phrase borne le coût du test sur runner Linux. Chaque ligne du JSONL est écrite immédiatement pour préserver les résultats partiels en cas d'interruption du job.
+
+
+## Corpus lexical des analyses non complètes
+
+Le workflow émet aussi failed_sentences.jsonl, avec une ligne pour chaque
+échec, dépassement de plafond, timeout ou erreur. Les champs comprennent
+le statut, l'identifiant stable (livre et empreinte de source_text),
+la phrase exacte d'origine, la phrase analysée, les réparations de
+ponctuation et de guillemets, la provenance dans le roman et tous les mots.
+
+Pour chaque token, le diagnostic conserve TOUTES les catégories lexicales
+retenues, leurs sous-types et traits (dont subcat/valence), contraintes,
+sens WordNet ou statiques, origines, scores et candidats multi-mots couvrants.
+Les vrais mots sans candidat sont séparés des ponctuations. Le treillis
+inspecté est le treillis effectivement utilisé pour la reconnaissance :
+l'absence d'une hypothèse après filtrage ne prouve pas que WordNet soit
+incomplet.
+
+report.md énumère chaque phrase échouée avec un tableau mot/catégories,
+sans limitation aux 15 premiers. Les 50 phrases demeurent dans
+per_sentence.jsonl et seules les non complètes dans failed_sentences.jsonl.
+Le texte nettoyé original n'est jamais modifié. Les rapports GitHub Actions
+sont conservés 90 jours ; les corpus sont reproductibles depuis main.
