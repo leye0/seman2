@@ -59,7 +59,7 @@ L'intervalle bootstrap exploratoire sur les 1 000 ratios appariés donne 0,52594
 | Génération 1 | 9 199 collections | 9 241 |
 | Génération 2 | **125 collections** | **814 collections** |
 
-Les collections majeures sont *plus nombreuses*, mais nettement moins coûteuses après gel. Leur coût moyen passe d'environ **56,7 s CPU** à **10,0 s CPU** par série. Les objets gelés au début des bras B sont environ **1 532 100**, contre ~375 objets déjà gelés lors des bras A sans optimisation.
+Les collections majeures sont *plus nombreuses*, mais nettement moins coûteuses après gel. Le coût CPU total des collections de génération 2 passe d'environ **56,7 s** à **10,0 s** par série. Les objets gelés au début des bras B sont environ **1 532 100**, contre ~375 objets déjà gelés lors des bras A sans optimisation.
 
 Les données montrent une réduction du coût de parcours des objets du GC, non une réduction du nombre d'analyses ou des dérivations.
 
