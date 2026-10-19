@@ -203,6 +203,38 @@ class VectorChartTests(unittest.TestCase):
             for candidate in lattice.candidates
         ))
 
+    def test_contract_re_is_a_real_copula_not_the_noun_re(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for sentence in ("You're ready.", "We're ready.", "They're ready."):
+            with self.subTest(sentence=sentence):
+                lattice = build_lattice(
+                    sentence, self.parser.resources.lexicon, multiword_max=1,
+                )
+                self.assertTrue(any(
+                    c.category == "COPULA" and c.surface == "'re"
+                    and sentence[c.span_start:c.span_end] == "'re"
+                    for c in lattice.candidates
+                ))
+                report = self.parser.parse(sentence)
+                self.assertTrue(report.result.completed, report.result.stats)
+
+    def test_nominal_quantifier_many_is_pronoun_when_subject(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        sentence = "Many stared--many smiled."
+        lattice = build_lattice(
+            sentence, self.parser.resources.lexicon, multiword_max=1,
+        )
+        for token in lattice.tokens:
+            if token.text.lower() == "many":
+                self.assertTrue(any(
+                    c.category == "PRONOUN"
+                    and c.span_start == token.start
+                    and c.span_end == token.end
+                    for c in lattice.candidates
+                ))
+        result = self.parser.parse(sentence).result
+        self.assertTrue(result.completed, result.stats)
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

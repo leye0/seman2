@@ -94,3 +94,7 @@ Chaque cas conserve une signature compacte de **toutes** ses catégories grammat
 ## Possessifs et contractions à plusieurs arêtes lexicales
 
 Un token orthographique comme `father's` peut être entièrement analysé par les arêtes internes `father` et `'s` alors qu'aucune arête unique ne couvre le token. Le rapport `failed_sentences.jsonl` distingue désormais `no_exact_candidate` (vrai pour ce cas) de `no_candidate_or_cover` (faux si des sous-arêtes couvrent tout le token), avec `has_split_candidate_path` et les hypothèses de chaque sous-arête. Les signatures statistiques utilisent `SPLIT_LEXICAL_CANDIDATES` plutôt que de signaler faussement l'absence d'analyse WordNet.
+
+## Lectures grammaticales lexicales ciblées
+
+L'inventaire des formes fermées inclut maintenant `'re` comme copule contractée (p. ex. `you're`, `we're`, `they're`), plutôt que de ne proposer que l'homographe nominal `re`. `many` possède une lecture de pronom quantificateur pluriel (sujet autonome dans `Many stared`) et une lecture déterminative. Ce sont des lectures lexicales licites, non des règles grammaticales permissives inventées pour accepter des phrases défectueuses.
