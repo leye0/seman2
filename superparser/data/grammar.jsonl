@@ -148,7 +148,7 @@
 {"id":"clause_front_np","rhs":[{"category":"NP","exports":{"referent":"topic"}},{"category":"COMMA"},{"category":"CLAUSE","exports":{"event":"main"}}],"lhs":{"category":"CLAUSE"},"score":1.2}
 {"id":"clause_front_pp","rhs":[{"category":"PP","exports":{"referent":"topic"}},{"category":"COMMA"},{"category":"CLAUSE","exports":{"event":"main"}}],"lhs":{"category":"CLAUSE"},"score":0.5}
 {"id":"clause_front_pp_nocomma","rhs":[{"category":"PP","exports":{"referent":"topic"}},{"category":"CLAUSE","exports":{"event":"main"}}],"lhs":{"category":"CLAUSE"},"score":0.5}
-{"id":"np_temporal","rhs":[{"category":"DET"},{"category":"N","features":{"number":"?n"}}],"lhs":{"category":"NP","features":{"number":"?n","temporal":"true"}},"score":1}
+{"id":"np_temporal","rhs":[{"category":"DET","features":{"number":"?n"}},{"category":"N","features":{"number":"?n"}}],"lhs":{"category":"NP","features":{"number":"?n","temporal":"true"}},"score":1}
 {"id":"np_det_adj_n","rhs":[{"category":"DET"},{"category":"ADJ"},{"category":"N","features":{"number":"?n"},"exports":{"referent":"head"}}],"lhs":{"category":"NP","features":{"number":"?n"}},"score":1.1}
 {"id":"np_det_det_n","rhs":[{"category":"DET"},{"category":"DET"},{"category":"N","features":{"number":"?n"},"exports":{"referent":"head"}}],"lhs":{"category":"NP","features":{"number":"?n"}},"score":1.05}
 {"id":"np_det_det_adj_n","rhs":[{"category":"DET"},{"category":"DET"},{"category":"ADJ"},{"category":"N","features":{"number":"?n"},"exports":{"referent":"head"}}],"lhs":{"category":"NP","features":{"number":"?n"}},"score":1.1}

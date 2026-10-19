@@ -122,3 +122,7 @@ Les questions dont le sujet suit une copule et celles où le prédicat est sous-
 ## Gardes contre les faux positifs dans l'ellipse auxiliaire
 
 L'ajout de pronoms/déterminants pluriels a révélé qu'une ancienne règle `clause_np_coord_aux_adv` acceptait une combinaison arbitraire NP + VP-NP, y compris l'agrammatical « Those child are sleeping ». Elle exige maintenant explicitement le trait `ellipsis=true`, produit uniquement pour `AUX ADV` dans `vp_aux_adv` (« John did too »). Les interrogatives copulatives, déjà limitées aux phrases terminées par QMARK, préfèrent un vrai prédicat adjectival aux homographes nominaux; le prédicat nominal reste disponible lorsqu'il est grammatical.
+
+## Accord des noms à déterminant temporel
+
+La règle héritée `np_temporal` (DET N) acceptait un déterminant pluriel avec un nom singulier car elle ne contrôlait que le nombre du nom. Elle produisait ainsi une fausse lecture de « Those child are sleeping », classée comme NP temporel (!). Le trait de nombre est maintenant unifié entre DET et N pour toute construction `np_temporal`. Cela élimine une cause véritable d'acceptation de phrases grammaticalement fautives, au lieu de supprimer la catégorie plurielle correcte de « those ».
