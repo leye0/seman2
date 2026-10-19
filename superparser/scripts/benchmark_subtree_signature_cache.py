@@ -148,8 +148,10 @@ def main():
                               h.template_id))
             attempted=eligible[:args.replay_max_hints]
             replay_start=process_time_ns()
+            prepared=replayers[heldout].prepare(lattice)
             replay=[replayers[heldout].replay(
-                hint,lattice,max_steps=args.replay_work_limit)
+                hint,lattice,max_steps=args.replay_work_limit,
+                prepared_options=prepared)
                 for hint in attempted]
             replay_cpu_ms=(process_time_ns()-replay_start)/1e6
             replay_statuses=Counter(result.status for result in replay)
@@ -234,6 +236,7 @@ def main():
             "The four novels are historically explored; independent authors are required before rollout.",
             "No lexical candidate, quote or punctuation has been modified or pruned.",
             "Fixed-shape feature witnesses are not contextual/exhaustive; this probe does NOT skip parser recognition.",
+            "Replay CPU includes preparation of one candidate/span index per test sentence.",
             "Only bounded hints of length >= replay-min-tokens are checked; other hits remain UNKNOWN.",
         ],
     }
