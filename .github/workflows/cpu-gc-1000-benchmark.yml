@@ -45,7 +45,7 @@ jobs:
       - name: Verify benchmark syntax
         run: |
           python -m py_compile tools/cpu_gc_1000_benchmark.py
-      - name: Run four matched CPU passes of 1000 distinct novel sentences
+      - name: Prewarm WordNet and run four matched CPU passes of 1000 distinct novel sentences
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u tools/cpu_gc_1000_benchmark.py --limit 1000
       - name: Save full structured timing, memory, GC and digest evidence
