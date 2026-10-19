@@ -212,6 +212,24 @@ def build_lattice(
     occupied_spans = {(candidate.span_start, candidate.span_end) for candidate in candidates}
     candidates.extend(_hyphenated_candidates(text, tokens, lexicon, occupied_spans))
 
+    # In Gutenberg prose, "--" represents an em dash, not two separate
+    # single-hyphen words. Add ONE spanning punctuation edge; do NOT alter
+    # tokenize() or the pinned corpus's token positions/length strata.
+    # Lone hyphens retain their ordinary compound/minus behaviour.
+    for mark in re.finditer(r"--+|[\u2013\u2014]", text):
+        surface = mark.group(0)
+        candidates.append(LexicalCandidate(
+            span_start=mark.start(), span_end=mark.end(),
+            surface=surface, lemma="—", normalized="—",
+            category="COMMA",
+            features=FeatureStructure.empty(),
+            source="punctuation-dash",
+            score=0.75,
+            provenance={"construction":"em_dash_boundary", "source":"orthography"},
+            interpretations=(LexicalInterpretation(None, "—"),),
+        ))
+
+
     # Proper-noun and number heuristics as additional lattice hypotheses.
     # The proper-noun reading is never discarded just because the lexicon
     # also offers a common-noun reading ("Street" in "Maple Street").

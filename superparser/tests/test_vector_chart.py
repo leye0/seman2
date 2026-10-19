@@ -175,6 +175,34 @@ class VectorChartTests(unittest.TestCase):
         self.assertIn("vpnp_post_adv", rules)
         self.assertIn("clause_imperative", rules)
 
+    def test_typographic_and_double_hyphen_dashes_have_one_syntax_edge(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for dash in ("--", "---", "—", "–"):
+            with self.subTest(dash=dash):
+                text = "John opened the box" + dash + "Mary closed the box."
+                lattice = build_lattice(
+                    text, self.parser.resources.lexicon, multiword_max=1,
+                )
+                matches = [
+                    candidate for candidate in lattice.candidates
+                    if candidate.category == "COMMA"
+                    and candidate.span_start == text.index(dash)
+                    and candidate.span_end == text.index(dash) + len(dash)
+                ]
+                self.assertEqual(len(matches), 1)
+                self.assertEqual(matches[0].surface, dash)
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+
+        single = "John opened the box-Mary closed the box."
+        lattice = build_lattice(
+            single, self.parser.resources.lexicon, multiword_max=1,
+        )
+        self.assertFalse(any(
+            candidate.category == "COMMA" and candidate.surface == "-"
+            for candidate in lattice.candidates
+        ))
+
     def test_kbest_work_budget_never_claims_incomplete_parse_as_success(self) -> None:
         from seman_parser.segmentation import build_lattice
         text="John opened the box."

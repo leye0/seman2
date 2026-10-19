@@ -9,6 +9,7 @@ on:
       - 'superparser/tests/test_dialogue_grammar.py'
       - 'superparser/research/verbnet_lr/gutenberg_novels.py'
       - 'superparser/seman_parser/vector_chart.py'
+      - 'superparser/seman_parser/segmentation.py'
       - 'superparser/data/grammar.jsonl'
       - 'superparser/tests/test_novel_parse_diagnostics.py'
       - '.github/workflows/novel-parse-diagnostics.yml'
