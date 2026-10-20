@@ -743,11 +743,9 @@ class InterposedAdverbPassiveAndBareControlTests(unittest.TestCase):
             report = p.parse(text)
             best = report.result.best()
             self.assertIsNotNone(best, (text, report.result.stats))
-            self.assertIn("vpnp_subject_control_infinitive",
+            self.assertIn("vpnp_base_subject_control_to_inf",
                           self.rule_ids(best), text)
-            self.assertIn("clause_neg", self.rule_ids(best)
-                          | {"clause_neg"} if best.rule_id == "clause_neg_vp" else self.rule_ids(best),
-                          text)
+            self.assertIn(best.rule_id, {"clause_neg", "clause_neg_vp"}, text)
 
     def test_base_control_requires_lexical_subject_control(self):
         p = make_parser()
@@ -756,7 +754,7 @@ class InterposedAdverbPassiveAndBareControlTests(unittest.TestCase):
             "John did not smile to leave.",
         ):
             for item in p.parse(text).result.alternatives(limit=8):
-                self.assertNotIn("vpnp_subject_control_infinitive",
+                self.assertNotIn("vpnp_base_subject_control_to_inf",
                                  self.rule_ids(item), text)
 
 if __name__ == "__main__":
