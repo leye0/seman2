@@ -16,6 +16,14 @@ class VectorChartTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.parser = Parser(ParserResources.from_dir(DATA, wordnet_dict=os.environ.get('WORDNET_DICT')), cache_size=0)
 
+    def test_shared_subject_finite_vp_comma_coordination(self) -> None:
+        # The comma belongs to the coordination, not to another clause.
+        # Both coordinated predicates inherit the SAME finite agreement.
+        result = self.parser.parse(
+            "Elizabeth looked archly, and turned away."
+        ).result
+        self.assertTrue(result.completed, result.stats)
+
     def test_parser_uses_vector_engine_and_retains_shared_forest(self) -> None:
         result = self.parser.parse("John opened the box.").result
         self.assertTrue(result.completed)

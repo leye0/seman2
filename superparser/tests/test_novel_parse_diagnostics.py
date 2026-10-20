@@ -11,10 +11,45 @@ from research.verbnet_lr.corpus_pipeline import (
 from scripts.diagnose_novel_parses import (
     classify, compact_stats, tally, lexical_diagnostics, recurring_issues,
     select_cases, word_category_sequence, contrast_category_patterns,
+    canonical_residual_audit,
 )
 
 
 class NovelDiagnosticsTests(unittest.TestCase):
+
+    def test_canonical_residual_audit_uses_paired_quote_transfer(self):
+        rows = [
+            {"case_id": "a", "index": 0, "book_id": 766, "band": "04-08",
+             "sentence": "“I can go.", "source_text": "“I can go.",
+             "status": "no_structural_root",
+             "quote_boundary_trial": {
+                 "analysis_text": "“I can go.”", "status": "complete"}},
+            {"case_id": "b", "index": 1, "book_id": 84, "band": "09-16",
+             "sentence": "John walked, and Mary ran.",
+             "source_text": "John walked, and Mary ran.", "status": "complete",
+             "quote_boundary_trial": {
+                 "analysis_text": "“John walked, and Mary ran.”",
+                 "status": "roots_without_valid_analysis"}},
+            {"case_id": "c", "index": 2, "book_id": 120, "band": "09-16",
+             "sentence": "The girl who laughed was here.",
+             "source_text": "The girl who laughed was here.",
+             "status": "no_structural_root",
+             "canonical_analysis_text": "The girl who laughed was here."},
+        ]
+        audit, residuals = canonical_residual_audit(rows)
+        self.assertEqual(audit["completed"], 1)
+        self.assertEqual(audit["remaining"], 2)
+        self.assertEqual(audit["statuses"]["no_structural_root"], 1)
+        self.assertEqual(
+            audit["statuses"]["roots_without_valid_analysis"], 1)
+        self.assertEqual([r["case_id"] for r in residuals], ["b", "c"])
+        self.assertIn("coordination_surface", residuals[0]["surface_tags"])
+        self.assertIn("relative_or_wh_surface", residuals[1]["surface_tags"])
+        self.assertEqual(residuals[0]["reference_status"], "complete")
+        self.assertEqual(residuals[0]["canonical_status"],
+                         "roots_without_valid_analysis")
+        self.assertEqual(audit["coverage_percent"], 33.33)
+
     def test_default_corpus_entrypoint_transfers_quotes_not_raw(self):
         # The source opens a quotation which continues across a sentence.
         case = {

@@ -10,6 +10,7 @@ from collections import Counter
 from hashlib import sha256
 import json
 import math
+import re
 from pathlib import Path
 import signal
 from time import perf_counter
@@ -351,6 +352,92 @@ def contrast_category_patterns(rows: list[dict], *, min_support: int = 5) -> dic
     }
 
 
+
+def canonical_residual_audit(rows: list[dict]) -> tuple[dict, list[dict]]:
+    """Paired canonical coverage, without re-parsing or altering the pinned cohort.
+
+    The source extraction is authoritative for quote context. Surface tags
+    identify INVESTIGATION cohorts, not proven causes of grammatical failure.
+    A canonical trial is used only where quote transfer changed the input.
+    """
+    statuses = Counter()
+    families = Counter()
+    residuals = []
+    transitions = Counter()
+    for row in rows:
+        trial = row.get("quote_boundary_trial")
+        reference_status = row["status"]
+        status = trial["status"] if trial is not None else reference_status
+        if status not in STATUSES:
+            raise ValueError(f"Unknown canonical diagnostic status: {status}")
+        statuses[status] += 1
+        transitions[(reference_status, status)] += 1
+        if status == "complete":
+            continue
+        sentence = row["sentence"]
+        # These are intentionally NON-EXCLUSIVE lexical/surface signatures.
+        # They never assert a linguistic explanation based on keywords alone.
+        words = re.findall(r"[A-Za-z]+(?:['’][A-Za-z]+)*", sentence.casefold())
+        word_set = set(words)
+        tags = []
+        if word_set & {"and", "but", "nor", "or"}:
+            tags.append("coordination_surface")
+        if word_set & {"which", "who", "whom", "whose", "that", "what"}:
+            tags.append("relative_or_wh_surface")
+        if "to" in word_set:
+            tags.append("to_surface")
+        if any(w.endswith("ing") for w in words):
+            tags.append("ing_surface")
+        if sentence.lstrip()[:1].islower():
+            tags.append("lowercase_initial_surface")
+        if trial is not None:
+            tags.append("quote_transfer_changed_input")
+        lexical = row.get("lexical_diagnostic") or {}
+        missing = lexical.get("words_without_any_candidate", [])
+        if missing:
+            tags.append("reference_lexical_gap")
+        if not tags:
+            tags.append("other_surface")
+        families.update(tags)
+        residuals.append({
+            "case_id": row["case_id"],
+            "index": row["index"],
+            "book_id": row["book_id"],
+            "band": row["band"],
+            "sentence": sentence,
+            "source_text": row["source_text"],
+            "canonical_analysis_text": (
+                trial["analysis_text"] if trial else
+                row.get("canonical_analysis_text", sentence)
+            ),
+            "reference_status": reference_status,
+            "canonical_status": status,
+            "quote_transfer_changed_input": trial is not None,
+            "surface_tags": tags,
+            # Historical evidence is never mislabeled as a canonical lattice.
+            "reference_words_without_any_candidate": missing,
+        })
+    n = len(rows)
+    completed = statuses["complete"]
+    return ({
+        "schema": "seman2-canonical-residual-audit-v1",
+        "n": n, "completed": completed,
+        "coverage_percent": round(100 * completed / n, 2) if n else 0.0,
+        "statuses": {s: statuses[s] for s in STATUSES},
+        "reference_to_canonical": [
+            {"reference": source, "canonical": target, "count": count}
+            for (source, target), count in sorted(transitions.items())
+        ],
+        "surface_tags_nonexclusive": dict(sorted(families.items())),
+        "remaining": len(residuals),
+        "caution": (
+            "Paired on the immutable cohort; uses the normal quote-transfer "
+            "gateway. Tags are surface correlations, NOT validated causes. "
+            "Reference lexical candidates are not canonical lexical evidence."
+        ),
+    }, residuals)
+
+
 def compact_stats(stats: dict) -> dict:
     names = (
         "engine", "structural_root_nodes", "forest_nodes", "partial_states",
@@ -443,6 +530,27 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
         "doivent pas être confondus avec une absence certaine de grammaire.",
         "",
     ])
+    canonical = summary.get("canonical_audit")
+    if canonical is not None:
+        output.extend([
+            "",
+            "## Couverture canonique après transfert réel des guillemets",
+            "",
+            f"Analyses certifiées : {canonical['completed']}/{canonical['n']} "
+            f"({canonical['coverage_percent']:.1f} %).",
+            f"Cas toujours non complets : {canonical['remaining']}.",
+            "",
+            "Les signatures de surface sont non exclusives et ne prouvent "
+            "aucune cause grammaticale. Voir canonical_residuals.jsonl.",
+            "",
+            "| Signature descriptive | Cas canoniques non complets |",
+            "|---|---:|",
+        ])
+        for tag, count in sorted(
+            canonical["surface_tags_nonexclusive"].items(),
+            key=lambda item: (-item[1], item[0]),
+        ):
+            output.append(f"| {tag} | {count} |")
     repair = summary["quote_boundary_experiment"]
     output.extend([
         "",
@@ -769,6 +877,16 @@ def run(args: argparse.Namespace) -> dict:
             "coverage or purport to be original Gutenberg punctuation."
         ),
     }
+    canonical_audit, canonical_residuals = canonical_residual_audit(rows)
+    with (args.out_dir / "canonical_residuals.jsonl").open(
+        "w", encoding="utf8"
+    ) as canonical_stream:
+        for residual in canonical_residuals:
+            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "\\n")
+    (args.out_dir / "canonical_residual_audit.json").write_text(
+        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "\\n",
+        encoding="utf8",
+    )
     totals = tally(rows)
     by_band = {band: tally([r for r in rows if r["band"] == band])
                for band, _, _ in BANDS}
@@ -787,6 +905,7 @@ def run(args: argparse.Namespace) -> dict:
             "deadline_seconds": args.deadline_seconds,
         },
         "totals": totals, "by_band": by_band, "by_book": by_book,
+        "canonical_audit": canonical_audit,
         "quote_boundary_experiment": trial_summary,
         "coverage_percent": round(100 * totals["completed"] / len(rows), 2),
         "elapsed_seconds": round(perf_counter() - started, 2),
