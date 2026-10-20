@@ -131,6 +131,47 @@ class ChartParserTests(unittest.TestCase):
                 for rule in descendants(control))
         )
 
+    def test_predicative_adjectives_license_finite_content_clauses(self) -> None:
+        def rule_ids(node):
+            return {node.rule_id} | {
+                name for child in node.children for name in rule_ids(child)
+            }
+        cases = (
+            ("Mary is sure John will return.", "adjp_clausal_bare"),
+            ("Mary is sure that John will return.", "adjp_clausal_that"),
+            ("Mary is afraid John will leave.", "adjp_clausal_bare"),
+            ("Mary is glad that John returned.", "adjp_clausal_that"),
+            ("Are you quite sure that you can go?", "adjp_degree_clausal"),
+        )
+        for text, required in cases:
+            with self.subTest(text=text):
+                parsed = self.parser.parse(text).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                trees = [tree for tree in parsed.alternatives(limit=12)]
+                self.assertTrue(
+                    any(required in rule_ids(tree) for tree in trees),
+                    (text, parsed.stats, [tree.rule_id for tree in trees]),
+                )
+
+    def test_clausal_adjective_valency_excludes_generic_adjectives(self) -> None:
+        def rule_ids(node):
+            return {node.rule_id} | {
+                name for child in node.children for name in rule_ids(child)
+            }
+        for text in (
+            "Mary is tall John will return.",
+            "Mary is blue that John returned.",
+            "Are you quite tall that John returned?",
+        ):
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                for tree in result.alternatives(limit=8):
+                    self.assertNotIn("adjp_clausal_bare", rule_ids(tree))
+                    self.assertNotIn("adjp_clausal_that", rule_ids(tree))
+        # Existing ordinary adjectival predication remains available.
+        basic = self.parser.parse("Mary is sure.").result
+        self.assertTrue(basic.completed, basic.stats)
+
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
         # Even with one preferred reading, the API exposes alternatives.
