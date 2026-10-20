@@ -90,6 +90,27 @@ class SegmentationTests(unittest.TestCase):
         self.assertIn("clause_neg_vp", rules(auxiliary.best()))
 
 
+class AuxiliaryHomographDiagnosticTests(unittest.TestCase):
+    """Temporary diagnostics: inspect any invalid auxiliary completions."""
+
+    def test_negative_pair_tree_audit(self) -> None:
+        parser = make_parser()
+        cases = (
+            "They did opened the door.",
+            "She did not opened the door.",
+            "He does not likes coffee.",
+            "John did eats.",
+        )
+        for phrase in cases:
+            result = parser.parse(phrase).result
+            def tree(node, depth=0):
+                return [(depth, node.category, node.rule_id,
+                         phrase[node.start:node.end])] + [
+                    row for child in node.children for row in tree(child, depth+1)
+                ]
+            print("AUX_DIAG", phrase, "complete=", result.completed,
+                  "tree=", tree(result.best()) if result.best() else [])
+
 class ChartParserTests(unittest.TestCase):
     def setUp(self) -> None:
         self.parser = make_parser()
