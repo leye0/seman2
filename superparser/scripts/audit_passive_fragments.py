@@ -137,6 +137,8 @@ def main() -> None:
     print("PASSIVE_ROOT_UNIFICATION",
           "complete=", restricted.completed,
           "root=", restricted.best().rule_id if restricted.best() else None,
+          "restricted_score=", restricted.best().score if restricted.best() else None,
+          "unrestricted_best_score=", result.best().score if result.best() else None,
           "stats=", {
               k: restricted.stats.get(k) for k in
               ("structural_root_nodes", "forest_nodes", "budget_exceeded",
