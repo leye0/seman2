@@ -275,6 +275,8 @@ class Parser:
 
         light_tokens = tokenize(text)
         plan = self._clause_plan(text, light_tokens)
+        if plan is None:
+            plan = self._binary_coord_clause_plan(text, light_tokens)
         if plan is not None:
             hierarchical = self._parse_hierarchical(text, light_tokens, plan)
             if hierarchical is not None:
@@ -540,6 +542,63 @@ class Parser:
                 return None
         return tuple(spans), tuple(separators)
 
+
+    def _binary_coord_clause_plan(
+        self,
+        text: str,
+        tokens: Sequence[Token],
+    ) -> tuple[tuple[tuple[int, int], ...], tuple[Token, ...]] | None:
+        """Propose ONLY an explicit comma + coordinator between full clauses.
+
+        'but' is ambiguous: in 'You were but a man', it is a restrictive
+        adverb, NOT a coordination boundary. A token's COORD lexical sense
+        is necessary but insufficient: the follow-up hierarchical stage
+        requires each side to independently parse as a finite-subject
+        clause; otherwise the original unsplit forest is used.
+        """
+        if self.goal_category != "CLAUSE" or len(tokens) < 7:
+            return None
+        # Quote and punctuation context can change clause scope. Prefer
+        # the full grammar rather than removing such context as an
+        # optimization.
+        if any(mark in text for mark in ('"', '“', '”', '‘', '’')):
+            return None
+        commas = [i for i, tok in enumerate(tokens) if tok.text == ","]
+        if len(commas) != 1:
+            return None
+        comma = commas[0]
+        if comma < 2 or comma + 3 >= len(tokens):
+            return None
+        coordinator = tokens[comma + 1]
+        if coordinator.text.casefold() not in self._coord_surfaces:
+            return None
+
+        def explicit_subject_start(token: Token) -> bool:
+            surface = token.text.casefold()
+            if surface in self._clause_subject_surfaces:
+                return True
+            if surface in self._determiner_surfaces:
+                return True
+            # Capitalized names may begin clauses; a subsequent full
+            # finite clause parse is still mandatory.
+            return token.text[:1].isupper() and surface not in self._coord_surfaces
+
+        if not explicit_subject_start(tokens[0]):
+            return None
+        right_start = tokens[comma + 2]
+        if not explicit_subject_start(right_start):
+            return None
+        end_index = len(tokens) - 1
+        while end_index > comma + 2 and tokens[end_index].text in {".", "!", "?"}:
+            end_index -= 1
+        if end_index <= comma + 2:
+            return None
+        spans = (
+            (tokens[0].start, tokens[comma - 1].end),
+            (right_start.start, tokens[end_index].end),
+        )
+        return spans, (tokens[comma], coordinator)
+
     def _parse_hierarchical(
         self,
         text: str,
@@ -558,6 +617,11 @@ class Parser:
                 return None
             best = segment.best()
             if best is None or best.category != self.goal_category:
+                return None
+            # Binary clause decomposition must demonstrate a conventional
+            # independently finite subject-predicate analysis on EACH side,
+            # not an elliptical NP/ADJP promoted to a CLAUSE by homographs.
+            if len(spans) == 2 and best.rule_id != "clause_np_vp":
                 return None
             interface = SegmentInterface(segment, start, start, end)
             interfaces.append(interface)

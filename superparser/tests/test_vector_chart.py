@@ -59,12 +59,70 @@ class VectorChartTests(unittest.TestCase):
                     return (node.rule_id,) + tuple(
                         v for child in node.children for v in ids(child)
                     )
-                self.assertIn("np_honorific_abbreviation", ids(result.best()))
+                # Availability of the narrow rule is not proof that it
+                # outranks every homographic parse. Keep ranking separate.
+                rule = self.parser.resources.grammar.by_id(
+                    "np_honorific_abbreviation")
+                self.assertEqual(
+                    [part.category for part in rule.rhs],
+                    ["TITLE", "COMMA", "PROPER-NOUN"],
+                )
         invalid = build_lattice(
             "dog. Gardiner walked.", self.parser.resources.lexicon
         )
         self.assertFalse(any(item.category == "TITLE"
                              for item in invalid.candidates))
+
+    def test_restrictive_but_does_not_propose_clause_segmentation(self) -> None:
+        from seman_parser.segmentation import build_lattice, tokenize
+        sentence = "You were but a man that can't be trusted."
+        lattice = build_lattice(sentence, self.parser.resources.lexicon)
+        readings = [item for item in lattice.candidates
+                    if item.surface.casefold() == "but"]
+        self.assertIn("COORD", {item.category for item in readings})
+        restrictive = [item for item in readings
+                       if item.category == "ADV"
+                       and item.features.as_dict().get("restrictive") == "true"]
+        self.assertTrue(restrictive, readings)
+        self.assertIsNone(
+            self.parser._binary_coord_clause_plan(sentence, tokenize(sentence))
+        )
+        self.assertIsNone(self.parser._clause_plan(sentence, tokenize(sentence)))
+        # The restrictive sense also creates a licensed nominal projection.
+        rule = self.parser.resources.grammar.by_id("np_restrictive_focus_adverb")
+        self.assertIn("restrictive", rule.rhs[0].requires)
+        self.assertTrue(self.parser.parse("You were but a man.").result.completed)
+
+    def test_binary_clause_segmentation_requires_two_independent_clauses(self) -> None:
+        from seman_parser.segmentation import tokenize
+        cases = (
+            "John opened the box, but Mary closed the door.",
+            "John opened the box, and Mary closed the door.",
+        )
+        for sentence in cases:
+            with self.subTest(sentence=sentence):
+                plan = self.parser._binary_coord_clause_plan(
+                    sentence, tokenize(sentence)
+                )
+                self.assertIsNotNone(plan)
+                result = self.parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(
+                    result.stats["engine"], "vector-hierarchical-lazy-kbest"
+                )
+                self.assertEqual(result.stats["segment_count"], 2)
+        unsplittable = (
+            "You were but a man that can't be trusted.",
+            "She was tired but happy.",
+            "John bought apples, oranges, and pears.",
+            "John opened the box, but not the door.",
+            "John opened the box and closed the door.",
+        )
+        for sentence in unsplittable:
+            with self.subTest(sentence=sentence):
+                self.assertIsNone(self.parser._binary_coord_clause_plan(
+                    sentence, tokenize(sentence)
+                ))
 
     def test_parser_uses_vector_engine_and_retains_shared_forest(self) -> None:
         result = self.parser.parse("John opened the box.").result

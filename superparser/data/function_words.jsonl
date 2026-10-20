@@ -35,7 +35,7 @@
 {"lemma":"no","surfaces":["no"],"senses":[{"id":"no-1","category":"DET","features":{"number":"singular","negation":"true","definiteness":"negative"},"semantic_type":"QUANT","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"not","surfaces":["'t","n't","not"],"senses":[{"id":"not-1","category":"NEG","features":{"negation":"true"},"semantic_type":"NEGATION","score":1}],"morphology":{"'t":"not","n't":"not"},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"and","surfaces":["and"],"senses":[{"id":"and-1","category":"COORD","features":{},"semantic_type":"CONJUNCTION","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
-{"lemma":"but","surfaces":["but"],"senses":[{"id":"but-1","category":"COORD","features":{},"semantic_type":"CONTRAST","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
+{"lemma":"but","surfaces":["but"],"senses":[{"id":"but-1","category":"COORD","features":{},"semantic_type":"CONTRAST","score":1},{"id":"but-restrictive-adv","category":"ADV","features":{"restrictive":"true"},"semantic_type":"RESTRICTION","score":0.94}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"or","surfaces":["or"],"senses":[{"id":"or-1","category":"COORD","features":{},"semantic_type":"DISJUNCTION","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"because","surfaces":["because"],"senses":[{"id":"because-1","category":"CONJ","features":{},"semantic_type":"REASON","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
 {"lemma":"although","surfaces":["although"],"senses":[{"id":"although-1","category":"CONJ","features":{},"semantic_type":"CONTRAST","score":1}],"morphology":{},"provenance":{"source":"novel-lexicon"}}
