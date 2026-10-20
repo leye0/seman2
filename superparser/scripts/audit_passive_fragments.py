@@ -103,7 +103,7 @@ def main() -> None:
         nodes_at_start = [
             n for n in forest.nodes
             if n.category == category and n.start == start
-            and not sample[n.end:].strip(".!?;: \\"")
+            and not sample[n.end:].strip(' .!?;:"')
         ]
         counts = Counter()
         for n in nodes_at_start:
