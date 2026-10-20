@@ -1025,7 +1025,7 @@ class EllipticalOffWithDispatchTests(unittest.TestCase):
         self.assertIn("clause_elliptical_off_with_np_pp", rules)
         self.assertIn("clause_imperative", rules)
         self.assertIn("vp_bare_trans", rules)
-        self.assertIn("clause_coord", rules)
+        self.assertIn("clause_coordinate_dispatch_imperative", rules)
 
         def collect(node):
             result = [(node.rule_id, text[node.start:node.end])]
