@@ -967,6 +967,15 @@ def run(args: argparse.Namespace) -> dict:
     (args.out_dir / "report.md").write_text(
         render_markdown(summary, rows), encoding="utf8"
     )
+    # Small, stable CI-log index: makes failed constructions inspectable even
+    # when the uploaded diagnostic artifact is not locally available.
+    for row in rows:
+        if row["status"] in ("no_structural_root", "roots_without_valid_analysis"):
+            print("NOVEL_GRAMMAR_RESIDUAL", json.dumps({
+                "index": row["index"], "book_id": row["book_id"],
+                "status": row["status"], "sentence": row["sentence"],
+                "lexical_category_sequence": row.get("lexical_category_sequence"),
+            }, ensure_ascii=False), flush=True)
     print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
