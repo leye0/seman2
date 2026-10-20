@@ -700,6 +700,131 @@ class PersonalPronounParadigmTests(unittest.TestCase):
         subject_text = "Our friends arrived."[best.children[0].start:best.children[0].end]
         self.assertEqual(subject_text, "Our friends")
 
+
+class InterposedAdverbPassiveAndBareControlTests(unittest.TestCase):
+    """Productive auxiliary scope and explicit verbal valency."""
+
+    @staticmethod
+    def rule_ids(item):
+        if item is None:
+            return set()
+        return ({item.rule_id} if item.rule_id else set()) | {
+            rule for child in item.children
+            for rule in InterposedAdverbPassiveAndBareControlTests.rule_ids(child)
+        }
+
+    def test_interposed_adverb_is_licensed_by_finite_be_and_past_participle(self):
+        p = make_parser()
+        for text in (
+            "The visitor was kindly received.",
+            "The children were quickly rescued.",
+            "The guest was likewise accommodated with a room.",
+        ):
+            report = p.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, (text, report.result.stats))
+            self.assertIn("vp_passive_interposed_manner_adverb",
+                          self.rule_ids(best), text)
+            self.assertEqual(best.rule_id, "clause_passive", text)
+
+    def test_non_participle_cannot_fill_passive_slot(self):
+        p = make_parser()
+        for text in ("The guest was kindly receive.", "The guest was kindly receiving."):
+            for item in p.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vp_passive_interposed_manner_adverb",
+                                 self.rule_ids(item), text)
+
+    def test_base_subject_control_under_do_support(self):
+        p = make_parser()
+        for text in (
+            "John did not try to leave.",
+            "Mary did not attempt to conceal the truth from her friends.",
+        ):
+            report = p.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, (text, report.result.stats))
+            self.assertIn("vpnp_base_subject_control_to_inf",
+                          self.rule_ids(best), text)
+            self.assertIn(best.rule_id, {"clause_neg", "clause_neg_vp"}, text)
+
+    def test_base_control_requires_lexical_subject_control(self):
+        p = make_parser()
+        for text in (
+            "John did not admire to leave.",
+            "John did not smile to leave.",
+        ):
+            for item in p.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vpnp_base_subject_control_to_inf",
+                                 self.rule_ids(item), text)
+
+
+class NamedEntityNominalConstructionTests(unittest.TestCase):
+    """Lexically supported proper-name nominalization and attributive names."""
+
+    @staticmethod
+    def rules(item):
+        if item is None:
+            return set()
+        return ({item.rule_id} if item.rule_id else set()) | {
+            r for child in item.children
+            for r in NamedEntityNominalConstructionTests.rules(child)
+        }
+
+    def test_definite_proper_name_with_article(self):
+        p = make_parser()
+        for sentence in (
+            "The Orfling arrived.",
+            "The Titanic sank.",
+            "The Turk smiled.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            forms = [self.rules(item) for item in report.result.alternatives(limit=8)]
+            self.assertTrue(any("np_definite_named_entity" in form for form in forms),
+                            (sentence, forms))
+
+    def test_proper_names_can_modify_real_common_noun_heads(self):
+        p = make_parser()
+        for sentence in (
+            "The Longbourn family arrived.",
+            "The London train departed.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            self.assertIn("np_determiner_name_noun_compound", self.rules(best), sentence)
+
+
+    def test_abbreviated_honorific_forms_subject_not_dislocated_topic(self):
+        p = make_parser()
+        for sentence in (
+            "Mr. Gardiner did not attempt to conceal these particulars from the Longbourn family.",
+            "Mr. Gardiner smiled.",
+            "Mrs. Bennet waited.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            self.assertIn("np_honorific_abbreviation",
+                          NamedEntityNominalConstructionTests.rules(best), sentence)
+            self.assertNotEqual(best.rule_id, "clause_front_np", sentence)
+
+    def test_abbreviated_honorific_requires_real_title(self):
+        p = make_parser()
+        result = p.parse("Tree. Alice smiled.")
+        for item in result.result.alternatives(limit=8):
+            self.assertNotIn("np_honorific_abbreviation",
+                             NamedEntityNominalConstructionTests.rules(item))
+
+    def test_indefinite_article_does_not_license_bare_name(self):
+        p = make_parser()
+        for sentence in ("A Orfling arrived.", "A Titanic sank."):
+            report = p.parse(sentence)
+            for item in report.result.alternatives(limit=8):
+                self.assertNotIn("np_definite_named_entity", self.rules(item), sentence)
+
+
 if __name__ == "__main__":
     unittest.main()
 
