@@ -211,6 +211,40 @@ class ChartParserTests(unittest.TestCase):
                     self.assertNotIn("clause_subject_parenthetical_vp", rule_set)
                     self.assertNotIn("vp_subject_control_parenthetical_inf", rule_set)
 
+    def test_subject_supplementary_adjective_between_commas(self) -> None:
+        """An ADJP adjunct must not erase the subject's finite agreement."""
+        def ids(node):
+            return {node.rule_id} | {key for child in node.children for key in ids(child)}
+        positives = (
+            "The Turk, amazed and delighted, endeavoured to kindle the zeal of his deliverer by promises of reward and wealth.",
+            "The scientist, exhausted and hungry, returned home.",
+            "Mary, tired, opened the box.",
+        )
+        for sentence in positives:
+            with self.subTest(sentence=sentence):
+                result = self.parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(
+                    any("clause_subject_parenthetical_adjp" in ids(tree)
+                        for tree in result.alternatives(limit=24)),
+                    (sentence, result.stats),
+                )
+
+    def test_subject_supplementary_adjective_requires_adjp_and_two_commas(self) -> None:
+        def ids(node):
+            return {node.rule_id} | {key for child in node.children for key in ids(child)}
+        for sentence in (
+            "The scientist, and hungry, returned home.",
+            "The scientist, opened the box, returned home.",
+            "The scientist, hungry returned home.",
+            "The scientist hungry, returned home.",
+            "The scientist, Mary, returned home.",
+        ):
+            with self.subTest(sentence=sentence):
+                result = self.parser.parse(sentence).result
+                for tree in result.alternatives(limit=16):
+                    self.assertNotIn("clause_subject_parenthetical_adjp", ids(tree))
+
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
         # Even with one preferred reading, the API exposes alternatives.
