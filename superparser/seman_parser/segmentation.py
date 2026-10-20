@@ -368,7 +368,7 @@ def build_lattice(
     # The legacy tokenizer may split curly apostrophes into separate tokens.
     # Add the same full-span surname hypothesis without re-tokenizing or
     # disturbing the fixed Gutenberg cohort's byte-for-byte offsets.
-    for match in re.finditer(r"\\b[A-Z][A-Za-z]*’[A-Z][A-Za-z]+\\b", text):
+    for match in re.finditer(r"\b[A-Z][A-Za-z]*’[A-Z][A-Za-z]+\b", text):
         if not any(
             c.span_start == match.start() and c.span_end == match.end()
             and c.category == "PROPER-NOUN" for c in candidates
