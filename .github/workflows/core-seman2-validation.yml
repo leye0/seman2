@@ -80,7 +80,7 @@ jobs:
           PYTHONPATH=superparser python -m scripts.audit_literary_lexicon --top 30
       - name: Inspect actual best trees on three recovered novel cases
         run: |
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 8,36,44,52,53,86,107,109,178,212,215,250,308,328,331,338,365,368,399,403,405,406,412,413,435,438,449,458,459,480,485 --alternatives 1 --lexical-audit
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 8,44,53,86,87,94,107,109,178,212,215,250,308,328,331,338,343,365,368,399,403,405,412,413,435,438,449,458,459,480,485 --alternatives 1 --lexical-audit
       - name: Verify documented canonical, adaptive and dialogue execution
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.smoke_layer1
