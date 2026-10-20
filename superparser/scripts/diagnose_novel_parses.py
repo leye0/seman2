@@ -967,7 +967,7 @@ def run(args: argparse.Namespace) -> dict:
     (args.out_dir / "report.md").write_text(
         render_markdown(summary, rows), encoding="utf8"
     )
-    print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
+    # Small, stable CI-log index: makes failed constructions inspectable even\n    # when the uploaded diagnostic artifact is not locally available.\n    for row in rows:\n        if row["status"] in ("no_structural_root", "roots_without_valid_analysis"):\n            print("NOVEL_GRAMMAR_RESIDUAL", json.dumps({\n                "index": row["index"], "book_id": row["book_id"],\n                "status": row["status"], "sentence": row["sentence"],\n                "lexical_category_sequence": row.get("lexical_category_sequence"),\n            }, ensure_ascii=False), flush=True)\n    print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
         "recurrent_missing_lexical_words": patterns["word_without_candidate"][:10],
