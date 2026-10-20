@@ -95,6 +95,26 @@ def main() -> None:
                          for n in nodes(a))
               ][:20], flush=True)
 
+    for beam in (160, 320):
+        pp = Parser.from_dir(DATA, goal_category="CLAUSE", cache_size=0,
+                             max_items=50_000, beam=beam)
+        wide = pp.parse(sample, diagnostic_k=128, beam=beam,
+                        kbest_work_limit=500_000).result
+        alts = wide.alternatives(limit=128)
+        matches = [
+            k for k, tree in enumerate(alts, start=1)
+            if any(n.rule_id == "vp_passive_shared_aux_sequence"
+                   for n in nodes(tree))
+        ]
+        print("PASSIVE_BEAM_AUDIT", beam,
+              "complete=", wide.completed,
+              "correct_ranks=", matches[:10],
+              "forest=", wide.stats.get("forest_nodes"),
+              "forest_budget=", wide.stats.get("budget_exceeded"),
+              "kbest_budget=", wide.stats.get("kbest_budget_exceeded"),
+              "roots=", wide.stats.get("structural_root_nodes"),
+              flush=True)
+
     for rank, tree in enumerate(result.alternatives(limit=128), start=1):
         all_nodes = list(nodes(tree))
         if any(n.rule_id == "vp_passive_shared_aux_sequence" for n in all_nodes):
