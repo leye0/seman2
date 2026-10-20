@@ -776,8 +776,7 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
             f"Mots sans aucun candidat : {lex['words_without_any_candidate']}",
             "",
         ])
-    return "
-".join(output)
+    return "\n".join(output)
 
 
 def run(args: argparse.Namespace) -> dict:
