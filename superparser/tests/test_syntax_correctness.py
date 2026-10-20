@@ -336,3 +336,53 @@ def test_title_licensing_keeps_wordnet_noun_alternatives() -> None:
         if c.surface.casefold() == "captain"
     }
     assert {"TITLE", "N"} <= categories, categories
+
+
+def test_reporting_tag_with_real_participial_adjunct() -> None:
+    text = "'It was a mistake,' I replied, quietly speaking to the witness."
+    result = parser().parse(text).result
+    best = result.best()
+    assert best is not None, result.stats
+    assert "dialogue_speech_tag_post_participial_adv_pp" in rules(best)
+
+
+def test_comma_and_ing_required_for_reporting_participial_adjunct() -> None:
+    p = parser()
+    for sentence in (
+        "'It was a mistake,' I replied quietly speaking to the witness.",
+        "'It was a mistake,' I replied, quietly speak to the witness.",
+    ):
+        result = p.parse(sentence).result
+        assert all(
+            "dialogue_speech_tag_post_participial_adv_pp" not in rules(item)
+            for item in result.alternatives(limit=6)
+        ), sentence
+
+
+def test_right_edge_transitive_participial_clause() -> None:
+    result = parser().parse("Maya crossed the square, carrying a lantern.").result
+    best = result.best()
+    assert best is not None, result.stats
+    assert "clause_final_transitive_participle" in rules(best)
+
+
+def test_parenthetical_you_know_inside_postpredicate_vp() -> None:
+    result = parser().parse("Mary waited, you know, near the entrance.").result
+    best = result.best()
+    assert best is not None, result.stats
+    assert "parenthetical_interpersonal_you_know" in rules(best)
+    assert "vp_postpredicate_parenthetical" in rules(best)
+
+
+def test_parenthetical_verb_must_be_licensed_and_comma_delimited() -> None:
+    p = parser()
+    for sentence in (
+        "Mary waited, you jump, near the entrance.",
+        "Mary waited, you know near the entrance.",
+        "Mary waited you know, near the entrance.",
+    ):
+        result = p.parse(sentence).result
+        assert all(
+            "parenthetical_interpersonal_you_know" not in rules(item)
+            for item in result.alternatives(limit=6)
+        ), sentence
