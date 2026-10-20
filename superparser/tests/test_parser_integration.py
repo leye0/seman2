@@ -947,6 +947,34 @@ class AdverbialWhModalAndBarePPTests(unittest.TestCase):
                     if node.rule_id=="vpnp_bare_intransitive_pp":
                         self.assertNotIn("the book",sentence[node.start:node.end])
 
+
+class CommaSeparatedAttributiveNounTests(unittest.TestCase):
+    @staticmethod
+    def rules(node):
+        if node is None:
+            return set()
+        return ({node.rule_id} if node.rule_id else set()) | {
+            r for child in node.children
+            for r in CommaSeparatedAttributiveNounTests.rules(child)
+        }
+
+    def test_productive_attributive_adjective_lists(self):
+        p=make_parser()
+        for sentence in ("Long, hard frosts arrived.", "The dark, narrow streets emptied.",
+                         "It was a bitter cold winter, with long, hard frosts and heavy gales."):
+            report=p.parse(sentence)
+            best=report.result.best()
+            self.assertIsNotNone(best,(sentence,report.result.stats))
+            self.assertIn("n_asymmetric_attributive_adjective_list",self.rules(best),sentence)
+
+    def test_requires_real_head_and_two_real_adjectives(self):
+        p=make_parser()
+        for sentence in ("The happy, dogs arrived.", "The narrow, John arrived."):
+            report=p.parse(sentence)
+            for root in report.result.alternatives(limit=8):
+                self.assertNotIn("n_asymmetric_attributive_adjective_list",
+                                 self.rules(root),sentence)
+
 if __name__ == "__main__":
     unittest.main()
 
