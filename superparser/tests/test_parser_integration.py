@@ -603,6 +603,38 @@ class ProductiveSupplementTests(unittest.TestCase):
                 )
 
 
+
+class PerfectPassiveMorphologyTests(unittest.TestCase):
+    """Perfect-passive auxiliary chains must not reanalyze HAVE as a noun."""
+
+    def test_productive_perfect_passive_with_and_without_negation(self):
+        p = make_parser()
+        for text in (
+            "The door has been opened.",
+            "The door has never been opened.",
+            "The door had already been opened.",
+        ):
+            best = p.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            root = best
+            self.assertEqual(root.rule_id, "clause_passive", text)
+            self.assertEqual(root.children[0].category, "NP", text)
+            self.assertEqual(text[root.children[0].start:root.children[0].end],
+                             "The door", text)
+            def tree_rules(node):
+                return {node.rule_id} | {r for c in node.children for r in tree_rules(c)}
+            self.assertTrue({"vp_perfect_passive", "vp_perfect_passive_adv",
+                             "vp_perfect_passive_neg"} & tree_rules(root), text)
+
+    def test_perfect_passive_participle_be_is_not_finite(self):
+        p = make_parser()
+        result = p.parse("The box has never been opened.")
+        be_candidates = [c for c in result.lattice.candidates
+                         if c.surface.casefold() == "been" and c.category == "AUX-BE"]
+        self.assertIn("ed", {c.features.as_dict().get("vform") for c in be_candidates})
+        self.assertIn("finite", {c.features.as_dict().get("vform") for c in be_candidates})
+
+
 if __name__ == "__main__":
     unittest.main()
 
