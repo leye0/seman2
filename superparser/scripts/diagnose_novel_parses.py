@@ -17,10 +17,7 @@ from time import perf_counter
 
 from scripts.corpus_samples import BANDS, choose_cases, sample_spread
 from seman_parser.engine import Parser, ParserResources
-from seman_parser.segmentation import build_lattice
-from research.verbnet_lr.corpus_pipeline import (
-    CorpusParseMode, parse_corpus_case, prepare_corpus_input,
-)
+from research.verbnet_lr.corpus_pipeline import parse_corpus_case, prepare_corpus_input
 
 ROOT = Path(__file__).resolve().parents[1]
 # Fixed 500-case reference, computed from cohort.jsonl on the initial run.
@@ -354,29 +351,22 @@ def contrast_category_patterns(rows: list[dict], *, min_support: int = 5) -> dic
 
 
 def canonical_residual_audit(rows: list[dict]) -> tuple[dict, list[dict]]:
-    """Paired canonical coverage, without re-parsing or altering the pinned cohort.
+    """Investigate genuine failures of the public parser on balanced input.
 
-    The source extraction is authoritative for quote context. Surface tags
-    identify INVESTIGATION cohorts, not proven causes of grammatical failure.
-    A canonical trial is used only where quote transfer changed the input.
+    Surface tags are descriptive signals, never proof of the failure's cause.
+    There is no second parse route or hidden historical fallback.
     """
     statuses = Counter()
     families = Counter()
     residuals = []
-    transitions = Counter()
     for row in rows:
-        trial = row.get("quote_boundary_trial")
-        reference_status = row["status"]
-        status = trial["status"] if trial is not None else reference_status
+        status = row["status"]
         if status not in STATUSES:
             raise ValueError(f"Unknown canonical diagnostic status: {status}")
         statuses[status] += 1
-        transitions[(reference_status, status)] += 1
         if status == "complete":
             continue
         sentence = row["sentence"]
-        # These are intentionally NON-EXCLUSIVE lexical/surface signatures.
-        # They never assert a linguistic explanation based on keywords alone.
         words = re.findall(r"[A-Za-z]+(?:['’][A-Za-z]+)*", sentence.casefold())
         word_set = set(words)
         tags = []
@@ -390,12 +380,12 @@ def canonical_residual_audit(rows: list[dict]) -> tuple[dict, list[dict]]:
             tags.append("ing_surface")
         if sentence.lstrip()[:1].islower():
             tags.append("lowercase_initial_surface")
-        if trial is not None:
+        if row.get("canonical_analysis_text") != sentence:
             tags.append("quote_transfer_changed_input")
         lexical = row.get("lexical_diagnostic") or {}
         missing = lexical.get("words_without_any_candidate", [])
         if missing:
-            tags.append("reference_lexical_gap")
+            tags.append("lexical_gap")
         if not tags:
             tags.append("other_surface")
         families.update(tags)
@@ -406,34 +396,26 @@ def canonical_residual_audit(rows: list[dict]) -> tuple[dict, list[dict]]:
             "band": row["band"],
             "sentence": sentence,
             "source_text": row["source_text"],
-            "canonical_analysis_text": (
-                trial["analysis_text"] if trial else
-                row.get("canonical_analysis_text", sentence)
-            ),
-            "reference_status": reference_status,
+            "canonical_analysis_text": row.get("canonical_analysis_text", sentence),
             "canonical_status": status,
-            "quote_transfer_changed_input": trial is not None,
+            "quote_transfer_changed_input": (
+                row.get("canonical_analysis_text", sentence) != sentence
+            ),
             "surface_tags": tags,
-            # Historical evidence is never mislabeled as a canonical lattice.
-            "reference_words_without_any_candidate": missing,
+            "words_without_any_candidate": missing,
         })
     n = len(rows)
     completed = statuses["complete"]
     return ({
-        "schema": "seman2-canonical-residual-audit-v1",
+        "schema": "seman2-canonical-residual-audit-v2",
         "n": n, "completed": completed,
         "coverage_percent": round(100 * completed / n, 2) if n else 0.0,
-        "statuses": {s: statuses[s] for s in STATUSES},
-        "reference_to_canonical": [
-            {"reference": source, "canonical": target, "count": count}
-            for (source, target), count in sorted(transitions.items())
-        ],
+        "statuses": {status: statuses[status] for status in STATUSES},
         "surface_tags_nonexclusive": dict(sorted(families.items())),
         "remaining": len(residuals),
         "caution": (
-            "Paired on the immutable cohort; uses the normal quote-transfer "
-            "gateway. Tags are surface correlations, NOT validated causes. "
-            "Reference lexical candidates are not canonical lexical evidence."
+            "The SAME public Parser.parse is used for all canonical cases. "
+            "Tags are correlations, not proven grammar-error causes."
         ),
     }, residuals)
 
@@ -551,24 +533,6 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
             key=lambda item: (-item[1], item[0]),
         ):
             output.append(f"| {tag} | {count} |")
-    repair = summary["quote_boundary_experiment"]
-    output.extend([
-        "",
-        "## Test apparié du gestionnaire existant de guillemets",
-        "",
-        f"Tentatives : {repair['attempted']}; analyses supplémentaires avec "
-        f"citation synthétique : {repair['newly_completed']}.",
-        "",
-        "Les marqueurs synthétiques viennent du découpage source, et les essais ne changent pas les 500 résultats bruts.",
-        "",
-    ])
-    for row in rows:
-        trial = row.get("quote_boundary_trial")
-        if trial is not None and trial["status"] == "complete":
-            output.extend([
-                f"- Cas {row['case_id']} : {row['sentence']}",
-                f"  - Texte proposé : {trial['analysis_text']}",
-            ])
     patterns = summary["recurrent_issues"]
     output.extend([
         "",
@@ -716,7 +680,7 @@ def run(args: argparse.Namespace) -> dict:
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=args.wordnet_dir)
     parser = Parser(resources, cache_size=0, max_items=args.max_items)
     # Warm lexical lookup before any per-sentence deadline.
-    build_lattice("John opened the box.", resources.lexicon, multiword_max=1)
+    parser.parse("John opened the box.")  # One public warm-up route
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     rows = []
@@ -742,16 +706,11 @@ def run(args: argparse.Namespace) -> dict:
                     ).hexdigest()[:16],
                     "sha256": sha256(case["text"].encode("utf8")).hexdigest(),
                 }
-                # Historical counts are intentional controls. Real/new corpus
-                # analyses default to transferred quotation context through
-                # parse_corpus_case(); never parse case["text"] directly.
-                historical = prepare_corpus_input(
-                    case, mode=CorpusParseMode.HISTORICAL_REFERENCE
-                )
+                # The official measurement is the quote-balanced input
+                # analyzed through exactly the public Parser.parse route.
                 balanced = prepare_corpus_input(case)
-                row["analysis_contract"] = "corpus_pipeline:v1"
-                row["reference_parse_mode"] = historical.mode.value
-                row["canonical_parse_mode"] = balanced.mode.value
+                row["analysis_contract"] = "corpus_pipeline:public-parser-v2"
+                row["parse_mode"] = balanced.mode.value
                 row["canonical_analysis_text"] = balanced.analysis_text
                 row["canonical_synthetic_prefix"] = balanced.synthetic_prefix
                 row["canonical_synthetic_suffix"] = balanced.synthetic_suffix
@@ -761,7 +720,6 @@ def run(args: argparse.Namespace) -> dict:
                 try:
                     _, lattice, result = parse_corpus_case(
                         parser, case,
-                        mode=CorpusParseMode.HISTORICAL_REFERENCE,
                         max_items=args.max_items,
                         kbest_work_limit=args.kbest_work_limit,
                     )
@@ -788,47 +746,6 @@ def run(args: argparse.Namespace) -> dict:
                 finally:
                     signal.setitimer(signal.ITIMER_REAL, 0)
                 row["wall_ms"] = round((perf_counter() - began) * 1000, 2)
-                # Compare the EXISTING quote-balancing algorithm applied
-                # across sentence boundaries, never a second repair heuristic.
-                # Baseline text and 500-case SHA remain exactly unchanged.
-                if balanced.analysis_text != historical.analysis_text:
-                        trial = {
-                            "analysis_text": balanced.analysis_text,
-                            "synthetic_prefix": balanced.synthetic_prefix,
-                            "synthetic_suffix": balanced.synthetic_suffix,
-                            "source_text": balanced.source_text,
-                            "analysis_contract": "corpus_pipeline:v1",
-                            "parse_mode": balanced.mode.value,
-                        }
-                        trial_started = perf_counter()
-                        signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
-                        try:
-                            _, fixed_lattice, fixed_result = parse_corpus_case(
-                                parser, case,
-                                max_items=args.max_items,
-                                kbest_work_limit=args.kbest_work_limit,
-                            )
-                            trial["status"] = classify(
-                                fixed_result.completed, fixed_result.stats
-                            )
-                            trial["root_rule"] = (
-                                fixed_result.best().rule_id
-                                if fixed_result.completed else None
-                            )
-                            trial["structural_root_nodes"] = fixed_result.stats.get(
-                                "structural_root_nodes", 0
-                            )
-                        except SentenceDeadline:
-                            trial["status"] = "timeout"
-                        except Exception as error:
-                            trial["status"] = "error"
-                            trial["error"] = f"{type(error).__name__}: {error}"
-                        finally:
-                            signal.setitimer(signal.ITIMER_REAL, 0)
-                        trial["wall_ms"] = round(
-                            (perf_counter() - trial_started) * 1000, 2
-                        )
-                        row["quote_boundary_trial"] = trial
                 if row["status"] != "complete":
                     # A timeout can still retain an already-built lattice.
                     row["lexical_diagnostic"] = (
@@ -846,37 +763,6 @@ def run(args: argparse.Namespace) -> dict:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, old_handler)
 
-    quote_trials = [
-        {"case_id": row["case_id"], "source_status": row["status"],
-         **row["quote_boundary_trial"]}
-        for row in rows if row.get("quote_boundary_trial") is not None
-    ]
-    with (args.out_dir / "quote_boundary_trials.jsonl").open(
-        "w", encoding="utf8"
-    ) as trial_stream:
-        for trial in quote_trials:
-            trial_stream.write(json.dumps(trial, ensure_ascii=False) + "\n")
-    trial_summary = {
-        "attempted": len(quote_trials),
-        "newly_completed": sum(
-            t["source_status"] != "complete" and t["status"] == "complete"
-            for t in quote_trials
-        ),
-        "previously_completed_retained": sum(
-            t["source_status"] == "complete" and t["status"] == "complete"
-            for t in quote_trials
-        ),
-        "previously_completed_regressed": sum(
-            t["source_status"] == "complete" and t["status"] != "complete"
-            for t in quote_trials
-        ),
-        "statuses": dict(Counter(t["status"] for t in quote_trials)),
-        "caution": (
-            "Quote balancing is performed by the shared segmentation code, "
-            "not by post-hoc repair. Synthetic marks never change raw cohort "
-            "coverage or purport to be original Gutenberg punctuation."
-        ),
-    }
     canonical_audit, canonical_residuals = canonical_residual_audit(rows)
     with (args.out_dir / "canonical_residuals.jsonl").open(
         "w", encoding="utf8"
@@ -895,7 +781,7 @@ def run(args: argparse.Namespace) -> dict:
         for book_id in sorted({r["book_id"] for r in rows})
     }
     summary = {
-        "schema": "seman2-novel-parse-diagnostics-v3",
+        "schema": "seman2-novel-parse-diagnostics-v4",
         "cohort_sha256": cohort_digest,
         "selection": "deterministic four-book/four-band cleaned Gutenberg sample",
         "sources": sources,
@@ -906,7 +792,6 @@ def run(args: argparse.Namespace) -> dict:
         },
         "totals": totals, "by_band": by_band, "by_book": by_book,
         "canonical_audit": canonical_audit,
-        "quote_boundary_experiment": trial_summary,
         "coverage_percent": round(100 * totals["completed"] / len(rows), 2),
         "elapsed_seconds": round(perf_counter() - started, 2),
         "notes": [
@@ -914,7 +799,7 @@ def run(args: argparse.Namespace) -> dict:
             "A structural root does not guarantee a unified valid analysis.",
             "Timeouts and errors are not grammatical coverage failures.",
             "A completed parse can still have an interrupted forest.",
-            "Each sentence is parsed once, without A/B comparisons.",
+            "Each balanced sentence goes through Parser.parse exactly once.",
             "Full 500-case cohort is exported before parsing begins.",
             "Repeated lexical patterns are exploratory, not causal evidence.",
         ],
@@ -948,7 +833,6 @@ def run(args: argparse.Namespace) -> dict:
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
         "recurrent_missing_lexical_words": patterns["word_without_candidate"][:10],
-        "quote_boundary_experiment": trial_summary,
     }, ensure_ascii=False), flush=True)
     return summary
 

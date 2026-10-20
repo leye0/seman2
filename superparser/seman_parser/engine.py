@@ -116,6 +116,7 @@ class ParseReport:
 
     result: ParseResult
     resources: ParserResources
+    lattice: LexicalLattice | None = None
 
     def best_semantic_graph(self) -> dict[str, Any] | None:
         best = self.result.best()
@@ -245,49 +246,106 @@ class Parser:
     def from_dir(cls, directory: str | Path, **kwargs: Any) -> "Parser":
         return cls(ParserResources.from_dir(directory), **kwargs)
 
-    def parse(self, text: str) -> ParseReport:
+    def _lattice_for_text(self, text: str) -> LexicalLattice:
+        """The same lexical preparation for public parsing and corpus audits."""
+        lattice = self._lattice_cache.get(text)
+        if lattice is None:
+            lattice = build_lattice(
+                text, self.resources.lexicon,
+                deduplicate=self.deduplicate_lexical,
+            )
+            self._lattice_cache.put(text, lattice)
+        return lattice
+
+    def parse(
+        self,
+        text: str,
+        *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseReport:
+        """SINGLE public parsing entry point, including corpus diagnostics.
+
+        Dialogue, safe clause segmentation, routing and ordinary recognition
+        follow the same order for every caller. Explicit budgets disable the
+        ordinary result cache so trials cannot silently reuse a different run.
+        """
         original = text.strip()
-        # Dialogue results are expensive and must be cached separately from
-        # the unquoted fallback which intentionally has another source span.
+        use_cache = all(value is None for value in (
+            max_items, kbest_work_limit, diagnostic_k, beam,
+        ))
         dialogue_key = (original, self.goal_category)
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
             from .dialogue import quotation_boundaries
             if quotation_boundaries(original):
-                cached_dialogue = self._parse_cache.get(dialogue_key)
-                if cached_dialogue is not None and cached_dialogue.stats.get("dialogue_scoped"):
+                if use_cache:
+                    cached = self._parse_cache.get(dialogue_key)
+                    if cached is not None and cached.stats.get("dialogue_scoped"):
+                        return ParseReport(
+                            result=cached,
+                            resources=self._dialogue_resources or self.resources,
+                            lattice=self._lattice_for_text(original),
+                        )
+                original_lattice = self._lattice_for_text(original)
+                spoken = self._parse_lattice(
+                    original_lattice, max_items=max_items,
+                    kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if spoken.completed and spoken.stats.get("dialogue_scoped"):
+                    if use_cache:
+                        self._parse_cache.put(dialogue_key, spoken)
                     return ParseReport(
-                        result=cached_dialogue,
+                        result=spoken,
                         resources=self._dialogue_resources or self.resources,
+                        lattice=original_lattice,
                     )
-                dialogue = self._parse_dialogue_text(original)
-                if dialogue is not None and dialogue.completed:
-                    self._parse_cache.put(dialogue_key, dialogue)
-                    return ParseReport(
-                        result=dialogue,
-                        resources=self._dialogue_resources or self.resources,
-                    )
-        # Legacy parsing still accepts isolated outer-quoted clauses.
-        text = original.strip('"\u201c\u201d\u2018\u2019').strip()
-        cache_key = (text, self.goal_category)
-        cached = self._parse_cache.get(cache_key)
-        if cached is not None:
-            return ParseReport(result=cached, resources=self.resources)
+        # Backwards compatibility for an isolated outer-quoted clause when
+        # the explicit dialogue grammar cannot recognize the whole utterance.
+        # No corpus caller may strip quotes before entering this method.
+        normalized = original.strip('"\u201c\u201d\u2018\u2019').strip()
+        cache_key = (normalized, self.goal_category)
+        if use_cache:
+            cached = self._parse_cache.get(cache_key)
+            if cached is not None:
+                return ParseReport(
+                    result=cached, resources=self.resources,
+                    lattice=self._lattice_for_text(normalized),
+                )
 
-        light_tokens = tokenize(text)
-        plan = self._clause_plan(text, light_tokens)
+        light_tokens = tokenize(normalized)
+        plan = self._clause_plan(normalized, light_tokens)
         if plan is None:
-            plan = self._binary_coord_clause_plan(text, light_tokens)
+            plan = self._binary_coord_clause_plan(normalized, light_tokens)
         if plan is not None:
-            hierarchical = self._parse_hierarchical(text, light_tokens, plan)
+            hierarchical = self._parse_hierarchical(
+                normalized, light_tokens, plan, max_items=max_items,
+                kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
             if hierarchical is not None:
-                self._parse_cache.put(cache_key, hierarchical)
-                return ParseReport(result=hierarchical, resources=self.resources)
+                if use_cache:
+                    self._parse_cache.put(cache_key, hierarchical)
+                return ParseReport(
+                    result=hierarchical, resources=self.resources,
+                    lattice=self._lattice_for_text(normalized),
+                )
 
-        result = self._parse_vector_text(text)
+        lattice = self._lattice_for_text(normalized)
+        result = self._parse_lattice(
+            lattice, max_items=max_items,
+            kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
         if plan is not None and isinstance(result.stats, dict):
             result.stats["segmentation_fallback"] = True
-        self._parse_cache.put(cache_key, result)
-        return ParseReport(result=result, resources=self.resources)
+        if use_cache:
+            self._parse_cache.put(cache_key, result)
+        return ParseReport(
+            result=result, resources=self.resources, lattice=lattice,
+        )
 
     def _select_vector_grammar(
         self, lattice: Any, *, dialogue: bool = False,
@@ -325,87 +383,51 @@ class Parser:
             })
         return result
 
-    def parse_grammar_lattice(
+    def _parse_lattice(
         self,
-        lattice: Any,
+        lattice: LexicalLattice,
         *,
         max_items: int | None = None,
         kbest_work_limit: int | None = None,
         diagnostic_k: int | None = None,
+        beam: int | None = None,
     ) -> ParseResult:
-        """Canonical sentence-level entry point for future corpus benchmarks.
+        """Internal recognizer. Only Parser.parse dispatches public analyses.
 
-        The prior research scripts call _vector_grammar.parse_lattice
-        directly, bypassing speech. New experiments should use this wrapper
-        to include marked dialogues in coverage statistics without adding
-        unquoted dialogue rules to the ordinary grammar.
+        Keep the dialogue-scoped grammar and complexity policy centralized,
+        including when analyzing validated hierarchical clause segments.
         """
-        # The input lattice is already built; keep transient forests out of
-        # CPython's frozen generation, including on this public entry point.
         freeze_loaded_wordnet_once(self.resources.lexicon)
         budget = self.max_items if max_items is None else max_items
+        active_beam = self.beam if beam is None else beam
         is_dialogue = False
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
             extended = dialogue_lattice(lattice)
             if extended is not None:
                 is_dialogue = True
                 spoken = self._dialogue_vector_grammar.parse_lattice(
-                    extended, beam=self.beam, max_items=budget,
+                    extended, beam=active_beam, max_items=budget,
                     goal_category=self.goal_category,
                     kbest_work_limit=kbest_work_limit,
                     diagnostic_k=diagnostic_k,
                 )
                 if spoken.completed:
-                    if isinstance(spoken.stats,dict):
-                        spoken.stats["dialogue_scoped"]=True
-                        spoken.stats["dialogue_source"]="explicit_balanced_quotes"
+                    if isinstance(spoken.stats, dict):
+                        spoken.stats["dialogue_scoped"] = True
+                        spoken.stats["dialogue_source"] = "explicit_balanced_quotes"
                     if self._complexity_router is not None:
                         _, choice = self._select_vector_grammar(lattice, dialogue=True)
                         self._attach_complexity_route(spoken, choice)
                     return spoken
         grammar, decision = self._select_vector_grammar(
-            lattice, dialogue=is_dialogue)
+            lattice, dialogue=is_dialogue,
+        )
         return self._attach_complexity_route(grammar.parse_lattice(
-            lattice, beam=self.beam, max_items=budget,
+            lattice, beam=active_beam, max_items=budget,
             goal_category=self.goal_category,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,
         ), decision)
-
-    def _parse_dialogue_text(self, text: str) -> ParseResult | None:
-        """Parse marked speech using only balanced, explicit quote terminals.
-
-        Every quotation mark is a syntax edge, not a discarded character.
-        No permissive speech productions enter the ordinary vector grammar.
-        """
-        if self._dialogue_vector_grammar is None:
-            return None
-        from .dialogue import quotation_boundaries
-        if not quotation_boundaries(text):
-            return None
-        lattice = self._lattice_cache.get(text)
-        if lattice is None:
-            lattice = build_lattice(
-                text, self.resources.lexicon,
-                deduplicate=self.deduplicate_lexical,
-            )
-            self._lattice_cache.put(text, lattice)
-        freeze_loaded_wordnet_once(self.resources.lexicon)
-        extended = dialogue_lattice(lattice)
-        if extended is None:
-            return None
-        result = self._dialogue_vector_grammar.parse_lattice(
-            extended, beam=self.beam, max_items=self.max_items,
-            goal_category=self.goal_category,
-        )
-        if isinstance(result.stats, dict):
-            result.stats.update({
-                "dialogue_scoped": True,
-                "dialogue_quotation_count": sum(
-                    c.category == "OPEN-QUOTE" for c in extended.candidates),
-                "dialogue_source": "explicit_balanced_quotes",
-            })
-        return result
 
     def parse_diagnostic(
         self,
@@ -414,79 +436,34 @@ class Parser:
         alternatives: int = 64,
         max_items: int = 500_000,
     ) -> ParseReport:
-        """Parse with a wide materialized root view and a generous budget.
-
-        This mode is intended for grammar audits, not production.  It makes
-        it possible to distinguish absent analyses from correct analyses that
-        merely lose in ranking, without replacing the packed recognizer or
-        changing its grammar.
-        """
-        original = text.strip()
-        from .dialogue import quotation_boundaries
-        if (self.goal_category == "CLAUSE"
-                and self._dialogue_vector_grammar is not None
-                and quotation_boundaries(original)):
-            extended = dialogue_lattice(build_lattice(
-                original, self.resources.lexicon,
-                deduplicate=self.deduplicate_lexical,
-            ))
-            if extended is not None:
-                freeze_loaded_wordnet_once(self.resources.lexicon)
-                result = self._dialogue_vector_grammar.parse_lattice(
-                    extended, beam=max(self.beam,alternatives),
-                    max_items=max(max_items,self.max_items),
-                    goal_category=self.goal_category,diagnostic_k=alternatives,
-                )
-                if result.completed:
-                    if isinstance(result.stats,dict):
-                        result.stats.update({
-                            "dialogue_scoped":True,
-                            "dialogue_source":"explicit_balanced_quotes",
-                            "diagnostic_mode":True,
-                            "diagnostic_k":alternatives,
-                        })
-                    return ParseReport(
-                        result=result,
-                        resources=self._dialogue_resources or self.resources,
-                    )
-        text = text.strip().strip('"\u201c\u201d\u2018\u2019').strip()
-        lattice = build_lattice(
-            text, self.resources.lexicon,
-            deduplicate=self.deduplicate_lexical,
+        """Convenience preset for Parser.parse, never another parser route."""
+        report = self.parse(
+            text, max_items=max(max_items, self.max_items),
+            diagnostic_k=alternatives, beam=max(self.beam, alternatives),
         )
-        freeze_loaded_wordnet_once(self.resources.lexicon)
-        result = self._vector_grammar.parse_lattice(
-            lattice,
-            beam=max(self.beam, alternatives),
-            max_items=max(max_items, self.max_items),
-            goal_category=self.goal_category,
-            diagnostic_k=alternatives,
-        )
-        if isinstance(result.stats, dict):
-            result.stats["diagnostic_mode"] = True
-            result.stats["diagnostic_k"] = alternatives
-        return ParseReport(result=result, resources=self.resources)
+        if isinstance(report.result.stats, dict):
+            report.result.stats["diagnostic_mode"] = True
+            report.result.stats["diagnostic_k"] = alternatives
+        return report
 
-    def _parse_vector_text(self, text: str) -> ParseResult:
+    def _parse_vector_text(
+        self,
+        text: str,
+        *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult:
+        """Internal segment recognition through the SAME core dispatcher."""
         lexical_start = perf_counter()
-        lattice = self._lattice_cache.get(text)
-        if lattice is None:
-            lattice = build_lattice(
-                text, self.resources.lexicon,
-                deduplicate=self.deduplicate_lexical,
-            )
-            self._lattice_cache.put(text, lattice)
+        lattice = self._lattice_for_text(text)
         lexical_ms = (perf_counter() - lexical_start) * 1000
-        freeze_loaded_wordnet_once(self.resources.lexicon)
-
-        grammar, decision = self._select_vector_grammar(lattice)
-        result = grammar.parse_lattice(
-            lattice,
-            beam=self.beam,
-            max_items=self.max_items,
-            goal_category=self.goal_category,
+        result = self._parse_lattice(
+            lattice, max_items=max_items,
+            kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
         )
-        self._attach_complexity_route(result, decision)
         if isinstance(result.stats, dict):
             result.stats["lexical_ms"] = round(lexical_ms, 4)
         return result
@@ -604,6 +581,11 @@ class Parser:
         text: str,
         tokens: Sequence[Token],
         plan: tuple[tuple[tuple[int, int], ...], tuple[Token, ...]],
+        *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
     ) -> ParseResult | None:
         """Validate clause pieces, then parse only their compact interfaces."""
         spans, separators = plan
@@ -612,7 +594,11 @@ class Parser:
         candidates: list[LexicalCandidate] = []
         for start, end in spans:
             local_text = text[start:end]
-            segment = self._parse_vector_text(local_text)
+            segment = self._parse_vector_text(
+                local_text, max_items=max_items,
+                kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
             if not segment.completed:
                 return None
             best = segment.best()
@@ -644,9 +630,11 @@ class Parser:
         interface_lattice = LexicalLattice(text, tuple(tokens), tuple(candidates))
         assembly = self._assembly_vector_grammar.parse_lattice(
             interface_lattice,
-            beam=self.beam,
-            max_items=self.max_items,
+            beam=self.beam if beam is None else beam,
+            max_items=self.max_items if max_items is None else max_items,
             goal_category=self.goal_category,
+            kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,
         )
         if not assembly.completed:
             return None

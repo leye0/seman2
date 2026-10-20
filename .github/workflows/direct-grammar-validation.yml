@@ -8,6 +8,8 @@ on:
     paths:
       - 'superparser/data/grammar.jsonl'
       - 'superparser/seman_parser/segmentation.py'
+      - 'superparser/seman_parser/engine.py'
+      - 'superparser/research/verbnet_lr/corpus_pipeline.py'
       - 'superparser/scripts/validate_direct_grammar.py'
       - '.github/workflows/direct-grammar-validation.yml'
   workflow_dispatch:

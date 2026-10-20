@@ -73,8 +73,8 @@ def calibrate_bands(rows,scores,min_tokens,share):
 def timed(parser,lattice):
     tick=perf_counter_ns()
     cpu_tick=process_time_ns()
-    parsed=parser.parse_grammar_lattice(
-        lattice,max_items=20000,kbest_work_limit=100000)
+    parsed=parser.parse(
+        lattice.text,max_items=20000,kbest_work_limit=100000).result
     best=parsed.best()
     trees=[x.as_dict() for x in parsed.alternatives(limit=2)]
     ms=(perf_counter_ns()-tick)/1e6
@@ -211,7 +211,7 @@ def main():
         reference._vector_grammar.grammar,ComplexityPolicy(
             1,min_tokens=args.minimum_tokens))
     cases=[{**item,"lattice":build_lattice(
-                item["text"],resources.lexicon,multiword_max=1)}
+                item["text"],resources.lexicon)}
            for item in raw]
     learned,training_scores=calibrate(
         cases,prototype,args.minimum_tokens,args.hard_share)
@@ -326,7 +326,7 @@ def main():
         "by_band":{band:group([r for r in records if r["band"]==band])
                    for band,_,_ in BANDS},
         "notes":[
-            "Same lexicon, lattice, identical parser budgets and underlying grammar.",
+            "Same public parse entry point, lexical settings and configured budgets.",
             "No grammatical answer, elapsed time or saturation used to choose thresholds.",
             "A/A measurement bracketed around adaptive implementation; order counterbalanced.",
             "Short text has no preparse score and never instantiates a specialized forest.",

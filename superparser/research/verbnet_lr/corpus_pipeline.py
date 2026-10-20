@@ -14,7 +14,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Mapping, Any
 
-from seman_parser.segmentation import build_lattice
 
 
 class CorpusParseMode(str, Enum):
@@ -104,10 +103,14 @@ def parse_corpus_case(
     legacy 500-case measurements comparable without changing their SHA.
     """
     prepared = prepare_corpus_input(case, mode=mode)
-    lattice = build_lattice(
-        prepared.analysis_text, parser.resources.lexicon, multiword_max=1,
+    report = parser.parse(
+        prepared.analysis_text,
+        max_items=max_items,
+        kbest_work_limit=kbest_work_limit,
     )
-    result = parser.parse_grammar_lattice(
-        lattice, max_items=max_items, kbest_work_limit=kbest_work_limit,
-    )
-    return prepared, lattice, result
+    # The diagnostic sees EXACTLY the lexical lattice used by the parser,
+    # not a separately rebuilt or differently configured approximation.
+    lattice = report.lattice
+    if lattice is None:
+        raise AssertionError("Parser.parse did not expose its lexical lattice")
+    return prepared, lattice, report.result

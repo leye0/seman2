@@ -63,10 +63,10 @@ class AdaptiveRouterTests(unittest.TestCase):
             for sentence in EASY:
                 with self.subTest(sentence=sentence):
                     lattice=self.lattice(sentence)
-                    observed=self.adaptive.parse_grammar_lattice(
-                        lattice,max_items=20000,kbest_work_limit=100000)
-                    baseline=self.reference.parse_grammar_lattice(
-                        lattice,max_items=20000,kbest_work_limit=100000)
+                    observed=self.adaptive.parse(
+                        lattice.text,max_items=20000,kbest_work_limit=100000).result
+                    baseline=self.reference.parse(
+                        lattice.text,max_items=20000,kbest_work_limit=100000).result
                     self.assertEqual(observed.stats["complexity_route"],"canonical")
                     self.assertEqual(observed.stats["complexity_probe_ms"],0.0)
                     self.assertIsNone(observed.stats["complexity_score"])
@@ -81,10 +81,10 @@ class AdaptiveRouterTests(unittest.TestCase):
         for sentence in HARD:
             with self.subTest(sentence=sentence):
                 lattice=self.lattice(sentence)
-                base=self.reference.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
-                fast=self.adaptive.parse_grammar_lattice(
-                    lattice,max_items=20000,kbest_work_limit=100000)
+                base=self.reference.parse(
+                    lattice.text,max_items=20000,kbest_work_limit=100000).result
+                fast=self.adaptive.parse(
+                    lattice.text,max_items=20000,kbest_work_limit=100000).result
                 self.assertEqual(fast.stats["complexity_route"],"trie")
                 self.assertTrue(fast.stats["lazy_trie_recognition"])
                 self.assertEqual(base.completed,fast.completed)
@@ -93,8 +93,8 @@ class AdaptiveRouterTests(unittest.TestCase):
                     [x.as_dict() for x in fast.alternatives(limit=2)])
 
     def test_long_below_threshold_remains_canonical(self):
-        result=self.canonical_long.parse_grammar_lattice(
-            self.lattice(HARD[0]),max_items=20000,kbest_work_limit=100000)
+        result=self.canonical_long.parse(
+            HARD[0],max_items=20000,kbest_work_limit=100000).result
         self.assertEqual(result.stats["complexity_reason"],"risk_below_threshold")
         self.assertFalse(result.stats["lazy_trie_recognition"])
         self.assertIsInstance(result.stats["complexity_score"],int)
@@ -103,8 +103,8 @@ class AdaptiveRouterTests(unittest.TestCase):
         for sentence in ('"Hello," said Mary.',
                          '"I am tired," said Mary, "and John opened the door."'):
             lattice=self.lattice(sentence)
-            result=self.adaptive.parse_grammar_lattice(
-                lattice,max_items=20000,kbest_work_limit=100000)
+            result=self.adaptive.parse(
+                lattice.text,max_items=20000,kbest_work_limit=100000).result
             self.assertFalse(result.stats["lazy_trie_recognition"])
         router=StructuralRiskRouter(self.reference._vector_grammar.grammar,
                                     ComplexityPolicy(1,min_tokens=1))

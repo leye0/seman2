@@ -7,6 +7,11 @@ It preserves the source spans and records synthetic prefixes/suffixes. It is
 **not** a repair heuristic or a defect. Do not reimplement this algorithm or
 discard/ignore its provenance.
 
+There is only ONE public syntactic parsing entry point:
+`seman_parser.engine.Parser.parse(text, ...)`. Do not introduce another
+public recognizer or route a benchmark directly into an internal forest.
+Options for search budgets belong on that same entry point.
+
 When parsing Gutenberg/novel case records from `gutenberg_novels.extract()`,
 **ALWAYS** call:
 
@@ -17,6 +22,10 @@ prepared, lattice, result = parse_corpus_case(parser, case)
 # The DEFAULT parse uses case["balanced_analysis_text"].
 # prepared.source_text remains exactly the original passage.
 ```
+
+The canonical 500-case score uses the **balanced analysis text** through
+`Parser.parse` directly; the historical raw control must NEVER be the
+headline score or an implicit alternate engine.
 
 The frozen historical **500-case** corpus is special. Its original
 `case["text"]` and `cohort.jsonl` are SHA-256-pinned for longitudinal

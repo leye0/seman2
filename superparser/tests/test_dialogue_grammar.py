@@ -248,12 +248,12 @@ class DialogueGrammarTests(unittest.TestCase):
         self.assertIs(first.result.best(),second.result.best())
         self.assertTrue(second.result.stats.get("dialogue_scoped"))
 
-    def test_future_corpus_lattice_dispatch_recognizes_dialogue(self):
+    def test_public_parser_recognizes_corpus_style_dialogue(self):
         from seman_parser.segmentation import build_lattice
         text='"John walks," Mary said.'
         raw=build_lattice(text,self.parser.resources.lexicon,multiword_max=1)
-        scoped=self.parser.parse_grammar_lattice(
-            raw,kbest_work_limit=100000,max_items=20000)
+        scoped=self.parser.parse(
+            text,kbest_work_limit=100000,max_items=20000).result
         self.assertTrue(scoped.completed,scoped.stats)
         self.assertTrue(scoped.stats.get("dialogue_scoped"))
         self.assertIn("dialogue_post_tag",descendant_ids(scoped.best()))

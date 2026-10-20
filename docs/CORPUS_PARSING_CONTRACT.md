@@ -1,46 +1,48 @@
-# Contrat d'analyse du corpus littéraire (Seman2)
+# Point d'entrée unique de Seman2 — corpus et moteur
 
-La séparation des phrases et des points-virgules est **déjà** associée à
-un transfert volontaire des guillemets. Le contrat logiciel interdit
-désormais l'oubli de ce transfert dans les diagnostics.
+**Un seul moteur public : `Parser.parse(text, ...)`.** Le diagnostic
+des 500 phrases, les tests d'intégration et les usages normaux doivent
+tous passer par cet appel. Les paramètres de budget
+(`max_items`, `kbest_work_limit`, `diagnostic_k`) sont des options
+du **même** moteur ; ils ne sélectionnent jamais un second chemin.
 
-### Entrée unique
-
-`research.verbnet_lr.corpus_pipeline.parse_corpus_case(parser, case)`
-est l'entrée recommandée et utilise **par défaut** l'unité contenant les
-guillemets rééquilibrés. La structure `PreparedCorpusInput` documente
-le texte original, celui du témoin historique, le texte soumis au parseur
-et les signes synthétiques. Si un cas ne contient pas ces métadonnées, une
-erreur est levée **avant** de parser : pas de repli silencieux vers le texte brut.
-
-Le témoin historique des 500 phrases peut toujours être évalué, mais il
-requiert un argument explicite
-`mode=CorpusParseMode.HISTORICAL_REFERENCE`. Cette distinction conserve le
-SHA-256 immuable du `cohort.jsonl` et permet la comparaison appariée.
-
-### Barrières anti-régression
-
-Le diagnostic appelle `parse_corpus_case` pour **les deux** modes, sans
-appeler `parser.parse_grammar_lattice` directement. Des tests unitaires
-vérifient le mode par défaut, l'immuabilité du `source_text`, les guillemets
-transférés, l'échec sur provenance absente et, via AST, l'absence de bypass
-du chemin standard. Le workflow GitHub exécute ces tests lors des changements
-de la préparation du corpus et de son API.
-
-Le découpage et le suivi de la pile de guillemets demeurent uniquement dans
-`seman_parser.sentence_boundaries`. **Aucune seconde logique de réparation
-des guillemets n'est introduite.**
-
-### Exemple reproductible
+Pour les enregistrements littéraires, la préparation du texte est
+une responsabilité séparée, sans moteur concurrent :
 
 ```python
-from research.verbnet_lr.corpus_pipeline import parse_corpus_case, CorpusParseMode
+from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 
-prepared, lattice, parsed = parse_corpus_case(parser, case)
-assert prepared.mode == CorpusParseMode.QUOTE_BALANCED
+prepared, lattice, result = parse_corpus_case(parser, case)
+# parse_corpus_case appelle Parser.parse(prepared.analysis_text).
+# lattice est la vue lexicale du même Parser et de ses mêmes paramètres.
+```
 
-reference, old_lattice, old_result = parse_corpus_case(
+`prepare_corpus_input` valide que le contexte des guillemets est
+transféré par `gutenberg_novels.extract()` via
+`seman_parser.sentence_boundaries`. Aucun script ne répare ou ne
+reconstruit indépendamment ces guillemets. Toute provenance absente
+provoque une erreur.
+
+La cohorte déterministe de 500 entrées reste immuable (SHA-256), mais
+**le score officiel concerne ses textes d'analyse équilibrés**, à
+travers `Parser.parse` exclusivement. Aucun résultat historique brut
+n'est agrégé ou substitué par un essai secondaire.
+
+Pour une recherche de compatibilité historique seulement :
+
+```python
+from research.verbnet_lr.corpus_pipeline import CorpusParseMode
+prepared, lattice, result = parse_corpus_case(
     parser, case, mode=CorpusParseMode.HISTORICAL_REFERENCE,
 )
-assert prepared.source_text == reference.source_text
 ```
+
+Cette option explicite ne change pas l'entrée du moteur. Elle
+change exclusivement les données soumises à celui-ci.
+
+**Tests anti-contournement :**
+`superparser/tests/test_novel_parse_diagnostics.py` vérifie
+que le script passe par `parse_corpus_case`, que celui-ci
+appelle `Parser.parse` et qu'aucune autre entrée cachée ou autre
+préparation lexicale n'est invoquée. Les tests d'intégration
+exercent le même point d'entrée public.

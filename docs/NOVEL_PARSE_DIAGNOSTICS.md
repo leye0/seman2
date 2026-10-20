@@ -9,7 +9,7 @@ Commande équivalente (avec WordNet 3.0 installé) :
       --count 500 --max-items 50000 --kbest-work-limit 500000 \
       --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
 
-**500 phrases au total**, pas par roman, à travers quatre romans Gutenberg nettoyés et quatre bandes de longueur (4–8, 9–16, 17–24, 25–32 tokens). Sélection déterministe. Chaque phrase est analysée une seule fois, sans comparaison A/B. Aucun changement aux règles grammaticales ni aux scores.
+**500 phrases au total**, pas par roman, à travers quatre romans Gutenberg nettoyés et quatre bandes de longueur (4–8, 9–16, 17–24, 25–32 tokens). Sélection déterministe. Chaque phrase est analysée une seule fois, sans comparaison A/B, en mode QUOTE_BALANCED et via le seul moteur public `Parser.parse`. Le score principal est celui du texte d'analyse préparé, jamais le témoin historique brut.
 
 ## Interprétation
 
@@ -102,3 +102,7 @@ L'inventaire des formes fermées inclut maintenant `'re` comme copule contracté
 ## Garde-fous pour les sous-mots accidentels
 
 Une succession de sous-mots qui couvre graphiquement un token ne prouve pas que le mot ait une lecture grammaticale. Les arêtes doivent correspondre exactement à la graphie originale. La négation contractée `n't` doit suivre une hypothèse lexicale auxiliaire, copule, HAVE ou modale : les accidents tels que `ai` (nom) + `n't` ne masquent plus un manque de couverture pour `ain't`. Le diagnostic n'invente aucune lecture grammaticale pour ce dialectalisme et conserve les hypothèses originales pour l'investigation.
+
+## Point d'entrée et cohérence
+
+Le diagnostic appelle `parse_corpus_case`, qui valide la provenance des guillemets puis transmet `balanced_analysis_text` au seul point d'entrée public `Parser.parse`. Le moteur applique les mêmes règles de dialogue, de découpage sécurisé et de routage que les autres clients. La forêt et les statistiques ne sont plus produites par un chemin `parse_grammar_lattice` parallèle. Le mode historique brut ne s'exécute pas durant le diagnostic officiel.

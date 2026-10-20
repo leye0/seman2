@@ -27,16 +27,16 @@ def main():
                   complexity_policy=ComplexityPolicy(1,min_tokens=17))
     for text,expected in ((SHORT,"canonical"),(LONG,"trie"),
                           (DIALOGUE,"canonical")):
-        lattice=build_lattice(text,resources.lexicon,multiword_max=1)
-        result=routed.parse_grammar_lattice(
-            lattice,max_items=20000,kbest_work_limit=100000)
+        lattice=build_lattice(text,resources.lexicon)
+        result=routed.parse(
+            text,max_items=20000,kbest_work_limit=100000).result
         assert result.stats["complexity_route"]==expected,(
             text,result.stats.get("complexity_route"))
         assert result.text==text
         assert result.lattice.text==text
         assert bool(result.stats["lazy_trie_recognition"])==(expected=="trie")
-        ordinary=canonical.parse_grammar_lattice(
-            lattice,max_items=20000,kbest_work_limit=100000)
+        ordinary=canonical.parse(
+            text,max_items=20000,kbest_work_limit=100000).result
         assert result.completed==ordinary.completed
         assert ([x.as_dict() for x in result.alternatives(limit=2)]==
                 [x.as_dict() for x in ordinary.alternatives(limit=2)])
