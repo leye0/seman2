@@ -795,6 +795,28 @@ class NamedEntityNominalConstructionTests(unittest.TestCase):
             self.assertIsNotNone(best, (sentence, report.result.stats))
             self.assertIn("np_determiner_name_noun_compound", self.rules(best), sentence)
 
+
+    def test_abbreviated_honorific_forms_subject_not_dislocated_topic(self):
+        p = make_parser()
+        for sentence in (
+            "Mr. Gardiner did not attempt to conceal these particulars from the Longbourn family.",
+            "Mr. Gardiner smiled.",
+            "Mrs. Bennet waited.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            self.assertIn("np_honorific_abbreviation",
+                          NamedEntityNominalConstructionTests.rules(best), sentence)
+            self.assertNotEqual(best.rule_id, "clause_front_np", sentence)
+
+    def test_abbreviated_honorific_requires_real_title(self):
+        p = make_parser()
+        result = p.parse("Tree. Alice smiled.")
+        for item in result.result.alternatives(limit=8):
+            self.assertNotIn("np_honorific_abbreviation",
+                             NamedEntityNominalConstructionTests.rules(item))
+
     def test_indefinite_article_does_not_license_bare_name(self):
         p = make_parser()
         for sentence in ("A Orfling arrived.", "A Titanic sank."):
