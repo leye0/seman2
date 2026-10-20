@@ -30,9 +30,47 @@ def display_tree(item, text: str, depth: int = 0) -> list[str]:
         lines.extend(display_tree(child, text, depth + 1))
     return lines
 
+def display_lexical_matrix(lattice, *, index: int) -> None:
+    """Report ALL category/feature hypotheses at their exact token positions.
+
+    Include source and sense provenance; no lexical alternative is silently
+    reduced to one best POS tag. Multiword candidates are shown separately.
+    """
+    for token in lattice.tokens:
+        candidates = sorted(
+            lattice.covering(token.start, token.end),
+            key=lambda candidate: (
+                candidate.category, -candidate.score, candidate.source,
+                candidate.sense_id or "",
+            ),
+        )
+        print("NOVEL_LEXICAL_MATRIX", json.dumps({
+            "case_index": index, "token_index": token.index,
+            "text": token.text, "start": token.start, "end": token.end,
+            "candidates": [{
+                "category": c.category, "features": c.features.as_dict(),
+                "source": c.source, "sense_ids": c.sense_ids,
+                "score": c.score,
+            } for c in candidates],
+        }, ensure_ascii=False), flush=True)
+    for candidate in lattice.candidates:
+        if not any(
+            token.start == candidate.span_start and
+            token.end == candidate.span_end for token in lattice.tokens
+        ):
+            print("NOVEL_MULTIWORD_MATRIX", json.dumps({
+                "case_index": index, "start": candidate.span_start,
+                "end": candidate.span_end, "surface": candidate.surface,
+                "category": candidate.category,
+                "features": candidate.features.as_dict(),
+                "source": candidate.source,
+            }, ensure_ascii=False), flush=True)
+
+
 
 def audit(indices: tuple[int, ...], *, wordnet_dir: str | None,
-          max_items: int, kbest_work_limit: int, alternatives: int) -> None:
+          max_items: int, kbest_work_limit: int, alternatives: int,
+          lexical_audit: bool = False) -> None:
     selected, _ = select_cases(500)
     if len(selected) != 500:
         raise AssertionError("Pinned cohort lost entries")
@@ -56,6 +94,8 @@ def audit(indices: tuple[int, ...], *, wordnet_dir: str | None,
             "budget_exceeded": result.stats.get("budget_exceeded"),
             "lexical_candidates": len(lattice.candidates),
         }, ensure_ascii=False), flush=True)
+        if lexical_audit:
+            display_lexical_matrix(lattice, index=idx)
         for rank, item in enumerate(result.alternatives(limit=alternatives)):
             print(f"NOVEL_TREE_BEGIN index={idx} rank={rank + 1} score={item.score:.4f}",
                   flush=True)
@@ -70,11 +110,13 @@ def main() -> None:
     args.add_argument("--max-items", type=int, default=50_000)
     args.add_argument("--kbest-work-limit", type=int, default=500_000)
     args.add_argument("--alternatives", type=int, default=2)
+    args.add_argument("--lexical-audit", action="store_true")
     opts = args.parse_args()
     audit(tuple(int(x) for x in opts.indices.split(",") if x.strip()),
           wordnet_dir=opts.wordnet_dir, max_items=opts.max_items,
           kbest_work_limit=opts.kbest_work_limit,
-          alternatives=opts.alternatives)
+          alternatives=opts.alternatives,
+          lexical_audit=opts.lexical_audit)
 
 
 if __name__ == "__main__":
