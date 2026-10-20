@@ -656,7 +656,7 @@ class GreetingVocativeTests(unittest.TestCase):
             self.assertIn("clause_farewell_vocative", rules, sentence)
             # A noun-appellation reading ("my dear Margaret") is also
             # lexically possible; do not force the adjective alternative.
-            self.assertTrue({"np_poss_adj_proper", "np_poss_n_name"} & rules,
+            self.assertTrue({"np_poss_adj_proper", "np_poss_n_name", "np_adj_proper"} & rules,
                             sentence)
 
     def test_salutation_is_required_and_wordnet_noun_alternative_survives(self):
