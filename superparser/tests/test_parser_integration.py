@@ -886,6 +886,48 @@ class SubordinateComplementAgainstDefiniteProperModifierTests(unittest.TestCase)
                       NamedEntityNominalConstructionTests.rules(best))
 
 
+
+class AdverbialWhModalAndBarePPTests(unittest.TestCase):
+    @staticmethod
+    def rules(node):
+        if node is None:
+            return set()
+        return ({node.rule_id} if node.rule_id else set()) | {
+            name for child in node.children
+            for name in AdverbialWhModalAndBarePPTests.rules(child)
+        }
+
+    def test_adverbial_wh_question_and_prepositional_bare_predicate(self):
+        p=make_parser()
+        for sentence in (
+            "Why should I sleep in the garden?",
+            "Where can they dwell in the valley?",
+            "But why should I dwell upon the incidents that followed this last overwhelming event?",
+        ):
+            report=p.parse(sentence)
+            best=report.result.best()
+            self.assertIsNotNone(best,(sentence,report.result.stats))
+            self.assertIn("clause_wh_adverbial_modal",self.rules(best),sentence)
+            self.assertIn("vpnp_bare_intransitive_pp",self.rules(best),sentence)
+
+    def test_an_object_wh_is_not_mistaken_for_adverbial_wh(self):
+        p=make_parser()
+        for sentence in ("What should I sleep in the garden?", "Which can John sleep in the garden?"):
+            report=p.parse(sentence)
+            for tree in report.result.alternatives(limit=6):
+                self.assertNotIn("clause_wh_adverbial_modal",self.rules(tree),sentence)
+
+    def test_bare_intransitive_pp_does_not_consume_transitive_object(self):
+        p=make_parser()
+        for sentence in ("Why should I conceal the book?", "Where can we eat the soup?"):
+            report=p.parse(sentence)
+            for tree in report.result.alternatives(limit=6):
+                # These verbs may have other lexical senses, but a real object
+                # cannot be swallowed by the intransitive+PP construction.
+                for node in tree.children:
+                    if node.rule_id=="vpnp_bare_intransitive_pp":
+                        self.assertNotIn("the book",sentence[node.start:node.end])
+
 if __name__ == "__main__":
     unittest.main()
 
