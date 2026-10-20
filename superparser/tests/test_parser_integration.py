@@ -979,6 +979,50 @@ class ClauseSupplementaryCommaPPTests(unittest.TestCase):
             for item in report.result.alternatives(limit=8):
                 self.assertNotIn("clause_final_comma_pp_adjunct",self.rules(item),sentence)
 
+
+class LexicalHaveAndFractionalPredeterminerTests(unittest.TestCase):
+    @staticmethod
+    def rules(node):
+        if node is None:
+            return set()
+        return ({node.rule_id} if node.rule_id else set()) | {
+            r for ch in node.children for r in LexicalHaveAndFractionalPredeterminerTests.rules(ch)
+        }
+
+    def test_possession_main_verb_with_morphological_agreement(self):
+        p=make_parser()
+        for text in ("I have an idea.", "She has a book.", "They have a letter.",
+                     "I had an idea."):
+            report=p.parse(text)
+            best=report.result.best()
+            self.assertIsNotNone(best,(text,report.result.stats))
+            self.assertIn("vp_lexical_have_object",self.rules(best),text)
+
+    def test_fractional_predeterminer_before_np(self):
+        p=make_parser()
+        for text in ("Half a day passed.", "Half the journey was over."):
+            report=p.parse(text)
+            best=report.result.best()
+            self.assertIsNotNone(best,(text,report.result.stats))
+            self.assertIn("np_fractional_half",self.rules(best),text)
+
+    def test_contracted_lexical_have_with_nonfinite_noun_complement(self):
+        text="I've half a mind to dine first."
+        report=make_parser().parse(text)
+        best=report.result.best()
+        self.assertIsNotNone(best,report.result.stats)
+        r=self.rules(best)
+        self.assertIn("vp_lexical_have_object",r)
+        self.assertIn("np_fractional_half",r)
+        self.assertIn("np_inf_rel",r)
+
+    def test_have_morphology_does_not_license_wrong_present_person(self):
+        p=make_parser()
+        for text in ("She have a book.", "They has a book.", "I has an idea."):
+            report=p.parse(text)
+            for root in report.result.alternatives(limit=8):
+                self.assertNotIn("vp_lexical_have_object",self.rules(root),text)
+
 if __name__ == "__main__":
     unittest.main()
 
