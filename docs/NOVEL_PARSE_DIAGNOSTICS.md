@@ -126,7 +126,7 @@ Familles à vérifier avec de vrais arbres, exemples adversariaux et tests cibl�
 
 - **Relatives prépositionnelles antéposées** (pied-piping) :
   `on which`, `of whose`, `to which`, `with whom`.
-  Cas 101, 187, 327, 473 : **4/4 non complétés**, dans trois romans.
+  Cas 101, 187, 327, 473 : **4/4 non complétés**, dans les quatre romans.
   La grammaire connaît des relatives sujet et objet mais aucune
   construction productive explicite `PREP + WH + proposition relative`.
   Il s'agit d'une hypothèse de règle manquante **forte**, non encore d'un
