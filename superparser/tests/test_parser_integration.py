@@ -37,6 +37,37 @@ class SegmentationTests(unittest.TestCase):
         john = [c for c in lattice.candidates if c.surface == "John"]
         self.assertGreaterEqual(len(john), 1)
 
+    def test_local_irregular_inflection_does_not_hide_wordnet_verb(self) -> None:
+        """A local auxiliary and an irregular lexical verb are both real."""
+        parser = make_parser()
+        for surface in ("did", "does"):
+            with self.subTest(surface=surface):
+                lattice = parser.parse(f"John {surface} the work.").lattice
+                readings = [candidate for candidate in lattice.candidates
+                            if candidate.surface.lower() == surface]
+                self.assertTrue(any(c.category == "AUX" for c in readings))
+                self.assertTrue(any(
+                    c.category == "V" and c.lemma == "do"
+                    and c.features.as_dict().get("vform") == "finite"
+                    and any(i.sense_id and i.sense_id.startswith("wn-")
+                            for i in c.interpretations)
+                    for c in readings
+                ), [c.as_dict() for c in readings])
+
+        lexical = parser.parse("John did the work.").result
+        self.assertTrue(lexical.completed, lexical.stats)
+        best = lexical.best()
+        self.assertIsNotNone(best)
+        def rules(node):
+            return {node.rule_id} | {
+                rule for child in node.children for rule in rules(child)
+            }
+        self.assertIn("vp_transitive", rules(best))
+
+        auxiliary = parser.parse("John did not open the box.").result
+        self.assertTrue(auxiliary.completed, auxiliary.stats)
+        self.assertIn("clause_neg_vp", rules(auxiliary.best()))
+
 
 class ChartParserTests(unittest.TestCase):
     def setUp(self) -> None:
