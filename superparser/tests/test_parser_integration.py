@@ -947,6 +947,38 @@ class AdverbialWhModalAndBarePPTests(unittest.TestCase):
                     if node.rule_id=="vpnp_bare_intransitive_pp":
                         self.assertNotIn("the book",sentence[node.start:node.end])
 
+
+class ClauseSupplementaryCommaPPTests(unittest.TestCase):
+    @staticmethod
+    def rules(node):
+        if node is None:
+            return set()
+        return ({node.rule_id} if node.rule_id else set()) | {
+            r for ch in node.children
+            for r in ClauseSupplementaryCommaPPTests.rules(ch)
+        }
+
+    def test_compositional_sentence_final_supplementary_pp(self):
+        p=make_parser()
+        for sentence in (
+            "Mary waited, with a look of anxiety.",
+            "The road was quiet, with trees along the path.",
+            "It was a bitter cold winter, with long, hard frosts and heavy gales.",
+        ):
+            report=p.parse(sentence)
+            best=report.result.best()
+            self.assertIsNotNone(best,(sentence,report.result.stats))
+            self.assertIn("clause_final_comma_pp_adjunct",self.rules(best),sentence)
+            if "long, hard" in sentence:
+                self.assertIn("adjp_comma_separated_adjectives",self.rules(best),sentence)
+
+    def test_comma_and_prepositional_phrase_are_both_necessary(self):
+        p=make_parser()
+        for sentence in ("Mary waited with a look of anxiety.", "Mary waited, the house."):
+            report=p.parse(sentence)
+            for item in report.result.alternatives(limit=8):
+                self.assertNotIn("clause_final_comma_pp_adjunct",self.rules(item),sentence)
+
 if __name__ == "__main__":
     unittest.main()
 
