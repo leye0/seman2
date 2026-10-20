@@ -761,17 +761,24 @@ def _hyphenated_candidates(
                 # The ordinary multiword pass already emitted these senses.
                 continue
             if not matches:
-                # An unattested compound may inherit NON-VERBAL lexical
-                # readings of its final head. Inheriting V would fabricate
-                # a lexical verb from a noun or adjective compound, e.g.
-                # "bright-eyed" -> finite V and "carpet-bag" -> finite V.
-                # A full-surface lexical entry still licenses verb senses.
-                # The final head must also satisfy its own written
-                # inflection; do not turn singular "bag" into plural.
+                # A productive compound normally inherits NON-VERBAL head
+                # readings. A verbal head is licensed only after a recognized
+                # productive verb PREFIX (over-rated, under-estimated,
+                # mis-judged, ...), never merely because the final word also
+                # happens to be a verb (bright-eyed, carpet-bag).
+                # Prefixes are morphemes here, NOT arbitrary first-word POS.
+                verbal_prefixes = {
+                    "over", "under", "out", "mis", "re", "pre", "un",
+                }
+                licensed_verb_prefix = (
+                    end == start + 2
+                    and first.text.casefold() in verbal_prefixes
+                )
                 matches = tuple(
                     (entry, sense, lemma)
                     for entry, sense, lemma in lexicon.lookup_morphology(head.text)
-                    if sense.category in open_categories - {"V"}
+                    if (sense.category in open_categories - {"V"}
+                        or (sense.category == "V" and licensed_verb_prefix))
                     and _surface_matches_morphology(head.text, entry, sense, lemma)
                 )
                 source = "hyphen-compound"

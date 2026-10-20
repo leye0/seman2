@@ -435,6 +435,17 @@ class ChartParserTests(unittest.TestCase):
                 ]
                 self.assertEqual(unlicensed_verbs, [])
 
+        # Prefixal compounds retain lexically justified verb categories,
+        # constrained by the morphology of the attested verbal head.
+        prefixed = build_lattice("over-rated", self.parser.resources.lexicon)
+        verb_forms = {
+            c.features.as_dict().get("vform")
+            for c in prefixed.covering(0, len("over-rated"))
+            if c.category == "V"
+        }
+        self.assertIn("ed", verb_forms)
+        self.assertTrue(verb_forms.isdisjoint({"base", "ing"}), verb_forms)
+
         compounds = build_lattice(
             "my carpet-bag and bright-eyed Dora",
             self.parser.resources.lexicon,
