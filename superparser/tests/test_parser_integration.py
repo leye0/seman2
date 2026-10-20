@@ -1146,6 +1146,72 @@ class LiteraryExceptionDictionaryTests(unittest.TestCase):
                             and c.category == "ADJ"
                             for c in lattice.candidates))
 
+
+class ProductiveHyphenMorphologyWithoutDictionaryTests(unittest.TestCase):
+    """Standard hyphenated compounds require no per-word curated entry."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        # Explicitly omit literary_lexicon.jsonl to prove generalization.
+        from seman_parser.engine import discover_wordnet
+        cls.lexicon = load_lexicon(
+            DATA / "function_words.jsonl",
+            wordnet_dict=discover_wordnet(DATA),
+            supplemental_paths=(DATA / "syntax_lexicon.jsonl",),
+            max_senses=8,
+        )
+
+    def test_participial_adjectives_productive_without_literary_words(self):
+        for word in ("sun-painted", "river-washed", "well-described",
+                     "moon-carried"):
+            with self.subTest(word=word):
+                lattice = build_lattice(word, self.lexicon)
+                full = lattice.covering(0, len(word))
+                derived = [c for c in full
+                           if c.category == "ADJ" and
+                           c.source == "hyphen-participial-adjective"]
+                self.assertTrue(derived, [c.as_dict() for c in full])
+                self.assertTrue(all(c.provenance.get("head_lemma")
+                                    for c in derived))
+                self.assertFalse(any(c.category == "V" and
+                                     c.source == "hyphen-participial-adjective"
+                                     for c in full))
+
+    def test_headed_nominal_compounds_agree_without_literary_words(self):
+        for word, number in (("orchard-bag", "singular"),
+                             ("orchard-bags", "plural"),
+                             ("hill-trees", "plural")):
+            with self.subTest(word=word):
+                lattice = build_lattice(word, self.lexicon)
+                full = lattice.covering(0, len(word))
+                self.assertTrue(any(
+                    c.category == "N" and
+                    c.features.as_dict().get("number") == number and
+                    c.source == "hyphen-compound"
+                    for c in full), [c.as_dict() for c in full])
+
+    def test_do_not_fabricate_verbs_or_adjectives_for_unlicensed_heads(self):
+        for word in ("carpet-bag", "stone-walk", "silver-cook"):
+            with self.subTest(word=word):
+                lattice = build_lattice(word, self.lexicon)
+                full = lattice.covering(0, len(word))
+                self.assertFalse(any(
+                    c.source == "hyphen-participial-adjective"
+                    for c in full), [c.as_dict() for c in full])
+                self.assertFalse(any(
+                    c.category == "V" and c.source == "hyphen-compound"
+                    for c in full), [c.as_dict() for c in full])
+
+    def test_em_dash_is_never_inside_a_productive_compound(self):
+        text = "The sky--for it was night--was sun-painted."
+        lattice = build_lattice(text, self.lexicon)
+        self.assertTrue(any(
+            c.category == "ADJ" and c.surface == "sun-painted"
+            for c in lattice.candidates))
+        self.assertFalse(any(
+            "--" in c.surface and "hyphen" in c.source
+            for c in lattice.candidates))
+
 if __name__ == "__main__":
     unittest.main()
 
