@@ -3,6 +3,8 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '20 7 * * *'
 permissions:
   contents: read
 concurrency:
