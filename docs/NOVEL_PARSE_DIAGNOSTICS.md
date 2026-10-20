@@ -274,3 +274,68 @@ La prochaine étape méthodologique devrait vérifier explicitement les
 **arbres internes** des indices 107 et 368 et rechercher si leurs
 participes sont attachés au bon référent plutôt que déduire la
 validité syntaxique de la seule racine complète.
+
+
+## Audit des arbres : les complétions ne sont pas toutes grammaticales
+
+L'audit `scripts/audit_novel_tree_quality.py`, exécuté dans la CI
+[39359542186](https://github.com/leye0/seman2/actions/runs/39359542186),
+réanalyse par l'**unique** API `Parser.parse` les cas immuables
+107, 328 et 368 et imprime les meilleurs arbres complets, leurs
+constituants, leurs spans et leurs scores. L'audit ne se contente pas
+de la présence d'une racine `CLAUSE`.
+
+**Découverte sur la version à 428/500 :**
+- **107 (Dickens), faux positif** : le parseur décomposait
+  `and think of the captivating, girlish, bright-eyed lovely Dora`
+  en une proposition dont `think of the captivating` était le **sujet**
+  et `bright-eyed` le **verbe**. C'est une analyse grammaticalement
+  intenable, malgré une racine complète.
+- **328 (*Frankenstein*), gain de structure avéré** : l'arbre conserve
+  `The Turk` comme sujet, `amazed and delighted` comme incise ADJP
+  et `endeavoured to kindle...` comme prédicat. Il reste une ambiguïté
+  de rattachement de `by promises of reward and wealth`, actuellement
+  logé dans le groupe nominal objet plutôt qu'attaché clairement à
+  l'événement ; la justesse complète de l'arbre n'est donc pas certifiée.
+- **368 (*Frankenstein*), faux positif toujours ouvert** : le moteur
+  transforme `on` en adverbe de proposition puis utilise
+  `this shore` comme sujet de `seized immediately, and charged with
+  murder`. Or la phrase doit être analysée autour du sujet `You`
+  et d'une **coordination passive** (`were thrown ... seized ...
+  and charged`), avec les groupes prépositionnels et l'incise
+  `renowned for its hospitality` rattachés aux bons éléments.
+
+**Correction conservatrice** : le premier essai introduisait deux
+variantes concurrentes de l'incise et saturait la forêt d'un autre
+cas (346). La version [`4e497ea`](https://github.com/leye0/seman2/commit/4e497eacd978b5f2fe4275494c567047a2299479)
+réunit leur reconnaissance dans **une règle** exigeant le trait
+syntaxique `incidental_subject=true`, présent sur les NP
+déterminés, possessifs, pronominaux ou noms propres licenciés.
+Le cas 107 est désormais `roots_without_valid_analysis`, comme il
+se doit en attendant une vraie règle de coordination/participe.
+Le cas 328 reste complet ; le cas 368 reste complet mais mal
+analysé. Le cas 346 ne sature plus.
+
+**Mesure finale [39359542183](https://github.com/leye0/seman2/actions/runs/39359542183) :
+427/500 (85,4 %)**, 44 sans racine, 22 racines sans analyse
+valide, 4 dépassements de budget et 3 délais. Exactement **un**
+changement de statut vs les 428 complétions précédentes : le
+faux positif du cas 107 est retiré. Les trois suites CI (Layer 1,
+Direct Grammar, 500 romans) sont vertes. Cette statistique est une
+**couverture de complétion**, et NON un décompte d'arbres
+linguistiquement vérifiés ; au moins le cas 368 y reste un faux
+positif identifié.
+
+Pour reproduire l'audit :
+```bash
+PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality \
+  --wordnet-dir /path/to/wordnet/dict --indices 107,328,368 \
+  --max-items 50000 --kbest-work-limit 500000
+```
+
+**Suite de recherche ciblée** : règles de **coordination passive
+partageant un auxiliaire**, frontières des groupes prépositionnels
+et attache des participes adjectivaux. Ces règles doivent être
+éprouvées sur des phrases positives et négatives et sur les
+attachements internes ; on ne revendiquera aucun gain de qualité
+sur la seule base de nouvelles racines.
