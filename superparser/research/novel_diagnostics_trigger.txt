@@ -2,3 +2,4 @@ Full pinned novel benchmark requested after productive grammar fixes: habitual u
 Checkpoint: e3a248256d8ec986ea8d42cb3e7ad9a2af6000b5
 Checkpoint: 7ec527de470ce75e5e3a9f2cac30cb11c933e1e8 — send lexical dative, apostrophe names, restrictive zero-relative, parenthetical negative do.
 Checkpoint: fbd27a6d5413192c5d185575faffffb038a1d84e — correct overconstrained zero relative.
+Checkpoint: 594bb197dedf94857f044cc31df1752e71f2b011 — participial supplement, towards, quantified-distance copula and iterated quotation with full tree checks.
