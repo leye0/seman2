@@ -42,6 +42,18 @@ class SegmentationTests(unittest.TestCase):
                 self.assertIsNotNone(root)
                 self.assertIn(expected, set(derivations(root)))
 
+    def test_british_directional_towards_keeps_preposition_and_wordnet(self) -> None:
+        p = make_parser()
+        lattice = p.parse("She moved towards the door.").lattice
+        readings = [c for c in lattice.candidates
+                    if c.surface.casefold() == "towards"]
+        self.assertIn("PREP", {c.category for c in readings})
+        self.assertTrue(any(c.lemma == "toward" for c in readings
+                            if c.category == "PREP"))
+        self.assertIn("PREP", {c.category for c in p.parse(
+            "She moved toward the door.").lattice.candidates
+            if c.surface.casefold() == "toward"})
+
     def test_internal_apostrophe_surnames_are_full_span_names(self) -> None:
         parser = make_parser()
         for surface in ("O'Brien", "D'Artagnan", "M'Graw", "O’Connor"):
