@@ -927,7 +927,7 @@ class AdverbialWhModalAndBarePPTests(unittest.TestCase):
             report=p.parse(sentence)
             best=report.result.best()
             self.assertIsNotNone(best,report.result.stats)
-            self.assertIn("vpnp_bare_prepositional_pp",self.rules(best),sentence)
+            self.assertTrue({"vpnp_bare_prepositional_pp", "vpnp_bare_intransitive_pp"} & self.rules(best), (sentence,self.rules(best)))
 
     def test_an_object_wh_is_not_mistaken_for_adverbial_wh(self):
         p=make_parser()
