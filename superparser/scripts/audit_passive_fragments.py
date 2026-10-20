@@ -50,6 +50,27 @@ def main() -> None:
         for child in item.children:
             yield from nodes(child)
 
+    for goal, frag in (
+        ("VP", sample[sample.index("were "):].rstrip(".")),
+        ("CLAUSE", "You were thrown, seized immediately, and charged with murder."),
+        ("VP", "were opened, and closed"),
+        ("CLAUSE", "The doors were opened, and closed."),
+    ):
+        p = Parser.from_dir(DATA, goal_category=goal, cache_size=0)
+        rr = p.parse(frag, diagnostic_k=64,
+                     kbest_work_limit=500_000).result
+        alt = rr.alternatives(limit=64)
+        valid = [
+            rank for rank, item in enumerate(alt, start=1)
+            if any(n.rule_id == "vp_passive_shared_aux_sequence"
+                   for n in nodes(item))
+        ]
+        print("PASSIVE_COMPOSITION", repr(goal), repr(frag),
+              "complete=", rr.completed,
+              "shared_aux_ranks=", valid[:8],
+              "best_rule=", rr.best().rule_id if rr.best() else None,
+              "root_candidates=", len(alt), flush=True)
+
     for rank, tree in enumerate(result.alternatives(limit=128), start=1):
         all_nodes = list(nodes(tree))
         if any(n.rule_id == "vp_passive_shared_aux_sequence" for n in all_nodes):
