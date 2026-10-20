@@ -1171,8 +1171,9 @@ class ProductiveHyphenMorphologyWithoutDictionaryTests(unittest.TestCase):
                            if c.category == "ADJ" and
                            c.source == "hyphen-participial-adjective"]
                 self.assertTrue(derived, [c.as_dict() for c in full])
-                self.assertTrue(all(c.provenance.get("head_lemma")
-                                    for c in derived))
+                self.assertTrue(all(
+                    any(i.provenance.get("head_lemma") for i in c.interpretations)
+                    for c in derived))
                 self.assertFalse(any(c.category == "V" and
                                      c.source == "hyphen-participial-adjective"
                                      for c in full))
