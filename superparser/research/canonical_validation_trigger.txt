@@ -1,0 +1,2 @@
+Explicit checkpoint for canonical grammar quality. The full CI suite no longer runs on every grammar commit.
+Checkpoint: 75120a119a23c01dc224b2704b303b0f55929aca — free relative inversion, complement attachment, and distributive lexical categories.
