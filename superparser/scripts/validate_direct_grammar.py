@@ -132,6 +132,9 @@ def main():
         "quality_gate":checks,
         "lexical_sample":{k:v for k,v in result["lexical_morphology"].items() if k in ("barks","are","did")},
     }),flush=True)
+    for pair in result["pair_details"]:
+        if pair["negative"]["completed"]:
+            print("DIRECT_NEGATIVE_FALSE_ACCEPT "+json.dumps(pair),flush=True)
     if not all(checks.values()):
         raise SystemExit("System-level grammar quality gate FAILED")
 
