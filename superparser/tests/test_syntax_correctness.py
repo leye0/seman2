@@ -296,3 +296,43 @@ def test_participial_np_cannot_absorb_an_active_subject_verb_object() -> None:
     best = result.best()
     if best is not None:
         assert "np_part_ed_obj" not in rules(best)
+
+
+def test_prenominal_titles_are_lexically_licensed_not_arbitrary_nouns() -> None:
+    """TITLE is a distinct function, not any WordNet noun preceding a name."""
+    p = parser()
+    for sentence in ("Captain Nemo arrived.", "Doctor Watson waited.",
+                     "Professor Moriarty spoke.", "Lady Catherine smiled."):
+        result = p.parse(sentence).result
+        best = result.best()
+        assert best is not None, (sentence, result.stats)
+        assert "np_title_name" in rules(best), sentence
+        titled = next(n for n in nodes(best) if n.rule_id == "np_title_name")
+        assert titled.children[0].category == "TITLE", sentence
+        assert titled.children[0].features.as_dict()["honorific"] == "true"
+
+    for sentence in ("Lovely Dora smiled.", "River Mary smiled.",
+                     "Carpet Dora spoke."):
+        report = p.parse(sentence)
+        # Noncompletion is acceptable; an illicit TITLE reading is not.
+        assert all(
+            "np_title_name" not in rules(root)
+            for root in report.result.alternatives(limit=8)
+        ), sentence
+
+
+def test_title_licensing_keeps_wordnet_noun_alternatives() -> None:
+    p = parser()
+    for surface in ("captain", "doctor", "lovely", "think"):
+        report = p.parse(surface.capitalize() + " arrived.")
+        lexical = {
+            c.category for c in report.lattice.candidates
+            if c.surface.casefold() == surface
+        }
+        assert "N" in lexical, (surface, lexical)
+    captain = p.parse("Captain Nemo arrived.")
+    categories = {
+        c.category for c in captain.lattice.candidates
+        if c.surface.casefold() == "captain"
+    }
+    assert {"TITLE", "N"} <= categories, categories

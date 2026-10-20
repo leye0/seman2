@@ -15,7 +15,7 @@ from scripts.diagnose_novel_parses import select_cases
 from seman_parser.engine import Parser, ParserResources
 
 DATA = Path(__file__).resolve().parents[1] / "data"
-TARGETS = (107, 328, 368)
+TARGETS = (107, 328, 368, 480)
 
 
 def display_tree(item, text: str, depth: int = 0) -> list[str]:
