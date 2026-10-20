@@ -414,6 +414,44 @@ class ChartParserTests(unittest.TestCase):
                 for tree in parsed.alternatives(limit=16):
                     self.assertNotIn("vp_passive_shared_aux_sequence", rules(tree))
 
+    def test_unattested_hyphen_compounds_do_not_invent_verb_lemmas(self) -> None:
+        """Preserve POS ambiguity when attested, not via a different word's suffix."""
+        from seman_parser.segmentation import build_lattice
+
+        for text, expected in (
+            ("bright-eyed", "ADJ"),
+            ("carpet-bag", "N"),
+        ):
+            with self.subTest(compound=text):
+                lattice = build_lattice(text, self.parser.resources.lexicon)
+                candidates = lattice.covering(0, len(text))
+                self.assertTrue(
+                    any(c.category == expected for c in candidates),
+                    [c.as_dict() for c in candidates],
+                )
+                unlicensed_verbs = [
+                    c for c in candidates
+                    if c.category == "V" and c.source == "hyphen-compound"
+                ]
+                self.assertEqual(unlicensed_verbs, [])
+
+        compounds = build_lattice(
+            "my carpet-bag and bright-eyed Dora",
+            self.parser.resources.lexicon,
+        )
+        carpet = compounds.covering(3, 13)
+        self.assertFalse(any(
+            c.category == "N" and c.features.as_dict().get("number") == "plural"
+            and c.source == "hyphen-compound" for c in carpet
+        ))
+        # The legitimate WordNet N and V interpretations of *think*
+        # continue to coexist; the restriction applies only to UNATTESTED
+        # hyphenated compounds, not individual words.
+        think = build_lattice("think", self.parser.resources.lexicon)
+        categories = {c.category for c in think.candidates}
+        self.assertIn("N", categories)
+        self.assertIn("V", categories)
+
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
         # Even with one preferred reading, the API exposes alternatives.

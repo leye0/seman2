@@ -761,15 +761,25 @@ def _hyphenated_candidates(
                 # The ordinary multiword pass already emitted these senses.
                 continue
             if not matches:
-                # A productive compound inherits the syntactic readings of
-                # its rightmost head while keeping its full surface span.
+                # An unattested compound may inherit NON-VERBAL lexical
+                # readings of its final head. Inheriting V would fabricate
+                # a lexical verb from a noun or adjective compound, e.g.
+                # "bright-eyed" -> finite V and "carpet-bag" -> finite V.
+                # A full-surface lexical entry still licenses verb senses.
+                # The final head must also satisfy its own written
+                # inflection; do not turn singular "bag" into plural.
                 matches = tuple(
-                    match
-                    for match in lexicon.lookup_morphology(head.text)
-                    if match[1].category in open_categories
+                    (entry, sense, lemma)
+                    for entry, sense, lemma in lexicon.lookup_morphology(head.text)
+                    if sense.category in open_categories - {"V"}
+                    and _surface_matches_morphology(head.text, entry, sense, lemma)
                 )
                 source = "hyphen-compound"
-            for _, sense, lemma in matches:
+            for entry, sense, lemma in matches:
+                if source == "lexicon-hyphen" and not _surface_matches_morphology(
+                    surface, entry, sense, lemma,
+                ):
+                    continue
                 candidate = _candidate_from_sense(
                     span_start=first.start,
                     span_end=head.end,
