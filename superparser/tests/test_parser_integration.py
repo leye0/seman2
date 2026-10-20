@@ -37,6 +37,27 @@ class SegmentationTests(unittest.TestCase):
         john = [c for c in lattice.candidates if c.surface == "John"]
         self.assertGreaterEqual(len(john), 1)
 
+    def test_independent_wh_subject_question_needs_question_boundary(self) -> None:
+        """A relative fragment must not be rescued by a lexical homograph."""
+        parser = make_parser()
+        fragment = "which I accordingly did"
+        result = parser.parse(fragment).result
+        self.assertFalse(result.completed, result.stats)
+        self.assertIsNone(result.best())
+
+        # Ordinary questions retain their nominal wh constructions, while
+        # the proper noun/letter-N interpretation of I remains lexical.
+        for question in ("Who arrived?", "Which guests arrived?"):
+            with self.subTest(question=question):
+                parsed = parser.parse(question).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertEqual(parsed.best().rule_id, "clause_wh_subj")
+        lattice = parser.parse(fragment).lattice
+        self.assertIn("N", {c.category for c in lattice.candidates
+                            if c.surface == "I"})
+        self.assertIn("PRONOUN", {c.category for c in lattice.candidates
+                                  if c.surface == "I"})
+
     def test_local_irregular_inflection_does_not_hide_wordnet_verb(self) -> None:
         """A local auxiliary and an irregular lexical verb are both real."""
         parser = make_parser()
