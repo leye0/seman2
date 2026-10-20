@@ -152,3 +152,29 @@ les nombres ci-dessus sont la photographie contrôlée du commit indiqué.
 Une signature n'est **pas** un diagnostic causal. Le prochain correctif
 devra être évalué sur les cas positifs précis et sur des contre-exemples
 non grammaticaux avant de revendiquer un gain.
+
+## Essais sur les relatives, cohorte figée (octobre 2026)
+
+- **Contrôle propre, commit `50d2433` : 418/500.**
+- **Règle générale de relative prépositionnelle, commit `7a26e1d` :
+  421/500, sans régression de couverture.** Les phrases indexées 101,
+  187 et 327 sont nouvellement complètes, respectivement avec
+  `on which`, `of whose` et `to which`. Les règles utilisent
+  une catégorie pronominale relative spécifique, un groupe
+  prépositionnel relativisé et une proposition à sujet explicite
+  avec verbe fini ; elles ne convertissent pas n'importe quel PP en
+  relative.
+- **Essai rejeté d'objet relatif + coordination mixte, commits
+  `415664a` et `0c036d8` : 420/500.** La quatrième phrase,
+  index 473, reste non complète. La phrase 346, autrefois complète,
+  bascule vers `forest_budget_exceeded` (saturation à 50 000 états).
+  Ce coût d'ambiguïté est une régression réelle sous le budget
+  canonique : les neuf règles et deux sens lexicaux supplémentaires
+  ont donc été retirés.
+
+La phrase 473 combine `whom he had met by the way` et
+`with whom he had had the intelligence to return at once`.
+Des tests minimaux de relatives objet réussissent, mais ne
+démontrent **ni** le bon classement d'arbre **ni** la couverture
+du cas réel. La prochaine recherche doit isoler les sous-analyses
+manquantes et mesurer le coût forestier avant d'élargir la grammaire.

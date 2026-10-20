@@ -104,43 +104,6 @@ class ChartParserTests(unittest.TestCase):
                 self.assertIsNotNone(best)
                 self.assertIn(rule, descendants(best))
 
-    def test_object_gap_relative_and_mixed_relative_coordination(self) -> None:
-        """Whom demands an independently licensed transitive object gap."""
-        def descendant_ids(node):
-            return {node.rule_id} | {
-                r for child in node.children for r in descendant_ids(child)
-            }
-        examples = (
-            ("The captain whom Mary met smiled.", "rel_obj_finite_np_gap"),
-            # Current best ranking may prefer an unrelated WH-NP structure
-            # here; completion alone does NOT certify a correct relative tree.
-            ("The captain, whom Mary had met at the station, smiled.",
-             None),
-            ("The officers, whom Mary met, and with whom Mary spoke, waited.",
-             "rel_clause_mixed_coord_comma"),
-        )
-        for text, expected in examples:
-            with self.subTest(text=text):
-                result = self.parser.parse(text).result
-                self.assertTrue(result.completed, result.stats)
-                if expected is not None:
-                    self.assertIn(expected, descendant_ids(result.best()))
-
-    def test_object_gap_relatives_refuse_intransitive_verbs(self) -> None:
-        def descendant_ids(node):
-            return {node.rule_id} | {
-                r for child in node.children for r in descendant_ids(child)
-            }
-        for text in (
-            "The captain whom Mary slept smiled.",
-            "The captain whom Mary arrived smiled.",
-            "The captain whom Mary was happy smiled.",
-        ):
-            with self.subTest(text=text):
-                best = self.parser.parse(text).result.best()
-                if best is not None:
-                    self.assertNotIn("rel_obj_finite_np_gap", descendant_ids(best))
-
     def test_pied_piping_cannot_be_invented_from_any_wh_or_prep(self) -> None:
         """Reject missing relative pronouns and unlicensed possessive gaps."""
         def descendants(node):
