@@ -64,6 +64,7 @@ class NovelDiagnosticsTests(unittest.TestCase):
         )
         parser = MagicMock()
         parser.parse.return_value.lattice.text = "“I saw.”"
+        parser.parse.return_value.result.text = "“I saw.”"
         parsed, lattice, result = parse_corpus_case(parser, case)
         self.assertEqual(parsed.analysis_text, "“I saw.”")
         self.assertIs(lattice, parser.parse.return_value.lattice)
@@ -173,6 +174,14 @@ class NovelDiagnosticsTests(unittest.TestCase):
             result.best().as_dict() if result.best() else None,
             direct.result.best().as_dict() if direct.result.best() else None,
         )
+
+    def test_novel_dialogue_audit_uses_gateway_and_fails_on_errors(self):
+        source = (Path(__file__).resolve().parents[1]
+                  / "scripts" / "smoke_cleaned_novel_dialogues.py").read_text(
+                      encoding="utf8")
+        self.assertIn("parse_corpus_case(", source)
+        self.assertNotIn("parse_grammar_lattice", source)
+        self.assertIn("raise RuntimeError(", source)
 
     def test_exclusive_headlines(self):
         cases = (

@@ -273,6 +273,13 @@ class DialogueGrammarTests(unittest.TestCase):
         self.assertIn("REPORTED_CONTENT",
                       [edge.relation for edge in report.interpret().graph.relations])
 
+    def test_unsuccessful_quotation_cannot_be_silently_stripped(self):
+        for text in ('“The the the.”', '“Unfinished speech'):
+            with self.subTest(text=text):
+                report=self.parser.parse(text)
+                self.assertEqual(report.result.text,text)
+                self.assertEqual(report.lattice.text,text)
+
     def test_unquoted_prose_keeps_canonical_grammar(self):
         report=self.parser.parse("John walks.")
         self.assertFalse(report.result.stats.get("dialogue_scoped",False))

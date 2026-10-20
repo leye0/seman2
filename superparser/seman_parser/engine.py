@@ -282,30 +282,32 @@ class Parser:
             if quotation_boundaries(original):
                 if use_cache:
                     cached = self._parse_cache.get(dialogue_key)
-                    if cached is not None and cached.stats.get("dialogue_scoped"):
+                    if cached is not None:
                         return ParseReport(
                             result=cached,
-                            resources=self._dialogue_resources or self.resources,
+                            resources=(self._dialogue_resources or self.resources)
+                            if cached.stats.get("dialogue_scoped") else self.resources,
                             lattice=self._lattice_for_text(original),
                         )
                 original_lattice = self._lattice_for_text(original)
+                # One recognizer call: it tries scoped dialogue then the
+                # ordinary grammar. NEVER discard quote marks and retry.
                 spoken = self._parse_lattice(
                     original_lattice, max_items=max_items,
                     kbest_work_limit=kbest_work_limit,
                     diagnostic_k=diagnostic_k, beam=beam,
                 )
-                if spoken.completed and spoken.stats.get("dialogue_scoped"):
-                    if use_cache:
-                        self._parse_cache.put(dialogue_key, spoken)
-                    return ParseReport(
-                        result=spoken,
-                        resources=self._dialogue_resources or self.resources,
-                        lattice=original_lattice,
-                    )
-        # Backwards compatibility for an isolated outer-quoted clause when
-        # the explicit dialogue grammar cannot recognize the whole utterance.
-        # No corpus caller may strip quotes before entering this method.
-        normalized = original.strip('"\u201c\u201d\u2018\u2019').strip()
+                if use_cache:
+                    self._parse_cache.put(dialogue_key, spoken)
+                return ParseReport(
+                    result=spoken,
+                    resources=(self._dialogue_resources or self.resources)
+                    if spoken.stats.get("dialogue_scoped") else self.resources,
+                    lattice=original_lattice,
+                )
+        # No silent normalization: an incomplete quoted sentence must fail
+        # with its original quote context, not succeed as a different string.
+        normalized = original
         cache_key = (normalized, self.goal_category)
         if use_cache:
             cached = self._parse_cache.get(cache_key)

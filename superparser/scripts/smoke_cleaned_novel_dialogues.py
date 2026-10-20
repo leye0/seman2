@@ -17,7 +17,7 @@ from research.verbnet_lr.clean_novel_corpus import load_cleaned, read_manifest
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, extract
 from seman_parser.dialogue import quotation_boundaries
 from seman_parser.engine import Parser, ParserResources
-from seman_parser.segmentation import build_lattice
+from research.verbnet_lr.corpus_pipeline import parse_corpus_case, prepare_corpus_input
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -93,7 +93,8 @@ def select_quotes(quota,max_tokens,*,stratify_length=False):
         book=by_book[record["ebook_id"]]
         text,info=load_cleaned(book)
         rows,extraction=extract(book,text,length_min=4,length_max=max_tokens)
-        valid=[r for r in rows if quotation_boundaries(r["text"])]
+        valid=[r for r in rows if quotation_boundaries(
+            prepare_corpus_input(r).analysis_text)]
         sampled=(choose_stratified(valid,quota) if stratify_length
                  else choose_from_whole_book(valid,quota))
         metadata.append({
@@ -129,16 +130,16 @@ def main():
         for i,row in enumerate(selected):
             began=perf_counter()
             try:
-                lattice=build_lattice(row["text"],resources.lexicon,multiword_max=1)
-                parsed=parser.parse_grammar_lattice(
-                    lattice,max_items=args.max_items,
+                prepared,lattice,parsed=parse_corpus_case(
+                    parser,row,max_items=args.max_items,
                     kbest_work_limit=args.kbest_work_limit)
                 best=parsed.best() if parsed.completed else None
                 result={
                     "index":i,"book_id":row["book_id"],"ordinal":row["ordinal"],
-                    "sentence":row["text"],"tokens":row["tokens"],
+                    "sentence":row["text"],"analysis_text":prepared.analysis_text,
+                    "tokens":row["tokens"],
                     "length_band":token_length_band(row["tokens"]),
-                    "quote_layout":quote_surface_layout(row["text"]),
+                    "quote_layout":quote_surface_layout(prepared.analysis_text),
                     "sha256":sha256(row["text"].encode()).hexdigest(),
                     "completed":bool(best),
                     "dialogue_scoped":bool(parsed.stats.get("dialogue_scoped")),
@@ -189,7 +190,8 @@ def main():
 
     final={"schema":"cleaned-novel-dialogue-smoke-v2",
            "source":source,"totals":{
-               "n":len(rows),"dialogue_covered":sum(r["dialogue_scoped"] for r in rows),
+               "n":len(rows),"errors":sum("error" in r for r in rows),
+                "dialogue_covered":sum(r["dialogue_scoped"] for r in rows),
                "fallback_complete":sum(r["completed"] and not r["dialogue_scoped"] for r in rows),
                "unparsed":sum(not r["completed"] for r in rows)},
            "by_book":counts,
@@ -213,6 +215,14 @@ def main():
             "wall_ms":r["wall_ms"],"completed":r["completed"]}
             for r in final["examples_unparsed"][:8]]
     },ensure_ascii=False),flush=True)
+    # Preserve the full audit, but NEVER let a caught parser exception be
+    # misreported as a green GitHub Actions run.
+    errors=[r for r in rows if "error" in r]
+    if errors:
+        raise RuntimeError(
+            f"Dialogue audit encountered {len(errors)} parser errors "
+            f"out of {len(rows)} examples; see individual JSONL"
+        )
 
 
 if __name__=="__main__":

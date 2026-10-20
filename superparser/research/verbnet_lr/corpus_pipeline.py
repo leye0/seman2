@@ -113,4 +113,9 @@ def parse_corpus_case(
     lattice = report.lattice
     if lattice is None:
         raise AssertionError("Parser.parse did not expose its lexical lattice")
+    if lattice.text != prepared.analysis_text or report.result.text != prepared.analysis_text:
+        raise AssertionError(
+            "Public parser changed corpus analysis text: quote context "
+            "and source spans must never be silently stripped or replaced"
+        )
     return prepared, lattice, report.result
