@@ -136,7 +136,15 @@ def _advance_quotes(
         # A trailing English possessive ("three days' rest") is not an
         # opening dialogue delimiter. Likewise, a closing double quote
         # stranded at a fragment's end must not become a new opening quote.
-        if balance_sentence_boundary and char == "'" and before.isalnum() and not stack:
+        # A clipped colloquial word ("o' that", "an' then") has a
+        # trailing apostrophe even when the surrounding speech uses double
+        # quotation marks.  The earlier not-stack guard misread that apostrophe
+        # as an opening SINGLE quote inside an open DOUBLE quote, then
+        # fabricated an extra quote at the next sentence boundary.
+        # Keep the genuine closing single quote in 'word' / 'father.' when
+        # a matching single-quote delimiter is actually on top of the stack.
+        if (balance_sentence_boundary and char == "'" and before.isalnum()
+                and (not stack or stack[-1][1] != "'")):
             continue
         if balance_sentence_boundary and char == '"' and not stack and before in ".!?" and not after:
             continue

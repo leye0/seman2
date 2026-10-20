@@ -979,6 +979,32 @@ class ClauseSupplementaryCommaPPTests(unittest.TestCase):
             for item in report.result.alternatives(limit=8):
                 self.assertNotIn("clause_final_comma_pp_adjunct",self.rules(item),sentence)
 
+
+class EmDashPunctuationProvenanceTests(unittest.TestCase):
+    def test_double_hyphen_and_typographic_emdash_have_dash_hypotheses(self):
+        parser = make_parser()
+        for sentence, marker in (
+            ("Anderson's ball--for it was Job--had broken the window.", "--"),
+            ("Anderson's ball—for it was Job—had broken the window.", "—"),
+        ):
+            lattice = parser.parse(sentence).lattice
+            spans = {(c.span_start, c.span_end, c.surface, c.category,
+                      c.features.as_dict().get("dash_kind"))
+                     for c in lattice.candidates if c.surface == marker}
+            for position in (sentence.index(marker),
+                             sentence.index(marker, sentence.index(marker) + len(marker))):
+                self.assertIn((position, position + len(marker), marker,
+                               "DASH", "em"), spans)
+                self.assertIn((position, position + len(marker), marker,
+                               "COMMA", None), spans)
+
+    def test_apostrophe_in_anderson_possessive_is_not_dash(self):
+        sentence = "Anderson's ball--for it was Job--had broken the window."
+        report = make_parser().parse(sentence)
+        dash_spans = [c for c in report.lattice.candidates if c.category == "DASH"]
+        self.assertEqual(len(dash_spans), 2)
+        self.assertNotIn("'s", [c.surface for c in dash_spans])
+
 if __name__ == "__main__":
     unittest.main()
 

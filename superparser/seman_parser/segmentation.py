@@ -287,6 +287,19 @@ def build_lattice(
     # Lone hyphens retain their ordinary compound/minus behaviour.
     for mark in re.finditer(r"--+|[\u2013\u2014]", text):
         surface = mark.group(0)
+        # The legacy COMMA edge remains for existing grammar compatibility,
+        # while DASH is a distinct syntactic hypothesis for appositions,
+        # interruptions and explanatory --...-- parentheses. No source text
+        # or historical cohort token offset is normalized in place.
+        candidates.append(LexicalCandidate(
+            span_start=mark.start(), span_end=mark.end(),
+            surface=surface, lemma="—", normalized="—",
+            category="DASH",
+            features=FeatureStructure.build({"dash_kind": "em"}),
+            source="punctuation-dash", score=0.9,
+            provenance={"construction": "em_dash_delimiter", "source": "orthography"},
+            interpretations=(LexicalInterpretation(None, "—"),),
+        ))
         candidates.append(LexicalCandidate(
             span_start=mark.start(), span_end=mark.end(),
             surface=surface, lemma="—", normalized="—",

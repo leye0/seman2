@@ -158,5 +158,43 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertEqual(len(split_prose_sentences(text)), 2)
 
 
+
+    def test_colloquial_trailing_apostrophe_inside_double_quotes(self):
+        # Exact spelling from Treasure Island. "o'" is a clipped word,
+        # not an opening of nested SINGLE-quoted speech.
+        source = '"out o\' that! Off with you to the cook and get some work."'
+        units = split_prose_analysis_units(source)
+        self.assertEqual([u.source_text for u in units],
+                         ['"out o\' that!', 'Off with you to the cook and get some work."'])
+        self.assertEqual([u.text for u in units],
+                         ['"out o\' that!"', '"Off with you to the cook and get some work."'])
+        self.assertEqual(units[1].synthetic_prefix, '"')
+        self.assertEqual(units[1].synthetic_suffix, '')
+        self.assertEqual(" ".join(u.source_text for u in units), source)
+
+    def test_inner_single_quote_is_genuine_in_frankenstein(self):
+        source = ("The youth and his companion had each of them several names, "
+                  "but the old man had only one, which was 'father.' "
+                  "The girl was called 'sister' or 'Agatha'.")
+        units = split_prose_analysis_units(source)
+        self.assertEqual(len(units), 2)
+        self.assertEqual(" ".join(u.source_text for u in units), source)
+        self.assertTrue(all(not u.synthetic_prefix and not u.synthetic_suffix
+                            for u in units))
+        self.assertIn("'father.'", units[0].text)
+
+    def test_closing_double_quote_from_prior_sentence_is_provenance_not_orphan(self):
+        source = '"There are three tall trees. I\'ve half a mind to dine first."'
+        units = split_prose_analysis_units(source)
+        self.assertEqual(len(units), 2)
+        self.assertEqual(units[1].source_text, 'I\'ve half a mind to dine first."')
+        self.assertEqual(units[1].synthetic_prefix, '"')
+        self.assertEqual(units[1].text, '"I\'ve half a mind to dine first."')
+
+    def test_double_hyphen_is_not_a_sentence_break(self):
+        source = ("Anderson's ball--for it was Job that shot him first--"
+                  "had broken his shoulder-blade and touched the lung, not badly.")
+        self.assertEqual(split_prose_sentences(source), [source])
+
 if __name__ == "__main__":
     unittest.main()
