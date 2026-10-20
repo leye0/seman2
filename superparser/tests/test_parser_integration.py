@@ -1056,6 +1056,96 @@ class EllipticalOffWithDispatchTests(unittest.TestCase):
                 self.assertNotIn("clause_elliptical_off_with_np_pp", self.rules(best), text)
                 self.assertNotIn("clause_elliptical_off_with_np", self.rules(best), text)
 
+
+class LiteraryExceptionDictionaryTests(unittest.TestCase):
+    """Attested orthographic variants are first-class lexicon hypotheses."""
+
+    def test_source_attested_hyphenated_words_have_independent_readings(self):
+        p = make_parser()
+        pairs = (
+            ("blood-stained", "ADJ"),
+            ("bright-eyed", "ADJ"),
+            ("shoulder-blade", "N"),
+            ("pick-axe", "N"),
+            ("spy-glass", "N"),
+            ("charnel-houses", "N"),
+            ("well-known", "ADJ"),
+            ("stage-cutch", "N"),
+            ("carpet-bag", "N"),
+        )
+        for surface, category in pairs:
+            with self.subTest(surface=surface):
+                report = p.parse(surface)
+                full = report.lattice.covering(0, len(surface))
+                matched = [c for c in full
+                           if c.category == category
+                           and any(i.provenance.get("source") ==
+                                   "attested-literary-supplement"
+                                   for i in c.interpretations)]
+                self.assertTrue(matched, [x.as_dict() for x in full])
+                self.assertEqual(matched[0].source, "lexicon-multiword")
+
+    def test_dialectal_words_preserve_attested_spelling_and_normalized_lemma(self):
+        lexicon = make_parser().resources.lexicon
+        expected = {
+            "unfort'nate": ("unfortunate", "ADJ"),
+            "howsomever": ("however", "ADV"),
+            "sperrits": ("spirit", "N"),
+            "sperrit": ("spirit", "N"),
+            "babby": ("baby", "N"),
+            "cap'n": ("captain", "N"),
+            "porkypine": ("porcupine", "N"),
+        }
+        for surface, (lemma, category) in expected.items():
+            with self.subTest(surface=surface):
+                matches = lexicon.lookup_morphology(surface)
+                self.assertTrue(any(
+                    meaning == lemma and sense.category == category
+                    and sense.provenance.get("source") ==
+                    "attested-literary-supplement"
+                    for _, sense, meaning in matches), (surface, matches))
+
+    def test_plural_and_singular_forms_do_not_inherit_each_other(self):
+        lexicon = make_parser().resources.lexicon
+        for surface, number in (("cross-trees", "plural"),
+                                ("school-fellows", "plural"),
+                                ("spy-glass", "singular"),
+                                ("shoulder-blade", "singular"),
+                                ("sperrits", "plural")):
+            with self.subTest(surface=surface):
+                matches = [(sense.category, sense.features.as_dict().get("number"))
+                           for _, sense, _ in lexicon.lookup_morphology(surface)
+                           if sense.provenance.get("source") ==
+                              "attested-literary-supplement"]
+                self.assertIn(("N", number), matches)
+                self.assertNotIn(("N", "singular" if number == "plural"
+                                  else "plural"), matches)
+
+    def test_distinct_double_dash_does_not_become_hyphenated_word(self):
+        p = make_parser()
+        text = "Anderson's ball--for it was Job--had broken his shoulder-blade."
+        lattice = p.parse(text).lattice
+        for c in lattice.candidates:
+            if c.source == "lexicon-multiword" and c.surface.count("-") > 0:
+                self.assertNotIn("--", c.surface)
+        dashes = [c for c in lattice.candidates
+                  if c.category == "DASH" and c.surface == "--"]
+        self.assertEqual(len(dashes), 2)
+        self.assertTrue(any(c.category == "N"
+                            and c.surface == "shoulder-blade"
+                            for c in lattice.candidates))
+
+    def test_wordnet_and_compound_fallback_remain_available(self):
+        p = make_parser()
+        for word in ("think", "uninvented-frost", "blood-stained"):
+            lattice = p.parse(word).lattice
+            self.assertTrue(lattice.candidates, word)
+        lattice = p.parse("blood-stained knife").lattice
+        self.assertTrue(any(c.source == "lexicon-multiword"
+                            and c.surface == "blood-stained"
+                            and c.category == "ADJ"
+                            for c in lattice.candidates))
+
 if __name__ == "__main__":
     unittest.main()
 

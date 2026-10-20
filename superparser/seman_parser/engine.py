@@ -92,7 +92,10 @@ class ParserResources:
             lexicon=load_lexicon(
                 directory / "function_words.jsonl",
                 wordnet_dict=wordnet_dict or discover_wordnet(directory),
-                supplemental_paths=(directory / "syntax_lexicon.jsonl",),
+                supplemental_paths=(
+                    directory / "syntax_lexicon.jsonl",
+                    directory / "literary_lexicon.jsonl",
+                ),
                 # Valency-bearing senses are not reliably ordered first in
                 # WordNet.  Two senses lose productive alternations such as
                 # flood/visit/endure (transitive and intransitive), turning
