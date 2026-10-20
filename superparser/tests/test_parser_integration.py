@@ -140,7 +140,7 @@ class ChartParserTests(unittest.TestCase):
             ("Mary is sure John will return.", "adjp_clausal_bare"),
             ("Mary is sure that John will return.", "adjp_clausal_that"),
             ("Mary is afraid John will leave.", "adjp_clausal_bare"),
-            ("Mary is glad that John returned.", "adjp_clausal_that"),
+            ("Mary is glad that John will return.", "adjp_clausal_that"),
             ("Are you quite sure that you can go?", "adjp_degree_clausal"),
         )
         for text, required in cases:
