@@ -1,0 +1,1 @@
+Research checkpoint: compare 100k and 200k item ceilings against 50k baseline for pinned forest-budget cases 235,243,248,346,487. Preserve 500-case official budget metrics independently.
