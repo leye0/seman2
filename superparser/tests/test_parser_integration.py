@@ -635,6 +635,42 @@ class PerfectPassiveMorphologyTests(unittest.TestCase):
         self.assertIn("finite", {c.features.as_dict().get("vform") for c in be_candidates})
 
 
+
+class GreetingVocativeTests(unittest.TestCase):
+    """A greeting plus addressee is a dialogue act, not an arbitrary NP."""
+
+    def test_productive_greeting_plus_modified_proper_vocative(self):
+        p = make_parser()
+        for sentence in ("Adieu, my dear Margaret.", "Hello, our dear Alice.",
+                         "Farewell, dear Eleanor."):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            rules = set()
+            def collect(node):
+                if node.rule_id is not None:
+                    rules.add(node.rule_id)
+                for child in node.children:
+                    collect(child)
+            collect(best)
+            self.assertIn("clause_farewell_vocative", rules, sentence)
+            if "my dear" in sentence or "our dear" in sentence:
+                self.assertIn("np_poss_adj_proper", rules, sentence)
+
+    def test_salutation_is_required_and_wordnet_noun_alternative_survives(self):
+        p = make_parser()
+        for sentence in ("River, my dear Margaret.", "Table, dear Eleanor."):
+            report = p.parse(sentence)
+            for root in report.result.alternatives(limit=8):
+                def includes(node):
+                    return node.rule_id == "clause_farewell_vocative" or any(
+                        includes(child) for child in node.children)
+                self.assertFalse(includes(root), sentence)
+        lattice = p.parse("Farewell, dear Eleanor.").lattice
+        candidates = [c for c in lattice.candidates if c.surface.lower() == "farewell"]
+        self.assertIn("INTERJECTION", {c.category for c in candidates})
+        self.assertIn("N", {c.category for c in candidates})
+
 if __name__ == "__main__":
     unittest.main()
 
