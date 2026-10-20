@@ -80,6 +80,56 @@ class ChartParserTests(unittest.TestCase):
         report = self.parser.parse("John left.")
         self.assertTrue(report.result.completed, report.result.stats)
 
+    def test_pied_piped_relative_pp_is_a_headed_np(self) -> None:
+        """A preposition plus an oblique wh-word modifies a real NP head."""
+        examples = (
+            ("The shore on which Mary stood was quiet.",
+             "np_relative_pp_restrictive"),
+            ("The sea, on which the moon shone, was calm.",
+             "np_relative_pp_comma_pair"),
+            ("The question to which Mary replied was difficult.",
+             "np_relative_pp_restrictive"),
+            ("The students, of whose work Mary spoke, waited.",
+             "np_relative_pp_comma_pair"),
+        )
+        def descendants(node):
+            return {node.rule_id} | {
+                rule for child in node.children for rule in descendants(child)
+            }
+        for sentence, rule in examples:
+            with self.subTest(sentence=sentence):
+                parsed = self.parser.parse(sentence).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                best = parsed.best()
+                self.assertIsNotNone(best)
+                self.assertIn(rule, descendants(best))
+
+    def test_pied_piping_cannot_be_invented_from_any_wh_or_prep(self) -> None:
+        """Reject missing relative pronouns and unlicensed possessive gaps."""
+        def descendants(node):
+            return {node.rule_id} | {
+                rule for child in node.children for rule in descendants(child)
+            }
+        for sentence in (
+            "The shore on Mary stood was quiet.",
+            "The shore on what Mary stood was quiet.",
+            "The students, of whose Mary spoke, waited.",
+            "The shore on which Mary.",
+        ):
+            with self.subTest(sentence=sentence):
+                best = self.parser.parse(sentence).result.best()
+                if best is not None:
+                    self.assertFalse(
+                        any(rule.startswith("np_relative_pp")
+                            for rule in descendants(best)),
+                        sentence,
+                    )
+        control = self.parser.parse("Mary stood on the shore.").result.best()
+        self.assertIsNotNone(control)
+        self.assertFalse(
+            any(rule.startswith("np_relative_pp") for rule in descendants(control))
+        )
+
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
         # Even with one preferred reading, the API exposes alternatives.
