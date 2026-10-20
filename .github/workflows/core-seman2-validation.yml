@@ -73,7 +73,7 @@ jobs:
             superparser.tests.test_verbnet_lr_gutenberg_novels
       - name: Inspect actual best trees on three recovered novel cases
         run: |
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 8,36,52,53,86,107,178,212,215,250,308,328,338,365,368,449,480,485 --alternatives 1 --lexical-audit
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 8,36,44,52,53,86,107,178,212,215,250,308,328,338,365,368,403,406,412,413,449,480,485 --alternatives 1 --lexical-audit
       - name: Verify documented canonical, adaptive and dialogue execution
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.smoke_layer1
