@@ -120,14 +120,15 @@ class ChartParserTests(unittest.TestCase):
                 best = self.parser.parse(sentence).result.best()
                 if best is not None:
                     self.assertFalse(
-                        any(rule.startswith("np_relative_pp")
+                        any(rule is not None and rule.startswith("np_relative_pp")
                             for rule in descendants(best)),
                         sentence,
                     )
         control = self.parser.parse("Mary stood on the shore.").result.best()
         self.assertIsNotNone(control)
         self.assertFalse(
-            any(rule.startswith("np_relative_pp") for rule in descendants(control))
+            any(rule is not None and rule.startswith("np_relative_pp")
+                for rule in descendants(control))
         )
 
     def test_alternatives_are_preserved(self) -> None:
