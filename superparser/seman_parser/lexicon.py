@@ -248,8 +248,10 @@ class Lexicon:
         out: list[tuple[LexicalEntry, str, str | None]] = []
         for entry, lemma in self._by_morph.get(surface, ()):
             out.append((entry, lemma, None))
-        if out:
-            return out
+        # Static morphology and WordNet exceptions are independent sources.
+        # An irregular verb such as "did" may be an auxiliary in the local
+        # inventory AND a lexical verb in WordNet; the local mapping must not
+        # hide the POS-specific exception for its open-class reading.
         if self._wordnet is not None:
             from .wordnet import POS_ADJ, POS_ADV, POS_NOUN, POS_VERB
 
