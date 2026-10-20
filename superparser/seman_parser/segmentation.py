@@ -340,6 +340,31 @@ def build_lattice(
                             score=1.25,
                         )
                     )
+    # Internal apostrophes in surnames (O'Brien, D'Artagnan, M'Graw)
+    # are not possessive/contraction clitics. The uppercase continuation
+    # distinguishes them from John's, I've, we'd, etc. Keep every other
+    # lexical hypothesis and the original source span unchanged.
+    for token in tokens:
+        if re.fullmatch(r"[A-Z][A-Za-z]*['’][A-Z][A-Za-z]+", token.text):
+            if not any(
+                c.span_start == token.start and c.span_end == token.end
+                and c.category == "PROPER-NOUN" for c in candidates
+            ):
+                candidates.append(LexicalCandidate(
+                    span_start=token.start,
+                    span_end=token.end,
+                    surface=token.text,
+                    lemma=token.text,
+                    category="PROPER-NOUN",
+                    features=FeatureStructure.build(
+                        {"number": "singular", "person": "3"}
+                    ),
+                    interpretations=(LexicalInterpretation(None, token.text),),
+                    normalized=token.text,
+                    source="proper-noun-apostrophe",
+                    score=1.25,
+                    provenance={"construction": "internal_apostrophe_proper_name"},
+                ))
     for token in tokens:
         if token.text[:1].isupper() and token.text.isalpha():
             # A word the lexicon already analyses as an anaphor / wh-element
