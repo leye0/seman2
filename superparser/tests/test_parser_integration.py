@@ -225,7 +225,7 @@ class ChartParserTests(unittest.TestCase):
                 result = self.parser.parse(sentence).result
                 self.assertTrue(result.completed, result.stats)
                 self.assertTrue(
-                    any("clause_subject_parenthetical_adjp" in ids(tree)
+                    any(any(rule is not None and rule.startswith("clause_subject_parenthetical_adjp_") for rule in ids(tree))
                         for tree in result.alternatives(limit=24)),
                     (sentence, result.stats),
                 )
@@ -243,7 +243,47 @@ class ChartParserTests(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 result = self.parser.parse(sentence).result
                 for tree in result.alternatives(limit=16):
-                    self.assertNotIn("clause_subject_parenthetical_adjp", ids(tree))
+                    self.assertFalse(any(rule is not None and rule.startswith("clause_subject_parenthetical_adjp_") for rule in ids(tree)))
+
+    def test_parenthetical_adjective_cannot_invent_bare_subjects(self) -> None:
+        """Reject bare count nouns and spurious noun readings in incidentals."""
+        def walk(item):
+            yield item
+            for child in item.children:
+                yield from walk(child)
+
+        negative_corpus = (
+            "I could only sit down before my fire, biting the key of my carpet-bag, and think of the captivating, girlish, bright-eyed lovely Dora.",
+            '"You were thrown, by some surprising accident, on this shore, renowned for its hospitality, seized immediately, and charged with murder."',
+        )
+        for text in negative_corpus:
+            with self.subTest(text=text):
+                parsed = self.parser.parse(text, max_items=50000,
+                                           kbest_work_limit=500000).result
+                for tree in parsed.alternatives(limit=2):
+                    for node in walk(tree):
+                        if node.rule_id and node.rule_id.startswith(
+                                "clause_subject_parenthetical_adjp_"):
+                            self.assertNotIn(
+                                text[node.children[0].start:node.children[0].end],
+                                {"shore", "think of the captivating"},
+                            )
+
+    def test_recovered_turk_clause_anchors_its_correct_subject(self) -> None:
+        sentence = '"The Turk, amazed and delighted, endeavoured to kindle the zeal of his deliverer by promises of reward and wealth."'
+        best = self.parser.parse(sentence).result.best()
+        self.assertIsNotNone(best)
+        spoken = best.children[0]
+        self.assertEqual(spoken.category, "DIRECT-SPEECH")
+        clause = next(child for child in spoken.children if child.category == "CLAUSE")
+        self.assertIn(clause.rule_id, {
+            "clause_subject_parenthetical_adjp_determined",
+            "clause_subject_parenthetical_adjp_person",
+        })
+        subject, _, adjunct, _, predicate = clause.children
+        self.assertEqual(sentence[subject.start:subject.end], "The Turk")
+        self.assertEqual(sentence[adjunct.start:adjunct.end], "amazed and delighted")
+        self.assertTrue(sentence[predicate.start:predicate.end].startswith("endeavoured to"))
 
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
