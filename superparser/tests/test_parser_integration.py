@@ -65,6 +65,35 @@ class SegmentationTests(unittest.TestCase):
                     for c in lattice.candidates
                 ))
 
+    def test_send_true_double_object_is_not_donate_double_object(self) -> None:
+        parser = make_parser()
+
+        def rule_ids(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from rule_ids(child)
+
+        for sentence in ("Peter sent Susan a message.",
+                         "Mary sent John a letter.",
+                         "They sent her the manuscript."):
+            with self.subTest(sentence=sentence):
+                result = parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertIn("vp_ditransitive", set(rule_ids(result.best())))
+
+        # Donate selects a prepositional recipient instead. In particular
+        # an ambiguous unrelated noun-compound analysis is NOT evidence
+        # for donation's ditransitive lexical frame.
+        for sentence in ("They donated John a book.",
+                         "She donated Mary a painting."):
+            with self.subTest(sentence=sentence):
+                result = parser.parse(sentence).result
+                if result.best() is not None:
+                    self.assertNotIn("vp_ditransitive",
+                                     set(rule_ids(result.best())))
+        grammatical = parser.parse("They donated a book to John.").result
+        self.assertTrue(grammatical.completed, grammatical.stats)
+
     def test_habitual_used_and_fractional_half_keep_open_class_readings(self) -> None:
         parser = make_parser()
         for word, specialty, lexical in (
