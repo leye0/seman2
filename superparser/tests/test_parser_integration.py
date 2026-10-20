@@ -90,23 +90,36 @@ class SegmentationTests(unittest.TestCase):
         self.assertIn("clause_neg_vp", rules(auxiliary.best()))
 
 
-class AuxiliaryHomographDiagnosticTests(unittest.TestCase):
-    """Temporary diagnostics: inspect any invalid auxiliary completions."""
+class MorphologyAndNominalAgreementRegressionTests(unittest.TestCase):
+    """Tests across lexical, morphology, composition and sentence levels."""
 
-    def test_negative_pair_tree_audit(self) -> None:
-        parser = make_parser()
-        import json
-        fixture = DATA.parent / "research" / "verbnet_lr" / "negative_minimal_pairs.jsonl"
-        cases = tuple(json.loads(line)["text"] for line in fixture.read_text().splitlines() if line.strip())
-        for phrase in cases:
-            result = parser.parse(phrase).result
-            def tree(node, depth=0):
-                return [(depth, node.category, node.rule_id,
-                         phrase[node.start:node.end])] + [
-                    row for child in node.children for row in tree(child, depth+1)
-                ]
-            print("AUX_DIAG", phrase, "complete=", result.completed,
-                  "tree=", tree(result.best()) if result.best() else [])
+    def test_did_has_finite_but_not_past_participle_reading(self) -> None:
+        p = make_parser()
+        did = [c for c in p.parse("John did the work.").lattice.candidates
+               if c.surface == "did" and c.category == "V"]
+        self.assertIn("finite", {c.features.as_dict().get("vform") for c in did})
+        self.assertNotIn("ed", {c.features.as_dict().get("vform") for c in did})
+        done = [c for c in p.parse("The work was done.").lattice.candidates
+                if c.surface == "done" and c.category == "V"]
+        self.assertIn("ed", {c.features.as_dict().get("vform") for c in done})
+        self.assertNotIn("finite", {c.features.as_dict().get("vform") for c in done})
+
+    def test_unlicensed_past_participle_cannot_make_pronoun_nominal(self) -> None:
+        p = make_parser()
+        for text in ("They did opened the door.",
+                     "She did not opened the door."):
+            with self.subTest(text=text):
+                result = p.parse(text).result
+                self.assertFalse(result.completed, result.stats)
+        self.assertTrue(p.parse("They did open the door.").result.completed)
+        self.assertTrue(p.parse("She did not open the door.").result.completed)
+
+    def test_common_noun_subject_is_third_person(self) -> None:
+        p = make_parser()
+        wrong = p.parse("The boy are happy.").result
+        self.assertFalse(wrong.completed, wrong.stats)
+        self.assertTrue(p.parse("The boy is happy.").result.completed)
+        self.assertTrue(p.parse("You are happy.").result.completed)
 
 class ChartParserTests(unittest.TestCase):
     def setUp(self) -> None:
