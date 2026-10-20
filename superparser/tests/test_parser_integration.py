@@ -54,6 +54,39 @@ class SegmentationTests(unittest.TestCase):
             "She moved toward the door.").lattice.candidates
             if c.surface.casefold() == "toward"})
 
+    def test_quoted_exclamation_with_iterated_adverbial_has_true_structure(self) -> None:
+        parser = make_parser()
+        text = '"Darby M\'Graw!" again and again and again.'
+        parsed = parser.parse(text).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        best = parsed.best()
+        self.assertEqual(best.rule_id,
+                         "clause_direct_speech_iterative_reporting_ellipsis")
+        self.assertEqual([node.category for node in best.children],
+                         ["DIRECT-SPEECH", "ADVP"])
+        self.assertEqual(best.children[1].rule_id,
+                         "advp_iterative_recursive_coordination")
+
+    def test_negative_copular_distance_keeps_numeral_and_reference_pp(self) -> None:
+        parser = make_parser()
+        parsed = parser.parse(
+            "I was not a hundred yards from her when the wind came again in a clap."
+        ).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        best = parsed.best()
+        self.assertEqual(best.rule_id, "clause_when_post")
+        assert best is not None
+        self.assertIn(
+            "vp_copular_negated_measure_pp",
+            {n.rule_id for n in self._descendants_for_test(best)}
+        )
+
+    @staticmethod
+    def _descendants_for_test(item):
+        yield item
+        for child in item.children:
+            yield from SegmentationTests._descendants_for_test(child)
+
     def test_internal_apostrophe_surnames_are_full_span_names(self) -> None:
         parser = make_parser()
         for surface in ("O'Brien", "D'Artagnan", "M'Graw", "O’Connor"):
