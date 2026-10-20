@@ -825,6 +825,67 @@ class NamedEntityNominalConstructionTests(unittest.TestCase):
                 self.assertNotIn("np_definite_named_entity", self.rules(item), sentence)
 
 
+
+class LicensedObjectTopicalizationTests(unittest.TestCase):
+    @staticmethod
+    def rules(node):
+        if node is None:
+            return set()
+        return ({node.rule_id} if node.rule_id else set()) | {
+            rule for child in node.children
+            for rule in LicensedObjectTopicalizationTests.rules(child)
+        }
+
+    def test_topicalized_object_of_transitive_predicate(self):
+        p = make_parser()
+        for sentence in (
+            "The latter you must develop in her.",
+            "The book you must put on the shelf.",
+            "The work they can finish.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            self.assertIn("clause_object_topicalization_modal",
+                          self.rules(best), sentence)
+            self.assertIn("licensed_transitive",
+                          dict(best.children[-1].features.as_dict()), sentence)
+
+    def test_modal_topicalization_preserves_gapped_object_and_subordinate_if(self):
+        text = "The latter you must develop in her, if you can."
+        report = make_parser().parse(text)
+        best = report.result.best()
+        self.assertIsNotNone(best, report.result.stats)
+        self.assertIn("clause_object_topicalization_modal",
+                      self.rules(best))
+
+    def test_transitive_verb_is_required_for_object_fronting(self):
+        p = make_parser()
+        for sentence in ("The rock you must arrive.", "The mountain you can perish."):
+            report = p.parse(sentence)
+            for root in report.result.alternatives(limit=8):
+                self.assertNotIn("clause_object_topicalization_modal",
+                                 self.rules(root), sentence)
+
+
+class SubordinateComplementAgainstDefiniteProperModifierTests(unittest.TestCase):
+    def test_complementizer_that_is_not_swallowed_by_name_nominal(self):
+        text = "Mary believes that John left."
+        report = make_parser().parse(text)
+        best = report.result.best()
+        self.assertIsNotNone(best, report.result.stats)
+        self.assertNotIn("np_determiner_name_noun_compound",
+                         NamedEntityNominalConstructionTests.rules(best))
+        self.assertIn("John", text[best.start:best.end])
+
+    def test_true_definite_name_noun_still_composes(self):
+        text = "The Longbourn family arrived."
+        best = make_parser().parse(text).result.best()
+        self.assertIsNotNone(best)
+        self.assertIn("np_determiner_name_noun_compound",
+                      NamedEntityNominalConstructionTests.rules(best))
+
+
 if __name__ == "__main__":
     unittest.main()
 
