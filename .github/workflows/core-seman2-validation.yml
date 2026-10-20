@@ -52,6 +52,18 @@ jobs:
       - name: Audit passive coordination fragments through public parser
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.audit_passive_fragments
+      - name: Retrospective 109 and 480 tree comparison through historical Parser.parse
+        run: |
+          git fetch --no-tags --depth=1 origin 4e6a58315ffc2e62a8b74ba9135eab0deca85a67
+          git fetch --no-tags --depth=1 origin 75584d2e08e8453b1c278a7c3486aa5ece304b8c
+          git worktree add --detach "$RUNNER_TEMP/prev-426" 4e6a58315ffc2e62a8b74ba9135eab0deca85a67
+          git worktree add --detach "$RUNNER_TEMP/prev-427" 75584d2e08e8453b1c278a7c3486aa5ece304b8c
+          echo "=== OLD CASE 109 TREE, 426 baseline ==="
+          PYTHONPATH="$RUNNER_TEMP/prev-426/superparser" python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 109 --alternatives 1
+          echo "=== OLD CASE 480 TREE, 427 baseline ==="
+          PYTHONPATH="$RUNNER_TEMP/prev-427/superparser" python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 480 --alternatives 1
+          echo "=== NEW CASES 109 AND 480 ==="
+          PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 109,480 --alternatives 1
       - name: Run current Layer 1 test suite
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v \
