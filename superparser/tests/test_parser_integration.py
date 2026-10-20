@@ -117,6 +117,10 @@ class MorphologyAndNominalAgreementRegressionTests(unittest.TestCase):
     def test_common_noun_subject_is_third_person(self) -> None:
         p = make_parser()
         wrong = p.parse("The boy are happy.").result
+        if wrong.best():
+            def brief(node):
+                return (node.category, node.rule_id, [(c.category,c.rule_id) for c in node.children], [brief(c) for c in node.children])
+            print("AGREEMENT_DIAG", brief(wrong.best()))
         self.assertFalse(wrong.completed, wrong.stats)
         self.assertTrue(p.parse("The boy is happy.").result.completed)
         self.assertTrue(p.parse("You are happy.").result.completed)
