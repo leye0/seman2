@@ -37,6 +37,58 @@ class SegmentationTests(unittest.TestCase):
         john = [c for c in lattice.candidates if c.surface == "John"]
         self.assertGreaterEqual(len(john), 1)
 
+    def test_independent_wh_subject_question_needs_question_boundary(self) -> None:
+        """A relative fragment must not be rescued by a lexical homograph."""
+        parser = make_parser()
+        fragment = "which I accordingly did"
+        result = parser.parse(fragment).result
+        self.assertFalse(result.completed, result.stats)
+        self.assertIsNone(result.best())
+
+        # Ordinary questions retain their nominal wh constructions, while
+        # the proper noun/letter-N interpretation of I remains lexical.
+        for question in ("Who arrived?", "Which guests arrived?"):
+            with self.subTest(question=question):
+                parsed = parser.parse(question).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertEqual(parsed.best().rule_id, "clause_wh_subj")
+        lattice = parser.parse(fragment).lattice
+        self.assertIn("N", {c.category for c in lattice.candidates
+                            if c.surface == "I"})
+        self.assertIn("PRONOUN", {c.category for c in lattice.candidates
+                                  if c.surface == "I"})
+
+    def test_local_irregular_inflection_does_not_hide_wordnet_verb(self) -> None:
+        """A local auxiliary and an irregular lexical verb are both real."""
+        parser = make_parser()
+        for surface in ("did", "does"):
+            with self.subTest(surface=surface):
+                lattice = parser.parse(f"John {surface} the work.").lattice
+                readings = [candidate for candidate in lattice.candidates
+                            if candidate.surface.lower() == surface]
+                self.assertTrue(any(c.category == "AUX" for c in readings))
+                self.assertTrue(any(
+                    c.category == "V" and c.lemma == "do"
+                    and c.features.as_dict().get("vform") == "finite"
+                    and any(i.sense_id and i.sense_id.startswith("wn-")
+                            for i in c.interpretations)
+                    for c in readings
+                ), [c.as_dict() for c in readings])
+
+        lexical = parser.parse("John did the work.").result
+        self.assertTrue(lexical.completed, lexical.stats)
+        best = lexical.best()
+        self.assertIsNotNone(best)
+        def rules(node):
+            return {node.rule_id} | {
+                rule for child in node.children for rule in rules(child)
+            }
+        self.assertIn("vp_transitive", rules(best))
+
+        auxiliary = parser.parse("John did not open the box.").result
+        self.assertTrue(auxiliary.completed, auxiliary.stats)
+        self.assertIn("clause_neg_vp", rules(auxiliary.best()))
+
 
 class ChartParserTests(unittest.TestCase):
     def setUp(self) -> None:
