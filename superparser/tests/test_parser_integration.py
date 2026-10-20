@@ -281,6 +281,37 @@ class ChartParserTests(unittest.TestCase):
         self.assertEqual(sentence[adjunct.start:adjunct.end], "amazed and delighted")
         self.assertTrue(sentence[predicate.start:predicate.end].startswith("endeavoured to"))
 
+    def test_second_person_agreement_retains_both_be_number_readings(self) -> None:
+        """Are/were must license 2sg you, without making 3sg he agree."""
+        from seman_parser.segmentation import build_lattice
+        lexicon = self.parser.resources.lexicon
+        for surface in ("are", "were"):
+            with self.subTest(surface=surface):
+                lattice = build_lattice(surface, lexicon)
+                readings = [
+                    c.features.as_dict()
+                    for c in lattice.candidates
+                    if c.category == "AUX-BE"
+                ]
+                self.assertTrue(any(
+                    f.get("number") == "singular" and f.get("person") == "2"
+                    for f in readings
+                ), readings)
+                self.assertTrue(any(
+                    f.get("number") == "plural" for f in readings
+                ), readings)
+        self.assertTrue(self.parser.parse("You are happy.").result.completed)
+        self.assertTrue(self.parser.parse("You were captured.").result.completed)
+
+    def test_shared_auxiliary_rejects_third_person_singular_were(self) -> None:
+        def rules(node):
+            return {node.rule_id} | {
+                rule for child in node.children for rule in rules(child)
+            }
+        parsed = self.parser.parse("He were captured, and released.").result
+        for tree in parsed.alternatives(limit=20):
+            self.assertNotIn("vp_passive_shared_aux_sequence", rules(tree))
+
     def test_shared_finite_auxiliary_in_passive_participle_series(self) -> None:
         """The coordinated verbs share one finite passive auxiliary."""
         def walk(node):

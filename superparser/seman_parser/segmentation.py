@@ -190,16 +190,38 @@ def build_lattice(
             for entry, sense, lemma in matches:
                 if not _surface_matches_morphology(surface, entry, sense, lemma):
                     continue
-                candidates.append(
-                    _candidate_from_sense(
-                        span_start=span_start,
-                        span_end=span_end,
-                        surface=surface,
-                        lemma=lemma,
-                        sense=sense,
-                        source="lexicon-multiword" if width > 1 else "lexicon",
-                    )
+                candidate = _candidate_from_sense(
+                    span_start=span_start,
+                    span_end=span_end,
+                    surface=surface,
+                    lemma=lemma,
+                    sense=sense,
+                    source="lexicon-multiword" if width > 1 else "lexicon",
                 )
+                candidates.append(candidate)
+                # Finite *are* and *were* are plural for all persons but
+                # ALSO singular for second-person *you*. Preserve both
+                # grammatical feature bundles instead of loosening either
+                # number or person unification globally. This is an
+                # inflectional paradigm property, independent of the corpus.
+                if (
+                    width == 1
+                    and surface.casefold() in {"are", "were"}
+                    and candidate.category in {"COPULA", "AUX-BE"}
+                    and candidate.features.as_dict().get("vform") == "finite"
+                ):
+                    alternate_features = {
+                        **candidate.features.as_dict(),
+                        "number": "singular", "person": "2",
+                    }
+                    candidates.append(replace(
+                        candidate,
+                        features=FeatureStructure.build(alternate_features),
+                        provenance={
+                            **candidate.provenance,
+                            "agreement_variant": "second-person-singular",
+                        },
+                    ))
             # Contraction split: John's -> John + 's with alternative analyses.
             if width == 1 and "'" in surface:
                 for candidate in _contraction_candidates(span_start, span_end, surface, lexicon):
