@@ -172,6 +172,45 @@ class ChartParserTests(unittest.TestCase):
         basic = self.parser.parse("Mary is sure.").result
         self.assertTrue(basic.completed, basic.stats)
 
+    def test_discourse_parentheticals_inside_finite_clauses(self) -> None:
+        def rule_ids(node):
+            return {node.rule_id} | {
+                name for child in node.children for name in rule_ids(child)
+            }
+        sentences = (
+            ("Mary, however, opened the box.", "clause_subject_parenthetical_vp"),
+            ("Mary, indeed, left.", "clause_subject_parenthetical_vp"),
+            ("John tried, therefore, to open the box.",
+             "vp_subject_control_parenthetical_inf"),
+        )
+        for text, expected in sentences:
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(
+                    any(expected in rule_ids(tree)
+                        for tree in result.alternatives(limit=24)),
+                    (text, result.stats),
+                )
+
+    def test_discourse_parenthetical_cannot_swallow_plain_adverbs(self) -> None:
+        def rule_ids(node):
+            return {node.rule_id} | {
+                name for child in node.children for name in rule_ids(child)
+            }
+        for text in (
+            "Mary, quickly, opened the box.",
+            "Mary however opened the box.",
+            "Mary, however opened the box.",
+            "John kicked, therefore, to open the box.",
+        ):
+            with self.subTest(text=text):
+                result = self.parser.parse(text).result
+                for tree in result.alternatives(limit=16):
+                    rule_set = rule_ids(tree)
+                    self.assertNotIn("clause_subject_parenthetical_vp", rule_set)
+                    self.assertNotIn("vp_subject_control_parenthetical_inf", rule_set)
+
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
         # Even with one preferred reading, the API exposes alternatives.
