@@ -281,6 +281,45 @@ class ChartParserTests(unittest.TestCase):
         self.assertEqual(sentence[adjunct.start:adjunct.end], "amazed and delighted")
         self.assertTrue(sentence[predicate.start:predicate.end].startswith("endeavoured to"))
 
+    def test_shared_finite_auxiliary_in_passive_participle_series(self) -> None:
+        """The coordinated verbs share one finite passive auxiliary."""
+        def walk(node):
+            yield node
+            for child in node.children:
+                yield from walk(child)
+        cases = (
+            "The doors were opened, and closed.",
+            "The prisoners were questioned, and released.",
+            "The parcel was wrapped, and delivered.",
+            "You were thrown, by some surprising accident, on this shore, renowned for its hospitality, seized immediately, and charged with murder.",
+        )
+        for sentence in cases:
+            with self.subTest(sentence=sentence):
+                parsed = self.parser.parse(sentence, max_items=50000,
+                                           kbest_work_limit=500000).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                alternatives = parsed.alternatives(limit=12)
+                self.assertTrue(any(
+                    any(n.rule_id == "vp_passive_shared_aux_sequence" for n in walk(tree))
+                    for tree in alternatives
+                ), (sentence, parsed.stats))
+
+    def test_passive_participle_coordination_requires_real_passives(self) -> None:
+        """Do not accept active infinitives or present verbs as passive participles."""
+        def rules(node):
+            return {node.rule_id} | {r for child in node.children for r in rules(child)}
+        negatives = (
+            "The doors were open, and close.",
+            "The children were happy, and laughed.",
+            "The doors opened, and closed.",
+            "The doors were opening, and closing.",
+        )
+        for sentence in negatives:
+            with self.subTest(sentence=sentence):
+                parsed = self.parser.parse(sentence).result
+                for tree in parsed.alternatives(limit=16):
+                    self.assertNotIn("vp_passive_shared_aux_sequence", rules(tree))
+
     def test_alternatives_are_preserved(self) -> None:
         report = self.parser.parse("John opened the box.")
         # Even with one preferred reading, the API exposes alternatives.
