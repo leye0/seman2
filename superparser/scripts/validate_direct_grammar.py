@@ -43,6 +43,27 @@ def run(wordnet_dir):
           (ROOT/"data/syntax_correctness_validation.jsonl").read_text().splitlines()
           if x.strip()]
     assert len(gold)==120 and len(pairs)==24
+    # Linguistic research diagnostic: inspect source valency rather than
+    # rescuing a failed ditransitive with an unrelated relative attachment.
+    wn=getattr(resources.lexicon,"_wordnet",None)
+    if wn is not None:
+        for lemma in ("send","donate"):
+            senses=wn.synsets_for(lemma,"v")
+            print("WORDNET_VERB_FRAME_AUDIT "+json.dumps({
+                "lemma":lemma,
+                "synsets":[{
+                    "offset":synset.offset,
+                    "frames":[{"number":frame.frame_number,
+                               "word_number":frame.word_number}
+                              for frame in synset.frames],
+                } for synset in senses],
+            }),flush=True)
+    audit_lattice=build_lattice("Peter sent Susan a message.",resources.lexicon)
+    print("DIRECT_DITRANSITIVE_LEXICAL "+json.dumps([{
+        "surface":c.surface,"lemma":c.lemma,"category":c.category,
+        "features":c.features.as_dict(),"source":c.source,
+    } for c in audit_lattice.candidates
+    if c.surface.casefold()=="sent"]),flush=True)
     positive=Counter(); neg=Counter();family=defaultdict(Counter)
     timings=[];outliers=[];failed_gold=[];pairs_detail=[]
     for row in gold:
