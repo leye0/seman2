@@ -153,7 +153,7 @@ class Lexicon:
     words) live in the static table. Both sources merge transparently.
     """
 
-    __slots__ = ("entries", "_by_surface", "_by_lemma", "_by_morph", "_wordnet", "_cache", "_max_senses")
+    __slots__ = ("entries", "_by_surface", "_by_lemma", "_by_morph", "_wordnet", "_cache", "_max_senses", "_irregular_vforms")
 
     def __init__(
         self,
@@ -169,7 +169,19 @@ class Lexicon:
         self._wordnet = wordnet
         self._cache: dict[str, tuple[LexicalEntry, ...]] = {}
         self._max_senses = max_senses
+        # Evidence belongs to the inflectional paradigm, not to a word's
+        # grammatical role in a particular sentence. In WordNet, irregular
+        # exceptions identify lemmas but not past vs past participle.
+        # A documented paradigm may constrain this ambiguity for that form.
+        self._irregular_vforms: dict[tuple[str, str], set[str]] = {}
         for entry in self.entries:
+            for form, surfaces in entry.provenance.get("irregular_verb_forms", {}).items():
+                if form not in {"finite", "ed"}:
+                    raise ValueError(f"Unrecognized irregular verb vform: {form}")
+                for surface in surfaces:
+                    self._irregular_vforms.setdefault(
+                        (surface.casefold(), entry.lemma.casefold()), set()
+                    ).add(form)
             self._index(entry)
 
     def _index(self, entry: LexicalEntry) -> None:
@@ -283,8 +295,14 @@ class Lexicon:
                 return
             seen.add(key)
             for sense in entry.senses:
-                if category is None or sense.category == category:
-                    out.append((entry, sense, lemma))
+                if category is not None and sense.category != category:
+                    continue
+                if (entry.provenance.get("source") == "wordnet"
+                        and sense.category == "V"):
+                    allowed = self._irregular_vforms.get((lowered, lemma.casefold()))
+                    if allowed and sense.features.as_dict().get("vform") not in allowed:
+                        continue
+                out.append((entry, sense, lemma))
 
         # Exact spellings first.  Do not call ``lookup_surface`` here: that
         # convenience API also resolves morphological lemmas but returns

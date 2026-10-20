@@ -90,6 +90,40 @@ class SegmentationTests(unittest.TestCase):
         self.assertIn("clause_neg_vp", rules(auxiliary.best()))
 
 
+class MorphologyAndNominalAgreementRegressionTests(unittest.TestCase):
+    """Tests across lexical, morphology, composition and sentence levels."""
+
+    def test_did_has_finite_but_not_past_participle_reading(self) -> None:
+        p = make_parser()
+        did = [c for c in p.parse("John did the work.").lattice.candidates
+               if c.surface == "did" and c.category == "V"]
+        self.assertIn("finite", {c.features.as_dict().get("vform") for c in did})
+        self.assertNotIn("ed", {c.features.as_dict().get("vform") for c in did})
+        done = [c for c in p.parse("The work was done.").lattice.candidates
+                if c.surface == "done" and c.category == "V"]
+        self.assertIn("ed", {c.features.as_dict().get("vform") for c in done})
+        self.assertNotIn("finite", {c.features.as_dict().get("vform") for c in done})
+
+    def test_unlicensed_past_participle_cannot_make_pronoun_nominal(self) -> None:
+        p = make_parser()
+        for text in ("They did opened the door.",
+                     "She did not opened the door."):
+            with self.subTest(text=text):
+                result = p.parse(text).result
+                self.assertFalse(result.completed, result.stats)
+        self.assertTrue(p.parse("They did open the door.").result.completed)
+        self.assertTrue(p.parse("She did not open the door.").result.completed)
+
+    def test_common_noun_subject_is_third_person(self) -> None:
+        p = make_parser()
+        wrong = p.parse("The boy are happy.").result
+        self.assertFalse(wrong.completed, wrong.stats)
+        self.assertFalse(p.parse("The books is heavy.").result.completed)
+        self.assertTrue(p.parse("The boy is happy.").result.completed)
+        self.assertTrue(p.parse("You are happy.").result.completed)
+        self.assertTrue(p.parse("They are happy.").result.completed)
+        self.assertTrue(p.parse("John must be happy.").result.completed)
+
 class ChartParserTests(unittest.TestCase):
     def setUp(self) -> None:
         self.parser = make_parser()

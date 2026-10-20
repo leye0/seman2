@@ -207,7 +207,8 @@ def build_lattice(
                 if (
                     width == 1
                     and surface.casefold() in {"are", "were"}
-                    and candidate.category in {"COPULA", "AUX-BE"}
+                    and candidate.category in {"COPULA", "AUX-BE", "V"}
+                    and candidate.lemma.casefold() in {"be", "was", "is", "are"}
                     and candidate.features.as_dict().get("vform") == "finite"
                 ):
                     alternate_features = {
@@ -556,9 +557,9 @@ def _candidate_from_sense(
     features = _project_syntactic_features(sense)
     # Attach *surface-proven* agreement rather than treating all inflected
     # forms in a shared BE lexical entry as interchangeable.
-    if sense.category in {"COPULA", "AUX-BE"} and (
+    if (sense.category in {"COPULA", "AUX-BE", "V"} and (
         lemma.casefold() in {"be", "was", "is", "are"} or sense.semantic_type == "BE"
-    ):
+    )):
         agreement = {
             "is": {"number": "singular", "person": "3"},
             "are": {"number": "plural"},
