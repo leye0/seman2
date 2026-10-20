@@ -336,3 +336,5 @@ def test_title_licensing_keeps_wordnet_noun_alternatives() -> None:
         if c.surface.casefold() == "captain"
     }
     assert {"TITLE", "N"} <= categories, categories
+
+

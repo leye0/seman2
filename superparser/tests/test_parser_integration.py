@@ -539,5 +539,102 @@ class ConstitutionTests(unittest.TestCase):
         self.assertEqual(violations, [])
 
 
+
+class ProductiveSupplementTests(unittest.TestCase):
+    """Full public Parser.parse parses and counterexamples."""
+
+    @staticmethod
+    def rule_ids(root):
+        if root is None:
+            return set()
+        return ({root.rule_id} if root.rule_id else set()) | {
+            rule for child in root.children
+            for rule in ProductiveSupplementTests.rule_ids(child)
+        }
+
+    def test_reporting_tag_with_real_participial_adjunct(self):
+        result = make_parser().parse(
+            "'It was a mistake,' I replied, quietly speaking to the witness."
+        ).result
+        self.assertIsNotNone(result.best(), result.stats)
+        self.assertIn("dialogue_speech_tag_post_participial_adv_pp",
+                      self.rule_ids(result.best()))
+
+    def test_comma_and_ing_required_for_reporting_participial_adjunct(self):
+        p = make_parser()
+        for sentence in (
+            "'It was a mistake,' I replied quietly speaking to the witness.",
+            "'It was a mistake,' I replied, quietly speak to the witness.",
+        ):
+            result = p.parse(sentence).result
+            for item in result.alternatives(limit=6):
+                self.assertNotIn(
+                    "dialogue_speech_tag_post_participial_adv_pp",
+                    self.rule_ids(item), sentence,
+                )
+
+    def test_right_edge_transitive_participial_clause(self):
+        result = make_parser().parse(
+            "Maya crossed the square, carrying a lantern."
+        ).result
+        self.assertIsNotNone(result.best(), result.stats)
+        self.assertIn("clause_final_transitive_participle", self.rule_ids(result.best()))
+
+    def test_parenthetical_you_know_inside_postpredicate_vp(self):
+        result = make_parser().parse(
+            "Mary waited, you know, near the entrance."
+        ).result
+        self.assertIsNotNone(result.best(), result.stats)
+        self.assertIn("parenthetical_interpersonal_you_know", self.rule_ids(result.best()))
+        self.assertIn("vp_postpredicate_parenthetical", self.rule_ids(result.best()))
+
+    def test_parenthetical_verb_must_be_licensed_and_comma_delimited(self):
+        p = make_parser()
+        for sentence in (
+            "Mary waited, you jump, near the entrance.",
+            "Mary waited, you know near the entrance.",
+            "Mary waited you know, near the entrance.",
+        ):
+            result = p.parse(sentence).result
+            for item in result.alternatives(limit=6):
+                self.assertNotIn(
+                    "parenthetical_interpersonal_you_know",
+                    self.rule_ids(item), sentence,
+                )
+
+
+
+class PerfectPassiveMorphologyTests(unittest.TestCase):
+    """Perfect-passive auxiliary chains must not reanalyze HAVE as a noun."""
+
+    def test_productive_perfect_passive_with_and_without_negation(self):
+        p = make_parser()
+        for text in (
+            "The door has been opened.",
+            "The door has never been opened.",
+            "The door had already been opened.",
+        ):
+            best = p.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            root = best
+            self.assertEqual(root.rule_id, "clause_passive", text)
+            self.assertEqual(root.children[0].category, "NP", text)
+            self.assertEqual(text[root.children[0].start:root.children[0].end],
+                             "The door", text)
+            def tree_rules(node):
+                return {node.rule_id} | {r for c in node.children for r in tree_rules(c)}
+            self.assertTrue({"vp_perfect_passive", "vp_perfect_passive_adv",
+                             "vp_perfect_passive_neg"} & tree_rules(root), text)
+
+    def test_perfect_passive_participle_be_is_not_finite(self):
+        p = make_parser()
+        result = p.parse("The box has never been opened.")
+        be_candidates = [c for c in result.lattice.candidates
+                         if c.surface.casefold() == "been" and c.category == "AUX-BE"]
+        self.assertIn("ed", {c.features.as_dict().get("vform") for c in be_candidates})
+        self.assertIn("finite", {c.features.as_dict().get("vform") for c in be_candidates})
+
+
 if __name__ == "__main__":
     unittest.main()
+
