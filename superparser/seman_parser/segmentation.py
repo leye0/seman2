@@ -541,6 +541,14 @@ def _candidate_from_sense(
 ) -> LexicalCandidate:
     constraints = _sense_syntactic_constraints(sense)
     features = _project_syntactic_features(sense)
+    # A lexical noun is an atomic head; derived N constituents (N + PP,
+    # relative modification, coordination) do NOT inherit this feature.
+    # Supplementary predicates may attach locally to explicit nominal heads,
+    # without reinterpreting arbitrary comma-containing NP forests.
+    if sense.category == "N":
+        features = FeatureStructure.build({
+            **features.as_dict(), "atomic_nominal": "true",
+        })
     # Attach *surface-proven* agreement rather than treating all inflected
     # forms in a shared BE lexical entry as interchangeable.
     if sense.category in {"COPULA", "AUX-BE"} and (
