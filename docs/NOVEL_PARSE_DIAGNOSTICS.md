@@ -178,3 +178,57 @@ Des tests minimaux de relatives objet réussissent, mais ne
 démontrent **ni** le bon classement d'arbre **ni** la couverture
 du cas réel. La prochaine recherche doit isoler les sous-analyses
 manquantes et mesurer le coût forestier avant d'élargir la grammaire.
+
+## Complétives adjectivales et incises discursives — mesure contrôlée
+
+L'analyse officielle utilise toujours les 500 mêmes phrases équilibrées et
+le **point d'entrée unique `Parser.parse()`**. Les changements de statuts
+ci-dessous sont mesurés individuellement dans `per_sentence.jsonl` et ne
+sont pas déduits des signatures de surface.
+
+| Version | Complètes | Delta net | Cause mesurée |
+|---|---:|---:|---|
+| `d3df1fb` | 421/500 | — | Référence après relatives prépositionnelles |
+| `6a2ace7` | **423/500** | **+2**, aucune perte | Complétive finie sélectionnée par un adjectif |
+| `097b231` | **425/500** | **+2**, aucune perte | Incise discursive encadrée de deux virgules |
+
+**Complétives.** La propriété `clausal_complement=true` est portée par
+les hypothèses adjectivales lexicales de `sure`, `afraid`, `certain`
+et `glad`, sans éliminer les analyses WordNet parallèles. Les règles
+`adjp_clausal_bare`, `adjp_clausal_that` et
+`adjp_degree_clausal` construisent les groupes adjectivaux sélectionnant
+une proposition finie avec ou sans `that`. Les tests négatifs interdisent
+que `tall` ou `blue` sélectionnent arbitrairement une telle proposition.
+
+Les deux nouvelles réussites sont les indices **186** (`Are you quite
+sure that you feel what you ought to do?`) et **208** (`I am afraid
+you will not be able to make it out, but I hardly know what I have
+written.`). Le cas **167** demeure non complet en raison notamment
+de sa terminaison épistolaire ; une propriété lexicale ne peut réparer
+à elle seule toutes les structures d'une phrase.
+
+**Incises.** La propriété lexicale `parenthetical_discourse=true`
+autorise une lecture de marqueur discursif pour `however`,
+`therefore`, `indeed` et `nevertheless`. Le constituant
+`PARENTHETICAL` exige les **deux virgules** et un sens lexical
+explicitement autorisé. Deux constructions l'insèrent dans la proposition
+avec accord du sujet et dans le VP de contrôle du sujet avec sous-
+catégorisation `subject_control`. Les contre-exemples vérifient les
+virgules manquantes, un adverbe ordinaire comme `quickly`, et un
+verbe non autorisé à prendre une infinitive de contrôle.
+
+Les nouvelles réussites sont **205** (`Elizabeth, however, had never
+been blind...`, racine `clause_subject_parenthetical_vp`) et **325**
+(`I tried, therefore, to dress my food...`, racine dialoguée
+`dialogue_unattributed`). La construction est retrouvée même à
+l'intérieur des citations, car le moteur public ne supprime pas les
+guillemets.
+
+**Limites.** La mesure finale est **425/500 (85 %)** : 47 sans racine
+structurelle, 21 racines sans analyse valide, 4 dépassements de budget
+forestier et 3 délais, **zéro erreur d'exécution**. Le drapeau indépendant
+de saturation de forêt passe de 13 à 14, mais aucune phrase complète ne
+régresse. La réussite de complétion n'est pas une preuve d'exactitude
+de tous les arbres ; conserver des audits de qualité syntaxique et les
+contre-exemples. Les incises `you know`, `indeed` en position
+postverbale, et la coordination de relatives demeurent à investiguer.
