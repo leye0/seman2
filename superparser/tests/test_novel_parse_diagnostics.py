@@ -1,5 +1,12 @@
 """Fast, data-independent tests for the 500-sentence diagnostic corpus."""
 import unittest
+from pathlib import Path
+from unittest.mock import patch, MagicMock
+import ast
+
+from research.verbnet_lr.corpus_pipeline import (
+    CorpusParseMode, prepare_corpus_input, parse_corpus_case,
+)
 
 from scripts.diagnose_novel_parses import (
     classify, compact_stats, tally, lexical_diagnostics, recurring_issues,
@@ -8,6 +15,100 @@ from scripts.diagnose_novel_parses import (
 
 
 class NovelDiagnosticsTests(unittest.TestCase):
+    def test_default_corpus_entrypoint_transfers_quotes_not_raw(self):
+        # The source opens a quotation which continues across a sentence.
+        case = {
+            "text": "I saw.”", "source_text": "I saw.”",
+            "balanced_analysis_text": "“I saw.”",
+            "balanced_synthetic_prefix": "“",
+            "balanced_synthetic_suffix": "",
+            "balanced_synthetic_terminal": False,
+        }
+        input_ = prepare_corpus_input(case)
+        self.assertEqual(input_.analysis_text, "“I saw.”")
+        self.assertEqual(input_.source_text, "I saw.”")
+        self.assertEqual(input_.synthetic_prefix, "“")
+        self.assertEqual(input_.mode, CorpusParseMode.QUOTE_BALANCED)
+        self.assertEqual(
+            prepare_corpus_input(
+                case, mode=CorpusParseMode.HISTORICAL_REFERENCE,
+            ).analysis_text,
+            "I saw.”",
+        )
+        parser = MagicMock()
+        with patch(
+            "research.verbnet_lr.corpus_pipeline.build_lattice"
+        ) as lattice_builder:
+            lattice_builder.return_value.text = "“I saw.”"
+            parsed, lattice, _ = parse_corpus_case(parser, case)
+        self.assertEqual(parsed.analysis_text, "“I saw.”")
+        lattice_builder.assert_called_once_with(
+            "“I saw.”", parser.resources.lexicon, multiword_max=1,
+        )
+        parser.parse_grammar_lattice.assert_called_once_with(
+            lattice, max_items=None, kbest_work_limit=None,
+        )
+
+    def test_missing_quote_provenance_fails_closed(self):
+        sample = {"text": "I saw.”", "source_text": "I saw.”"}
+        for mode in CorpusParseMode:
+            with self.subTest(mode=mode):
+                with self.assertRaisesRegex(ValueError, "quote-transfer provenance"):
+                    prepare_corpus_input(sample, mode=mode)
+        with self.assertRaisesRegex(ValueError, "CorpusParseMode"):
+            prepare_corpus_input({
+                **sample, "balanced_analysis_text": "“I saw.”",
+                "balanced_synthetic_prefix": "“",
+                "balanced_synthetic_suffix": "",
+                "balanced_synthetic_terminal": False,
+            }, mode="historical_reference")
+
+    def test_reference_sample_has_same_source_and_prepared_candidate(self):
+        from research.verbnet_lr.gutenberg_novels import Book, extract
+        paragraph = "“I came. I saw.”"
+        rows, _ = extract(
+            Book(999, "Test", "Test", "train"), paragraph,
+            length_min=1, length_max=99,
+        )
+        self.assertEqual([x["text"] for x in rows], ["“I came.", "I saw.”"])
+        self.assertEqual(
+            [prepare_corpus_input(x).analysis_text for x in rows],
+            ["“I came.”", "“I saw.”"],
+        )
+        self.assertEqual(
+            [prepare_corpus_input(
+                x, mode=CorpusParseMode.HISTORICAL_REFERENCE,
+            ).analysis_text for x in rows],
+            ["“I came.", "I saw.”"],
+        )
+        self.assertEqual(
+            [x["source_text"] for x in rows], ["“I came.", "I saw.”"],
+        )
+
+    def test_diagnostic_must_not_bypass_corpus_quote_gateway(self):
+        """Static architecture guard: a future raw parse fails CI."""
+        source = (
+            Path(__file__).resolve().parents[1]
+            / "scripts" / "diagnose_novel_parses.py"
+        ).read_text(encoding="utf8")
+        parsed = ast.parse(source)
+        called = {
+            n.func.id
+            for n in ast.walk(parsed)
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+        }
+        self.assertIn("parse_corpus_case", called)
+        self.assertIn("prepare_corpus_input", called)
+        forbidden = [
+            n.func.attr
+            for n in ast.walk(parsed)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr in {"parse_grammar_lattice", "_parse_dialogue_text"}
+        ]
+        self.assertEqual(forbidden, [],
+            "The 500-case diagnostic must parse through corpus_pipeline only")
+
     def test_exclusive_headlines(self):
         cases = (
             (False, {"budget_exceeded": True, "kbest_budget_exceeded": True}, "both_budgets_exceeded"),

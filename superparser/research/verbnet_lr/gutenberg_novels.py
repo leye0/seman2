@@ -98,10 +98,12 @@ def strip_gutenberg(text: str):
 
 
 def analysis_units(core: str, *, balance_sentence_quotes: bool = False):
-    """Yield source-stable units; optionally rewrap cross-sentence dialogue.
+    """Yield source-stable units with recorded quote transfer.
 
-    By default this retains the frozen 500-case cohort. Balanced alternatives
-    preserve the exact same order and source_text for paired evaluation.
+    DEFAULT FALSE IS HISTORICAL EXTRACTION COMPATIBILITY ONLY. For parsing,
+    call corpus_pipeline.parse_corpus_case (default QUOTE_BALANCED) rather
+    than invoking Parser directly on these strings. The SHA-pinned 500-case
+    selection depends on these historical source spans.
     """
     for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
@@ -120,7 +122,11 @@ def analysis_units(core: str, *, balance_sentence_quotes: bool = False):
 
 
 def sentences(core: str):
-    """Return independently parseable novel units, splitting semicolons."""
+    """Historical source-unit stream; NOT the canonical corpus parsing API.
+
+    To analyze a selected case, use corpus_pipeline.parse_corpus_case so that
+    sentence- and semicolon-spanning quotation state is always applied.
+    """
     for unit in analysis_units(core):
         yield unit.text
 

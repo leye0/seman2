@@ -17,6 +17,9 @@ from time import perf_counter
 from scripts.corpus_samples import BANDS, choose_cases, sample_spread
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.segmentation import build_lattice
+from research.verbnet_lr.corpus_pipeline import (
+    CorpusParseMode, parse_corpus_case, prepare_corpus_input,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 # Fixed 500-case reference, computed from cohort.jsonl on the initial run.
@@ -631,18 +634,30 @@ def run(args: argparse.Namespace) -> dict:
                     ).hexdigest()[:16],
                     "sha256": sha256(case["text"].encode("utf8")).hexdigest(),
                 }
+                # Historical counts are intentional controls. Real/new corpus
+                # analyses default to transferred quotation context through
+                # parse_corpus_case(); never parse case["text"] directly.
+                historical = prepare_corpus_input(
+                    case, mode=CorpusParseMode.HISTORICAL_REFERENCE
+                )
+                balanced = prepare_corpus_input(case)
+                row["analysis_contract"] = "corpus_pipeline:v1"
+                row["reference_parse_mode"] = historical.mode.value
+                row["canonical_parse_mode"] = balanced.mode.value
+                row["canonical_analysis_text"] = balanced.analysis_text
+                row["canonical_synthetic_prefix"] = balanced.synthetic_prefix
+                row["canonical_synthetic_suffix"] = balanced.synthetic_suffix
                 lattice = None
                 began = perf_counter()
                 signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
                 try:
-                    lattice = build_lattice(
-                        case["text"], resources.lexicon, multiword_max=1
-                    )
-                    row["lexical_category_sequence"] = word_category_sequence(lattice)
-                    result = parser.parse_grammar_lattice(
-                        lattice, max_items=args.max_items,
+                    _, lattice, result = parse_corpus_case(
+                        parser, case,
+                        mode=CorpusParseMode.HISTORICAL_REFERENCE,
+                        max_items=args.max_items,
                         kbest_work_limit=args.kbest_work_limit,
                     )
+                    row["lexical_category_sequence"] = word_category_sequence(lattice)
                     stats = result.stats
                     row.update(compact_stats(stats))
                     row.update({
@@ -668,22 +683,21 @@ def run(args: argparse.Namespace) -> dict:
                 # Compare the EXISTING quote-balancing algorithm applied
                 # across sentence boundaries, never a second repair heuristic.
                 # Baseline text and 500-case SHA remain exactly unchanged.
-                trial_text = case.get("balanced_analysis_text", case["text"])
-                if trial_text != case["text"]:
+                if balanced.analysis_text != historical.analysis_text:
                         trial = {
-                            "analysis_text": trial_text,
-                            "synthetic_prefix": case.get("balanced_synthetic_prefix", ""),
-                            "synthetic_suffix": case.get("balanced_synthetic_suffix", ""),
-                            "source_text": source_text,
+                            "analysis_text": balanced.analysis_text,
+                            "synthetic_prefix": balanced.synthetic_prefix,
+                            "synthetic_suffix": balanced.synthetic_suffix,
+                            "source_text": balanced.source_text,
+                            "analysis_contract": "corpus_pipeline:v1",
+                            "parse_mode": balanced.mode.value,
                         }
                         trial_started = perf_counter()
                         signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
                         try:
-                            fixed_lattice = build_lattice(
-                                trial_text, resources.lexicon, multiword_max=1
-                            )
-                            fixed_result = parser.parse_grammar_lattice(
-                                fixed_lattice, max_items=args.max_items,
+                            _, fixed_lattice, fixed_result = parse_corpus_case(
+                                parser, case,
+                                max_items=args.max_items,
                                 kbest_work_limit=args.kbest_work_limit,
                             )
                             trial["status"] = classify(
