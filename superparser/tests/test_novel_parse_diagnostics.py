@@ -63,17 +63,13 @@ class NovelDiagnosticsTests(unittest.TestCase):
             "I saw.”",
         )
         parser = MagicMock()
-        with patch(
-            "research.verbnet_lr.corpus_pipeline.build_lattice"
-        ) as lattice_builder:
-            lattice_builder.return_value.text = "“I saw.”"
-            parsed, lattice, _ = parse_corpus_case(parser, case)
+        parser.parse.return_value.lattice.text = "“I saw.”"
+        parsed, lattice, result = parse_corpus_case(parser, case)
         self.assertEqual(parsed.analysis_text, "“I saw.”")
-        lattice_builder.assert_called_once_with(
-            "“I saw.”", parser.resources.lexicon, multiword_max=1,
-        )
-        parser.parse_grammar_lattice.assert_called_once_with(
-            lattice, max_items=None, kbest_work_limit=None,
+        self.assertIs(lattice, parser.parse.return_value.lattice)
+        self.assertIs(result, parser.parse.return_value.result)
+        parser.parse.assert_called_once_with(
+            "“I saw.”", max_items=None, kbest_work_limit=None,
         )
 
     def test_missing_quote_provenance_fails_closed(self):
@@ -145,6 +141,38 @@ class NovelDiagnosticsTests(unittest.TestCase):
         self.assertNotIn("quote_boundary_trial", source)
         self.assertIn("parse_corpus_case", source)
         self.assertNotIn("parse_grammar_lattice", source)
+
+    def test_real_corpus_and_direct_call_share_coordination_route(self):
+        """Measure the actual production route, not a second lattice API."""
+        from seman_parser.engine import Parser
+        parser = Parser.from_dir(
+            Path(__file__).resolve().parents[1] / "data",
+            cache_size=0, max_items=20000,
+        )
+        self.assertFalse(hasattr(parser, "parse_grammar_lattice"))
+        text = "John opened the box, but Mary closed the door."
+        case = {
+            "text": text, "source_text": text,
+            "balanced_analysis_text": text,
+            "balanced_synthetic_prefix": "",
+            "balanced_synthetic_suffix": "",
+            "balanced_synthetic_terminal": False,
+        }
+        direct = parser.parse(
+            text, max_items=20000, kbest_work_limit=100000,
+        )
+        prepared, lattice, result = parse_corpus_case(
+            parser, case, max_items=20000, kbest_work_limit=100000,
+        )
+        self.assertEqual(prepared.analysis_text, text)
+        self.assertEqual(lattice.text, direct.lattice.text)
+        self.assertEqual(result.completed, direct.result.completed)
+        self.assertEqual(result.stats.get("segmented"),
+                         direct.result.stats.get("segmented"))
+        self.assertEqual(
+            result.best().as_dict() if result.best() else None,
+            direct.result.best().as_dict() if direct.result.best() else None,
+        )
 
     def test_exclusive_headlines(self):
         cases = (

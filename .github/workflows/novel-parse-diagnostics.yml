@@ -60,7 +60,7 @@ jobs:
       - name: Validate diagnostic reporting
         run: |
           python -m py_compile superparser/scripts/diagnose_novel_parses.py superparser/research/verbnet_lr/corpus_pipeline.py superparser/seman_parser/engine.py superparser/seman_parser/vector_chart.py superparser/seman_parser/sentence_boundaries.py
-          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics superparser.tests.test_sentence_boundaries superparser.tests.test_parser_integration superparser.tests.test_complexity_routing
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics superparser.tests.test_sentence_boundaries superparser.tests.test_parser_integration superparser.tests.test_complexity_routing
       - name: Diagnose 500 cleaned novel sentences, once each
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/diagnose_novel_parses.py \
