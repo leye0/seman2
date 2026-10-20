@@ -5,3 +5,4 @@ Checkpoint: fbd27a6d5413192c5d185575faffffb038a1d84e — correct overconstrained
 Checkpoint: 594bb197dedf94857f044cc31df1752e71f2b011 — participial supplement, towards, quantified-distance copula and iterated quotation with full tree checks.
 Checkpoint: 23b89d68cb2f7f206ac0a25d15f450170471c7e2 — productive PP serial coordination verified for case 343.
 Checkpoint: 6162ba4b2500dd877ccff149ebacac63f88a2783 — predicative copular inversions and nominal free relative subject/object with PP supplements.
+Checkpoint: f41f633468bbe27f490eda38a0a355109c76bfd5 — classify forest ceilings and timeouts separately at 447/500 coverage.
