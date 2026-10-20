@@ -700,6 +700,65 @@ class PersonalPronounParadigmTests(unittest.TestCase):
         subject_text = "Our friends arrived."[best.children[0].start:best.children[0].end]
         self.assertEqual(subject_text, "Our friends")
 
+
+class InterposedAdverbPassiveAndBareControlTests(unittest.TestCase):
+    """Productive auxiliary scope and explicit verbal valency."""
+
+    @staticmethod
+    def rule_ids(item):
+        if item is None:
+            return set()
+        return ({item.rule_id} if item.rule_id else set()) | {
+            rule for child in item.children
+            for rule in InterposedAdverbPassiveAndBareControlTests.rule_ids(child)
+        }
+
+    def test_interposed_adverb_is_licensed_by_finite_be_and_past_participle(self):
+        p = make_parser()
+        for text in (
+            "The visitor was kindly received.",
+            "The children were quickly rescued.",
+            "The guest was likewise accommodated with a room.",
+        ):
+            report = p.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, (text, report.result.stats))
+            self.assertIn("vp_passive_interposed_manner_adverb",
+                          self.rule_ids(best), text)
+            self.assertEqual(best.rule_id, "clause_passive", text)
+
+    def test_non_participle_cannot_fill_passive_slot(self):
+        p = make_parser()
+        for text in ("The guest was kindly receive.", "The guest was kindly receiving."):
+            for item in p.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vp_passive_interposed_manner_adverb",
+                                 self.rule_ids(item), text)
+
+    def test_base_subject_control_under_do_support(self):
+        p = make_parser()
+        for text in (
+            "John did not try to leave.",
+            "Mary did not attempt to conceal the truth from her friends.",
+        ):
+            report = p.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, (text, report.result.stats))
+            self.assertIn("vpnp_subject_control_infinitive",
+                          self.rule_ids(best), text)
+            self.assertIn("clause_neg", self.rule_ids(best)
+                          | {"clause_neg"} if best.rule_id == "clause_neg_vp" else self.rule_ids(best),
+                          text)
+
+    def test_base_control_requires_lexical_subject_control(self):
+        p = make_parser()
+        for text in (
+            "John did not admire to leave.",
+            "John did not smile to leave.",
+        ):
+            for item in p.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vpnp_subject_control_infinitive",
+                                 self.rule_ids(item), text)
+
 if __name__ == "__main__":
     unittest.main()
 
