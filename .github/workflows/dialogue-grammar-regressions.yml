@@ -7,6 +7,9 @@ on:
     paths:
       - 'superparser/seman_parser/dialogue.py'
       - 'superparser/seman_parser/engine.py'
+      - 'superparser/data/literary_lexicon.jsonl'
+      - 'superparser/data/syntax_lexicon.jsonl'
+      - 'superparser/data/function_words.jsonl'
       - 'superparser/seman_parser/vector_chart.py'
       - 'superparser/seman_parser/semantics.py'
       - 'superparser/data/dialogue_grammar.jsonl'
