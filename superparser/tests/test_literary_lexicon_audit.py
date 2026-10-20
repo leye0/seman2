@@ -29,6 +29,33 @@ class LiteraryLexiconAuditTests(unittest.TestCase):
                 self.assertTrue(row["senses"][0]["category"])
                 self.assertIsInstance(row["provenance"]["ebook_id"], int)
 
+
+    def test_frequent_attested_compounds_have_named_categories(self):
+        lexicon = attested_catalog()
+        for surface in ("drawing-room", "child-wife", "pocket-handkerchief",
+                        "public-house", "dining-room", "good-natured",
+                        "old-fashioned", "second-hand", "business-like",
+                        "half-hour", "stage-coach"):
+            with self.subTest(surface=surface):
+                matches = lexicon[surface]
+                self.assertTrue(matches, surface)
+                categories = {sense["category"]
+                              for entry in matches
+                              for sense in entry["senses"]}
+                self.assertIn("ADJ" if surface in (
+                    "good-natured", "old-fashioned", "second-hand", "business-like",
+                ) else "N", categories)
+
+    def test_polyfunctional_good_bye_and_half_way_keep_alternatives(self):
+        lexicon = attested_catalog()
+        for surface, required in (
+            ("good-bye", {"N", "INTERJECTION"}),
+            ("half-way", {"ADV", "ADJ"}),
+        ):
+            cats = {sense["category"] for entry in lexicon[surface]
+                    for sense in entry["senses"]}
+            self.assertEqual(cats, required)
+
     def test_full_pinned_books_report_unlisted_compounds(self):
         report = audit_corpora(top=10)
         self.assertEqual(len(report["by_book"]), 4)
