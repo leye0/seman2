@@ -499,3 +499,56 @@ Transferts individuels sur les 500 cas : **107** `complete -> roots_without_vali
 Sur **107**, le nombre de nœuds de forêt passe de **1313** à **1269** et aucune analyse valide finale ne demeure. Sur **368**, l'audit conserve une analyse passive partageant `were` et l'apposition adjectivale de `this shore`. **249** reste complet et ses hypothèses verbales productives sur `over-rated` sont préservées. Les validations du commit `11e77712` sont toutes vertes : [Layer 1](https://github.com/leye0/seman2/actions/runs/39369277867), [Direct Grammar](https://github.com/leye0/seman2/actions/runs/39369277857), [diagnostic 500](https://github.com/leye0/seman2/actions/runs/39369277836).
 
 **Travail restant** : auditer `np_appos_comma` / `np_gerund` / `np_list_last`, expliciter les restrictions d'apposition de référent et la coordination de prédicats sous auxiliaire partagé, puis inspecter leurs contre-exemples **avant** de modifier la grammaire. Le cas 107 demande encore une vraie coordination `sit ... and think` avec une participiale incidente. **424/500** est le nouveau point de référence mesuré, pas une raison d'assouplir des règles pour atteindre artificiellement **450/500**.
+
+
+## Gains constructifs et paradigme pronominal — 20 octobre 2026
+
+### Mesure officielle, cohorte inchangée
+
+Point de départ contrôlé : **424/500** au commit `11e77712` ([Actions 39369277836](https://github.com/leye0/seman2/actions/runs/39369277836)). Après les corrections grammaticales et lexicales successives :
+
+| Révision | Couverture | Nouvelles complétions | Perte de complétion |
+|---|---:|---|---|
+| `d5ab9a9` — passifs parfaits, participiales et incises | **427/500** | 86, 212, 449 | aucune |
+| `bc04f33` — salutation et vocatif | **428/500** | 250, 338 | 485 : saturation de forêt |
+| `83a4d9e` — `we/us` vs `our` | **429/500** | 485 rétabli | aucune |
+
+Dernier diagnostic officiel : [39372861982](https://github.com/leye0/seman2/actions/runs/39372861982), **429/500 (85,8 %)**. La cohorte `cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a` n'a pas changé. Il s'agit de **+5 complétions nettes** vs 424, et d'**aucune des 424 initialement complètes perdue** ; surtout, **429 ne signifie pas 429 analyses grammaticalement correctes**.
+
+| Statut exclusif | Avant (424) | Après (429) |
+|---|---:|---:|
+| `complete` | 424 | 429 |
+| `no_structural_root` | 47 | 41 |
+| `roots_without_valid_analysis` | 23 | 23 |
+| `forest_budget_exceeded` | 5 | 5 |
+| `kbest_budget_exceeded` | 1 | 0 |
+| `timeout` | 0 | 2 |
+| `error` | 0 | 0 |
+
+Indices nouvellement complets : **86, 212, 250, 338, 449**. Autres changements de statut vs baseline : **122** `no_structural_root -> timeout`, **486** `kbest_budget_exceeded -> timeout`, **497** `no_structural_root -> roots_without_valid_analysis`. Les cas déjà complets **52** et **81** changent de meilleure règle racine (`dialogue_post_tag -> clause_final_transitive_participle` et `clause_comma -> clause_when_post`), donc leurs arbres nécessitent un nouvel audit qualité. La saturation de forêt indépendante demeure à **17** cas signalés. Trois timeouts intermédiaires sur `d5ab9a9` ne doivent pas être interprétés comme des déficits grammaticaux conclusifs.
+
+### Constructions réellement ajoutées
+
+- **Perfect passif productif** : `HAVE[finite] + AUX-BE[ed] + V[ed]`, avec variants d'adverbe et de négation. Un nouveau sens `AUX-BE[vform=ed]` de `been` coexiste avec les lectures antérieures. Sur **86** (« It has never been attributed to you »), le meilleur arbre commence enfin par le sujet `It` (**PRONOUN**) et `VP vp_perfect_passive_neg` ; il n'utilise plus le faux sujet `NP("It has")`. Le complément `to you` et l'incise `I returned, earnestly responding to her earnestness` sont rattachés de façon appropriée.
+- **Participiales en supplément** après proposition et après verbe de discours rapporté : formes `V[ing,transitive] NP` et `V[ing,prepositional] PP` avec virgule et, pour l'incise rapportée, un adverbe de manière facultatif dans le schéma attesté. Toutes les formes lexicales et valences originales demeurent. Cette famille produit également le nouveau `complete` du **449**, mais **son meilleur arbre est faux** (voir ci-dessous).
+- **Incise interpersonnelle lexicalement licenciée** : `, you know,` devient `PARENTHETICAL[interpersonal=true]` et peut s'insérer après un `VP` avant un `PP` subséquent ; les traits de `VP` sont conservés. La propriété n'est pas confondue avec l'incise adverbiale `however` et ses règles existantes. Le **212** retrouve `We were married, you know, at St. Clement's, because ...`. La grande structure (passif, incise, locatif, causale) est correcte, mais **`St. Clement's` reçoit toujours une analyse interne douteuse** (`NP np_appos_comma: St. Clement's`) ; ce n'est pas un arbre complètement certifié.
+- **Salut et vocatif** : un inventaire `INTERJECTION[vocative_salutation=true]` pour `adieu`, `hello`, `goodbye`, `farewell`, `hi`, combiné avec une vraie `NP` de destinataire. Nouvelles constructions de nom propre modifié `POSS + ADJ + PROPER-NOUN` et `ADJ + PROPER-NOUN`, sans retirer les lectures nominales WordNet. Le **250** `Adieu, my dear Margaret.` possède une analyse explicite de salutation et d'adresse. Dans son meilleur arbre, `dear` conserve la lecture nominale alternative et `np_poss_n_name` est retenu ; la variante adjectivale doit rester disponible.
+- **Paradigme pronominal** : l'entrée de `we` contenait par erreur `surfaces: ["we","us","our"]` et `morphology: {"our":"we"}`, ce qui inventait un **PRONOUN(our)**. Les formes `we` et `us` restent des pronoms et `our` est désormais seulement `POSS` (donnée lexicalisée distincte). Le **485** redevient `complete` sous les plafonds courants sans restauration d'un faux pronom ni modification de `Parser.parse`.
+
+### Qualité des arbres : problèmes qui restent ouverts
+
+**338 (faux positif, non certifié)** : le nouveau meilleur arbre rattache `simple truth--Do` en `NP np_appos_comma`, traite `Do` comme un nom, et perd la véritable question `Do you not love another?`. La lecture possessive `our mutual happiness` est correcte, mais le reste n'est **pas** une récupération grammaticale. Cause générale : apposition nominale trop permissive à travers les tirets et homographie `Do:N`.
+
+**449 (faux positif, non certifié)** : le moteur trouve un supplément `cleansing`, mais son `NP` objet absorbe `his blood-stained knife the while upon a wisp of grass` via `np_det_post` puis `np_pp_mod`. Il devrait séparer `his blood-stained knife` des compléments temporel et prépositionnel du participe. Ne pas compter ce `completed=True` comme succès linguistique.
+
+**485 (ancien arbre retrouvé, non certifié)** : même si le budget de forêt et la complétion redeviennent acceptables, le meilleur arbre analyse `it fell` comme `NP np_poss`, puis `upon the clearing` comme `VP` avec le faux verbe `upon`. La vraie structure de `it fell ... and drank up the vapours` demeure à reconstruire. Un statut restauré ne prouve pas la validité de l'arbre.
+
+**52** change de portée d'attachement : le supplément `shaking his head` passe sur `clause_final_transitive_participle` englobant `dialogue_post_tag`. La relation attendue est avec le locuteur rapporteur `Uriah`; il faudra vérifier ou mieux contraindre cette ancre. L'ancienne exclamation interne `How kind he puts it!` était elle-même mal classée et n'est pas certifiée ici.
+
+### Contrôles positifs/négatifs et CI
+
+**188 tests** Layer 1 passent au commit [`83a4d9e`](https://github.com/leye0/seman2/commit/83a4d9eb159eaf3c6ceb8a788b42b928181e4527) ([CI 39372861912](https://github.com/leye0/seman2/actions/runs/39372861912)), en plus du diagnostic 500 vert ([39372861982](https://github.com/leye0/seman2/actions/runs/39372861982)). Direct Grammar était vert sur `bc04f33` ([39372289984](https://github.com/leye0/seman2/actions/runs/39372289984)) ; le dernier commit ne modifie que le paradigme lexical, les tests et l'audit ciblé.
+
+Exemples positifs de test : `The door has been opened.`, `The door has never been opened.`, `The door had already been opened.`, `'It was a mistake,' I replied, quietly speaking to the witness.`, `Maya crossed the square, carrying a lantern.`, `Mary waited, you know, near the entrance.`, `Adieu, my dear Margaret.`, `Hello, our dear Alice.`, `Farewell, dear Eleanor.`, `Our friends arrived.`. Contre-exemples vérifiés : parenthèse sans virgule, `you jump` non licencié comme parenthèse, manque de virgule ou de participe en `-ing` après verbe rapporteur, `River, my dear Margaret.` et `Table, dear Eleanor.` sans INTERJECTION, ainsi que l'absence de `PRONOUN` pour `our`.
+
+PR fusionnées : [#4](https://github.com/leye0/seman2/pull/4) → `d5ab9a9`, [#5](https://github.com/leye0/seman2/pull/5) → `bc04f33`, [#6](https://github.com/leye0/seman2/pull/6) → `83a4d9e`. Aucune modification ne contourne `Parser.parse`, ni ne réécrit les romans ou l'empreinte des 500 phrases. **L'objectif 450 reste non atteint** ; le travail suivant doit prioriser les interfaces appositives et l'ancrage des suppléments participiaux, tout en gardant la comparaison des arbres individuels.
