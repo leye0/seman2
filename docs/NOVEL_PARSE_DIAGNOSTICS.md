@@ -552,3 +552,45 @@ Indices nouvellement complets : **86, 212, 250, 338, 449**. Autres changements d
 Exemples positifs de test : `The door has been opened.`, `The door has never been opened.`, `The door had already been opened.`, `'It was a mistake,' I replied, quietly speaking to the witness.`, `Maya crossed the square, carrying a lantern.`, `Mary waited, you know, near the entrance.`, `Adieu, my dear Margaret.`, `Hello, our dear Alice.`, `Farewell, dear Eleanor.`, `Our friends arrived.`. Contre-exemples vérifiés : parenthèse sans virgule, `you jump` non licencié comme parenthèse, manque de virgule ou de participe en `-ing` après verbe rapporteur, `River, my dear Margaret.` et `Table, dear Eleanor.` sans INTERJECTION, ainsi que l'absence de `PRONOUN` pour `our`.
 
 PR fusionnées : [#4](https://github.com/leye0/seman2/pull/4) → `d5ab9a9`, [#5](https://github.com/leye0/seman2/pull/5) → `bc04f33`, [#6](https://github.com/leye0/seman2/pull/6) → `83a4d9e`. Aucune modification ne contourne `Parser.parse`, ni ne réécrit les romans ou l'empreinte des 500 phrases. **L'objectif 450 reste non atteint** ; le travail suivant doit prioriser les interfaces appositives et l'ancrage des suppléments participiaux, tout en gardant la comparaison des arbres individuels.
+
+
+## Gains supplémentaires — passifs adverbiaux, noms propres et antéposition de l'objet (20 octobre 2026)
+
+**Révision finale de grammaire :** [`d0627134`](https://github.com/leye0/seman2/commit/d0627134c17195e950357d2b00e10a270e4b3ae6). La cohorte des 500 phrases demeure exactement `cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a`. La passerelle publique demeure `Parser.parse`; aucune ligne du corpus n'a été remplacée, supprimée ou réécrite.
+
+| Revision | `complete` / 500 | Différence sur la cohorte |
+|---|---:|---|
+| `83a4d9e` (avant cette itération) | **429 (85,8 %)** | Référence |
+| `2fd194b` (PR #7) | **432 (86,4 %)** | +36, +178, +365 |
+| `d0627134` (PR #8) | **433 (86,6 %)** | +53, aucun ancien `complete` perdu |
+
+[Diagnostic 500 final vert](https://github.com/leye0/seman2/actions/runs/39420409029). **+4 `complete` nets depuis 429**, et +9 nets depuis le 424 de la première étude. Il reste **17 nouvelles complétions** pour atteindre le seuil de 450, mais `complete` ne garantit pas un arbre vrai.
+
+### 4 nouveaux `complete` : examen des arbres
+
+- **36, véritable gain** : `The Orfling was likewise accommodated with an inexpensive lodging in the same neighbourhood.` Le groupe nominal sujet est `NP np_definite_named_entity("The Orfling")`, suivi de `VP vp_passive_interposed_manner_adverb("was likewise accommodated")` avec `AUX-BE[finite] + ADV + V[ed,transitive]`, puis `PP("with an inexpensive lodging in the same neighbourhood")`. Les sous-groupes `inexpensive lodging` et `in the same neighbourhood` sont analysés explicitement.
+- **178, véritable gain après correction du meilleur arbre** : `Mr. Gardiner did not attempt to conceal these particulars from the Longbourn family.` Le meilleur arbre est `CLAUSE clause_neg_vp` avec `NP np_honorific_abbreviation("Mr. Gardiner")`, `AUX did`, `NEG not`, `VP-NP vpnp_base_subject_control_to_inf("attempt to ...")` *déjà présent* et `VP-NP vpnp_transitive_base_pp("conceal these particulars from ...")`. L'objet `these particulars`, la préposition `from` et `NP np_determiner_name_noun_compound("the Longbourn family")` sont correctement séparés. Le titre `Mr.` n'est plus faux `NP` topic détaché. Une règle de contrôle infinitif redondante proposée en cours de recherche a été **retirée** après détection par les tests existants.
+- **53, véritable gain** : `The latter you must develop in her, if you can.` Après équilibrage des guillemets du corpus, le meilleur arbre est `dialogue_unattributed → clause_comma_sub`. La principale est `clause_object_topicalization_modal` : `NP("The latter")` objet antéposé, `NP("you")` sujet, `MODAL must` et `VP-GAP[gap=object,licensed_transitive=true]("develop in her")`, avec `V[base,transitive]` et le `PP in her`. La subordonnée `if you can` est `clause_modal_ellipsis`. Les verbes intransitifs ne peuvent pas remplir ce nouvel emplacement d'objet. Les lectures WordNet multiples restent disponibles.
+- **365, `complete` mais arbre non certifié** : `With this resolution I traversed ... and fixed on ... as the scene of my labours.` L'amorce `PP("With this resolution")` et le sujet `I` sont corrects. Mais `fixed` est analysé comme `VP vp_part_pp` à valeur participiale plutôt que comme deuxième prédicat fini coordonné, et `as the scene of my labours` reste attaché au groupe nominal `the remotest of the Orkneys` au lieu du rattachement événementiel/predicatif attendu. La récupération est une amélioration du statut, **pas** une réussite totale de qualité.
+
+### Correction d'une régression de classement avant finalisation
+
+Après la PR #7, la validation grammaticale directe est descendue de **113 à 112 annotations reconnues** : `Mary believes that John left.` pouvait être absorbée fautivement par `np_determiner_name_noun_compound` sous le déterminant `that`. La PR #8 impose désormais `DET[definiteness=definite]` avec une exigence explicite pour ce schéma `DET + PROPER-NOUN + N`, empêchant le détournement de `that`. Les annotations ont été **rétablies à 113/120**, sans modification du jeu gold ni désactivation du gate.
+
+[Direct Grammar final vert](https://github.com/leye0/seman2/actions/runs/39420409083) : 120/120 phrases gold structurellement complètes, 113/120 annotations attendues satisfaites, 24/24 contrastes positifs complets, mêmes 10/24 négatifs encore reconnus qu'avant (dette préexistante). [Suite Layer 1 finale verte](https://github.com/leye0/seman2/actions/runs/39420409063) : **202 tests** dont nouveaux contrôles positifs et négatifs. Niveaux de grammaire et de scores non confondus.
+
+### Statuts officiels de la cohorte et limites
+
+| Statut exclusif | Avant `83a4d9e` | Après `d0627134` |
+|---|---:|---:|
+| `complete` | 429 | **433** |
+| `no_structural_root` | 41 | **39** |
+| `roots_without_valid_analysis` | 23 | **20** |
+| `forest_budget_exceeded` | 5 | **5** |
+| `timeout` | 2 | **3** |
+| `kbest_budget_exceeded` | 0 | **0** |
+| `error` | 0 | **0** |
+
+Aucun des 429 `complete` de départ n'a régressé. **119** change toutefois de `no_structural_root` en `timeout` : son échec est donc inconclusif. Les 17 signalements de saturation de forêt restent inchangés. Parmi les anciennes phrases toujours complètes, les indices **67, 192, 334, 337, 350** changent de règle racine du meilleur arbre ; ces changements de classement ne sont pas encore certifiés comme améliorations.
+
+**PR fusionnées :** [#7](https://github.com/leye0/seman2/pull/7) → `2fd194b` et [#8](https://github.com/leye0/seman2/pull/8) → `d0627134`. Prochaines priorités qualité : coordination `VP[finite]` vs participiale (`365`), séparation `the while` hors de l'objet (`449`), gestion structurée des faux membres d'apposition sous tirets (`338`) et amélioration des tests gold/negatifs toujours non satisfaits.
