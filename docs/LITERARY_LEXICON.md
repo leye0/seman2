@@ -21,3 +21,9 @@ Le fichier annoté est versionné comme **inventaire de formes attestées**, et 
 Un catalogue lexical distinct est préférable à des règles de syntaxe par phrase : une seule hypothèse `ADJ blood-stained` est réutilisable avec n'importe quel nom compatible. Les tests `LiteraryExceptionDictionaryTests` garantissent formes, catégorie, nombre, provenance, relation avec le WordNet, et distinction entre `-` et `--`.
 
 Le SHA de la cohorte fixe des 500 textes originaux ne doit pas changer.
+
+## Audit reproductible de la couverture du supplément
+
+Pour connaître **tous les composés encore absents du catalogue explicitement attesté**, lancer `PYTHONPATH=superparser python -m scripts.audit_literary_lexicon --top 50`. Cet audit parcourt les **quatre romans nettoyés épinglés** (pas les mentions Gutenberg légales) et fournit le nombre de types/occurrences par livre, la part listée et une file de révision classée par fréquence. Il exclut `--` (tiret cadratin) des composés.
+
+**Attention :** les mots non listés ne sont pas nécessairement inconnus du parseur, car WordNet et l'assemblage productif des composés restent actifs. Inversement, une graphie réellement attestée ne garantit pas que sa catégorie grammaticale soit inférable sans vérification humaine. L'audit sert à enrichir le dictionnaire progressivement sans polluer les analyses avec des sens inventés.
