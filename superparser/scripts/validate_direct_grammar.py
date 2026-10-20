@@ -21,6 +21,18 @@ def stats(v):
     return {f"p{int(q*100)}":round(v[int((len(v)-1)*q)],3)
             for q in (.5,.95,.99)} | {"max":round(v[-1],3)}
 
+def compact_tree(node, text):
+    """Expose the actual derivation behind an incorrectly accepted sentence."""
+    if node is None:
+        return None
+    return {
+        "cat": node.category,
+        "rule": node.rule_id,
+        "surface": text[node.start:node.end] if not node.children else None,
+        "children": [compact_tree(ch, text) for ch in node.children],
+    }
+
+
 def run(wordnet_dir):
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=wordnet_dir)
     parser=Parser(resources,cache_size=0)
@@ -60,6 +72,8 @@ def run(wordnet_dir):
             item=result.best()
             pair[kind]={"completed":result.completed,
                         "root_rule":item.rule_id if item else None}
+            if kind=="negative" and item is not None:
+                pair[kind]["derivation"]=compact_tree(item,text)
             neg[kind+"_tested"]+=1
             neg[kind+"_completed"]+=int(result.completed)
             family[row["family"]][kind+"_tested"]+=1
