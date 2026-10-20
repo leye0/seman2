@@ -882,9 +882,9 @@ def run(args: argparse.Namespace) -> dict:
         "w", encoding="utf8"
     ) as canonical_stream:
         for residual in canonical_residuals:
-            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "\\n")
+            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "\n")
     (args.out_dir / "canonical_residual_audit.json").write_text(
-        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "\\n",
+        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
     )
     totals = tally(rows)
