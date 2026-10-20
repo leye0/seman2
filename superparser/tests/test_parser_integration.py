@@ -1005,6 +1005,57 @@ class EmDashPunctuationProvenanceTests(unittest.TestCase):
         self.assertEqual(len(dash_spans), 2)
         self.assertNotIn("'s", [c.surface for c in dash_spans])
 
+
+class EllipticalOffWithDispatchTests(unittest.TestCase):
+    @staticmethod
+    def rules(item):
+        if item is None:
+            return set()
+        return ({item.rule_id} if item.rule_id else set()) | {
+            rule for child in item.children
+            for rule in EllipticalOffWithDispatchTests.rules(child)
+        }
+
+    def test_real_dialogue_dispatch_coordinates_with_transitive_imperative(self):
+        text = '"Off with you to the cook and get some work."'
+        report = make_parser().parse(text)
+        best = report.result.best()
+        self.assertIsNotNone(best, report.result.stats)
+        rules = self.rules(best)
+        self.assertIn("clause_elliptical_off_with_np_pp", rules)
+        self.assertIn("clause_imperative", rules)
+        self.assertIn("vp_bare_trans", rules)
+        self.assertIn("clause_coord", rules)
+
+        def collect(node):
+            result = [(node.rule_id, text[node.start:node.end])]
+            for child in node.children:
+                result.extend(collect(child))
+            return result
+
+        spans = collect(best)
+        self.assertIn(("clause_imperative", "get some work"), spans)
+        self.assertIn(("vp_bare_trans", "get some work"), spans)
+        self.assertIn(("clause_elliptical_off_with_np_pp", "Off with you to the cook"), spans)
+
+    def test_elliptical_dispatch_is_productive_without_the_coordination(self):
+        p = make_parser()
+        for text in ("Off with you to the cook!", "Off with them to the harbour!",
+                     "Off with you!"):
+            best = p.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            rules = self.rules(best)
+            self.assertTrue({"clause_elliptical_off_with_np",
+                             "clause_elliptical_off_with_np_pp"} & rules, text)
+
+    def test_off_and_with_are_not_arbitrary_imperative_markers(self):
+        p = make_parser()
+        for text in ("Across with you to the cook!", "Off beyond you to the cook!"):
+            result = p.parse(text)
+            for best in result.result.alternatives(limit=8):
+                self.assertNotIn("clause_elliptical_off_with_np_pp", self.rules(best), text)
+                self.assertNotIn("clause_elliptical_off_with_np", self.rules(best), text)
+
 if __name__ == "__main__":
     unittest.main()
 
