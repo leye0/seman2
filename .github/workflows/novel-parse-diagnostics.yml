@@ -6,6 +6,8 @@ on:
       - 'superparser/scripts/diagnose_novel_parses.py'
       - 'superparser/research/verbnet_lr/corpus_pipeline.py'
       - 'superparser/seman_parser/engine.py'
+      - 'superparser/data/literary_lexicon.jsonl'
+      - 'superparser/data/syntax_lexicon.jsonl'
       - 'AGENTS.md'
       - 'superparser/seman_parser/sentence_boundaries.py'
       - 'superparser/seman_parser/dialogue.py'

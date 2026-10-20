@@ -787,14 +787,61 @@ def _hyphenated_candidates(
                     end == start + 2
                     and first.text.casefold() in verbal_prefixes
                 )
-                matches = tuple(
+                head_readings = tuple(
                     (entry, sense, lemma)
                     for entry, sense, lemma in lexicon.lookup_morphology(head.text)
+                    if _surface_matches_morphology(head.text, entry, sense, lemma)
+                )
+                matches = tuple(
+                    (entry, sense, lemma)
+                    for entry, sense, lemma in head_readings
                     if (sense.category in open_categories - {"V"}
                         or (sense.category == "V" and licensed_verb_prefix))
-                    and _surface_matches_morphology(head.text, entry, sense, lemma)
                 )
                 source = "hyphen-compound"
+
+                # Productive English attributive compounds: X + past
+                # participle -> ADJ ("river-washed", "sun-dried",
+                # "well-written"). This *does not* license a verbal
+                # compound: the entire X-V[ed] is an adjective.
+                # The head's attested V[ed] morphology is mandatory:
+                # X-"walk" or X-"bag" may not become ADJ by guessing.
+                # Preserve any independent WordNet ADJ/N senses alongside
+                # the derived hypothesis. With explicit dictionary readings
+                # (occupied_spans), this inference is unnecessary.
+                for entry, sense, lemma in head_readings:
+                    if (sense.category != "V"
+                            or sense.features.as_dict().get("vform") != "ed"
+                            or not (head.text.casefold().endswith("ed")
+                                    or head.text.casefold() != lemma.casefold())):
+                        continue
+                    yield LexicalCandidate(
+                        span_start=first.start,
+                        span_end=head.end,
+                        surface=surface,
+                        lemma=surface.casefold(),
+                        category="ADJ",
+                        features=FeatureStructure.empty(),
+                        normalized=surface.casefold(),
+                        source="hyphen-participial-adjective",
+                        score=min(sense.score, 0.78),
+                        provenance={
+                            "source": "productive-hyphen-morphology",
+                            "construction": "X+past_participle->ADJ",
+                            "head_surface": head.text,
+                            "head_lemma": lemma,
+                            "verb_sense_id": sense.sense_id,
+                        },
+                        interpretations=(LexicalInterpretation(
+                            sense_id=None,
+                            lemma=surface.casefold(),
+                            provenance={
+                                "source": "productive-hyphen-morphology",
+                                "head_lemma": lemma,
+                                "verb_sense_id": sense.sense_id,
+                            },
+                        ),),
+                    )
             for entry, sense, lemma in matches:
                 if source == "lexicon-hyphen" and not _surface_matches_morphology(
                     surface, entry, sense, lemma,
