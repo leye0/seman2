@@ -39,6 +39,35 @@ def main() -> None:
               "structural_roots=", result.stats.get("structural_root_nodes"),
               "forest=", result.stats.get("forest_nodes"), flush=True)
 
+    sample = SAMPLES[-1][1]
+    parser = Parser.from_dir(DATA, goal_category="CLAUSE", cache_size=0,
+                             max_items=50_000)
+    result = parser.parse(sample, diagnostic_k=128,
+                          kbest_work_limit=500_000).result
+
+    def nodes(item):
+        yield item
+        for child in item.children:
+            yield from nodes(child)
+
+    for rank, tree in enumerate(result.alternatives(limit=128), start=1):
+        all_nodes = list(nodes(tree))
+        if any(n.rule_id == "vp_passive_shared_aux_sequence" for n in all_nodes):
+            print("PASSIVE_CORRECT_PATH_RANK", rank,
+                  "score=", tree.score,
+                  "has_supplementary_np=", any(
+                      n.rule_id == "np_postposed_supplementary_adjp"
+                      for n in all_nodes),
+                  "root=", tree.rule_id,
+                  "voice=", tree.features.as_dict().get("voice"), flush=True)
+            break
+    else:
+        print("PASSIVE_CORRECT_PATH_MISSING",
+              "checked=", len(result.alternatives(limit=128)),
+              "forest=", result.stats.get("forest_nodes"),
+              "kbest_budget=", result.stats.get("kbest_budget_exceeded"),
+              flush=True)
+
 
 if __name__ == "__main__":
     main()
