@@ -118,6 +118,31 @@ def main() -> None:
           "PASSIVE-SEQ=", rule_counts("PASSIVE-SEQ", sample.index("thrown")),
           flush=True)
 
+    # Diagnostic-only restriction of competing root schemas. The public
+    # Parser.parse entry point remains exactly the same; this experiment
+    # tests whether the packed clause_passive derivation can unify at all.
+    from seman_parser.engine import ParserResources
+    from seman_parser.grammar import Grammar
+    resources = ParserResources.from_dir(DATA)
+    restricted_rules = [
+        r for r in resources.grammar
+        if r.lhs.category != "CLAUSE" or r.rule_id == "clause_passive"
+    ]
+    resources.grammar = Grammar(tuple(restricted_rules))
+    restricted_parser = Parser(resources, goal_category="CLAUSE", cache_size=0,
+                               max_items=50_000)
+    restricted = restricted_parser.parse(
+        sample, diagnostic_k=32, kbest_work_limit=500_000,
+    ).result
+    print("PASSIVE_ROOT_UNIFICATION",
+          "complete=", restricted.completed,
+          "root=", restricted.best().rule_id if restricted.best() else None,
+          "stats=", {
+              k: restricted.stats.get(k) for k in
+              ("structural_root_nodes", "forest_nodes", "budget_exceeded",
+               "roots_without_valid_analysis", "kbest_work_units")
+          }, flush=True)
+
     for beam in (160, 320):
         pp = Parser.from_dir(DATA, goal_category="CLAUSE", cache_size=0,
                              max_items=50_000, beam=beam)
