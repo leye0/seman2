@@ -757,6 +757,50 @@ class InterposedAdverbPassiveAndBareControlTests(unittest.TestCase):
                 self.assertNotIn("vpnp_base_subject_control_to_inf",
                                  self.rule_ids(item), text)
 
+
+class NamedEntityNominalConstructionTests(unittest.TestCase):
+    """Lexically supported proper-name nominalization and attributive names."""
+
+    @staticmethod
+    def rules(item):
+        if item is None:
+            return set()
+        return ({item.rule_id} if item.rule_id else set()) | {
+            r for child in item.children
+            for r in NamedEntityNominalConstructionTests.rules(child)
+        }
+
+    def test_definite_proper_name_with_article(self):
+        p = make_parser()
+        for sentence in (
+            "The Orfling arrived.",
+            "The Titanic sank.",
+            "The Turk smiled.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            self.assertIn("np_definite_named_entity", self.rules(best), sentence)
+
+    def test_proper_names_can_modify_real_common_noun_heads(self):
+        p = make_parser()
+        for sentence in (
+            "The Longbourn family arrived.",
+            "The London train departed.",
+        ):
+            report = p.parse(sentence)
+            best = report.result.best()
+            self.assertIsNotNone(best, (sentence, report.result.stats))
+            self.assertIn("np_determiner_name_noun_compound", self.rules(best), sentence)
+
+    def test_indefinite_article_does_not_license_bare_name(self):
+        p = make_parser()
+        for sentence in ("A Orfling arrived.", "A Titanic sank."):
+            report = p.parse(sentence)
+            for item in report.result.alternatives(limit=8):
+                self.assertNotIn("np_definite_named_entity", self.rules(item), sentence)
+
+
 if __name__ == "__main__":
     unittest.main()
 
