@@ -95,12 +95,9 @@ class AuxiliaryHomographDiagnosticTests(unittest.TestCase):
 
     def test_negative_pair_tree_audit(self) -> None:
         parser = make_parser()
-        cases = (
-            "They did opened the door.",
-            "She did not opened the door.",
-            "He does not likes coffee.",
-            "John did eats.",
-        )
+        import json
+        fixture = DATA.parent / "research" / "verbnet_lr" / "negative_minimal_pairs.jsonl"
+        cases = tuple(json.loads(line)["text"] for line in fixture.read_text().splitlines() if line.strip())
         for phrase in cases:
             result = parser.parse(phrase).result
             def tree(node, depth=0):
