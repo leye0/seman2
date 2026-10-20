@@ -232,3 +232,45 @@ régresse. La réussite de complétion n'est pas une preuve d'exactitude
 de tous les arbres ; conserver des audits de qualité syntaxique et les
 contre-exemples. Les incises `you know`, `indeed` en position
 postverbale, et la coordination de relatives demeurent à investiguer.
+
+## Incise adjectivale entre sujet et prédicat : évaluation à 428/500
+
+Le commit `c739c6b` introduit **une seule** règle
+`clause_subject_parenthetical_adjp` :
+`NP[number=?n, person=?p] , ADJP , VP[finite, active, number=?n, person=?p]`
+→ `CLAUSE`. L'accord de sujet et le type verbal restent obligatoires.
+Le constituant `ADJP` demeure une véritable analyse grammaticale
+(adjectifs coordonnés ou participes adjectivaux) ; la règle ne transforme
+pas une suite de mots arbitraire en incise.
+
+Le diagnostic canonique [39357217895] mesure **428/500 (85,6 %)**
+contre **425/500** avant la modification. Les statuts individuels
+ont évolué ainsi, sans perte de phrase auparavant complétée :
+
+- **328**, `The Turk, amazed and delighted, endeavoured ...` :
+  `no_structural_root` → `complete` (racine extérieure
+  `dialogue_unattributed`). C'est l'exemple directement visé.
+- **107**, `I could only sit down ..., biting the key ..., and think ...` :
+  `roots_without_valid_analysis` → `complete` (racine
+  `clause_comma`). Construction complexe de participation incidente.
+- **368**, `You were thrown, by some surprising accident, ...` :
+  `no_structural_root` → `complete` (racine extérieure
+  `dialogue_unattributed`). Il faut vérifier l'attache des
+  constituants incidentiels avant de certifier cet arbre.
+- **370** passe de `no_structural_root` à
+  `roots_without_valid_analysis` : un arbre structural de plus,
+  mais **aucune** nouvelle phrase complète.
+
+Trois gains **de complétion** sont ainsi vérifiés ; la correction
+linguistique de tous leurs arbres n'est pas encore établie. Le nombre
+de cas `forest_budget_exceeded` reste à **4**, les délais à **3**,
+et les erreurs d'exécution à **0**. Le drapeau de saturation
+secondaire augmente de **14 à 16**. Les tests d'intégration incluent
+des contrôles positifs et négatifs pour l'incise adjectivale. Les
+validations Direct Grammar et Layer 1, ainsi que le diagnostic canonique,
+sont vertes.
+
+La prochaine étape méthodologique devrait vérifier explicitement les
+**arbres internes** des indices 107 et 368 et rechercher si leurs
+participes sont attachés au bon référent plutôt que déduire la
+validité syntaxique de la seule racine complète.
