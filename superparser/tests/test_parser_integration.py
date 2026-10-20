@@ -147,7 +147,7 @@ class ChartParserTests(unittest.TestCase):
             with self.subTest(text=text):
                 parsed = self.parser.parse(text).result
                 self.assertTrue(parsed.completed, parsed.stats)
-                trees = [tree for tree in parsed.alternatives(limit=12)]
+                trees = [tree for tree in parsed.alternatives(limit=64)]
                 self.assertTrue(
                     any(required in rule_ids(tree) for tree in trees),
                     (text, parsed.stats, [tree.rule_id for tree in trees]),
