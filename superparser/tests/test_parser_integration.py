@@ -225,7 +225,7 @@ class ChartParserTests(unittest.TestCase):
                 result = self.parser.parse(sentence).result
                 self.assertTrue(result.completed, result.stats)
                 self.assertTrue(
-                    any(any(rule is not None and rule.startswith("clause_subject_parenthetical_adjp_") for rule in ids(tree))
+                    any("clause_subject_parenthetical_adjp_referential" in ids(tree)
                         for tree in result.alternatives(limit=24)),
                     (sentence, result.stats),
                 )
@@ -243,7 +243,7 @@ class ChartParserTests(unittest.TestCase):
             with self.subTest(sentence=sentence):
                 result = self.parser.parse(sentence).result
                 for tree in result.alternatives(limit=16):
-                    self.assertFalse(any(rule is not None and rule.startswith("clause_subject_parenthetical_adjp_") for rule in ids(tree)))
+                    self.assertFalse("clause_subject_parenthetical_adjp_referential" in ids(tree))
 
     def test_parenthetical_adjective_cannot_invent_bare_subjects(self) -> None:
         """Reject bare count nouns and spurious noun readings in incidentals."""
@@ -262,8 +262,7 @@ class ChartParserTests(unittest.TestCase):
                                            kbest_work_limit=500000).result
                 for tree in parsed.alternatives(limit=2):
                     for node in walk(tree):
-                        if node.rule_id and node.rule_id.startswith(
-                                "clause_subject_parenthetical_adjp_"):
+                        if node.rule_id == "clause_subject_parenthetical_adjp_referential":
                             self.assertNotIn(
                                 text[node.children[0].start:node.children[0].end],
                                 {"shore", "think of the captivating"},
@@ -276,10 +275,7 @@ class ChartParserTests(unittest.TestCase):
         spoken = best.children[0]
         self.assertEqual(spoken.category, "DIRECT-SPEECH")
         clause = next(child for child in spoken.children if child.category == "CLAUSE")
-        self.assertIn(clause.rule_id, {
-            "clause_subject_parenthetical_adjp_determined",
-            "clause_subject_parenthetical_adjp_person",
-        })
+        self.assertEqual(clause.rule_id, "clause_subject_parenthetical_adjp_referential")
         subject, _, adjunct, _, predicate = clause.children
         self.assertEqual(sentence[subject.start:subject.end], "The Turk")
         self.assertEqual(sentence[adjunct.start:adjunct.end], "amazed and delighted")
