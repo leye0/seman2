@@ -776,7 +776,8 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
             f"Mots sans aucun candidat : {lex['words_without_any_candidate']}",
             "",
         ])
-    return "\n".join(output)
+    return "
+".join(output)
 
 
 def run(args: argparse.Namespace) -> dict:
@@ -799,7 +800,8 @@ def run(args: argparse.Namespace) -> dict:
                 "synthetic_prefix": case.get("synthetic_prefix", ""),
                 "synthetic_suffix": case.get("synthetic_suffix", ""),
                 "synthetic_terminal": bool(case.get("synthetic_terminal")),
-            }, ensure_ascii=False) + "\n")
+            }, ensure_ascii=False) + "
+")
     cohort_digest = sha256(
         (args.out_dir / "cohort.jsonl").read_bytes()
     ).hexdigest()
@@ -884,7 +886,8 @@ def run(args: argparse.Namespace) -> dict:
                         lexical_diagnostics(lattice) if lattice is not None else None
                     )
                 rows.append(row)
-                stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+                stream.write(json.dumps(row, ensure_ascii=False) + "
+")
                 if (index + 1) % 5 == 0 or index + 1 == len(selected):
                     progress = tally(rows)
                     print("NOVEL_DIAGNOSTIC_PROGRESS", json.dumps({
@@ -900,9 +903,11 @@ def run(args: argparse.Namespace) -> dict:
         "w", encoding="utf8"
     ) as canonical_stream:
         for residual in canonical_residuals:
-            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "\n")
+            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "
+")
     (args.out_dir / "canonical_residual_audit.json").write_text(
-        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "
+",
         encoding="utf8",
     )
     totals = tally(rows)
@@ -941,33 +946,47 @@ def run(args: argparse.Namespace) -> dict:
     ) as failed_stream:
         for row in rows:
             if row["status"] != "complete":
-                failed_stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+                failed_stream.write(json.dumps(row, ensure_ascii=False) + "
+")
     patterns = recurring_issues(rows)
     (args.out_dir / "recurrent_issues.json").write_text(
-        json.dumps(patterns, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(patterns, ensure_ascii=False, indent=2) + "
+",
         encoding="utf8",
     )
     summary["recurrent_issues"] = patterns
     contrasts = contrast_category_patterns(rows)
     (args.out_dir / "pattern_contrasts.json").write_text(
-        json.dumps(contrasts, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(contrasts, ensure_ascii=False, indent=2) + "
+",
         encoding="utf8",
     )
     summary["pattern_contrasts"] = contrasts
     clusters = construction_cluster_audit(rows)
     summary["construction_clusters"] = clusters
     (args.out_dir / "construction_clusters.json").write_text(
-        json.dumps(clusters, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(clusters, ensure_ascii=False, indent=2) + "
+",
         encoding="utf8",
     )
     (args.out_dir / "summary.json").write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(summary, ensure_ascii=False, indent=2) + "
+",
         encoding="utf8",
     )
     (args.out_dir / "report.md").write_text(
         render_markdown(summary, rows), encoding="utf8"
     )
-    # Small, stable CI-log index: makes failed constructions inspectable even\n    # when the uploaded diagnostic artifact is not locally available.\n    for row in rows:\n        if row["status"] in ("no_structural_root", "roots_without_valid_analysis"):\n            print("NOVEL_GRAMMAR_RESIDUAL", json.dumps({\n                "index": row["index"], "book_id": row["book_id"],\n                "status": row["status"], "sentence": row["sentence"],\n                "lexical_category_sequence": row.get("lexical_category_sequence"),\n            }, ensure_ascii=False), flush=True)\n    print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
+    # Small, stable CI-log index: makes failed constructions inspectable even
+    # when the uploaded diagnostic artifact is not locally available.
+    for row in rows:
+        if row["status"] in ("no_structural_root", "roots_without_valid_analysis"):
+            print("NOVEL_GRAMMAR_RESIDUAL", json.dumps({
+                "index": row["index"], "book_id": row["book_id"],
+                "status": row["status"], "sentence": row["sentence"],
+                "lexical_category_sequence": row.get("lexical_category_sequence"),
+            }, ensure_ascii=False), flush=True)
+    print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
         "recurrent_missing_lexical_words": patterns["word_without_candidate"][:10],
