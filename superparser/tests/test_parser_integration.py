@@ -673,6 +673,33 @@ class GreetingVocativeTests(unittest.TestCase):
         self.assertIn("INTERJECTION", {c.category for c in candidates})
         self.assertIn("N", {c.category for c in candidates})
 
+
+class PersonalPronounParadigmTests(unittest.TestCase):
+    """Possessive determiner is not a free pronoun, even with WordNet present."""
+
+    def test_we_us_and_our_keep_distinct_grammatical_functions(self):
+        p = make_parser()
+        samples = {
+            "we": {"PRONOUN"},
+            "us": {"PRONOUN"},
+            "our": {"POSS"},
+        }
+        for word, expected in samples.items():
+            report = p.parse(f"Mary said {word} could help.")
+            found = {c.category for c in report.lattice.candidates
+                     if c.surface.lower() == word}
+            self.assertTrue(expected <= found, (word, found))
+            if word == "our":
+                self.assertNotIn("PRONOUN", found)
+
+    def test_our_is_available_inside_ordinary_possessive_np(self):
+        result = make_parser().parse("Our friends arrived.").result
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        self.assertEqual(best.children[0].category, "NP")
+        subject_text = "Our friends arrived."[best.children[0].start:best.children[0].end]
+        self.assertEqual(subject_text, "Our friends")
+
 if __name__ == "__main__":
     unittest.main()
 
