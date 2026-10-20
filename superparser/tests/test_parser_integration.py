@@ -116,15 +116,7 @@ class MorphologyAndNominalAgreementRegressionTests(unittest.TestCase):
 
     def test_common_noun_subject_is_third_person(self) -> None:
         p = make_parser()
-        report = p.parse("The boy are happy.")
-        wrong = report.result
-        if wrong.best():
-            def traced(n):
-                return (n.rule_id, n.category, n.features.as_dict() if hasattr(n.features,"as_dict") else None,
-                        [(ch.rule_id,ch.category, ch.features.as_dict() if hasattr(ch.features,"as_dict") else None) for ch in n.children],
-                        [traced(ch) for ch in n.children])
-            print("FULL_AGREEMENT_TREE", traced(wrong.best()))
-        print("ARE_SURFACES", [c.as_dict() for c in report.lattice.candidates if c.surface.lower()=="are"])
+        wrong = p.parse("The boy are happy.").result
         self.assertFalse(wrong.completed, wrong.stats)
         self.assertFalse(p.parse("The books is heavy.").result.completed)
         self.assertTrue(p.parse("The boy is happy.").result.completed)
