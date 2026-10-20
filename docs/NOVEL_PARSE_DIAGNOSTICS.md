@@ -339,3 +339,71 @@ et attache des participes adjectivaux. Ces règles doivent être
 éprouvées sur des phrases positives et négatives et sur les
 attachements internes ; on ne revendiquera aucun gain de qualité
 sur la seule base de nouvelles racines.
+
+
+## Diagnostic par catégories, traits et frontières (octobre 2026)
+
+**Constat méthodologique :** la couverture d'une phrase ne suffit pas.
+Avant d'ajouter une règle grammaticale, inspecter le treillis lexical
+**complet** et les frontières exactes des constituants ; une homographie
+valide n'autorise pas n'importe quel emboîtement syntaxique.
+
+Un audit reproductible est activé dans la CI Layer 1 avec
+`python -m scripts.audit_novel_tree_quality --indices 107,368 --lexical-audit`.
+Il imprime, pour chaque mot, `start`, `end`, les **catégories
+concurrentes**, les **traits**, les identifiants WordNet et les
+sources de chaque candidat. Le chemin de production est exclusivement
+`Parser.parse`.
+
+**Cas 107 (Dickens) — faux positif structurel confirmé :**
+
+- `think` à [75:80] possède légitimement des sens **N** et **V**
+  dans WordNet. Ne surtout pas supprimer la catégorie nominale.
+  `think of` à [75:83] est également un verbe lexical multi-mots.
+- `bright-eyed` à [110:121] recevait artificiellement, par
+  `_hyphenated_candidates`, `ADJ` mais aussi
+  `V[finite]`, `V[base]`, `V[ed]`, `V[ing]`, parce que
+  le générateur copiait les lectures du segment final `eyed`,
+  **sans attestation du composé comme verbe** et sans vérifier la
+  morphologie de chaque lecture.
+- `carpet-bag` à [59:69] subissait le même phénomène et recevait
+  jusqu'à `N[plural]` malgré le segment final singulier `bag`.
+- La correction générale restreint la projection des composés
+  **non attestés** aux lectures **non verbales** morphologiquement
+  licites de leur tête. Les composés explicitement attestés
+  continuent de conserver leurs catégories lexicales. Les
+  lectures grammaticales de `think` demeurent toutes présentes.
+- **Attention :** après cette correction lexicale, une autre
+  analyse incorrecte reste possible :
+  `before [my fire, [biting [the key of
+  [my carpet-bag, and think of the captivating], girlish]],
+  [bright-eyed lovely Dora]]`.
+  Son arbre s'appuie notamment sur `np_appos_comma`,
+  `np_gerund`, `np_list_last`, `np_of` et
+  `np_title_name`. Les traits et la position exacte des
+  constituants doivent contraindre leur *licence d'attachement* ;
+  il ne faut pas détruire des catégories WordNet correctes.
+
+**Cas 368 (Frankenstein) — contrôle positif :**
+
+- `You` [1:4] est `PRONOUN[number=singular, person=2]` ;
+  `were` [5:9] possède ses lectures `AUX-BE[finite,
+  number=plural]` et `AUX-BE[finite, number=singular,
+  person=2]`. Ce sont deux analyses morphologiques licites,
+  non une neutralisation globale de l'accord.
+- `thrown`, `seized` et `charged` portent les lectures
+  `V[vform=ed]` nécessaires à une structure passive partageant
+  l'auxiliaire ; les variantes finies continuent de coexister.
+- Le meilleur arbre contrôlé au commit `75584d2` utilise
+  `clause_passive` puis `vp_passive_shared_aux_sequence`,
+  et analyse `on [this shore, [renowned [for its hospitality]]]`.
+  Les délimiteurs et l'apposition adjectivale y sont visibles et
+  vérifiables par leurs positions.
+
+**Contrat pour la suite :** avant de modifier les constructions
+d'apposition ou de coordination, établir la *catégorie*, la
+*sous-catégorie*, les *traits présents et absents*, la *position*
+et la *relation grammaticale* attendue. Évaluer les arbres réellement
+sélectionnés et les contre-exemples, puis seulement la variation
+de couverture sur les 500 phrases. Aucun bonus de score destiné
+à « récupérer » un exemple ne remplace cette vérification.
