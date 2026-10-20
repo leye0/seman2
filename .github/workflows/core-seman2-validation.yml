@@ -75,9 +75,7 @@ jobs:
       - name: Check global grammar quality for pull requests
         if: github.event_name == 'pull_request'
         run: |
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.validate_direct_grammar \\
-            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \\
-            --out "$RUNNER_TEMP/direct-grammar-quality.json"
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.validate_direct_grammar --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out "$RUNNER_TEMP/direct-grammar-quality.json"
       - name: Report unlisted attested hyphenated compounds
         run: |
           PYTHONPATH=superparser python -m scripts.audit_literary_lexicon --top 30
