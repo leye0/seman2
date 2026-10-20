@@ -87,6 +87,40 @@ class SegmentationTests(unittest.TestCase):
         for child in item.children:
             yield from SegmentationTests._descendants_for_test(child)
 
+    def test_predicative_inversion_free_relatives_keep_genuine_subjects(self) -> None:
+        p = make_parser()
+        examples = (
+            ("Such is my journal of what relates to this strange occurrence "
+             "up to the present day.",
+             {"clause_predicative_adjp_copular_inversion",
+              "np_nominal_free_relative_subject"}),
+            ("and still different from either was what Mr. Bennet sent to Mr. Collins, "
+             "in reply to his last.",
+             {"clause_predicative_adjp_copular_inversion",
+              "np_nominal_free_relative_object_pp",
+              "np_free_relative_supplementary_pp"}),
+        )
+        for sentence, expected in examples:
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                root = parsed.best()
+                self.assertIsNotNone(root)
+                descendants = [root]
+                for item in descendants:
+                    descendants.extend(item.children)
+                realized = {node.rule_id for node in descendants}
+                self.assertTrue(expected <= realized, (expected, realized))
+
+    def test_distributive_either_and_neither_keep_nominal_alternatives(self) -> None:
+        p = make_parser()
+        for word in ("either", "neither"):
+            with self.subTest(word=word):
+                lexical = {c.category for c in p.parse(word).lattice.candidates
+                           if c.surface.casefold() == word}
+                self.assertIn("DET", lexical)
+                self.assertIn("PRONOUN", lexical)
+
     def test_internal_apostrophe_surnames_are_full_span_names(self) -> None:
         parser = make_parser()
         for surface in ("O'Brien", "D'Artagnan", "M'Graw", "O’Connor"):
