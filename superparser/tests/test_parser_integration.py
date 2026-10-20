@@ -908,8 +908,26 @@ class AdverbialWhModalAndBarePPTests(unittest.TestCase):
             best=report.result.best()
             self.assertIsNotNone(best,(sentence,report.result.stats))
             self.assertIn("clause_wh_adverbial_modal",self.rules(best),sentence)
-            if not sentence.startswith("But why"):
-                self.assertIn("vpnp_bare_intransitive_pp",self.rules(best),sentence)
+            self.assertTrue({"vpnp_bare_intransitive_pp", "vpnp_bare_prepositional_pp"} & self.rules(best), (sentence, self.rules(best)))
+
+
+    def test_upon_is_real_preposition_with_preserved_lexical_hypotheses(self):
+        p=make_parser()
+        report=p.parse("John slept upon the ground.")
+        cats={c.category for c in report.lattice.candidates if c.surface.casefold()=="upon"}
+        self.assertIn("PREP",cats)
+        best=report.result.best()
+        self.assertIsNotNone(best,report.result.stats)
+        rules=self.rules(best)
+        self.assertIn("pp_prep_np",rules)
+
+    def test_prepositional_base_predicate_requires_real_valency(self):
+        p=make_parser()
+        for sentence in ("Why should I depend upon the answer?", "Why should I dwell upon the issue?"):
+            report=p.parse(sentence)
+            best=report.result.best()
+            self.assertIsNotNone(best,report.result.stats)
+            self.assertIn("vpnp_bare_prepositional_pp",self.rules(best),sentence)
 
     def test_an_object_wh_is_not_mistaken_for_adverbial_wh(self):
         p=make_parser()
