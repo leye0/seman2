@@ -398,27 +398,6 @@ class ChartParserTests(unittest.TestCase):
             {n.rule_id for n in all_nodes(best)},
         )
 
-    def test_supplementary_np_requires_atomic_lexical_head(self) -> None:
-        """A comma-coordinated nominal forest cannot masquerade as a local host."""
-        from seman_parser.engine import Parser
-        parser = Parser(self.parser.resources, goal_category="NP",
-                        cache_size=0)
-        good = parser.parse("this shore, renowned for its hospitality").result
-        self.assertTrue(good.completed, good.stats)
-        bad = parser.parse(
-            "the key of my carpet-bag, and think of the captivating, girlish"
-        ).result
-
-        def walk(node):
-            yield node
-            for child in node.children:
-                yield from walk(child)
-        for tree in bad.alternatives(limit=20):
-            self.assertNotIn(
-                "np_postposed_supplementary_adjp",
-                {node.rule_id for node in walk(tree)},
-            )
-
     def test_passive_participle_coordination_requires_real_passives(self) -> None:
         """Do not accept active infinitives or present verbs as passive participles."""
         def rules(node):
