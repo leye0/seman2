@@ -1,6 +1,6 @@
 # Supplément lexical littéraire du Layer 1
 
-**Objectif :** compléter WordNet, non le remplacer. `superparser/data/literary_lexicon.jsonl` énumère **86 graphies attestées** (mots composés, dialecte, graphies anciennes ou contractées) avec `category`, `features`, `lemma`, `ebook_id`, `attested_surface` et `register`. Le moteur charge ce fichier après `syntax_lexicon.jsonl` via `ParserResources.from_dir` sans modifier son API `Parser.parse`. Chaque hypothèse du treillis conserve la forme originale dans `surface` et une provenance de sens `attested-literary-supplement`.
+**Objectif :** compléter WordNet, non le remplacer. `superparser/data/literary_lexicon.jsonl` énumère **111 graphies attestées** (mots composés, dialecte, graphies anciennes ou contractées) avec `category`, `features`, `lemma`, `ebook_id`, `attested_surface` et `register`. Le moteur charge ce fichier après `syntax_lexicon.jsonl` via `ParserResources.from_dir` sans modifier son API `Parser.parse`. Chaque hypothèse du treillis conserve la forme originale dans `surface` et une provenance de sens `attested-literary-supplement`.
 
 ## Politique linguistique
 
@@ -36,3 +36,10 @@ Après intégration de 86 formes attestées, la mesure officielle passe de **437
 - **Index 459**, Stevenson, `that's unfort'nate--appears as if killing parties was a waste of time.` : `unfort'nate` est correctement reconnu comme `ADJ` (véritable gain lexical) et `--` identifié dans le treillis. Toutefois le meilleur arbre traite `as if killing` comme un groupe prépositionnel et `parties was a waste of time` comme une indépendante, au lieu d'une construction `as if` correcte. **Faux positif de qualité syntaxique**.
 
 Conclusion : **439/500 est un indicateur de reconnaissance structurelle brute, pas 439 arbres validés**. Le supplément est utile sur le plan lexical et ne modifie pas le corpus; les priorités restantes sont le balancement interphrastique des guillemets et l'analyse de `as if`. Pour confirmer ces conclusions, la CI de suivi audite explicitement les meilleurs arbres 109 et 459. Ne pas augmenter le score de qualité certifiée sur ces deux cas.
+
+
+## Première vague priorisée par fréquence
+
+L'audit des quatre romans a révélé 1 567 types de composés avec tiret simple, dont initialement 79 étaient déjà dans le catalogue explicite de 86 entrées. Nous avons ensuite ajouté **25 composés parmi les plus fréquents**, avec des catégories vérifiables : `drawing-room`, `child-wife`, `pocket-handkerchief`, `public-house`, `dining-room`, `stage-coach`, `good-natured`, `old-fashioned`, `business-like`, etc. Les variantes contextuellement polysémiques `good-bye` (nom et interjection) et `half-way` (adjectif/adverbe) conservent leurs deux lectures indépendantes. L'existence d'un composé seul n'autorise jamais à inventer un sens verbal.
+
+Les graphies non encore inscrites dans ce dictionnaire explicite ne sont pas forcément inconnues du moteur : WordNet, les alias orthographiques comme `to-day` / `to-morrow` et le fallback compositionnel sont conservés. Les séquences idiomatiques telles que `a-going`, `half-an-hour` et `half-a-dozen` doivent recevoir une analyse morphosyntaxique avant ajout, plutôt qu'une fausse catégorie `N` par défaut.
