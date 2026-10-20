@@ -20,6 +20,43 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_literary_question_and_habitual_trees_are_licensed(self) -> None:
+        parser = make_parser()
+
+        def derivations(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from derivations(child)
+
+        cases = (
+            ("What brings you here, man?", "clause_wh_subject_question_vocative"),
+            ("Dick, was it?", "clause_copular_left_dislocation_question"),
+            ("And when you used to tell the stories?", "vp_past_habitual_used_to"),
+            ("I've half a mind to dine first.", "vp_possessive_have_np_infinitival_modifier"),
+        )
+        for sentence, expected in cases:
+            with self.subTest(sentence=sentence):
+                result = parser.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                root = result.best()
+                self.assertIsNotNone(root)
+                self.assertIn(expected, set(derivations(root)))
+
+    def test_habitual_used_and_fractional_half_keep_open_class_readings(self) -> None:
+        parser = make_parser()
+        for word, specialty, lexical in (
+            ("used", "HABITUAL", "V"),
+            ("half", "DET", "N"),
+        ):
+            with self.subTest(word=word):
+                candidates = [
+                    c for c in parser.parse(word).lattice.candidates
+                    if c.surface.casefold() == word
+                ]
+                categories = {c.category for c in candidates}
+                self.assertIn(specialty, categories)
+                self.assertIn(lexical, categories)
+
     def test_lattice_has_candidates(self) -> None:
         lexicon = load_lexicon(DATA / "lexicon.jsonl")
         lattice = build_lattice("John opened the box.", lexicon)
