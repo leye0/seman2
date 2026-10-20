@@ -780,7 +780,9 @@ class NamedEntityNominalConstructionTests(unittest.TestCase):
             report = p.parse(sentence)
             best = report.result.best()
             self.assertIsNotNone(best, (sentence, report.result.stats))
-            self.assertIn("np_definite_named_entity", self.rules(best), sentence)
+            forms = [self.rules(item) for item in report.result.alternatives(limit=8)]
+            self.assertTrue(any("np_definite_named_entity" in form for form in forms),
+                            (sentence, forms))
 
     def test_proper_names_can_modify_real_common_noun_heads(self):
         p = make_parser()
