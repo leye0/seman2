@@ -71,6 +71,30 @@ def main() -> None:
               "best_rule=", rr.best().rule_id if rr.best() else None,
               "root_candidates=", len(alt), flush=True)
 
+    for sentence in (
+        "You were captured.",
+        "You were captured, and released.",
+        "They were captured, and released.",
+        "John was captured, and released.",
+        "The men were captured, and released.",
+    ):
+        p = Parser.from_dir(DATA, cache_size=0)
+        rr = p.parse(sentence, diagnostic_k=64,
+                     kbest_work_limit=500_000).result
+        alts = rr.alternatives(limit=64)
+        print("PASSIVE_SUBJECT_RANK", repr(sentence),
+              "completed=", rr.completed,
+              "best=", rr.best().rule_id if rr.best() else None,
+              "passive_clause_ranks=", [
+                  i for i, a in enumerate(alts, 1)
+                  if a.rule_id == "clause_passive"
+              ][:20],
+              "shared_seq_ranks=", [
+                  i for i, a in enumerate(alts, 1)
+                  if any(n.rule_id == "vp_passive_shared_aux_sequence"
+                         for n in nodes(a))
+              ][:20], flush=True)
+
     for rank, tree in enumerate(result.alternatives(limit=128), start=1):
         all_nodes = list(nodes(tree))
         if any(n.rule_id == "vp_passive_shared_aux_sequence" for n in all_nodes):
