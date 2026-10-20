@@ -799,8 +799,7 @@ def run(args: argparse.Namespace) -> dict:
                 "synthetic_prefix": case.get("synthetic_prefix", ""),
                 "synthetic_suffix": case.get("synthetic_suffix", ""),
                 "synthetic_terminal": bool(case.get("synthetic_terminal")),
-            }, ensure_ascii=False) + "
-")
+            }, ensure_ascii=False) + "\n")
     cohort_digest = sha256(
         (args.out_dir / "cohort.jsonl").read_bytes()
     ).hexdigest()
@@ -885,8 +884,7 @@ def run(args: argparse.Namespace) -> dict:
                         lexical_diagnostics(lattice) if lattice is not None else None
                     )
                 rows.append(row)
-                stream.write(json.dumps(row, ensure_ascii=False) + "
-")
+                stream.write(json.dumps(row, ensure_ascii=False) + "\n")
                 if (index + 1) % 5 == 0 or index + 1 == len(selected):
                     progress = tally(rows)
                     print("NOVEL_DIAGNOSTIC_PROGRESS", json.dumps({
@@ -902,11 +900,9 @@ def run(args: argparse.Namespace) -> dict:
         "w", encoding="utf8"
     ) as canonical_stream:
         for residual in canonical_residuals:
-            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "
-")
+            canonical_stream.write(json.dumps(residual, ensure_ascii=False) + "\n")
     (args.out_dir / "canonical_residual_audit.json").write_text(
-        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "
-",
+        json.dumps(canonical_audit, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
     )
     totals = tally(rows)
@@ -945,32 +941,27 @@ def run(args: argparse.Namespace) -> dict:
     ) as failed_stream:
         for row in rows:
             if row["status"] != "complete":
-                failed_stream.write(json.dumps(row, ensure_ascii=False) + "
-")
+                failed_stream.write(json.dumps(row, ensure_ascii=False) + "\n")
     patterns = recurring_issues(rows)
     (args.out_dir / "recurrent_issues.json").write_text(
-        json.dumps(patterns, ensure_ascii=False, indent=2) + "
-",
+        json.dumps(patterns, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
     )
     summary["recurrent_issues"] = patterns
     contrasts = contrast_category_patterns(rows)
     (args.out_dir / "pattern_contrasts.json").write_text(
-        json.dumps(contrasts, ensure_ascii=False, indent=2) + "
-",
+        json.dumps(contrasts, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
     )
     summary["pattern_contrasts"] = contrasts
     clusters = construction_cluster_audit(rows)
     summary["construction_clusters"] = clusters
     (args.out_dir / "construction_clusters.json").write_text(
-        json.dumps(clusters, ensure_ascii=False, indent=2) + "
-",
+        json.dumps(clusters, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
     )
     (args.out_dir / "summary.json").write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2) + "
-",
+        json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
     )
     (args.out_dir / "report.md").write_text(
