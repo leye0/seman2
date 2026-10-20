@@ -106,3 +106,49 @@ Une succession de sous-mots qui couvre graphiquement un token ne prouve pas que 
 ## Point d'entrée et cohérence
 
 Le diagnostic appelle `parse_corpus_case`, qui valide la provenance des guillemets puis transmet `balanced_analysis_text` au seul point d'entrée public `Parser.parse`. Le moteur applique les mêmes règles de dialogue, de découpage sécurisé et de routage que les autres clients. La forêt et les statistiques ne sont plus produites par un chemin `parse_grammar_lattice` parallèle. Le mode historique brut ne s'exécute pas durant le diagnostic officiel.
+
+## Regroupement des échecs par constructions (sans attribution automatique)
+
+Depuis l'unification du point d'entrée, le diagnostic crée
+`construction_clusters.json` et sa synthèse dans `report.md`.
+Les cas sont repérés dans les **textes d'analyse canoniques équilibrés** et
+comparés à toutes les phrases réussies de la **même cohorte figée de 500**.
+Chaque groupe est non exclusif ; les pourcentages ne sont calculés que sur
+les succès et échecs conclusifs : délais, erreurs et budgets dépassés sont
+comptés séparément.
+
+La mesure du commit `50d2433` est **418/500** (83,6 %, 82 non complétées,
+dont 51 sans racine, 24 racines non unifiables, 4 saturations de forêt,
+3 délais). Ce résultat remplace l'ancien 422/500, obtenu avant suppression
+d'un repli qui effaçait indûment les guillemets.
+
+Familles à vérifier avec de vrais arbres, exemples adversariaux et tests ciblés :
+
+- **Relatives prépositionnelles antéposées** (pied-piping) :
+  `on which`, `of whose`, `to which`, `with whom`.
+  Cas 101, 187, 327, 473 : **4/4 non complétés**, dans trois romans.
+  La grammaire connaît des relatives sujet et objet mais aucune
+  construction productive explicite `PREP + WH + proposition relative`.
+  Il s'agit d'une hypothèse de règle manquante **forte**, non encore d'un
+  correctif validé ; l'extraction de la dépendance et le verbe gouverneur
+  doivent être correctement contraints.
+- **Incises discursives entre deux virgules** : indices 205, 212,
+  215, 325, 497 non complétés, contre 193 et 372 réussis (5/7).
+  Ces incises occupent plusieurs positions syntaxiques ; une règle unique
+  ne doit pas être postulée sans vérifier leurs points d'attache.
+- **Adjectif copulaire suivi d'une complétive** (`sure`, `afraid`) :
+  cas 167, 186, 208 non complétés grammaticalement, 487 saturé,
+  tandis que 211 réussit. **3 échecs conclusifs / 4 décisions**,
+  une saturation censurée. L'inventaire actuel comporte `COPULA + ADJ`
+  mais pas un schéma général contraint d'adjectif sélectionnant une
+  proposition finie avec ou sans `that` ; il faut une licence lexicale.
+- **Coordination après virgule** : construction large et hétérogène
+  (30 non complétés sur 105 occurrences) ; la simple présence de `and`
+  ou `but` ne prouve jamais une coordination de clauses. `but` peut
+  aussi être adverbial restrictif, comme `You were but a man`.
+
+Les taux et les exemples se recalculent à chaque nouveau diagnostic ;
+les nombres ci-dessus sont la photographie contrôlée du commit indiqué.
+Une signature n'est **pas** un diagnostic causal. Le prochain correctif
+devra être évalué sur les cas positifs précis et sur des contre-exemples
+non grammaticaux avant de revendiquer un gain.

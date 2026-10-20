@@ -420,6 +420,110 @@ def canonical_residual_audit(rows: list[dict]) -> tuple[dict, list[dict]]:
     }, residuals)
 
 
+
+# These signatures describe observable constructions, NOT proven diagnoses.
+# Evaluate them on all 500 cases, including successful negative controls.
+_CONSTRUCTION_PATTERNS = {
+    "relative_preposition_pied_piping": re.compile(
+        r",\s*(?:and\s+)?(?:to|of|with|in|for|by|on|at|from)\s+"
+        r"(?:which|whom|whose)\b", re.I,
+    ),
+    "parenthetical_between_commas": re.compile(
+        r",\s*(?:indeed|however|therefore|you\s+know|i\s+think|"
+        r"i\s+believe|of\s+course|perhaps|certainly|nevertheless)\s*,",
+        re.I,
+    ),
+    "copular_adjective_finite_complement": re.compile(
+        r"\b(?:am|is|are|was|were|be|been)\s+"
+        r"(?:very\s+|quite\s+|really\s+|so\s+)*"
+        r"(?:afraid|sure|certain|glad)\s+(?:that\s+)?"
+        r"(?:I|you|he|she|we|they|it)\b|"
+        r"\b(?:are|is|was|were)\s+(?:you|he|she|we|they|it)\s+"
+        r"(?:very\s+|quite\s+|really\s+|so\s+)*"
+        r"(?:afraid|sure|certain|glad)\s+(?:that\s+)?"
+        r"(?:I|you|he|she|we|they|it)\b",
+        re.I,
+    ),
+    "comma_followed_by_participial_phrase": re.compile(
+        r",\s*(?:\w+\s+){0,2}\w+ing\b", re.I,
+    ),
+    "comma_followed_by_coordinator": re.compile(
+        r",\s*(?:and|but|or)\b", re.I,
+    ),
+}
+_INCONCLUSIVE_STATUSES = frozenset({
+    "timeout", "error", "forest_budget_exceeded",
+    "kbest_budget_exceeded", "both_budgets_exceeded",
+})
+
+
+def construction_cluster_audit(rows: list[dict]) -> dict:
+    """Case-level, nonexclusive failure enrichment against the SAME successes.
+
+    No second parser call, grammar guess, or edited quotation is allowed.
+    An incomplete case due to budget/deadline is explicitly inconclusive.
+    """
+    groups = []
+    for name, pattern in _CONSTRUCTION_PATTERNS.items():
+        matched = [
+            row for row in rows
+            if pattern.search(row.get("canonical_analysis_text", row["sentence"]))
+        ]
+        successes = [r for r in matched if r["status"] == "complete"]
+        inconclusive = [
+            r for r in matched if r["status"] in _INCONCLUSIVE_STATUSES
+        ]
+        failures = [
+            r for r in matched
+            if r["status"] != "complete"
+            and r["status"] not in _INCONCLUSIVE_STATUSES
+        ]
+        decided = len(successes) + len(failures)
+        groups.append({
+            "construction": name,
+            "matched": len(matched),
+            "successful": len(successes),
+            "conclusive_failures": len(failures),
+            "inconclusive": len(inconclusive),
+            "conclusive_failure_percent": (
+                round(100 * len(failures) / decided, 2) if decided else None
+            ),
+            "failing_case_indices": [r["index"] for r in failures],
+            "inconclusive_case_indices": [r["index"] for r in inconclusive],
+            "successful_control_indices": [r["index"] for r in successes[:8]],
+            "failure_examples": [
+                {"index": r["index"], "book_id": r["book_id"],
+                 "analysis_text": r.get("canonical_analysis_text", r["sentence"]),
+                 "status": r["status"]}
+                for r in failures[:8]
+            ],
+        })
+    groups.sort(key=lambda r: (
+        -(r["conclusive_failure_percent"] or 0),
+        -r["conclusive_failures"], r["construction"],
+    ))
+    return {
+        "schema": "seman2-construction-clusters-v1",
+        "cohort_size": len(rows),
+        "total_conclusive_failures": sum(
+            r["status"] not in _INCONCLUSIVE_STATUSES
+            and r["status"] != "complete" for r in rows
+        ),
+        "total_inconclusive": sum(
+            r["status"] in _INCONCLUSIVE_STATUSES for r in rows
+        ),
+        "groups": groups,
+        "cautions": [
+            "These are surface signatures, not proof of a missing rule.",
+            "Groups overlap; their failures MUST NOT be summed.",
+            "Each rate uses matching successes as controls and excludes "
+            "budget failures and timeouts.",
+            "The corpus is unchanged and every case uses public Parser.parse.",
+        ],
+    }
+
+
+
 def compact_stats(stats: dict) -> dict:
     names = (
         "engine", "structural_root_nodes", "forest_nodes", "partial_states",
@@ -533,6 +637,34 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
             key=lambda item: (-item[1], item[0]),
         ):
             output.append(f"| {tag} | {count} |")
+    clusters = summary.get("construction_clusters")
+    if clusters:
+        output.extend([
+            "",
+            "## Constructions grammaticales récurrentes : échecs et témoins",
+            "",
+            "Signatures de surface, **pas** diagnostic automatique de la cause. "
+            "Cohortes chevauchantes ; les cas saturés et les délais sont exclus "
+            "du taux conclusif. Les réussites comptent comme témoins.",
+            "",
+            "| Construction candidate | Cas | Échecs conclusifs | Réussites | "
+            "Inconclusifs | Taux d'échec conclusif |",
+            "|---|---:|---:|---:|---:|---:|",
+        ])
+        for group in clusters["groups"]:
+            rate = group["conclusive_failure_percent"]
+            formatted = "n/a" if rate is None else f"{rate:.1f} %"
+            output.append(
+                f"| {group['construction']} | {group['matched']} | "
+                f"{group['conclusive_failures']} | {group['successful']} | "
+                f"{group['inconclusive']} | {formatted} |"
+            )
+            if group["conclusive_failures"]:
+                output.append(
+                    f"  - Indices des échecs : "
+                    + ", ".join(str(i) for i in group["failing_case_indices"])
+                )
+        output.append("")
     patterns = summary["recurrent_issues"]
     output.extend([
         "",
@@ -822,6 +954,12 @@ def run(args: argparse.Namespace) -> dict:
         encoding="utf8",
     )
     summary["pattern_contrasts"] = contrasts
+    clusters = construction_cluster_audit(rows)
+    summary["construction_clusters"] = clusters
+    (args.out_dir / "construction_clusters.json").write_text(
+        json.dumps(clusters, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf8",
+    )
     (args.out_dir / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",

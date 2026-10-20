@@ -11,11 +11,66 @@ from research.verbnet_lr.corpus_pipeline import (
 from scripts.diagnose_novel_parses import (
     classify, compact_stats, tally, lexical_diagnostics, recurring_issues,
     select_cases, word_category_sequence, contrast_category_patterns,
-    canonical_residual_audit,
+    canonical_residual_audit, construction_cluster_audit,
 )
 
 
 class NovelDiagnosticsTests(unittest.TestCase):
+
+    def test_construction_clusters_compare_successes_and_censor_limits(self):
+        def case(index, text, status):
+            return {
+                "index": index, "book_id": 84,
+                "sentence": text, "canonical_analysis_text": text,
+                "status": status,
+            }
+        rows = [
+            case(0, "The book, to which the child replied, fell.", "no_structural_root"),
+            case(1, "The sea, on which the moon shone, was calm.",
+                 "roots_without_valid_analysis"),
+            case(2, "The house, in which Mary lived, was old.", "complete"),
+            case(3, "I am sure you will return.", "roots_without_valid_analysis"),
+            case(4, "Are you quite sure that they left?", "complete"),
+            case(5, "It is certain that he will go.", "timeout"),
+            case(6, "John, however, opened the box.", "no_structural_root"),
+            case(7, "John opened the box.", "complete"),
+        ]
+        report = construction_cluster_audit(rows)
+        self.assertEqual(report["cohort_size"], 8)
+        groups = {g["construction"]: g for g in report["groups"]}
+        relatives = groups["relative_preposition_pied_piping"]
+        self.assertEqual(relatives["matched"], 3)
+        self.assertEqual(relatives["conclusive_failures"], 2)
+        self.assertEqual(relatives["successful"], 1)
+        self.assertEqual(relatives["successful_control_indices"], [2])
+        self.assertEqual(relatives["conclusive_failure_percent"], 66.67)
+        adjectives = groups["copular_adjective_finite_complement"]
+        self.assertEqual(adjectives["conclusive_failures"], 1)
+        self.assertEqual(adjectives["successful"], 1)
+        self.assertEqual(adjectives["inconclusive"], 1)
+        self.assertEqual(adjectives["conclusive_failure_percent"], 50.0)
+        self.assertEqual(
+            groups["parenthetical_between_commas"]["failing_case_indices"],
+            [6],
+        )
+        self.assertEqual(report["total_inconclusive"], 1)
+        self.assertEqual(report["total_conclusive_failures"], 4)
+
+    def test_clusters_do_not_conflate_ordinary_pp_or_bare_adjective(self):
+        texts = [
+            "John spoke to Mary, and his sister listened.",
+            "The school to which John walked was closed.",
+            "I am certain of this result.",
+        ]
+        rows = [{
+            "index": i, "book_id": 120,
+            "sentence": text, "status": "complete",
+        } for i, text in enumerate(texts)]
+        report = construction_cluster_audit(rows)
+        groups = {g["construction"]: g for g in report["groups"]}
+        self.assertEqual(groups["relative_preposition_pied_piping"]["matched"], 0)
+        self.assertEqual(groups["copular_adjective_finite_complement"]["matched"], 0)
+        self.assertEqual(groups["comma_followed_by_coordinator"]["matched"], 1)
 
     def test_canonical_residual_audit_uses_actual_parser_statuses(self):
         rows = [
