@@ -2,6 +2,10 @@ name: Seman2 - Novel parse diagnostics (500 sentences)
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/research/novel_diagnostics_trigger.txt'
   workflow_dispatch:
   schedule:
     - cron: '20 7 * * *'
