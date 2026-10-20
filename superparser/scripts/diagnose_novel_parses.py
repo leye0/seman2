@@ -976,6 +976,21 @@ def run(args: argparse.Namespace) -> dict:
                 "status": row["status"], "sentence": row["sentence"],
                 "lexical_category_sequence": row.get("lexical_category_sequence"),
             }, ensure_ascii=False), flush=True)
+        if row["status"] in (
+            "forest_budget_exceeded", "kbest_budget_exceeded",
+            "both_budgets_exceeded", "timeout",
+        ):
+            print("NOVEL_RESOURCE_LIMIT", json.dumps({
+                "index": row["index"], "book_id": row["book_id"],
+                "status": row["status"], "sentence": row["sentence"],
+                "tokens": row["tokens"], "wall_ms": row["wall_ms"],
+                "forest_nodes": row.get("forest_nodes"),
+                "structural_root_nodes": row.get("structural_root_nodes"),
+                "forest_budget_exceeded": row.get("forest_budget_exceeded"),
+                "kbest_budget_exceeded": row.get("kbest_budget_exceeded"),
+                "complexity_route": row.get("complexity_route"),
+                "lexical_category_sequence": row.get("lexical_category_sequence"),
+            }, ensure_ascii=False), flush=True)
     print("NOVEL_DIAGNOSTIC_FINAL", json.dumps({
         "counts": totals, "coverage_percent": summary["coverage_percent"],
         "by_band": by_band, "elapsed_seconds": summary["elapsed_seconds"],
