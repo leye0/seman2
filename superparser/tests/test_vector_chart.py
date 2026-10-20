@@ -24,6 +24,48 @@ class VectorChartTests(unittest.TestCase):
         ).result
         self.assertTrue(result.completed, result.stats)
 
+
+    def test_nonfinite_subject_control_is_frame_guarded(self) -> None:
+        text = "John did not attempt to open the box."
+        result = self.parser.parse(text).result
+        self.assertTrue(result.completed, result.stats)
+        def ids(node):
+            return (node.rule_id,) + tuple(
+                value for child in node.children for value in ids(child)
+            )
+        self.assertIn(
+            "vpnp_base_subject_control_to_inf", ids(result.best())
+        )
+        rule = self.parser.resources.grammar.by_id(
+            "vpnp_base_subject_control_to_inf"
+        )
+        self.assertIn("subcat", rule.rhs[0].requires)
+        self.assertEqual(
+            rule.rhs[0].features.as_dict()["subcat"], "subject_control"
+        )
+
+    def test_honorific_abbreviation_not_any_noun(self) -> None:
+        from seman_parser.segmentation import build_lattice
+        for text in ("Mr. Gardiner walked.", "Mrs. Bennet walked."):
+            with self.subTest(text=text):
+                lattice = build_lattice(text, self.parser.resources.lexicon)
+                titles = [item for item in lattice.candidates
+                          if item.category == "TITLE"]
+                self.assertEqual(len(titles), 1)
+                self.assertIn(titles[0].surface.lower(), ("mr", "mrs"))
+                result = self.parser.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                def ids(node):
+                    return (node.rule_id,) + tuple(
+                        v for child in node.children for v in ids(child)
+                    )
+                self.assertIn("np_honorific_abbreviation", ids(result.best()))
+        invalid = build_lattice(
+            "dog. Gardiner walked.", self.parser.resources.lexicon
+        )
+        self.assertFalse(any(item.category == "TITLE"
+                             for item in invalid.candidates))
+
     def test_parser_uses_vector_engine_and_retains_shared_forest(self) -> None:
         result = self.parser.parse("John opened the box.").result
         self.assertTrue(result.completed)

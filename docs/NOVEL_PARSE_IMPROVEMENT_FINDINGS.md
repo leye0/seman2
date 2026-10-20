@@ -236,3 +236,26 @@ Ablation des constructions redondantes `adjp_adjective_stack` et `np_possessive_
 ## Cadres lexicaux productifs manquants : exclaim et long
 
 Les échecs `I joyfully exclaimed.` et `for I longed to see my native town and my beloved friends.` ne requièrent ni changement de guillemets ni grammaire fourre-tout. Dans la cohorte, `exclaimed` n'offrait que les cadres transitif/clausal, alors que `exclaim` peut aussi s'employer sans objet direct. `longed` n'offrait que le cadre prépositionnel, mais `long` sélectionne couramment un infinitif contrôlé (`long to see`). Les alternatives lexicales intransitive et subject_control sont introduites avec les catégories morphologiques propres à chaque flexion, sans éliminer WordNet. La conjonction de coordination causale `for` est ajoutée en alternative à la préposition de même surface, permettant `COORD CLAUSE` initial. Les analyses seront acceptées comme progrès uniquement après tests et comparaison des 500 phrases.
+
+## Suivi de la cohorte canonique après transfert des guillemets (octobre 2026)
+
+La référence historique brutale (379/500 au commit 4f1888f4) n'est
+pas la couverture canonique : le transfert des guillemets est l'entrée
+normale du parseur de romans. La comparaison appariée sur les mêmes 500
+cas fournit 416/500 dans ce commit de référence, puis 417/500 avec la
+coordination des VP finis séparés par virgule (CI du commit cae57884).
+Les budgets de 10 secondes peuvent entraîner des timeouts sporadiques.
+
+Le diagnostic produit désormais `canonical_residual_audit.json` et
+`canonical_residuals.jsonl` pour chaque cas restant, avec les statuts
+du témoin historique et de l'entrée canonique. Les signatures de surface
+sont non exclusives et hypothétiques : elles ne prouvent pas la cause
+de l'échec. Ne pas confondre un échec de parsing avec un énoncé agrammatical.
+
+Le premier nouveau traitement ciblé et mesuré couvre la coordination
+avec sujet partagé de deux VP finis (`Elizabeth looked archly, and turned
+away.`). Les nouvelles constructions suivantes doivent être évaluées
+sur toute la cohorte fixe : contrôle du sujet infinitif d'un VP-NP à
+forme de base (`did not attempt to conceal`), et titres abrégés devant
+un nom propre (`Mr. Gardiner`, `Mrs. Bennet`). Aucun des deux ne
+permet de convertir des séquences arbitraires en propositions.
