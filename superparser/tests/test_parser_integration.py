@@ -356,9 +356,47 @@ class ChartParserTests(unittest.TestCase):
         rules = {item.rule_id for item in nodes(best)}
         self.assertIn("vp_passive_shared_aux_sequence", rules)
         self.assertIn("np_postposed_supplementary_adjp", rules)
+        adjunct = next(
+            n for n in nodes(best)
+            if n.rule_id == "np_postposed_supplementary_adjp"
+        )
+        self.assertEqual(
+            sentence[adjunct.children[2].start:adjunct.children[2].end],
+            "renowned for its hospitality",
+        )
+        self.assertNotIn("pp_np_coord", rules)
         self.assertNotIn("clause_subject_parenthetical_adjp_referential", rules)
         self.assertEqual(sentence[best.children[0].start:best.children[0].end],
                          "You")
+
+    def test_np_coordination_disallows_causal_for(self) -> None:
+        """Conjunction 'for' joins clauses, not bare nominal objects."""
+        parser = self.parser
+        parsed = parser.parse("John and Mary opened the box.").result
+        self.assertTrue(parsed.completed)
+        # The nominal 'and' reading remains legal, without making
+        # 'for' a coordinator inside PP objects.
+        from seman_parser.engine import Parser
+        pp_parser = Parser(parser.resources, goal_category="PP",
+                           cache_size=0)
+        pp = pp_parser.parse("on this shore, renowned for its hospitality").result
+        self.assertTrue(pp.completed, pp.stats)
+
+        def all_nodes(item):
+            yield item
+            for child in item.children:
+                yield from all_nodes(child)
+
+        best = pp.best()
+        self.assertEqual(best.rule_id, "pp_prep_np")
+        self.assertIn(
+            "np_postposed_supplementary_adjp",
+            {n.rule_id for n in all_nodes(best)},
+        )
+        self.assertNotIn(
+            "pp_np_coord",
+            {n.rule_id for n in all_nodes(best)},
+        )
 
     def test_passive_participle_coordination_requires_real_passives(self) -> None:
         """Do not accept active infinitives or present verbs as passive participles."""
