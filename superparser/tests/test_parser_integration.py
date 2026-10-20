@@ -335,6 +335,31 @@ class ChartParserTests(unittest.TestCase):
                     for tree in alternatives
                 ), (sentence, parsed.stats))
 
+    def test_complex_shared_aux_passive_is_best_and_preserves_np_attachment(self) -> None:
+        """Check the internal *tree*, not merely a completed root."""
+        sentence = (
+            "You were thrown, by some surprising accident, on this shore, "
+            "renowned for its hospitality, seized immediately, "
+            "and charged with murder."
+        )
+        parsed = self.parser.parse(
+            sentence, max_items=50000, kbest_work_limit=500000,
+        ).result
+        best = parsed.best()
+        self.assertIsNotNone(best)
+        self.assertEqual(best.rule_id, "clause_passive", parsed.stats)
+
+        def nodes(item):
+            yield item
+            for child in item.children:
+                yield from nodes(child)
+        rules = {item.rule_id for item in nodes(best)}
+        self.assertIn("vp_passive_shared_aux_sequence", rules)
+        self.assertIn("np_postposed_supplementary_adjp", rules)
+        self.assertNotIn("clause_subject_parenthetical_adjp_referential", rules)
+        self.assertEqual(sentence[best.children[0].start:best.children[0].end],
+                         "You")
+
     def test_passive_participle_coordination_requires_real_passives(self) -> None:
         """Do not accept active infinitives or present verbs as passive participles."""
         def rules(node):
