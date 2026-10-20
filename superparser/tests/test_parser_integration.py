@@ -974,7 +974,7 @@ class ClauseSupplementaryCommaPPTests(unittest.TestCase):
 
     def test_comma_and_prepositional_phrase_are_both_necessary(self):
         p=make_parser()
-        for sentence in ("Mary waited with a look of anxiety.", "Mary waited, the house."):
+        for sentence in ("Mary waited with a look of anxiety.", "Mary waited, the house.", "Mary waited, by the doorway."):
             report=p.parse(sentence)
             for item in report.result.alternatives(limit=8):
                 self.assertNotIn("clause_final_comma_pp_adjunct",self.rules(item),sentence)
