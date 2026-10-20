@@ -368,11 +368,13 @@ sources de chaque candidat. Le chemin de production est exclusivement
   morphologie de chaque lecture.
 - `carpet-bag` à [59:69] subissait le même phénomène et recevait
   jusqu'à `N[plural]` malgré le segment final singulier `bag`.
-- La correction générale restreint la projection des composés
-  **non attestés** aux lectures **non verbales** morphologiquement
-  licites de leur tête. Les composés explicitement attestés
-  continuent de conserver leurs catégories lexicales. Les
-  lectures grammaticales de `think` demeurent toutes présentes.
+- La correction générale conserve les lectures non verbales
+  morphologiquement licites de la tête ; une lecture **V** de composé
+  non attesté exige maintenant un **préfixe verbal productif**
+  (`over-`, `under-`, `mis-`, etc.) et l'accord de la forme
+  écrite avec `vform`. Les composés explicitement attestés
+  conservent leurs catégories lexicales. Les lectures
+  grammaticales de `think` demeurent toutes présentes.
 - **Attention :** après cette correction lexicale, une autre
   analyse incorrecte reste possible :
   `before [my fire, [biting [the key of
@@ -407,3 +409,42 @@ et la *relation grammaticale* attendue. Évaluer les arbres réellement
 sélectionnés et les contre-exemples, puis seulement la variation
 de couverture sur les 500 phrases. Aucun bonus de score destiné
 à « récupérer » un exemple ne remplace cette vérification.
+
+### Résultat du contrôle morphologique et exceptions restantes
+
+Commits `985a17f` (premier filtre, trop restrictif) puis
+`4e6a583` (licence productive des préfixes verbaux). Les suites
+Layer 1 et Direct Grammar sont vertes. Le diagnostic officiel
+[39367362821](https://github.com/leye0/seman2/actions/runs/39367362821)
+compte **426/500 (85,2 %)** contre **427/500** sur
+[39362711657](https://github.com/leye0/seman2/actions/runs/39362711657).
+
+Comparaison des 500 cas :
+- **249** reste complet, car `over-rated` conserve ses analyses
+  verbales morphologiquement justifiées (`vform=ed` notamment),
+  indispensables à `had been over-rated`. Le premier filtre
+  perdait indûment cette phrase.
+- **480** passe de `complete` à `no_structural_root` :
+  la forme `pick-axe` n'hérite plus de lectures verbales
+  de `axe` sans licence du composé. Il reste à vérifier
+  l'ancien arbre avant de classifier ce cas comme faux positif :
+  une perte de couverture n'est pas automatiquement un gain de
+  précision.
+- **107** demeure complet, mais **l'arbre est faux** :
+  la suppression du faux `V[finite]` sur `bright-eyed`
+  révèle une autre analyse fondée sur
+  `np_appos_comma` / `np_gerund` /
+  `np_list_last` / `np_title_name`.
+  La prochaine intervention doit porter sur les **interfaces
+  et contraintes de position des constituants**, pas sur un
+  nouveau bonus de score ou la suppression de `think:N`.
+- Les cas **119, 122, 486** ont changé seulement de catégorie
+  d'échec (`timeout` vs déficit structurel/budget), sans
+  devenir complets. Les délais et le budget doivent être
+  contrôlés séparément du jugement grammatical.
+
+**Conclusion méthodologique :** mesurer la qualité des constituants
+et de leurs rattachements au moins autant que le taux de complétion.
+Ne pas essayer de regagner le point du cas 480 en autorisant une
+nouvelle lecture verbale arbitraire ; isoler d'abord son arbre
+historique et identifier le besoin syntaxique réel.
