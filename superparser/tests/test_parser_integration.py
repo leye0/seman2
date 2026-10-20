@@ -42,6 +42,29 @@ class SegmentationTests(unittest.TestCase):
                 self.assertIsNotNone(root)
                 self.assertIn(expected, set(derivations(root)))
 
+    def test_internal_apostrophe_surnames_are_full_span_names(self) -> None:
+        parser = make_parser()
+        for surface in ("O'Brien", "D'Artagnan", "M'Graw", "O’Connor"):
+            with self.subTest(surface=surface):
+                lattice = parser.parse(surface).lattice
+                names = [c for c in lattice.candidates
+                         if c.span_start == 0 and c.span_end == len(surface)
+                         and c.category == "PROPER-NOUN"]
+                self.assertTrue(names, surface)
+                self.assertTrue(
+                    any(c.source == "proper-noun-apostrophe" for c in names),
+                    [c.as_dict() for c in names],
+                )
+        for contraction in ("I've", "John's", "We'd"):
+            with self.subTest(contraction=contraction):
+                lattice = parser.parse(contraction).lattice
+                self.assertFalse(any(
+                    c.category == "PROPER-NOUN"
+                    and c.span_start == 0 and c.span_end == len(contraction)
+                    and c.source == "proper-noun-apostrophe"
+                    for c in lattice.candidates
+                ))
+
     def test_habitual_used_and_fractional_half_keep_open_class_readings(self) -> None:
         parser = make_parser()
         for word, specialty, lexical in (
