@@ -121,6 +121,36 @@ class SegmentationTests(unittest.TestCase):
                 self.assertIn("DET", lexical)
                 self.assertIn("PRONOUN", lexical)
 
+    def test_comparative_elliptical_than_pp_keeps_both_comparison_scopes(self) -> None:
+        p = make_parser()
+        text = ("When we accosted him, his manner was something more confused, "
+                "and something less genteel, than of yore.")
+        result = p.parse(text).result
+        self.assertTrue(result.completed, result.stats)
+        root = result.best()
+        self.assertEqual(root.rule_id, "clause_when_comma")
+        visited = [root]
+        for item in visited:
+            visited.extend(item.children)
+        rules = {item.rule_id for item in visited}
+        self.assertIn("np_coordinated_comparative_predicatives", rules)
+        self.assertIn("np_comparative_elliptical_than_pp", rules)
+        assert sum(item.rule_id == "np_indefinite_pronoun_comparative_adj"
+                   for item in visited) == 2
+
+    def test_more_less_comparative_degree_preserves_wordnet_adverbs(self) -> None:
+        p = make_parser()
+        for word in ("more", "less"):
+            with self.subTest(word=word):
+                candidates = [
+                    c for c in p.parse(word).lattice.candidates
+                    if c.surface.casefold() == word
+                ]
+                self.assertTrue(any(c.category == "DEGREE" and
+                                    c.features.as_dict().get("comparative") == "true"
+                                    for c in candidates))
+                self.assertIn("ADV", {c.category for c in candidates})
+
     def test_internal_apostrophe_surnames_are_full_span_names(self) -> None:
         parser = make_parser()
         for surface in ("O'Brien", "D'Artagnan", "M'Graw", "O’Connor"):
