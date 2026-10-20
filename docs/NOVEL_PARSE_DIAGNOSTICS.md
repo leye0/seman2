@@ -448,3 +448,54 @@ et de leurs rattachements au moins autant que le taux de complétion.
 Ne pas essayer de regagner le point du cas 480 en autorisant une
 nouvelle lecture verbale arbitraire ; isoler d'abord son arbre
 historique et identifier le besoin syntaxique réel.
+
+## Audits des titres lexicaux et des faux positifs nominaux (20 octobre 2026)
+
+**Baseline contrôlée** : commit `4e6a583`, GitHub Actions [39367362821](https://github.com/leye0/seman2/actions/runs/39367362821), **426/500**. **Après correction** : commit `11e77712`, GitHub Actions [39369277836](https://github.com/leye0/seman2/actions/runs/39369277836), **424/500**. Les 500 `case_id` et l'empreinte immuable du corpus `cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a` sont identiques. **Cette baisse de deux complétions élimine deux anciens arbres erronés, pas deux constructions valables.** Il reste des échecs et des arbres non audités : le nombre 424 n'est **pas** une mesure de précision certifiée.
+
+### Première composition non justifiée : `np_title_name`
+
+L'arbre sélectionné avant correction pour l'index **107** n'était pas une vraie coordination verbale de `sit ... and think`. Il construisait entre autres :
+
+```text
+NP np_appos_comma: "my fire, biting ... girlish, bright-eyed lovely Dora"
+  NP np_gerund: "biting the key of my carpet-bag, and think of the captivating, girlish"
+    NP np_det_n -> N n_pp -> PP pp_prep_np:
+      NP np_list_last: "my carpet-bag, and think of the captivating"
+        NP np_poss: "my carpet-bag"
+        NP np_of: "think of the captivating"    # think:N demeure légitime
+  NP np_title_name: "bright-eyed lovely Dora"
+    N n_adj_n: "bright-eyed lovely"            # lovely:N existe dans WordNet
+    PROPER-NOUN: Dora
+```
+
+Le premier assemblage retenu pour correction est le dernier : `np_title_name` autorisait **tout** `N + PROPER-NOUN` sans s'assurer que `N` jouait réellement un rôle de titre. La lecture `N` de `lovely` n'est pas interdite en soi, mais elle ne donne pas à « bright-eyed lovely » le statut d'honorifique devant *Dora*. Distinguer une catégorie lexicale attestée d'une **fonction grammaticale licenciée** est indispensable. Une apposition arbitraire `NP , NP` reste problématique ailleurs ; le présent changement ne prétend pas la résoudre.
+
+**Changement général** : la règle existante `np_title_name` exige désormais `TITLE[honorific=true]` avec preuve de trait `requires:[honorific]`, au lieu de `N`. Des lectures `TITLE` explicites sont ajoutées au lexique syntaxique pour les titres ou appellatifs pertinents (`captain`, `doctor`, `professor`, `lady`, etc.) **sans remplacer les lectures WordNet**. Les titres abrégés existants `Mr.`, `Mrs.`, `Dr.` gardent leur chemin d'analyse spécifique. Le travail passe uniquement par `Parser.parse` ; aucune forêt alternative, aucune retouche de guillemets ni aucun bonus arbitraire de score.
+
+Exemples positifs ciblés (meilleur arbre avec `np_title_name` et `TITLE[honorific=true]`) : `Captain Nemo arrived.`, `Doctor Watson waited.`, `Professor Moriarty spoke.`, `Lady Catherine smiled.`. Contrastes négatifs (aucune des huit premières analyses ne fait appel à `np_title_name`) : `Lovely Dora smiled.`, `River Mary smiled.`, `Carpet Dora spoke.`. Les tests vérifient aussi la persistance de `N` dans les candidats WordNet de `captain`, `doctor`, `lovely`, `think`. **177 tests** Layer 1 réussis (trois échecs attendus déjà connus). Source descriptive pour l'usage des titres : [Cambridge Dictionary — Names and titles: addressing people](https://dictionary.cambridge.org/grammar/british-grammar/names-and-titles-addressing-people).
+
+### Inspection historique des cas 109 et 480 par `Parser.parse`
+
+PR de recherche temporaire [#3](https://github.com/leye0/seman2/pull/3), **fermée sans fusion**, suite de tests [39369700325](https://github.com/leye0/seman2/actions/runs/39369700325) verte. Elle a exécuté l'audit sur les **vrais anciens commits** dans des worktrees Git indépendants, sans altérer `main`.
+
+- **109** : le meilleur arbre historique à `4e6a583` était `dialogue_unattributed`, mais contenait `NP np_title_name: "a great Sea Porkypine"`, où `N n_adj_n: "a great Sea"` jouait frauduleusement le rôle d'un titre, ainsi que `NP np_appos_comma: "Mr. Peggotty, relieving his earnestness"` analysant la participiale comme une apposition nominale. Ancien `complete` non défendable ; nouveau `no_structural_root` n'est pas une perte de bonne analyse. Une vraie analyse de l'appellation `Sea Porkypine` et de la participiale reste à construire.
+- **480** : le meilleur arbre historique à `75584d2` interprétait `and pick-axe` comme `coord_clause -> clause_imperative -> vp_bare -> V("pick-axe")`. Dans `and a spade, and pick-axe`, `pick-axe` est un nom coordonné dans une énumération d'outils, pas un ordre verbal. Le passage `complete -> no_structural_root` consécutif au contrôle morphologique des composés ne supprime pas un arbre grammaticalement correct. Il faudrait une construction d'énumération nominale/ellipse de déterminant *véritablement* autorisée pour rétablir cette phrase, sans recréer `V(pick-axe)`.
+
+### Différence exacte dans la cohorte et validation
+
+| Statut | Baseline 426 | Nouveau 424 |
+|---|---:|---:|
+| `complete` | 426 | 424 |
+| `no_structural_root` | 44 | 47 |
+| `roots_without_valid_analysis` | 22 | 23 |
+| `forest_budget_exceeded` | 5 | 5 |
+| `kbest_budget_exceeded` | 0 | 1 |
+| `timeout` | 3 | 0 |
+| `error` | 0 | 0 |
+
+Transferts individuels sur les 500 cas : **107** `complete -> roots_without_valid_analysis` ; **109** `complete -> no_structural_root` ; **119**, **122** `timeout -> no_structural_root` ; **486** `timeout -> kbest_budget_exceeded`. Les trois derniers ne sont **pas** de nouveaux gains ni des pertes conclusives : le délai et les plafonds peuvent révéler des statuts différents selon le coût de recherche. Les cas **79** et **192** restent complets mais leur `root_rule` change respectivement de `clause_comma` à `clause_front_adv_nocomma`, et de `clause_front_pp_nocomma` à `clause_adv_adjunct` : classements modifiés, **qualité non certifiée**. L'indicateur de saturation de forêt reste à **17**, le drapeau de budget k-best passe de **0 à 1**.
+
+Sur **107**, le nombre de nœuds de forêt passe de **1313** à **1269** et aucune analyse valide finale ne demeure. Sur **368**, l'audit conserve une analyse passive partageant `were` et l'apposition adjectivale de `this shore`. **249** reste complet et ses hypothèses verbales productives sur `over-rated` sont préservées. Les validations du commit `11e77712` sont toutes vertes : [Layer 1](https://github.com/leye0/seman2/actions/runs/39369277867), [Direct Grammar](https://github.com/leye0/seman2/actions/runs/39369277857), [diagnostic 500](https://github.com/leye0/seman2/actions/runs/39369277836).
+
+**Travail restant** : auditer `np_appos_comma` / `np_gerund` / `np_list_last`, expliciter les restrictions d'apposition de référent et la coordination de prédicats sous auxiliaire partagé, puis inspecter leurs contre-exemples **avant** de modifier la grammaire. Le cas 107 demande encore une vraie coordination `sit ... and think` avec une participiale incidente. **424/500** est le nouveau point de référence mesuré, pas une raison d'assouplir des règles pour atteindre artificiellement **450/500**.
