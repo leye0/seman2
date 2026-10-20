@@ -95,6 +95,29 @@ def main() -> None:
                          for n in nodes(a))
               ][:20], flush=True)
 
+    from collections import Counter
+    from seman_parser.vector_chart import RuleDerivation
+
+    forest = result.shared_forest
+    def rule_counts(category: str, start: int):
+        nodes_at_start = [
+            n for n in forest.nodes
+            if n.category == category and n.start == start
+            and not sample[n.end:].strip(".!?;: \\"")
+        ]
+        counts = Counter()
+        for n in nodes_at_start:
+            for d in n.derivations:
+                if isinstance(d, RuleDerivation):
+                    counts[forest.compiled.rules[d.rule_index].rule.rule_id] += 1
+        return dict(counts)
+
+    print("PASSIVE_FOREST_ROOTS",
+          "CLAUSE=", rule_counts("CLAUSE", 0),
+          "VP=", rule_counts("VP", sample.index("were")),
+          "PASSIVE-SEQ=", rule_counts("PASSIVE-SEQ", sample.index("thrown")),
+          flush=True)
+
     for beam in (160, 320):
         pp = Parser.from_dir(DATA, goal_category="CLAUSE", cache_size=0,
                              max_items=50_000, beam=beam)
