@@ -301,9 +301,15 @@ class Lexicon:
 
         # Regular suffix stripping merges additional readings even when the
         # surface is already a lemma ("opened" is also a participle of "open").
-        # But a closed-class word (his, the, of) is not an inflection of an
-        # open-class stem — never invent those readings.
-        if not _has_closed_class(out):
+        # An arbitrary closed-class form ("his", "of") must not spawn
+        # unrelated open-class stems. But when the local morphology itself
+        # attests the stem ("does" -> "do"), preserve independently licensed
+        # WordNet verb inflections alongside AUX instead of erasing them.
+        closed_class = _has_closed_class(out)
+        attested_stems = {
+            lemma.casefold() for _, lemma in self._by_morph.get(lowered, ())
+        } if closed_class else set()
+        if not closed_class or attested_stems:
             for suffix, cut, tag in (("ing", 3, "ing"), ("ed", 2, "ed"), ("s", 1, "s")):
                 if len(lowered) <= len(suffix) + 1 or not lowered.endswith(suffix):
                     continue
@@ -324,11 +330,13 @@ class Lexicon:
                     # ordinary one-letter candidate still covers uses -> use.
                     candidates.append(lowered[:-2])
                 for candidate in candidates:
-                    if candidate == lowered:
+                    if candidate == lowered or (closed_class and candidate not in attested_stems):
                         continue
                     for entry in self.entries_for_lemma(candidate):
                         for sense in entry.senses:
-                            if _suffix_compatible(sense, tag):
+                            if _suffix_compatible(sense, tag) and (
+                                not closed_class or sense.category == "V"
+                            ):
                                 out.append((entry, sense, entry.lemma))
         return out
 
