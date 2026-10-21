@@ -1,1 +1,2 @@
 2026-10-21 validate 17 exact semantic-equivalence groups, no grammar edits; paired 100 novel sentences + difficult controls.
+2026-10-21 full immutable cohort after 108-case equivalence proof; compare exact selected trees and derivation budgets.

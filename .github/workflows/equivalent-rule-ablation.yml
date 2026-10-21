@@ -10,7 +10,7 @@ permissions:
 jobs:
   paired:
     runs-on: ubuntu-latest
-    timeout-minutes: 9
+    timeout-minutes: 17
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,11 +40,11 @@ jobs:
                       (dest/leaf).write_bytes(z.read(part))
           assert (dest/'index.verb').exists()
           PY
-      - name: Compare semantically identical productions across 100 controls
+      - name: Compare semantically identical productions across all 500 fixed sentences
         run: |
           PYTHONPATH=superparser python -u -m scripts.audit_equivalent_rules \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-            --count 100 \
+            --count 500 \
             --output "$RUNNER_TEMP/equivalent-rules.json"
       - name: Keep case-level proof and removed IDs
         if: always()
