@@ -485,6 +485,42 @@ _INCONCLUSIVE_STATUSES = frozenset({
 })
 
 
+def _length_band_failure_baselines(rows: list[dict]) -> dict[str, float]:
+    """One rate per token-length band, excluding uncensored resource limits."""
+    counts: dict[str, list[int]] = {}
+    for row in rows:
+        if row["status"] not in (
+            "complete", "no_structural_root", "roots_without_valid_analysis"
+        ):
+            continue
+        band = str(row.get("band", "unbanded"))
+        count = counts.setdefault(band, [0, 0])
+        count[0] += 1
+        count[1] += int(row["status"] != "complete")
+    return {
+        band: failed / decided
+        for band, (decided, failed) in counts.items() if decided
+    }
+
+
+def _length_adjusted_outcome(
+    decided_rows: list[dict], failure_count: int,
+    band_rates: dict[str, float],
+) -> dict:
+    """Expected failures for this subset at cohort background rates by band."""
+    expected = sum(
+        band_rates.get(str(row.get("band", "unbanded")), 0.0)
+        for row in decided_rows
+    )
+    return {
+        "length_adjusted_expected_failures": round(expected, 2),
+        "length_adjusted_excess_failures": round(failure_count - expected, 2),
+        "length_adjusted_relative_risk": (
+            round(failure_count / expected, 2) if expected > 0 else None
+        ),
+    }
+
+
 def construction_cluster_audit(rows: list[dict]) -> dict:
     """Case-level, nonexclusive failure enrichment against the SAME successes.
 
@@ -492,6 +528,7 @@ def construction_cluster_audit(rows: list[dict]) -> dict:
     An incomplete case due to budget/deadline is explicitly inconclusive.
     """
     groups = []
+    band_rates = _length_band_failure_baselines(rows)
     for name, pattern in _CONSTRUCTION_PATTERNS.items():
         matched = [
             row for row in rows
@@ -516,6 +553,7 @@ def construction_cluster_audit(rows: list[dict]) -> dict:
             "conclusive_failure_percent": (
                 round(100 * len(failures) / decided, 2) if decided else None
             ),
+            **_length_adjusted_outcome(successes + failures, len(failures), band_rates),
             "failing_case_indices": [r["index"] for r in failures],
             "inconclusive_case_indices": [r["index"] for r in inconclusive],
             "successful_control_indices": [r["index"] for r in successes[:8]],
@@ -527,11 +565,11 @@ def construction_cluster_audit(rows: list[dict]) -> dict:
             ],
         })
     groups.sort(key=lambda r: (
-        -(r["conclusive_failure_percent"] or 0),
+        -r["length_adjusted_excess_failures"],
         -r["conclusive_failures"], r["construction"],
     ))
     return {
-        "schema": "seman2-construction-clusters-v1",
+        "schema": "seman2-construction-clusters-v2",
         "cohort_size": len(rows),
         "total_conclusive_failures": sum(
             r["status"] not in _INCONCLUSIVE_STATUSES
@@ -545,6 +583,8 @@ def construction_cluster_audit(rows: list[dict]) -> dict:
         "cautions": [
             "These are surface signatures, not proof of a missing rule.",
             "Groups overlap; their failures MUST NOT be summed.",
+            "Token-length strata control for part of the long-sentence confound; "
+            "they do not establish a causal missing construction.",
             "Each rate uses matching successes as controls and excludes "
             "budget failures and timeouts.",
             "The corpus is unchanged and every case uses public Parser.parse.",
@@ -568,6 +608,7 @@ def construction_interaction_audit(rows: list[dict], *, min_support: int = 5) ->
     ]
     failed = sum(row["status"] != "complete" for row in conclusive)
     baseline = failed / len(conclusive) if conclusive else 0.0
+    band_rates = _length_band_failure_baselines(conclusive)
     per_case = [
         (
             row,
@@ -598,13 +639,14 @@ def construction_interaction_audit(rows: list[dict], *, min_support: int = 5) ->
                 "excess_failures_vs_baseline": round(
                     len(failures) - len(subset) * baseline, 2
                 ),
+                **_length_adjusted_outcome(subset, len(failures), band_rates),
                 "failure_indices": [row["index"] for row in failures],
                 "control_indices": [row["index"] for row in controls[:5]],
             })
     # Rank by absolute surplus of failures, not by inflated percentages from
     # one or two rare examples; evidence still requires both sample sizes.
     pairs.sort(key=lambda p: (
-        -p["excess_failures_vs_baseline"], -p["conclusive_failures"],
+        -p["length_adjusted_excess_failures"], -p["conclusive_failures"],
         -p["support"], p["signatures"]
     ))
     return {
@@ -612,6 +654,9 @@ def construction_interaction_audit(rows: list[dict], *, min_support: int = 5) ->
         "conclusive_failures": failed,
         "excluded_resource_limited": len(rows) - len(conclusive),
         "baseline_failure_percent": round(baseline * 100, 2),
+        "failure_percent_by_length_band": {
+            band: round(rate * 100, 2) for band, rate in sorted(band_rates.items())
+        },
         "pairs": pairs,
         "interpretation": "observational enrichment versus successful same-cohort controls",
     }
@@ -1052,10 +1097,14 @@ def run(args: argparse.Namespace) -> dict:
     print("NOVEL_GLOBAL_SIGNATURE_AUDIT", json.dumps({
         "conclusive_failures": clusters["total_conclusive_failures"],
         "inconclusive": clusters["total_inconclusive"],
+        "failure_percent_by_length_band": clusters["interactions"]["failure_percent_by_length_band"],
         "top_constructions": [
             {key: group[key] for key in (
                 "construction", "matched", "successful", "conclusive_failures",
-                "conclusive_failure_percent", "failing_case_indices"
+                "conclusive_failure_percent", "failing_case_indices",
+                "length_adjusted_expected_failures",
+                "length_adjusted_excess_failures",
+                "length_adjusted_relative_risk"
             )} for group in clusters["groups"]
             if group["conclusive_failures"] >= 2
         ][:15],
