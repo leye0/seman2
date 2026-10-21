@@ -374,3 +374,5 @@
 {"id":"vp_perfect_negated_adverbial_intransitive","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"predicate","target":"scope_adverb"}]}}]}
 {"id":"vp_finite_comma_coord_fronted_pp","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_predicate","target":"second_predicate"},{"relation":"MODIFIER","source":"second_predicate","target":"fronted_conjunct_adjunct"}]}}]}
 {"id":"vp_finite_comma_coord_fronted_adv","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_predicate","target":"second_predicate"},{"relation":"MANNER","source":"second_predicate","target":"fronted_conjunct_adjunct"}]}}]}
+{"id":"vp_gap_perfect_transitive","semantic":[{"copy":{}}]}
+{"id":"wh_bare_perfect_object_relative","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"relative_predicate","target":"relative_subject"}]}}]}
