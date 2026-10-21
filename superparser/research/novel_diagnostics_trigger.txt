@@ -18,3 +18,4 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 2026-10-21 default score-neutral local NP participial attachment after opt-in fixed 500 trial and adversarial test.
 2026-10-21 measure 500 canonical post discourse-incise construction.
 2026-10-21 original-paragraph and semicolon neighbor evidence on fixed 500, no truth labels.\n
+2026-10-21 fix synthetic cohort fields and assert source-order mismatch beyond digest guard.

@@ -31,15 +31,22 @@ class SourceContextAuditTests(unittest.TestCase):
                          surface_signatures("The dog which I saw left."))
 
     def test_misaligned_cohort_fails_closed(self):
+        from unittest.mock import patch
+        from scripts.audit_context_dependencies import fingerprint
         cases=[{"book_id":766,"ordinal":i,"text":f"A{i}.",
-                "source_text":f"A{i}.","semicolon_split":False}
+                "source_text":f"A{i}.","semicolon_split":False,
+                "band":"04-08","tokens":4}
                for i in range(500)]
         diagnostics=[{"index":i,"book_id":766,
                       "ordinal":i,"sentence":f"A{i}.","status":"complete"}
                      for i in range(500)]
         diagnostics[0]["ordinal"]=2
-        with self.assertRaises(AssertionError):
-            audit(cases,diagnostics,{766:{}})
+        # This fixture is intentionally not the real SHA-pinned cohort.
+        # Patch only the digest constant so the ordinal mismatch is tested.
+        with patch("scripts.audit_context_dependencies.EXPECTED_500_COHORT_SHA256",
+                   fingerprint(cases)):
+            with self.assertRaisesRegex(AssertionError, "alignment failure"):
+                audit(cases,diagnostics,{766:{}})
 
 
 if __name__=="__main__":unittest.main()
