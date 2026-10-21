@@ -14,7 +14,7 @@ import signal
 from pathlib import Path
 from time import perf_counter
 
-from scripts.diagnose_novel_parses import select_cases
+from scripts.diagnose_novel_parses import classify, select_cases
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from seman_parser.engine import Parser, ParserResources
 from seman_parser.grammar import Grammar
@@ -113,7 +113,14 @@ def audit(wordnet_dir: str, indices: tuple[int, ...], *,
                         "variant": name, "index": idx, "book_id": case["book_id"],
                         "completed": result.completed,
                         "root": result.best().rule_id if result.best() else None,
-                        "forest_budget": bool(result.stats.get("budget_exceeded")),
+                        "status": classify(result.completed, result.stats),
+                        "forest_budget": bool(
+                            result.stats.get("budget_exceeded")
+                            or (result.stats.get("dialogue_attempt") or {}).get(
+                                "budget_exceeded")),
+                        "fallback_forest_budget": bool(
+                            result.stats.get("budget_exceeded")),
+                        "dialogue_attempt": result.stats.get("dialogue_attempt"),
                         "forest_nodes": result.stats.get("forest_nodes"),
                         "root_nodes": result.stats.get("structural_root_nodes"),
                         "lexical_candidates": len(lattice.candidates),
@@ -161,6 +168,12 @@ def audit(wordnet_dir: str, indices: tuple[int, ...], *,
                            and not candidate[i]["completed"])
         deltas[name] = {
             "recovered_vs_current": recovered,
+            "recovered_with_saturated_forest": [
+                i for i in recovered if candidate[i].get("forest_budget")
+            ],
+            "recovered_without_saturated_forest": [
+                i for i in recovered if not candidate[i].get("forest_budget")
+            ],
             "regressed_vs_current": regressed,
             "net_completion_change": len(recovered) - len(regressed),
             "baseline_completed": sum(baseline[i]["completed"] for i in indices),

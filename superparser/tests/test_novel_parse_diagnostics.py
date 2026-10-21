@@ -2,6 +2,9 @@
 import unittest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
+
+from seman_parser.chart import ParseResult
+from seman_parser.engine import Parser
 import ast
 
 from research.verbnet_lr.corpus_pipeline import (
@@ -16,6 +19,64 @@ from scripts.diagnose_novel_parses import (
 
 
 class NovelDiagnosticsTests(unittest.TestCase):
+
+    def test_failed_dialogue_attempt_preserves_resource_censorship(self):
+        # Both paths are still invoked via the ONE public Parser.parse.
+        # Force the dialogue recognizer to saturate and the fallback to
+        # have no structural root, independently of WordNet and ranking.
+        parser = Parser.from_dir(Path(__file__).resolve().parents[1] / "data",
+                                 cache_size=0)
+        sentence = '"Hello."'
+        lattice = parser._lattice_for_text(sentence)
+        def response(stats):
+            return ParseResult(
+                text=sentence, lattice=lattice, packed={}, roots=(),
+                completed=False, stats=stats,
+            )
+        dialogue = response({
+            "budget_exceeded": True, "kbest_budget_exceeded": False,
+            "forest_nodes": 500, "partial_states": 490,
+            "structural_root_nodes": 0,
+        })
+        ordinary = response({
+            "budget_exceeded": False, "kbest_budget_exceeded": False,
+            "forest_nodes": 20, "structural_root_nodes": 0,
+        })
+        self.assertIsNotNone(parser._dialogue_vector_grammar)
+        with patch.object(parser._dialogue_vector_grammar, "parse_lattice",
+                          return_value=dialogue) as dialogue_parse, patch.object(
+            parser._vector_grammar, "parse_lattice",
+            return_value=ordinary,
+        ) as ordinary_parse:
+            result = parser.parse(sentence, max_items=500).result
+        dialogue_parse.assert_called_once()
+        ordinary_parse.assert_called_once()
+        self.assertFalse(result.completed)
+        self.assertEqual(result.stats["forest_nodes"], 20)
+        self.assertEqual(result.stats["dialogue_attempt"]["forest_nodes"], 500)
+        self.assertTrue(result.stats["dialogue_attempt"]["budget_exceeded"])
+        self.assertEqual(classify(result.completed, result.stats),
+                         "forest_budget_exceeded")
+
+    def test_dialogue_attempt_roots_and_kbest_are_not_discarded(self):
+        stats = {
+            "structural_root_nodes": 0, "budget_exceeded": False,
+            "kbest_budget_exceeded": False,
+            "dialogue_attempt": {
+                "structural_root_nodes": 2,
+                "budget_exceeded": False,
+                "kbest_budget_exceeded": True,
+            },
+        }
+        self.assertEqual(classify(False, stats), "kbest_budget_exceeded")
+        stats["dialogue_attempt"]["kbest_budget_exceeded"] = False
+        self.assertEqual(classify(False, stats),
+                         "roots_without_valid_analysis")
+        self.assertEqual(classify(True, stats), "complete")
+        self.assertEqual(classify(False, {
+            "structural_root_nodes": 0, "budget_exceeded": False,
+            "kbest_budget_exceeded": False,
+        }), "no_structural_root")
 
     def test_construction_clusters_compare_successes_and_censor_limits(self):
         def case(index, text, status):

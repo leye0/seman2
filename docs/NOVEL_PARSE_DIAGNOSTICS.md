@@ -22,6 +22,19 @@ Le statut principal est exclusif : complete, both_budgets_exceeded, forest_budge
 
 Un manque de racine sous budget diffère de l'existence de racines dont toutes les analyses échouent à l'unification. Un timeout ou une erreur ne compte jamais comme preuve de couverture insuffisante.
 
+Pour les guillemets équilibrés, `Parser.parse` tente d'abord la grammaire de
+dialogue puis, si nécessaire, la grammaire ordinaire. Le champ
+`dialogue_attempt` conserve les ressources consommées et les racines de
+la première tentative lorsqu'elle échoue. Les statuts et les drapeaux de
+saturation de la cohorte combinent les **deux** tentatives : une saturation
+du dialogue suivie d'un `no_structural_root` ordinaire reste indéterminée
+(`forest_budget_exceeded` ou `kbest_budget_exceeded`), et non une absence
+prouvée de structure. Les compteurs `forest_nodes` et
+`structural_root_nodes` du résultat principal restent ceux de la
+tentative retenue, pour ne pas additionner des forêts différentes.
+Une analyse trouvée dans une forêt saturée reste une analyse grammaticale
+attestée, mais n'est pas une preuve d'optimalité de son classement.
+
 ## Fichiers produits
 
 - report.md : synthèse lisible, causes exclusives, drapeaux et bandes.

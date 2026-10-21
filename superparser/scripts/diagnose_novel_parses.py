@@ -63,15 +63,25 @@ def classify(completed: bool, stats: dict) -> str:
     """Exclusive headline; independent budget flags remain in the JSONL."""
     if completed:
         return "complete"
-    forest = bool(stats.get("budget_exceeded"))
-    kbest = bool(stats.get("kbest_budget_exceeded"))
+    # Public Parser.parse can try a scoped quote grammar before falling back
+    # to the ordinary grammar. A failed, resource-limited attempt still makes
+    # the overall failure inconclusive, even if the fallback has no root.
+    dialogue = stats.get("dialogue_attempt") or {}
+    forest = bool(stats.get("budget_exceeded") or dialogue.get("budget_exceeded"))
+    kbest = bool(
+        stats.get("kbest_budget_exceeded")
+        or dialogue.get("kbest_budget_exceeded")
+    )
     if forest and kbest:
         return "both_budgets_exceeded"
     if forest:
         return "forest_budget_exceeded"
     if kbest:
         return "kbest_budget_exceeded"
-    if int(stats.get("structural_root_nodes", 0)) == 0:
+    if (
+        int(stats.get("structural_root_nodes", 0)) == 0
+        and int(dialogue.get("structural_root_nodes", 0)) == 0
+    ):
         return "no_structural_root"
     return "roots_without_valid_analysis"
 
@@ -1000,8 +1010,14 @@ def run(args: argparse.Namespace) -> dict:
                         "status": classify(result.completed, stats),
                         "completed": bool(result.completed),
                         "lexical_candidates": len(lattice.candidates),
-                        "forest_budget_exceeded": bool(stats.get("budget_exceeded")),
-                        "kbest_budget_exceeded": bool(stats.get("kbest_budget_exceeded")),
+                        "forest_budget_exceeded": bool(
+                            stats.get("budget_exceeded")
+                            or (stats.get("dialogue_attempt") or {}).get("budget_exceeded")),
+                        "kbest_budget_exceeded": bool(
+                            stats.get("kbest_budget_exceeded")
+                            or (stats.get("dialogue_attempt") or {}).get(
+                                "kbest_budget_exceeded")),
+                        "dialogue_attempt": stats.get("dialogue_attempt"),
                         "root_rule": result.best().rule_id if result.completed else None,
                         "dialogue_scoped": bool(stats.get("dialogue_scoped")),
                         "complexity_route": stats.get("complexity_route", "canonical"),

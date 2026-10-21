@@ -9,3 +9,4 @@ Checkpoint: f41f633468bbe27f490eda38a0a355109c76bfd5 — classify forest ceiling
 Checkpoint: 5132a4725e264f3d148787a4bf718b73aa575736 — measure global construction enrichment and reporting parentheticals on all 500 fixed cases.
 Checkpoint: 19d93fa79c2c1ff7e4d0d05ab9de9144c615430c — compare 500 cases after serial nominal subject, interrupted VP coordination, perfect object relatives, and length-stratified failure enrichment.
 Checkpoint: fa2187b667a7f6b07728201c4ffce6e3e00ab638 — narrow serial coordinated subjects, preserving negative perfect and modal report with fewer spurious nominal combinations; adversative yet included.
+Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budgets and compare ablation recoveries with saturation.

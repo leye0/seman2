@@ -406,6 +406,7 @@ class Parser:
         budget = self.max_items if max_items is None else max_items
         active_beam = self.beam if beam is None else beam
         is_dialogue = False
+        dialogue_attempt = None
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
             extended = dialogue_lattice(lattice)
             if extended is not None:
@@ -416,6 +417,24 @@ class Parser:
                     kbest_work_limit=kbest_work_limit,
                     diagnostic_k=diagnostic_k,
                 )
+                if not spoken.completed:
+                    # A scoped dialogue parse may exhaust the forest or k-best
+                    # budget before ordinary grammar fallback succeeds/fails.
+                    # Preserve this independent evidence for corpus diagnostics;
+                    # never mislabel an inconclusive dialogue attempt as a
+                    # conclusive absence of grammatical structure.
+                    dialogue_attempt = {
+                        "budget_exceeded": bool(spoken.stats.get("budget_exceeded")),
+                        "kbest_budget_exceeded": bool(
+                            spoken.stats.get("kbest_budget_exceeded")),
+                        "structural_root_nodes": int(
+                            spoken.stats.get("structural_root_nodes", 0)),
+                        "forest_nodes": int(spoken.stats.get("forest_nodes", 0)),
+                        "partial_states": int(
+                            spoken.stats.get("partial_states", 0)),
+                        "kbest_work_units": int(
+                            spoken.stats.get("kbest_work_units", 0)),
+                    }
                 if spoken.completed:
                     if isinstance(spoken.stats, dict):
                         spoken.stats["dialogue_scoped"] = True
@@ -427,12 +446,15 @@ class Parser:
         grammar, decision = self._select_vector_grammar(
             lattice, dialogue=is_dialogue,
         )
-        return self._attach_complexity_route(grammar.parse_lattice(
+        result = grammar.parse_lattice(
             lattice, beam=active_beam, max_items=budget,
             goal_category=self.goal_category,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,
-        ), decision)
+        )
+        if dialogue_attempt is not None and isinstance(result.stats, dict):
+            result.stats["dialogue_attempt"] = dialogue_attempt
+        return self._attach_complexity_route(result, decision)
 
     def parse_diagnostic(
         self,
