@@ -232,3 +232,22 @@ par une subordonnée. Les compteurs de synthèse comptent les **phrases
 distinctes**, pas les occurrences. Aucun de ces signaux n'est en lui-même
 une preuve de faute grammaticale. La suite doit valider les classes de
 signaux et corriger la valence et la transmission des traits à leur source.
+
+## Résultats quantifiés de l'audit des traits morphosyntaxiques
+
+[Exécution des 500 phrases](https://github.com/leye0/seman2/actions/runs/39607780390) :
+454/500 reconnues avec le pruning expérimental, et cinq types
+d'alertes distingués sur les meilleurs arbres. **26** phrases ont une
+finitude de VP déclaratif non prouvée, **8** une virgule à l'intérieur
+d'une subordonnée antéposée, **3** une subordonnée antéposée elliptique,
+**2** une coordination VP avec `finite` et `ed` explicitement
+incompatibles (#281, #365), et **1** une matrice impérative suspecte
+après subordination (#485). Ce sont des signatures exploratoires, non
+des erreurs grammaticales toutes certifiées.
+
+Les deux coordinations opposant `vform=finite` et `vform=ed`
+emploient `vp_part_pp` avec `vp_transitive`; le lexique et les
+contraintes de valence doivent être inspectés avant d'imposer un
+accord de forme entre les deux VP. Les expériences de contrainte
+`vform=finite` ont précisément montré la nécessité de préserver les
+branches grammaticales avant de modifier leur classement.
