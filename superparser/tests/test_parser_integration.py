@@ -20,6 +20,31 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_yet_preserves_adverb_and_adds_adversative_coordination(self) -> None:
+        parser = make_parser()
+        lattice = parser.parse("Mary was happy yet worried.").lattice
+        readings = [candidate for candidate in lattice.candidates
+                    if candidate.surface.casefold() == "yet"]
+        self.assertIn("COORD", {candidate.category for candidate in readings})
+        self.assertIn("ADV", {candidate.category for candidate in readings})
+        self.assertTrue(any(
+            c.category == "COORD"
+            and c.features.as_dict().get("adversative") == "true"
+            for c in readings
+        ))
+        result = parser.parse("Mary was happy yet worried.").result
+        self.assertTrue(result.completed, result.stats)
+        # The adjective coordination must be a licensed lexical reading;
+        # equivalent complete roots need not choose identical ranking.
+        def descendants(node):
+            yield node
+            for child in node.children:
+                yield from descendants(child)
+        self.assertTrue(any(
+            "adjp_coord" in {node.rule_id for node in descendants(root)}
+            for root in result.alternatives(limit=8)
+        ))
+
     def test_zero_relative_perfect_preserves_auxiliary_and_real_verb(self) -> None:
         p = make_parser()
 
