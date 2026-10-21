@@ -97,6 +97,42 @@ class NovelDiagnosticsTests(unittest.TestCase):
         self.assertEqual(len(pair["control_indices"]), 5)
         self.assertGreater(pair["relative_risk"], 1)
 
+    def test_length_stratification_removes_spurious_long_sentence_risk(self):
+        rows = []
+        for index in range(5):
+            rows.append({
+                "index": index, "sentence": "John walked.",
+                "band": "04-08", "status": "complete",
+            })
+        for index in range(5, 10):
+            rows.append({
+                "index": index,
+                "sentence": "John, however, waited, and Mary read the book.",
+                "band": "25-32",
+                "status": "complete" if index == 9 else "no_structural_root",
+            })
+        rows.append({
+            "index": 10,
+            "sentence": "John, however, waited, and Mary read the book.",
+            "band": "25-32", "status": "timeout",
+        })
+        audit = construction_interaction_audit(rows, min_support=5)
+        self.assertEqual(audit["conclusive_total"], 10)
+        self.assertEqual(audit["excluded_resource_limited"], 1)
+        pair = next(p for p in audit["pairs"] if p["signatures"] == [
+            "comma_followed_by_coordinator", "paired_comma_interruption",
+        ])
+        self.assertEqual(pair["conclusive_failures"], 4)
+        self.assertEqual(pair["successful_controls"], 1)
+        self.assertEqual(pair["relative_risk"], 2)
+        self.assertEqual(pair["length_adjusted_expected_failures"], 4)
+        self.assertEqual(pair["length_adjusted_relative_risk"], 1)
+        self.assertEqual(pair["length_adjusted_excess_failures"], 0)
+        self.assertEqual(
+            audit["failure_percent_by_length_band"],
+            {"04-08": 0.0, "25-32": 80.0},
+        )
+
     def test_clusters_do_not_conflate_ordinary_pp_or_bare_adjective(self):
         texts = [
             "John spoke to Mary, and his sister listened.",
