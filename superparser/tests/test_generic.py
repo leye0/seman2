@@ -21,7 +21,7 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 # Use the same dynamically provisioned WordNet dictionary as Parser.from_dir.
 # A fixed per-machine developer path caused CI failures once these tests
 # were actually discovered by unittest.
-from seman_parser.lexicon import discover_wordnet
+from seman_parser.engine import discover_wordnet
 WN_DICT = discover_wordnet(DATA)
 
 # Identifiers that belong to a corpus, not to the engine.
