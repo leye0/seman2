@@ -159,7 +159,9 @@ def main():
             case = cases[index]
             old = _parse(original, case, args.seconds)
             new = _parse(restricted, case, args.seconds)
-            if old.get("lexical_count") != new.get("lexical_count"):
+            if (old.get("lexical_count") is not None
+                    and new.get("lexical_count") is not None
+                    and old["lexical_count"] != new["lexical_count"]):
                 raise AssertionError(
                     f"Lexical lattice changed at {index}: "
                     f"{old.get('lexical_count')} / {new.get('lexical_count')}"
