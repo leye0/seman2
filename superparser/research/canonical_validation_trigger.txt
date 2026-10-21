@@ -5,3 +5,4 @@ Checkpoint: 36ab012b49ddc41ad1063318e5f2bd278d86376c — global failure interact
 Checkpoint: 8442ebc44692f8876dcf0b121de5d85888b60334 — nonexclusive construction enrichment and agreement-constrained shared-subject coordination with fronted adjuncts.
 Checkpoint: 95e78be1e2e8b669c9fafb0e6cfb95fe26533cc8 — serial coordinated nominal subjects, possessive ADJP noun, and negated perfect with adverb.
 Checkpoint: 748e5b1cd427516ba6faa6d37d5057af1b6f3865 — preserve existing semantic trees while checking serial-subject coordination and negative perfect analyses.
+Checkpoint: e2f15ac8f0e4b1f101476ff1177ad48036dce7f3 — distinguish enumerated subjects from spurious appositions; length-adjusted clustering tests.
