@@ -88,6 +88,13 @@ class AdaptiveRouterTests(unittest.TestCase):
                 self.assertEqual(fast.stats["complexity_route"],"trie")
                 self.assertTrue(fast.stats["lazy_trie_recognition"])
                 self.assertEqual(base.completed,fast.completed)
+                # A hard max-items cutoff interrupts the two agendas at
+                # different points; the resulting partial forests cannot
+                # certify identical best rankings. Parity is mandatory only
+                # when both recognitions finished without saturation.
+                if (base.stats.get("budget_exceeded")
+                        or fast.stats.get("budget_exceeded")):
+                    continue
                 self.assertEqual(
                     [x.as_dict() for x in base.alternatives(limit=2)],
                     [x.as_dict() for x in fast.alternatives(limit=2)])

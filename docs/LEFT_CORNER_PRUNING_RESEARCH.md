@@ -117,3 +117,10 @@ les expressions prépositionnelles initiales `For my part` et
 `As for the captain` de se faire passer pour un préfixe coordonnant
 suivi d'une proposition disloquée. Le lien sémantique AGENT est conservé
 pour le sujet et son prédicat.
+
+Après introduction de `coord_clause_causal_finite`, le contrôle
+`For my part` n'est plus un échec attendu : il est désormais un test de
+non-régression positif. Pour la parité trie/canonique, l'identité des
+meilleurs arbres ne constitue une obligation que pour deux forêts non
+saturées ; le diagnostic de saturation demeure explicitement observable,
+plutôt que prétendre à la certification d'un ordre sur une forêt partielle.

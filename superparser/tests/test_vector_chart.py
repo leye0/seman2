@@ -776,7 +776,7 @@ class VectorChartTests(unittest.TestCase):
             ("I joyfully exclaimed.", "vp_intransitive"),
             ("I longed to see my friends.", "vp_to_inf"),
             ("for I longed to see my native town and my beloved friends.",
-             "coord_clause"),
+             "coord_clause_causal_finite"),
         )
         for sentence, required in positive:
             with self.subTest(sentence=sentence):

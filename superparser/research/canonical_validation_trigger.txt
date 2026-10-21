@@ -14,3 +14,4 @@ Full suite validation: 2026-10-21 — verify scope-preserving diagnostic and sat
 Tree-quality expected failures for lexical left-corner optimization, run global regression 2026-10-21.
 2026-10-21 phrase-coordinate positive lexical licensing (and/or/but vs causal for), full regression.
 2026-10-21 clausal causal for vs initial PP, full regression.
+2026-10-21 causal-for test expectation updated; k-best trie parity conditional on unsaturated forest.

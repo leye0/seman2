@@ -58,7 +58,6 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             for item in descendants(best)
         ), "The subject 'I' must not be part of the fronted object NP")
 
-    @unittest.expectedFailure
     def test_for_my_part_is_prepositional_adjunct_not_coordination(self):
         text = (
             "For my part, as I was not much use at carrying, I was kept "
