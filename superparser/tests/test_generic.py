@@ -18,7 +18,11 @@ from seman_parser.segmentation import build_lattice
 
 ROOT = Path(__file__).resolve().parents[1] / "seman_parser"
 DATA = Path(__file__).resolve().parents[1] / "data"
-WN_DICT = Path(__file__).resolve().parents[2] / ".local" / "share" / "wordnet" / "WordNet-3.0" / "dict"
+# Use the same dynamically provisioned WordNet dictionary as Parser.from_dir.
+# A fixed per-machine developer path caused CI failures once these tests
+# were actually discovered by unittest.
+from seman_parser.lexicon import discover_wordnet
+WN_DICT = discover_wordnet(DATA)
 
 # Identifiers that belong to a corpus, not to the engine.
 CORPUS_TOKENS = {

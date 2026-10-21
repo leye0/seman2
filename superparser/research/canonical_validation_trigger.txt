@@ -19,3 +19,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 VP vform sharing 4 coordination rules, regression suite.
 2026-10-21 17 exact equivalent construction groups removed; full regression.
 2026-10-21 complete unittest discovery: 36 module syntax tests and 4 gold reference tests, 3 missed TestCase modules.
+2026-10-21 fix new generic tests WordNet source discovery, preserve grammatical failures for repair.
