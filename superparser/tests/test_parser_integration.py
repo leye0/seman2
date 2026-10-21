@@ -20,6 +20,38 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_interpolated_modal_reporting_requires_reporting_verb(self) -> None:
+        p = make_parser()
+
+        def rules(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from rules(child)
+
+        for sentence in (
+            "John, I may observe, opened the box.",
+            "Mary, I might add, arrived.",
+            "Peter, I may remark, waited patiently.",
+        ):
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertIn(
+                    "parenthetical_reporting_modal_bare",
+                    set(rules(result.best())),
+                )
+        for sentence in (
+            "John, I may eat, opened the box.",
+            "Mary, I might swim, arrived.",
+        ):
+            with self.subTest(unlicensed=sentence):
+                result = p.parse(sentence).result
+                for root in result.alternatives(limit=8):
+                    self.assertNotIn(
+                        "parenthetical_reporting_modal_bare",
+                        set(rules(root)),
+                    )
+
     def test_literary_question_and_habitual_trees_are_licensed(self) -> None:
         parser = make_parser()
 
