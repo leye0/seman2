@@ -814,10 +814,6 @@ class VectorChartTests(unittest.TestCase):
                 )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
     def test_local_participial_attachment_tie_is_opt_in(self) -> None:
         """In an exact scoring tie, prefer nearest legitimate nominal head."""
         from seman_parser.vector_chart import (
@@ -844,4 +840,10 @@ if __name__ == "__main__":
         )
         self.assertTrue(trial.stats.get("local_attachment_tiebreak_applied"))
         self.assertTrue(trial.completed)
+
+
+
+if __name__ == "__main__":
+    unittest.main()
+
 

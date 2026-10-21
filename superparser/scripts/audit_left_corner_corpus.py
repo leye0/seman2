@@ -124,6 +124,7 @@ def main():
     p.add_argument("--max-items", type=int, default=50000)
     p.add_argument("--kbest-work-limit", type=int, default=500000)
     p.add_argument("--seconds", type=float, default=10.0)
+    p.add_argument("--local-attachment-tiebreak", action="store_true")
     opts = p.parse_args()
     cases, _sources = select_cases(500)
     opts.out_dir.mkdir(parents=True, exist_ok=True)
@@ -149,11 +150,13 @@ def main():
 
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=opts.wordnet_dir)
     parser = Parser(resources, max_items=opts.max_items, cache_size=0,
-                    lexical_left_corner_pruning=True)
+                    lexical_left_corner_pruning=True,
+                    local_attachment_tiebreak=opts.local_attachment_tiebreak)
     parser.parse("John opened the box.")  # Same warm-up as canonical diagnostic
     old_handler = signal.signal(signal.SIGALRM, _alarm)
     counts = Counter()
     summed = Counter()
+    recorded_rows = []
     quality_counts = Counter()
     quality_indices: dict[str, list[int]] = {}
     out = opts.out_dir / "per_sentence.jsonl"
@@ -177,6 +180,11 @@ def main():
                         "status": classify(result.completed, stats),
                         "completed": result.completed,
                         "root_rule": result.best().rule_id if result.best() else None,
+                        "local_attachment_tiebreak_applied": bool(
+                            stats.get("local_attachment_tiebreak_applied", False)),
+                        "local_attachment_best_score": (
+                            result.best().score if result.best() else None
+                        ),
                         "tree": _tree(result.best()),
                         "tree_quality_signals": tree_quality_signals(
                             result.best(), lattice.text),
@@ -207,6 +215,7 @@ def main():
                 finally:
                     signal.setitimer(signal.ITIMER_REAL, 0)
                 row["wall_ms"] = round(1000 * (perf_counter() - began), 2)
+                recorded_rows.append(row)
                 counts[row["status"]] += 1
                 for kind in {s["signal"] for s in row.get("tree_quality_signals", ())}:
                     quality_counts[kind] += 1
@@ -238,6 +247,9 @@ def main():
         "tree_quality_signal_indices": quality_indices,
         "tree_quality_signals_are_diagnostic_not_certified_errors": True,
         "experimental": True,
+        "local_attachment_tiebreak": opts.local_attachment_tiebreak,
+        "tiebreak_applied_cases": [r["index"] for r in recorded_rows
+                                  if r.get("local_attachment_tiebreak_applied")],
     }
     (opts.out_dir / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
