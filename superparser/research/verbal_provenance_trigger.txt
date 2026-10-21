@@ -1,1 +1,2 @@
 2026-10-21 inspect full WordNet lexical readings and syntactic frames of contrastive finite-ed tree cases 281,365,485 via Parser.parse.\n
+2026-10-21 inspect bundled VerbNet 3.4 class evidence for competing finite/ed frames, alongside WordNet lookup.
