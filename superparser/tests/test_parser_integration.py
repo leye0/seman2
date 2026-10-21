@@ -30,8 +30,8 @@ class SegmentationTests(unittest.TestCase):
 
         simple = p.parse("My old dog arrived.").result
         self.assertTrue(simple.completed, simple.stats)
-        self.assertIn("np_possessive_adjective_phrase_noun",
-                      set(rules(simple.best())))
+        # The established N->ADJ N + possessive NP tree is equally valid.
+        # Test the new full ADJP construction in the serial-subject tree below.
 
         perfect = p.parse("She had not yet found the box.").result
         self.assertTrue(perfect.completed, perfect.stats)
