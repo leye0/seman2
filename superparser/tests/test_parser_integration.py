@@ -20,6 +20,32 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_zero_relative_perfect_preserves_auxiliary_and_real_verb(self) -> None:
+        p = make_parser()
+
+        def rules(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from rules(child)
+
+        for sentence in (
+            "Mary met the author John had praised.",
+            "The letters that John had written were useful.",
+        ):
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                root = result.best()
+                self.assertIsNotNone(root)
+                # The overt relative or that-clause may have competing
+                # grammatical analyses; the licensed perfect object gap
+                # must remain available among the packed derivations.
+                alternatives = result.alternatives(limit=12)
+                self.assertTrue(any(
+                    "wh_bare_perfect_object_relative" in set(rules(node))
+                    for node in alternatives
+                ), [node.rule_id for node in alternatives])
+
     def test_serial_nominal_subject_and_negative_perfect_compose(self) -> None:
         p = make_parser()
 
