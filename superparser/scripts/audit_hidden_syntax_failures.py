@@ -25,6 +25,7 @@ EXAMPLES=[
 ]
 def tree(n,text):
     return {"category":n.category,"rule":n.rule_id,
+            "score":n.score,
             "text":text[n.start:n.end],
             "features":n.features.as_dict(),
             "children":[tree(c,text) for c in n.children]}

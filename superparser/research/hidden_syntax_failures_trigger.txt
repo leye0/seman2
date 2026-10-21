@@ -1,1 +1,2 @@
 2026-10-21 capture root and competing tree details for hidden grammar nonregression tests, no rank changes.
+2026-10-21 include every alternative's exact score to separate structural ambiguity from evidence-driven ranking.
