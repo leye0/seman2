@@ -4,3 +4,4 @@ Checkpoint: 23ac8d37697246f11640db8b9811a1222b3da8a8 — more/less comparative v
 Checkpoint: 36ab012b49ddc41ad1063318e5f2bd278d86376c — global failure interaction audit and licensed interpolated modal reporting, with controls and syntax tests.
 Checkpoint: 8442ebc44692f8876dcf0b121de5d85888b60334 — nonexclusive construction enrichment and agreement-constrained shared-subject coordination with fronted adjuncts.
 Checkpoint: 95e78be1e2e8b669c9fafb0e6cfb95fe26533cc8 — serial coordinated nominal subjects, possessive ADJP noun, and negated perfect with adverb.
+Checkpoint: 748e5b1cd427516ba6faa6d37d5057af1b6f3865 — preserve existing semantic trees while checking serial-subject coordination and negative perfect analyses.
