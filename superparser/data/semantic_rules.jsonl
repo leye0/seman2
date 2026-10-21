@@ -365,3 +365,12 @@
 {"id":"clause_list4","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"c1","target":"c2"},{"relation":"CONJUNCT","source":"c2","target":"c3"},{"relation":"CONJUNCT","source":"c3","target":"c4"}]}}]}
 {"id":"np_det_post","semantic":[{"copy":{}}]}
 {"id":"np_n_det_post","semantic":[{"copy":{}}]}
+{"id":"np_possessive_adjective_phrase_noun","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"head","target":"possessor"},{"relation":"ATTRIBUTE","source":"head","target":"attribute"}]}}]}
+{"id":"np_third_person_nominal_coord_subject","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_nominal","target":"second_nominal"}]}}]}
+{"id":"np_universal_third_person_nominal","semantic":[{"compose":{"links":[{"relation":"QUANTIFIER","source":"possessed_nominal","target":"universal"}]}}]}
+{"id":"np_serial_third_person_nominal_coordination","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_group","target":"second_group"},{"relation":"CONJUNCT","source":"second_group","target":"last_group"}]}}]}
+{"id":"clause_serial_nominal_subject_comma_predicate","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"predicate","target":"coordinated_subject"}]}}]}
+{"id":"vp_perfect_negated_adverbial_transitive","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"predicate","target":"object"},{"relation":"MANNER","source":"predicate","target":"scope_adverb"}]}}]}
+{"id":"vp_perfect_negated_adverbial_intransitive","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"predicate","target":"scope_adverb"}]}}]}
+{"id":"vp_finite_comma_coord_fronted_pp","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_predicate","target":"second_predicate"},{"relation":"MODIFIER","source":"second_predicate","target":"fronted_conjunct_adjunct"}]}}]}
+{"id":"vp_finite_comma_coord_fronted_adv","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_predicate","target":"second_predicate"},{"relation":"MANNER","source":"second_predicate","target":"fronted_conjunct_adjunct"}]}}]}
