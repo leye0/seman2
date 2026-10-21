@@ -64,6 +64,7 @@ jobs:
             superparser.tests.test_complexity_routing \
             superparser.tests.test_shared_trie_forest \
             superparser.tests.test_clean_novel_corpus \
+            superparser.tests.test_novel_parse_diagnostics \
             superparser.tests.test_syntax_correctness \
             superparser.tests.test_reference_300_evaluator \
             superparser.tests.test_verbnet_lr_gutenberg_novels
