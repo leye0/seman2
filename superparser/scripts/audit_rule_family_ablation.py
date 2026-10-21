@@ -1,0 +1,140 @@
+"""Controlled grammar-family ablation on the SAME pinned 500-case corpus.
+
+Research-only. The official Parser and 500-case benchmark remain unchanged.
+Each ablation constructs a Grammar excluding a named family, calls the public
+parse_corpus_case gateway exactly once per case and condition, and enforces
+the same per-sentence time/forest limits. The result describes interactions,
+not a license to overfit particular Gutenberg sentence indices.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import signal
+from pathlib import Path
+from time import perf_counter
+
+from scripts.diagnose_novel_parses import select_cases
+from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+from seman_parser.engine import Parser, ParserResources
+from seman_parser.grammar import Grammar
+
+ROOT = Path(__file__).resolve().parents[1]
+SERIAL = frozenset({
+    "np_possessive_adjective_phrase_noun",
+    "vp_perfect_negated_adverbial_transitive",
+    "vp_perfect_negated_adverbial_intransitive",
+    "np_third_person_nominal_coord_subject",
+    "np_universal_third_person_nominal",
+    "np_serial_third_person_nominal_coordination",
+    "clause_serial_nominal_subject_comma_predicate",
+})
+COORD = frozenset({
+    "vp_finite_comma_coord_fronted_pp",
+    "vp_finite_comma_coord_fronted_adv",
+})
+PERFECT_GAP = frozenset({
+    "vp_gap_perfect_transitive",
+    "wh_bare_perfect_object_relative",
+})
+REPORTING = frozenset({"parenthetical_reporting_modal_bare"})
+ABLATIONS = {
+    "current": frozenset(),
+    "without_serial_subject_and_neg_perfect": SERIAL,
+    "without_interrupted_vp_coordination": COORD,
+    "without_perfect_relative_gaps": PERFECT_GAP,
+    "without_new_rule_families": SERIAL | COORD | PERFECT_GAP | REPORTING,
+}
+TARGETS = (122, 124, 229, 236, 316, 321, 359, 363, 367, 485)
+
+
+class Deadline(Exception):
+    pass
+
+
+def _alarm(_signal_number, _frame):
+    raise Deadline("research parse exceeded per-case deadline")
+
+
+def audit(wordnet_dir: str, indices: tuple[int, ...], *,
+          seconds: float = 9.0, max_items: int = 50000):
+    cases, _ = select_cases(500)
+    baseline = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
+    names = {rule.rule_id for rule in baseline.grammar}
+    for name, excluded in ABLATIONS.items():
+        unknown = excluded - names
+        if unknown:
+            raise ValueError(f"Missing rule IDs in {name}: {sorted(unknown)}")
+    old_handler = signal.signal(signal.SIGALRM, _alarm)
+    rows = []
+    try:
+        for name, excluded in ABLATIONS.items():
+            grammar = Grammar(r for r in baseline.grammar if r.rule_id not in excluded)
+            resources = ParserResources(
+                grammar=grammar,
+                lexicon=baseline.lexicon,
+                types=baseline.types,
+                metadata=baseline.metadata,
+            )
+            parser = Parser(resources, cache_size=0, max_items=max_items)
+            for idx in indices:
+                case = cases[idx]
+                started = perf_counter()
+                signal.setitimer(signal.ITIMER_REAL, seconds)
+                try:
+                    prepared, lattice, result = parse_corpus_case(
+                        parser, case, max_items=max_items,
+                        kbest_work_limit=500000,
+                    )
+                    row = {
+                        "variant": name, "index": idx, "book_id": case["book_id"],
+                        "completed": result.completed,
+                        "root": result.best().rule_id if result.best() else None,
+                        "forest_budget": bool(result.stats.get("budget_exceeded")),
+                        "forest_nodes": result.stats.get("forest_nodes"),
+                        "root_nodes": result.stats.get("structural_root_nodes"),
+                        "lexical_candidates": len(lattice.candidates),
+                    }
+                except Deadline:
+                    row = {"variant": name, "index": idx, "completed": False,
+                           "status": "timeout"}
+                except Exception as exc:
+                    row = {"variant": name, "index": idx, "completed": False,
+                           "status": f"error: {type(exc).__name__}: {exc}"}
+                finally:
+                    signal.setitimer(signal.ITIMER_REAL, 0)
+                row["wall_ms"] = round((perf_counter() - started) * 1000, 2)
+                rows.append(row)
+                print("NOVEL_RULE_FAMILY_ABLATION",
+                      json.dumps(row, ensure_ascii=False), flush=True)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, old_handler)
+    summary = {
+        name: {
+            "completed": sum(x["completed"] for x in rows if x["variant"] == name),
+            "timeouts": sum(x.get("status") == "timeout"
+                            for x in rows if x["variant"] == name),
+            "forest_limited": sum(x.get("forest_budget", False)
+                                  for x in rows if x["variant"] == name),
+        }
+        for name in ABLATIONS
+    }
+    print("NOVEL_RULE_FAMILY_ABLATION_SUMMARY",
+          json.dumps({"indices": indices, "groups": summary}), flush=True)
+    return rows
+
+
+def main() -> None:
+    p = argparse.ArgumentParser()
+    p.add_argument("--wordnet-dir", required=True)
+    p.add_argument("--indices", default=",".join(map(str, TARGETS)))
+    p.add_argument("--seconds", type=float, default=9.0)
+    p.add_argument("--max-items", type=int, default=50000)
+    opts = p.parse_args()
+    audit(opts.wordnet_dir, tuple(int(x) for x in opts.indices.split(",")),
+          seconds=opts.seconds, max_items=opts.max_items)
+
+
+if __name__ == "__main__":
+    main()
