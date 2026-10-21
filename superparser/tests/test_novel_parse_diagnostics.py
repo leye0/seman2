@@ -91,6 +91,44 @@ class NovelDiagnosticsTests(unittest.TestCase):
         self.assertIn("internal_comma_in_front_subordinate", types)
         self.assertIn("imperative_matrix_after_subordinate", types)
 
+    def test_adjective_infinitive_signal_records_unproven_control_type(self):
+        from types import SimpleNamespace
+        from seman_parser.features import FeatureStructure
+        from scripts.audit_left_corner_corpus import tree_quality_signals
+
+        def node(rule, category, start, end, children=(), features=None):
+            return SimpleNamespace(
+                rule_id=rule, category=category,
+                start=start, end=end, children=tuple(children),
+                features=FeatureStructure.build(features or {}),
+            )
+        text="Mary is ready to leave"
+        copula=node(None,"COPULA",5,7)
+        adjective=node(None,"ADJ",8,13)
+        marker=node(None,"TO",14,16)
+        infinitive=node("vp_bare","VP-NP",17,22)
+        vp=node("vp_tough","VP",5,22,children=(
+            copula,adjective,marker,infinitive,
+        ))
+        reports=tree_quality_signals(vp,text)
+        matches=[r for r in reports if
+                 r["signal"]=="untyped_adjective_infinitive_relation"]
+        self.assertEqual(len(matches),1)
+        self.assertEqual(matches[0]["details"]["adjective"],"ready")
+        self.assertEqual(matches[0]["details"]["infinitive_rule"],"vp_bare")
+        self.assertFalse(matches[0]["details"]["has_positive_control_type"])
+
+        licensed=node(None,"ADJ",8,13,features={
+            "infinitive_control_type":"subject_control",
+        })
+        new_vp=node("vp_tough","VP",5,22,children=(
+            copula,licensed,marker,infinitive,
+        ))
+        new_reports=tree_quality_signals(new_vp,text)
+        item=next(r for r in new_reports if
+                  r["signal"]=="untyped_adjective_infinitive_relation")
+        self.assertTrue(item["details"]["has_positive_control_type"])
+
     def test_failed_dialogue_attempt_preserves_resource_censorship(self):
         # Both paths are still invoked via the ONE public Parser.parse.
         # Force the dialogue recognizer to saturate and the fallback to

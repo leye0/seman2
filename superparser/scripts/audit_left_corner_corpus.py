@@ -97,6 +97,21 @@ def tree_quality_signals(best, text: str) -> list[dict]:
                        forms=forms,
                        conjunct_rules=[c.rule_id for c in conjuncts])
 
+        if node.rule_id == "vp_tough" and len(node.children) == 4:
+            # The general surface construction COPULA+ADJ+TO+VP-NP
+            # does not prove whether its subject is the controller,
+            # an extracted object, or a raising argument. A Lexical ADJ
+            # POS reading by itself cannot certify the control relation.
+            adjective = node.children[1]
+            infinitive = node.children[3]
+            report("untyped_adjective_infinitive_relation", node,
+                   adjective=text[adjective.start:adjective.end],
+                   adjective_rule=adjective.rule_id,
+                   infinitive_rule=infinitive.rule_id,
+                   has_positive_control_type=bool(
+                       feature(adjective, "infinitive_control_type")),
+            )
+
         if node.rule_id == "clause_sub_front" and len(node.children) == 3:
             subordinate, matrix = node.children[1:]
             ellipsis = feature(subordinate, "ellipsis")

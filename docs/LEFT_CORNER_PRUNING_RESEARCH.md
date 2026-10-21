@@ -430,3 +430,24 @@ Il faudra distinguer au moins : *contrôle du sujet* (`eager/ready to`),
 *tough-movement* (`easy/difficult to`) et adjectifs sans sélection
 infinitivale. Ce découpage doit reposer sur des cadres de valence
 vérifiables plutôt qu'une liste de mots destinée à satisfaire le corpus.
+
+## Signal global de sous-spécification des infinitives adjectivales
+
+L'inspection des 455 meilleurs arbres expérimentaux du corpus fixe
+détecte **cinq emplois** de la règle `vp_tough` : les adjectifs
+`overjoyed` (#40), `sure` (#58), `ashamed` (#83), `likely` (#224)
+et `willing` (#454). Ils ne constituent pas des exemples probants
+de tough-movement (extraction de l'objet d'un infinitif). Ils
+correspondent plutôt à des relations de contrôle du sujet ou de montée,
+qui ne sont pas identifiées dans les traits lexicaux actuels.
+
+La fonction `tree_quality_signals` inscrit désormais, pour toute
+utilisation de `vp_tough`, un signal
+`untyped_adjective_infinitive_relation` avec l'adjectif,
+sa construction, le VP infinitival et la disponibilité éventuelle
+d'un trait positif `infinitive_control_type`. C'est un **signal de
+sous-spécification**, pas une règle de rejet : aucune catégorie ni
+hypothèse WordNet n'est filtrée et les 500 meilleurs arbres restent
+inchangés. Une future ressource de cadres adjectivaux pourra ainsi
+faire la différence entre contrôle du sujet, montée et extraction
+d'objet sans modifier le moteur générique.
