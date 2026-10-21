@@ -12,3 +12,4 @@ Checkpoint: fa2187b667a7f6b07728201c4ffce6e3e00ab638 — narrow serial coordinat
 Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budgets and compare ablation recoveries with saturation.
 2026-10-21 phrase-coordinate semantic category feature restrictions, pinned 500 analysis.
 2026-10-21 final pinned canonical 500 after phrase COORD, causal for and pronominal apposition changes.
+2026-10-21 VP morphosyntax agreement, unchanged immutable cohort.

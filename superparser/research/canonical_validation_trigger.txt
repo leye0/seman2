@@ -16,3 +16,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 clausal causal for vs initial PP, full regression.
 2026-10-21 causal-for test expectation updated; k-best trie parity conditional on unsaturated forest.
 2026-10-21 appositive vs pronominal contrast core validation.
+2026-10-21 VP vform sharing 4 coordination rules, regression suite.

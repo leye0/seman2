@@ -456,3 +456,52 @@ def test_personal_pronoun_is_not_an_appositive_nominal_subject() -> None:
                     assert node.children[2].rule_id not in (
                         "np_pronoun", "np_indef_pron"
                     ), text
+
+
+def test_vp_coordination_rejects_explicit_mixed_inflection_but_retains_unknown() -> None:
+    """VP constituent forms agree; underspecified lexical form stays possible."""
+    from seman_parser.grammar import load_grammar
+    from seman_parser.features import FeatureStructure, unify
+    grammar = load_grammar(DATA / "grammar.jsonl")
+    for rule_id in ("vp_coord", "vp_comma_coord", "vp_comma_list", "vp_list3"):
+        rule = grammar.by_id(rule_id)
+        vp_symbols = [symbol for symbol in rule.rhs if symbol.category == "VP"]
+        variable = f"?coord_form_{rule_id}"
+        assert len(vp_symbols) >= 2
+        assert all(sym.features.as_dict().get("vform") == variable
+                   for sym in vp_symbols), rule_id
+        assert rule.lhs.features.as_dict().get("vform") == variable
+        first = unify(vp_symbols[0].features,
+                      FeatureStructure.build({"vform": "finite"}))
+        assert first is not None, rule_id
+        for other in vp_symbols[1:]:
+            # Once a finite predicate has fixed the shared form variable,
+            # an independently attested participial predicate is excluded.
+            assert unify(other.features,
+                         FeatureStructure.build({"vform": "ed"}),
+                         first[1]) is None, rule_id
+            assert unify(other.features,
+                         FeatureStructure.build({"vform": "finite"}),
+                         first[1]) is not None, rule_id
+            # Missing morphological evidence is not conflated with "ed".
+            assert unify(other.features, FeatureStructure.empty(),
+                         first[1]) is not None, rule_id
+
+
+def test_selected_vp_coordination_never_unifies_known_finite_with_ed() -> None:
+    """Adversarial literary constructions stay within the shared public parse."""
+    parser_instance = parser()
+    text = "With this resolution I traversed the northern highlands and fixed on one of the remotest of the Orkneys as the scene of my labours."
+    result = parser_instance.parse(text, max_items=50000).result
+    for root in result.alternatives(limit=5):
+        for node in nodes(root):
+            if node.rule_id not in {
+                "vp_coord", "vp_comma_coord", "vp_comma_list", "vp_list3",
+            }:
+                continue
+            forms = {
+                child.features.as_dict().get("vform") for child in node.children
+                if child.category == "VP"
+            }
+            assert not ({"finite", "ed"} <= forms), (node.rule_id, forms)
+

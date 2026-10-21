@@ -269,3 +269,27 @@ une sélection `PREP` directe d'une séquence `NP+PREP+NP`.
 La prochaine modification des règles de composition devra être fondée
 sur les contraintes de ces cadres et sur des exemples contrastifs,
 non sur une règle `V+PP` arbitrairement permissive.
+
+## Compatibilité morphologique des VP coordonnés (21 octobre 2026)
+
+L'expérience [500 phrases appariées](https://github.com/leye0/seman2/actions/runs/39618748182)
+a montré exactement **454/500** reconnues avant et après l'unification
+morphologique des deux côtés de quatre familles de coordinations VP.
+Elle a éliminé les deux meilleurs arbres qui mêlaient `finite` et
+`ed` (#281, #365), sans aucune perte ni récupération de phrase et
+sans changement des 498 autres meilleurs arbres.
+
+Les règles `vp_coord`, `vp_comma_coord`, `vp_comma_list` et
+`vp_list3` partagent désormais une variable de `vform` sur chaque
+conjunct VP et sur la projection VP. **Aucune preuve positive de forme
+n'est exigée lorsqu'un enfant est sous-spécifié** : le moteur conserve
+l'interprétation lexicale et n'écarte que les formes connues qui
+se contredisent. Aucun score n'est modifié.
+
+**Limite de qualité :** les nouveaux arbres sélectionnés pour les
+phrases #281 et #365 présentent encore des rattachements nominaux
+non justifiés (`vp_ditransitive` et `np_gerund_coord`). Cette
+contrainte est nécessaire pour rejeter la coordination contradictoire,
+mais insuffisante pour certifier la bonne structure de ces deux phrases.
+La réparation ultérieure doit mieux contraindre la valence et la
+formation des objets NP et des constructions participiales.
