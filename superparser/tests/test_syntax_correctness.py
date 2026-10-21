@@ -540,3 +540,17 @@ def test_no_duplicate_grammar_constructions_with_identical_semantics() -> None:
     duplicates = [items for items in by_pattern.values() if len(items) > 1]
     assert not duplicates, duplicates
 
+
+
+def load_tests(loader, tests, pattern):
+    """Register module-level test_* functions with the unittest CI runner.
+
+    unittest's default module loader only discovers TestCase subclasses;
+    without this hook the grammar/reference checks were silently skipped.
+    """
+    import unittest
+    for name, function in sorted(globals().items()):
+        if name.startswith("test_") and callable(function):
+            tests.addTest(unittest.FunctionTestCase(function, description=name))
+    assert tests.countTestCases() >= 36, "Grammatical checks are not registered"
+    return tests

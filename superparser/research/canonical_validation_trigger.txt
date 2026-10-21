@@ -18,3 +18,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 appositive vs pronominal contrast core validation.
 2026-10-21 VP vform sharing 4 coordination rules, regression suite.
 2026-10-21 17 exact equivalent construction groups removed; full regression.
+2026-10-21 complete unittest discovery: 36 module syntax tests and 4 gold reference tests, 3 missed TestCase modules.

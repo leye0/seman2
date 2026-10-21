@@ -324,3 +324,19 @@ Le test de régression `test_no_duplicate_grammar_constructions_with_identical_s
 interdit désormais de recréer ces doublons. Il préserve explicitement
 les constructions possédant des sémantiques différentes, même lorsque
 leurs patrons de catégories coïncident.
+
+## Correction de la découverte CI des tests (21 octobre 2026)
+
+L'audit du fichier `core-seman2-validation.yml` a identifié une lacune de
+validation : `unittest` ne découvre pas automatiquement les fonctions
+`test_*` définies directement dans un module. **36 tests de qualité
+grammaticale** (`test_syntax_correctness.py`) et **4 tests du corpus de
+référence** (`test_reference_300_evaluator.py`) étaient chargés comme
+modules mais non exécutés. Deux fonctions explicites `load_tests`
+les inscrivent maintenant dans le runner `unittest`, avec un test de
+contrat bloquant une future omission. Trois modules TestCase valides,
+`test_generic`, `test_symbols_types` et
+`test_verbnet_valence_provenance`, manquaient également dans la liste
+de modules de la CI : ils sont désormais inclus. Une exécution verte
+d'avant cette correction ne doit donc **pas** être présentée comme preuve
+que ces 40 assertions avaient été satisfaites.

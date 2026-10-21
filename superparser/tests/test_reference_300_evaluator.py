@@ -54,3 +54,17 @@ def test_flat_existential_is_a_documented_normalized_equivalent() -> None:
     best = Parser.from_dir(DATA).parse(row["text"]).result.best()
     assert best is not None
     assert normalized_gold(row["tree"]) == normalized_parser(best)
+
+
+def load_tests(loader, tests, pattern):
+    """Register module-level test_* functions with the unittest CI runner.
+
+    unittest's default module loader only discovers TestCase subclasses;
+    without this hook the grammar/reference checks were silently skipped.
+    """
+    import unittest
+    for name, function in sorted(globals().items()):
+        if name.startswith("test_") and callable(function):
+            tests.addTest(unittest.FunctionTestCase(function, description=name))
+    assert tests.countTestCases() >= 4, "Grammatical checks are not registered"
+    return tests
