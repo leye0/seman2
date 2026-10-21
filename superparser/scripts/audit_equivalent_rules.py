@@ -110,9 +110,15 @@ def main():
     base=Parser(source,cache_size=200,lexical_left_corner_pruning=True)
     candidate=Parser(filtered,cache_size=200,lexical_left_corner_pruning=True)
     candidate._lattice_cache=base._lattice_cache
-    indices=sorted(set(list(range(0,500,5))[:opt.count]+[
-        32,75,104,168,202,281,348,365,367,485,499
-    ]))
+    if opt.count==500:
+        # The complete corpus must not accidentally inherit the step-5
+        # witness-sampling selection. Fail closed if a future edit regresses.
+        indices=list(range(500))
+        assert len(indices)==500 and indices[-1]==499
+    else:
+        indices=sorted(set(list(range(0,500,5))[:opt.count]+[
+            32,75,104,168,202,281,348,365,367,485,499
+        ]))
     previous=signal.signal(signal.SIGALRM,alarm)
     rows=[]
     try:
