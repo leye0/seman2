@@ -99,9 +99,11 @@ def _run(parser, case, seconds):
 def audit(wordnet_dir: str, indices=INDICES, seconds=9.0, output=None):
     cases, _ = select_cases(500)
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
-    baseline = Parser(resources, cache_size=0)
+    # Explicit budgets disable parse-result caching, but the shared
+    # lexical cache MUST have nonzero capacity to freeze lexical input.
+    baseline = Parser(resources, cache_size=256)
     candidate = Parser(
-        resources, cache_size=0, lexical_left_corner_pruning=True,
+        resources, cache_size=256, lexical_left_corner_pruning=True,
     )
     # Crucial paired-design invariant: lexical hypotheses must be IDENTICAL.
     # Lazy WordNet lookup/morphology cache population can otherwise alter
