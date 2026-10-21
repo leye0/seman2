@@ -1,0 +1,1 @@
+2026-10-21 analyze full 500-case nonfinite VP vs finite subject-predicate licensing using public Parser.parse only.\n

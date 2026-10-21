@@ -1,0 +1,55 @@
+name: Seman2 - Finite Predicate Research
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/research/finite_predicate_trigger.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  paired:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request(
+              'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+              headers={'User-Agent':'Seman2-research'}), timeout=90) as f:
+              raw=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for part in z.namelist():
+                  leaf=Path(part).name
+                  if part.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(part))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Compare finite and unconstrained NP+VP clauses on 500 fixed cases
+        run: |
+          PYTHONPATH=superparser python -u -m scripts.audit_finite_predicate \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --out "$RUNNER_TEMP/finite-predicate-500.json"
+      - name: Preserve per-case paired best tree comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-finite-predicate-paired
+          path: ${{ runner.temp }}/finite-predicate-500.json
+          if-no-files-found: warn
+          retention-days: 30
