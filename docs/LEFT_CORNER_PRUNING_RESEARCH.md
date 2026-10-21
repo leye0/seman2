@@ -173,3 +173,34 @@ finie. Sur 25 phrases contrastées, la couverture est descendue de 25
 **Hypothèse rejetée pour intégration** : aucune règle de production
 n'a été changée par cette expérience. Des preuves de frontières
 propositionnelles et de valence plus fortes sont nécessaires.
+
+## Diagnostic de la prochaine cause générale : frontières propositionnelles
+
+L'inspection indépendante des **454 meilleurs arbres** expérimentaux
+compte 21 occurrences de `clause_sub_front` dans 20 phrases distinctes.
+Les signatures problématiques recouvrent notamment :
+
+- **8 occurrences** dont la subordonnée a absorbé une virgule à
+  l'intérieur de son propre constituant sans la laisser servir à la
+  vraie frontière propositionnelle ;
+- **3 occurrences** commençant par une subordonnée elliptique,
+  parfois limitée à `he would` ou `eyes were` ;
+- **1 occurrence** où la prétendue proposition principale est
+  `up the vapours at a draught` analysée comme impératif.
+
+Ces catégories se chevauchent et sont des **signaux** à contrôler
+structurellement, pas autant de fautes certifiées. Le problème générique
+semble être la certification insuffisante d'un sujet-prédicat fini
+**complet**, combinée à des frontières de ponctuation sous-déterminées.
+Un simple remplacement du second `CLAUSE` par `NP VP` a échoué
+l'expérience contrastive. La piste suivante doit établir une interface
+de clause attestée (valence, finitude, frontières, subordonnée versus
+matrice), réutilisable à toutes les phrases, sans contournement de
+`Parser.parse`.
+
+Le [dernier test de la cohorte canonique](https://github.com/leye0/seman2/actions/runs/39600330696)
+confirme 446/500 après ces restrictions grammaticales, soit la seule
+ancienne analyse de `for Hands` rejetée par rapport au témoin
+447/500. Aucun changement de complétion supplémentaire n'est constaté
+après les restrictions causales et pronominales. Le corpus fixe et son
+empreinte sont inchangés.
