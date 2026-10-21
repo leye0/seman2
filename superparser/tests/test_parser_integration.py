@@ -20,6 +20,31 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_bare_linking_predicates_require_lexical_linking_valency(self) -> None:
+        p = make_parser()
+
+        def rules(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from rules(child)
+
+        for text in ("Mary might become happy.", "John can become tired."):
+            with self.subTest(text=text):
+                result = p.parse(text).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(any(
+                    "vpnp_base_linking_adjective_phrase" in set(rules(root))
+                    for root in result.alternatives(limit=8)
+                ))
+
+        for text in ("Mary might eat happy.", "John can run blue."):
+            with self.subTest(unlicensed=text):
+                result = p.parse(text).result
+                self.assertFalse(any(
+                    "vpnp_base_linking_adjective_phrase" in set(rules(root))
+                    for root in result.alternatives(limit=8)
+                ))
+
     def test_yet_preserves_adverb_and_adds_adversative_coordination(self) -> None:
         parser = make_parser()
         lattice = parser.parse("Mary was happy yet worried.").lattice
