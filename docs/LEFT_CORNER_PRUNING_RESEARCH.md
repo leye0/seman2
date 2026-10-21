@@ -390,3 +390,11 @@ aucun score et ne supprime aucune dérivation. L'absence de changement
 sur ces 500 phrases ne démontre pas une exactitude linguistique générale :
 ce sont les tests contrastifs et les corpus ultérieurs qui devront
 éprouver les cas où les deux portées sont sémantiquement possibles.
+
+## Incise adverbiale après coordonnant discursif — 21 octobre 2026
+
+L'expérience [sur l'ensemble de la cohorte de 500 phrases](https://github.com/leye0/seman2/actions/runs/39681752811) mesure le modèle de coordination avec incise délimitée : `COORD COMMA ADV COMMA CLAUSE`, avec preuve positive `nominal_coordination=true`. Elle a reconnu **455/500** contre **454/500** sans cette construction, **une** récupération (cas #244, `and, besides, it was such a pity...`), **zéro** perte et aucun autre meilleur arbre modifié. Une première comparaison de 39 cas avait obtenu la même récupération.
+
+La règle est déclarative, conserve le score déjà utilisé par `coord_clause` et n'autorise ni un coordonnant causal `for` ni l'omission des virgules; une recette sémantique `TOPIC(main,parenthetical)` réutilise le traitement d'une incise adverbiale antéposée. Les traitements lexicaux WordNet ne changent pas.
+
+L'autre candidate, `COORD COMMA TO VP-NP COMMA CLAUSE`, **reste en recherche** : le cas #196 (`and, to confess the truth, we are scarcely less eager to meet her again`) ne complète toujours pas, parce que **sa proposition matrice seule** (`We are scarcely less eager to meet her again.`) échoue déjà avec `roots_without_valid_analysis`. La recherche doit cibler les comparatifs adjectivaux (`scarcely less eager`) et le complément infinitival, pas inventer une frontière discursive pour accepter une matrice défectueuse.

@@ -599,3 +599,43 @@ def test_lexical_title_priority_preserves_proper_name_hypothesis() -> None:
         assert title > guessed_name, (sentence,title,guessed_name)
         best = report.result.best()
         assert best is not None and "np_title_name" in rules(best), sentence
+
+
+def test_delimited_discourse_adverbial_has_an_independent_matrix_clause() -> None:
+    """'and, besides, X' is a construction; 'for, besides' is not."""
+    from seman_parser.grammar import load_grammar
+    grammar = load_grammar(DATA / "grammar.jsonl")
+    rule = grammar.by_id("clause_discourse_coordinator_adv_incise")
+    assert [part.category for part in rule.rhs] == [
+        "COORD", "COMMA", "ADV", "COMMA", "CLAUSE",
+    ]
+    assert rule.rhs[0].features.as_dict()["nominal_coordination"] == "true"
+    assert "nominal_coordination" in rule.rhs[0].requires
+    assert rule.score == grammar.by_id("coord_clause").score
+
+    p = parser()
+    positive = p.parse("And, besides, John waited.").result
+    assert positive.completed, positive.stats
+    assert any(
+        "clause_discourse_coordinator_adv_incise" in rules(root)
+        for root in positive.alternatives(limit=12)
+    )
+    recovered = p.parse(
+        "and, besides, it was such a pity that Lydia should be taken "
+        "from a regiment where she was acquainted with everybody, and "
+        "had so many favourites."
+    ).result
+    assert recovered.completed, recovered.stats
+    assert recovered.best().rule_id == "clause_discourse_coordinator_adv_incise"
+    assert recovered.best().children[-1].category == "CLAUSE"
+
+    for text in (
+        "For, besides, John waited.",
+        "And besides John waited.",
+        "And, besides John waited.",
+    ):
+        result = p.parse(text).result
+        assert all(
+            "clause_discourse_coordinator_adv_incise" not in rules(root)
+            for root in result.alternatives(limit=12)
+        ), text

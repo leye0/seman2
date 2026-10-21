@@ -11,3 +11,4 @@ Evaluate 500 fixed cases using opt-in lexical left-corner pruning; include actua
 2026-10-21 fixed 500 optimized after exact semantic duplicate grammar cleanup.
 2026-10-21 general lexical-title priority over capitalization-only proper name heuristic, preserve alternative parses.
 2026-10-21 default score-neutral local NP participial attachment after opt-in fixed 500 trial and adversarial test.
+2026-10-21 measure optimized 500 after proven ADV incise.
