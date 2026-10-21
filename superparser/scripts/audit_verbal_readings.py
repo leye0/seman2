@@ -1,6 +1,7 @@
 """Trace all lexical verb-form and valence alternatives through Parser.parse."""
 from __future__ import annotations
-import argparse,json
+import argparse,gzip,json
+from collections import defaultdict
 from pathlib import Path
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from scripts.diagnose_novel_parses import select_cases,classify
@@ -14,7 +15,30 @@ def walk(n):
     yield n
     for c in n.children:yield from walk(c)
 
-def inspect(parser,case):
+def load_verbnet_index():
+    """Preserve attested class frames and exact/lemma-only provenance."""
+    path=ROOT/"research"/"verbnet_lr"/"verbnet34.compiled.json.gz"
+    with gzip.open(path,"rt",encoding="utf8") as stream:
+        payload=json.load(stream)
+    assert payload.get("schema") and isinstance(payload.get("frames"),list)
+    by_lemma=defaultdict(list)
+    for frame in payload["frames"]:
+        by_lemma[frame["lemma"]].append(frame)
+    return by_lemma
+
+
+def _frame_valence(frame):
+    """Extract preposition choices without converting NP+PP to bare PP."""
+    groups=frame.get("symbols",())
+    prep={symbol[5:] for group in groups
+          for symbol in group if symbol.startswith("PREP:")}
+    direct_pp=bool(groups and any(
+        symbol.startswith("PREP:") for symbol in groups[0]))
+    return {"prepositions":sorted(prep),"direct_pp_frame":direct_pp}
+
+
+def inspect(parser,case,verbnet):
+
     inp,lattice,result=parse_corpus_case(parser,case,max_items=50000,kbest_work_limit=500000)
     selected=result.best()
     spans={}
@@ -40,8 +64,30 @@ def inspect(parser,case):
                      "span":[c.start,c.end]} for c in n.children]
     } for n in walk(selected)
     if n.category=="VP" or n.rule_id in {"clause_np_vp","clause_sub_front"}]
+    verb_lemmas=sorted({
+        reading["lemma"] for span in lexical
+        for reading in span["readings"]
+        if reading["category"]=="V"
+    })
+    external_frames={
+        lemma:{
+            "all_frames":[{
+                **frame,"valence":_frame_valence(frame),
+            } for frame in verbnet.get(lemma,())],
+            "explicit_prepositions":sorted({
+                prep for frame in verbnet.get(lemma,())
+                for prep in _frame_valence(frame)["prepositions"]
+            }),
+            "direct_pp_prepositions":sorted({
+                prep for frame in verbnet.get(lemma,())
+                if _frame_valence(frame)["direct_pp_frame"]
+                for prep in _frame_valence(frame)["prepositions"]
+            }),
+        } for lemma in verb_lemmas
+    }
     return {"source":inp.source_text,"analysis":lattice.text,
             "status":classify(result.completed,result.stats),
+            "verbnet_frames_by_lemma":external_frames,
             "lexical_alternatives":lexical,
             "finite_ed_ambiguity":[x["surface"] for x in lexical if x["finite_and_ed"]],
             "selected_constituents":constituents}
@@ -55,14 +101,16 @@ def main():
     cases,_=select_cases(500)
     parser=Parser(ParserResources.from_dir(ROOT/"data",wordnet_dict=args.wordnet_dir),
                   cache_size=0,lexical_left_corner_pruning=True)
+    verbnet=load_verbnet_index()
     data=[]
     for i in (int(x) for x in args.indices.split(",") if x.strip()):
         if not 0<=i<500:raise ValueError(i)
-        row=inspect(parser,cases[i]);row["index"]=i;data.append(row)
+        row=inspect(parser,cases[i],verbnet);row["index"]=i;data.append(row)
         print("VERBAL_PROVENANCE_CASE",json.dumps({
             "index":i,"status":row["status"],
             "finite_ed_ambiguity":row["finite_ed_ambiguity"],
             "lexical_alternatives":len(row["lexical_alternatives"]),
+            "verbnet_lemmas":len(row["verbnet_frames_by_lemma"]),
         }),flush=True)
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps({"n":len(data),"cases":data},

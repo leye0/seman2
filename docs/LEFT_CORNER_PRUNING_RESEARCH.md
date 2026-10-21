@@ -251,3 +251,21 @@ contraintes de valence doivent être inspectés avant d'imposer un
 accord de forme entre les deux VP. Les expériences de contrainte
 `vform=finite` ont précisément montré la nécessité de préserver les
 branches grammaticales avant de modifier leur classement.
+
+## Liaison WordNet–VerbNet des cadres de valence
+
+La tâche de [traçage verbal](https://github.com/leye0/seman2/actions/runs/39609458515)
+a confirmé la présence de **lectures `finite` et `ed`** de
+`traversed`, `fixed`, `encompassed` et `drank` dans le treillis.
+Les catégories ne sont donc pas à réduire. Le VerbNet 3.4 compilé
+fournit dix cadres pour `fix`, mais aucun cadre `PREP:on` : des
+cadres transitifs `NP`, `NP+PP` avec des prépositions sélectionnées,
+et `ADV` sont présents. L'analyse littéraire `fixed on ...` nécessite
+une valence non attestée **dans ce paquet VerbNet**; l'absence ici
+ne démontre pas l'absence de la construction en anglais. La tâche
+`audit_verbal_readings.py` relie désormais les lectures du treillis
+à **tous les cadres VerbNet disponibles pour leur lemme**, en distinguant
+une sélection `PREP` directe d'une séquence `NP+PREP+NP`.
+La prochaine modification des règles de composition devra être fondée
+sur les contraintes de ces cadres et sur des exemples contrastifs,
+non sur une règle `V+PP` arbitrairement permissive.
