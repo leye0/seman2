@@ -3,3 +3,4 @@ Checkpoint: 75120a119a23c01dc224b2704b303b0f55929aca — free relative inversion
 Checkpoint: 23ac8d37697246f11640db8b9811a1222b3da8a8 — more/less comparative valency and elliptical than-PP coordinated nominal predicates.
 Checkpoint: 36ab012b49ddc41ad1063318e5f2bd278d86376c — global failure interaction audit and licensed interpolated modal reporting, with controls and syntax tests.
 Checkpoint: 8442ebc44692f8876dcf0b121de5d85888b60334 — nonexclusive construction enrichment and agreement-constrained shared-subject coordination with fronted adjuncts.
+Checkpoint: 95e78be1e2e8b669c9fafb0e6cfb95fe26533cc8 — serial coordinated nominal subjects, possessive ADJP noun, and negated perfect with adverb.
