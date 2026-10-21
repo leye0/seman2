@@ -103,6 +103,12 @@ def audit(wordnet_dir: str, indices=INDICES, seconds=9.0, output=None):
     candidate = Parser(
         resources, cache_size=0, lexical_left_corner_pruning=True,
     )
+    # Crucial paired-design invariant: lexical hypotheses must be IDENTICAL.
+    # Lazy WordNet lookup/morphology cache population can otherwise alter
+    # the surface/sense provenance exposed by two consecutive independent
+    # tokenizations. Both public Parser.parse invocations reuse the same
+    # memoized lattice, so this experiment isolates chart recognition.
+    candidate._lattice_cache = baseline._lattice_cache
     old_handler = signal.signal(signal.SIGALRM, _timeout)
     rows = []
     try:

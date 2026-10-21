@@ -448,6 +448,8 @@ class Parser:
                             "saturation_top_rules", []),
                         "saturation_top_categories": spoken.stats.get(
                             "saturation_top_categories", []),
+                        "unreachable_prefix_proposals": int(
+                            spoken.stats.get("unreachable_prefix_proposals", 0)),
                     }
                 if spoken.completed:
                     if isinstance(spoken.stats, dict):
