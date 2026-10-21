@@ -20,6 +20,47 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_serial_nominal_subject_and_negative_perfect_compose(self) -> None:
+        p = make_parser()
+
+        def rules(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from rules(child)
+
+        simple = p.parse("My old dog arrived.").result
+        self.assertTrue(simple.completed, simple.stats)
+        self.assertIn("np_possessive_adjective_phrase_noun",
+                      set(rules(simple.best())))
+
+        perfect = p.parse("She had not yet found the box.").result
+        self.assertTrue(perfect.completed, perfect.stats)
+        self.assertIn("vp_perfect_negated_adverbial_transitive",
+                      set(rules(perfect.best())))
+
+        sentence = (
+            "Her house and her barn, her books and her letters, "
+            "and all their old toys, had not yet lost their value."
+        )
+        result = p.parse(sentence).result
+        self.assertTrue(result.completed, result.stats)
+        root = result.best()
+        self.assertEqual(root.rule_id,
+                         "clause_serial_nominal_subject_comma_predicate")
+        observed = set(rules(root))
+        self.assertIn("np_serial_third_person_nominal_coordination", observed)
+        self.assertIn("np_universal_third_person_nominal", observed)
+        self.assertIn("vp_perfect_negated_adverbial_transitive", observed)
+
+        # A simple uncoordinated subject does not license the punctuation
+        # merely by satisfying common-noun features.
+        plain = p.parse("The dog, barks.").result
+        for root in plain.alternatives(limit=8):
+            self.assertNotIn(
+                "clause_serial_nominal_subject_comma_predicate",
+                set(rules(root)),
+            )
+
     def test_shared_subject_coordination_across_conjunct_adjunct(self) -> None:
         p = make_parser()
 
