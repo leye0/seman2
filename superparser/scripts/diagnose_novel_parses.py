@@ -451,6 +451,34 @@ _CONSTRUCTION_PATTERNS = {
         r",\s*(?:and|but|or)\b", re.I,
     ),
 }
+# Corpus-wide, non-exclusive grammatical/orthographic features. Each is
+# compared with *successful* cases in the same fixed cohort; no phrase index,
+# individual literary title or "rescue" rule is part of the classifier.
+_CONSTRUCTION_PATTERNS.update({
+    "finite_subordination_surface": re.compile(
+        r"\b(?:that|when|while|before|after|if|though|although|unless|because|since)\b", re.I),
+    "relative_or_free_wh_surface": re.compile(
+        r"\b(?:which|who|whom|whose|what|where|wherever)\b", re.I),
+    "nonfinite_to_verb_surface": re.compile(r"\bto\s+[A-Za-z][A-Za-z'-]*\b", re.I),
+    "repeated_coordination": re.compile(
+        r"\b(?:and|but|or|nor)\b.{5,}\b(?:and|but|or|nor)\b", re.I),
+    "initial_coordinator_or_subordinator": re.compile(
+        r"^\s*['\"“‘]?\s*(?:and|but|nor|or|which|that|as|while|if|though)\b", re.I),
+    "paired_comma_interruption": re.compile(r",[^,]{2,85},", re.I),
+    "parenthesized_or_dashed_interruption": re.compile(
+        r"\([^)]{3,}\)|--[^-]{3,}--|—[^—]{3,}—"),
+    "negative_auxiliary_or_copula": re.compile(
+        r"\b(?:do|does|did|has|have|had|can|could|will|would|shall|should|is|are|was|were)"
+        r"\s+not\b|\b(?:don't|doesn't|didn't|can't|couldn't|won't|wouldn't|isn't|wasn't)\b", re.I),
+    "comparative_parallelism": re.compile(
+        r"\b(?:more|less|rather|so|such|as|than)\b", re.I),
+    "passive_or_perfect_complex": re.compile(
+        r"\b(?:was|were|been|being|had|have|has)\s+(?:\w+\s+){0,2}\w+(?:ed|en)\b", re.I),
+    "quotation_or_reporting": re.compile(r"['\"“”‘’]", re.I),
+    "multiple_clausal_commas": re.compile(r"(?:,[^,]*){3,}"),
+    "gerund_or_participial_adjunct": re.compile(r"\b[A-Za-z]+ing\b", re.I),
+})
+
 _INCONCLUSIVE_STATUSES = frozenset({
     "timeout", "error", "forest_budget_exceeded",
     "kbest_budget_exceeded", "both_budgets_exceeded",
@@ -513,6 +541,7 @@ def construction_cluster_audit(rows: list[dict]) -> dict:
             r["status"] in _INCONCLUSIVE_STATUSES for r in rows
         ),
         "groups": groups,
+        "interactions": construction_interaction_audit(rows),
         "cautions": [
             "These are surface signatures, not proof of a missing rule.",
             "Groups overlap; their failures MUST NOT be summed.",
@@ -522,6 +551,70 @@ def construction_cluster_audit(rows: list[dict]) -> dict:
         ],
     }
 
+
+
+def construction_interaction_audit(rows: list[dict], *, min_support: int = 5) -> dict:
+    """Find co-occurring observable constructions enriched in true failures.
+
+    Compare each pair with successful control sentences in the same cohort.
+    These are overlapping observational associations, not grammar rules,
+    not root-cause diagnoses, and not a way to relabel budget-limited cases.
+    """
+    conclusive = [
+        row for row in rows
+        if row["status"] == "complete" or row["status"] in (
+            "no_structural_root", "roots_without_valid_analysis"
+        )
+    ]
+    failed = sum(row["status"] != "complete" for row in conclusive)
+    baseline = failed / len(conclusive) if conclusive else 0.0
+    per_case = [
+        (
+            row,
+            {name for name, pattern in _CONSTRUCTION_PATTERNS.items()
+             if pattern.search(row.get("canonical_analysis_text", row["sentence"]))}
+        )
+        for row in conclusive
+    ]
+    patterns = sorted(_CONSTRUCTION_PATTERNS)
+    pairs = []
+    for i, first in enumerate(patterns):
+        for second in patterns[i + 1:]:
+            subset = [row for row, signatures in per_case
+                      if first in signatures and second in signatures]
+            if len(subset) < min_support:
+                continue
+            failures = [row for row in subset if row["status"] != "complete"]
+            controls = [row for row in subset if row["status"] == "complete"]
+            observed = len(failures) / len(subset)
+            pairs.append({
+                "signatures": [first, second],
+                "support": len(subset),
+                "conclusive_failures": len(failures),
+                "successful_controls": len(controls),
+                "failure_percent": round(observed * 100, 2),
+                "baseline_failure_percent": round(baseline * 100, 2),
+                "relative_risk": round(observed / baseline, 2) if baseline else None,
+                "excess_failures_vs_baseline": round(
+                    len(failures) - len(subset) * baseline, 2
+                ),
+                "failure_indices": [row["index"] for row in failures],
+                "control_indices": [row["index"] for row in controls[:5]],
+            })
+    # Rank by absolute surplus of failures, not by inflated percentages from
+    # one or two rare examples; evidence still requires both sample sizes.
+    pairs.sort(key=lambda p: (
+        -p["excess_failures_vs_baseline"], -p["conclusive_failures"],
+        -p["support"], p["signatures"]
+    ))
+    return {
+        "conclusive_total": len(conclusive),
+        "conclusive_failures": failed,
+        "excluded_resource_limited": len(rows) - len(conclusive),
+        "baseline_failure_percent": round(baseline * 100, 2),
+        "pairs": pairs,
+        "interpretation": "observational enrichment versus successful same-cohort controls",
+    }
 
 
 def compact_stats(stats: dict) -> dict:
@@ -956,6 +1049,18 @@ def run(args: argparse.Namespace) -> dict:
     summary["pattern_contrasts"] = contrasts
     clusters = construction_cluster_audit(rows)
     summary["construction_clusters"] = clusters
+    print("NOVEL_GLOBAL_SIGNATURE_AUDIT", json.dumps({
+        "conclusive_failures": clusters["total_conclusive_failures"],
+        "inconclusive": clusters["total_inconclusive"],
+        "top_constructions": [
+            {key: group[key] for key in (
+                "construction", "matched", "successful", "conclusive_failures",
+                "conclusive_failure_percent", "failing_case_indices"
+            )} for group in clusters["groups"]
+            if group["conclusive_failures"] >= 2
+        ][:15],
+        "top_interactions": clusters["interactions"]["pairs"][:12],
+    }, ensure_ascii=False), flush=True)
     (args.out_dir / "construction_clusters.json").write_text(
         json.dumps(clusters, ensure_ascii=False, indent=2) + "\n",
         encoding="utf8",
