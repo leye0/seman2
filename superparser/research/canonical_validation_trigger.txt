@@ -6,3 +6,4 @@ Checkpoint: 8442ebc44692f8876dcf0b121de5d85888b60334 — nonexclusive constructi
 Checkpoint: 95e78be1e2e8b669c9fafb0e6cfb95fe26533cc8 — serial coordinated nominal subjects, possessive ADJP noun, and negated perfect with adverb.
 Checkpoint: 748e5b1cd427516ba6faa6d37d5057af1b6f3865 — preserve existing semantic trees while checking serial-subject coordination and negative perfect analyses.
 Checkpoint: e2f15ac8f0e4b1f101476ff1177ad48036dce7f3 — distinguish enumerated subjects from spurious appositions; length-adjusted clustering tests.
+Checkpoint: d8047b6a179bbc60ddff6c4596fd06bd3eedbf6e — completed serial-subject semantic ranking and newly licensed perfect transitive relative gaps.
