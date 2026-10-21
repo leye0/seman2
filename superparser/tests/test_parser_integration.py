@@ -46,6 +46,19 @@ class SegmentationTests(unittest.TestCase):
                     for node in alternatives
                 ), [node.rule_id for node in alternatives])
 
+        # The gap cannot be licensed by an intransitive participle or
+        # an auxiliary whose surface contradicts its subject agreement.
+        for sentence in (
+            "Mary met the author John had arrived.",
+            "Mary met the author John have praised.",
+        ):
+            with self.subTest(unlicensed=sentence):
+                parsed = p.parse(sentence).result
+                self.assertFalse(any(
+                    "wh_bare_perfect_object_relative" in set(rules(node))
+                    for node in parsed.alternatives(limit=12)
+                ))
+
     def test_serial_nominal_subject_and_negative_perfect_compose(self) -> None:
         p = make_parser()
 
