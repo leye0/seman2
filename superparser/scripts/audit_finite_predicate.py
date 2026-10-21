@@ -33,10 +33,42 @@ def _alarm(_sig, _frame):
     raise Deadline()
 
 
-def finite_variant(original: ParserResources) -> ParserResources:
+def finite_variant(
+    original: ParserResources, *, propagate_head_vform: bool = False,
+) -> ParserResources:
     rules = []
     revised = False
+    propagated = set()
     for rule in original.grammar:
+        # VP modifiers, recursively coordinated predicates and adverbial
+        # extensions inherit the morphological form of their VP head.
+        # Their old LHS often discarded this information entirely. A paired
+        # trial must propagate it rather than claiming nonfinite grammar.
+        if (propagate_head_vform and rule.lhs.category == "VP"
+                and "vform" not in rule.lhs.features.as_dict()):
+            head_indices = [
+                i for i, sym in enumerate(rule.rhs) if sym.category == "VP"
+            ]
+            if head_indices:
+                variable = "?head_vform_" + rule.rule_id
+                rhs = list(rule.rhs)
+                for idx in head_indices:
+                    sym = rhs[idx]
+                    rhs[idx] = replace(
+                        sym,
+                        features=FeatureStructure.build({
+                            **sym.features.as_dict(), "vform": variable,
+                        }),
+                        requires=tuple(dict.fromkeys((*sym.requires, "vform"))),
+                    )
+                rule = replace(
+                    rule, rhs=tuple(rhs),
+                    lhs=replace(rule.lhs,
+                        features=FeatureStructure.build({
+                            **rule.lhs.features.as_dict(), "vform": variable,
+                        })),
+                )
+                propagated.add(rule.rule_id)
         if rule.rule_id == "clause_np_vp":
             assert [s.category for s in rule.rhs] == ["NP", "VP"]
             predicate = rule.rhs[1]
@@ -60,6 +92,10 @@ def finite_variant(original: ParserResources) -> ParserResources:
             revised = True
         rules.append(rule)
     assert revised
+    if propagate_head_vform:
+        assert len(propagated) >= 10, propagated
+        print("FINITE_PREDICATE_PROPAGATED_VP_RULES",
+              json.dumps(sorted(propagated)), flush=True)
     return ParserResources(
         grammar=Grammar(rules),
         lexicon=original.lexicon,
@@ -136,6 +172,7 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--seconds", type=float, default=10.0)
     ap.add_argument("--count", type=int, default=500)
+    ap.add_argument("--propagate-head-vform", action="store_true")
     args = ap.parse_args()
     cases, _ = select_cases(500)
     resources = ParserResources.from_dir(
@@ -146,7 +183,8 @@ def main():
         lexical_left_corner_pruning=True,
     )
     restricted = Parser(
-        finite_variant(resources), cache_size=512,
+        finite_variant(resources, propagate_head_vform=args.propagate_head_vform),
+        cache_size=512,
         lexical_left_corner_pruning=True,
     )
     # Pair each trial with exactly the same lexical lattice; do not
@@ -203,6 +241,7 @@ def main():
                  and x["new"]["status"] != "complete"],
         "changed_trees": [x["index"] for x in rows if x["changed"]],
         "candidate": "clause_np_vp requires independently evidenced finite VP",
+        "propagated_head_vform": args.propagate_head_vform,
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(
