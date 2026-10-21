@@ -434,6 +434,10 @@ class Parser:
                             spoken.stats.get("partial_states", 0)),
                         "kbest_work_units": int(
                             spoken.stats.get("kbest_work_units", 0)),
+                        "saturation_top_rules": spoken.stats.get(
+                            "saturation_top_rules", []),
+                        "saturation_top_categories": spoken.stats.get(
+                            "saturation_top_categories", []),
                     }
                 if spoken.completed:
                     if isinstance(spoken.stats, dict):

@@ -2,3 +2,4 @@ Controlled ablation of newly introduced grammar rule families, fixed corpus case
 Checkpoint: bb08dadd8567328f0ffa9664a5abd40738deeea5 — individual rule ablations to isolate globally costly productions.
 Global failure signature interaction probe: 4d5818f8491e72cbd36da1cab3939e73704285c9 — paired losses/gains with successful controls.
 Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budgets and compare ablation recoveries with saturation.
+Saturation analysis checkpoint: 2026-10-21 — top distinct rule partials by grammar family, no alteration of recognition.

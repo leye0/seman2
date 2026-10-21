@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Iterator
 from dataclasses import dataclass, field, replace
 from heapq import heappop, heappush
@@ -348,6 +349,40 @@ class VectorGrammar:
         root_nodes = forest.recognize(goal_category)
         recognition_ms = (perf_counter() - recognition_start) * 1000
 
+        # Only a saturated recognition pays for this O(partial-state)
+        # diagnostic. Count distinct packed rule/dot/span states, NOT
+        # derivations and NOT arbitrary grammar-rule scores. The trie case
+        # reads original rule variants from shared states without forcing
+        # all virtual PackedPartial objects into memory.
+        saturation_top_rules = []
+        saturation_top_categories = []
+        if forest.budget_exceeded:
+            if self.lazy_trie_recognition:
+                indices = (
+                    rule_index
+                    for group in forest.trie_states
+                    for rule_index, _dot in self.trie_nodes[group.trie_id].variants
+                )
+            else:
+                indices = (part.rule_index for part in forest.partials)
+            counts = Counter(indices)
+            by_category = Counter()
+            for rule_index, count in counts.items():
+                by_category[self.rules[rule_index].rule.lhs.category] += count
+            saturation_top_rules = [
+                {"rule_id": self.rules[index].rule.rule_id, "partial_states": n}
+                for index, n in sorted(
+                    counts.items(),
+                    key=lambda item: (-item[1], self.rules[item[0]].rule.rule_id),
+                )[:12]
+            ]
+            saturation_top_categories = [
+                {"category": category, "partial_states": n}
+                for category, n in sorted(
+                    by_category.items(), key=lambda item: (-item[1], item[0]),
+                )[:10]
+            ]
+
         length = len(lattice.text)
         # Normal parsing deliberately materializes only a small k-best view
         # of the complete packed forest.  Audits need a wider view to tell a
@@ -416,6 +451,8 @@ class VectorGrammar:
             "nodes_visited_total": 0,
             "combinations_visited_total": 0,
             "budget_exceeded": forest.budget_exceeded,
+            "saturation_top_rules": saturation_top_rules,
+            "saturation_top_categories": saturation_top_categories,
             "expanded": len(forest.nodes),
             "pushed": len(forest.nodes),
             "packed_nodes": 0,

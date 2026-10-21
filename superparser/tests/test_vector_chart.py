@@ -124,6 +124,26 @@ class VectorChartTests(unittest.TestCase):
                     sentence, tokenize(sentence)
                 ))
 
+    def test_saturated_forest_profiles_distinct_rule_states(self) -> None:
+        result = self.parser.parse(
+            "John gave Mary the box.", max_items=100,
+        ).result
+        self.assertTrue(result.stats["budget_exceeded"])
+        ranked = result.stats["saturation_top_rules"]
+        self.assertTrue(ranked)
+        self.assertTrue(result.stats["saturation_top_categories"])
+        self.assertGreater(ranked[0]["partial_states"], 0)
+        self.assertEqual(
+            ranked,
+            sorted(ranked, key=lambda row: (
+                -row["partial_states"], row["rule_id"],
+            )),
+        )
+        self.assertLessEqual(
+            sum(row["partial_states"] for row in ranked),
+            result.stats["partial_states"],
+        )
+
     def test_parser_uses_vector_engine_and_retains_shared_forest(self) -> None:
         result = self.parser.parse("John opened the box.").result
         self.assertTrue(result.completed)
