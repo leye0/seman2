@@ -398,3 +398,35 @@ L'expérience [sur l'ensemble de la cohorte de 500 phrases](https://github.com/l
 La règle est déclarative, conserve le score déjà utilisé par `coord_clause` et n'autorise ni un coordonnant causal `for` ni l'omission des virgules; une recette sémantique `TOPIC(main,parenthetical)` réutilise le traitement d'une incise adverbiale antéposée. Les traitements lexicaux WordNet ne changent pas.
 
 L'autre candidate, `COORD COMMA TO VP-NP COMMA CLAUSE`, **reste en recherche** : le cas #196 (`and, to confess the truth, we are scarcely less eager to meet her again`) ne complète toujours pas, parce que **sa proposition matrice seule** (`We are scarcely less eager to meet her again.`) échoue déjà avec `roots_without_valid_analysis`. La recherche doit cibler les comparatifs adjectivaux (`scarcely less eager`) et le complément infinitival, pas inventer une frontière discursive pour accepter une matrice défectueuse.
+
+## Adjectifs à complément infinitival et classes de contrôle
+
+L'[expérience sur quinze contrastes grammaticaux et 34 phrases ciblées](https://github.com/leye0/seman2/actions/runs/39683343868)
+a testé trois nouvelles productions **hors grammaire de production** :
+adjectif suivi de `TO VP-NP`, adverbe + degré + ADJP, et coordonnant
+avec une incise infinitivale délimitée.
+
+Le résultat rétablit une analyse complète pour #196
+(`and, to confess the truth, we are scarcely less eager to meet her again`)
+et une autre pour #312, mais cette dernière passe d'un **timeout**
+à une complétion : c'est une observation dont la grammaire doit encore
+être vérifiée, pas une lacune grammaticale démontrée.
+
+La variante à base `ADJ TO VP-NP` **n'est pas intégrée** : WordNet
+donne bien les catégories `ADJ`, mais ne certifie pas nécessairement
+que chaque adjectif sélectionne ce complément. L'audit a identifié
+un problème préexistant plus grave : `vp_tough` admet actuellement
+`The wall is green to believe` via une lecture syntaxique
+non justifiée, et analyse `Mary is ready to leave` comme tough-movement
+alors que c'est une construction à contrôle du sujet. Les trois
+contre-exemples volontairement peu plausibles de l'essai avaient
+**déjà** une analyse avec le moteur de référence : comparer seulement
+les différences de complétion aurait masqué cette sur-génération.
+
+Deux tests grammaticaux `@unittest.expectedFailure` maintiennent
+explicitement le problème ouvert jusqu'à l'arrivée d'une licence
+lexicale positive pour les adjectifs à compléments infinitivaux.
+Il faudra distinguer au moins : *contrôle du sujet* (`eager/ready to`),
+*tough-movement* (`easy/difficult to`) et adjectifs sans sélection
+infinitivale. Ce découpage doit reposer sur des cadres de valence
+vérifiables plutôt qu'une liste de mots destinée à satisfaire le corpus.

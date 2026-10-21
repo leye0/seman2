@@ -167,6 +167,18 @@ def main():
         "potential_negative_overgeneration":[r["text"] for r in examples if
             not r["expected_plausible"] and
             not r["base"]["completed"] and r["trial"]["completed"]],
+        # A false tree that was ALREADY accepted by the baseline remains a
+        # problem even when both variants report completed=True.
+        "negative_controls_with_baseline_tough_tree":[
+            r["text"] for r in examples if
+            not r["expected_plausible"] and
+            used(r["base"].get("best"),"vp_tough")
+        ],
+        "positive_controls_with_baseline_tough_tree":[
+            r["text"] for r in examples if
+            r["expected_plausible"] and
+            used(r["base"].get("best"),"vp_tough")
+        ],
         "production_grammar_untouched":True,
     }
     opts.output.parent.mkdir(parents=True,exist_ok=True)

@@ -84,5 +84,26 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         ), "The predicative ADJP 'full ...' belongs to the copular clause")
 
 
+    @unittest.expectedFailure
+    def test_tough_movement_requires_an_eligible_adjective(self):
+        """A merely ADJ reading does not license every tough infinitive."""
+        sentence = "The wall is green to believe."
+        best = self.parser.parse(sentence, max_items=50000).result.best()
+        self.assertIsNotNone(best)
+        self.assertFalse(any(
+            node.rule_id == "vp_tough" for node in descendants(best)
+        ), "Green is not a lexically licensed tough-movement predicate")
+
+    @unittest.expectedFailure
+    def test_subject_control_infinitive_not_mislabeled_as_tough_movement(self):
+        """'Ready to leave' is subject control, not object-gap tough syntax."""
+        sentence = "Mary is ready to leave."
+        best = self.parser.parse(sentence, max_items=50000).result.best()
+        self.assertIsNotNone(best)
+        self.assertFalse(any(
+            node.rule_id == "vp_tough" for node in descendants(best)
+        ), "The subject of 'leave' is Mary, not a gap object of 'leave'")
+
+
 if __name__ == "__main__":
     unittest.main()

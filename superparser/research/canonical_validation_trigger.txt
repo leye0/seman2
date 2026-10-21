@@ -26,3 +26,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 score-neutral right-association tiebreak option regression and test actual registered method.
 2026-10-21 default score-neutral local NP participial attachment after opt-in fixed 500 trial and adversarial test.
 2026-10-21 test delimited ADV incise +1 coverage, all syntax regressions.
+2026-10-21 document two genuine adjective-infinitive quality xfails and preserve previous valid parse tests.
