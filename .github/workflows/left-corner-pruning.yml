@@ -13,7 +13,7 @@ concurrency:
 jobs:
   compare:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -47,6 +47,19 @@ jobs:
           PYTHONPATH=superparser python -u -m scripts.audit_left_corner_pruning \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --output "$RUNNER_TEMP/left-corner-summary.json"
+      - name: Evaluate optimized full fixed cohort
+        run: |
+          PYTHONPATH=superparser python -u -m scripts.audit_left_corner_corpus \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --out-dir "$RUNNER_TEMP/left-corner-500"
+      - name: Preserve all optimized trees and per-case status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-left-corner-500
+          path: ${{ runner.temp }}/left-corner-500/
+          if-no-files-found: warn
+          retention-days: 21
       - name: Preserve paired case comparison
         if: always()
         uses: actions/upload-artifact@v4
