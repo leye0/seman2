@@ -1,2 +1,3 @@
 Controlled ablation of newly introduced grammar rule families, fixed corpus cases and exact public parser. Runs must be compared for positive recovery and negative search-resource shifts; no index-specific production rules.
 Checkpoint: bb08dadd8567328f0ffa9664a5abd40738deeea5 — individual rule ablations to isolate globally costly productions.
+Global failure signature interaction probe: 4d5818f8491e72cbd36da1cab3939e73704285c9 — paired losses/gains with successful controls.
