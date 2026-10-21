@@ -66,6 +66,7 @@ jobs:
             superparser.tests.test_clean_novel_corpus \
             superparser.tests.test_novel_parse_diagnostics \
             superparser.tests.test_syntax_correctness \
+            superparser.tests.test_left_corner_tree_quality \
             superparser.tests.test_reference_300_evaluator \
             superparser.tests.test_verbnet_lr_gutenberg_novels
       - name: Check global grammar quality for main commits and pull requests

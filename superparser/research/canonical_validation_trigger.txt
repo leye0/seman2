@@ -11,3 +11,4 @@ Checkpoint: fbb082c9dc517391a6946b0d46bdddb8b7843a7a — check perfect-relative 
 Checkpoint: e00d693c3bd5b31cf6798c928e3a8a2a56d77e24 — lexical adversative yet, while-supplementary ADJP, plus controlled ablation research.
 Checkpoint: 77f12a822b5867e377b6b70d28790f03b0340bbf — narrowed serial subjects require overt internal coordination and typed final group, to avoid large-forest regressions.
 Full suite validation: 2026-10-21 — verify scope-preserving diagnostic and saturation profiler after code changes.
+Tree-quality expected failures for lexical left-corner optimization, run global regression 2026-10-21.
