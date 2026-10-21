@@ -42,6 +42,10 @@ jobs:
                       (dest / leaf).write_bytes(z.read(item))
           assert (dest / 'index.verb').exists()
           PY
+      - name: Verify tree-quality signal classification
+        run: |
+          PYTHONPATH=superparser python -m unittest \
+            superparser.tests.test_novel_parse_diagnostics
       - name: Prove full forest preservation on unsaturated controls
         run: |
           PYTHONPATH=superparser python -u -m scripts.audit_left_corner_pruning \

@@ -47,6 +47,76 @@ def _tree(item):
     }
 
 
+def tree_quality_signals(best, text: str) -> list[dict]:
+    """Inspect the selected tree without changing its recognition or score.
+
+    These are *diagnostic hypotheses*, not proof that every flagged tree
+    is ungrammatical. A missing vform is different from an overt conflict.
+    Return spans and rule provenance for manual, corpus-wide validation.
+    """
+    if best is None:
+        return []
+    findings = []
+
+    def report(kind, node, **details):
+        findings.append({
+            "signal": kind,
+            "rule": node.rule_id,
+            "span": [node.start, node.end],
+            "text": text[node.start:node.end],
+            "details": details,
+        })
+
+    def feature(node, name):
+        value = node.features.as_dict().get(name)
+        # Uninstantiated variables do not certify a morphological value.
+        return None if isinstance(value, str) and value.startswith("?") else value
+
+    def visit(node):
+        for child in node.children:
+            visit(child)
+        if node.rule_id == "clause_np_vp" and len(node.children) == 2:
+            predicate = node.children[1]
+            form = feature(predicate, "vform")
+            if form is None:
+                report("unproven_declarative_vform", node,
+                       predicate_rule=predicate.rule_id)
+            elif form != "finite":
+                report("nonfinite_declarative_vp", node, vform=form,
+                       predicate_rule=predicate.rule_id)
+
+        if node.rule_id in {
+            "vp_coord", "vp_coord_finite", "vp_comma_coord",
+            "vp_comma_list", "vp_list3",
+        }:
+            conjuncts = [c for c in node.children if c.category == "VP"]
+            forms = [feature(c, "vform") for c in conjuncts]
+            known = [x for x in forms if x is not None]
+            if len(set(known)) > 1:
+                report("mixed_vform_vp_coordination", node,
+                       forms=forms,
+                       conjunct_rules=[c.rule_id for c in conjuncts])
+
+        if node.rule_id == "clause_sub_front" and len(node.children) == 3:
+            subordinate, matrix = node.children[1:]
+            ellipsis = feature(subordinate, "ellipsis")
+            if ellipsis is not None and ellipsis != "false":
+                report("elliptical_front_subordinate", node,
+                       subordinate_rule=subordinate.rule_id,
+                       ellipsis=ellipsis)
+            if (feature(matrix, "stype") == "imperative"
+                    or matrix.rule_id == "clause_imperative"):
+                report("imperative_matrix_after_subordinate", node,
+                       matrix_rule=matrix.rule_id)
+            # The punctuation may delimit an incidental subordinate, or
+            # wrongly be swallowed within it. This is only an audit tag.
+            if "," in text[subordinate.start:subordinate.end]:
+                report("internal_comma_in_front_subordinate", node,
+                       subordinate_rule=subordinate.rule_id)
+    visit(best)
+    return findings
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--wordnet-dir", required=True)
@@ -84,6 +154,8 @@ def main():
     old_handler = signal.signal(signal.SIGALRM, _alarm)
     counts = Counter()
     summed = Counter()
+    quality_counts = Counter()
+    quality_indices: dict[str, list[int]] = {}
     out = opts.out_dir / "per_sentence.jsonl"
     try:
         with out.open("w", encoding="utf8") as stream:
@@ -106,6 +178,8 @@ def main():
                         "completed": result.completed,
                         "root_rule": result.best().rule_id if result.best() else None,
                         "tree": _tree(result.best()),
+                        "tree_quality_signals": tree_quality_signals(
+                            result.best(), lattice.text),
                         "partial_states": stats.get("partial_states", 0),
                         "forest_nodes": stats.get("forest_nodes", 0),
                         "structural_root_nodes": stats.get("structural_root_nodes", 0),
@@ -134,6 +208,9 @@ def main():
                     signal.setitimer(signal.ITIMER_REAL, 0)
                 row["wall_ms"] = round(1000 * (perf_counter() - began), 2)
                 counts[row["status"]] += 1
+                for kind in {s["signal"] for s in row.get("tree_quality_signals", ())}:
+                    quality_counts[kind] += 1
+                    quality_indices.setdefault(kind, []).append(index)
                 summed["wall_ms"] += row["wall_ms"]
                 for key in ("partial_states", "forest_nodes",
                             "unreachable_prefix_proposals",
@@ -157,6 +234,9 @@ def main():
         "counts": dict(counts),
         "completed": counts["complete"],
         "totals": dict(summed),
+        "tree_quality_signals_by_distinct_sentence": dict(quality_counts),
+        "tree_quality_signal_indices": quality_indices,
+        "tree_quality_signals_are_diagnostic_not_certified_errors": True,
         "experimental": True,
     }
     (opts.out_dir / "summary.json").write_text(

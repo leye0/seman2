@@ -6,3 +6,4 @@ Evaluate 500 fixed cases using opt-in lexical left-corner pruning; include actua
 2026-10-21 phrase-coordinate semantic restrictions, experimental 500 tree-quality.
 2026-10-21 causal for explicit finite subject predicate, 500-case audit.
 2026-10-21 apposition-pronoun compatibility leftcorner corpus.
+2026-10-21 diagnostic nonfinite/unproven predicate, VP coordination mismatch, elliptical subordinate across fixed 500.

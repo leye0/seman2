@@ -204,3 +204,31 @@ ancienne analyse de `for Hands` rejetée par rapport au témoin
 447/500. Aucun changement de complétion supplémentaire n'est constaté
 après les restrictions causales et pronominales. Le corpus fixe et son
 empreinte sont inchangés.
+
+## Audit transversal des témoins de finitude (21 octobre 2026)
+
+La proposition déclarative `clause_np_vp` ne demandait pas la preuve positive
+`vform=finite` à son VP. Une première expérience grammaticale utilisant
+`requires=[vform]` et `vform=finite` a produit **449/500** contre
+**454/500** avec le même pruning lexical. Cinq phrases étaient perdues,
+aucune récupérée. Une deuxième expérience a transmis `vform` à travers
+les règles de VP récursifs (coordination, adverbiaux) : **454/500** contre
+**454/500**, sans perte de couverture mais avec trois meilleurs arbres
+modifiés. Le cas #365 (`traversed … and fixed on …`) est devenu moins
+correct : le second verbe participe à une NP au lieu d'une coordination
+de VP. **Ces modifications ne sont donc pas intégrées à la grammaire
+canonique.** Les artefacts de comparaison sont associés aux expériences
+[finie sans transmission](https://github.com/leye0/seman2/actions/runs/39605571538)
+et [avec transmission](https://github.com/leye0/seman2/actions/runs/39606076608).
+
+L'audit expérimental des 500 meilleurs arbres enregistre désormais des
+signaux structurels, avec spans exacts et provenance des règles :
+`unproven_declarative_vform` et `nonfinite_declarative_vp` sont
+**distincts**, `mixed_vform_vp_coordination` inspecte les VP coordonnés,
+`elliptical_front_subordinate` reconnaît les subordonnées elliptiques,
+`imperative_matrix_after_subordinate` relève les matrices impératives,
+et `internal_comma_in_front_subordinate` observe les virgules absorbées
+par une subordonnée. Les compteurs de synthèse comptent les **phrases
+distinctes**, pas les occurrences. Aucun de ces signaux n'est en lui-même
+une preuve de faute grammaticale. La suite doit valider les classes de
+signaux et corriger la valence et la transmission des traits à leur source.

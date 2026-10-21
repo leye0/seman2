@@ -20,6 +20,77 @@ from scripts.diagnose_novel_parses import (
 
 class NovelDiagnosticsTests(unittest.TestCase):
 
+
+    def test_tree_quality_signals_distinguish_missing_and_conflicting_vform(self):
+        """The audit must never conflate underspecification and contradiction."""
+        from types import SimpleNamespace
+        from seman_parser.features import FeatureStructure
+        from scripts.audit_left_corner_corpus import tree_quality_signals
+
+        def node(rule, category, start, end, features=None, children=()):
+            return SimpleNamespace(
+                rule_id=rule, category=category, start=start, end=end,
+                features=FeatureStructure.build(features or {}),
+                children=tuple(children),
+            )
+        left = node("vp_intransitive", "VP", 5, 9,
+                    {"vform": "finite"})
+        right = node("vp_part_pp", "VP", 14, 18,
+                     {"vform": "ed"})
+        coordinator = node(None, "COORD", 10, 13)
+        joined = node("vp_coord", "VP", 5, 18, children=(
+            left, coordinator, right,
+        ))
+        subject = node("np_proper", "NP", 0, 4)
+        root = node("clause_np_vp", "CLAUSE", 0, 18, children=(
+            subject, joined,
+        ))
+        labels = {s["signal"] for s in tree_quality_signals(
+            root, "John went and gone",
+        )}
+        self.assertIn("mixed_vform_vp_coordination", labels)
+        self.assertIn("unproven_declarative_vform", labels)
+        self.assertNotIn("nonfinite_declarative_vp", labels)
+
+        explicitly_nonfinite = node(
+            "clause_np_vp", "CLAUSE", 0, 18,
+            children=(subject, right),
+        )
+        labels = {s["signal"] for s in tree_quality_signals(
+            explicitly_nonfinite, "John went and gone",
+        )}
+        self.assertIn("nonfinite_declarative_vp", labels)
+        self.assertNotIn("unproven_declarative_vform", labels)
+
+    def test_tree_quality_signals_track_elliptical_subordinate_and_imperative(self):
+        from types import SimpleNamespace
+        from seman_parser.features import FeatureStructure
+        from scripts.audit_left_corner_corpus import tree_quality_signals
+
+        def node(rule, category, start, end, features=None):
+            return SimpleNamespace(
+                rule_id=rule, category=category,
+                start=start, end=end,
+                features=FeatureStructure.build(features or {}),
+                children=(),
+            )
+        marker = node(None, "CONJ", 0, 2)
+        sub = node("clause_modal_ellipsis", "CLAUSE", 3, 11,
+                   {"ellipsis": "true"})
+        matrix = node("clause_imperative", "CLAUSE", 12, 21,
+                      {"stype": "imperative"})
+        clause = SimpleNamespace(
+            rule_id="clause_sub_front", category="CLAUSE",
+            start=0, end=21, features=FeatureStructure.empty(),
+            children=(marker, sub, matrix),
+        )
+        types = {x["signal"] for x in tree_quality_signals(
+            clause, "If he can, come home.",
+        )}
+        self.assertIn("elliptical_front_subordinate", types)
+        self.assertIn("internal_comma_in_front_subordinate", types)
+        self.assertIn("imperative_matrix_after_subordinate", types)
+
     def test_failed_dialogue_attempt_preserves_resource_censorship(self):
         # Both paths are still invoked via the ONE public Parser.parse.
         # Force the dialogue recognizer to saturate and the fallback to
