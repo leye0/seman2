@@ -22,3 +22,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 fix new generic tests WordNet source discovery, preserve grammatical failures for repair.
 2026-10-21 rerun newly discovered suite after fixing generic WordNet source location, keep syntax tests strict.
 2026-10-21 fix attested independent-subject licensing for causal for; test generic lexical provenance instead of prohibiting grammatical scaffold adverbs.
+2026-10-21 general lexical-title priority over capitalization-only proper name heuristic, preserve alternative parses.

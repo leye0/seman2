@@ -14,3 +14,4 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 2026-10-21 final pinned canonical 500 after phrase COORD, causal for and pronominal apposition changes.
 2026-10-21 VP morphosyntax agreement, unchanged immutable cohort.
 2026-10-21 fixed 500 diagnostic after exact semantic duplicate grammar cleanup.
+2026-10-21 general lexical-title priority over capitalization-only proper name heuristic, preserve alternative parses.

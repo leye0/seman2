@@ -579,3 +579,23 @@ def test_causal_for_requires_independent_subject_constituent() -> None:
             }
             for root in report.alternatives(limit=12)
         ), text
+
+
+def test_lexical_title_priority_preserves_proper_name_hypothesis() -> None:
+    """A strong lexical honorific beats capitalization-only name guessing."""
+    p = parser()
+    for sentence in ("Captain Nemo arrived.", "Doctor Watson waited.",
+                     "Professor Moriarty spoke.", "Lady Catherine smiled."):
+        report = p.parse(sentence)
+        first = sentence.split()[0]
+        reads = [c for c in report.lattice.candidates
+                 if c.surface == first]
+        categories = {c.category for c in reads}
+        assert {"TITLE", "PROPER-NOUN", "N"} <= categories, sentence
+        title = max(c.score for c in reads if c.category == "TITLE")
+        guessed_name = max(c.score for c in reads
+                           if c.category == "PROPER-NOUN"
+                           and c.source == "proper-noun")
+        assert title > guessed_name, (sentence,title,guessed_name)
+        best = report.result.best()
+        assert best is not None and "np_title_name" in rules(best), sentence

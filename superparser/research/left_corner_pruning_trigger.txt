@@ -9,3 +9,4 @@ Evaluate 500 fixed cases using opt-in lexical left-corner pruning; include actua
 2026-10-21 diagnostic nonfinite/unproven predicate, VP coordination mismatch, elliptical subordinate across fixed 500.
 2026-10-21 VP morphosyntax agreement, inspect 500 alternative selected trees.
 2026-10-21 fixed 500 optimized after exact semantic duplicate grammar cleanup.
+2026-10-21 general lexical-title priority over capitalization-only proper name heuristic, preserve alternative parses.

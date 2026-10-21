@@ -562,7 +562,13 @@ def _apply_lexical_priors(
         if candidate.category == "PROPER-NOUN" and candidate.span_start == first_word_start:
             written = candidate.surface.casefold()
             morphologically_common = any(
-                peer.category == "ADJ"
+                # A lexical TITLE is positive grammatical evidence of an
+                # honorific role. The generic uppercase PROPER-NOUN edge
+                # remains in the lattice, but casing alone must not outrank
+                # an attested "Doctor Watson" or "Captain Nemo" title.
+                (peer.category == "TITLE"
+                 and peer.features.as_dict().get("honorific") == "true")
+                or peer.category == "ADJ"
                 or peer.category == "ADV"
                 or (
                     peer.category == "N"
