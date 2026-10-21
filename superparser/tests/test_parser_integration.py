@@ -30,7 +30,7 @@ class SegmentationTests(unittest.TestCase):
 
         for sentence in (
             "Mary met the author John had praised.",
-            "The letters that John had written were useful.",
+            "The letters John had written were useful.",
         ):
             with self.subTest(sentence=sentence):
                 result = p.parse(sentence).result
