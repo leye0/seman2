@@ -429,3 +429,30 @@ def test_causal_for_initial_clause_requires_overt_finite_predicate() -> None:
     assert any(c.category == "COORD"
                and c.features.as_dict().get("causal_coordination") == "true"
                for c in readings)
+
+
+def test_personal_pronoun_is_not_an_appositive_nominal_subject() -> None:
+    """Resumptive 'he' is a clause subject, not a second appositive NP."""
+    from seman_parser.grammar import load_grammar
+    grammar = load_grammar(DATA / "grammar.jsonl")
+    for name in ("np_pronoun", "np_indef_pron"):
+        assert grammar.by_id(name).lhs.features.as_dict()["pronominal"] == "true"
+    for name in ("np_appos_comma", "clause_appositive_subject"):
+        rule = grammar.by_id(name)
+        appos = next(s for s in rule.rhs if "appos" in s.exports.values())
+        assert appos.features.as_dict()["pronominal"] == "false"
+    p = parser()
+    def walk(node):
+        yield node
+        for child in node.children:
+            yield from walk(child)
+    for text in ("John, the doctor, waited.", "The captain, he waited."):
+        result = p.parse(text).result
+        assert result.completed, (text, result.stats)
+    for text in ("John, he waited.", "The captain, he waited."):
+        for root in p.parse(text).result.alternatives(limit=12):
+            for node in walk(root):
+                if node.rule_id == "np_appos_comma":
+                    assert node.children[2].rule_id not in (
+                        "np_pronoun", "np_indef_pron"
+                    ), text

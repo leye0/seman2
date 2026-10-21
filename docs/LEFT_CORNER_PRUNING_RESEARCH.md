@@ -124,3 +124,13 @@ non-régression positif. Pour la parité trie/canonique, l'identité des
 meilleurs arbres ne constitue une obligation que pour deux forêts non
 saturées ; le diagnostic de saturation demeure explicitement observable,
 plutôt que prétendre à la certification d'un ordre sur une forêt partielle.
+
+## Appositions nominales et reprises pronominales
+
+Une projection directe de `PRONOUN` dans un groupe NP porte
+`pronominal=true`. Un appositif nominal attend maintenant
+`pronominal=false` : un pronom sujet comme `he` dans `The captain,
+he waited` ne peut plus être fusionné à la première NP. La
+construction de dislocation gauche `NP, CLAUSE` reste disponible, tout
+comme les appositions de type `John, the doctor`. Cette restriction
+structurelle ne retire aucune lecture lexicale ou catégorie WordNet.
