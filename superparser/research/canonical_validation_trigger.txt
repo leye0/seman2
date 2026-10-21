@@ -9,3 +9,4 @@ Checkpoint: e2f15ac8f0e4b1f101476ff1177ad48036dce7f3 — distinguish enumerated 
 Checkpoint: d8047b6a179bbc60ddff6c4596fd06bd3eedbf6e — completed serial-subject semantic ranking and newly licensed perfect transitive relative gaps.
 Checkpoint: fbb082c9dc517391a6946b0d46bdddb8b7843a7a — check perfect-relative object gaps including negative agreement contrasts.
 Checkpoint: e00d693c3bd5b31cf6798c928e3a8a2a56d77e24 — lexical adversative yet, while-supplementary ADJP, plus controlled ablation research.
+Checkpoint: 77f12a822b5867e377b6b70d28790f03b0340bbf — narrowed serial subjects require overt internal coordination and typed final group, to avoid large-forest regressions.
