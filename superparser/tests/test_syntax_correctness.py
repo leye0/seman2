@@ -554,3 +554,28 @@ def load_tests(loader, tests, pattern):
             tests.addTest(unittest.FunctionTestCase(function, description=name))
     assert tests.countTestCases() >= 36, "Grammatical checks are not registered"
     return tests
+
+
+def test_causal_for_requires_independent_subject_constituent() -> None:
+    """A causal coordinator cannot manufacture a subject from a comma list."""
+    from seman_parser.grammar import load_grammar
+    rule = load_grammar(DATA / "grammar.jsonl").by_id("coord_clause_causal_finite")
+    subject = rule.rhs[1]
+    assert subject.features.as_dict()["incidental_subject"] == "true"
+    assert "incidental_subject" in subject.requires
+    p = parser()
+    for text in ("For I waited.", "For the weather was cold."):
+        assert p.parse(text).result.completed, text
+    for text in ("For my part, I waited.", "For the captain, he waited."):
+        report = p.parse(text).result
+        assert report.completed, (text, report.stats)
+        def descendants(node):
+            yield node
+            for child in node.children:
+                yield from descendants(child)
+        assert all(
+            "coord_clause_causal_finite" not in {
+                sub.rule_id for sub in descendants(root)
+            }
+            for root in report.alternatives(limit=12)
+        ), text

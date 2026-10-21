@@ -63,10 +63,36 @@ class GenericEngineTests(unittest.TestCase):
         dependence on the lexicon for ordinary unknown names.
         """
         lexicon = load_lexicon(DATA / "function_words.jsonl", wordnet_dict=WN_DICT)
-        # Closed-class inventory is handwritten grammatical scaffolding.
+        # This inventory is mostly closed-class scaffolding, but it also
+        # contains documented constructions: degree/discourse adverbs,
+        # finite-clause-selecting adjectives and irregular 'do'.
+        # Such entries do not replace WordNet's open-class lexical senses.
         for entry in lexicon:
-            if entry.senses and entry.senses[0].category in {"N", "V", "ADJ", "ADV"}:
-                self.fail(f"open-class entry in static inventory: {entry.lemma}")
+            assert entry.lemma.casefold() not in CORPUS_TOKENS, entry.lemma
+            for sense in entry.senses:
+                if sense.category == "N":
+                    self.fail(f"content noun hardcoded: {entry.lemma}")
+                if sense.category == "V":
+                    self.assertTrue(
+                        entry.provenance.get("merge_wordnet")
+                        and entry.provenance.get("irregular_verb_forms"),
+                        (entry.lemma, "verb must be a morphological auxiliary scaffold"),
+                    )
+                if sense.category == "ADJ":
+                    self.assertTrue(
+                        entry.provenance.get("merge_wordnet")
+                        and sense.features.as_dict().get("clausal_complement") == "true",
+                        (entry.lemma, "only licensed clausal selectors are curated"),
+                    )
+                if sense.category == "ADV":
+                    self.assertIn(
+                        entry.provenance.get("source"),
+                        {"novel-lexicon", "novel-corpus", "function-inventory",
+                         "english_function_inventory",
+                         "English-discourse-adverbials", "English-elliptical-imperative",
+                         "iterative_adverb"},
+                        (entry.lemma, "explicit grammatical adverb inventory only"),
+                    )
         # Open-class words come from WordNet at lookup time.
         for word in ("man", "run", "happy", "dog"):
             for entry in lexicon.entries_for_lemma(word):

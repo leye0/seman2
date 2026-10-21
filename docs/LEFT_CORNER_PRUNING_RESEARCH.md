@@ -340,3 +340,23 @@ contrat bloquant une future omission. Trois modules TestCase valides,
 de modules de la CI : ils sont désormais inclus. Une exécution verte
 d'avant cette correction ne doit donc **pas** être présentée comme preuve
 que ces 40 assertions avaient été satisfaites.
+
+## Réparation des tests révélés par la nouvelle CI
+
+L'activation effective de 36 assertions grammaticales et quatre
+assertions de référence a mis au jour une lecture causale alternative
+non souhaitée dans `For my part, I waited`. La cause n'était pas
+la lecture `for/PREP` (bien disponible et retenue en premier), mais
+l'autorisation d'un sujet `my part, I` produit par `np_comma` ou
+`np_list_coord2`. La règle causale exige désormais une NP qui porte
+**positivement** `incidental_subject=true`. Cela préserve les sujets
+`I` et `the weather` déjà attestés et refuse une simple liste
+nominale fabriquée comme sujet causal. Aucun sens lexical n'est retiré.
+
+Le test d'inventaire lexical ne peut pas supposer que toutes les
+catégories `ADV` et `ADJ` sont des mots de contenu WordNet :
+les adverbes de degré et de discours, les adjectifs à sélection
+propositionnelle et l'auxiliaire irrégulier `do` sont déjà des
+ressources grammaticales explicites. Le contrôle distingue ces
+échafaudages morphosyntaxiques licenciés d'une liste de noms
+propres d'un roman ou de noms de contenu hardcodés.

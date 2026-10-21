@@ -21,3 +21,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 complete unittest discovery: 36 module syntax tests and 4 gold reference tests, 3 missed TestCase modules.
 2026-10-21 fix new generic tests WordNet source discovery, preserve grammatical failures for repair.
 2026-10-21 rerun newly discovered suite after fixing generic WordNet source location, keep syntax tests strict.
+2026-10-21 fix attested independent-subject licensing for causal for; test generic lexical provenance instead of prohibiting grammatical scaffold adverbs.
