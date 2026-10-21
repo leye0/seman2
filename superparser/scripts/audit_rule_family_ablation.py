@@ -62,7 +62,13 @@ ABLATIONS = {
     "without_perfect_relative_gaps": PERFECT_GAP,
     "without_new_rule_families": SERIAL | COORD | PERFECT_GAP | REPORTING,
 }
-TARGETS = (122, 124, 229, 236, 316, 321, 359, 363, 367, 485)
+# Stratified by the 500-case global signature audit: difficult interactions
+# (coordinator + nonfinite / repeated coordination) AND successful controls.
+# These are NOT selected solely for known failures, to expose regressions.
+TARGETS = (
+    58, 62, 75, 98, 104,  # matched successful controls
+    96, 100, 115, 194, 209, 232, 237, 347, 349, 367, 439, 473,
+)
 
 
 class Deadline(Exception):
@@ -137,6 +143,31 @@ def audit(wordnet_dir: str, indices: tuple[int, ...], *,
         }
         for name in ABLATIONS
     }
+    # Paired case-level deltas are more informative than raw completion
+    # totals: a rule family may recover one sentence while losing another.
+    baseline = {row["index"]: row for row in rows
+                if row["variant"] == "current"}
+    deltas = {}
+    for name in ABLATIONS:
+        if name == "current":
+            continue
+        candidate = {row["index"]: row for row in rows
+                     if row["variant"] == name}
+        recovered = sorted(i for i in indices
+                           if not baseline[i]["completed"]
+                           and candidate[i]["completed"])
+        regressed = sorted(i for i in indices
+                           if baseline[i]["completed"]
+                           and not candidate[i]["completed"])
+        deltas[name] = {
+            "recovered_vs_current": recovered,
+            "regressed_vs_current": regressed,
+            "net_completion_change": len(recovered) - len(regressed),
+            "baseline_completed": sum(baseline[i]["completed"] for i in indices),
+            "variant_completed": sum(candidate[i]["completed"] for i in indices),
+        }
+    print("NOVEL_RULE_FAMILY_ABLATION_PAIRED",
+          json.dumps({"indices": indices, "deltas": deltas}), flush=True)
     print("NOVEL_RULE_FAMILY_ABLATION_SUMMARY",
           json.dumps({"indices": indices, "groups": summary}), flush=True)
     return rows
