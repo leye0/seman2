@@ -11,7 +11,7 @@ from research.verbnet_lr.corpus_pipeline import (
 from scripts.diagnose_novel_parses import (
     classify, compact_stats, tally, lexical_diagnostics, recurring_issues,
     select_cases, word_category_sequence, contrast_category_patterns,
-    canonical_residual_audit, construction_cluster_audit,
+    canonical_residual_audit, construction_cluster_audit, construction_interaction_audit,
 )
 
 
@@ -55,6 +55,47 @@ class NovelDiagnosticsTests(unittest.TestCase):
         )
         self.assertEqual(report["total_inconclusive"], 1)
         self.assertEqual(report["total_conclusive_failures"], 4)
+
+    def test_failure_signature_interactions_use_successful_controls(self):
+        rows = [
+            {"index": i, "sentence": sentence, "status": status}
+            for i, (sentence, status) in enumerate([
+                ("If Mary arrives, John will leave, and Sue will stay.",
+                 "no_structural_root"),
+                ("If he knows, John will go, and Mary will stay.",
+                 "roots_without_valid_analysis"),
+                ("If she arrives, we go, and they remain.",
+                 "no_structural_root"),
+                ("If the clock rings, Mary runs, and John sleeps.",
+                 "complete"),
+                ("If the day is calm, she walks, and he reads.",
+                 "complete"),
+                ("If the wind stops, Mary sings, and I listen.",
+                 "complete"),
+                ("If the bell rings, he wakes, and she leaves.",
+                 "complete"),
+                ("If they leave, John sits, and we wait.",
+                 "complete"),
+                ("John opened the box.", "complete"),
+                ("If she returns, and he stays, Mary sleeps.", "timeout"),
+            ])
+        ]
+        report = construction_interaction_audit(rows, min_support=5)
+        self.assertEqual(report["conclusive_total"], 9)
+        self.assertEqual(report["conclusive_failures"], 3)
+        self.assertEqual(report["excluded_resource_limited"], 1)
+        pair = next(
+            p for p in report["pairs"]
+            if p["signatures"] == [
+                "comma_followed_by_coordinator",
+                "finite_subordination_surface",
+            ]
+        )
+        self.assertEqual(pair["conclusive_failures"], 3)
+        self.assertEqual(pair["successful_controls"], 5)
+        self.assertEqual(pair["failure_indices"], [0, 1, 2])
+        self.assertEqual(len(pair["control_indices"]), 5)
+        self.assertGreater(pair["relative_risk"], 1)
 
     def test_clusters_do_not_conflate_ordinary_pp_or_bare_adjective(self):
         texts = [
