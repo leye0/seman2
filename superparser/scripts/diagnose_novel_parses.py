@@ -29,7 +29,7 @@ STATUSES = (
     "roots_without_valid_analysis", "timeout", "error",
 )
 MEANINGS = {
-    "complete": "Best grammatical analysis certified",
+    "complete": "Full-span parse found under current grammar; tree quality is not independently certified",
     "both_budgets_exceeded": "Recognition and k-best both saturated",
     "forest_budget_exceeded": "Recognition stopped at forest item ceiling",
     "kbest_budget_exceeded": "Extraction stopped at k-best work ceiling",

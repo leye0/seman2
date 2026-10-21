@@ -65,6 +65,7 @@ jobs:
             superparser.tests.test_shared_trie_forest \
             superparser.tests.test_clean_novel_corpus \
             superparser.tests.test_novel_parse_diagnostics \
+            superparser.tests.test_context_dependencies \
             superparser.tests.test_syntax_correctness \
             superparser.tests.test_discovery_contract \
             superparser.tests.test_generic \

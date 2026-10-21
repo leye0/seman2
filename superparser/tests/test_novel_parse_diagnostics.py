@@ -20,6 +20,11 @@ from scripts.diagnose_novel_parses import (
 
 class NovelDiagnosticsTests(unittest.TestCase):
 
+    def test_complete_means_internal_parse_not_independent_gold(self):
+        from scripts.diagnose_novel_parses import MEANINGS
+        self.assertIn("not independently certified", MEANINGS["complete"])
+        self.assertNotIn("Best grammatical analysis certified", MEANINGS["complete"])
+
 
     def test_tree_quality_signals_distinguish_missing_and_conflicting_vform(self):
         """The audit must never conflate underspecification and contradiction."""
