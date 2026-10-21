@@ -1,1 +1,2 @@
 2026-10-21 test 39 pinned failures/controls for discourse coordinator plus overt comma-delimited adverb or infinitival incise plus full clause. No production changes.
+2026-10-21 validate full fixed 500 and isolate the infinitival component failure before grammar integration.

@@ -98,6 +98,7 @@ def main():
     p.add_argument("--wordnet-dir",required=True)
     p.add_argument("--output",type=Path,required=True)
     p.add_argument("--seconds",type=float,default=9)
+    p.add_argument("--count",type=int,choices=(39,500),default=39)
     options=p.parse_args()
     cases,_=select_cases(500)
     resources=ParserResources.from_dir(ROOT/"data",wordnet_dict=options.wordnet_dir)
@@ -108,19 +109,48 @@ def main():
     original=signal.signal(signal.SIGALRM,_alarm)
     data=[]
     try:
-        for index in CASES:
+        probes=(
+            "We are scarcely less eager to meet her again.",
+            "To confess the truth, we are scarcely less eager to meet her again.",
+            "and, to confess the truth, we are scarcely less eager to meet her again.",
+            "I confessed the truth.",
+            "I confess the truth.",
+            "and, besides, it was such a pity that Lydia should be taken.",
+        )
+        for text in probes:
+            report=baseline.parse(text,max_items=50000)
+            result=report.result
+            lexical={
+                token:[{"cat":candidate.category,"features":candidate.features.as_dict()}
+                       for candidate in report.lattice.candidates
+                       if candidate.surface.casefold()==token]
+                for token in ("confess","confessed","eager","besides")
+            }
+            print("DISCOURSE_COMPONENT_PROBE",json.dumps({
+                "sentence":text,"completed":result.completed,
+                "best":result.best().rule_id if result.best() else None,
+                "status":classify(result.completed,result.stats),
+                "lexical":lexical,
+            },ensure_ascii=False),flush=True)
+        indices=range(500) if options.count==500 else CASES
+        for index in indices:
             a=parse(baseline,cases[index],options.seconds)
             b=parse(trial,cases[index],options.seconds)
             if a.get("lexical_candidates") is not None and b.get("lexical_candidates") is not None:
                 assert a["lexical_candidates"]==b["lexical_candidates"],index
             row={"index":index,"text":cases[index]["text"],"baseline":a,"trial":b}
             data.append(row)
-            print("DISCOURSE_INCISE_CASE",json.dumps({
-                "index":index,"baseline_status":a["status"],
-                "trial_status":b["status"],
-                "trial_rule":b.get("root_rule"),
-                "changed_tree":a.get("tree")!=b.get("tree"),
-            }),flush=True)
+            if (a["status"]!=b["status"]
+                    or a.get("tree")!=b.get("tree")
+                    or index in (8,94,196,244,427)):
+                print("DISCOURSE_INCISE_CASE",json.dumps({
+                    "index":index,"baseline_status":a["status"],
+                    "trial_status":b["status"],
+                    "trial_rule":b.get("root_rule"),
+                    "changed_tree":a.get("tree")!=b.get("tree"),
+                }),flush=True)
+            if len(data)%50==0:
+                print("DISCOURSE_INCISE_PROGRESS",len(data),flush=True)
     finally:
         signal.setitimer(signal.ITIMER_REAL,0)
         signal.signal(signal.SIGALRM,original)
@@ -135,6 +165,7 @@ def main():
         "changed_trees":[x["index"] for x in data if
                          x["baseline"].get("tree")!=x["trial"].get("tree")],
         "production_grammar_untouched":True,
+        "fixed_full_500":options.count==500,
     }
     options.output.parent.mkdir(parents=True,exist_ok=True)
     options.output.write_text(json.dumps({"summary":summary,"cases":data},
