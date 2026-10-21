@@ -1,0 +1,2 @@
+Lexical category left-corner feasibility probe
+2026-10-21 baseline vs opt-in, pinned control and difficult sentences, preserving exact forests and best trees.

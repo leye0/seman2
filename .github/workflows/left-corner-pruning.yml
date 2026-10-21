@@ -1,0 +1,57 @@
+name: Seman2 - Lexical Left-Corner Preservation Probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/research/left_corner_pruning_trigger.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: seman2-left-corner-probe
+  cancel-in-progress: true
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          import os
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent': 'Seman2-research'}), timeout=90) as f:
+              raw = f.read()
+          dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict'
+          dest.mkdir(parents=True, exist_ok=True)
+          keep = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb', 'sents.vrb', 'cntlist.rev'}
+          for part in ('noun', 'verb', 'adj', 'adv'):
+              keep.update((f'index.{part}', f'data.{part}', f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf = Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (dest / leaf).write_bytes(z.read(item))
+          assert (dest / 'index.verb').exists()
+          PY
+      - name: Prove full forest preservation on unsaturated controls
+        run: |
+          PYTHONPATH=superparser python -u -m scripts.audit_left_corner_pruning \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --output "$RUNNER_TEMP/left-corner-summary.json"
+      - name: Preserve paired case comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seman2-left-corner-paired
+          path: ${{ runner.temp }}/left-corner-summary.json
+          if-no-files-found: warn
+          retention-days: 21
