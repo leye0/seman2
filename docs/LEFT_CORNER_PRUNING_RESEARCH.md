@@ -105,3 +105,15 @@ non propositionnelle. Les règles de catégorie `CLAUSE` gardent la lecture
 causale. Ce contrôle constitue une contrainte grammaticale générale et non
 un ajustement de score pour le corpus. La qualité des nouveaux arbres doit
 être mesurée séparément du taux de complétion.
+
+## Coordination causale finie
+
+L'emploi causal de `for` conserve sa lecture lexicale `COORD` (ainsi que
+`PREP`). Il est maintenant distingué par `causal_coordination=true`.
+La règle `coord_clause` demeure réservée aux coordonnants discursifs
+non causaux. La règle `coord_clause_causal_finite` exige un sujet NP
+et un prédicat VP *fini* dont les traits d'accord s'unifient. Elle empêche
+les expressions prépositionnelles initiales `For my part` et
+`As for the captain` de se faire passer pour un préfixe coordonnant
+suivi d'une proposition disloquée. Le lien sémantique AGENT est conservé
+pour le sujet et son prédicat.

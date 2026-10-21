@@ -13,3 +13,4 @@ Checkpoint: 77f12a822b5867e377b6b70d28790f03b0340bbf — narrowed serial subject
 Full suite validation: 2026-10-21 — verify scope-preserving diagnostic and saturation profiler after code changes.
 Tree-quality expected failures for lexical left-corner optimization, run global regression 2026-10-21.
 2026-10-21 phrase-coordinate positive lexical licensing (and/or/but vs causal for), full regression.
+2026-10-21 clausal causal for vs initial PP, full regression.

@@ -398,3 +398,34 @@ def test_phrase_coordination_keeps_causal_for_as_clausal_alternative() -> None:
                     for child in item.children
                 ), (item.rule_id, sentence)
 
+
+
+def test_causal_for_initial_clause_requires_overt_finite_predicate() -> None:
+    """The clausal 'for' cannot consume a dislocated NP/PP as its subject."""
+    p = parser()
+    def walk(node):
+        yield node
+        for child in node.children:
+            yield from walk(child)
+    for text in ("For I longed to see my friends.", "For the weather was cold."):
+        result = p.parse(text).result
+        assert result.completed, (text, result.stats)
+        assert any(
+            "coord_clause_causal_finite" in {n.rule_id for n in walk(root)}
+            for root in result.alternatives(limit=12)
+        ), text
+    for text in ("For my part, I waited.", "For the captain, he waited."):
+        result = p.parse(text).result
+        assert result.completed, (text, result.stats)
+        assert all(
+            "coord_clause_causal_finite" not in {n.rule_id for n in walk(root)}
+            for root in result.alternatives(limit=12)
+        ), text
+    readings = [
+        c for c in p.parse("For I waited.").lattice.candidates
+        if c.surface.casefold() == "for"
+    ]
+    assert {"COORD", "PREP"} <= {c.category for c in readings}
+    assert any(c.category == "COORD"
+               and c.features.as_dict().get("causal_coordination") == "true"
+               for c in readings)

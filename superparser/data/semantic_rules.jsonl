@@ -307,6 +307,7 @@
 {"id":"np_det_ved_n","semantic":[{"copy":{}}]}
 {"id":"n_ved_n","semantic":[{"copy":{}}]}
 {"id":"coord_clause","semantic":[{"copy":{}}]}
+{"id":"coord_clause_causal_finite","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"adjp_enough_to","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"attr","target":"inf"}]}}]}
 {"id":"adjp_enough_to_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"}]}}]}
 {"id":"clause_gerund_subj","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"main","target":"subject"}]}}]}
