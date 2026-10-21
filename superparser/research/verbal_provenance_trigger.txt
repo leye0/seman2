@@ -2,3 +2,4 @@
 2026-10-21 inspect bundled VerbNet 3.4 class evidence for competing finite/ed frames, alongside WordNet lookup.
 2026-10-21 inspect complete attested PP-selection frames for fix, drink, encompass from bundled VerbNet.
 2026-10-21 link all full lexical V alternatives to bundled VerbNet frames, preserving direct-PP vs NP-PP valence evidence.
+2026-10-21 verify exact PP selection, NP+PP distinction, wildcard and provenance through small contract tests.

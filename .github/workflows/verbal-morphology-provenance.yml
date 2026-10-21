@@ -40,6 +40,10 @@ jobs:
                       (dest/leaf).write_bytes(z.read(part))
           assert (dest/'index.verb').exists()
           PY
+      - name: Verify bundled VerbNet valence evidence
+        run: |
+          PYTHONPATH=superparser python -m unittest -v \
+            superparser.tests.test_verbnet_valence_provenance
       - name: Inspect all lexical readings for contrasting verbal forms
         run: |
           PYTHONPATH=superparser python -u -m scripts.audit_verbal_readings \
