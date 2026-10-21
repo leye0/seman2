@@ -40,6 +40,23 @@ PERFECT_GAP = frozenset({
 REPORTING = frozenset({"parenthetical_reporting_modal_bare"})
 ABLATIONS = {
     "current": frozenset(),
+    "without_possessive_adjp_nominal": frozenset({
+        "np_possessive_adjective_phrase_noun",
+    }),
+    "without_perfect_negative_adverbial": frozenset({
+        "vp_perfect_negated_adverbial_transitive",
+        "vp_perfect_negated_adverbial_intransitive",
+    }),
+    "without_nominal_coordination_head": frozenset({
+        "np_third_person_nominal_coord_subject",
+    }),
+    "without_universal_nominal_quantifier": frozenset({
+        "np_universal_third_person_nominal",
+    }),
+    "without_serial_nominal_subject": frozenset({
+        "np_serial_third_person_nominal_coordination",
+        "clause_serial_nominal_subject_comma_predicate",
+    }),
     "without_serial_subject_and_neg_perfect": SERIAL,
     "without_interrupted_vp_coordination": COORD,
     "without_perfect_relative_gaps": PERFECT_GAP,
