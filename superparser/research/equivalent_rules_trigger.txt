@@ -1,0 +1,1 @@
+2026-10-21 validate 17 exact semantic-equivalence groups, no grammar edits; paired 100 novel sentences + difficult controls.
