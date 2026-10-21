@@ -124,7 +124,10 @@ def main():
     p.add_argument("--max-items", type=int, default=50000)
     p.add_argument("--kbest-work-limit", type=int, default=500000)
     p.add_argument("--seconds", type=float, default=10.0)
-    p.add_argument("--local-attachment-tiebreak", action="store_true")
+    # None follows Parser's production default; explicit --no-... is
+    # available for reproducible historical control trials.
+    p.add_argument("--local-attachment-tiebreak",
+                   action=argparse.BooleanOptionalAction, default=None)
     opts = p.parse_args()
     cases, _sources = select_cases(500)
     opts.out_dir.mkdir(parents=True, exist_ok=True)
@@ -149,9 +152,11 @@ def main():
         )
 
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=opts.wordnet_dir)
+    parser_kw = {}
+    if opts.local_attachment_tiebreak is not None:
+        parser_kw["local_attachment_tiebreak"] = opts.local_attachment_tiebreak
     parser = Parser(resources, max_items=opts.max_items, cache_size=0,
-                    lexical_left_corner_pruning=True,
-                    local_attachment_tiebreak=opts.local_attachment_tiebreak)
+                    lexical_left_corner_pruning=True, **parser_kw)
     parser.parse("John opened the box.")  # Same warm-up as canonical diagnostic
     old_handler = signal.signal(signal.SIGALRM, _alarm)
     counts = Counter()
@@ -247,7 +252,7 @@ def main():
         "tree_quality_signal_indices": quality_indices,
         "tree_quality_signals_are_diagnostic_not_certified_errors": True,
         "experimental": True,
-        "local_attachment_tiebreak": opts.local_attachment_tiebreak,
+        "local_attachment_tiebreak": parser.local_attachment_tiebreak,
         "tiebreak_applied_cases": [r["index"] for r in recorded_rows
                                   if r.get("local_attachment_tiebreak_applied")],
     }
