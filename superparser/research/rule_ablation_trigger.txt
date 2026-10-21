@@ -1,0 +1,1 @@
+Controlled ablation of newly introduced grammar rule families, fixed corpus cases and exact public parser. Runs must be compared for positive recovery and negative search-resource shifts; no index-specific production rules.
