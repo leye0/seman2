@@ -11,3 +11,4 @@ Checkpoint: 19d93fa79c2c1ff7e4d0d05ab9de9144c615430c — compare 500 cases after
 Checkpoint: fa2187b667a7f6b07728201c4ffce6e3e00ab638 — narrow serial coordinated subjects, preserving negative perfect and modal report with fewer spurious nominal combinations; adversative yet included.
 Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budgets and compare ablation recoveries with saturation.
 2026-10-21 phrase-coordinate semantic category feature restrictions, pinned 500 analysis.
+2026-10-21 final pinned canonical 500 after phrase COORD, causal for and pronominal apposition changes.

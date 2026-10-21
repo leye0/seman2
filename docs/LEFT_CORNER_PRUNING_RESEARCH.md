@@ -134,3 +134,42 @@ he waited` ne peut plus être fusionné à la première NP. La
 construction de dislocation gauche `NP, CLAUSE` reste disponible, tout
 comme les appositions de type `John, the doctor`. Cette restriction
 structurelle ne retire aucune lecture lexicale ou catégorie WordNet.
+
+## Validations cumulatives des contraintes structurales — 21 octobre 2026
+
+La cohorte expérimentale de 500 phrases reste figée (empreinte ci-dessus).
+Les corrections de types de coordonnants, de causalité et d'apposition
+font évoluer les statistiques **sans aucune augmentation arbitraire de score** :
+
+- **Avant les nouvelles contraintes grammaticales** :
+  455/500 avec le pruning lexical expérimental.
+- **Après la licence positive de 36 coordinations non propositionnelles** :
+  454/500. Les 19 usages erronés de `for` comme conjonction de NP/VP
+  (18 phrases) sont éliminés des arbres sélectionnés. La seule analyse
+  perdue (#427) utilisait `np_list_last` pour traiter `for Hands`
+  comme élément d'une liste nominale : ce n'était pas une reconnaissance
+  grammaticale valide.
+- **Après la séparation du `for` causal fini et prépositionnel** :
+  toujours 454/500, aucune perte, modification de six meilleurs arbres.
+  `For my part` passe désormais par `PP` dans l'arbre #499;
+  les propositions causales attestées restent disponibles.
+- **Après la distinction pronominal/appositif** :
+  toujours 454/500, aucune perte, deux meilleurs arbres modifiés.
+  Les deux cas d'apposition avec un NP pronominal directement projeté
+  (#95 et #482) disparaissent des arbres sélectionnés. Dans #482,
+  `for the captain` est maintenant un `PP`, et `he` est
+  distinctement le sujet de la proposition suivante.
+
+Ces comptages mesurent une **précision locale des constructions**.
+Ils ne démontrent pas une exactitude globale des 454 arbres. Les
+faux rattachements restants des subordonnées et des groupes verbaux
+sont encore documentés par les contre-exemples de tests.
+
+Une expérience purement recherche
+(`audit_unpunctuated_subordination.py`) a tenté de restreindre les
+subordonnées antéposées sans virgule à une proposition matrice `NP VP`
+finie. Sur 25 phrases contrastées, la couverture est descendue de 25
+à 24, sans éliminer plusieurs analyses de constituants absurdes.
+**Hypothèse rejetée pour intégration** : aucune règle de production
+n'a été changée par cette expérience. Des preuves de frontières
+propositionnelles et de valence plus fortes sont nécessaires.
