@@ -20,6 +20,26 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_shared_subject_coordination_across_conjunct_adjunct(self) -> None:
+        p = make_parser()
+
+        def rules(node):
+            yield node.rule_id
+            for child in node.children:
+                yield from rules(child)
+
+        cases = (
+            ("John waited, and in frustration, opened the box.",
+             "vp_finite_comma_coord_fronted_pp"),
+            ("Mary waited, and suddenly, opened the door.",
+             "vp_finite_comma_coord_fronted_adv"),
+        )
+        for sentence, expected in cases:
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertIn(expected, set(rules(parsed.best())))
+
     def test_interpolated_modal_reporting_requires_reporting_verb(self) -> None:
         p = make_parser()
 
