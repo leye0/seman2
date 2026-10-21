@@ -377,3 +377,4 @@
 {"id":"vp_gap_perfect_transitive","semantic":[{"copy":{}}]}
 {"id":"wh_bare_perfect_object_relative","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"relative_predicate","target":"relative_subject"}]}}]}
 {"id":"np_serial_three_coordinated_nominal_groups","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_group","target":"second_group"},{"relation":"CONJUNCT","source":"second_group","target":"last_group"}]}}]}
+{"id":"vpnp_base_linking_adjective_phrase","semantic":[{"link":{"relation":"ATTRIBUTE","source":"linking_predicate","target":"predicative_attribute"}}]}
