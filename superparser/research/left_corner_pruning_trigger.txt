@@ -3,3 +3,4 @@ Lexical category left-corner feasibility probe
 Retry after fixing paired lexical-lattice cache equality, 2026-10-21.
 Fix nonzero shared lattice-cache capacity for paired test, 2026-10-21.
 Evaluate 500 fixed cases using opt-in lexical left-corner pruning; include actual best trees.
+2026-10-21 phrase-coordinate semantic restrictions, experimental 500 tree-quality.

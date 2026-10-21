@@ -338,3 +338,63 @@ def test_title_licensing_keeps_wordnet_noun_alternatives() -> None:
     assert {"TITLE", "N"} <= categories, categories
 
 
+
+
+def test_nonclausal_coordination_requires_an_attested_phrase_connector() -> None:
+    """Causal 'for' is COORD for clauses, not a linker of NP/VP/ADJP."""
+    from seman_parser.grammar import load_grammar
+    grammar = load_grammar(DATA / "grammar.jsonl")
+    phrase_coordinations = 0
+    for rule in grammar:
+        if rule.lhs.category == "CLAUSE":
+            continue
+        for symbol in rule.rhs:
+            if symbol.category != "COORD":
+                continue
+            phrase_coordinations += 1
+            assert symbol.features.as_dict().get("nominal_coordination") == "true", (
+                rule.rule_id, "causal for must not coordinate phrases"
+            )
+            assert "nominal_coordination" in symbol.requires, rule.rule_id
+    assert phrase_coordinations >= 30
+
+
+def test_phrase_coordination_keeps_causal_for_as_clausal_alternative() -> None:
+    p = parser()
+    tests = (
+        "John waited for Mary.",
+        "Mary spoke to John for she was concerned.",
+        "The boy and the girl waited.",
+        "The boy or the girl waited.",
+    )
+    for sentence in tests:
+        report = p.parse(sentence)
+        readings = [
+            c for c in report.lattice.candidates
+            if c.surface.casefold() == "for" and c.category == "COORD"
+        ]
+        if "for" in sentence:
+            assert readings, ("for retains its clausal reading", sentence)
+            assert all("nominal_coordination" not in c.features.as_dict()
+                       for c in readings)
+        assert report.result.completed, (sentence, report.result.stats)
+
+    def tree_nodes(item):
+        yield item
+        for child in item.children:
+            yield from tree_nodes(child)
+
+    # This is a syntactic distinction, not a dictionary deletion:
+    # a 'for' clause connector must not complete NP-COORD-NP, VP-COORD-VP,
+    # PP-COORD-PP or ADJP-COORD-ADJP productions.
+    sentence = "The captain carried the box for the pilot."
+    report = p.parse(sentence)
+    for root in report.result.alternatives(limit=8):
+        for item in tree_nodes(root):
+            if item.category in {"NP", "VP", "ADJP", "PP"}:
+                assert not any(
+                    child.category == "COORD"
+                    and sentence[child.start:child.end].casefold() == "for"
+                    for child in item.children
+                ), (item.rule_id, sentence)
+

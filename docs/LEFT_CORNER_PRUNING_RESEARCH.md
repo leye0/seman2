@@ -91,3 +91,17 @@ Cette vue globale oriente une suite d'expériences vers les mécanismes
 communs (licence des dislocations nominales et des ellipses, séparation
 des prédicats et de leurs compléments), plutôt que des règles qui
 cibleraient un titre de roman ou un indice particulier.
+
+## Révision des coordinations non propositionnelles
+
+Le lexique possède déjà un trait positif `nominal_coordination=true` pour
+`and`, `but`, `or`, `nor` et `yet`. La conjonction causale `for` est une
+lecture `COORD` grammaticalement justifiée **entre deux propositions**,
+mais non comme coordination de deux NP, VP, PP ou ADJP. Toutes les règles
+non propositionnelles employant `COORD` exigent désormais la preuve
+positive de ce trait lexical : la possibilité `for/COORD` reste dans le
+treillis, elle est simplement rejetée lorsque la composition est
+non propositionnelle. Les règles de catégorie `CLAUSE` gardent la lecture
+causale. Ce contrôle constitue une contrainte grammaticale générale et non
+un ajustement de score pour le corpus. La qualité des nouveaux arbres doit
+être mesurée séparément du taux de complétion.
