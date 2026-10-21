@@ -72,10 +72,19 @@ jobs:
                   found.append({"path":path,"value":o[:250]})
           audit(obj,"root")
           print("VERBNET_MATCHES",json.dumps(found[:45],ensure_ascii=False),flush=True)
+          selections={lemma:[
+              frame for frame in obj.get("frames",())
+              if frame.get("lemma")==lemma
+          ] for lemma in targets}
+          print("VERBNET_FRAME_COUNTS",
+                {k:len(v) for k,v in selections.items()},flush=True)
+          print("VERBNET_FIX_FRAME_SAMPLES",
+                json.dumps(selections["fix"][:15],ensure_ascii=False)[:16000],flush=True)
           Path("verbnet-valence-probe.json").write_text(
               json.dumps({"type":type(obj).__name__,
               "top_keys":list(obj)[:25] if isinstance(obj,dict) else [],
-              "matches":found[:70]},ensure_ascii=False,indent=2)+"\n")
+              "matches":found[:70],"selected_frames":selections},
+              ensure_ascii=False,indent=2)+"\n")
           PY
       - name: Preserve bundled VerbNet lexical probe
         if: always()
