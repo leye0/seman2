@@ -505,3 +505,38 @@ def test_selected_vp_coordination_never_unifies_known_finite_with_ed() -> None:
             }
             assert not ({"finite", "ed"} <= forms), (node.rule_id, forms)
 
+
+
+def test_no_duplicate_grammar_constructions_with_identical_semantics() -> None:
+    """Do not pay for the same compiled rule more than once.
+
+    Distinct semantic interpretations of one surface pattern are allowed;
+    exact duplicates are not. This checks constraints, required features,
+    handle exports, lhs/rhs categories and *all* semantic operations.
+    """
+    import json
+    from collections import defaultdict
+    patterns = [
+        json.loads(line)
+        for line in (DATA / "grammar.jsonl").read_text(
+            encoding="utf-8").splitlines() if line.strip()
+    ]
+    recipes = {
+        row["id"]: row.get("semantic")
+        for row in (
+            json.loads(line)
+            for line in (DATA / "semantic_rules.jsonl").read_text(
+                encoding="utf-8").splitlines() if line.strip()
+        )
+    }
+    by_pattern: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for rule in patterns:
+        syntax = json.dumps(
+            {"lhs": rule["lhs"], "rhs": rule["rhs"]},
+            sort_keys=True,
+        )
+        semantic = json.dumps(recipes.get(rule["id"]), sort_keys=True)
+        by_pattern[(syntax, semantic)].append(rule["id"])
+    duplicates = [items for items in by_pattern.values() if len(items) > 1]
+    assert not duplicates, duplicates
+

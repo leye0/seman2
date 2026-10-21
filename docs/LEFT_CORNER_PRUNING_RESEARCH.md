@@ -293,3 +293,34 @@ contrainte est nécessaire pour rejeter la coordination contradictoire,
 mais insuffisante pour certifier la bonne structure de ces deux phrases.
 La réparation ultérieure doit mieux contraindre la valence et la
 formation des objets NP et des constructions participiales.
+
+## Déduplication des productions sans perte d'analyses (21 octobre 2026)
+
+Une comparaison expérimentale [sur les 500 phrases immuables](https://github.com/leye0/seman2/actions/runs/39621203551)
+a isolé **17 groupes** de règles dont les membres portent exactement
+les mêmes symboles LHS/RHS, mêmes traits et exigences, mêmes exports
+de constituants et **même recette sémantique**. Deux autres groupes ont
+la même structure apparente mais des recettes sémantiques différentes :
+**ils sont conservés intégralement**.
+
+Le nettoyage retire 19 règles strictement redondantes, ainsi que leurs
+19 recettes sémantiques également redondantes. Pour chaque groupe, le
+représentant conservé est la règle qui avait **déjà le score maximal**
+(égalité : ordre original), sans invention ni augmentation de score.
+
+| Mesure sur 500 phrases, moteur expérimental | Avant | Après |
+| --- | ---: | ---: |
+| Reconnaissances | 454 | 454 |
+| États partiels | 2 652 048 | 2 527 699 |
+| Nœuds de forêt | 239 184 | 239 184 |
+| Meilleurs arbres modifiés | — | 0 |
+
+Les **124 349** états partiels évités (-4,7 %) représentent moins de
+travail combinatoire pour les mêmes meilleures analyses. Ce test ne
+certifie pas toutes les alternatives profondes de la forêt et ne
+résout pas les attaches erronées déjà connues (p. ex. cas #365).
+
+Le test de régression `test_no_duplicate_grammar_constructions_with_identical_semantics`
+interdit désormais de recréer ces doublons. Il préserve explicitement
+les constructions possédant des sémantiques différentes, même lorsque
+leurs patrons de catégories coïncident.

@@ -19,7 +19,6 @@
 {"id":"clause_passive","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"theme"}]}}]}
 {"id":"np_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"vp_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
-{"id":"clause_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"np_relative_subj","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"relative"}]}}]}
 {"id":"wh_subj_clause","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"np_relative_obj","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"relative"}]}}]}
@@ -60,10 +59,8 @@
 {"id":"vp_cop_np","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
 {"id":"clause_there","semantic":[{"link":{"relation":"THEME","source":"event","target":"theme"}}]}
 {"id":"pp_stack","semantic":[{"copy":{}}]}
-{"id":"np_name_seq","semantic":[{"copy":{}}]}
 {"id":"np_name_seq3","semantic":[{"copy":{}}]}
 {"id":"adj_degree","semantic":[{"copy":{}}]}
-{"id":"n_adj_n_deg","semantic":[{"copy":{}}]}
 {"id":"vp_resultative","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"theme"},{"relation":"RESULT","source":"event","target":"result"}]}}]}
 {"id":"vp_obj_control","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_particle","semantic":[{"copy":{}}]}
@@ -72,7 +69,6 @@
 {"id":"n_compound","semantic":[{"copy":{}}]}
 {"id":"np_pp","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"modifier"}]}}]}
 {"id":"clause_yn_neg","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
-{"id":"clause_neg","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"vp_perfect_adv","semantic":[{"copy":{}}]}
 {"id":"vp_np_resultative","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"theme"},{"relation":"RESULT","source":"event","target":"result"}]}}]}
 {"id":"vp_np_particle","semantic":[{"copy":{}}]}
@@ -91,7 +87,6 @@
 {"id":"wh_bare","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"np_that_clause","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"comp"}]}}]}
 {"id":"np_comp_clause","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"comp"}]}}]}
-{"id":"np_coord2","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"np_indef_pron","semantic":[{"copy":{}}]}
 {"id":"np_pp_mod","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"mod"}]}}]}
 {"id":"n_pp","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"mod"}]}}]}
@@ -122,7 +117,6 @@
 {"id":"vp_part_pp","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"mod"}]}}]}
 {"id":"vp_to_passive_pp","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"},{"relation":"MANNER","source":"inf","target":"mod"}]}}]}
 {"id":"adj_part","semantic":[{"copy":{}}]}
-{"id":"pp_as_adj_part","semantic":[{"copy":{}}]}
 {"id":"vp_comma_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"clause_comma","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"np_comma","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
@@ -138,7 +132,6 @@
 {"id":"np_list_coord2","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"}]}}]}
 {"id":"vp_obj_ctrl_to","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_for_to","semantic":[{"compose":{"links":[{"relation":"BENEFICIARY","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
-{"id":"np_list_full","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"},{"relation":"CONJUNCT","source":"a2","target":"a3"}]}}]}
 {"id":"np_list_last","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"}]}}]}
 {"id":"clause_front_np","semantic":[{"compose":{"links":[{"relation":"TOPIC","source":"main","target":"topic"}]}}]}
 {"id":"clause_front_pp","semantic":[{"compose":{"links":[{"relation":"TOPIC","source":"main","target":"topic"}]}}]}
@@ -155,7 +148,6 @@
 {"id":"clause_front_adv_nocomma","semantic":[{"compose":{"links":[{"relation":"TOPIC","source":"main","target":"topic"}]}}]}
 {"id":"clause_front_degree","semantic":[{"compose":{"links":[{"relation":"TOPIC","source":"main","target":"topic"}]}}]}
 {"id":"vp_list_obj","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
-{"id":"np_coord_rel","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"clause_colon","semantic":[{"compose":{"links":[{"relation":"APPOSITION","source":"main","target":"appos"}]}}]}
 {"id":"np_colon","semantic":[{"compose":{"links":[{"relation":"APPOSITION","source":"head","target":"appos"}]}}]}
 {"id":"np_gerund","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
@@ -168,7 +160,6 @@
 {"id":"vp_ing_wh","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"pp_degree","semantic":[{"copy":{}}]}
 {"id":"pp_adv_prep","semantic":[{"copy":{}}]}
-{"id":"np_rel_pp","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"mod"}]}}]}
 {"id":"adjp_adv_adj","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"attr","target":"mod"}]}}]}
 {"id":"vp_cop_neg_adjp","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
 {"id":"vp_linking_adjp","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
@@ -185,7 +176,6 @@
 {"id":"vp_adv_as_as","semantic":[{"compose":{"links":[{"relation":"COMPARISON","source":"event","target":"standard"}]}}]}
 {"id":"np_time_oclock","semantic":[{"copy":{}}]}
 {"id":"np_num_n_time","semantic":[{"copy":{}}]}
-{"id":"vp_as_adj_as_clause","semantic":[{"compose":{"links":[{"relation":"COMPARISON","source":"event","target":"standard"}]}}]}
 {"id":"advp_as_as","semantic":[{"compose":{"links":[{"relation":"COMPARISON","source":"head","target":"standard"}]}}]}
 {"id":"vp_adv_adj","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"mod"}]}}]}
 {"id":"vp_cop_pp","semantic":[{"compose":{"links":[{"relation":"LOCATION","source":"event","target":"location"}]}}]}
@@ -220,10 +210,8 @@
 {"id":"vp_np_from_ing","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_ing_np_adjunct","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"mod"}]}}]}
 {"id":"np_n_clause","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"comp"}]}}]}
-{"id":"np_neg_appos","semantic":[{"copy":{}}]}
 {"id":"wh_np_modal_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"clause_adv_adjunct","semantic":[{"compose":{"links":[{"relation":"ADJUNCT","source":"main","target":"adjunct"}]}}]}
-{"id":"clause_adv_conj","semantic":[{"compose":{"links":[{"relation":"TEMPORAL","source":"main","target":"sub"}]}}]}
 {"id":"np_appos_comma","semantic":[{"compose":{"links":[{"relation":"APPOSITION","source":"head","target":"appos"}]}}]}
 {"id":"np_reflexive_adv","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"mod"}]}}]}
 {"id":"conj_comma_clause","semantic":[{"compose":{"links":[{"relation":"SUBORDINATION","source":"sub","target":"rel"}]}}]}
@@ -250,7 +238,6 @@
 {"id":"clause_wh_bridge","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"think","target":"comp"}]}}]}
 {"id":"clause_ellipsis_too","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"subject"}]}}]}
 {"id":"adjp_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
-{"id":"vp_inf_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"vp_passive_inf","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_prog_passive","semantic":[{"copy":{}}]}
 {"id":"clause_there_raising","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
@@ -343,23 +330,17 @@
 {"id":"np_gerund_list","semantic":[{"copy":{}}]}
 {"id":"vp_gerund_list","semantic":[{"link":{"relation":"AFFECTED","source":"event","target":"obj"}}]}
 {"id":"advp_rather_than_adv","semantic":[{"copy":{}}]}
-{"id":"pp_because_of_not","semantic":[{"copy":{}}]}
-{"id":"np_n_to_v_np2","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"inf"}]}}]}
 {"id":"wh_vp_when_pp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"main","target":"subject"}]}}]}
-{"id":"np_list_for","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"},{"relation":"CONJUNCT","source":"a2","target":"a3"}]}}]}
 {"id":"np_n_prep_wh","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"comp"}]}}]}
 {"id":"clause_list3","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"c1","target":"c2"},{"relation":"CONJUNCT","source":"c2","target":"c3"}]}}]}
 {"id":"pp_rather_than","semantic":[{"copy":{}}]}
 {"id":"vp_pp_adv","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"mod"}]}}]}
-{"id":"wh_list4","semantic":[{"copy":{}}]}
 {"id":"wh_list2","semantic":[{"copy":{}}]}
 {"id":"wh_list3","semantic":[{"copy":{}}]}
 {"id":"vp_coord_that","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"v2","target":"comp"}]}}]}
 {"id":"advp_deg_prep_adv","semantic":[{"copy":{}}]}
 {"id":"pp_pp_advp","semantic":[{"copy":{}}]}
-{"id":"np_deg_np","semantic":[{"copy":{}}]}
 {"id":"np_coord_deg","semantic":[{"copy":{}}]}
-{"id":"vp_pp_coord_that","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"v2","target":"comp"}]}}]}
 {"id":"np_adv_np","semantic":[{"copy":{}}]}
 {"id":"np_coord_adv","semantic":[{"copy":{}}]}
 {"id":"vp_comma_clause","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
