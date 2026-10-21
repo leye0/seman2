@@ -824,7 +824,10 @@ class VectorChartTests(unittest.TestCase):
             "They built a sample sign with a large picture, a short name, "
             "and a smaller paragraph explaining the route."
         )
-        baseline = self.parser.parse(phrase).result
+        baseline = Parser(
+            self.parser.resources, cache_size=0,
+            local_attachment_tiebreak=False,
+        ).parse(phrase).result
         trial = Parser(
             self.parser.resources, cache_size=0,
             local_attachment_tiebreak=True,

@@ -159,7 +159,7 @@ class Parser:
         deduplicate_lexical: bool = True,
         complexity_policy: ComplexityPolicy | None = None,
         lexical_left_corner_pruning: bool = False,
-        local_attachment_tiebreak: bool = False,
+        local_attachment_tiebreak: bool = True,
     ) -> None:
         self.resources = resources
         self.beam = beam

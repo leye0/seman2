@@ -375,3 +375,18 @@ des alternatives explicites.
 Cette préférence psycholinguistique est contextuelle, **pas une
 contrainte grammaticale**. Elle restera désactivée en production avant
 évaluation de non-régression sur le corpus immuable.
+
+## Adoption de la préférence locale à scores égaux
+
+Après l'[essai sur les 500 phrases](https://github.com/leye0/seman2/actions/runs/39630528704),
+le départage des participes `-ing` a été activé **par défaut dans
+`Parser`**, tout en restant désactivable par
+`local_attachment_tiebreak=False`. La comparaison expérimentale a
+confirmé **454/500**, aucune phrase perdue ni aucun meilleur arbre
+modifié sur la cohorte littéraire; l'unique contre-exemple ciblé
+`a smaller paragraph explaining the route` choisit désormais la
+lecture grammaticale localement plausible. L'algorithme ne modifie
+aucun score et ne supprime aucune dérivation. L'absence de changement
+sur ces 500 phrases ne démontre pas une exactitude linguistique générale :
+ce sont les tests contrastifs et les corpus ultérieurs qui devront
+éprouver les cas où les deux portées sont sémantiquement possibles.
