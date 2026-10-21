@@ -67,3 +67,27 @@ contrastes grammaticaux et à la cohorte complète.
 
 **Décision :** l'optimisation demeure désactivée par défaut en attendant
 un audit structurel de qualité, malgré le gain technique prouvé.
+
+## Contrôles transversaux sur l'ensemble des meilleurs arbres
+
+Un balayage du fichier `per_sentence.jsonl` expérimental, sans sélection
+préalable de phrases, relève les signaux suivants parmi les 455 arbres
+complétés :
+
+| Signal structurel à inspecter | Phrases concernées |
+| --- | ---: |
+| Construction `clause_front_np` quelque part dans l'arbre | 54 |
+| `clause_cop_ellipsis` quelque part dans l'arbre | 17 |
+| Impératif imbriqué commençant après du texte alphabétique (sans ponctuation intermédiaire vérifiée) | 12 |
+| NP de plus de trois mots se terminant par un pronom personnel écrit | 11 |
+| `coord_clause` initial introduit par `For` | 2 |
+
+Ce sont des **signatures de recherche**, pas des verdicts : un impératif
+imbriqué ou un constituant nominal antéposé peut être parfaitement
+grammatical. Les compteurs sont des nombres de **phrases distinctes**,
+non des occurrences; une même phrase peut avoir plusieurs signaux.
+
+Cette vue globale oriente une suite d'expériences vers les mécanismes
+communs (licence des dislocations nominales et des ellipses, séparation
+des prédicats et de leurs compléments), plutôt que des règles qui
+cibleraient un titre de roman ou un indice particulier.
