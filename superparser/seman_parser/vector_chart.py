@@ -276,13 +276,18 @@ class VectorGrammar:
 
     def __init__(self, grammar: Grammar, *,
                  preserve_quote_delimiters: bool = False,
-                 lazy_trie_recognition: bool = False) -> None:
+                 lazy_trie_recognition: bool = False,
+                 lexical_left_corner_pruning: bool = False) -> None:
         self.grammar = grammar
         # Scoped dialogue grammar consumes quotation punctuation explicitly.
         self.preserve_quote_delimiters = preserve_quote_delimiters
         # The single supported experimental alternate engine: common
         # category-prefix recognition with lazy rule-specific projection.
         self.lazy_trie_recognition = lazy_trie_recognition
+        # Research option: reject a partial only when its next constituent
+        # cannot possibly start at the following lexical position. No POS
+        # hypothesis, rule, feature constraint, or derivation is deleted.
+        self.lexical_left_corner_pruning = lexical_left_corner_pruning
         self._bits: dict[int, int] = {}
         for rule in grammar:
             self._bit(rule.lhs.category)
@@ -307,6 +312,22 @@ class VectorGrammar:
             first.setdefault(rhs_ids[0], []).append(index)
         self.rules = tuple(compiled)
         self.first = {category: tuple(indices) for category, indices in first.items()}
+        # The least fixed point of the *category* left-corner relation:
+        # A can begin with a lexical B if A => B ... or A => C ... and
+        # C can begin with B. Every category includes itself, allowing
+        # legitimate direct lexical hypotheses even for recursive symbols.
+        # No nullable rules are compiled; all lexical edges have length > 0.
+        left_corners = dict(self._bits)
+        changed = True
+        while changed:
+            changed = False
+            for rule in self.rules:
+                lhs, first_rhs = rule.lhs_id, rule.rhs_ids[0]
+                expanded = left_corners[lhs] | left_corners[first_rhs]
+                if expanded != left_corners[lhs]:
+                    left_corners[lhs] = expanded
+                    changed = True
+        self.left_corner_masks = left_corners
         # Separate experimental recognizer; compilation is amortized once.
         if lazy_trie_recognition:
             from .shared_trie_forest import compile_category_trie
@@ -431,6 +452,7 @@ class VectorGrammar:
             "lazy_rule_partials_materialized": len(forest.partials.cached)
                 if self.lazy_trie_recognition else 0,
             "partial_proposals": forest.partial_proposals,
+            "unreachable_prefix_proposals": forest.unreachable_prefix_proposals,
             "duplicate_partial_proposals": forest.duplicate_partial_proposals,
             "duplicate_transitions_avoided": forest.duplicate_transitions_avoided,
             "recognition_operations": forest.operations,
@@ -523,10 +545,24 @@ class _VectorForest:
         self.derivation_count = 0
         self.partial_derivation_count = 0
         self.partial_proposals = 0
+        self.unreachable_prefix_proposals = 0
         self.duplicate_partial_proposals = 0
         self.duplicate_transitions_avoided = 0
         self.lexical_spans = 0
         self.budget_exceeded = False
+        # Computed once from ALL existing lexical alternatives. Candidates
+        # are never filtered; this index is only a proof of impossibility
+        # for future leftmost constituents at an exact source offset.
+        self._lexical_start_masks: dict[int, int] = {}
+        if self.compiled.lexical_left_corner_pruning:
+            for candidate in lattice.candidates:
+                if candidate.span_end <= candidate.span_start:
+                    raise ValueError("Left-corner pruning requires positive lexical spans")
+                start = candidate.span_start
+                self._lexical_start_masks[start] = (
+                    self._lexical_start_masks.get(start, 0)
+                    | compiled.bit(candidate.category)
+                )
     def _next_start(self, end: int) -> int:
         separators = (' \t\r\n' if self.compiled.preserve_quote_delimiters
                       else ' \t\r\n"\u201c\u201d\u2018\u2019')
@@ -604,6 +640,19 @@ class _VectorForest:
         child_id: int,
     ) -> None:
         self.partial_proposals += 1
+        if self.compiled.lexical_left_corner_pruning:
+            rule = self.compiled.rules[rule_index]
+            if dot < len(rule.rhs_ids):
+                next_pos = self._next_start(end)
+                lexical_mask = self._lexical_start_masks.get(next_pos, 0)
+                possible_starts = self.compiled.left_corner_masks[rule.rhs_ids[dot]]
+                if not lexical_mask & possible_starts:
+                    # Any nonempty derivation of the expected symbol must
+                    # start with one of these lexical categories. Missing
+                    # their intersection is a proof of impossibility, even
+                    # for recursive grammar rules and multiword candidates.
+                    self.unreachable_prefix_proposals += 1
+                    return
         key = (rule_index, dot, start, end)
         partial = self.partial_by_key.get(key)
         is_new = partial is None

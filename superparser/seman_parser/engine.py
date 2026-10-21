@@ -158,12 +158,14 @@ class Parser:
         cache_size: int = 2048,
         deduplicate_lexical: bool = True,
         complexity_policy: ComplexityPolicy | None = None,
+        lexical_left_corner_pruning: bool = False,
     ) -> None:
         self.resources = resources
         self.beam = beam
         self.max_items = max_items
         self.goal_category = goal_category
         self.deduplicate_lexical = deduplicate_lexical
+        self.lexical_left_corner_pruning = lexical_left_corner_pruning
         self._lattice_cache: LRU[str, Any] = LRU(cache_size)
         self._parse_cache: LRU[tuple[str, str], ParseResult] = LRU(cache_size)
         # Grammar masks and transition indexes are immutable and shared by
@@ -178,7 +180,10 @@ class Parser:
             and any(symbol.category in {"COMMA", "COORD"} for symbol in rule.rhs)
             and all(symbol.category in interface_categories for symbol in rule.rhs)
         )
-        self._assembly_vector_grammar = VectorGrammar(Grammar(assembly_rules))
+        self._assembly_vector_grammar = VectorGrammar(
+            Grammar(assembly_rules),
+            lexical_left_corner_pruning=lexical_left_corner_pruning,
+        )
         # Three/four-clause list rules are valid only after `_clause_plan`
         # has independently established clause-shaped segments.  Leaving
         # them in the unrestricted grammar lets comma-delimited NP/VP lists
@@ -190,7 +195,10 @@ class Parser:
             rule for rule in resources.grammar
             if rule.rule_id not in hierarchical_only
         )
-        self._vector_grammar = VectorGrammar(Grammar(syntax_rules))
+        self._vector_grammar = VectorGrammar(
+            Grammar(syntax_rules),
+            lexical_left_corner_pruning=lexical_left_corner_pruning,
+        )
         # Opt-in dispatch, not a second parser invoked for every sentence.
         # These two grammar variants are precompiled at initialization;
         # short sentences retain the ordinary recognizer with no probe.
@@ -203,6 +211,7 @@ class Parser:
             VectorGrammar(
                 self._vector_grammar.grammar,
                 lazy_trie_recognition=True,
+                lexical_left_corner_pruning=lexical_left_corner_pruning,
             )
             if complexity_policy is not None else None
         )
@@ -217,6 +226,7 @@ class Parser:
                 dialogue_grammar = Grammar((*syntax_rules, *dialogue_rules))
                 self._dialogue_vector_grammar = VectorGrammar(
                     dialogue_grammar, preserve_quote_delimiters=True,
+                    lexical_left_corner_pruning=lexical_left_corner_pruning,
                 )
                 self._dialogue_resources = ParserResources(
                     grammar=dialogue_grammar,

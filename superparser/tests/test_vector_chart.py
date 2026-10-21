@@ -124,6 +124,46 @@ class VectorChartTests(unittest.TestCase):
                     sentence, tokenize(sentence)
                 ))
 
+    def test_left_corner_pruning_preserves_lexical_readings_and_best_trees(self) -> None:
+        cases = (
+            "John gave Mary the box.",
+            "The teacher's notebook was missing.",
+            "John, who left, opened the box.",
+            "The doors were opened, and closed.",
+            '"I have only to tell her so, and she is sure to come."',
+        )
+        baseline = self.parser
+        optimized = Parser(
+            baseline.resources, cache_size=0,
+            lexical_left_corner_pruning=True,
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                original = baseline.parse(text, max_items=50000).result
+                changed = optimized.parse(text, max_items=50000).result
+                self.assertEqual(changed.completed, original.completed)
+                self.assertEqual(
+                    [(c.span_start, c.span_end, c.category, c.sense_ids)
+                     for c in changed.lattice.candidates],
+                    [(c.span_start, c.span_end, c.category, c.sense_ids)
+                     for c in original.lattice.candidates],
+                )
+                self.assertEqual(
+                    changed.best().rule_id if changed.best() else None,
+                    original.best().rule_id if original.best() else None,
+                )
+                self.assertFalse(
+                    changed.stats["budget_exceeded"],
+                    "comparison is inconclusive on saturated forests",
+                )
+                self.assertLessEqual(
+                    changed.stats["partial_states"],
+                    original.stats["partial_states"],
+                )
+                self.assertGreaterEqual(
+                    changed.stats["unreachable_prefix_proposals"], 0,
+                )
+
     def test_saturated_forest_profiles_distinct_rule_states(self) -> None:
         result = self.parser.parse(
             "John gave Mary the box.", max_items=100,
