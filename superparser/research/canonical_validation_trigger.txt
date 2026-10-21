@@ -10,3 +10,4 @@ Checkpoint: d8047b6a179bbc60ddff6c4596fd06bd3eedbf6e — completed serial-subjec
 Checkpoint: fbb082c9dc517391a6946b0d46bdddb8b7843a7a — check perfect-relative object gaps including negative agreement contrasts.
 Checkpoint: e00d693c3bd5b31cf6798c928e3a8a2a56d77e24 — lexical adversative yet, while-supplementary ADJP, plus controlled ablation research.
 Checkpoint: 77f12a822b5867e377b6b70d28790f03b0340bbf — narrowed serial subjects require overt internal coordination and typed final group, to avoid large-forest regressions.
+Full suite validation: 2026-10-21 — verify scope-preserving diagnostic and saturation profiler after code changes.
