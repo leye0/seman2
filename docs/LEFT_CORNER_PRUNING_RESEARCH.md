@@ -360,3 +360,18 @@ propositionnelle et l'auxiliaire irrégulier `do` sont déjà des
 ressources grammaticales explicites. Le contrôle distingue ces
 échafaudages morphosyntaxiques licenciés d'une liste de noms
 propres d'un roman ou de noms de contenu hardcodés.
+
+## Départage expérimental des participes après une coordination
+
+L'option de recherche `Parser(..., local_attachment_tiebreak=True)`
+matérialise quelques alternatives supplémentaires seulement quand
+le premier arbre présente un participe `-ing` attaché à un NP
+coordonné. Pour des **scores exactement égaux**, elle privilégie la
+plus petite portée nominale du participe (*right association*).
+Les catégories, les scores, les règles et les lectures lexicales
+demeurent strictement identiques; les arbres de portée large restent
+des alternatives explicites.
+
+Cette préférence psycholinguistique est contextuelle, **pas une
+contrainte grammaticale**. Elle restera désactivée en production avant
+évaluation de non-régression sur le corpus immuable.

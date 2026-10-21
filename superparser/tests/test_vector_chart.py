@@ -816,3 +816,32 @@ class VectorChartTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+    def test_local_participial_attachment_tie_is_opt_in(self) -> None:
+        """In an exact scoring tie, prefer nearest legitimate nominal head."""
+        from seman_parser.vector_chart import (
+            _has_broad_coordinated_participle,
+            _participial_attachment_scope,
+        )
+        phrase = (
+            "They built a sample sign with a large picture, a short name, "
+            "and a smaller paragraph explaining the route."
+        )
+        baseline = self.parser.parse(phrase).result
+        trial = Parser(
+            self.parser.resources, cache_size=0,
+            local_attachment_tiebreak=True,
+        ).parse(phrase).result
+        first, preferred = baseline.best(), trial.best()
+        self.assertIsNotNone(first)
+        self.assertIsNotNone(preferred)
+        self.assertEqual(first.score, preferred.score)
+        self.assertTrue(_has_broad_coordinated_participle(first))
+        self.assertLess(
+            _participial_attachment_scope(preferred),
+            _participial_attachment_scope(first),
+        )
+        self.assertTrue(trial.stats.get("local_attachment_tiebreak_applied"))
+        self.assertTrue(trial.completed)
+

@@ -277,7 +277,8 @@ class VectorGrammar:
     def __init__(self, grammar: Grammar, *,
                  preserve_quote_delimiters: bool = False,
                  lazy_trie_recognition: bool = False,
-                 lexical_left_corner_pruning: bool = False) -> None:
+                 lexical_left_corner_pruning: bool = False,
+                 local_attachment_tiebreak: bool = False) -> None:
         self.grammar = grammar
         # Scoped dialogue grammar consumes quotation punctuation explicitly.
         self.preserve_quote_delimiters = preserve_quote_delimiters
@@ -288,6 +289,8 @@ class VectorGrammar:
         # cannot possibly start at the following lexical position. No POS
         # hypothesis, rule, feature constraint, or derivation is deleted.
         self.lexical_left_corner_pruning = lexical_left_corner_pruning
+        # Research-only right association when exact scores tie.
+        self.local_attachment_tiebreak = local_attachment_tiebreak
         self._bits: dict[int, int] = {}
         for rule in grammar:
             self._bit(rule.lhs.category)
@@ -487,6 +490,11 @@ class VectorGrammar:
         best_start = perf_counter()
         try:
             root_provider.ensure(1, charge_kbest=False)
+            if (self.local_attachment_tiebreak
+                    and root_provider.items
+                    and _has_broad_coordinated_participle(root_provider.items[0])):
+                root_provider.ensure(min(requested_k, 8), charge_kbest=False)
+                root_provider.prefer_local_participial_attachment()
         except KBestWorkBudgetExceeded:
             # There may be a derivation somewhere in the packed forest, but
             # no optimal grammatical witness was certified within budget.
@@ -1484,6 +1492,29 @@ def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
     return shift(item)
 
 
+def _has_broad_coordinated_participle(root: ChartItem) -> bool:
+    """True when a participial NP adjunct scopes over a coordinated NP."""
+    def visit(node: ChartItem) -> bool:
+        if node.rule_id in {"np_part_ing", "np_part_ing_intrans"} and node.children:
+            head = node.children[0]
+            if (head.category == "NP"
+                    and sum(c.category == "NP" for c in head.children) >= 2
+                    and any(c.category == "COORD" for c in head.children)):
+                return True
+        return any(visit(child) for child in node.children)
+    return visit(root)
+
+
+def _participial_attachment_scope(root: ChartItem) -> int:
+    """Lesser NP head spans signify structurally closer participial attachment."""
+    size = 0
+    if root.rule_id in {"np_part_ing", "np_part_ing_intrans"} and root.children:
+        head = root.children[0]
+        if head.category == "NP":
+            size += head.end - head.start
+    return size + sum(_participial_attachment_scope(c) for c in root.children)
+
+
 class _LazyRoots:
     def __init__(
         self,
@@ -1550,6 +1581,21 @@ class _LazyRoots:
                 4,
             )
         self.refresh_stats()
+
+    def prefer_local_participial_attachment(self) -> None:
+        """Only re-order tied roots; preserve both analyses and exact scores."""
+        if not self.items:
+            return
+        score = self.items[0].score
+        tied = [i for i, item in enumerate(self.items) if item.score == score]
+        if len(tied) < 2:
+            return
+        selected = min(
+            tied, key=lambda i: (_participial_attachment_scope(self.items[i]), i)
+        )
+        if selected:
+            self.items.insert(0, self.items.pop(selected))
+            self.stats["local_attachment_tiebreak_applied"] = True
 
     def refresh_stats(self) -> None:
         materializer = self.materializer
