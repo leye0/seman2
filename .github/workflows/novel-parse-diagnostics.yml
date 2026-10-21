@@ -56,6 +56,12 @@ jobs:
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --count 500 --max-items 50000 --kbest-work-limit 500000 \
             --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
+      - name: Audit original paragraph and sentence neighbors
+        run: |
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_context_dependencies
+          PYTHONPATH=superparser python -u -m scripts.audit_context_dependencies \
+            --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
+            --out-dir /tmp/novel-parse-diagnostics
       - name: Guard fixed-cohort coverage against further regressions
         run: |
           python - <<'PY'
