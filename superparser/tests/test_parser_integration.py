@@ -20,6 +20,64 @@ def make_parser() -> Parser:
 
 
 
+class DashCausalAndPerfectCoordinationTests(unittest.TestCase):
+    """Typed productive structures behind the Treasure Island #486 tree."""
+
+    @staticmethod
+    def rule_ids(node):
+        yield node.rule_id
+        for child in node.children:
+            yield from DashCausalAndPerfectCoordinationTests.rule_ids(child)
+
+    def test_overt_dash_bounded_causal_incise(self):
+        parser = make_parser()
+        good = parser.parse("Mary--for she was ready--left.", diagnostic_k=32).result
+        self.assertTrue(good.completed, good.stats)
+        self.assertTrue(any(
+            "parenthetical_dash_causal_clause" in set(self.rule_ids(tree))
+            for tree in good.alternatives(limit=32)
+        ), good.stats)
+
+        for text in (
+            "Mary--because she was ready--left.",
+            "Mary--for she was ready-left.",
+            "Mary for she was ready left.",
+        ):
+            with self.subTest(unlicensed=text):
+                result = parser.parse(text, diagnostic_k=32).result
+                self.assertFalse(any(
+                    "parenthetical_dash_causal_clause" in set(self.rule_ids(tree))
+                    for tree in result.alternatives(limit=32)
+                ), text)
+
+    def test_shared_perfect_auxiliary_scopes_both_transitive_participles(self):
+        parser = Parser(make_parser().resources, goal_category="VP")
+        good = parser.parse(
+            "had broken the window and touched the wall, not badly",
+            diagnostic_k=32,
+        ).result
+        self.assertTrue(good.completed, good.stats)
+        self.assertTrue(any(
+            "vp_perfect_coord_transitive_postposed_neg_manner"
+            in set(self.rule_ids(tree))
+            for tree in good.alternatives(limit=32)
+        ), good.stats)
+
+        for text in (
+            "had broken the window and touched the wall, badly",
+            "had broken the window and arrived, not badly",
+        ):
+            with self.subTest(unlicensed=text):
+                result = parser.parse(text, diagnostic_k=32).result
+                self.assertFalse(any(
+                    "vp_perfect_coord_transitive_postposed_neg_manner"
+                    in set(self.rule_ids(tree))
+                    for tree in result.alternatives(limit=32)
+                ), text)
+
+
+
+
 class ResidualLiteraryCoverageTests(unittest.TestCase):
     """Paired lexical and construction tests for three residual novel cases."""
 
