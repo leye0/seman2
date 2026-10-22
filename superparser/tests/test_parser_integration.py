@@ -481,6 +481,62 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             "Genuine subject-control should remain available and preferred.",
         )
 
+    def test_reporting_discourse_coordination_is_matrix_scope(self):
+        p = make_parser()
+        source = (
+            "I have said the captain was weak, and indeed he seemed "
+            "rather to grow weaker than regain his strength."
+        )
+        result = p.parse(source, diagnostic_k=64).result
+        self.assertTrue(result.completed, result.stats)
+        best = result.best()
+        self.assertIsNotNone(best)
+        assert best is not None
+
+        def selected_spans(node):
+            yield (node.rule_id, source[node.start:node.end])
+            for child in node.children:
+                yield from selected_spans(child)
+
+        spans = set(selected_spans(best))
+        self.assertIn(
+            ("clause_reporting_discourse_coord", source.rstrip(".")), spans,
+            "The overt discourse conjunct must attach to the reporting matrix.",
+        )
+        self.assertIn(
+            ("vp_perfect_clausal_zero_complement",
+             "have said the captain was weak"), spans,
+            "The reported proposition must end before the discourse boundary.",
+        )
+        self.assertNotIn(
+            ("vp_perfect_clausal_zero_complement",
+             "have said the captain was weak, and indeed he seemed "
+             "rather to grow weaker than regain his strength"), spans,
+        )
+
+        for positive in (
+            "I have said Mary was kind, and indeed John came.",
+            "I have said that Mary was kind, and indeed John came.",
+        ):
+            with self.subTest(positive=positive):
+                analyzed = p.parse(positive, diagnostic_k=32).result
+                self.assertTrue(analyzed.completed, analyzed.stats)
+                self.assertIn(
+                    "clause_reporting_discourse_coord",
+                    set(self.rule_ids(analyzed.best())),
+                )
+
+        for negative in (
+            "Mary opened the door, and indeed John came.",
+            "I have said Mary was kind, and John came.",
+        ):
+            with self.subTest(negative=negative):
+                analyzed = p.parse(negative, diagnostic_k=32).result
+                self.assertFalse(any(
+                    "clause_reporting_discourse_coord" in set(self.rule_ids(root))
+                    for root in analyzed.alternatives(limit=32)
+                ), "Matrix reporting valency AND an overt discourse link are required.")
+
     def test_modal_perfect_composes_with_lexically_typed_bare_predicates(self):
         p = make_parser()
         positives = (
