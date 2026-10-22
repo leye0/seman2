@@ -85,7 +85,13 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             item.rule_id == "vp_cop_adjp"
             and text[item.start:item.end].startswith("were full")
             for item in descendants(best)
-        ), "The explicit copula and its ADJP must form one selected predicate")
+        ), (
+            "The explicit copula and its ADJP must form one selected predicate",
+            [(node.rule_id, node.category, text[node.start:node.end])
+             for node in descendants(best)
+             if any(word in text[node.start:node.end]
+                    for word in ("Peggotty", "were", "full", "compassion"))],
+        ))
 
 
     @unittest.expectedFailure
