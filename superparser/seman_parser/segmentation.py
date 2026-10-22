@@ -184,18 +184,6 @@ def build_lattice(
             span_start = tokens[start_index].start
             span_end = tokens[end_index - 1].end
             surface = text[span_start:span_end]
-            # A curly apostrophe splits John's into John + s at the tokenizer
-            # level. The bare s is not an independent word: the productive
-            # typographic contraction path below supplies the overt ’s edge.
-            # Keep every legitimate unsplit lexical hypothesis unchanged.
-            if (
-                width == 1
-                and surface.casefold() == "s"
-                and span_start >= 2
-                and text[span_start - 1] == "\u2019"
-                and text[span_start - 2].isalpha()
-            ):
-                continue
             matches = lexicon.lookup_morphology(surface)
             if not matches and width > 1:
                 continue
@@ -1020,17 +1008,17 @@ def _contraction_candidates(
             sense=sense,
             source="contraction-clitic",
         )
-    # An overt apostrophe-s is never a bare lexical 's': treating it as an
-    # independent noun or verb creates spurious zero-relative analyses such as
-    # John’s mother = John + ('s [N] mother [V]). The apostrophe-s lookup above
-    # already preserves the copular, HAVE and genitive hypotheses.
-    if clitic.casefold() != "s":
-        for entry, sense, lemma in lexicon.lookup_morphology(clitic):
-            yield _candidate_from_sense(
-                span_start=base_end,
-                span_end=span_end,
-                surface=clitic,
-                lemma=lemma,
-                sense=sense,
-                source="contraction-clitic",
-            )
+    for entry, sense, lemma in lexicon.lookup_morphology(clitic):
+        # For an overt apostrophe-s, the bare dictionary noun "s" is not
+        # a possible clitic reading. Keep copula, HAVE and POSS hypotheses;
+        # independent uncontracted "s" remains in the lexical inventory.
+        if clitic.casefold() == "s" and sense.category == "N":
+            continue
+        yield _candidate_from_sense(
+            span_start=base_end,
+            span_end=span_end,
+            surface=clitic,
+            lemma=lemma,
+            sense=sense,
+            source="contraction-clitic",
+        )

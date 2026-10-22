@@ -579,6 +579,19 @@ class _VectorForest:
         separators = (' \t\r\n' if self.compiled.preserve_quote_delimiters
                       else ' \t\r\n"\u201c\u201d\u2018\u2019')
         while end < len(self.text) and self.text[end] in separators:
+            # A curly apostrophe within a word is part of the lexical
+            # boundary (John’s, don’t), not a transferable quote mark.
+            # Keep tokenize() and the novel quote-balancing provenance
+            # unchanged; just allow the existing morphological clitic edge
+            # to start at the apostrophe, as ASCII apostrophes already do.
+            if (
+                self.text[end] == "\u2019"
+                and end > 0
+                and end + 1 < len(self.text)
+                and self.text[end - 1].isalpha()
+                and self.text[end + 1].isalpha()
+            ):
+                break
             end += 1
         return end
 

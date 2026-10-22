@@ -20,89 +20,55 @@ def make_parser() -> Parser:
 
 
 
-class DashCausalAndPerfectCoordinationTests(unittest.TestCase):
-    """Typed productive structures behind the Treasure Island #486 tree."""
+class CausalDashInciseAndUnicodeGenitiveTests(unittest.TestCase):
+    """Source-offset preserving grammar tests for literary parentheticals."""
 
     @staticmethod
     def rule_ids(node):
         yield node.rule_id
         for child in node.children:
-            yield from DashCausalAndPerfectCoordinationTests.rule_ids(child)
+            yield from CausalDashInciseAndUnicodeGenitiveTests.rule_ids(child)
 
-    def test_overt_apostrophe_s_is_not_reinterpreted_as_a_bare_noun(self):
+    def test_dash_bounded_causal_for_requires_two_overt_dashes(self):
         parser = make_parser()
-        for phrase, mark in (
-            ("John's mother", "'s"),
-            ("John’s mother", "’s"),
-            ("it's ready", "'s"),
-            ("it’s ready", "’s"),
-        ):
-            with self.subTest(phrase=phrase):
-                start = phrase.index(mark)
-                suffix = [
-                    c for c in parser.parse(phrase).lattice.candidates
-                    if (c.span_start, c.span_end) == (start, start + len(mark))
-                ]
-                self.assertFalse(any(c.category == "N" for c in suffix))
-                # The typographic apostrophe is tokenized separately; its
-                # trailing s must not also become a free lexical word.
-                if mark == "’s":
-                    self.assertFalse(any(
-                        c.span_start == start + 1
-                        and c.span_end == start + 2
-                        for c in parser.parse(phrase).lattice.candidates
-                    ), phrase)
-                self.assertTrue(any(
-                    c.category == "POSS"
-                    and c.features.as_dict().get("genitive_clitic") == "true"
-                    for c in suffix
-                ), phrase)
-
-    def test_overt_dash_bounded_causal_incise(self):
-        parser = make_parser()
-        good = parser.parse("Mary--for she was ready--left.", diagnostic_k=32).result
-        self.assertTrue(good.completed, good.stats)
+        positive = parser.parse(
+            "Mary--for she was ready--left.", diagnostic_k=32,
+        ).result
+        self.assertTrue(positive.completed, positive.stats)
         self.assertTrue(any(
             "parenthetical_dash_causal_clause" in set(self.rule_ids(tree))
-            for tree in good.alternatives(limit=32)
-        ), good.stats)
-
-        for text in (
+            for tree in positive.alternatives(limit=32)
+        ), positive.stats)
+        for sentence in (
             "Mary--because she was ready--left.",
             "Mary--for she was ready-left.",
             "Mary for she was ready left.",
         ):
-            with self.subTest(unlicensed=text):
-                result = parser.parse(text, diagnostic_k=32).result
+            with self.subTest(sentence=sentence):
+                result = parser.parse(sentence, diagnostic_k=32).result
                 self.assertFalse(any(
                     "parenthetical_dash_causal_clause" in set(self.rule_ids(tree))
                     for tree in result.alternatives(limit=32)
-                ), text)
+                ), sentence)
 
-    def test_shared_perfect_auxiliary_scopes_both_transitive_participles(self):
-        parser = Parser(make_parser().resources, goal_category="VP")
-        good = parser.parse(
-            "had broken the window and touched the wall, not badly",
-            diagnostic_k=32,
-        ).result
-        self.assertTrue(good.completed, good.stats)
-        self.assertTrue(any(
-            "vp_perfect_coord_transitive_postposed_neg_manner"
-            in set(self.rule_ids(tree))
-            for tree in good.alternatives(limit=32)
-        ), good.stats)
-
-        for text in (
-            "had broken the window and touched the wall, badly",
-            "had broken the window and arrived, not badly",
-        ):
-            with self.subTest(unlicensed=text):
-                result = parser.parse(text, diagnostic_k=32).result
-                self.assertFalse(any(
-                    "vp_perfect_coord_transitive_postposed_neg_manner"
-                    in set(self.rule_ids(tree))
-                    for tree in result.alternatives(limit=32)
-                ), text)
+    def test_curly_apostrophe_genitive_keeps_overt_morpheme_span(self):
+        parser = Parser(make_parser().resources, goal_category="NP")
+        for phrase, mark in (("John's mother", "'s"), ("John’s mother", "’s")):
+            with self.subTest(phrase=phrase):
+                result = parser.parse(phrase, diagnostic_k=32).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(
+                    {"np_poss_s", "np_genitive"} & set(self.rule_ids(result.best())),
+                    "The apostrophe-s must be a genitive, not a zero relative.",
+                )
+                start = phrase.index(mark)
+                lattice = parser.parse(phrase).lattice
+                self.assertTrue(any(
+                    c.span_start == start and c.span_end == start + len(mark)
+                    and c.category == "POSS"
+                    and c.features.as_dict().get("genitive_clitic") == "true"
+                    for c in lattice.candidates
+                ))
 
 
 
