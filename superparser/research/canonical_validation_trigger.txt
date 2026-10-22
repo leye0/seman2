@@ -67,3 +67,4 @@ Checkpoint: 88978a89a4413ca2e3b3cfbfc135aa60ee8086e8 — verify WordNet communic
 Checkpoint: bd94f1293ddfe2680b99c3cc3ccaaef1897a3a35 — retry core test after test-message evaluation typo (str/None sorting) masked real results.
 
 Checkpoint: 2026-10-22 — validate typed dash-delimited causal incise and shared-perfect conjunct-specific negative manner without #359/#427 regressions.
+Checkpoint: factor second-conjunct participle under shared perfect and remove unlicensed bare-s noun; preserve old causal analysis.

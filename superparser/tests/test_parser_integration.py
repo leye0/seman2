@@ -29,6 +29,27 @@ class DashCausalAndPerfectCoordinationTests(unittest.TestCase):
         for child in node.children:
             yield from DashCausalAndPerfectCoordinationTests.rule_ids(child)
 
+    def test_overt_apostrophe_s_is_not_reinterpreted_as_a_bare_noun(self):
+        parser = make_parser()
+        for phrase, mark in (
+            ("John's mother", "'s"),
+            ("John’s mother", "’s"),
+            ("it's ready", "'s"),
+            ("it’s ready", "’s"),
+        ):
+            with self.subTest(phrase=phrase):
+                start = phrase.index(mark)
+                suffix = [
+                    c for c in parser.parse(phrase).lattice.candidates
+                    if (c.span_start, c.span_end) == (start, start + len(mark))
+                ]
+                self.assertFalse(any(c.category == "N" for c in suffix))
+                self.assertTrue(any(
+                    c.category == "POSS"
+                    and c.features.as_dict().get("genitive_clitic") == "true"
+                    for c in suffix
+                ), phrase)
+
     def test_overt_dash_bounded_causal_incise(self):
         parser = make_parser()
         good = parser.parse("Mary--for she was ready--left.", diagnostic_k=32).result

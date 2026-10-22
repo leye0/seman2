@@ -1008,12 +1008,17 @@ def _contraction_candidates(
             sense=sense,
             source="contraction-clitic",
         )
-    for entry, sense, lemma in lexicon.lookup_morphology(clitic):
-        yield _candidate_from_sense(
-            span_start=base_end,
-            span_end=span_end,
-            surface=clitic,
-            lemma=lemma,
-            sense=sense,
-            source="contraction-clitic",
-        )
+    # An overt apostrophe-s is never a bare lexical 's': treating it as an
+    # independent noun or verb creates spurious zero-relative analyses such as
+    # John’s mother = John + ('s [N] mother [V]). The apostrophe-s lookup above
+    # already preserves the copular, HAVE and genitive hypotheses.
+    if clitic.casefold() != "s":
+        for entry, sense, lemma in lexicon.lookup_morphology(clitic):
+            yield _candidate_from_sense(
+                span_start=base_end,
+                span_end=span_end,
+                surface=clitic,
+                lemma=lemma,
+                sense=sense,
+                source="contraction-clitic",
+            )
