@@ -45,3 +45,5 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-22 validate bounded modal-perfect composition with previous #359/#427/#439 selected-tree checks; audit #213/#226/#232 evidence; commits 19d55259,837fc36a,d5969b29.
 2026-10-22 verify typed with-NP-predicate absolute, original quote-balanced #359, and indefinite-postpositive infinitival scope; grammar/tests commit 6023822da2bfee3364d5399544e6039282a7f295.
 2026-10-22 verify fixed-budget #359 recovery via explicit DET+N with-absolute, selected #427 nominal attachment, and positive/negative semantic/lexical contrasts; commit f6029812ba3e57d5149d9955208effd84f53b73b.
+
+Checkpoint: e73a6b7219e18f35fd8e650d2cc51a1294d00e56 — verify matrix reporting scope, lexical discourse constraints and 486/487 trees with core suite.
