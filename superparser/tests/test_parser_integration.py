@@ -71,6 +71,22 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             for root in unlicensed.alternatives(limit=8)
         ))
 
+    def test_subject_raising_is_distinct_from_control(self):
+        p = make_parser()
+        cases = (
+            ("He seemed to grow tired.", "vp_finite_raising_to_infinitive"),
+            ("He seemed rather to grow weaker than regain his strength.",
+             "vp_finite_raising_rather_to_than"),
+        )
+        for sentence, expected_rule in cases:
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(any(
+                    expected_rule in set(self.rule_ids(root))
+                    for root in result.alternatives(limit=12)
+                ), expected_rule)
+
     def test_fronted_participle_with_adverb_and_detached_beneficiary(self):
         p = make_parser()
         examples = (
