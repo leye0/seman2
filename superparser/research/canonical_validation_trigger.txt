@@ -70,3 +70,4 @@ Checkpoint: 2026-10-22 — validate typed dash-delimited causal incise and share
 Checkpoint: factor second-conjunct participle under shared perfect and remove unlicensed bare-s noun; preserve old causal analysis.
 Checkpoint: preserve 359 by localizing causal incise and suppress false curly apostrophe-s lexical edge.
 Checkpoint: 2026-10-22 — isolate typed dash incise; preserve all lexical senses; parse intra-word Unicode clitic boundary without changing quote-transfer algorithm; recheck #359.
+Checkpoint: type causal-for as finite CLAUSE for dash incises and demote bare NP+AUX-BE ellipsis below overt copular predicates.
