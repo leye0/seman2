@@ -496,22 +496,25 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                 best = result.best()
                 self.assertIsNotNone(best)
                 assert best is not None
-                self.assertTrue(
-                    genitive_rules.intersection(self.rule_ids(best)),
-                    (
-                        "A productive nominal possessor must attach to the "
-                        "following noun, rather than make apostrophe-s an N compound.",
-                        phrase,
-                        [(c.surface, c.span_start, c.span_end, c.category,
-                          c.features.as_dict(), c.source)
-                         for c in parser.parse(phrase, diagnostic_k=32).lattice.candidates],
-                        sorted(set(self.rule_ids(best))),
-                        [
-                            sorted(set(self.rule_ids(root)))
-                            for root in result.alternatives(limit=8)
-                        ],
-                    ),
-                )
+                selected_rules = set(self.rule_ids(best))
+                if not genitive_rules.intersection(selected_rules):
+                    lattice = parser.parse(phrase, diagnostic_k=32).lattice
+                    candidates = [
+                        (c.surface, c.span_start, c.span_end, c.category,
+                         c.features.as_dict(), c.source)
+                        for c in lattice.candidates
+                    ]
+                    alternatives = [
+                        [rule for rule in self.rule_ids(root) if rule is not None]
+                        for root in result.alternatives(limit=8)
+                    ]
+                    self.fail((
+                        "A productive nominal possessor must attach to its "
+                        "head noun rather than be an N compound.",
+                        phrase, candidates,
+                        [rule for rule in selected_rules if rule is not None],
+                        alternatives,
+                    ))
 
         for phrase in ("Andersons ball", "the sailor coat"):
             with self.subTest(non_genitive=phrase):
