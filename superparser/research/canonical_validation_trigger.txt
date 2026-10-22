@@ -34,3 +34,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 revert overbroad clitic lexical filtering after 500-case controls; preserve attested placeholder name reading.
 2026-10-22 validate lexical nor-modal inversion and remove spurious N CONJ nominal, commit 7857d937b0cf4b9843367c931648be63bf6ef8a6.
 2026-10-22 inspect comparative attachment after N CONJ removal, diagnostic be04af980d7a8a52257872afd5c830db676084f6.
+2026-10-22 verify explicit as-degree licensing versus than comparative, commit fc2b079e000b161e9d9813a6008aec170eec517f.
