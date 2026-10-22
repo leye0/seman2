@@ -1,0 +1,71 @@
+name: Seman2 - Focused Residual Grammar Validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/focused-residual-grammar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          import os
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent': 'Seman2-research'}), timeout=90) as f:
+              data = f.read()
+          dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict'
+          dest.mkdir(parents=True, exist_ok=True)
+          wanted = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb', 'sents.vrb', 'cntlist.rev'}
+          for part in ('noun', 'verb', 'adj', 'adv'):
+              wanted.update((f'index.{part}', f'data.{part}', f'{part}.exc'))
+          with ZipFile(BytesIO(data)) as z:
+              for name in z.namelist():
+                  leaf = Path(name).name
+                  if name.startswith('wordnet/') and leaf in wanted:
+                      (dest / leaf).write_bytes(z.read(name))
+          assert (dest / 'index.verb').exists()
+          PY
+      - name: Check new construction tests and their negative contrasts
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            python -m unittest -v superparser.tests.test_parser_integration.ResidualLiteraryCoverageTests \
+            2>&1 | tee /tmp/residual-focused-tests.log
+      - name: Audit three original novel parse cases and trees
+        if: always()
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            timeout 190s python -u -m scripts.audit_novel_tree_quality \
+              --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+              --indices 349,427,439 --alternatives 1 \
+              --max-items 50000 --kbest-work-limit 500000 \
+            > /tmp/residual-trees.txt 2>&1
+          code=$?
+          grep '^NOVEL_TREE_AUDIT' /tmp/residual-trees.txt || true
+          tail -n 25 /tmp/residual-trees.txt
+          exit "$code"
+      - name: Preserve focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: residual-grammar-validation
+          path: |
+            /tmp/residual-focused-tests.log
+            /tmp/residual-trees.txt
+          if-no-files-found: warn
+          retention-days: 7
