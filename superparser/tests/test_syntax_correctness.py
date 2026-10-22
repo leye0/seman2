@@ -348,6 +348,24 @@ def test_nonclausal_coordination_requires_an_attested_phrase_connector() -> None
     for rule in grammar:
         if rule.lhs.category == "CLAUSE":
             continue
+        # A genuinely clausal dash parenthesis is also a clause-level
+        # construction: it has two overt dashes, causal FOR, a licensed
+        # pronominal subject and an agreeing finite predicate. It is not
+        # phrase-level coordination of nominal or verbal fragments.
+        if (
+            rule.lhs.category == "PARENTHETICAL"
+            and rule.lhs.features.as_dict().get("causal_incise") == "true"
+        ):
+            assert tuple(s.category for s in rule.rhs) == (
+                "DASH", "COORD", "NP", "VP", "DASH",
+            ), rule.rule_id
+            assert rule.rhs[1].features.as_dict().get("causal_coordination") == "true"
+            assert "causal_coordination" in rule.rhs[1].requires
+            assert rule.rhs[2].features.as_dict().get("pronominal") == "true"
+            assert "pronominal" in rule.rhs[2].requires
+            assert rule.rhs[3].features.as_dict().get("vform") == "finite"
+            assert "vform" in rule.rhs[3].requires
+            continue
         for symbol in rule.rhs:
             if symbol.category != "COORD":
                 continue

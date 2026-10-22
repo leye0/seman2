@@ -81,6 +81,11 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             and text[item.start:item.end].endswith("eyes were")
             for item in descendants(best)
         ), "The predicative ADJP 'full ...' belongs to the copular clause")
+        self.assertTrue(any(
+            item.rule_id == "vp_cop_adjp"
+            and text[item.start:item.end].startswith("were full")
+            for item in descendants(best)
+        ), "The explicit copula and its ADJP must form one selected predicate")
 
 
     @unittest.expectedFailure
