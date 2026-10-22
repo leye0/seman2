@@ -72,7 +72,10 @@ jobs:
             --per-book 5 --max-tokens 32 --max-items 20000 \
             --kbest-work-limit 100000 \
             --out /tmp/novel-dialogue-smoke-summary.json
+      # Full 160-case research audit is explicit: push-triggered smoke remains cheap.
+      # Opt in via workflow_dispatch or a [dialogue-160] commit marker.
       - name: Audit 160 genuine dialogues stratified by sentence length
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[dialogue-160]')
         run: |
           PYTHONPATH=superparser python -u superparser/scripts/smoke_cleaned_novel_dialogues.py \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
@@ -80,7 +83,7 @@ jobs:
             --kbest-work-limit 100000 \
             --out /tmp/dialogue-audit/novel-dialogue-audit-summary.json
       - name: Preserve large dialogue audit even on error
-        if: always()
+        if: always() && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[dialogue-160]'))
         uses: actions/upload-artifact@v4
         with:
           name: real-cleaned-novel-dialogue-audit-160
