@@ -79,6 +79,16 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         self.assertEqual(copula.features.as_dict().get("vform"), "ing")
         self.assertIn("vform", copula.requires)
 
+    def test_clause_coordination_rejects_causal_for_as_plain_coordinator(self):
+        rules = [r for r in self.parser.resources.grammar
+                 if r.rule_id == "clause_correlative"]
+        self.assertEqual(len(rules), 1)
+        coordinator = rules[0].rhs[1]
+        self.assertEqual(
+            coordinator.features.as_dict().get("nominal_coordination"), "true",
+        )
+        self.assertIn("nominal_coordination", coordinator.requires)
+
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
             ("Mary's eyes were ready.", "plural"),

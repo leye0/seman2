@@ -82,3 +82,5 @@ Checkpoint: compare ASCII/Unicode genitive plural NP, short finite predicate, an
 Checkpoint: contrast genitive plural with regular subjects and print selected feature structures.
 
 Checkpoint: scope nested lexical variable bindings to the parent RHS interface; test plural head of genitive.
+
+Checkpoint: restrict unrestricted clausal coordinator to ordinary coordination, excluding causal for from correlative clauses.
