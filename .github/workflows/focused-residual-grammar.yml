@@ -41,7 +41,7 @@ jobs:
                       (dest / leaf).write_bytes(z.read(name))
           assert (dest / 'index.verb').exists()
           PY
-      - name: Check ten targeted construction tests and negative contrasts
+      - name: Check eleven targeted construction tests and negative contrasts
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
@@ -89,6 +89,15 @@ jobs:
           grep '^NOVEL_TREE_AUDIT' /tmp/residual-trees.txt || true
           cat /tmp/residual-trees.txt
           exit "$code"
+      - name: Ablate canonical quoted cases 359 and 414 without editing production grammar
+        if: always()
+        run: |
+          set -o pipefail
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            timeout 140s python -u -m scripts.audit_quote_regressions \
+              --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+              --indices 359,414 --budget 50000 --raised-budget 60000 \
+            2>&1 | tee /tmp/quote-regression-ablation.log
       - name: Preserve focused evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -97,5 +106,6 @@ jobs:
           path: |
             /tmp/residual-focused-tests.log
             /tmp/residual-trees.txt
+            /tmp/quote-regression-ablation.log
           if-no-files-found: warn
           retention-days: 7
