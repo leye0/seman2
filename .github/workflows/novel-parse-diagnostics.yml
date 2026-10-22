@@ -62,7 +62,7 @@ jobs:
           PYTHONPATH=superparser python -u -m scripts.audit_context_dependencies \
             --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
             --out-dir /tmp/novel-parse-diagnostics
-      - name: Guard fixed-cohort coverage against further regressions
+      - name: Guard fixed-cohort coverage near the verified 460/500 checkpoint
         run: |
           python - <<'PY'
           import json
@@ -71,9 +71,9 @@ jobs:
           totals = summary['totals']
           assert totals['n'] == 500, totals
           assert totals['statuses']['error'] == 0, totals
-          assert totals['completed'] >= 434, (
+          assert totals['completed'] >= 457, (
               f"Fixed literary cohort coverage regressed: {totals['completed']}/500 "
-              '(minimum verified after morphology/agreement changes: 434/500)'
+              '(minimum accepted after 457-to-460 fixed-cohort checkpoint: 457/500; audit per-case tree quality independently)'
           )
           print('NOVEL_COVERAGE_GATE', totals['completed'], '/500')
           PY
