@@ -468,6 +468,42 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             "Genuine subject-control should remain available and preferred.",
         )
 
+    def test_modal_perfect_composes_with_lexically_typed_bare_predicates(self):
+        p = make_parser()
+        positives = (
+            ("Mary would have answered the question.",
+             "vpnp_base_perfect_transitive"),
+            ("John could have written a letter.",
+             "vpnp_base_perfect_transitive"),
+            ("Mary might have arrived.",
+             "vpnp_base_perfect_intransitive"),
+        )
+        for sentence, constituent in positives:
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence, diagnostic_k=32).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertIn(
+                    constituent, set(self.rule_ids(parsed.best())),
+                    (sentence, constituent, parsed.stats),
+                )
+                self.assertIn(
+                    "vp_modal_bare", set(self.rule_ids(parsed.best())),
+                    (sentence, parsed.stats),
+                )
+
+        for sentence in (
+            "Mary would have the question.",
+            "Mary might have an arrival.",
+        ):
+            with self.subTest(unlicensed=sentence):
+                parsed = p.parse(sentence, diagnostic_k=32).result
+                self.assertFalse(any(
+                    {"vpnp_base_perfect_transitive",
+                     "vpnp_base_perfect_intransitive"}
+                    & set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=32)
+                ), sentence)
+
     def test_original_novel_cases_preserve_key_structural_distinctions(self):
         p = make_parser()
         cases = (
