@@ -19,6 +19,76 @@ def make_parser() -> Parser:
     return Parser.from_dir(DATA)
 
 
+
+class ResidualLiteraryCoverageTests(unittest.TestCase):
+    """Paired lexical and construction tests for three residual novel cases."""
+
+    @staticmethod
+    def rule_ids(node):
+        yield node.rule_id
+        for child in node.children:
+            yield from ResidualLiteraryCoverageTests.rule_ids(child)
+
+    def test_lexical_licenses_are_specific_and_preserve_regular_readings(self):
+        p = make_parser()
+        expected = (
+            ("within", "PREP", None),
+            ("rather", "ADV", "rather_infinitival_alternative"),
+            ("than", "CONJ", "infinitival_comparison_marker"),
+            ("for", "PREP", "supplementary_benefactive"),
+        )
+        for surface, category, feature in expected:
+            with self.subTest(surface=surface):
+                candidates = [
+                    c for c in p.parse(surface).lattice.candidates
+                    if c.surface.casefold() == surface and c.category == category
+                ]
+                self.assertTrue(candidates, (surface, category))
+                if feature:
+                    self.assertTrue(any(
+                        c.features.as_dict().get(feature) == "true"
+                        for c in candidates
+                    ), (surface, feature))
+        for other in ("and", "or", "but"):
+            with self.subTest(other=other):
+                self.assertFalse(any(
+                    c.features.as_dict().get("infinitival_comparison_marker") == "true"
+                    for c in p.parse(other).lattice.candidates
+                ))
+
+    def test_subject_control_rather_than_requires_explicit_comparison(self):
+        p = make_parser()
+        positive = p.parse("Mary tried rather to walk than run.").result
+        self.assertTrue(positive.completed, positive.stats)
+        rule = "vp_subject_control_rather_to_than"
+        self.assertTrue(any(
+            rule in set(self.rule_ids(root))
+            for root in positive.alternatives(limit=8)
+        ))
+        unlicensed = p.parse("Mary tried rather to walk and run.").result
+        self.assertFalse(any(
+            rule in set(self.rule_ids(root))
+            for root in unlicensed.alternatives(limit=8)
+        ))
+
+    def test_fronted_participle_with_adverb_and_detached_beneficiary(self):
+        p = make_parser()
+        examples = (
+            ("Foraging about, I found a bottle.",
+             "clause_front_participial_adverb"),
+            ("I saved a seat, for Mary.",
+             "clause_final_comma_benefactive_pp"),
+        )
+        for sentence, expected_rule in examples:
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertTrue(any(
+                    expected_rule in set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=8)
+                ), expected_rule)
+
+
 class SegmentationTests(unittest.TestCase):
     def test_lexicalized_placeholder_name_keeps_external_copula_and_other_readings(self):
         p = make_parser()
