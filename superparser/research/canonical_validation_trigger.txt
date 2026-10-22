@@ -31,3 +31,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 include source-context unit tests and clarify complete parse vs linguistic correctness.
 2026-10-21 attested nominal placeholder expressions with apostrophes and hyphens, external copula preserved.
 2026-10-21 disallow open-class noun/verb for written apostrophe clitics, preserve actual standalone letter.
+2026-10-21 revert overbroad clitic lexical filtering after 500-case controls; preserve attested placeholder name reading.

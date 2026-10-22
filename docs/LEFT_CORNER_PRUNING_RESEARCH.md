@@ -451,3 +451,19 @@ hypothèse WordNet n'est filtrée et les 500 meilleurs arbres restent
 inchangés. Une future ressource de cadres adjectivaux pourra ainsi
 faire la différence entre contrôle du sujet, montée et extraction
 d'objet sans modifier le moteur générique.
+
+## Essai rejeté : interdiction de tout homographe nominal après apostrophe
+
+Une restriction expérimentale des lectures ouvertes (`N/V/ADJ/ADV`)
+au seul endroit du `s` clitique changeait localement l'arbre de
+`it's about that`, mais la cohorte canonique est descendue de
+**452/500 à 449/500**. Quatre analyses auparavant complètes ont été
+perdues (#99, #212, #441, #466 : `Em’ly’s`, `Clement's`,
+`Kitt's`, `he's`) et une nouvelle phrase a été reconnue (#76).
+La restriction supprimait des hypothèses dont certaines constructions
+possessives et copulaires ont encore besoin, sans que leur vraie
+structure soit correctement licenciée. **Rejet :** le filtrage
+morphologique global est annulé; l'entrée lexicale indépendante
+`what's-his-name` est conservée. On ne doit pas échanger quatre
+reconnaissances contre un meilleur arbre isolé. La question des
+possessifs et clitiques reste ouverte pour une correction structurale.

@@ -488,32 +488,6 @@ def build_lattice(
                     )
                 )
 
-    # A contraction suffix following a letter and apostrophe is a clitic,
-    # not an arbitrary lexical word. The legacy curly-apostrophe tokenizer
-    # also emits the bare final letter as an independent token; WordNet
-    # then supplies an unrelated N reading of 's' that constructs
-    # false NPs such as 'it's about that' -> POSS(it)+N(s)+PP.
-    # Keep the full unsplit token and ALL alternative grammatical clitic
-    # readings; only disallow independently open-class suffix senses at
-    # a proven contraction position. The standalone letter S remains N.
-    clitic_categories = {
-        "AUX", "AUX-BE", "COPULA", "HAVE", "MODAL", "NEG",
-        "POSS", "PRONOUN",
-    }
-    clitic_spans = set()
-    for match in re.finditer(
-        r"(?<=[A-Za-z])['\u2019](?:s|d|ll|re|ve|m)\b",
-        text, re.I,
-    ):
-        clitic_spans.add((match.start(), match.end()))
-        clitic_spans.add((match.start() + 1, match.end()))
-    if clitic_spans:
-        candidates = [
-            c for c in candidates
-            if ((c.span_start, c.span_end) not in clitic_spans
-                or c.category in clitic_categories)
-        ]
-
     candidates = _apply_lexical_priors(candidates, tokens)
 
     from .perf import filter_lattice_candidates
