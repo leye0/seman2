@@ -77,3 +77,4 @@ Checkpoint: require actual participial copula before producing gerund nominal an
 Checkpoint: constrain free-standing POSS+N to anaphoric determiner; retain productive apostrophe-s via genitive-only routes.
 Checkpoint: project WordNet BE's predicative complement as linking rather than transitive object-gap valence; check Peggotty tree.
 Checkpoint: diagnose full vs fragment structural roots of Peggotty's finite copular subordinate when no full tree survives.
+Checkpoint: compare ASCII/Unicode genitive plural NP, short finite predicate, and LC vs normal composition in Peggotty clause.

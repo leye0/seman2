@@ -89,6 +89,11 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         best = report.result.best()
         if best is None:
             probes = (
+                ("Peggotty’s eyes", "NP"),
+                ("Peggotty's eyes", "NP"),
+                ("Peggotty’s eyes were ready", "CLAUSE"),
+                ("Peggotty's eyes were ready", "CLAUSE"),
+                ("Mary's eyes were ready", "CLAUSE"),
                 ("Peggotty’s eyes were full of compassion for him", "CLAUSE"),
                 ("were full of compassion for him", "VP"),
                 ("while Peggotty’s eyes were full of compassion for him, she said his generous impulse would do him good", "CLAUSE"),
@@ -109,6 +114,14 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
                                 [(node.rule_id, node.category)
                                  for node in descendants(selected)][:24]
                                 if selected else []))
+            control = Parser(
+                self.parser.resources, goal_category="CLAUSE",
+                lexical_left_corner_pruning=False, cache_size=0,
+            ).parse("Peggotty’s eyes were full of compassion for him",
+                    max_items=50000).result
+            details.append(("without left-corner pruning", bool(control.best()),
+                            control.stats.get("structural_root_nodes"),
+                            control.stats.get("budget_exceeded")))
             self.fail(("No selected full tree", report.result.stats, details))
         self.assertFalse(any(
             item.rule_id == "clause_cop_ellipsis"
