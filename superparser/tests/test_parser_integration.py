@@ -210,6 +210,19 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             set(self.rule_ids(parsed.best())),
         )
 
+    def test_original_copular_nor_reaches_a_real_inversion_tree(self):
+        p = make_parser()
+        sentence = (
+            "Nor was that wonderful, seeing how cavalier had been "
+            "the captain's answer."
+        )
+        parsed = p.parse(sentence, diagnostic_k=32).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        self.assertIn(
+            "clause_negative_coordinator_copular_adj_inversion",
+            set(self.rule_ids(parsed.best())),
+        )
+
     def test_degree_before_indefinite_noun_has_real_article_and_head(self):
         p = make_parser()
         rule = "np_prenominal_degree_adjective_indefinite_noun"
