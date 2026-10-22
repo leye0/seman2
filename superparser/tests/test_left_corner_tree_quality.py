@@ -90,6 +90,11 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         if best is None:
             probes = (
                 ("Peggotty’s eyes", "NP"),
+                ("eyes", "N"),
+                ("were ready", "VP"),
+                ("his eyes were ready", "CLAUSE"),
+                ("the eyes were ready", "CLAUSE"),
+                ("Mary saw John", "CLAUSE"),
                 ("Peggotty's eyes", "NP"),
                 ("Peggotty’s eyes were ready", "CLAUSE"),
                 ("Peggotty's eyes were ready", "CLAUSE"),
@@ -111,6 +116,7 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
                 details.append((probe, goal, bool(selected),
                                 subresult.stats.get("structural_root_nodes"),
                                 subresult.stats.get("budget_exceeded"),
+                                selected.features.as_dict() if selected else {},
                                 [(node.rule_id, node.category)
                                  for node in descendants(selected)][:24]
                                 if selected else []))
