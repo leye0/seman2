@@ -36,3 +36,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-22 inspect comparative attachment after N CONJ removal, diagnostic be04af980d7a8a52257872afd5c830db676084f6.
 2026-10-22 verify explicit as-degree licensing versus than comparative, commit fc2b079e000b161e9d9813a6008aec170eec517f.
 2026-10-22 verify all as-degree markers have overt lexical licensing, commit 532af369cf5af258a8fad0785c913f32ca35f908.
+2026-10-22 validate productive auxiliary/copular nor inversion and original case 361 best tree, commit 967eaafe2095d3968eba14e6646a80b4218a3648.
