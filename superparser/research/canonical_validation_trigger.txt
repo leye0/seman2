@@ -84,3 +84,5 @@ Checkpoint: contrast genitive plural with regular subjects and print selected fe
 Checkpoint: scope nested lexical variable bindings to the parent RHS interface; test plural head of genitive.
 
 Checkpoint: restrict unrestricted clausal coordinator to ordinary coordination, excluding causal for from correlative clauses.
+
+Checkpoint: require overt category feature licensing on all clausal coordination and gapping COORD tokens.

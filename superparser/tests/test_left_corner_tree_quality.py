@@ -88,6 +88,13 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             coordinator.features.as_dict().get("nominal_coordination"), "true",
         )
         self.assertIn("nominal_coordination", coordinator.requires)
+        for rule in self.parser.resources.grammar:
+            for symbol in rule.rhs:
+                if symbol.category == "COORD":
+                    self.assertTrue(
+                        symbol.requires,
+                        f"{rule.rule_id} accepts an untyped coordinator",
+                    )
 
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
