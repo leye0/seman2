@@ -160,6 +160,51 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                     for root in result.alternatives(limit=32)
                 ))
 
+    def test_negative_coordinator_supports_auxiliary_and_copular_inversions(self):
+        p = make_parser()
+        examples = (
+            ("Nor did Mary leave.",
+             "clause_negative_coordinator_aux_inversion"),
+            ("Nor was that wonderful.",
+             "clause_negative_coordinator_copular_adj_inversion"),
+            ("Nor was Mary a fool.",
+             "clause_negative_coordinator_copular_nominal_inversion"),
+        )
+        for sentence, expected in examples:
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence, diagnostic_k=32).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertTrue(any(
+                    expected in set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=32)
+                ), (sentence, parsed.stats))
+        restricted = (
+            "And did Mary leave.",
+            "But was that wonderful.",
+            "And was Mary a fool.",
+        )
+        new_rules = {expected for _, expected in examples}
+        for sentence in restricted:
+            with self.subTest(unlicensed=sentence):
+                parsed = p.parse(sentence, diagnostic_k=32).result
+                self.assertFalse(any(
+                    new_rules & set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=32)
+                ))
+
+    def test_original_negative_inversion_is_not_spurious_recognition(self):
+        p = make_parser()
+        sentence = (
+            "I did not know the names of the towns that I was to pass through, "
+            "nor could I ask information from a single human being."
+        )
+        parsed = p.parse(sentence, diagnostic_k=32).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        self.assertIn(
+            "clause_negative_coordinator_modal_inversion",
+            set(self.rule_ids(parsed.best())),
+        )
+
     def test_degree_before_indefinite_noun_has_real_article_and_head(self):
         p = make_parser()
         rule = "np_prenominal_degree_adjective_indefinite_noun"
