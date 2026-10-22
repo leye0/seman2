@@ -275,7 +275,7 @@ def test_comparative_construction_requires_a_comparative_preposition() -> None:
     ).result.best()
     assert ordinary is not None and comparative is not None
     assert not any(rule.startswith("np_comparative") for rule in rules(ordinary))
-    assert "np_comparative_than" in rules(comparative)
+    assert "np_comparative_than" in rules(comparative), comparative.as_dict()
 
 
 def test_ed_verb_plus_pp_does_not_create_a_finite_passive() -> None:
