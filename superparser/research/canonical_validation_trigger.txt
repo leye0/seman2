@@ -40,3 +40,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-22 audit chosen nor did declarative inversion vs existing polar-question ranking, commit 13d3067ed129b77d10d447816dd61416b62f7d78.
 2026-10-22 audit chosen trees and attachment quality for recovered novel cases 361/423; test and CI probes from 442967b6c064612ae3903e547886dfc494348aa3.
 2026-10-22 audit selected full trees for #361/#423 after separating copular inversion recognition from predicate attachment quality, commit 23074e80a9aa706171ec6bf0113ac34e74496c0b.
+2026-10-22 prefer WordNet-licensed object-control and finite-HAVE participles in case 359; contrast full selected trees, commits 0a60247 and 15d0b5e.
