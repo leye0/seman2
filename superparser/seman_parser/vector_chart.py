@@ -497,7 +497,7 @@ class VectorGrammar:
                 root_provider.prefer_local_participial_attachment()
             if (root_provider.items
                     and _reported_discourse_embedding(root_provider.items[0])):
-                root_provider.ensure(min(requested_k, 4), charge_kbest=False)
+                root_provider.ensure(min(requested_k, 8), charge_kbest=False)
                 root_provider.prefer_matrix_discourse_scope()
         except KBestWorkBudgetExceeded:
             # There may be a derivation somewhere in the packed forest, but
@@ -1633,11 +1633,15 @@ class _LazyRoots:
         self.refresh_stats()
 
     def prefer_matrix_discourse_scope(self) -> None:
-        """Resolve *only* exact root-score ties using lexical reporting scope."""
+        """Resolve score-equivalent roots using lexical reporting/discourse scope."""
         if not self.items:
             return
         score = self.items[0].score
-        tied = [i for i, item in enumerate(self.items) if item.score == score]
+        # Associative summation of identical rule scores can differ by one
+        # ULP when the same coordination is parented at another height.
+        # Tolerance is numerical (1e-12), not a syntactic score bonus.
+        tied = [i for i, item in enumerate(self.items)
+                if abs(item.score - score) <= 1e-12]
         if len(tied) < 2:
             return
         selected = min(
