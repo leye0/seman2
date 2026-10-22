@@ -68,6 +68,17 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         self.assertNotEqual(best.rule_id, "coord_clause",
                             "'For my part' is a PP, not a clausal coordinator")
 
+    def test_copular_gerund_requires_positive_ing_evidence(self):
+        from seman_parser.grammar import load_grammar
+        grammar = load_grammar(DATA / "grammar.jsonl")
+        matching = [rule for rule in grammar.rules
+                    if rule.rule_id == "np_gerund_cop_adjp"]
+        self.assertEqual(len(matching), 1)
+        copula = matching[0].rhs[0]
+        self.assertEqual(copula.category, "COPULA")
+        self.assertEqual(copula.features.as_dict().get("vform"), "ing")
+        self.assertIn("vform", copula.requires)
+
     def test_copular_predicate_not_detached_into_dislocated_np(self):
         text = (
             "but while Peggotty’s eyes were full of compassion for him, "

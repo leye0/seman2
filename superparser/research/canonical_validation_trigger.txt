@@ -73,3 +73,4 @@ Checkpoint: 2026-10-22 — isolate typed dash incise; preserve all lexical sense
 Checkpoint: type causal-for as finite CLAUSE for dash incises and demote bare NP+AUX-BE ellipsis below overt copular predicates.
 Checkpoint: retain full-sense Unicode genitives, constrain causal parenthetical as clausal construction, and remove unlicensed bare copular ellipse.
 Checkpoint: show selected Peggotty copular phrase subtree in failing quality assertion.
+Checkpoint: require actual participial copula before producing gerund nominal and re-evaluate Peggotty full predicate.
