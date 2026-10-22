@@ -481,6 +481,35 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             "Genuine subject-control should remain available and preferred.",
         )
 
+    def test_productive_genitive_clitic_selects_possessed_nominal_head(self):
+        parser = Parser(make_parser().resources, goal_category="NP")
+        genitive_rules = {"np_poss_s", "np_genitive"}
+        for phrase in (
+            "Anderson's ball",
+            "John's mother",
+            "John’s mother",
+            "the sailor's coat",
+        ):
+            with self.subTest(genitive=phrase):
+                result = parser.parse(phrase, diagnostic_k=32).result
+                self.assertTrue(result.completed, (phrase, result.stats))
+                best = result.best()
+                self.assertIsNotNone(best)
+                assert best is not None
+                self.assertTrue(
+                    genitive_rules.intersection(self.rule_ids(best)),
+                    "A productive nominal possessor must attach to the following "
+                    "noun, rather than making apostrophe-s a lexical N compound.",
+                )
+
+        for phrase in ("Andersons ball", "the sailor coat"):
+            with self.subTest(non_genitive=phrase):
+                result = parser.parse(phrase, diagnostic_k=32).result
+                self.assertFalse(any(
+                    genitive_rules.intersection(self.rule_ids(root))
+                    for root in result.alternatives(limit=32)
+                ), "Without an overt apostrophe-s, no genitive rule is licensed.")
+
     def test_comma_reporting_requires_lexical_clausal_valency(self):
         p = Parser(make_parser().resources, goal_category="VP")
         constructions = {"vp_colon_question", "vp_comma_clause"}
