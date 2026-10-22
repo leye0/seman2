@@ -636,6 +636,23 @@ def _candidate_from_sense(
 ) -> LexicalCandidate:
     constraints = _sense_syntactic_constraints(sense)
     features = _project_syntactic_features(sense)
+    # BE's predicative nominals are complements, not direct-object gaps.
+    # Keep its WordNet V hypotheses and senses, but map transitive-looking
+    # frames of the closed-class BE paradigm to linking syntax.
+    if sense.category == "V" and lemma.casefold() in {"be", "was", "is", "are"}:
+        current = features.as_dict()
+        subcat = current.get("subcat")
+        values = (list(subcat) if isinstance(subcat, (list, tuple))
+                  else [subcat] if subcat is not None else [])
+        if "transitive" in values:
+            projected = list(dict.fromkeys(
+                "linking" if value == "transitive" else value
+                for value in values
+            ))
+            features = FeatureStructure.build({
+                **current,
+                "subcat": projected[0] if len(projected) == 1 else projected,
+            })
     # Attach *surface-proven* agreement rather than treating all inflected
     # forms in a shared BE lexical entry as interchangeable.
     if (sense.category in {"COPULA", "AUX-BE", "V"} and (

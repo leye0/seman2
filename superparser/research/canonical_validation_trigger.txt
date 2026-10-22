@@ -75,3 +75,4 @@ Checkpoint: retain full-sense Unicode genitives, constrain causal parenthetical 
 Checkpoint: show selected Peggotty copular phrase subtree in failing quality assertion.
 Checkpoint: require actual participial copula before producing gerund nominal and re-evaluate Peggotty full predicate.
 Checkpoint: constrain free-standing POSS+N to anaphoric determiner; retain productive apostrophe-s via genitive-only routes.
+Checkpoint: project WordNet BE's predicative complement as linking rather than transitive object-gap valence; check Peggotty tree.

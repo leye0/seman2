@@ -29,6 +29,19 @@ class CausalDashInciseAndUnicodeGenitiveTests(unittest.TestCase):
         for child in node.children:
             yield from CausalDashInciseAndUnicodeGenitiveTests.rule_ids(child)
 
+    def test_be_copular_valence_cannot_license_transitive_object_gap(self):
+        lattice = make_parser().parse("were").lattice
+        self.assertTrue(any(c.category == "COPULA" for c in lattice.candidates))
+        for candidate in lattice.candidates:
+            if candidate.category != "V":
+                continue
+            if candidate.lemma.casefold() not in {"be", "was", "is", "are"}:
+                continue
+            valence = candidate.features.as_dict().get("subcat")
+            alternatives = valence if isinstance(valence, list) else [valence]
+            self.assertNotIn("transitive", alternatives,
+                             "BE's nominal attribute is not an object gap.")
+
     def test_possessive_determiner_is_not_a_suffix_clitic(self):
         parser = Parser(make_parser().resources, goal_category="NP")
         possessive = parser.parse("his eyes", diagnostic_k=32).result
