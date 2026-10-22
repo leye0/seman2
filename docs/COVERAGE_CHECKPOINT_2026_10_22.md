@@ -1,6 +1,136 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Verified fixed-cohort checkpoint
+## Updated verified checkpoint — 465/500 (93.0%)
+
+On main, the canonical Layer 1 suite passed **385 tests with eight expected
+failures** and all global grammar quality gates in
+[core run 39852826036](https://github.com/leye0/seman2/actions/runs/39852826036).
+The subsequent complete fixed-cohort
+[diagnostic run 39853175219](https://github.com/leye0/seman2/actions/runs/39853175219)
+verified **465/500 (93.0%)**, from the previous **462/500 (92.4%)**,
+without changing the 500-case SHA, sentence/quotation transfer or budgets.
+This checkpoint belongs to commit `1b20ca1debe56f1fb217fc68f1051c33b021347e`.
+Changes on main after that commit require their own test and coverage qualification.
+
+### Subsequent tree-quality validation (no new 500-case score yet)
+
+After the 465/500 fixed-cohort run, the verified core suite on
+[run 39856366742](https://github.com/leye0/seman2/actions/runs/39856366742)
+passed **387 tests (8 expected failures)** and all global quality checks.
+The selected original #439 sentence now attaches the *and indeed* discourse
+conjunct at matrix scope. The implementation is a bounded, lexically
+conditioned tie-break within eight best alternatives: it applies only when
+a clausal-reporting VP improperly embeds an overt coordinated discourse
+clause, and only when an equivalent-scoring top-level parse exists (machine
+precision tolerance 1e-12). It does not change recognition rules, lexical
+frames, scores, the forest budget, or the set of derivations. Productive
+negative controls and two simpler positive reporting variants pass.
+
+The same audit reveals why status and quality must not be conflated:
+
+- **#486**: the selected tree takes `Anderson's` as NP and
+  `ball--for ...` as a finite verbal predicate headed by *ball*. A
+  subsequent clausal-valency constraint on one permissive comma-reporting
+  rule exposed a second, redundant permissive rule; both have now been
+  constrained. The genuine target contains a productive genitive
+  `Anderson's ball` and an explanatory dash-delimited parenthesis.
+- **#487**: the tree attaches `we were` to a spurious object-gap relative
+  inside `the most part of the time we were` and takes
+  `broadside on` as a particle VP. The modal-perfect sequence
+  `should have made the ship` is real, but the full analysis remains
+  syntactically unsound.
+- **#213**: the object-bearing modal perfect is well formed, although the
+  initial nominal coordination/fronting deserves a separate quality audit.
+
+Consequently **465/500 is the verified numerical recognition score**, but
+the evidence supports only #213 as a new productive grammatical recovery.
+Counting #486 and #487 as improved syntax would be misleading.
+
+A family-level investigation of #486 identified the absence of an
+*overtly typed* productive apostrophe-s clitic even though `np_poss_s`
+and `np_genitive` constructions pre-existed. The loaded source is
+`superparser/data/function_words.jsonl`, not the legacy
+`lexicon.jsonl`; an explicit `genitive_clitic=true` reading has been
+added only to the morphological `'s` hypothesis, retaining alternative
+copular and HAVE readings. Lexically anchored genitive rules cannot
+consume an arbitrary pronominal POSS; tests include ASCII and curly
+apostrophes, common and proper possessors, and missing-apostrophe
+counterexamples. At the time of this entry the newly added tests are
+still being stabilized, particularly the typographic apostrophe, and
+no additional coverage gain is claimed.
+
+The dialogue regression workflow now retains its short smoke test on
+pushes but runs the expensive 160-case audit only upon explicit manual
+dispatch or a `[dialogue-160]` marker. This limits recurring GitHub
+Actions costs without removing the longer audit.
+
+Exact per-case status comparison with the 462/500 verified reference:
+
+| Case | Previous status | New status | Interpretation |
+| --- | --- | --- | --- |
+| 213 | roots_without_valid_analysis | complete | Real recovery of the licensed base HAVE + V[ed,transitive] + NP modal-perfect construction, within an attested full tree |
+| 486 | timeout | complete | Numeric recovery only: selected tree is structurally invalid, with *ball* as finite verb |
+| 487 | forest_budget_exceeded | complete | Numeric recovery only: selected tree has a spurious zero relative and *broadside* as finite verb |
+
+**Zero status regressions** across the 500 cases. The current distribution is
+465 complete, 10 no structural root, 20 roots without valid analysis,
+3 forest-limit failures, 2 timeouts, zero errors. The forest-limit flag can
+also be raised on completed examples; 18 completed analyses have saturation
+flags. The #359 quoted case is complete with its required selected
+constituents, but its dialogue attempt still approaches the fixed forest
+ceiling, so complexity efficiency remains an active issue.
+
+### Confirmed tree improvements in that checkpoint
+
+- **#359** — full canonical quoted tree selects `vp_obj_control`
+  for `allowed this intimacy to take place`, and `vp_perfect_trans`
+  for `had formed far other plans`. Both refer to the original word spans.
+- **#427** — the best tree selects the determiner+noun-headed,
+  typed-absolute modifier `np_det_head_with_absolute_modifier` with
+  `pp_absolute_with_np_adjp` over `with some brandy left`. An
+  ordinary `with a label` cannot satisfy the absolute rule. The broad
+  `NP + PP-ABSOLUTE` production had saturated #359 by creating
+  unproductive partial derivations; narrowing the high-evidence NP form
+  repaired that interaction without raising budgets.
+- **#439** — best tree now selects `vp_finite_raising_rather_to_than`,
+  rather than an incidental subject-control sense of `seem`; `try`
+  keeps the genuine control reading. At this 465 checkpoint, the
+  conjunction `and indeed he seemed...` still sits inside the reported
+  proposition of `I have said...`. A separate typed matrix-discourse
+  scope experiment is tracked after this checkpoint.
+- **#213** — modal `would` governs
+  `vpnp_base_perfect_transitive(have answered all my ideas of happiness)`.
+  The introductory `The quiet,` is treated as a fronted NP, which warrants
+  semantic/nominal coordination auditing even though recognition succeeds.
+
+### Residual islands established without budget changes
+
+A bounded canonical audit on
+[run 39853492614](https://github.com/leye0/seman2/actions/runs/39853492614)
+shows **#226** has independent failures: neither
+`in an instant arose the dreadful suspicion` (declarative clause goal)
+nor `the dreadful suspicion of his being purposely omitted` (NP goal)
+receives a complete structure. Lexical `arose` already carries
+intransitive `V[finite]` interpretations. Productive presentative
+inversion would need a positive licensing class, plus a separate solution
+for the nominal gerund/passive complement; a blanket `V NP` inversion is
+not justified.
+
+In **#232**, `was prevailed upon to get out` has a complete VP
+candidate, while `was scarcely ever prevailed upon to get out`
+has no VP root. Lexical `prevailed` carries prepositional and
+intransitive valencies. The real structure combines a scoped pair of
+adverbs, a prepositional passive and an infinitival complement; a
+free-floating PREP and an unconstrained passive rule would misrepresent
+its argument structure.
+
+The same scope audit reveals that the *matrix* and *embedded* #439
+analyses were exactly tied in score (8.99) in the verified checkpoint.
+Thus a sentence-specific lexical score change is not evidence-backed;
+the missing distinction is a typed matrix discourse boundary.
+
+
+## Historical verified fixed-cohort checkpoint (before 465/500)
 
 Repository: `leye0/seman2`, direct commits to `main`.
 Canonical Gutenberg cohort: exactly 500 fixed cases, SHA-256
@@ -83,7 +213,7 @@ changes were pushed in `0a60247c` and `15d0b5e2` and a fresh CI
 checkpoint was triggered via `70e7953e`; the numerical and tree-quality
 effects must not be claimed before that newer validation is inspected.
 
-## Subsequent grammar-quality work (awaiting fresh CI evidence)
+## Previously pending grammar-quality work (now verified above)
 
 The following are **generic, lexically constrained** productions added after
 the 462-recognition checkpoint. Do not count their intended benefits as verified
