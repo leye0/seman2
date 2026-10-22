@@ -83,6 +83,46 @@ changes were pushed in `0a60247c` and `15d0b5e2` and a fresh CI
 checkpoint was triggered via `70e7953e`; the numerical and tree-quality
 effects must not be claimed before that newer validation is inspected.
 
+## Subsequent grammar-quality work (awaiting fresh CI evidence)
+
+The following are **generic, lexically constrained** productions added after
+the 462-recognition checkpoint. Do not count their intended benefits as verified
+until the corresponding selected-tree tests and full 500-case diagnostics pass.
+
+- **#359:** Existing licensed object-control (`allow NP to VP`) and
+  transitive past-participle perfect (`had formed NP`) were promoted in
+  structural ranking. The original full quoted sentence now has a
+  selected-span regression test, plus ordinary ditransitive and possession
+  contrasts.
+- **#427:** `np_with_absolute_modifier` allows a headed NP to take a
+  separately licensed `PP[absolute_supplement=true]`. This distinguishes
+  `a bottle [with some brandy left]` from a VP-level adverb
+  `found ... left` or an ordinary `with + NP` modifier. The test
+  requires the full original tree to select both the nominal attachment
+  and the `with + NP + ADJP` absolute.
+- **#439:** The `rather to VP than VP` construction now more strongly
+  favors a *lexically licensed raising* interpretation over an incidental
+  subject-control reading on `seem`; it retains a positive
+  subject-control contrast on `try`. This does **not** resolve the
+  independent scope ambiguity between reported content and matrix
+  coordination, which must be audited separately.
+- **Potential #213 and related modal perfects:** A factored
+  `VP-NP -> HAVE[base] V[ed,transitive] NP` construction, with its
+  intransitive counterpart, composes with the pre-existing finite
+  `MODAL + VP-NP` rule. This supplies overt argument structure for
+  examples like `would have answered the question` and
+  `might have arrived`. The original #213 case remains a hypothesis
+  until its full analysis is inspected; it may have other independent
+  obstacles.
+
+The core tree audit now includes the original #427, #213, #226 and #232
+examples in addition to #359, #361, #423 and #439. No change was made
+to the corpus hash, quote-balancing transfer, budgets, or public API.
+The grammar edits were committed directly to `main` in
+`d62dca58`, `4f22eafe` and `19d55259`; the regression tests in
+`9dc48023`, `1659bb56` and `837fc36a`. The previous attempt
+at verifying #359 alone remains distinct from this grouped checkpoint.
+
 ## Generalizable grammar changes
 
 The grammar now licenses the preposition `within`; separates
