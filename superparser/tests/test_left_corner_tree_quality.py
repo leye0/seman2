@@ -85,8 +85,31 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             "she said his generous impulse would do him good, "
             "and it was better not to check it."
         )
-        best = self.parser.parse(text, max_items=50000).result.best()
-        self.assertIsNotNone(best)
+        report = self.parser.parse(text, max_items=50000)
+        best = report.result.best()
+        if best is None:
+            probes = (
+                ("Peggotty’s eyes were full of compassion for him", "CLAUSE"),
+                ("were full of compassion for him", "VP"),
+                ("while Peggotty’s eyes were full of compassion for him, she said his generous impulse would do him good", "CLAUSE"),
+                ("she said his generous impulse would do him good", "CLAUSE"),
+                ("and it was better not to check it", "CLAUSE"),
+            )
+            details = []
+            for probe, goal in probes:
+                subparser = Parser(
+                    self.parser.resources, goal_category=goal,
+                    lexical_left_corner_pruning=True, cache_size=0,
+                )
+                subresult = subparser.parse(probe, max_items=50000).result
+                selected = subresult.best()
+                details.append((probe, goal, bool(selected),
+                                subresult.stats.get("structural_root_nodes"),
+                                subresult.stats.get("budget_exceeded"),
+                                [(node.rule_id, node.category)
+                                 for node in descendants(selected)][:24]
+                                if selected else []))
+            self.fail(("No selected full tree", report.result.stats, details))
         self.assertFalse(any(
             item.rule_id == "clause_cop_ellipsis"
             and text[item.start:item.end].endswith("eyes were")
