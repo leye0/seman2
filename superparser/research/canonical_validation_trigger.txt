@@ -61,3 +61,5 @@ Checkpoint: 6cedcaef2152e6601dc954fa4af64b0236fbcf2f — check lexically constra
 Checkpoint: 744feb6aa7778b789f666edc3fd92c3cb422656b — confirm both lexical clausal-valency comma rules, productive ASCII/Unicode genitive, matrix discourse, and 359/427 budget-sensitive trees.
 
 Checkpoint: f7540e5cc6671782671277454bd06e53b92b05c7 — rerun after moving genitive-s features into canonical function-word lexicon, retaining clausal-reporting counterexample diagnostic.
+
+Checkpoint: 88978a89a4413ca2e3b3cfbfc135aa60ee8086e8 — verify WordNet communication-sense counterexample, promoted copular tree-quality test, and typographic genitive lattice diagnostic.
