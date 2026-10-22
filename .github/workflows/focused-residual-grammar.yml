@@ -96,7 +96,7 @@ jobs:
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             timeout 140s python -u -m scripts.audit_quote_regressions \
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-              --indices 359,414 --budget 50000 --raised-budget 60000 \
+              --indices 359,414 --budget 50000 --raised-budget 60000 --isolate-new-rules \
             2>&1 | tee /tmp/quote-regression-ablation.log
       - name: Preserve focused evidence
         if: always()
