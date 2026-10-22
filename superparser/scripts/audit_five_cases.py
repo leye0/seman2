@@ -11,6 +11,15 @@ from seman_parser.engine import Parser,ParserResources
 
 DATA=Path(__file__).resolve().parents[1]/"data"
 SAMPLES=(8,76,80,96,100)
+def tree(node,text):
+    if node is None:return None
+    return {
+        "rule":node.rule_id,"category":node.category,
+        "surface":text[node.start:node.end],
+        "features":node.features.as_dict(),
+        "children":[tree(c,text) for c in node.children],
+    }
+
 class Deadline(Exception):pass
 def expire(_s,_f):raise Deadline()
 
@@ -65,6 +74,7 @@ def run():
                     "best_rule":parsed.best().rule_id if parsed.best() else None,
                     "partial_states":parsed.stats.get("partial_states"),
                     "relevant_lexical_candidates":relevant,
+                    "best_tree":tree(parsed.best(),lattice.text),
                 }
             except Deadline:
                 report={"status":"timeout"}
@@ -84,6 +94,7 @@ def run():
                         "text":text,
                         "completed":res.result.completed,
                         "root":res.result.best().rule_id if res.result.best() else None,
+                        "best_tree":tree(res.result.best(),res.lattice.text),
                         "status":classify(res.result.completed,res.result.stats),
                     }
                 except Deadline:report["full_sentence"]={"status":"timeout"}

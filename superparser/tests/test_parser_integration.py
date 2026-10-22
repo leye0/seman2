@@ -1720,3 +1720,46 @@ class ProductiveHyphenMorphologyWithoutDictionaryTests(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
+    def test_english_placeholder_and_dash_have_independent_lexical_spans(self):
+        p = make_parser()
+        quote = "Old what’s-his-name’s in a bad way."
+        result = p.parse(quote)
+        self.assertTrue(result.result.completed, result.result.stats)
+        units = [
+            candidate for candidate in result.lattice.candidates
+            if candidate.source == "lexicalized-placeholder-name"
+        ]
+        self.assertEqual([x.surface for x in units], ["what’s-his-name"])
+        # The trailing 's is a distinct copular clitic, not part of the
+        # lexical nominal that denotes an unnamed person.
+        self.assertTrue(any(
+            c.category == "COPULA" and c.span_start >= units[0].span_end
+            for c in result.lattice.candidates
+        ))
+
+        literary = "And the stage-cutch that'll take you to--wherever it is."
+        lattice = p.parse(literary).lattice
+        self.assertIn(
+            ("stage-cutch", "N"),
+            {(c.surface, c.category) for c in lattice.candidates}
+        )
+        self.assertTrue({
+            ("--", "DASH"), ("--", "COMMA"),
+        } <= {(c.surface, c.category) for c in lattice.candidates})
+
+    def test_handkerchiefs_wordnet_plural_is_not_missing(self):
+        p = make_parser()
+        lattice = p.parse(
+            "I could hardly see the family for the handkerchiefs they waved."
+        ).lattice
+        readings = [
+            c for c in lattice.candidates
+            if c.surface.casefold() == "handkerchiefs" and c.category == "N"
+        ]
+        self.assertTrue(readings)
+        self.assertTrue(any(
+            c.lemma == "handkerchief"
+            and c.features.as_dict().get("number") == "plural"
+            for c in readings
+        ))
