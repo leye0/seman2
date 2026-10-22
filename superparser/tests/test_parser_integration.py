@@ -178,6 +178,11 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                     expected in set(self.rule_ids(root))
                     for root in parsed.alternatives(limit=32)
                 ), (sentence, parsed.stats))
+                if sentence == "Nor did Mary leave.":
+                    self.assertIn(
+                        expected, set(self.rule_ids(parsed.best())),
+                        "Overt nor inversion must outrank a spurious polar question.",
+                    )
         restricted = (
             "And did Mary leave.",
             "But was that wonderful.",
