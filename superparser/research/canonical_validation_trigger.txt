@@ -53,3 +53,5 @@ Checkpoint: cd35232f2936f9ee99d449180eef5a5d05301d87 — verify factorized CLAUS
 Checkpoint: ff1081ad200aee4271e51f99b73868712c7a67e0 — verify equal-score reporting scope tie-break with unchanged 524-rule recognition forest.
 
 Checkpoint: 6fd6ee69854d95c9fbc4c47e9ff383159ee05f12 — verify selected matrix scopes on two reporting variants rather than requiring unnecessary tie-break activation.
+
+Checkpoint: c808a7f69474efa2f7cfef23d8335a02ec068a12 — verify numerical equality of alternative matrix reporting scopes at unchanged forest/work limits.
