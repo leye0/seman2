@@ -532,7 +532,19 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                 self.assertFalse(any(
                     constructions.intersection(self.rule_ids(root))
                     for root in result.alternatives(limit=32)
-                ), "An arbitrary finite verb must not report a comma clause.")
+                ), (
+                    "An arbitrary finite verb must not report a comma clause.",
+                    phrase,
+                    [
+                        (c.category, c.features.as_dict(), c.provenance)
+                        for c in p.parse(phrase).lattice.candidates
+                        if c.surface == phrase.split(",", 1)[0]
+                    ],
+                    [
+                        sorted(set(self.rule_ids(root)) & constructions)
+                        for root in result.alternatives(limit=16)
+                    ],
+                ))
 
     def test_reporting_discourse_coordination_is_matrix_scope(self):
         p = make_parser()
