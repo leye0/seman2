@@ -114,12 +114,12 @@ def main() -> None:
                 if best and idx == 414 and variant in ("current", "old_nominal_coordination"):
                     from scripts.audit_novel_tree_quality import display_tree
                     print("QUOTE_REGRESSION_TREE_BEGIN", variant, idx, flush=True)
-                    print("\\n".join(display_tree(best, result.text)), flush=True)
+                    print("\n".join(display_tree(best, result.text)), flush=True)
                     print("QUOTE_REGRESSION_TREE_END", variant, idx, flush=True)
                 if best and idx == 359 and budget > args.budget:
                     from scripts.audit_novel_tree_quality import display_tree
                     print("QUOTE_REGRESSION_TREE_BEGIN", variant, idx, flush=True)
-                    print("\\n".join(display_tree(best, result.text)), flush=True)
+                    print("\n".join(display_tree(best, result.text)), flush=True)
                     print("QUOTE_REGRESSION_TREE_END", variant, idx, flush=True)
 
 
