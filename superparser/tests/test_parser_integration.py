@@ -44,6 +44,14 @@ class DashCausalAndPerfectCoordinationTests(unittest.TestCase):
                     if (c.span_start, c.span_end) == (start, start + len(mark))
                 ]
                 self.assertFalse(any(c.category == "N" for c in suffix))
+                # The typographic apostrophe is tokenized separately; its
+                # trailing s must not also become a free lexical word.
+                if mark == "’s":
+                    self.assertFalse(any(
+                        c.span_start == start + 1
+                        and c.span_end == start + 2
+                        for c in parser.parse(phrase).lattice.candidates
+                    ), phrase)
                 self.assertTrue(any(
                     c.category == "POSS"
                     and c.features.as_dict().get("genitive_clitic") == "true"

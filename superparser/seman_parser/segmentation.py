@@ -184,6 +184,18 @@ def build_lattice(
             span_start = tokens[start_index].start
             span_end = tokens[end_index - 1].end
             surface = text[span_start:span_end]
+            # A curly apostrophe splits John's into John + s at the tokenizer
+            # level. The bare s is not an independent word: the productive
+            # typographic contraction path below supplies the overt ’s edge.
+            # Keep every legitimate unsplit lexical hypothesis unchanged.
+            if (
+                width == 1
+                and surface.casefold() == "s"
+                and span_start >= 2
+                and text[span_start - 1] == "\u2019"
+                and text[span_start - 2].isalpha()
+            ):
+                continue
             matches = lexicon.lookup_morphology(surface)
             if not matches and width > 1:
                 continue
