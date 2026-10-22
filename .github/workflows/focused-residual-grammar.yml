@@ -73,7 +73,8 @@ jobs:
               for i,root in enumerate(parsed.result.alternatives(limit=128)):
                   names=set(rules(root))
                   interesting=[n for n in names if "raising" in str(n) or "rather_to_than" in str(n) or n=="np_coord_adv"]
-                  if i < 4 or interesting:\n                      print("DIAGNOSTIC_TREE",i,root.rule_id,root.score,sorted(interesting),flush=True)
+                  if i < 4 or interesting:
+                      print("DIAGNOSTIC_TREE",i,root.rule_id,root.score,sorted(interesting),flush=True)
           PY
       - name: Audit three original novel parse cases and trees
         if: always()
