@@ -123,6 +123,33 @@ The grammar edits were committed directly to `main` in
 `9dc48023`, `1659bb56` and `837fc36a`. The previous attempt
 at verifying #359 alone remains distinct from this grouped checkpoint.
 
+## Residual failure taxonomy and next directions
+
+The 462-recognition fixed-cohort diagnostic leaves **31 grammar-structure
+residuals** (10 without a structural root, 21 with roots but no valid
+analysis), plus seven resource-limited cases (four forest budgets and
+three timeouts). These are distinct forms of evidence, not 38 identical
+grammar rules to add.
+
+Inspection of the actual 31 sentence surfaces suggests the following
+*investigation categories*, not yet certified causes:
+
+| Cases | Candidate generalization | Guard against a false positive |
+| --- | --- | --- |
+| 213 | Modal + base HAVE + transitive participle + NP, now factored into the grammar | Verify the original NP subject and whole sentence, not just the modal span |
+| 226 | Postverbal subject after fronted locative PP (`in an instant arose the dreadful suspicion`) | Require attested presentative/unaccusative inversion licensing, not every intransitive verb |
+| 232 | Multi-adverb passive and stranded preposition with infinitival complement (`was scarcely ever prevailed upon to get out`) | Distinguish true valence and passive controller from free PP concatenation |
+| 94, 107, 194, 340 | Shared subjects, interrupted/nonfinite predicates and coordination | Preserve each actual conjunct and prohibit spurious NP promotion |
+| 96, 105, 220, 480 | Nested/reporting dialogue and interrupted quotations | Keep the canonical quote-balancing gateway and source provenance |
+| 473 | Object and pied-piped PP relatives sharing an antecedent | Preserve syntactic gaps and prohibit unrestricted wh nominal substitutions |
+| 8, 167, 182, 414, 434 | Context-bound fragments, letter closings, adjective or nautical ellipses | Do not invent an autonomous finite clause or artificial nominal head |
+
+Other residuals still need their trees or lexical matrices investigated.
+The ordering here favors **productive, positively licensed syntax** and
+actual selected-tree improvements over simply making complete-status
+numbers larger. The remaining resource-limited cases require separate
+work-budget diagnosis before assigning any grammatical cause.
+
 ## Generalizable grammar changes
 
 The grammar now licenses the preposition `within`; separates
