@@ -29,6 +29,22 @@ class CausalDashInciseAndUnicodeGenitiveTests(unittest.TestCase):
         for child in node.children:
             yield from CausalDashInciseAndUnicodeGenitiveTests.rule_ids(child)
 
+    def test_possessive_determiner_is_not_a_suffix_clitic(self):
+        parser = Parser(make_parser().resources, goal_category="NP")
+        possessive = parser.parse("his eyes", diagnostic_k=32).result
+        self.assertTrue(possessive.completed, possessive.stats)
+        self.assertTrue(any(
+            "np_poss" in set(self.rule_ids(tree))
+            for tree in possessive.alternatives(limit=32)
+        ), possessive.stats)
+        for phrase in ("'s eyes", "’s eyes"):
+            with self.subTest(phrase=phrase):
+                result = parser.parse(phrase, diagnostic_k=32).result
+                self.assertFalse(any(
+                    "np_poss" in set(self.rule_ids(tree))
+                    for tree in result.alternatives(limit=32)
+                ), "An apostrophe-s clitic cannot independently head a possessor NP.")
+
     def test_dash_bounded_causal_for_requires_two_overt_dashes(self):
         parser = make_parser()
         positive = parser.parse(

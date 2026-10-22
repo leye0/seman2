@@ -74,3 +74,4 @@ Checkpoint: type causal-for as finite CLAUSE for dash incises and demote bare NP
 Checkpoint: retain full-sense Unicode genitives, constrain causal parenthetical as clausal construction, and remove unlicensed bare copular ellipse.
 Checkpoint: show selected Peggotty copular phrase subtree in failing quality assertion.
 Checkpoint: require actual participial copula before producing gerund nominal and re-evaluate Peggotty full predicate.
+Checkpoint: constrain free-standing POSS+N to anaphoric determiner; retain productive apostrophe-s via genitive-only routes.
