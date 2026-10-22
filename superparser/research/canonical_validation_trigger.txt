@@ -57,3 +57,5 @@ Checkpoint: 6fd6ee69854d95c9fbc4c47e9ff383159ee05f12 — verify selected matrix 
 Checkpoint: c808a7f69474efa2f7cfef23d8335a02ec068a12 — verify numerical equality of alternative matrix reporting scopes at unchanged forest/work limits.
 
 Checkpoint: 6cedcaef2152e6601dc954fa4af64b0236fbcf2f — check lexically constrained comma reporting and fully validated matrix discourse scope.
+
+Checkpoint: 744feb6aa7778b789f666edc3fd92c3cb422656b — confirm both lexical clausal-valency comma rules, productive ASCII/Unicode genitive, matrix discourse, and 359/427 budget-sensitive trees.
