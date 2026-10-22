@@ -208,6 +208,44 @@ def diagnose_residual_islands(resources, cohort):
 
 
 
+
+def diagnose_scope_variants(resources):
+    """Inspect how reporting scope competition generalizes beyond case 439."""
+    parser = parser_variant(resources)
+    for phrase in (
+        "I have said Mary was kind, and indeed John came.",
+        "I have said that Mary was kind, and indeed John came.",
+        "I have said the captain was weak, and indeed he seemed rather to grow weaker than regain his strength.",
+        "I have said Mary was kind, and John came.",
+    ):
+        parsed = parser.parse(
+            phrase, max_items=MAX_ITEMS,
+            kbest_work_limit=KBEST_WORK, diagnostic_k=32,
+        ).result
+        for rank, root in enumerate(parsed.alternatives(limit=16), start=1):
+            spans = [(n.rule_id, phrase[n.start:n.end])
+                     for n in nodes(root)]
+            reports = [span for rule, span in spans if rule in {
+                "vp_perfect_clausal_zero_complement",
+                "vp_perfect_clausal_that_complement",
+            }]
+            matrix = any(
+                rule in {"clause_comma", "clause_comma_coord"}
+                and span == phrase.rstrip(".")
+                for rule, span in spans
+            )
+            print("SCOPE_VARIANT_RANK", json.dumps({
+                "phrase": phrase,
+                "rank": rank,
+                "score": root.score,
+                "root_rule": root.rule_id,
+                "reports": reports,
+                "matrix": matrix,
+                "tiebreak_applied": parsed.stats.get(
+                    "matrix_discourse_tiebreak_applied", False),
+            }), flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--wordnet-dir", required=True)
@@ -218,6 +256,7 @@ def main():
     diagnose_427(resources, cohort[427])
     diagnose_439(resources, cohort[439])
     diagnose_residual_islands(resources, cohort)
+    diagnose_scope_variants(resources)
 
 
 if __name__ == "__main__":
