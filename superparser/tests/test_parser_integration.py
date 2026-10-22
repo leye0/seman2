@@ -483,24 +483,25 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
 
     def test_comma_reporting_requires_lexical_clausal_valency(self):
         p = Parser(make_parser().resources, goal_category="VP")
-        construction = "vp_colon_question"
+        constructions = {"vp_colon_question", "vp_comma_clause"}
         for phrase in ("said, Mary had left", "said, John was ready"):
             with self.subTest(licensed=phrase):
                 result = p.parse(phrase, diagnostic_k=32).result
                 self.assertTrue(result.completed, (phrase, result.stats))
                 self.assertTrue(any(
-                    construction in set(self.rule_ids(root))
+                    constructions.intersection(self.rule_ids(root))
                     for root in result.alternatives(limit=32)
                 ), "Finite reporting verb has an attested clausal complement.")
 
         for phrase in (
             "kicked, Mary had left",
             "ball, John was ready",
+            "ball--for it was Job that shot him first",
         ):
             with self.subTest(unlicensed=phrase):
                 result = p.parse(phrase, diagnostic_k=32).result
                 self.assertFalse(any(
-                    construction in set(self.rule_ids(root))
+                    constructions.intersection(self.rule_ids(root))
                     for root in result.alternatives(limit=32)
                 ), "An arbitrary finite verb must not report a comma clause.")
 
