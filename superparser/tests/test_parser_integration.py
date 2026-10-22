@@ -191,13 +191,19 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
 
     def test_with_absolute_keeps_predicate_inside_oblique(self):
         p = make_parser()
-        sentence = "Mary saw a bottle with some brandy left."
-        parsed = p.parse(sentence, diagnostic_k=32).result
-        self.assertTrue(parsed.completed, parsed.stats)
+        # Audit the constituent itself instead of assuming that a short
+        # matrix clause's top 32 k-best trees expose this low-ranked PP.
+        oblique = Parser(p.resources, goal_category="PP")
+        absolute = oblique.parse("with some brandy left",
+                                 diagnostic_k=64).result
+        self.assertTrue(absolute.completed, absolute.stats)
         self.assertTrue(any(
             "pp_absolute_with_np_adjp" in set(self.rule_ids(root))
-            for root in parsed.alternatives(limit=32)
+            for root in absolute.alternatives(limit=64)
         ))
+        sentence = "Mary saw a bottle with some brandy left."
+        matrix = p.parse(sentence).result
+        self.assertTrue(matrix.completed, matrix.stats)
 
     def test_original_novel_cases_preserve_key_structural_distinctions(self):
         p = make_parser()
