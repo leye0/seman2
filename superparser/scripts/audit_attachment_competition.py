@@ -137,6 +137,77 @@ def diagnose_427(resources, case):
         }), flush=True)
 
 
+
+def diagnose_439(resources, case):
+    """Compare grammatical scope of the actual best reporting/coordination trees."""
+    parser = parser_variant(resources)
+    prepared, _, result = parse_corpus_case(
+        parser, case, max_items=MAX_ITEMS, kbest_work_limit=KBEST_WORK,
+    )
+    for rank, root in enumerate(result.alternatives(limit=32), start=1):
+        spans = [(n.rule_id, prepared.analysis_text[n.start:n.end])
+                 for n in nodes(root)]
+        reporting = [span for rule, span in spans
+                     if rule == "vp_perfect_clausal_zero_complement"]
+        coordination = [span for rule, span in spans
+                        if rule in {"clause_comma", "clause_comma_coord",
+                                    "clause_initial_coordinator_discourse_adverb"}]
+        print("SCOPE_ALTERNATIVE_439", json.dumps({
+            "rank": rank, "score": root.score, "root_rule": root.rule_id,
+            "reporting_scope": reporting, "coordination_scope": coordination,
+            "raising": any(r == "vp_finite_raising_rather_to_than" for r, _ in spans),
+        }, ensure_ascii=False), flush=True)
+
+
+def diagnose_residual_islands(resources, cohort):
+    """Identify which lexical valence or constituent family blocks real novels."""
+    parser = parser_variant(resources)
+    probes = {
+        226: ("arose", "in", "instant", "suspicion", "omitted"),
+        232: ("prevailed", "upon", "scarcely", "ever", "get"),
+    }
+    for index, words in probes.items():
+        prepared, lattice, result = parse_corpus_case(
+            parser, cohort[index], max_items=MAX_ITEMS,
+            kbest_work_limit=KBEST_WORK,
+        )
+        lexical = []
+        for candidate in lattice.candidates:
+            if candidate.surface.lower() in words:
+                lexical.append({
+                    "surface": candidate.surface,
+                    "lemma": candidate.lemma,
+                    "category": candidate.category,
+                    "features": candidate.features.as_dict(),
+                })
+        print("RESIDUAL_LEXICON", json.dumps({
+            "index": index, "completed": result.completed,
+            "status": classify(result.completed, result.stats),
+            "lexical": lexical,
+        }, ensure_ascii=False), flush=True)
+    phrases = (
+        ("in an instant arose the dreadful suspicion", "CLAUSE"),
+        ("arose the dreadful suspicion", "CLAUSE"),
+        ("the dreadful suspicion of his being purposely omitted", "NP"),
+        ("was prevailed upon to get out", "VP"),
+        ("was scarcely ever prevailed upon to get out", "VP"),
+        ("She was prevailed upon to get out.", "CLAUSE"),
+    )
+    for phrase, goal in phrases:
+        trial = parser_variant(resources, goal=goal)
+        result = trial.parse(
+            phrase, max_items=MAX_ITEMS, kbest_work_limit=KBEST_WORK,
+            diagnostic_k=16,
+        ).result
+        print("RESIDUAL_ISLAND", json.dumps({
+            "phrase": phrase, "goal": goal, "completed": result.completed,
+            "root_rule": result.best().rule_id if result.best() else None,
+            "forest_nodes": result.stats.get("forest_nodes"),
+            "budget_exceeded": result.stats.get("budget_exceeded"),
+        }, ensure_ascii=False), flush=True)
+
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--wordnet-dir", required=True)
@@ -145,6 +216,8 @@ def main():
     cohort, _ = select_cases(500)
     diagnose_original_359(resources, cohort[359])
     diagnose_427(resources, cohort[427])
+    diagnose_439(resources, cohort[439])
+    diagnose_residual_islands(resources, cohort)
 
 
 if __name__ == "__main__":
