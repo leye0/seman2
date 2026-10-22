@@ -87,6 +87,25 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                     for root in result.alternatives(limit=128)
                 ), expected_rule)
 
+    def test_all_degree_as_rules_require_overt_lexical_degree(self):
+        grammar = load_grammar(DATA / "grammar.jsonl")
+        marked = [
+            (rule.rule_id, symbol)
+            for rule in grammar.rules
+            for symbol in rule.rhs
+            if symbol.category == "CONJ"
+            and symbol.features.as_dict().get("degree") == "true"
+        ]
+        self.assertGreaterEqual(len(marked), 10)
+        for rule_id, symbol in marked:
+            with self.subTest(rule=rule_id):
+                self.assertIn("degree", symbol.requires)
+
+        pp = Parser(make_parser().resources, goal_category="PP")
+        invalid = pp.parse("than most children", diagnostic_k=32).result
+        for root in invalid.alternatives(limit=32):
+            self.assertNotIn("pp_as_adj_np", set(self.rule_ids(root)))
+
     def test_degree_as_avoids_comparative_than_attachment(self):
         p = Parser(make_parser().resources, goal_category="PP")
         construction = "pp_as_adj"
