@@ -41,13 +41,13 @@ jobs:
                       (dest / leaf).write_bytes(z.read(name))
           assert (dest / 'index.verb').exists()
           PY
-      - name: Check new construction tests and their negative contrasts
+      - name: Check nine targeted construction tests and negative contrasts
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             python -m unittest -v superparser.tests.test_parser_integration.ResidualLiteraryCoverageTests \
             2>&1 | tee /tmp/residual-focused-tests.log
-      - name: Diagnose raising candidates and competing best trees
+      - name: Diagnose raising alternatives, discourse attachments and ranking
         if: always()
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python - <<'PY'
@@ -56,13 +56,16 @@ jobs:
           p=Parser.from_dir(Path("superparser/data"))
           samples=("He seemed to grow tired.",
                    "He seemed rather to grow weaker than regain his strength.",
-                   "I have said the captain was weak, and indeed he seemed rather to grow weaker than regain his strength.")
+                   "I have said the captain was weak, and indeed he seemed rather to grow weaker than regain his strength.",
+                   "Mary saw so arduous an undertaking.",
+                   "I have said the captain was weak.",
+                   "And indeed he seemed tired.")
           def rules(node):
               yield node.rule_id
               for child in node.children:
                   yield from rules(child)
           for sentence in samples:
-              parsed=p.parse(sentence)
+              parsed=p.parse(sentence, diagnostic_k=64)
               print("DIAGNOSTIC_SENTENCE",repr(sentence),"completed",parsed.result.completed, flush=True)
               for c in parsed.lattice.candidates:
                   if c.surface.casefold()=="seemed":
