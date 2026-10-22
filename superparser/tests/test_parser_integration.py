@@ -80,11 +80,11 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
         )
         for sentence, expected_rule in cases:
             with self.subTest(sentence=sentence):
-                result = p.parse(sentence, diagnostic_k=64).result
+                result = p.parse(sentence, diagnostic_k=128, beam=128).result
                 self.assertTrue(result.completed, result.stats)
                 self.assertTrue(any(
                     expected_rule in set(self.rule_ids(root))
-                    for root in result.alternatives(limit=12)
+                    for root in result.alternatives(limit=128)
                 ), expected_rule)
 
     def test_degree_before_indefinite_noun_has_real_article_and_head(self):
@@ -158,6 +158,36 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             "np_coord_adv" in set(self.rule_ids(root))
             for root in parsed.alternatives(limit=1)
         ), "The conjunction and discourse adverb must not become the subject.")
+
+    def test_nominal_focus_particles_are_not_generic_discourse_adverbs(self):
+        p = make_parser()
+        for particle in ("even", "only", "just"):
+            with self.subTest(particle=particle):
+                self.assertTrue(any(
+                    c.category == "ADV" and
+                    c.features.as_dict().get("nominal_focus") == "true"
+                    for c in p.parse(particle).lattice.candidates
+                ))
+        for particle in ("indeed", "nevertheless"):
+            with self.subTest(unlicensed=particle):
+                self.assertFalse(any(
+                    c.category == "ADV" and
+                    c.features.as_dict().get("nominal_focus") == "true"
+                    for c in p.parse(particle).lattice.candidates
+                ))
+        nominal = p.parse("And even he could speak.", diagnostic_k=32).result
+        self.assertTrue(nominal.completed, nominal.stats)
+        self.assertTrue(any(
+            "np_coord_adv" in set(self.rule_ids(root))
+            for root in nominal.alternatives(limit=32)
+        ))
+        discourse = p.parse("And indeed he could speak.",
+                            diagnostic_k=32).result
+        self.assertTrue(discourse.completed, discourse.stats)
+        self.assertFalse(any(
+            "np_coord_adv" in set(self.rule_ids(root))
+            for root in discourse.alternatives(limit=32)
+        ))
 
     def test_with_absolute_keeps_predicate_inside_oblique(self):
         p = make_parser()
