@@ -39,6 +39,6 @@ jobs:
                       (dest / leaf).write_bytes(z.read(item))
           assert (dest / 'index.verb').exists()
           PY
-      - name: Ablate grammar at fixed budgets and inspect actual alternatives
+      - name: Audit attachment, reporting scope and residual grammatical islands
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u -m scripts.audit_attachment_competition --wordnet-dir "$RUNNER_TEMP/wordnet3/dict"
