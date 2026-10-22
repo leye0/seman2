@@ -43,9 +43,14 @@ OLD_NP_COORD_ADV = parse_rule({
 
 
 def variant_rules(resources: ParserResources, variant: str) -> Grammar:
-    if variant not in VARIANTS:
+    if variant not in VARIANTS and not variant.startswith("without_rule:"):
         raise ValueError(f"Unknown variant: {variant}")
     rules = list(resources.grammar.rules)
+    if variant.startswith("without_rule:"):
+        dropped = variant.partition(":")[2]
+        if dropped not in NEW_RULES:
+            raise ValueError(f"Unknown new rule for ablation: {dropped}")
+        rules = [r for r in rules if r.rule_id != dropped]
     if variant in ("without_six_rules", "both"):
         rules = [r for r in rules if r.rule_id not in NEW_RULES]
     if variant in ("old_nominal_coordination", "both"):
@@ -66,17 +71,21 @@ def main() -> None:
     ap.add_argument("--indices", default="359,414")
     ap.add_argument("--budget", type=int, default=50000)
     ap.add_argument("--raised-budget", type=int, default=60000)
+    ap.add_argument("--isolate-new-rules", action="store_true")
     args = ap.parse_args()
     indices = tuple(int(v) for v in args.indices.split(","))
     cases, _ = select_cases(500)
     resources = ParserResources.from_dir(DATA, wordnet_dict=args.wordnet_dir)
-    for variant in VARIANTS:
+    variants = (*VARIANTS, *(f"without_rule:{rule}" for rule in sorted(NEW_RULES))) if args.isolate_new_rules else VARIANTS
+    for variant in variants:
         grammar = variant_rules(resources, variant)
         p = Parser(ParserResources(
             grammar=grammar, lexicon=resources.lexicon,
             types=resources.types, metadata=resources.metadata,
         ), cache_size=0, max_items=args.budget)
         for idx in indices:
+            if variant.startswith("without_rule:") and idx != 359:
+                continue
             for budget in (args.budget, args.raised_budget) if idx == 359 and variant == "current" else (args.budget,):
                 start = perf_counter()
                 prepared, lattice, result = parse_corpus_case(
@@ -102,6 +111,16 @@ def main() -> None:
                 }
                 print("QUOTE_REGRESSION_ABLATION", json.dumps(
                     row, ensure_ascii=False), flush=True)
+                if best and idx == 414 and variant in ("current", "old_nominal_coordination"):
+                    from scripts.audit_novel_tree_quality import display_tree
+                    print("QUOTE_REGRESSION_TREE_BEGIN", variant, idx, flush=True)
+                    print("\\n".join(display_tree(best, result.text)), flush=True)
+                    print("QUOTE_REGRESSION_TREE_END", variant, idx, flush=True)
+                if best and idx == 359 and budget > args.budget:
+                    from scripts.audit_novel_tree_quality import display_tree
+                    print("QUOTE_REGRESSION_TREE_BEGIN", variant, idx, flush=True)
+                    print("\\n".join(display_tree(best, result.text)), flush=True)
+                    print("QUOTE_REGRESSION_TREE_END", variant, idx, flush=True)
 
 
 if __name__ == "__main__":
