@@ -525,12 +525,29 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             with self.subTest(positive=positive):
                 analyzed = p.parse(positive, diagnostic_k=32).result
                 self.assertTrue(analyzed.completed, analyzed.stats)
-                self.assertTrue(
-                    analyzed.stats.get("matrix_discourse_tiebreak_applied"),
-                    (positive, analyzed.stats),
+                root = analyzed.best()
+                self.assertIsNotNone(root)
+                assert root is not None
+
+                def spans(node):
+                    yield (node.rule_id, positive[node.start:node.end])
+                    for child in node.children:
+                        yield from spans(child)
+
+                observed = set(spans(root))
+                expected_report = (
+                    "have said that Mary was kind"
+                    if "said that" in positive else "have said Mary was kind"
                 )
+                expected_rule = (
+                    "vp_perfect_clausal_that_complement"
+                    if "said that" in positive
+                    else "vp_perfect_clausal_zero_complement"
+                )
+                self.assertIn((expected_rule, expected_report), observed)
                 self.assertIn(
-                    "clause_comma", set(self.rule_ids(analyzed.best())),
+                    ("clause_comma", positive.rstrip(".")), observed,
+                    "The discourse marker is outside the reported proposition.",
                 )
 
         for negative in (
