@@ -28,3 +28,5 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 2026-10-22: verify global fixed 500 after factoring PP-SUPPLEMENT+ADJP (recovered #359 at identical 50000-item ceiling) and preventing false nominal quote parse of context-dependent #414; 11/11 focused tests green. Prior full benchmark 459/500.
 2026-10-22: one fixed 500 comparison after nor-modal inversion, N CONJ pruning, and overt degree-as lexical gating; baseline 460/500, preserve budgets and inspect tree quality.
 2026-10-22: confirm expanded nor with did/was and chosen declarative auxiliary inversion; compare against 461/500 and do not alter fixed-cohort controls.
+
+Checkpoint: 214c98be6d4bd1f9499c031abb808a3dbd81c326 — fixed 500-case diagnostic after passing 385 tests, typed absolute NP attachment, object-control/perfect selection, and modal-perfect recovery.
