@@ -39,6 +39,50 @@ root, 22 with roots but no valid analysis, 4 forest-budget failures,
 3 timeouts, 0 errors. Some completed parses still hit a forest budget;
 completion is **not** a certificate that the best tree is linguistically sound.
 
+## Later 22 October checkpoint: productive negative inversion
+
+The following changes were committed **directly to `main`** with no change
+to the fixed 500-case cohort, quote preparation, resource limits or public parser.
+A full diagnostic after negative-inversion rules and their regression tests
+produced **462/500 recognized** ([run 39824039007](https://github.com/leye0/seman2/actions/runs/39824039007)):
+462 complete, 10 no structural root, 21 roots without a valid analysis,
+4 forest-budget failures, 3 timeouts and no errors.
+
+Relative to the earlier verified 460/500 run:
+
+- **#361** was recovered by a lexically gated `nor + finite MODAL + NP + VP-NP`
+  declarative inversion. The selected actual tree includes the correct
+  `nor could I ask information from a single human being` construction
+  ([full diagnostic 39822230151](https://github.com/leye0/seman2/actions/runs/39822230151)).
+- **#423** was newly counted complete via copular inversion, but the **selected
+  full tree is linguistically wrong**: it treats
+  `that wonderful, seeing how cavalier had been` as an appositive NP,
+  `how cavalier` as a nominal interrogative, and
+  `the captain's answer` as a second predicative NP. This status is
+  a **recognition only, not a syntactic-quality gain**. The tree was
+  inspected in [core run 39825063636](https://github.com/leye0/seman2/actions/runs/39825063636).
+  Do not report 462 as 462 certified correct trees.
+
+The corpus comparison between 461 and 462 found no other changed grammatical
+success/failure status. The production for bare `N + CONJ -> NP`, responsible
+for impossible structures such as `water than`, was removed. Degree/as
+constructions now require explicit lexical `degree` features on the
+conjunction, verified against both ordinary `as` and comparative `than`.
+The extended core validation passed **380 tests (8 known expected failures)**,
+the global grammar gate and canonical/adaptive smoke checks on
+[run 39825063636](https://github.com/leye0/seman2/actions/runs/39825063636).
+
+After that checkpoint, the grammar was adjusted to prefer two **existing,
+lexically licensed, general constructions** in the original #359 sentence:
+`V[object_control] NP TO VP-NP` (rather than treating `allowed` as
+ditransitive) and `HAVE[finite] V[ed,transitive] NP` (rather than treating
+`had` as lexical possession). Tests now inspect both selected spans in
+the **original complete quoted sentence** and check ordinary ditransitive,
+possessive-`have`, perfect and object-control contrasts. These later
+changes were pushed in `0a60247c` and `15d0b5e2` and a fresh CI
+checkpoint was triggered via `70e7953e`; the numerical and tree-quality
+effects must not be claimed before that newer validation is inspected.
+
 ## Generalizable grammar changes
 
 The grammar now licenses the preposition `within`; separates
