@@ -229,6 +229,52 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             parsed.stats,
         )
 
+    def test_selected_object_control_and_perfect_in_original_literary_tree(self):
+        p = make_parser()
+        sentence = (
+            '"The Turk allowed this intimacy to take place and encouraged '
+            'the hopes of the youthful lovers, while in his heart he '
+            'had formed far other plans."'
+        )
+        result = p.parse(sentence, diagnostic_k=32).result
+        self.assertTrue(result.completed, result.stats)
+        best = result.best()
+        self.assertIsNotNone(best)
+        assert best is not None
+
+        def selected_spans(node):
+            yield (node.rule_id, sentence[node.start:node.end])
+            for child in node.children:
+                yield from selected_spans(child)
+
+        spans = set(selected_spans(best))
+        self.assertIn(
+            ("vp_obj_control", "allowed this intimacy to take place"), spans,
+            "The infinitive must be selected as the complement of allowed, "
+            "not part of a second nominal object.",
+        )
+        self.assertIn(
+            ("vp_perfect_trans", "had formed far other plans"), spans,
+            "Finite HAVE must select the past participle and its object.",
+        )
+
+    def test_control_and_perfect_preference_preserves_contrasts(self):
+        p = make_parser()
+        examples = (
+            ("Mary allowed John to leave.", "vp_obj_control"),
+            ("Mary had formed a plan.", "vp_perfect_trans"),
+            ("John gave Mary the box.", "vp_ditransitive"),
+            ("Mary had a plan.", "vp_transitive"),
+        )
+        for sentence, expected in examples:
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence, diagnostic_k=32).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertIn(
+                    expected, set(self.rule_ids(result.best())),
+                    (sentence, expected, result.stats),
+                )
+
     def test_degree_before_indefinite_noun_has_real_article_and_head(self):
         p = make_parser()
         rule = "np_prenominal_degree_adjective_indefinite_noun"
