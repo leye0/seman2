@@ -41,7 +41,7 @@ jobs:
                       (dest / leaf).write_bytes(z.read(name))
           assert (dest / 'index.verb').exists()
           PY
-      - name: Check nine targeted construction tests and negative contrasts
+      - name: Check ten targeted construction tests and negative contrasts
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
@@ -65,15 +65,15 @@ jobs:
               for child in node.children:
                   yield from rules(child)
           for sentence in samples:
-              parsed=p.parse(sentence, diagnostic_k=64)
+              parsed=p.parse(sentence, diagnostic_k=128, beam=128)
               print("DIAGNOSTIC_SENTENCE",repr(sentence),"completed",parsed.result.completed, flush=True)
               for c in parsed.lattice.candidates:
                   if c.surface.casefold()=="seemed":
                       print("DIAGNOSTIC_LEXICAL", c.category, c.features.as_dict(), c.source, flush=True)
-              for i,root in enumerate(parsed.result.alternatives(limit=30)):
+              for i,root in enumerate(parsed.result.alternatives(limit=128)):
                   names=set(rules(root))
                   interesting=[n for n in names if "raising" in str(n) or "rather_to_than" in str(n) or n=="np_coord_adv"]
-                  print("DIAGNOSTIC_TREE",i,root.rule_id,root.score,sorted(interesting),flush=True)
+                  if i < 4 or interesting:\n                      print("DIAGNOSTIC_TREE",i,root.rule_id,root.score,sorted(interesting),flush=True)
           PY
       - name: Audit three original novel parse cases and trees
         if: always()
