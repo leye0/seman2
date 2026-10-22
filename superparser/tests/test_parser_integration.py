@@ -87,6 +87,45 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                     for root in result.alternatives(limit=128)
                 ), expected_rule)
 
+    def test_bare_conjunction_cannot_complete_a_nominal_head(self):
+        grammar = load_grammar(DATA / "grammar.jsonl")
+        self.assertFalse(any(
+            rule.lhs.category == "NP"
+            and tuple(symbol.category for symbol in rule.rhs) == ("N", "CONJ")
+            for rule in grammar.rules
+        ), "A noun followed by a subordinating conjunction is not an NP.")
+        np_parser = Parser(make_parser().resources, goal_category="NP")
+        malformed = np_parser.parse("water than").result
+        self.assertFalse(malformed.completed, malformed.stats)
+        coordinated = np_parser.parse("water and bread").result
+        self.assertTrue(coordinated.completed, coordinated.stats)
+
+    def test_negative_coordinator_licenses_modal_inversion_only(self):
+        p = make_parser()
+        construction = "clause_negative_coordinator_modal_inversion"
+        for sentence in (
+            "Nor could Mary leave.",
+            "John waited, nor could Mary leave.",
+            "Nor could I ask information from a single human being.",
+        ):
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence, diagnostic_k=32).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertTrue(any(
+                    construction in set(self.rule_ids(root))
+                    for root in result.alternatives(limit=32)
+                ), (sentence, result.stats))
+        for sentence in (
+            "And could Mary leave.",
+            "But could Mary leave.",
+        ):
+            with self.subTest(unlicensed=sentence):
+                result = p.parse(sentence, diagnostic_k=32).result
+                self.assertFalse(any(
+                    construction in set(self.rule_ids(root))
+                    for root in result.alternatives(limit=32)
+                ))
+
     def test_degree_before_indefinite_noun_has_real_article_and_head(self):
         p = make_parser()
         rule = "np_prenominal_degree_adjective_indefinite_noun"
