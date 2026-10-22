@@ -87,6 +87,21 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                     for root in result.alternatives(limit=128)
                 ), expected_rule)
 
+    def test_degree_as_avoids_comparative_than_attachment(self):
+        p = Parser(make_parser().resources, goal_category="PP")
+        construction = "pp_as_adj"
+        degree_as = p.parse("as happy", diagnostic_k=32).result
+        self.assertTrue(degree_as.completed, degree_as.stats)
+        self.assertTrue(any(
+            construction in set(self.rule_ids(root))
+            for root in degree_as.alternatives(limit=32)
+        ))
+        bare_than = p.parse("than happy", diagnostic_k=32).result
+        self.assertFalse(any(
+            construction in set(self.rule_ids(root))
+            for root in bare_than.alternatives(limit=32)
+        ), "Comparative than cannot be promoted to a degree-as PP.")
+
     def test_bare_conjunction_cannot_complete_a_nominal_head(self):
         grammar = load_grammar(DATA / "grammar.jsonl")
         self.assertFalse(any(
