@@ -80,12 +80,94 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
         )
         for sentence, expected_rule in cases:
             with self.subTest(sentence=sentence):
-                result = p.parse(sentence).result
+                result = p.parse(sentence, diagnostic_k=64).result
                 self.assertTrue(result.completed, result.stats)
                 self.assertTrue(any(
                     expected_rule in set(self.rule_ids(root))
                     for root in result.alternatives(limit=12)
                 ), expected_rule)
+
+    def test_degree_before_indefinite_noun_has_real_article_and_head(self):
+        p = make_parser()
+        rule = "np_prenominal_degree_adjective_indefinite_noun"
+        for sentence in (
+            "Mary saw so arduous an undertaking.",
+            "Mary saw too steep a hill.",
+        ):
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence, diagnostic_k=32).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertTrue(any(
+                    rule in set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=32)
+                ))
+        for sentence in (
+            "Mary saw so arduous the undertaking.",
+            "Mary saw much arduous an undertaking.",
+        ):
+            with self.subTest(unlicensed=sentence):
+                parsed = p.parse(sentence).result
+                self.assertFalse(any(
+                    rule in set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=8)
+                ))
+
+    def test_perfect_reporting_predicate_selects_a_proposition(self):
+        p = make_parser()
+        for sentence, construction in (
+            ("I have said the captain was weak.",
+             "vp_perfect_clausal_zero_complement"),
+            ("I have said that the captain was weak.",
+             "vp_perfect_clausal_that_complement"),
+        ):
+            with self.subTest(sentence=sentence):
+                parsed = p.parse(sentence, diagnostic_k=32).result
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertTrue(any(
+                    construction in set(self.rule_ids(root))
+                    for root in parsed.alternatives(limit=32)
+                ), construction)
+
+    def test_postverbal_not_requires_overt_clausal_complement(self):
+        p = make_parser()
+        rule = "vp_finite_clausal_not_that"
+        result = p.parse("I doubted not that I should succeed.",
+                         diagnostic_k=32).result
+        self.assertTrue(result.completed, result.stats)
+        self.assertTrue(any(
+            rule in set(self.rule_ids(root))
+            for root in result.alternatives(limit=32)
+        ))
+        negative = p.parse("I doubted not the book.").result
+        self.assertFalse(any(
+            rule in set(self.rule_ids(root))
+            for root in negative.alternatives(limit=8)
+        ))
+
+    def test_coordinator_plus_indeed_is_clausal_not_nominal(self):
+        p = make_parser()
+        parsed = p.parse("And indeed he seemed tired.",
+                         diagnostic_k=32).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        self.assertTrue(any(
+            "clause_initial_coordinator_discourse_adverb"
+            in set(self.rule_ids(root))
+            for root in parsed.alternatives(limit=32)
+        ))
+        self.assertFalse(any(
+            "np_coord_adv" in set(self.rule_ids(root))
+            for root in parsed.alternatives(limit=1)
+        ), "The conjunction and discourse adverb must not become the subject.")
+
+    def test_with_absolute_keeps_predicate_inside_oblique(self):
+        p = make_parser()
+        sentence = "Mary saw a bottle with some brandy left."
+        parsed = p.parse(sentence, diagnostic_k=32).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        self.assertTrue(any(
+            "pp_absolute_with_np_adjp" in set(self.rule_ids(root))
+            for root in parsed.alternatives(limit=32)
+        ))
 
     def test_fronted_participle_with_adverb_and_detached_beneficiary(self):
         p = make_parser()
