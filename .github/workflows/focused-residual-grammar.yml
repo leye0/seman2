@@ -41,7 +41,7 @@ jobs:
                       (dest / leaf).write_bytes(z.read(name))
           assert (dest / 'index.verb').exists()
           PY
-      - name: Check eleven targeted construction tests and negative contrasts
+      - name: Check eleven tests including the isolated with-absolute constituent
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
