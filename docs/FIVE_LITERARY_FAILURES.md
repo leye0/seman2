@@ -86,14 +86,18 @@ orthographique existante.
 
 `handkerchiefs` est reconnu comme `N` pluriel, lemme
 `handkerchief`, et `waved` porte une lecture verbale transitive.
-La construction manquante est principalement
-`the handkerchiefs [that] they waved` : une relative restrictive
-**sans relatif prononcé**, dont `handkerchiefs` remplit le trou
-d'objet de `wave`. Les règles `np_relative_obj` présentes
-requièrent un relatif explicite; la variante zéro devra être
-licenciée par un objet manquant et un prédicat transitif,
-pas simplement `NP NP VP`. La première proposition porte
-aussi `before the coach started` comme subordonnée temporelle.
+**Rectification après tests minimaux sur `92151fa` :** la relative zéro
+existe déjà (`wh_bare` + `vp_gap_transitive` + `np_relative_obj`).
+`I saw the handkerchiefs they waved.` et le second membre entier sont
+reconnus avec cette structure. Le blocage isolé est `I had barely time
+to get down again` : l'adverbe entre HAVE possessif et NP manquait dans
+le cadre avec infinitif. L'ajout de ce cadre permet maintenant la
+reconnaissance du cas 100, sans nouvelle règle de relative.
+
+**Qualité encore imparfaite :** le meilleur arbre traite `before the
+coach started` comme PP + NP participial au lieu d'une subordonnée
+finie. Le statut `complete` n'est donc pas une certification de
+l'arbre entier. Voir `RESIDUAL_CONSTRUCTIONS_2026_10_21.md`.
 
 ## Règle méthodologique
 
@@ -103,3 +107,12 @@ automatiquement un échec du découpage. Les preuves conservent
 l'original, la version balancée, le treillis lexical et l'arbre
 sélectionné, et les nouvelles règles passent par des tests appariés
 sans augmenter arbitrairement leurs scores.
+
+## Mise à jour : cas 80
+
+Les tests minimaux isolent trois pièces : complément infinitif de
+l'adjectif sous copule de base, incise PP entre l'adjectif et TO,
+et emploi prépositionnel `attain to`. Les nouvelles lectures/règles
+licenciées permettent le cas canonique entier, avec les guillemets
+transférés intacts. Le meilleur arbre conserve l'incise et le vrai
+VP infinitif. Aucun score existant n'a été augmenté.

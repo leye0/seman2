@@ -639,3 +639,86 @@ def test_delimited_discourse_adverbial_has_an_independent_matrix_clause() -> Non
             "clause_discourse_coordinator_adv_incise" not in rules(root)
             for root in result.alternatives(limit=12)
         ), text
+
+
+def test_comma_adjective_lists_recurse_without_losing_head_agreement() -> None:
+    p = parser()
+    for text in (
+        'The horrible, soft-spoken, eyeless creature gripped it.',
+        'The horrible, soft-spoken, eyeless, scarred creature gripped it.',
+    ):
+        result = p.parse(text).result
+        assert result.completed, text
+        best = result.best()
+        assert 'adjp_extend_comma_adjective_list' in rules(best), text
+        subject = best.children[0]
+        assert subject.category == 'NP'
+        assert subject.features.as_dict()['number'] == 'singular'
+    result = p.parse('These horrible, soft-spoken, eyeless creature gripped it.').result
+    assert not result.completed
+
+
+def test_licensed_adjective_infinitive_and_delimited_pp_preserve_structure() -> None:
+    p = parser()
+    for text, rule in (
+        ('I should be happy to attain to eminence.', 'adjp_licensed_to_infinitive'),
+        ('I should be happy, on his account, to attain to eminence.',
+         'adjp_licensed_to_infinitive_parenthetical_pp'),
+    ):
+        report = p.parse(text)
+        best = report.result.best()
+        assert best is not None, text
+        assert rule in rules(best), text
+        assert 'vpnp_bare_prepositional_pp' in rules(best)
+        assert report.result.text == text
+        clause = next(n for n in nodes(best) if n.rule_id == rule)
+        assert clause.children[-1].category == 'VP-NP'
+        assert clause.children[0].features.as_dict()['to_infinitive'] == 'true'
+    # Other legacy productions can overgenerate nominal readings of blue:
+    # these negative checks specifically forbid the newly licensed construction.
+    for text in ('The box should be blue to sleep.',
+                 'I should be happy, on his account to attain eminence.',
+                 'I should be happy to attained eminence.'):
+        result = p.parse(text).result
+        for root in result.alternatives(limit=20):
+            for n in nodes(root):
+                if n.rule_id in {'adjp_licensed_to_infinitive',
+                                 'adjp_licensed_to_infinitive_parenthetical_pp'}:
+                    assert 'blue' not in text[n.start:n.end]
+                    assert 'attained' not in text[n.start:n.end]
+                    assert ', on his account to' not in text[n.start:n.end]
+
+
+def test_possessive_have_adverb_does_not_lose_its_infinitive() -> None:
+    p = parser()
+    text = 'I had barely time to get down again.'
+    best = p.parse(text).result.best()
+    assert best is not None
+    rule = 'vp_possessive_have_adverb_np_infinitival_modifier'
+    assert rule in rules(best)
+    predicate = next(n for n in nodes(best) if n.rule_id == rule)
+    assert [c.category for c in predicate.children] == ['HAVE','ADV','NP','TO','VP-NP']
+    assert predicate.features.as_dict()['vform'] == 'finite'
+    # A past-tense verb is not licensed as a bare infinitive by this rule.
+    result = p.parse('I had barely time to went.').result
+    assert all(rule not in rules(root) for root in result.alternatives(limit=20))
+
+
+def test_comparative_incise_keeps_an_adjectival_matrix() -> None:
+    p = parser()
+    text = 'And, to confess the truth, we are scarcely less eager to meet her again.'
+    best = p.parse(text).result.best()
+    assert best is not None
+    assert best.rule_id == 'clause_discourse_coordinator_infinitive_incise'
+    assert best.children[-1].category == 'CLAUSE'
+    assert 'adjp_modified_comparative' in rules(best)
+    assert 'adjp_licensed_to_infinitive' in rules(best)
+    eager = [n for n in nodes(best) if n.lexical_candidate is not None
+             and text[n.start:n.end] == 'eager']
+    assert eager and all(n.category == 'ADJ' for n in eager)
+    for text in ('And, to confess the truth,',
+                 'And to confess the truth we are eager.',
+                 'For, to confess the truth, we are eager.'):
+        result = p.parse(text).result
+        assert all('clause_discourse_coordinator_infinitive_incise' not in rules(root)
+                   for root in result.alternatives(limit=20)), text
