@@ -199,6 +199,42 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             for root in parsed.alternatives(limit=32)
         ))
 
+    def test_original_novel_cases_preserve_key_structural_distinctions(self):
+        p = make_parser()
+        cases = (
+            (
+                "The materials at present within my command hardly appeared "
+                "adequate to so arduous an undertaking, but I doubted not "
+                "that I should ultimately succeed.",
+                {"np_prenominal_degree_adjective_indefinite_noun",
+                 "vp_finite_clausal_not_that"},
+                set(),
+            ),
+            (
+                "Foraging about, I found a bottle with some brandy left, "
+                "for Hands.",
+                {"clause_front_participial_adverb",
+                 "clause_final_comma_benefactive_pp"},
+                set(),
+            ),
+            (
+                "I have said the captain was weak, and indeed he seemed "
+                "rather to grow weaker than regain his strength.",
+                {"vp_perfect_clausal_zero_complement",
+                 "clause_initial_coordinator_discourse_adverb"},
+                {"np_coord_adv"},
+            ),
+        )
+        for sentence, required, prohibited in cases:
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                root = result.best()
+                self.assertIsNotNone(root)
+                realized = set(self.rule_ids(root))
+                self.assertFalse(required - realized, (required - realized, realized))
+                self.assertFalse(prohibited & realized, prohibited & realized)
+
     def test_fronted_participle_with_adverb_and_detached_beneficiary(self):
         p = make_parser()
         examples = (
