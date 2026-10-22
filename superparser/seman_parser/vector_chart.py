@@ -495,6 +495,10 @@ class VectorGrammar:
                     and _has_broad_coordinated_participle(root_provider.items[0])):
                 root_provider.ensure(min(requested_k, 8), charge_kbest=False)
                 root_provider.prefer_local_participial_attachment()
+            if (root_provider.items
+                    and _reported_discourse_embedding(root_provider.items[0])):
+                root_provider.ensure(min(requested_k, 4), charge_kbest=False)
+                root_provider.prefer_matrix_discourse_scope()
         except KBestWorkBudgetExceeded:
             # There may be a derivation somewhere in the packed forest, but
             # no optimal grammatical witness was certified within budget.
@@ -1515,6 +1519,52 @@ def _participial_attachment_scope(root: ChartItem) -> int:
     return size + sum(_participial_attachment_scope(c) for c in root.children)
 
 
+
+def _reported_discourse_embedding(root: ChartItem) -> int:
+    """Count overt assertive discourse links nested inside selected reports.
+
+    Only score-tied full trees are compared. Reporting is diagnosed by the
+    lexical V[clausal] selection of a CLAUSE daughter, never by words in a
+    corpus sentence. This preference does not prohibit genuinely coordinated
+    reported speech: it only favors independent discourse scope when the
+    grammar supplies an equally scored matrix attachment.
+    """
+    def selected_reporting_clause(node: ChartItem) -> bool:
+        if node.category != "VP" or not any(
+            child.category == "CLAUSE" for child in node.children
+        ):
+            return False
+        for child in node.children:
+            if child.category != "V":
+                continue
+            subcat = child.features.as_dict().get("subcat")
+            if subcat == "clausal" or (
+                isinstance(subcat, (tuple, list, set)) and "clausal" in subcat
+            ):
+                return True
+        return False
+
+    def discourse_links(node: ChartItem) -> int:
+        link = (
+            node.category == "CLAUSE"
+            and node.features.as_dict().get("discourse_link") == "coordinated"
+        )
+        return int(link) + sum(discourse_links(child) for child in node.children)
+
+    total = 0
+    def visit(node: ChartItem) -> None:
+        nonlocal total
+        if selected_reporting_clause(node):
+            total += sum(
+                discourse_links(child)
+                for child in node.children if child.category == "CLAUSE"
+            )
+        for child in node.children:
+            visit(child)
+    visit(root)
+    return total
+
+
 class _LazyRoots:
     def __init__(
         self,
@@ -1581,6 +1631,21 @@ class _LazyRoots:
                 4,
             )
         self.refresh_stats()
+
+    def prefer_matrix_discourse_scope(self) -> None:
+        """Resolve *only* exact root-score ties using lexical reporting scope."""
+        if not self.items:
+            return
+        score = self.items[0].score
+        tied = [i for i, item in enumerate(self.items) if item.score == score]
+        if len(tied) < 2:
+            return
+        selected = min(
+            tied, key=lambda i: (_reported_discourse_embedding(self.items[i]), i)
+        )
+        if selected:
+            self.items.insert(0, self.items.pop(selected))
+            self.stats["matrix_discourse_tiebreak_applied"] = True
 
     def prefer_local_participial_attachment(self) -> None:
         """Only re-order tied roots; preserve both analyses and exact scores."""

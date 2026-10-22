@@ -500,8 +500,12 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
 
         spans = set(selected_spans(best))
         self.assertIn(
-            ("clause_reporting_discourse_coord", source.rstrip(".")), spans,
+            ("clause_comma", source.rstrip(".")), spans,
             "The overt discourse conjunct must attach to the reporting matrix.",
+        )
+        self.assertTrue(
+            result.stats.get("matrix_discourse_tiebreak_applied"),
+            "A score-tied lexical reporting/discourse ambiguity was resolved.",
         )
         self.assertIn(
             ("vp_perfect_clausal_zero_complement",
@@ -521,9 +525,12 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             with self.subTest(positive=positive):
                 analyzed = p.parse(positive, diagnostic_k=32).result
                 self.assertTrue(analyzed.completed, analyzed.stats)
+                self.assertTrue(
+                    analyzed.stats.get("matrix_discourse_tiebreak_applied"),
+                    (positive, analyzed.stats),
+                )
                 self.assertIn(
-                    "clause_reporting_discourse_coord",
-                    set(self.rule_ids(analyzed.best())),
+                    "clause_comma", set(self.rule_ids(analyzed.best())),
                 )
 
         for negative in (
@@ -532,10 +539,10 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
         ):
             with self.subTest(negative=negative):
                 analyzed = p.parse(negative, diagnostic_k=32).result
-                self.assertFalse(any(
-                    "clause_reporting_discourse_coord" in set(self.rule_ids(root))
-                    for root in analyzed.alternatives(limit=32)
-                ), "Matrix reporting valency AND an overt discourse link are required.")
+                self.assertFalse(
+                    analyzed.stats.get("matrix_discourse_tiebreak_applied", False),
+                    "A non-reporting VP or absent discourse marker cannot trigger the tie-break.",
+                )
 
     def test_modal_perfect_composes_with_lexically_typed_bare_predicates(self):
         p = make_parser()

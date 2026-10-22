@@ -362,5 +362,3 @@
 {"id":"np_serial_three_coordinated_nominal_groups","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_group","target":"second_group"},{"relation":"CONJUNCT","source":"second_group","target":"last_group"}]}}]}
 {"id":"vpnp_base_linking_adjective_phrase","semantic":[{"link":{"relation":"ATTRIBUTE","source":"linking_predicate","target":"predicative_attribute"}}]}
 {"id":"np_det_head_with_absolute_modifier","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"nominal_absolute_modifier"}]}}]}
-{"id":"clause_reporting_discourse_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"matrix_reporting_clause","target":"independent_discourse_conjunct"}]}}]}
-{"id":"clause_reporting_subject","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"reporting_event","target":"subject"}]}}]}
