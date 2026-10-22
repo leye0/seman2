@@ -80,3 +80,5 @@ Checkpoint: diagnose full vs fragment structural roots of Peggotty's finite copu
 Checkpoint: compare ASCII/Unicode genitive plural NP, short finite predicate, and LC vs normal composition in Peggotty clause.
 
 Checkpoint: contrast genitive plural with regular subjects and print selected feature structures.
+
+Checkpoint: scope nested lexical variable bindings to the parent RHS interface; test plural head of genitive.

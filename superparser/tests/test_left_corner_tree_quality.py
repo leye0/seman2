@@ -79,6 +79,20 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         self.assertEqual(copula.features.as_dict().get("vform"), "ing")
         self.assertIn("vform", copula.requires)
 
+    def test_genitive_subject_agrees_with_possessed_head(self):
+        for sentence, number in (
+            ("Mary's eyes were ready.", "plural"),
+            ("Mary's eye was ready.", "singular"),
+        ):
+            with self.subTest(sentence=sentence):
+                best = self.parser.parse(sentence, max_items=50000).result.best()
+                self.assertIsNotNone(best, "A genitive subject must compose with a finite VP")
+                self.assertTrue(any(
+                    node.rule_id in {"np_genitive", "np_poss_s"}
+                    and node.features.as_dict().get("number") == number
+                    for node in descendants(best)
+                ), "The possessed head determines the subject number")
+
     def test_copular_predicate_not_detached_into_dislocated_np(self):
         text = (
             "but while Peggotty’s eyes were full of compassion for him, "
@@ -90,11 +104,6 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         if best is None:
             probes = (
                 ("Peggotty’s eyes", "NP"),
-                ("eyes", "N"),
-                ("were ready", "VP"),
-                ("his eyes were ready", "CLAUSE"),
-                ("the eyes were ready", "CLAUSE"),
-                ("Mary saw John", "CLAUSE"),
                 ("Peggotty's eyes", "NP"),
                 ("Peggotty’s eyes were ready", "CLAUSE"),
                 ("Peggotty's eyes were ready", "CLAUSE"),
@@ -116,7 +125,6 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
                 details.append((probe, goal, bool(selected),
                                 subresult.stats.get("structural_root_nodes"),
                                 subresult.stats.get("budget_exceeded"),
-                                selected.features.as_dict() if selected else {},
                                 [(node.rule_id, node.category)
                                  for node in descendants(selected)][:24]
                                 if selected else []))

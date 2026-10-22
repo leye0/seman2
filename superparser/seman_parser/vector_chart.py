@@ -271,6 +271,21 @@ def _project_bindings(
     )
 
 
+def _merge_child_interface_bindings(
+    inherited: Bindings,
+    interface_features: FeatureStructure,
+    child_bindings: Bindings,
+) -> Bindings:
+    """Propagate only bindings visible through a rule child's interface.
+
+    Every nested grammar rule owns its variables. A local number variable
+    in the possessor NP must not bind the enclosing genitive's head number
+    unless the parent RHS interface links them.
+    """
+    projected, _ = _project_bindings(interface_features, child_bindings)
+    return {**inherited, **projected}
+
+
 class VectorGrammar:
     """Compile category symbols and all grammar transitions once."""
 
@@ -1135,7 +1150,9 @@ class _LazyMaterializer:
                     )
                 return
             combo.append(child)
-            env = dict(child.bindings)
+            env = _merge_child_interface_bindings(
+                env, rule.rhs[index].features, child.bindings,
+            )
         score = sum(child.score for child in combo) + rule.score - self.RULE_COST
         heappush(state.heap, (
             -score, next(self._serial), "rule",
@@ -1368,8 +1385,10 @@ class _LazyMaterializer:
         lhs_merged, env = lhs_result
         uses: list[AnalysisUse] = []
         for symbol, child in zip(rule.rhs, combo):
-            env = dict(child.bindings)
-            uses.append(AnalysisUse(child, child.features, dict(env)))
+            uses.append(AnalysisUse(child, child.features, dict(child.bindings)))
+            env = _merge_child_interface_bindings(
+                env, symbol.features, child.bindings,
+            )
         result = (substitute_structure(lhs_merged, env), dict(env), tuple(uses))
         self.unification_cache[key] = result
         return result
