@@ -1763,3 +1763,30 @@ if __name__ == "__main__":
             and c.features.as_dict().get("number") == "plural"
             for c in readings
         ))
+
+    def test_contraction_suffix_cannot_be_an_open_class_noun(self):
+        p = make_parser()
+        for text in (
+            "It's about that, I believe.",
+            "It’s about that, I believe.",
+            "Old what’s-his-name’s in a bad way.",
+            "John's book is here.",
+            "John’s book is here.",
+        ):
+            with self.subTest(text=text):
+                lattice = p.parse(text).lattice
+                for candidate in lattice.candidates:
+                    if candidate.surface.casefold() in ("s", "'s", "’s"):
+                        if (candidate.span_start >= 2
+                                and text[candidate.span_start - 1] in "'’"
+                                and text[candidate.span_start - 2].isalpha()):
+                            self.assertNotIn(candidate.category, {"N", "V", "ADJ", "ADV"})
+                self.assertTrue(any(c.category in {"COPULA", "HAVE", "POSS"}
+                                    for c in lattice.candidates
+                                    if c.surface.casefold() in ("s", "'s", "’s")))
+
+        standalone = p.parse("The letter S is written clearly.").lattice
+        self.assertTrue(any(
+            c.category == "N" and c.surface == "S"
+            for c in standalone.candidates
+        ))

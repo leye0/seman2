@@ -1,2 +1,3 @@
 2026-10-21 investigate raw paragraphs and balanced quote context for cases 8 76 80 96 100; verify lexicalized placeholder expressions.\n
 2026-10-21 inspect complete original-relative and lexicalized placeholder parse trees, not just root IDs.
+2026-10-21 disallow open-class noun/verb for written apostrophe clitics, preserve actual standalone letter.

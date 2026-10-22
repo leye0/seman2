@@ -20,3 +20,4 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 2026-10-21 original-paragraph and semicolon neighbor evidence on fixed 500, no truth labels.\n
 2026-10-21 fix synthetic cohort fields and assert source-order mismatch beyond digest guard.
 2026-10-21 remeasure fixed 500 with attested what\u2019s-his-name lexical span; no tokenization changes.
+2026-10-21 disallow open-class noun/verb for written apostrophe clitics, preserve actual standalone letter.

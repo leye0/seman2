@@ -30,3 +30,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 register diagnostic unit test for missing adjective infinitival control type.
 2026-10-21 include source-context unit tests and clarify complete parse vs linguistic correctness.
 2026-10-21 attested nominal placeholder expressions with apostrophes and hyphens, external copula preserved.
+2026-10-21 disallow open-class noun/verb for written apostrophe clitics, preserve actual standalone letter.
