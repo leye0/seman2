@@ -393,6 +393,45 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
         matrix = p.parse(sentence).result
         self.assertTrue(matrix.completed, matrix.stats)
 
+    def test_selected_with_absolute_modifies_the_bottle_not_the_finding(self):
+        p = make_parser()
+        sentence = (
+            "Foraging about, I found a bottle with some brandy left, "
+            "for Hands."
+        )
+        parsed = p.parse(sentence, diagnostic_k=64).result
+        self.assertTrue(parsed.completed, parsed.stats)
+        best = parsed.best()
+        self.assertIsNotNone(best)
+        assert best is not None
+
+        def selected_spans(node):
+            yield node.rule_id, sentence[node.start:node.end]
+            for child in node.children:
+                yield from selected_spans(child)
+
+        spans = set(selected_spans(best))
+        self.assertIn(
+            ("np_with_absolute_modifier", "a bottle with some brandy left"),
+            spans, "The with-absolute must be the nominal modifier.",
+        )
+        self.assertIn(
+            ("pp_absolute_with_np_adjp", "with some brandy left"),
+            spans, "Left is the secondary predicate of brandy, not a VP adverb.",
+        )
+        self.assertNotIn(
+            ("vp_adv", "found a bottle with some brandy left"),
+            spans, "The finding event cannot take 'left' as an adverb.",
+        )
+
+        ordinary = p.parse("Mary found a bottle with a label.",
+                           diagnostic_k=32).result
+        self.assertTrue(ordinary.completed, ordinary.stats)
+        self.assertFalse(any(
+            "np_with_absolute_modifier" in set(self.rule_ids(root))
+            for root in ordinary.alternatives(limit=32)
+        ), "An ordinary with-NP must not become a predicative absolute.")
+
     def test_original_novel_cases_preserve_key_structural_distinctions(self):
         p = make_parser()
         cases = (
