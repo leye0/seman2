@@ -282,6 +282,36 @@ def build_lattice(
     occupied_spans = {(candidate.span_start, candidate.span_end) for candidate in candidates}
     candidates.extend(_hyphenated_candidates(text, tokens, lexicon, occupied_spans))
 
+    # Attested English placeholder names ('what's-his-name',
+    # 'who's-her-name') are single nominal lexical units even though their
+    # orthography contains an apostrophe and multiple hyphens. The ordinary
+    # token, pronoun, verb and clitic readings remain in the lattice.
+    # The *lexicon* must positively license each complete spelling:
+    # matching this orthographic shape alone never creates a noun.
+    # The final possessive/copular "'s" in "what's-his-name's" is NOT
+    # swallowed by the placeholder name; it remains its own morpheme.
+    for match in re.finditer(
+        r"(?<![A-Za-z])(?:what|who)[\u0027\u2019]s-(?:his|her|their)-name\b",
+        text, re.I,
+    ):
+        surface = match.group(0)
+        normalized = surface.replace("\u2019", "'").casefold()
+        for _entry, sense, lemma in lexicon.lookup_morphology(normalized):
+            if sense.category != "N":
+                continue
+            candidates.append(replace(
+                _candidate_from_sense(
+                    span_start=match.start(), span_end=match.end(),
+                    surface=surface, lemma=lemma, sense=sense,
+                    source="lexicalized-placeholder-name",
+                ),
+                provenance={
+                    "source": "attested-placeholder-name-inventory",
+                    "orthographic_expression": normalized,
+                    "trailing_clitic_retained": True,
+                },
+            ))
+
     # In Gutenberg prose, "--" represents an em dash, not two separate
     # single-hyphen words. Add ONE spanning punctuation edge; do NOT alter
     # tokenize() or the pinned corpus's token positions/length strata.

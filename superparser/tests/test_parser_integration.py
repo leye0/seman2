@@ -20,6 +20,44 @@ def make_parser() -> Parser:
 
 
 class SegmentationTests(unittest.TestCase):
+    def test_lexicalized_placeholder_name_keeps_external_copula_and_other_readings(self):
+        p = make_parser()
+        for text in (
+            "Old what’s-his-name’s in a bad way.",
+            "Old what's-his-name's in a bad way.",
+            "I met who's-her-name yesterday.",
+            "I met what's-their-name yesterday.",
+        ):
+            with self.subTest(text=text):
+                lattice = p.parse(text).lattice
+                edges = [
+                    c for c in lattice.candidates
+                    if c.source == "lexicalized-placeholder-name"
+                ]
+                self.assertEqual(len(edges), 1, text)
+                edge = edges[0]
+                self.assertEqual(edge.category, "N")
+                self.assertEqual(edge.lemma, "whats-his-name")
+                self.assertEqual(edge.features.as_dict().get("number"), "singular")
+                self.assertTrue(text[edge.span_start:edge.span_end].endswith("-name"))
+                self.assertEqual(edge.surface, text[edge.span_start:edge.span_end])
+                # Apostrophe inside the name remains visible as an ordinary
+                # tokenization alternative instead of mutating source text.
+                self.assertTrue(any(
+                    c.category in {"WH-NOM", "WH-PRONOUN"}
+                    for c in lattice.candidates
+                    if c.span_start >= edge.span_start
+                    and c.span_end <= edge.span_end
+                ))
+
+        for example in ("what-is-his-name", "what's-his-house"):
+            lattice = p.parse(example + " was here.").lattice
+            self.assertFalse(any(
+                c.source == "lexicalized-placeholder-name"
+                for c in lattice.candidates
+            ), example)
+
+
     def test_bare_linking_predicates_require_lexical_linking_valency(self) -> None:
         p = make_parser()
 

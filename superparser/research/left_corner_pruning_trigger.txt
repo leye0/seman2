@@ -13,3 +13,4 @@ Evaluate 500 fixed cases using opt-in lexical left-corner pruning; include actua
 2026-10-21 default score-neutral local NP participial attachment after opt-in fixed 500 trial and adversarial test.
 2026-10-21 measure optimized 500 after proven ADV incise.
 2026-10-21 corpus-wide selected adjective-infinitive relation diagnostic, preserve fixed 500 status.
+2026-10-21 attested nominal placeholder expressions with apostrophes and hyphens, external copula preserved.
