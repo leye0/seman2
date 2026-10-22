@@ -32,3 +32,4 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 2026-10-21 attested nominal placeholder expressions with apostrophes and hyphens, external copula preserved.
 2026-10-21 disallow open-class noun/verb for written apostrophe clitics, preserve actual standalone letter.
 2026-10-21 revert overbroad clitic lexical filtering after 500-case controls; preserve attested placeholder name reading.
+2026-10-22 validate lexical nor-modal inversion and remove spurious N CONJ nominal, commit 7857d937b0cf4b9843367c931648be63bf6ef8a6.
