@@ -49,3 +49,5 @@ Tree-quality expected failures for lexical left-corner optimization, run global 
 Checkpoint: e73a6b7219e18f35fd8e650d2cc51a1294d00e56 — verify matrix reporting scope, lexical discourse constraints and 486/487 trees with core suite.
 
 Checkpoint: cd35232f2936f9ee99d449180eef5a5d05301d87 — verify factorized CLAUSE-REPORTING matrix scope against 359 budget.
+
+Checkpoint: ff1081ad200aee4271e51f99b73868712c7a67e0 — verify equal-score reporting scope tie-break with unchanged 524-rule recognition forest.
