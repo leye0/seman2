@@ -432,6 +432,42 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             for root in ordinary.alternatives(limit=32)
         ), "An ordinary with-NP must not become a predicative absolute.")
 
+    def test_selected_raising_outweighs_incidental_control_for_seem(self):
+        p = make_parser()
+        sentence = (
+            "I have said the captain was weak, and indeed he seemed "
+            "rather to grow weaker than regain his strength."
+        )
+        result = p.parse(sentence, diagnostic_k=64).result
+        self.assertTrue(result.completed, result.stats)
+        best = result.best()
+        self.assertIsNotNone(best)
+        assert best is not None
+
+        def selected_spans(node):
+            yield node.rule_id, sentence[node.start:node.end]
+            for child in node.children:
+                yield from selected_spans(child)
+
+        spans = set(selected_spans(best))
+        complement = "seemed rather to grow weaker than regain his strength"
+        self.assertIn(
+            ("vp_finite_raising_rather_to_than", complement), spans,
+            "The selected seem-construction is raising, not subject control.",
+        )
+        self.assertNotIn(
+            ("vp_subject_control_rather_to_than", complement), spans,
+        )
+
+        control = p.parse("Mary tried rather to walk than run.",
+                          diagnostic_k=32).result
+        self.assertTrue(control.completed, control.stats)
+        self.assertIn(
+            "vp_subject_control_rather_to_than",
+            set(self.rule_ids(control.best())),
+            "Genuine subject-control should remain available and preferred.",
+        )
+
     def test_original_novel_cases_preserve_key_structural_distinctions(self):
         p = make_parser()
         cases = (
