@@ -498,8 +498,19 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                 assert best is not None
                 self.assertTrue(
                     genitive_rules.intersection(self.rule_ids(best)),
-                    "A productive nominal possessor must attach to the following "
-                    "noun, rather than making apostrophe-s a lexical N compound.",
+                    (
+                        "A productive nominal possessor must attach to the "
+                        "following noun, rather than make apostrophe-s an N compound.",
+                        phrase,
+                        [(c.surface, c.span_start, c.span_end, c.category,
+                          c.features.as_dict(), c.source)
+                         for c in parser.parse(phrase, diagnostic_k=32).lattice.candidates],
+                        sorted(set(self.rule_ids(best))),
+                        [
+                            sorted(set(self.rule_ids(root)))
+                            for root in result.alternatives(limit=8)
+                        ],
+                    ),
                 )
 
         for phrase in ("Andersons ball", "the sailor coat"):
@@ -523,7 +534,7 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                 ), "Finite reporting verb has an attested clausal complement.")
 
         for phrase in (
-            "kicked, Mary had left",
+            "sprinted, Mary had left",
             "ball, John was ready",
             "ball--for it was Job that shot him first",
         ):

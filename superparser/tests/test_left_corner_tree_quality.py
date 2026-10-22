@@ -68,7 +68,6 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         self.assertNotEqual(best.rule_id, "coord_clause",
                             "'For my part' is a PP, not a clausal coordinator")
 
-    @unittest.expectedFailure
     def test_copular_predicate_not_detached_into_dislocated_np(self):
         text = (
             "but while Peggotty’s eyes were full of compassion for him, "
