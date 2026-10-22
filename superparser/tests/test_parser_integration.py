@@ -230,13 +230,21 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
         )
 
     def test_selected_object_control_and_perfect_in_original_literary_tree(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+
         p = make_parser()
-        sentence = (
-            '"The Turk allowed this intimacy to take place and encouraged '
-            'the hopes of the youthful lovers, while in his heart he '
-            'had formed far other plans."'
+        # The Gutenberg case carries its own synthetic closing quotation
+        # mark.  Keep the exact canonical quote-transfer provenance.
+        cohort, _ = select_cases(500)
+        case = cohort[359]
+        prepared, _, result = parse_corpus_case(
+            p, case, max_items=50_000, kbest_work_limit=500_000,
         )
-        result = p.parse(sentence, diagnostic_k=32).result
+        sentence = prepared.analysis_text
+        self.assertIn(
+            "The Turk allowed this intimacy to take place", sentence,
+        )
         self.assertTrue(result.completed, result.stats)
         best = result.best()
         self.assertIsNotNone(best)
@@ -389,6 +397,11 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
             "pp_absolute_with_np_adjp" in set(self.rule_ids(root))
             for root in absolute.alternatives(limit=64)
         ))
+        typed = Parser(p.resources, goal_category="PP-ABSOLUTE")
+        for phrase in ("with some brandy left", "with her eyes open"):
+            self.assertTrue(typed.parse(phrase).result.completed, phrase)
+        for phrase in ("with some brandy", "with her eyes"):
+            self.assertFalse(typed.parse(phrase).result.completed, phrase)
         sentence = "Mary saw a bottle with some brandy left."
         matrix = p.parse(sentence).result
         self.assertTrue(matrix.completed, matrix.stats)
