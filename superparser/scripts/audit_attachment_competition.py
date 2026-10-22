@@ -27,6 +27,10 @@ def nodes(node):
 
 
 def parser_variant(base, removed=(), goal="CLAUSE"):
+    existing = {rule.rule_id for rule in base.grammar.rules}
+    missing = set(removed) - existing
+    if missing:
+        raise ValueError(f"Ablation referenced absent rules: {sorted(missing)}")
     rules = tuple(rule for rule in base.grammar.rules
                   if rule.rule_id not in removed)
     return Parser(ParserResources(
@@ -38,12 +42,12 @@ def parser_variant(base, removed=(), goal="CLAUSE"):
 def diagnose_original_359(resources, case):
     variants = {
         "current": (),
-        "without_nominal_absolute_attachment": ("np_with_absolute_modifier",),
+        "without_nominal_absolute_attachment": ("np_det_head_with_absolute_modifier",),
         "without_modal_perfects": (
             "vpnp_base_perfect_transitive", "vpnp_base_perfect_intransitive",
         ),
         "without_both_families": (
-            "np_with_absolute_modifier",
+            "np_det_head_with_absolute_modifier",
             "vpnp_base_perfect_transitive", "vpnp_base_perfect_intransitive",
         ),
         "without_typed_absolute_projection": (
@@ -82,7 +86,7 @@ def diagnose_427(resources, case):
         kbest_work_limit=KBEST_WORK,
     )
     target = "a bottle with some brandy left"
-    names = {"np_with_absolute_modifier", "pp_absolute_with_np_adjp"}
+    names = {"np_det_head_with_absolute_modifier", "pp_absolute_with_np_adjp"}
     ranks = []
     for rank, root in enumerate(result.alternatives(limit=128), start=1):
         spans = {

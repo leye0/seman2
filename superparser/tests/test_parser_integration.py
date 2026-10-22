@@ -425,7 +425,7 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
 
         spans = set(selected_spans(best))
         self.assertIn(
-            ("np_with_absolute_modifier", "a bottle with some brandy left"),
+            ("np_det_head_with_absolute_modifier", "a bottle with some brandy left"),
             spans, "The with-absolute must be the nominal modifier.",
         )
         self.assertIn(
@@ -441,7 +441,7 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
                            diagnostic_k=32).result
         self.assertTrue(ordinary.completed, ordinary.stats)
         self.assertFalse(any(
-            "np_with_absolute_modifier" in set(self.rule_ids(root))
+            "np_det_head_with_absolute_modifier" in set(self.rule_ids(root))
             for root in ordinary.alternatives(limit=32)
         ), "An ordinary with-NP must not become a predicative absolute.")
 
