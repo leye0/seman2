@@ -25,3 +25,4 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 
 2026-10-21: validate licensed adjective infinitives, comparative incises, recursive adjective lists and possessive HAVE adverbs; local paired cohort 453 -> 457, no losses; retain quality warnings for #100 and #471.
 2026-10-22: full fixed 500 after bounded repairs to within, rather/than, for, raising, clausal perfects, adjective degree-NP, and nominal-focus vs discourse coordinator distinctions. Reference 457/500; inspect both completions and regressions.
+2026-10-22: verify global fixed 500 after factoring PP-SUPPLEMENT+ADJP (recovered #359 at identical 50000-item ceiling) and preventing false nominal quote parse of context-dependent #414; 11/11 focused tests green. Prior full benchmark 459/500.
