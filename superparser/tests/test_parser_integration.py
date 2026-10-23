@@ -2859,6 +2859,52 @@ class PluralGenitivePassiveControlTests(unittest.TestCase):
 
 
 
+
+class ExactNominalFocusTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from ExactNominalFocusTests.nodes(child)
+
+    def test_exactly_focus_uses_existing_nominal_rule(self):
+        parser = make_parser()
+        for text in ("He should copy exactly what he had before him.",
+                     "He copied exactly the instructions."):
+            report = parser.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, report.result.stats)
+            focused = [n for n in self.nodes(best) if n.rule_id == "np_adv_np"]
+            self.assertTrue(focused, text)
+            self.assertTrue(any(text[n.start:n.end].startswith("exactly ") for n in focused))
+        for word in ("exactly", "quickly"):
+            report = parser.parse("He copied " + word + " the instructions.")
+            marked = [c for c in report.lattice.candidates if c.surface == word
+                      and c.features.as_dict().get("nominal_modifier") == "true"]
+            self.assertEqual(bool(marked), word == "exactly")
+        self.assertIsNotNone(parser.parse("He copied the instructions exactly.").result.best())
+
+    def test_pinned_112_exactly_modifies_free_relative(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[112]["text"].startswith("Our instructions to Mr. Dick"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[112], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        nodes = list(self.nodes(best))
+        text = prepared.analysis_text
+        relatives = [n for n in nodes if n.rule_id == "np_nominal_free_relative_object_pp"
+                     and text[n.start:n.end] == "what he had before him"]
+        self.assertTrue(relatives)
+        self.assertTrue(any(n.rule_id == "np_adv_np"
+                            and text[n.start:n.end].startswith("exactly what he had before him")
+                            for n in nodes))
+        self.assertTrue(any(n.rule_id == "vp_modal_bare"
+                            and text[n.start:n.end].startswith("should copy exactly")
+                            for n in nodes))
+
 if __name__ == "__main__":
     unittest.main()
 
