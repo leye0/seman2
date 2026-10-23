@@ -117,3 +117,4 @@ Checkpoint: add closed-class unless subordinator; verify pinned #317 conditional
 Checkpoint: compose base HAVE + participial copula + ADJP under modal; assert correct #317 clause boundaries, passive and perfect predicates.
 
 Checkpoint: repair #445 spatial prepositions, licensed base object-adjective predication, reduced possible comparison, and comma infinitival supplement; verify best tree and fixed cohort.
+Checkpoint: narrow object-adjective construction to closed-class base HAVE, remove unnecessary open-class have valence senses, preserve saturated #359 and #445 within unchanged budgets.

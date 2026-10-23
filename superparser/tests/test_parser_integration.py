@@ -2611,38 +2611,38 @@ class SpatialPrepositionsAndObjectAdjectiveTests(unittest.TestCase):
     def test_productive_object_adjective_predicate_and_equative_bound(self):
         parser = make_parser()
         for text in ("John can have both hands free.",
-                     "Mary could keep the room as quiet as possible."):
+                     "Mary could have the room as quiet as possible."):
             with self.subTest(text=text):
                 report = parser.parse(text)
                 best = report.result.best()
                 self.assertIsNotNone(best, report.result.stats)
-                self.assertTrue({"vpnp_base_object_adjective", "vp_np_resultative"}
+                self.assertTrue({"vpnp_base_have_object_adjective", "vp_np_resultative"}
                                 & {n.rule_id for n in self.nodes(best)})
-        report = parser.parse("Mary could keep the room as quiet as possible.")
+        report = parser.parse("Mary could have the room as quiet as possible.")
         self.assertIn("adjp_as_as_adjectival_bound",
                       {n.rule_id for n in self.nodes(report.result.best())})
         for text in ("John can sleep both hands free.",
                      "John can had both hands free."):
             for tree in parser.parse(text).result.alternatives(limit=8):
-                self.assertNotIn("vpnp_base_object_adjective",
+                self.assertNotIn("vpnp_base_have_object_adjective",
                                  {n.rule_id for n in self.nodes(tree)}, text)
-        for text in ("Mary could keep the room as quiet as blue.",
-                     "Mary could keep the room than quiet as possible."):
+        for text in ("Mary could have the room as quiet as blue.",
+                     "Mary could have the room than quiet as possible."):
             for tree in parser.parse(text).result.alternatives(limit=8):
                 self.assertNotIn("adjp_as_as_adjectival_bound",
                                  {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_final_infinitival_supplement_requires_overt_boundary(self):
         parser = make_parser()
-        text = "Mary waited, to keep the room quiet."
+        text = "Mary waited, to have the room quiet."
         report = parser.parse(text)
         best = report.result.best()
         self.assertIsNotNone(best, report.result.stats)
         self.assertIn("clause_final_comma_infinitival_supplement",
                       {n.rule_id for n in self.nodes(best)})
-        for text in ("Mary waited to keep the room quiet.",
-                     "Mary waited, keep the room quiet.",
-                     "Mary waited, to kept the room quiet."):
+        for text in ("Mary waited to have the room quiet.",
+                     "Mary waited, have the room quiet.",
+                     "Mary waited, to had the room quiet."):
             for tree in parser.parse(text).result.alternatives(limit=8):
                 self.assertNotIn("clause_final_comma_infinitival_supplement",
                                  {n.rule_id for n in self.nodes(tree)}, text)
@@ -2664,7 +2664,7 @@ class SpatialPrepositionsAndObjectAdjectiveTests(unittest.TestCase):
         rules = {n.rule_id for n in nodes}
         self.assertNotIn("clause_infinitive_subject", rules)
         for rule in ("clause_final_comma_infinitival_supplement",
-                     "vpnp_base_object_adjective",
+                     "vpnp_base_have_object_adjective",
                      "adjp_as_as_adjectival_bound"):
             self.assertIn(rule, rules)
         spans = {(n.category, text[n.start:n.end]) for n in nodes}
