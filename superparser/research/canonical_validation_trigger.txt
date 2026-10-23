@@ -106,3 +106,5 @@ Checkpoint: typed reduced concessive adjectival incise via lexical though and ov
 Checkpoint: complete productive free-relative WH-NOM closed-class lexical family (whatever/whoever/whichever) and test nominal object extraction #132.
 
 Checkpoint: finite passive AUX-BE+past-participle+ADV, and free-relative NP subject with overt rhetorical comma (#132).
+
+Checkpoint: factor paused free-relative through dedicated NP-FREE-REL category to avoid NP-comma-VP forest explosion; reuse vp_passive + vp_adv.

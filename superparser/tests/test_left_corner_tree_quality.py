@@ -216,7 +216,7 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
                                 if selected else []))
             self.fail(("Free relative unavailable", details))
         self.assertTrue(any(
-            n.rule_id == "np_nominal_free_relative_object"
+            n.rule_id == "np_free_relative_object_pause_subject"
             for n in descendants(best)
         ), "The WH word names the missing object inside the nominal relative")
         self.assertTrue(any(
@@ -224,10 +224,13 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             for n in descendants(best)
         ), "The comma marks a pause after an overt nominal free relative")
         self.assertTrue(any(
-            n.rule_id == "vp_passive_final_manner_adverb"
+            n.rule_id == "vp_adv"
             for n in descendants(best)
-        ), "Said must remain a transitive past participle in the passive")
+        ), "The passive predicate takes its final manner adverb through VP attachment")
 
+        self.assertTrue(any(
+            n.rule_id == "vp_passive" for n in descendants(best)
+        ), "The predicate must use an overt passive, not a copular adjective")
         np = Parser(self.parser.resources, goal_category="NP",
                     lexical_left_corner_pruning=True, cache_size=0)
         other = np.parse("Whoever arrived", max_items=50000).result.best()
