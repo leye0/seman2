@@ -312,6 +312,34 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         ))
 
 
+    def test_bare_modal_coordination_with_participial_incise_and_named_object(self):
+        """A shared-subject modal combines two bare predicates around an -ing incise."""
+        text = (
+            "I could only sit down before my fire, biting the key of my "
+            "carpet-bag, and think of the captivating, girlish, "
+            "bright-eyed lovely Dora."
+        )
+        report = self.parser.parse(text, max_items=50000)
+        best = report.result.best()
+        self.assertIsNotNone(best, (
+            "The entire sentence must have a feature-valid analysis",
+            report.result.stats,
+        ))
+        rules = {node.rule_id for node in descendants(best)}
+        for expected in (
+            "adjp_adjective_list_final_unpunctuated_modifier",
+            "np_definite_adjp_proper_name",
+            "vpnp_bare_participial_object_supplement",
+            "vpnp_bare_comma_coord",
+            "vp_modal_bare",
+        ):
+            with self.subTest(construction=expected):
+                self.assertIn(expected, rules, (
+                    "The best analysis should retain the overt syntactic "
+                    "construction, rather than a spurious alternative",
+                    report.result.stats, rules,
+                ))
+
     @unittest.expectedFailure
     def test_tough_movement_requires_an_eligible_adjective(self):
         """A merely ADJ reading does not license every tough infinitive."""
