@@ -1,6 +1,24 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #200 recovered, 456/500 (91.2%)
+## Latest measured checkpoint — sentence #239 recovered, 457/500 (91.4%)
+
+Code commit `2e2564300d0c3e91c429e1ff0b89370cb0445930` adds temporal CONJ
+before (preserving PREP/ADV) and the attested singular noun tete-a-tete.
+No grammar production or budget changes. The pinned-case selected-tree test
+checks the temporal clause, coordinated subject, dash-separated coordination,
+and complete compound nominal span without reinterpreting its internal a as
+a determiner.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/39961780369):
+413 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/39961780249):
+457/500 complete; #239 is the only recovery from 456/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 38 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors. The existing 457/500 coverage gate is now green, unchanged.
+
+
+## Previous measured checkpoint — sentence #200 recovered, 456/500 (91.2%)
 
 Code commit `0dd760991b01b42ae2b14c160ee4fc4845899ff3` adds the missing
 DET reading of any and PREP reading of beyond while retaining WordNet readings.
