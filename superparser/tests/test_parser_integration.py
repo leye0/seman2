@@ -2510,6 +2510,64 @@ class ProductiveHyphenMorphologyWithoutDictionaryTests(unittest.TestCase):
             "--" in c.surface and "hyphen" in c.source
             for c in lattice.candidates))
 
+
+class UnlessConditionalSubordinatorTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from UnlessConditionalSubordinatorTests.nodes(child)
+
+    def test_unless_is_a_subordinator_in_both_cases(self):
+        parser = make_parser()
+        for text in ("Unless Mary left, John stayed.",
+                     "unless Mary left, John stayed.",
+                     "John stayed unless Mary left."):
+            with self.subTest(text=text):
+                report = parser.parse(text)
+                candidates = [c for c in report.lattice.candidates
+                              if c.surface.casefold() == "unless"
+                              and c.category == "CONJ"]
+                self.assertTrue(candidates)
+                for candidate in candidates:
+                    features = candidate.features.as_dict()
+                    for forbidden in ("wh", "degree", "complementizer"):
+                        self.assertNotIn(forbidden, features)
+                best = report.result.best()
+                self.assertIsNotNone(best, report.result.stats)
+                self.assertTrue(any(n.category == "CONJ"
+                                    and text[n.start:n.end].casefold() == "unless"
+                                    for n in self.nodes(best)))
+
+    def test_pinned_frankenstein_317_uses_conditional_subordination(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.audit_novel_tree_quality import display_tree
+        cases, _ = select_cases(500)
+        case = cases[317]
+        self.assertTrue(case["text"].startswith("Unless I had been animated"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), case, max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        print("UNLESS_317_TREE\n" + "\n".join(
+            display_tree(best, prepared.analysis_text)), flush=True)
+        nodes = list(self.nodes(best))
+        conditional = [n for n in nodes if n.rule_id == "clause_cond"]
+        self.assertTrue(conditional, [n.rule_id for n in nodes])
+        clause = conditional[0]
+        self.assertEqual([n.category for n in clause.children],
+                         ["CONJ", "CLAUSE", "COMMA", "CLAUSE"])
+        self.assertEqual(prepared.analysis_text[
+            clause.children[0].start:clause.children[0].end], "Unless")
+        self.assertEqual(prepared.analysis_text[
+            clause.children[1].start:clause.children[1].end],
+            "I had been animated by an almost supernatural enthusiasm")
+        self.assertEqual(prepared.analysis_text[
+            clause.children[3].start:clause.children[3].end],
+            "my application to this study would have been irksome and almost intolerable")
+
+
 if __name__ == "__main__":
     unittest.main()
 
