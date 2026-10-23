@@ -31,4 +31,4 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 
 Checkpoint: 214c98be6d4bd1f9499c031abb808a3dbd81c326 — fixed 500-case diagnostic after passing 385 tests, typed absolute NP attachment, object-control/perfect selection, and modal-perfect recovery.
 
-2026-10-22: remeasure immutable fixed 500 after scoped nested feature bindings and feature-licensed ordinary COORD rules; inspect quality, regressions, budgets, not just completion counts.
+2026-10-22: revalidate immutable 500 after specifically scoped preposed possessors and typed ordinary coordinators; prior broad scope changed coverage 465->448 and is withdrawn.
