@@ -2953,6 +2953,56 @@ class IntransitiveDepictivePurposeTests(unittest.TestCase):
                        "retired to meditate on some other mode of action"), spans)
         self.assertIn("vp_coord_finite", {n.rule_id for n in nodes})
 
+
+class DegreeNominalAdjectiveGapTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from DegreeNominalAdjectiveGapTests.nodes(child)
+
+    def test_degree_nominal_gap_licenses_only_selected_preposition(self):
+        parser = make_parser()
+        for text in ("It is too great a violation for him to be guilty of.",
+                     "It is too great a violation, for him to be guilty of."):
+            result = parser.parse(text).result
+            best = result.best()
+            self.assertIsNotNone(best, result.stats)
+            self.assertIn("vp_infinitival_adjective_selected_pp_gap",
+                          {n.rule_id for n in self.nodes(best)})
+        for text in ("It is too great a violation for him to be guilty with.",
+                     "It is too great a violation for him to is guilty of.",
+                     "It is too great a violation for him to be happy of."):
+            self.assertIsNone(parser.parse(text).result.best(), text)
+        self.assertIsNone(parser.parse("He is guilty of.").result.best())
+        self.assertIsNotNone(parser.parse("He is guilty of it.").result.best())
+        result = parser.parse("It was certainly a mistake.").result
+        self.assertIn("vp_copular_adverb_nominal_predicate",
+                      {n.rule_id for n in self.nodes(result.best())})
+
+    def test_pinned_209_keeps_degree_antecedent_and_list_inside_of(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[209]["text"].startswith("It is really too great"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[209], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        nodes = list(self.nodes(best))
+        relative = next(n for n in nodes
+                        if n.rule_id == "np_for_infinitival_adjective_pp_relative_comma")
+        self.assertEqual(text[relative.children[0].start:relative.children[0].end],
+                         "too great a violation of decency, honour, and interest")
+        self.assertEqual(text[relative.children[3].start:relative.children[3].end], "him")
+        self.assertTrue(any(n.category == "PP" and
+                            text[n.start:n.end] == "of decency, honour, and interest"
+                            for n in nodes))
+        self.assertTrue(any(n.rule_id == "vp_infinitival_adjective_selected_pp_gap"
+                            and text[n.start:n.end] == "be guilty of" for n in nodes))
+        self.assertIn("vp_copular_adverb_nominal_predicate", {n.rule_id for n in nodes})
+
 if __name__ == "__main__":
     unittest.main()
 

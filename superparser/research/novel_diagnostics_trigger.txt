@@ -49,3 +49,4 @@ Validate pinned #232: plural genitive and adverbial passive control.
 Validate pinned #112: exactly as nominal precision focus.
 Validate pinned #340: intransitive depictive and purpose constructions.
 Preserve lexical subject-control precedence over purpose fallback.
+Validate #209: degree nominal with for-infinitive and selected adjective PP gap.
