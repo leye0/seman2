@@ -219,6 +219,15 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             n.rule_id == "np_nominal_free_relative_object"
             for n in descendants(best)
         ), "The WH word names the missing object inside the nominal relative")
+        self.assertTrue(any(
+            n.rule_id == "clause_free_relative_subject_pause"
+            for n in descendants(best)
+        ), "The comma marks a pause after an overt nominal free relative")
+        self.assertTrue(any(
+            n.rule_id == "vp_passive_final_manner_adverb"
+            for n in descendants(best)
+        ), "Said must remain a transitive past participle in the passive")
+
         np = Parser(self.parser.resources, goal_category="NP",
                     lexical_left_corner_pruning=True, cache_size=0)
         other = np.parse("Whoever arrived", max_items=50000).result.best()

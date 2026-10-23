@@ -104,3 +104,5 @@ Checkpoint: score generic finite adverb-to-infinitive below overt rather/than co
 Checkpoint: typed reduced concessive adjectival incise via lexical though and overt NEG+ADJ; avoid blanket CONJ-to-ADJP rules.
 
 Checkpoint: complete productive free-relative WH-NOM closed-class lexical family (whatever/whoever/whichever) and test nominal object extraction #132.
+
+Checkpoint: finite passive AUX-BE+past-participle+ADV, and free-relative NP subject with overt rhetorical comma (#132).
