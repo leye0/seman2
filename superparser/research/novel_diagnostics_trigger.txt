@@ -34,3 +34,4 @@ Checkpoint: 214c98be6d4bd1f9499c031abb808a3dbd81c326 — fixed 500-case diagnost
 2026-10-22: verify 500 fixed cohort after compositional NEG+ADV comma afterthought and adverb-intervening finite TO-infinitive recovery; preserve comparative control preference and tally exact per-ID deltas from 448 baseline.
 
 2026-10-22: compare fixed 500 after reduced concessive ADJP (#168) and WH-NOM free-relative passive subject (#132) with bounded typed NP-FREE-REL category. Baseline 450/500, no per-case losses permitted.
+2026-10-22: verify 500 frozen novel cases after #107 paired-comma bare modal coordination and typed final-adjective proper-name object, plus two exact-rule deduplications; preserve fixed cohort and compare #359.
