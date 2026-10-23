@@ -1,6 +1,35 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Updated verified checkpoint — 465/500 (93.0%)
+## Latest measured checkpoint — sentence #317 repaired, 454/500 (90.8%)
+
+Code commit `48426b2c29f849268724b83bdde2c70c48b1fbf8` repairs the
+Frankenstein sentence beginning “Unless I had been animated”.
+The closed-class inventory now supplies `unless` as a CONJ, without WH,
+degree, or interrogative-complementizer features. A generic
+`vpnp_base_perfect_cop_adjp` construction combines base HAVE, participial
+COPULA and ADJP under the existing modal rule.
+
+Lexical repair alone produced a misleading complete tree: the subordinate
+clause swallowed the main subject plus “would”, and “have” became a noun.
+The regression now checks the selected tree's exact subordinate/main spans,
+perfect passive, modal perfect copular predicate, and absence of modal ellipsis.
+Additional tests cover capitalization, postposed unless, productive adjective
+predicates, and malformed auxiliary forms.
+
+- [Core validation](https://github.com/leye0/seman2/actions/runs/39894848367):
+  403 tests, OK with 7 expected failures; global grammar quality gates passed.
+- [Fixed 500-case diagnostic](https://github.com/leye0/seman2/actions/runs/39894848310):
+  454 complete, 41 grammatical residuals, 4 forest-budget failures, 1 timeout,
+  zero errors. Same corpus, quote-transfer gateway and search budgets.
+- Compared with [the immediate 453/500 baseline](https://github.com/leye0/seman2/actions/runs/39893497060),
+  #317 is the only recovered case; no previously completed case was lost and
+  all remaining non-complete cases retained their status.
+- The diagnostic workflow is still red because its existing threshold is
+  457/500. This pre-existing coverage deficit is not fixed by the #317 repair;
+  the threshold was not lowered. The 465/500 checkpoint below is historical.
+
+
+## Historical verified checkpoint — 465/500 (93.0%)
 
 On main, the canonical Layer 1 suite passed **385 tests with eight expected
 failures** and all global grammar quality gates in
