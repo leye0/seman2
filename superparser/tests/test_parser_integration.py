@@ -2678,6 +2678,63 @@ class SpatialPrepositionsAndObjectAdjectiveTests(unittest.TestCase):
         self.assertNotIn(("N", "possible"), lexical)
 
 
+
+class NegatedPossessiveHavePPTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from NegatedPossessiveHavePPTests.nodes(child)
+
+    def test_productive_have_negation_pp_object_and_agreement(self):
+        parser = make_parser()
+        for text in ("John has not at present any money.",
+                     "Mary had not at that time any reason."):
+            report = parser.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, report.result.stats)
+            self.assertIn("vp_have_neg_pp_object",
+                          {n.rule_id for n in self.nodes(best)})
+        for text in ("John have not at present any money.",
+                     "John had at present any money.",
+                     "John slept not at present any money."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vp_have_neg_pp_object",
+                                 {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_any_and_beyond_retain_wordnet_readings(self):
+        parser = make_parser()
+        for word, wanted in (("any", {"DET", "ADJ", "ADV"}),
+                             ("beyond", {"PREP", "ADV"})):
+            cats = {c.category for c in parser.parse(word).lattice.candidates}
+            self.assertTrue(wanted <= cats, (word, cats))
+
+    def test_pinned_200_has_possessive_have_and_interposed_time_pp(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertIn("I had not at that time the honour", cases[200]["text"])
+        prepared, _, result = parse_corpus_case(
+            make_parser(), cases[200], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        nodes = list(self.nodes(best))
+        predicate = [n for n in nodes if n.rule_id == "vp_have_neg_pp_object"]
+        self.assertTrue(predicate)
+        self.assertEqual([c.category for c in predicate[0].children],
+                         ["HAVE", "NEG", "PP", "NP"])
+        text = prepared.analysis_text
+        self.assertEqual(text[predicate[0].children[2].start:
+                              predicate[0].children[2].end], "at that time")
+        self.assertTrue(text[predicate[0].children[3].start:
+                             predicate[0].children[3].end].startswith("the honour"))
+        lexical = {(n.category, text[n.start:n.end]) for n in nodes if not n.children}
+        self.assertTrue({("DET", "any"), ("PREP", "beyond"),
+                         ("PREP", "at"), ("N", "time")} <= lexical)
+        self.assertNotIn(("N", "at"), lexical)
+        self.assertNotIn(("V", "time"), lexical)
+
+
 if __name__ == "__main__":
     unittest.main()
 
