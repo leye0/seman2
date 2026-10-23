@@ -1,6 +1,26 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #112 recovered, 460/500 (92.0%)
+## Latest measured checkpoint — sentence #340 recovered, 461/500 (92.2%)
+
+Code commits `a1c1f9d5a2da2771b9fe1fc27a03573ceb1f6c15` and
+`393079a39d184d65701c38caf1ec6ef357fafde9` add finite intransitive constructions for
+PP plus subject depictive and purpose infinitive. The latter ranks below
+lexically licensed subject control, preserving the selected analysis of
+"Lena decided to read the novel". Tests enforce agreement and intransitive
+valency and check #340's coordinated actions, "angry and disturbed" ADJP,
+and "retired to meditate on some other mode of action" purpose construction.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40005242173):
+420 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40005243149):
+461/500 complete; #340 is the only recovery from 460/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 34 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+Corpus, quote transfer, budgets and coverage gate are unchanged.
+
+
+## Previous measured checkpoint — sentence #112 recovered, 460/500 (92.0%)
 
 Code commit `f21566d278232ecbf47163936bd71173d37e6318` adds the nominal_modifier reading of
 exactly while preserving its ordinary WordNet adverb readings. The existing
