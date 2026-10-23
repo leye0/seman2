@@ -327,8 +327,8 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         ))
         rules = {node.rule_id for node in descendants(best)}
         for expected in (
-            "adjp_adjective_list_final_unpunctuated_modifier",
-            "np_definite_adjp_proper_name",
+            "adjp_extend_comma_adjective_list",
+            "np_definite_adjlist_final_adjective_proper_name",
             "vpnp_bare_coord_participial_incise",
             "vp_modal_bare",
         ):
