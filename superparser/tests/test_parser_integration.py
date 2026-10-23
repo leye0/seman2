@@ -2735,6 +2735,61 @@ class NegatedPossessiveHavePPTests(unittest.TestCase):
         self.assertNotIn(("V", "time"), lexical)
 
 
+
+class TemporalBeforeCompoundTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from TemporalBeforeCompoundTests.nodes(child)
+
+    def test_before_clausal_and_prepositional_readings_coexist(self):
+        parser = make_parser()
+        for text in ("Mary left before John arrived.",
+                     "Before John arrived, Mary left."):
+            report = parser.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, report.result.stats)
+            self.assertTrue(any(n.category == "CONJ"
+                                and text[n.start:n.end].casefold() == "before"
+                                for n in self.nodes(best)))
+        cats = {c.category for c in parser.parse("before").lattice.candidates}
+        self.assertTrue({"CONJ", "PREP", "ADV"} <= cats, cats)
+
+    def test_tete_a_tete_is_one_nominal_span_without_consuming_dash(self):
+        parser = make_parser()
+        text = "the tete-a-tete--was over"
+        lattice = parser.parse(text).lattice
+        candidates = [c for c in lattice.candidates
+                      if c.surface == "tete-a-tete" and c.category == "N"]
+        self.assertTrue(candidates)
+        self.assertTrue(all(text[c.span_start:c.span_end] == "tete-a-tete"
+                            for c in candidates))
+        self.assertTrue(any(c.surface == "--" and c.category == "DASH"
+                            for c in lattice.candidates))
+
+    def test_pinned_239_keeps_temporal_clause_and_compound_noun(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[239]["text"].startswith("Yet time and her aunt"))
+        prepared, _, result = parse_corpus_case(
+            make_parser(), cases[239], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        nodes = list(self.nodes(best))
+        spans = {(n.category, text[n.start:n.end]) for n in nodes}
+        self.assertTrue({("CONJ", "before"), ("N", "tete-a-tete"),
+                         ("CLAUSE", "the tete-a-tete was over"),
+                         ("NP", "her patience and her ideas")} <= spans, spans)
+        self.assertIn("clause_sub", {n.rule_id for n in nodes})
+        self.assertIn("clause_comma_coord", {n.rule_id for n in nodes})
+        self.assertFalse(any(n.category == "DET" and
+                            n.start > text.index("tete-a-tete")
+                            for n in nodes))
+
+
 if __name__ == "__main__":
     unittest.main()
 

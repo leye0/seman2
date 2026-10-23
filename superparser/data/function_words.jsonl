@@ -211,3 +211,4 @@
 {"lemma":"round","surfaces":["round"],"senses":[{"id":"round-preposition","category":"PREP","features":{},"semantic_type":"AROUND","score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true,"syntactic_role":"spatial preposition selecting a nominal complement"}}
 {"lemma":"beyond","surfaces":["beyond"],"senses":[{"id":"beyond-preposition","category":"PREP","features":{},"score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true}}
 {"lemma":"any","surfaces":["any"],"senses":[{"id":"any-determiner","category":"DET","features":{},"score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true}}
+{"lemma":"before","surfaces":["before"],"senses":[{"id":"before-subordinator","category":"CONJ","features":{},"semantic_type":"TEMPORAL","score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true,"syntactic_role":"temporal subordinator introducing a finite clause"}}

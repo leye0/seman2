@@ -120,3 +120,5 @@ Checkpoint: repair #445 spatial prepositions, licensed base object-adjective pre
 Checkpoint: narrow object-adjective construction to closed-class base HAVE, remove unnecessary open-class have valence senses, preserve saturated #359 and #445 within unchanged budgets.
 
 Checkpoint: #200 any determiner, beyond preposition, finite negated possessive HAVE with interposed PP; verify pinned selected predicate and unchanged fixed corpus.
+
+Checkpoint: #239 before temporal conjunction and attested tete-a-tete nominal span; no grammar changes; verify pinned tree and fixed-budget corpus.
