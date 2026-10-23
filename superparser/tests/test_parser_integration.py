@@ -2923,6 +2923,9 @@ class IntransitiveDepictivePurposeTests(unittest.TestCase):
             best = result.best()
             self.assertIsNotNone(best, result.stats)
             self.assertIn(rule, {n.rule_id for n in self.nodes(best)})
+        control = parser.parse("Lena decided to read the novel.").result.best()
+        self.assertIsNotNone(control)
+        self.assertIn("vp_to_inf", {n.rule_id for n in self.nodes(control)})
         forbidden = {"vp_intransitive_pp_depictive", "vp_intransitive_purpose_infinitive"}
         for text in ("He returns from work tired.", "He returns to meditate."):
             self.assertIsNotNone(parser.parse(text).result.best(), text)
