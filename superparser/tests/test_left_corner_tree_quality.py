@@ -164,6 +164,37 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             "The matrix obligation is a finite clause, not a nominal fragment",
         )
 
+    def test_reduced_concessive_adjective_incise(self):
+        text = "her features, though not plain, were insignificant."
+        report = self.parser.parse(text, max_items=50000)
+        best = report.result.best()
+        if best is None:
+            details = []
+            for probe, goal in (
+                ("her features", "NP"),
+                ("though not plain", "ADJP"),
+                ("were insignificant", "VP"),
+                (text, "CLAUSE"),
+            ):
+                p = Parser(self.parser.resources, goal_category=goal,
+                           lexical_left_corner_pruning=True, cache_size=0)
+                result = p.parse(probe, max_items=50000).result
+                selected = result.best()
+                details.append((probe, goal, bool(selected),
+                                result.stats.get("structural_root_nodes"),
+                                [(node.rule_id, node.category)
+                                 for node in descendants(selected)][:12]
+                                if selected else []))
+            self.fail(("Concessive incise missing", report.result.stats, details))
+        self.assertTrue(any(
+            node.rule_id == "adjp_concessive_negated_adjective"
+            for node in descendants(best)
+        ), "The concessive should retain its overt conjunction and negation")
+        self.assertTrue(any(
+            node.rule_id == "clause_subject_parenthetical_adjp_referential"
+            for node in descendants(best)
+        ), "The paired commas attach the concessive adjective to the subject")
+
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
             ("Mary's eyes were ready.", "plural"),

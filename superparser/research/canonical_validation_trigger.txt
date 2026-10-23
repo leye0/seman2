@@ -100,3 +100,5 @@ Checkpoint: probe generic finite obligation with intervening only and coordinati
 Checkpoint: restore overt finite-V ADV TO VP-NP variant for obligation/control verbs, without loosening silent infinitives.
 
 Checkpoint: score generic finite adverb-to-infinitive below overt rather/than comparative and genuine control/raising.
+
+Checkpoint: typed reduced concessive adjectival incise via lexical though and overt NEG+ADJ; avoid blanket CONJ-to-ADJP rules.
