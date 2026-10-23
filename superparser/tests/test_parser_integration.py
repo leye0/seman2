@@ -2591,6 +2591,93 @@ class UnlessConditionalSubordinatorTests(unittest.TestCase):
             "my application to this study would have been irksome and almost intolerable")
 
 
+
+class SpatialPrepositionsAndObjectAdjectiveTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from SpatialPrepositionsAndObjectAdjectiveTests.nodes(child)
+
+    def test_spatial_prepositions_preserve_other_readings(self):
+        parser = make_parser()
+        for text in ("Aboard ship", "aboard ship", "round the house"):
+            report = parser.parse(text)
+            first = report.lattice.tokens[0]
+            cats = {c.category for c in report.lattice.covering(first.start, first.end)}
+            self.assertIn("PREP", cats)
+            self.assertIn("ADV", cats)
+
+    def test_productive_object_adjective_predicate_and_equative_bound(self):
+        parser = make_parser()
+        for text in ("John can have both hands free.",
+                     "Mary could keep the room as quiet as possible."):
+            with self.subTest(text=text):
+                report = parser.parse(text)
+                best = report.result.best()
+                self.assertIsNotNone(best, report.result.stats)
+                self.assertTrue({"vpnp_base_object_adjective", "vp_np_resultative"}
+                                & {n.rule_id for n in self.nodes(best)})
+        report = parser.parse("Mary could keep the room as quiet as possible.")
+        self.assertIn("adjp_as_as_adjectival_bound",
+                      {n.rule_id for n in self.nodes(report.result.best())})
+        for text in ("John can sleep both hands free.",
+                     "John can had both hands free."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vpnp_base_object_adjective",
+                                 {n.rule_id for n in self.nodes(tree)}, text)
+        for text in ("Mary could keep the room as quiet as blue.",
+                     "Mary could keep the room than quiet as possible."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("adjp_as_as_adjectival_bound",
+                                 {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_final_infinitival_supplement_requires_overt_boundary(self):
+        parser = make_parser()
+        text = "Mary waited, to keep the room quiet."
+        report = parser.parse(text)
+        best = report.result.best()
+        self.assertIsNotNone(best, report.result.stats)
+        self.assertIn("clause_final_comma_infinitival_supplement",
+                      {n.rule_id for n in self.nodes(best)})
+        for text in ("Mary waited to keep the room quiet.",
+                     "Mary waited, keep the room quiet.",
+                     "Mary waited, to kept the room quiet."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("clause_final_comma_infinitival_supplement",
+                                 {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_pinned_treasure_island_445_has_real_object_and_infinitival_supplement(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.audit_novel_tree_quality import display_tree
+        cases, _ = select_cases(500)
+        case = cases[445]
+        self.assertTrue(case["text"].startswith("Aboard ship he carried"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), case, max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        print("ABOARD_445_TREE\n" + "\n".join(display_tree(best, text)), flush=True)
+        nodes = list(self.nodes(best))
+        rules = {n.rule_id for n in nodes}
+        self.assertNotIn("clause_infinitive_subject", rules)
+        for rule in ("clause_final_comma_infinitival_supplement",
+                     "vpnp_base_object_adjective",
+                     "adjp_as_as_adjectival_bound"):
+            self.assertIn(rule, rules)
+        spans = {(n.category, text[n.start:n.end]) for n in nodes}
+        for expected in (("PP", "Aboard ship"), ("NP", "both hands"),
+                         ("ADJ", "possible"), ("NP", "a lanyard round his neck"),
+                         ("PP", "round his neck"),
+                         ("VP-NP", "have both hands as free as possible")):
+            self.assertIn(expected, spans)
+        lexical = {(n.category, text[n.start:n.end]) for n in nodes if not n.children}
+        self.assertNotIn(("V", "hands"), lexical)
+        self.assertNotIn(("N", "possible"), lexical)
+
+
 if __name__ == "__main__":
     unittest.main()
 

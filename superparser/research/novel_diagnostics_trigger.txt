@@ -38,3 +38,5 @@ Checkpoint: 214c98be6d4bd1f9499c031abb808a3dbd81c326 — fixed 500-case diagnost
 
 Checkpoint: add closed-class unless subordinator; verify pinned #317 conditional subtree and unchanged 500-case budgets.
 Checkpoint: compose base HAVE + participial copula + ADJP under modal; assert correct #317 clause boundaries, passive and perfect predicates.
+
+Checkpoint: repair #445 spatial prepositions, licensed base object-adjective predication, reduced possible comparison, and comma infinitival supplement; verify best tree and fixed cohort.
