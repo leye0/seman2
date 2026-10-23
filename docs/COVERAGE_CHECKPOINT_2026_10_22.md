@@ -1,6 +1,27 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentences #232 and #237 recovered, 459/500 (91.8%)
+## Latest measured checkpoint — sentence #112 recovered, 460/500 (92.0%)
+
+Code commit `f21566d278232ecbf47163936bd71173d37e6318` adds the nominal_modifier reading of
+exactly while preserving its ordinary WordNet adverb readings. The existing
+np_adv_np production now licenses "exactly what he had before him".
+No grammar production, parser algorithm, corpus or budget changes.
+Tests check nominal focus, the existing object free-relative construction,
+modal scope, ordinary adverb use, and the lexical gate excluding quickly.
+Final PP attachment ambiguities are outside these selected-tree assertions.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40003608281):
+418 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40003608016):
+460/500 complete; #112 is the only recovery from 459/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 35 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+[Scoped dialogue validation](https://github.com/leye0/seman2/actions/runs/40003607812)
+also passes. The coverage gate remains unchanged.
+
+
+## Previous measured checkpoint — sentences #232 and #237 recovered, 459/500 (91.8%)
 
 Code commit `d6d40dbcf939a9bf29daaa2ff50ffca401c4bd45` adds the attested ADV unfrequently,
 plural genitive apostrophe edges, and bounded passive object-control rules
