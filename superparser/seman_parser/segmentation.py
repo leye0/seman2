@@ -242,6 +242,25 @@ def build_lattice(
                 source="typographic-" + candidate.source,
             ))
 
+
+    # A plural genitive has an overt apostrophe but no additional s.
+    # Offer a separate clitic edge; keep quotation and token hypotheses intact.
+    for match in re.finditer(r"\b([A-Za-z]+s)(['\u2019])(?=\s+[A-Za-z])", text, re.I):
+        stem_end = match.end(1)
+        plural_noun = any(
+            c.span_start == match.start(1) and c.span_end == stem_end
+            and c.category == "N"
+            and c.features.as_dict().get("number") == "plural"
+            for c in candidates
+        )
+        if plural_noun:
+            candidates.append(LexicalCandidate(
+                span_start=match.start(2), span_end=match.end(2),
+                surface=match.group(2), lemma="'", category="POSS",
+                features=FeatureStructure.build({"genitive_clitic": "true"}),
+                score=1.0, source="plural-genitive-apostrophe",
+                provenance={"construction": "overt_plural_s_genitive"},
+            ))
     # Keep exclamative punctuation distinct from commas (without removing
     # the existing legacy COMMA hypothesis for '!').
     for mark in re.finditer(r"!", text):
@@ -1039,3 +1058,4 @@ def _contraction_candidates(
             sense=sense,
             source="contraction-clitic",
         )
+

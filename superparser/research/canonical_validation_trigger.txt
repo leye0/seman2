@@ -122,3 +122,4 @@ Checkpoint: narrow object-adjective construction to closed-class base HAVE, remo
 Checkpoint: #200 any determiner, beyond preposition, finite negated possessive HAVE with interposed PP; verify pinned selected predicate and unchanged fixed corpus.
 
 Checkpoint: #239 before temporal conjunction and attested tete-a-tete nominal span; no grammar changes; verify pinned tree and fixed-budget corpus.
+Validate pinned #232: plural genitive and adverbial passive control.

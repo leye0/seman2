@@ -2790,6 +2790,75 @@ class TemporalBeforeCompoundTests(unittest.TestCase):
                             for n in nodes))
 
 
+class PluralGenitivePassiveControlTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from PluralGenitivePassiveControlTests.nodes(child)
+
+    def test_plural_genitive_preserves_ascii_and_curly_apostrophe_spans(self):
+        from seman_parser.segmentation import tokenize
+        parser = make_parser()
+        for mark in ("'", "’"):
+            text = "She had a few minutes" + mark + " conversation."
+            tokens = tokenize(text)
+            report = parser.parse(text)
+            self.assertEqual(report.lattice.tokens, tokens)
+            clitics = [c for c in report.lattice.candidates
+                       if c.source == "plural-genitive-apostrophe"]
+            self.assertEqual(len(clitics), 1)
+            self.assertEqual(text[clitics[0].span_start:clitics[0].span_end], mark)
+            self.assertEqual(clitics[0].features.as_dict()["genitive_clitic"], "true")
+            best = report.result.best()
+            self.assertIsNotNone(best, report.result.stats)
+            self.assertIn("np_genitive", {n.rule_id for n in self.nodes(best)})
+        for text in ("the dog' bowl", "a few minutes conversation", "John's coat"):
+            self.assertFalse(any(c.source == "plural-genitive-apostrophe"
+                                 for c in parser.parse(text).lattice.candidates), text)
+
+    def test_passive_control_licenses_adverbs_and_rejects_wrong_morphology(self):
+        parser = make_parser()
+        for text, rule in (
+            ("She was scarcely ever prevailed upon to leave.",
+             "vp_passive_control_interposed_advp"),
+            ("He was kindly persuaded to stay.",
+             "vp_passive_control_interposed_adv"),
+        ):
+            report = parser.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, report.result.stats)
+            self.assertIn(rule, {n.rule_id for n in self.nodes(best)})
+        forbidden = {"vp_passive_control_interposed_adv",
+                     "vp_passive_control_interposed_advp"}
+        for text in ("She were scarcely ever prevailed upon to leave.",
+                     "She was scarcely ever prevail upon to leave.",
+                     "She was scarcely ever slept to leave."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertFalse(forbidden & {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_pinned_232_has_genitive_adverb_and_passive_control(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[232]["text"].startswith("She not unfrequently"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[232], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        nodes = list(self.nodes(best))
+        spans = {(n.category, text[n.start:n.end]) for n in nodes}
+        self.assertTrue({("ADV", "unfrequently"), ("POSS", "'"),
+                         ("NP", "a few minutes' conversation"),
+                         ("ADVP", "scarcely ever"), ("V", "prevailed upon"),
+                         ("VP-NP", "get out")} <= spans, spans)
+        self.assertIn("vp_passive_control_interposed_advp",
+                      {n.rule_id for n in nodes})
+        self.assertIn("np_genitive", {n.rule_id for n in nodes})
+
+
+
 if __name__ == "__main__":
     unittest.main()
 

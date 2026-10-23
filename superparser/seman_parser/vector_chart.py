@@ -560,6 +560,10 @@ class _VectorForest:
         self.compiled = compiled
         self.lattice = lattice
         self.text = lattice.text
+        self._genitive_clitic_starts = {
+            c.span_start for c in lattice.candidates
+            if c.source == "plural-genitive-apostrophe"
+        }
         self.max_items = max_items
         self.nodes: list[ForestNode] = []
         self.by_key: dict[tuple[int, int, int], ForestNode] = {}
@@ -594,6 +598,9 @@ class _VectorForest:
         separators = (' \t\r\n' if self.compiled.preserve_quote_delimiters
                       else ' \t\r\n"\u201c\u201d\u2018\u2019')
         while end < len(self.text) and self.text[end] in separators:
+            # An overt plural-genitive edge must remain consumable.
+            if end in self._genitive_clitic_starts:
+                break
             # A curly apostrophe within a word is part of the lexical
             # boundary (John’s, don’t), not a transferable quote mark.
             # Keep tokenize() and the novel quote-balancing provenance
@@ -1773,3 +1780,4 @@ class LazyRootSequence(Sequence[ChartItem]):
 
 
 __all__ = ["LazyRootSequence", "VectorGrammar"]
+
