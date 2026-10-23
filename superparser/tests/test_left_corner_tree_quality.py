@@ -195,6 +195,35 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             for node in descendants(best)
         ), "The paired commas attach the concessive adjective to the subject")
 
+    def test_free_relative_wh_object_forms_nominal_subject(self):
+        sentence = "Whatever he said, was said well."
+        best = self.parser.parse(sentence, max_items=50000).result.best()
+        if best is None:
+            details = []
+            for probe, goal in (
+                ("Whatever he said", "NP"),
+                ("was said well", "VP"),
+                (sentence, "CLAUSE"),
+            ):
+                p = Parser(self.parser.resources, goal_category=goal,
+                           lexical_left_corner_pruning=True, cache_size=0)
+                result = p.parse(probe, max_items=50000).result
+                selected = result.best()
+                details.append((probe, goal, bool(selected),
+                                result.stats.get("structural_root_nodes"),
+                                [(node.rule_id, node.category)
+                                 for node in descendants(selected)][:14]
+                                if selected else []))
+            self.fail(("Free relative unavailable", details))
+        self.assertTrue(any(
+            n.rule_id == "np_nominal_free_relative_object"
+            for n in descendants(best)
+        ), "The WH word names the missing object inside the nominal relative")
+        np = Parser(self.parser.resources, goal_category="NP",
+                    lexical_left_corner_pruning=True, cache_size=0)
+        other = np.parse("Whoever arrived", max_items=50000).result.best()
+        self.assertIsNotNone(other, "The WH family is not one corpus-specific phrase")
+
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
             ("Mary's eyes were ready.", "plural"),

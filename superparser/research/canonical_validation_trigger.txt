@@ -102,3 +102,5 @@ Checkpoint: restore overt finite-V ADV TO VP-NP variant for obligation/control v
 Checkpoint: score generic finite adverb-to-infinitive below overt rather/than comparative and genuine control/raising.
 
 Checkpoint: typed reduced concessive adjectival incise via lexical though and overt NEG+ADJ; avoid blanket CONJ-to-ADJP rules.
+
+Checkpoint: complete productive free-relative WH-NOM closed-class lexical family (whatever/whoever/whichever) and test nominal object extraction #132.
