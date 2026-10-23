@@ -2976,7 +2976,7 @@ class DegreeNominalAdjectiveGapTests(unittest.TestCase):
             self.assertIsNone(parser.parse(text).result.best(), text)
         self.assertIsNone(parser.parse("He is guilty of.").result.best())
         self.assertIsNotNone(parser.parse("He is guilty of it.").result.best())
-        result = parser.parse("It was certainly a mistake.").result
+        result = parser.parse("It was really too great a mistake.").result
         self.assertIn("vp_copular_adverb_nominal_predicate",
                       {n.rule_id for n in self.nodes(result.best())})
 
