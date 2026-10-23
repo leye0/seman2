@@ -1,6 +1,25 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #445 repaired, 455/500 (91.0%)
+## Latest measured checkpoint — sentence #200 recovered, 456/500 (91.2%)
+
+Code commit `0dd760991b01b42ae2b14c160ee4fc4845899ff3` adds the missing
+DET reading of any and PREP reading of beyond while retaining WordNet readings.
+A finite HAVE + NEG + PP + NP construction recognizes possessive “had not at
+that time the honour”, preventing the former selected nominal at/verbal time
+misanalysis. The pinned-case test checks the selected predicate, interposed
+temporal PP, object onset and lexical categories. PP attachment ambiguities
+inside the object remain outside these assertions.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/39960598855):
+410 tests, OK with 7 expected failures. [Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/39960599085):
+456 complete, 39 grammatical residuals, 4 forest-budget failures and 1 timeout.
+Compared with 455/500, only #200 recovers, no completion is lost and remaining
+non-complete statuses are unchanged. Complete parses with forest saturation
+increase from 17 to 18; the corpus and budgets are unchanged.
+The existing 457/500 gate remains red and was not lowered.
+
+
+## Previous measured checkpoint — sentence #445 repaired, 455/500 (91.0%)
 
 Code commit `56adc49b523dea66c73568e97a47d5a1358c3a71` repairs the Treasure
 Island sentence beginning “Aboard ship he carried his crutch”.
