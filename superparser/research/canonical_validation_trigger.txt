@@ -111,3 +111,4 @@ Checkpoint: factor paused free-relative through dedicated NP-FREE-REL category t
 Checkpoint: test generic adjective-list proper-name objects and participial supplements between modal bare conjuncts (David Copperfield #107, four grammar constructions; fdc91b46).
 Checkpoint: narrow the 107 repair to one paired-comma participial incise inside coordinated bare VPs, without recursive VP-NP proliferation; follow up after canonical regression.
 Checkpoint: factor the definite adjective-list named object into one typed rule, avoiding standalone ADJP+ADJ recursion and broad DET+ADJP+PROPER-NOUN partial states; protect #359.
+Checkpoint: deduplicate exact LHS/RHS copies clause_front_np_comma and wh_list3 to preserve chart budget on saturated #359 while retaining one semantically identical production each.
