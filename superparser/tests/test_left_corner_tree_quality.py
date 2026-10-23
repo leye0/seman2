@@ -130,6 +130,40 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             "The dashes must enclose an overt finite causal clause",
         )
 
+    def test_obligation_with_intervening_adverb_coordinates_finite_clauses(self):
+        text = "I have only to tell her so, and she is sure to come."
+        report = self.parser.parse(text, max_items=50000)
+        best = report.result.best()
+        if best is None:
+            probes = (
+                ("have only to tell her so", "VP"),
+                ("tell her so", "VP-NP"),
+                ("I have only to tell her so", "CLAUSE"),
+                ("she is sure to come", "CLAUSE"),
+                ("and she is sure to come", "CLAUSE"),
+                ("I have only to tell her so, and she is sure to come.", "CLAUSE"),
+                ("I have only to tell her so, and she is sure to come.’", "CLAUSE"),
+            )
+            details = []
+            for probe, goal in probes:
+                p = Parser(self.parser.resources, goal_category=goal,
+                           lexical_left_corner_pruning=True, cache_size=0)
+                result = p.parse(probe, max_items=50000).result
+                selected = result.best()
+                details.append((
+                    probe, goal, bool(selected),
+                    result.stats.get("structural_root_nodes"),
+                    result.stats.get("budget_exceeded"),
+                    [(node.rule_id, node.category)
+                     for node in descendants(selected)][:18] if selected else [],
+                ))
+            self.fail(("Obligation/coordination missing", report.result.stats, details))
+        self.assertTrue(any(
+            node.rule_id == "clause_np_vp" and text[node.start:node.end].startswith("I have")
+            for node in descendants(best)),
+            "The matrix obligation is a finite clause, not a nominal fragment",
+        )
+
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
             ("Mary's eyes were ready.", "plural"),
