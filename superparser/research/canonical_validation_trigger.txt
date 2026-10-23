@@ -96,3 +96,5 @@ Checkpoint: fragment diagnostics for originally completed #486 now with no valid
 Checkpoint: license overt NEG+ADV afterthought following comma, preserving finite clause and typed causal incise for 486.
 
 Checkpoint: probe generic finite obligation with intervening only and coordination (#58) as another former-complete case.
+
+Checkpoint: restore overt finite-V ADV TO VP-NP variant for obligation/control verbs, without loosening silent infinitives.
