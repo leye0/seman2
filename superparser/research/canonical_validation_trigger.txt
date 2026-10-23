@@ -98,3 +98,5 @@ Checkpoint: license overt NEG+ADV afterthought following comma, preserving finit
 Checkpoint: probe generic finite obligation with intervening only and coordination (#58) as another former-complete case.
 
 Checkpoint: restore overt finite-V ADV TO VP-NP variant for obligation/control verbs, without loosening silent infinitives.
+
+Checkpoint: score generic finite adverb-to-infinitive below overt rather/than comparative and genuine control/raising.
