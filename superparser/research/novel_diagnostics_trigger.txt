@@ -31,4 +31,4 @@ Diagnostic provenance checkpoint: 2026-10-21 — preserve masked dialogue budget
 
 Checkpoint: 214c98be6d4bd1f9499c031abb808a3dbd81c326 — fixed 500-case diagnostic after passing 385 tests, typed absolute NP attachment, object-control/perfect selection, and modal-perfect recovery.
 
-2026-10-22: benchmark exactly 500 after retaining two licensed ordinary-coordinate guards only (correlative clause, NP gapping); restore other clausal patterns and preposed-genitive scoping.
+2026-10-22: verify 500 fixed cohort after compositional NEG+ADV comma afterthought and adverb-intervening finite TO-infinitive recovery; preserve comparative control preference and tally exact per-ID deltas from 448 baseline.
