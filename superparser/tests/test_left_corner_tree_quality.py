@@ -93,6 +93,43 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         self.assertEqual(len(gapping), 1)
         self.assertIn("nominal_coordination", gapping[0].rhs[1].requires)
 
+    def test_causal_dash_incise_and_finite_predicate_cohere(self):
+        text = (
+            "Anderson's ball--for it was Job that shot him first--"
+            "had broken his shoulder-blade and touched the lung, not badly."
+        )
+        report = self.parser.parse(text, max_items=50000)
+        best = report.result.best()
+        if best is None:
+            probes = (
+                ("Anderson's ball", "NP"),
+                ("for it was Job that shot him first", "CLAUSE"),
+                ("--for it was Job that shot him first--", "PARENTHETICAL"),
+                ("had broken his shoulder-blade", "VP"),
+                ("had broken his shoulder-blade and touched the lung", "VP"),
+                ("Anderson's ball had broken his shoulder-blade and touched the lung", "CLAUSE"),
+                ("Anderson's ball--for it was Job that shot him first--had broken his shoulder-blade and touched the lung", "CLAUSE"),
+            )
+            details = []
+            for probe, goal in probes:
+                p = Parser(self.parser.resources, goal_category=goal,
+                           lexical_left_corner_pruning=True, cache_size=0)
+                result = p.parse(probe, max_items=50000).result
+                selected = result.best()
+                details.append((
+                    probe, goal, bool(selected),
+                    result.stats.get("structural_root_nodes"),
+                    result.stats.get("budget_exceeded"),
+                    [(node.rule_id, node.category, probe[node.start:node.end])
+                     for node in descendants(selected)][:22] if selected else [],
+                ))
+            self.fail(("No 486 full analysis", report.result.stats, details))
+        self.assertTrue(
+            any(node.rule_id == "parenthetical_dash_causal_clause"
+                for node in descendants(best)),
+            "The dashes must enclose an overt finite causal clause",
+        )
+
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
             ("Mary's eyes were ready.", "plural"),

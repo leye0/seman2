@@ -90,3 +90,5 @@ Checkpoint: require overt category feature licensing on all clausal coordination
 Checkpoint: rollback broad feature-context filtering after 448/500 regression; isolate only preposed genitive possessor agreement from possessed head.
 
 Checkpoint: 448/500 remained after narrowing variable scope; restore attested clausal coordinators, restrict only two causally ambiguous bare-for schemas.
+
+Checkpoint: fragment diagnostics for originally completed #486 now with no valid root; require explicit finite causal dash incise.
