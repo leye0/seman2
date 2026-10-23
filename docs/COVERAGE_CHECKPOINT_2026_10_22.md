@@ -1,6 +1,32 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #317 repaired, 454/500 (90.8%)
+## Latest measured checkpoint — sentence #445 repaired, 455/500 (91.0%)
+
+Code commit `56adc49b523dea66c73568e97a47d5a1358c3a71` repairs the Treasure
+Island sentence beginning “Aboard ship he carried his crutch”.
+Aboard and round now have prepositional readings. The selected tree groups
+“both hands” as the object of base HAVE, “as free as possible” as its adjectival
+predicate, and the final comma + TO phrase as an infinitival supplement.
+“Round his neck” modifies “a lanyard”. Possible remains adjectival, and hands
+is not misread as a verb.
+
+The HAVE construction is restricted to the closed-class base-form category
+to avoid arbitrary V+NP partial states and preserve budget-sensitive #359.
+Tests cover the exact quote-balanced corpus case, productive variants and
+negative lexical/morphological/boundary contrasts.
+
+- [Core validation](https://github.com/leye0/seman2/actions/runs/39895993940):
+  407 tests, OK with 7 expected failures.
+- [Latest fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/39954824743):
+  455/500 complete, 40 grammatical residuals, 4 forest-budget failures and
+  1 timeout, zero errors.
+- Compared with the previous 454/500 diagnostic, only #445 changes from
+  non-complete to complete; no completed case is lost, and all remaining
+  non-complete statuses are unchanged. Corpus and budgets are unchanged.
+- The existing 457/500 coverage gate remains red; its threshold is unchanged.
+
+
+## Previous measured checkpoint — sentence #317 repaired, 454/500 (90.8%)
 
 Code commit `48426b2c29f849268724b83bdde2c70c48b1fbf8` repairs the
 Frankenstein sentence beginning “Unless I had been animated”.
