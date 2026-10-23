@@ -2539,6 +2539,26 @@ class UnlessConditionalSubordinatorTests(unittest.TestCase):
                                     and text[n.start:n.end].casefold() == "unless"
                                     for n in self.nodes(best)))
 
+
+    def test_perfect_copular_predicate_requires_base_have_and_participial_be(self):
+        parser = make_parser()
+        for text in ("John would have been happy.",
+                     "Mary might have been quiet and almost invisible."):
+            report = parser.parse(text)
+            best = report.result.best()
+            self.assertIsNotNone(best, report.result.stats)
+            self.assertIn("vpnp_base_perfect_cop_adjp",
+                          {n.rule_id for n in self.nodes(best)})
+        for text in ("John would has been happy.",
+                     "John would had been happy.",
+                     "John would have be happy.",
+                     "John would have was happy.",
+                     "John would have being happy."):
+            report = parser.parse(text)
+            for tree in report.result.alternatives(limit=8):
+                self.assertNotIn("vpnp_base_perfect_cop_adjp",
+                                 {n.rule_id for n in self.nodes(tree)}, text)
+
     def test_pinned_frankenstein_317_uses_conditional_subordination(self):
         from scripts.diagnose_novel_parses import select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
@@ -2553,6 +2573,9 @@ class UnlessConditionalSubordinatorTests(unittest.TestCase):
         print("UNLESS_317_TREE\n" + "\n".join(
             display_tree(best, prepared.analysis_text)), flush=True)
         nodes = list(self.nodes(best))
+        self.assertIn("vpnp_base_perfect_cop_adjp", {n.rule_id for n in nodes})
+        self.assertIn("vp_perfect_passive", {n.rule_id for n in nodes})
+        self.assertNotIn("clause_modal_ellipsis", {n.rule_id for n in nodes})
         conditional = [n for n in nodes if n.rule_id == "clause_cond"]
         self.assertTrue(conditional, [n.rule_id for n in nodes])
         clause = conditional[0]
