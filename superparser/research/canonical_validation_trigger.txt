@@ -124,3 +124,4 @@ Checkpoint: #200 any determiner, beyond preposition, finite negated possessive H
 Checkpoint: #239 before temporal conjunction and attested tete-a-tete nominal span; no grammar changes; verify pinned tree and fixed-budget corpus.
 Validate pinned #232: plural genitive and adverbial passive control.
 Validate pinned #112: exactly as nominal precision focus.
+Validate pinned #340: intransitive depictive and purpose constructions.

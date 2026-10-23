@@ -2905,6 +2905,51 @@ class ExactNominalFocusTests(unittest.TestCase):
                             and text[n.start:n.end].startswith("should copy exactly")
                             for n in nodes))
 
+
+class IntransitiveDepictivePurposeTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from IntransitiveDepictivePurposeTests.nodes(child)
+
+    def test_depictive_and_purpose_constructions_are_licensed(self):
+        parser = make_parser()
+        for text, rule in (
+            ("She returned from work tired.", "vp_intransitive_pp_depictive"),
+            ("They retired to meditate.", "vp_intransitive_purpose_infinitive"),
+        ):
+            result = parser.parse(text).result
+            best = result.best()
+            self.assertIsNotNone(best, result.stats)
+            self.assertIn(rule, {n.rule_id for n in self.nodes(best)})
+        forbidden = {"vp_intransitive_pp_depictive", "vp_intransitive_purpose_infinitive"}
+        for text in ("He returns from work tired.", "He returns to meditate."):
+            self.assertIsNotNone(parser.parse(text).result.best(), text)
+        for text in ("They returns from work tired.", "They returns to meditate.",
+                     "He required to meditate.", "He required from work tired."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertFalse(forbidden & {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_pinned_340_coordinates_depictive_action_and_purpose(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[340]["text"].startswith("I broke from the house"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[340], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        nodes = list(self.nodes(best))
+        spans = {(n.rule_id, text[n.start:n.end]) for n in nodes}
+        self.assertIn(("vp_intransitive_pp_depictive",
+                       "broke from the house angry and disturbed"), spans)
+        self.assertIn(("adjp_coord", "angry and disturbed"), spans)
+        self.assertIn(("vp_intransitive_purpose_infinitive",
+                       "retired to meditate on some other mode of action"), spans)
+        self.assertIn("vp_coord_finite", {n.rule_id for n in nodes})
+
 if __name__ == "__main__":
     unittest.main()
 
