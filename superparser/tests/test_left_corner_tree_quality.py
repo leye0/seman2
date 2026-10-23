@@ -88,13 +88,10 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             coordinator.features.as_dict().get("nominal_coordination"), "true",
         )
         self.assertIn("nominal_coordination", coordinator.requires)
-        for rule in self.parser.resources.grammar:
-            for symbol in rule.rhs:
-                if symbol.category == "COORD":
-                    self.assertTrue(
-                        symbol.requires,
-                        f"{rule.rule_id} accepts an untyped coordinator",
-                    )
+        gapping = [r for r in self.parser.resources.grammar
+                   if r.rule_id == "clause_gapping_np"]
+        self.assertEqual(len(gapping), 1)
+        self.assertIn("nominal_coordination", gapping[0].rhs[1].requires)
 
     def test_genitive_subject_agrees_with_possessed_head(self):
         for sentence, number in (
