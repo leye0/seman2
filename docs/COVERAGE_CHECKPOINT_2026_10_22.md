@@ -1,6 +1,27 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #239 recovered, 457/500 (91.4%)
+## Latest measured checkpoint — sentences #232 and #237 recovered, 459/500 (91.8%)
+
+Code commit `d6d40dbcf939a9bf29daaa2ff50ffca401c4bd45` adds the attested ADV unfrequently,
+plural genitive apostrophe edges, and bounded passive object-control rules
+with interposed ADV/ADVP. The participial lexical unit prevailed upon/on
+retains its control valency. Curly plural-genitive edges remain consumable
+without changing tokenization or the corpus quote-transfer algorithm.
+The selected-tree regression for #232 checks the genitive, adverbs and
+passive control; focused tests cover both apostrophes and reject incorrect
+agreement, verb morphology and control valency.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40000029649):
+416 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40000029586):
+459/500 complete. Compared with 457/500, #232 and #237 recover, no completion
+is lost, and remaining non-complete statuses are unchanged.
+There are 36 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+[Scoped dialogue validation](https://github.com/leye0/seman2/actions/runs/40000029673)
+also passes. Corpus, budgets and coverage gate are unchanged.
+
+## Previous measured checkpoint — sentence #239 recovered, 457/500 (91.4%)
 
 Code commit `2e2564300d0c3e91c429e1ff0b89370cb0445930` adds temporal CONJ
 before (preserving PREP/ADV) and the attested singular noun tete-a-tete.
