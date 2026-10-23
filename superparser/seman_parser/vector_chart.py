@@ -271,16 +271,16 @@ def _project_bindings(
     )
 
 
-def _merge_child_interface_bindings(
+def _merge_preposed_possessor_bindings(
     inherited: Bindings,
     interface_features: FeatureStructure,
     child_bindings: Bindings,
 ) -> Bindings:
-    """Propagate only bindings visible through a rule child's interface.
+    """Keep a possessor's private agreement away from the possessed head.
 
-    Every nested grammar rule owns its variables. A local number variable
-    in the possessor NP must not bind the enclosing genitive's head number
-    unless the parent RHS interface links them.
+    A preceding NP possessor has its own number/person variables.
+    Only features explicitly exported through the parent RHS interface
+    may constrain the following genitive clitic and possessed noun.
     """
     projected, _ = _project_bindings(interface_features, child_bindings)
     return {**inherited, **projected}
@@ -1150,9 +1150,16 @@ class _LazyMaterializer:
                     )
                 return
             combo.append(child)
-            env = _merge_child_interface_bindings(
-                env, rule.rhs[index].features, child.bindings,
-            )
+            symbol = rule.rhs[index]
+            if (
+                index < len(rule.rhs) - 1 and symbol.category == "NP"
+                and symbol.exports.get("referent") == "possessor"
+            ):
+                env = _merge_preposed_possessor_bindings(
+                    env, symbol.features, child.bindings,
+                )
+            else:
+                env = dict(child.bindings)
         score = sum(child.score for child in combo) + rule.score - self.RULE_COST
         heappush(state.heap, (
             -score, next(self._serial), "rule",
@@ -1384,11 +1391,17 @@ class _LazyMaterializer:
         assert lhs_result is not None
         lhs_merged, env = lhs_result
         uses: list[AnalysisUse] = []
-        for symbol, child in zip(rule.rhs, combo):
+        for index, (symbol, child) in enumerate(zip(rule.rhs, combo)):
+            if (
+                index < len(rule.rhs) - 1 and symbol.category == "NP"
+                and symbol.exports.get("referent") == "possessor"
+            ):
+                env = _merge_preposed_possessor_bindings(
+                    env, symbol.features, child.bindings,
+                )
+            else:
+                env = dict(child.bindings)
             uses.append(AnalysisUse(child, child.features, dict(child.bindings)))
-            env = _merge_child_interface_bindings(
-                env, symbol.features, child.bindings,
-            )
         result = (substitute_structure(lhs_merged, env), dict(env), tuple(uses))
         self.unification_cache[key] = result
         return result
