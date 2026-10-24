@@ -1,6 +1,29 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #340 recovered, 461/500 (92.2%)
+## Latest measured checkpoint — sentence #209 recovered, 462/500 (92.4%)
+
+Code commits `bd7f005908b5accefb0a1a0aa801baf0ad85871a` and
+`1a4c701a04050db5c94ef0bc0c1121e8ece69b1f` license a degree nominal with a for-infinitive and
+a selected adjectival prepositional gap. Lexical features match guilty to
+of, while a dedicated DEGREE-NP constituent bounds recognition to overt
+degree nominals. The selected tree keeps the entire "of decency, honour,
+and interest" PP under "too great a violation" and attaches the infinitive
+to that antecedent. Copular adverb recognition is restricted to this typed
+nominal construction, preserving comparative adjective analyses.
+Negative tests reject wrong prepositions, non-base copulas and unlicensed
+adjectival gaps. The existing #359 fixed-budget test remains green.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40010928957):
+422 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40010928872):
+462/500 complete; #209 is the only recovery from 461/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 33 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+Corpus, quote transfer, budgets and coverage gate are unchanged.
+
+
+## Previous measured checkpoint — sentence #340 recovered, 461/500 (92.2%)
 
 Code commits `a1c1f9d5a2da2771b9fe1fc27a03573ceb1f6c15` and
 `393079a39d184d65701c38caf1ec6ef357fafde9` add finite intransitive constructions for
