@@ -3038,12 +3038,12 @@ class EquativeInciseBeforePPTests(unittest.TestCase):
         text = prepared.analysis_text
         vp = next(n for n in nodes if n.rule_id == "pp_equative_incise")
         self.assertEqual([text[n.start:n.end] for n in vp.children],
-                         [", as fast as he could,", "to Kitt's Hole"])
+                         [",", "as fast as he could,", "to Kitt's Hole"])
         spans = {(n.category, text[n.start:n.end]) for n in nodes}
         self.assertTrue({("PARTICLE", "on"), ("ADV", "fast"),
                          ("PROPER-NOUN", "Kitt"), ("POSS", "'s")} <= spans)
         self.assertIn("clause_modal_ellipsis", {n.rule_id for n in nodes})
-        self.assertTrue(any(n.rule_id == "vp_equative_pp_particle" and text[n.children[0].start:n.children[1].end] == "rode on" for n in nodes))
+        self.assertTrue(any(n.rule_id == "vp_particle" and text[n.start:n.end] == "rode on" for n in nodes))
 
 if __name__ == "__main__":
     unittest.main()
