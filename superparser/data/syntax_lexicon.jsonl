@@ -85,3 +85,5 @@
 {"lemma":"guilty","surfaces":["guilty"],"senses":[{"id":"guilty-of-complement","category":"ADJ","features":{"selected_preposition":"of"},"score":1}],"provenance":{"source":"syntax-valency-correction","merge_wordnet":true,"construction":"adjective_with_selected_prepositional_complement"}}
 {"lemma":"of","surfaces":["of"],"senses":[{"id":"of-selected-adjective-complement","category":"PREP","features":{"preposition_form":"of"},"score":1}],"provenance":{"source":"syntactic-licensing","merge_wordnet":true}}
 {"lemma":"as","surfaces":["as"],"senses":[{"id":"as-equative-marker","category":"EQUATIVE-AS","features":{"degree":"true"},"score":1}],"provenance":{"source":"syntactic-licensing","merge_wordnet":true,"construction":"paired equative as markers"}}
+{"lemma":"each","surfaces":["each"],"senses":[{"id":"each-floating-distributive","category":"DISTRIBUTIVE-EACH","features":{},"score":1}],"provenance":{"source":"syntactic-licensing","merge_wordnet":true}}
+{"lemma":"of","surfaces":["of"],"senses":[{"id":"of-partitive-marker","category":"PARTITIVE-OF","features":{},"score":1}],"provenance":{"source":"syntactic-licensing","merge_wordnet":true}}

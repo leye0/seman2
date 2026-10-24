@@ -128,3 +128,4 @@ Validate pinned #340: intransitive depictive and purpose constructions.
 Preserve lexical subject-control precedence over purpose fallback.
 Validate #209 typed degree nominal restriction and fixed-budget regressions.
 Validate #441 through existing VP+PP with typed equative markers; #359 local budget preserved.
+Validate #357 distributive possession, supplementary relative and quoted nominal.

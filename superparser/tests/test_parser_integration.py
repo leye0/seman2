@@ -3045,6 +3045,53 @@ class EquativeInciseBeforePPTests(unittest.TestCase):
         self.assertIn("clause_modal_ellipsis", {n.rule_id for n in nodes})
         self.assertTrue(any(n.rule_id == "vp_particle" and text[n.start:n.end] == "rode on" for n in nodes))
 
+
+class DistributivePossessionQuotedNameTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from DistributivePossessionQuotedNameTests.nodes(child)
+
+    def test_distributive_group_and_quoted_nominal_contrasts(self):
+        parser = make_parser()
+        for text in ("They had each of them several names.",
+                     "We have each of us a room."):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best)
+            self.assertIn("vp_have_distributive_object", {n.rule_id for n in self.nodes(best)})
+        for text in ("They had each of him several names.",
+                     "They have each with them several names."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vp_have_distributive_object",
+                                 {n.rule_id for n in self.nodes(tree)})
+        for text in ("The name was 'father'.", "The name was 'father.'"):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best)
+            self.assertTrue(any(n.features.as_dict().get("quoted_nominal") == "true"
+                                for n in self.nodes(best)))
+
+    def test_pinned_357_preserves_distribution_object_and_quoted_name(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[357]["text"].startswith("The youth and his companion"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[357], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        nodes = list(self.nodes(best))
+        vp = next(n for n in nodes if n.rule_id == "vp_have_distributive_object")
+        self.assertEqual([text[n.start:n.end] for n in vp.children],
+                         ["had", "each of them", "several names"])
+        self.assertTrue(any(n.rule_id == "wh_supplementary_subject_comma"
+                            and text[n.start:n.end] == ", which was 'father.'"
+                            for n in nodes))
+        quoted = next(n for n in nodes if n.rule_id == "dialogue_quoted_nominal_terminal")
+        self.assertEqual(text[quoted.start:quoted.end], "'father.'")
+        self.assertEqual([n.category for n in quoted.children],
+                         ["OPEN-QUOTE", "N", "COMMA", "CLOSE-QUOTE"])
 if __name__ == "__main__":
     unittest.main()
 
