@@ -3003,6 +3003,47 @@ class DegreeNominalAdjectiveGapTests(unittest.TestCase):
                             and text[n.start:n.end] == "be guilty of" for n in nodes))
         self.assertIn("vp_copular_adverb_nominal_predicate", {n.rule_id for n in nodes})
 
+
+class EquativeInciseBeforePPTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from EquativeInciseBeforePPTests.nodes(child)
+
+    def test_equative_incise_requires_paired_commas_and_as_markers(self):
+        parser = make_parser()
+        text = "She walked, as slowly as she could, to the house."
+        best = parser.parse(text).result.best()
+        self.assertIsNotNone(best)
+        self.assertIn("vp_equative_incise_pp", {n.rule_id for n in self.nodes(best)})
+        for text in ("She walked, than slowly as she could, to the house.",
+                     "She walked, as slowly than she could, to the house.",
+                     "She walked as slowly as she could, to the house.",
+                     "She walked, as slowly as she could to the house."):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn("vp_equative_incise_pp",
+                                 {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_pinned_441_keeps_particle_comparison_and_destination(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[441]["text"].startswith("In the meantime the supervisor"))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[441], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        nodes = list(self.nodes(best))
+        text = prepared.analysis_text
+        vp = next(n for n in nodes if n.rule_id == "vp_equative_incise_pp")
+        self.assertEqual([text[n.start:n.end] for n in vp.children],
+                         ["rode on", ", as fast as he could,", "to Kitt's Hole"])
+        spans = {(n.category, text[n.start:n.end]) for n in nodes}
+        self.assertTrue({("PARTICLE", "on"), ("ADV", "fast"),
+                         ("PROPER-NOUN", "Kitt"), ("POSS", "'s")} <= spans)
+        self.assertIn("clause_modal_ellipsis", {n.rule_id for n in nodes})
+
 if __name__ == "__main__":
     unittest.main()
 
