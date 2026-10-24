@@ -1,6 +1,28 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #209 recovered, 462/500 (92.4%)
+## Latest measured checkpoint — sentence #441 recovered, 463/500 (92.6%)
+
+Final code commit `085d22e5042b72b32655ee2036645e49995465af` recognizes a paired-comma
+equative manner incise before a PP. A dedicated EQUATIVE-AS lexical reading
+seeds recognition only at the relevant marker. The incise and destination
+compose through the existing VP+PP rule; preposition stacking cannot cross
+the incise. The selected tree preserves rode + PARTICLE on, ADV fast,
+the existing modal ellipsis he could, and the genitive destination.
+Tests reject missing commas and substituted than markers.
+Local ablation and CI preserve the sensitive #359 fixed-budget parse.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40123190324):
+424 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40123190317):
+463/500 complete; #441 is the only recovery from 462/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 32 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+[Scoped dialogue validation](https://github.com/leye0/seman2/actions/runs/40123190366)
+also passes. Corpus, quote transfer, budgets and coverage gate are unchanged.
+
+
+## Previous measured checkpoint — sentence #209 recovered, 462/500 (92.4%)
 
 Code commits `bd7f005908b5accefb0a1a0aa801baf0ad85871a` and
 `1a4c701a04050db5c94ef0bc0c1121e8ece69b1f` license a degree nominal with a for-infinitive and
