@@ -1,6 +1,30 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #441 recovered, 463/500 (92.6%)
+## Latest measured checkpoint — sentences #113, #357 and #459 recovered, 466/500 (93.2%)
+
+Code commits `ed35264e2289cb1b1e865408cf74e2f763c94df4` and
+`d6e2f801bb8af78576fee8f0e8f84eaa52e7d91a` add a typed each-of plural-pronoun distributive
+inside possessive HAVE, comma-introduced subject relatives, and quoted
+nominal mentions. The nominal-quote fallback ranks below split clausal
+dialogue. The #357 selected-tree test checks separate distribution and
+object spans, the supplementary relative and the quoted noun with its
+preserved delimiters. Distributive reference resolution is left to later
+processing. #113 and #459 gain completion; their selected trees have not
+been independently certified by this change.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40137394850):
+426 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40137394976):
+466/500 complete; #113, #357 and #459 recover from 463/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 29 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+[Scoped dialogue validation](https://github.com/leye0/seman2/actions/runs/40137394890)
+also passes, including split quoted subject/predicate precedence.
+Corpus, quote transfer, budgets and coverage gate are unchanged.
+
+
+## Previous measured checkpoint — sentence #441 recovered, 463/500 (92.6%)
 
 Final code commit `085d22e5042b72b32655ee2036645e49995465af` recognizes a paired-comma
 equative manner incise before a PP. A dedicated EQUATIVE-AS lexical reading
