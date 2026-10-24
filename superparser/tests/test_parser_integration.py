@@ -3016,13 +3016,13 @@ class EquativeInciseBeforePPTests(unittest.TestCase):
         text = "She walked, as slowly as she could, to the house."
         best = parser.parse(text).result.best()
         self.assertIsNotNone(best)
-        self.assertIn("vp_equative_incise_pp", {n.rule_id for n in self.nodes(best)})
+        self.assertIn("pp_equative_incise", {n.rule_id for n in self.nodes(best)})
         for text in ("She walked, than slowly as she could, to the house.",
                      "She walked, as slowly than she could, to the house.",
                      "She walked as slowly as she could, to the house.",
                      "She walked, as slowly as she could to the house."):
             for tree in parser.parse(text).result.alternatives(limit=8):
-                self.assertNotIn("vp_equative_incise_pp",
+                self.assertNotIn("pp_equative_incise",
                                  {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_pinned_441_keeps_particle_comparison_and_destination(self):
@@ -3036,13 +3036,14 @@ class EquativeInciseBeforePPTests(unittest.TestCase):
         self.assertIsNotNone(best, result.stats)
         nodes = list(self.nodes(best))
         text = prepared.analysis_text
-        vp = next(n for n in nodes if n.rule_id == "vp_equative_incise_pp")
+        vp = next(n for n in nodes if n.rule_id == "pp_equative_incise")
         self.assertEqual([text[n.start:n.end] for n in vp.children],
-                         ["rode on", ", as fast as he could,", "to Kitt's Hole"])
+                         [", as fast as he could,", "to Kitt's Hole"])
         spans = {(n.category, text[n.start:n.end]) for n in nodes}
         self.assertTrue({("PARTICLE", "on"), ("ADV", "fast"),
                          ("PROPER-NOUN", "Kitt"), ("POSS", "'s")} <= spans)
         self.assertIn("clause_modal_ellipsis", {n.rule_id for n in nodes})
+        self.assertTrue(any(n.rule_id == "vp_equative_pp_particle" and text[n.children[0].start:n.children[1].end] == "rode on" for n in nodes))
 
 if __name__ == "__main__":
     unittest.main()
