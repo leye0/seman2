@@ -1,5 +1,44 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
+## Sentence #356 — discourse incise and negative semi-modal, 472/500 (94.4%)
+
+Canonical text: `This hovel however, joined a cottage of a neat and pleasant
+appearance, but after my late dearly bought experience, I dared not enter it.`
+The gateway adds only the quotation context recorded by the extractor.
+
+Two bounded constructions recover this case. A typed lexical discourse reading
+of **however** licenses a trailing literal comma without requiring an opening
+comma; the existing paired-comma analysis remains available. A typed negative
+semi-modal reading of **dare**, **dared** and **need** licenses overt negation
+plus an active bare infinitive. All original adverb and lexical verb readings
+are retained. The rules do not promote arbitrary adverbs or arbitrary finite
+verbs, accept a period as an incise comma, or rewrite the source punctuation.
+No parser algorithm, search budget or corpus change is involved.
+
+The selected #356 tree is tested for subject **This hovel**, the exact
+**however,** incise, and **I dared not enter it** with an ordinary pronominal
+subject and a negative semi-modal selecting **enter it**. It no longer analyzes
+**I dared** as a participially modified NP. Negative tests reject unlicensed
+incise words, missing punctuation and wrong bare-infinitive morphology.
+
+Local validation against `bc9229a8e0ccb577b18d4bff426b39a85750e27f`:
+**441 tests pass with the same 7 expected failures**. Canonical balanced
+coverage rises **471 -> 472/500**; #356 is the only status change, all previous
+complete cases remain complete (including budget-sensitive #359 and #485),
+and all other residual statuses are unchanged. The SHA-pinned cohort and
+`parse_corpus_case` gateway remain unchanged, with 50,000 forest items,
+500,000 k-best work units and a 10-second corpus deadline. Direct grammar
+quality passes with unchanged 120/120 completions, 114/120 annotations,
+24/24 grammatical contrasts and 9/24 existing negative acceptances.
+These are local measurements; see `docs/case-356-validation.json`.
+
+**Remaining selected-tree limitations:** the existing ranking still treats
+**but** as a postposed adverb and **after** as a conjunction governing a
+fronted NP, instead of selecting the intended coordination and fronted PP.
+It also groups **late dearly** rather than attaching **dearly** to **bought**.
+The two repaired constructions are certified; the whole sentence is not
+claimed to be a fully correct syntactic gold tree.
+
 ## Sentence #99 — attested elided name and possessive, 471/500 (94.2%)
 
 The exact canonical sentence begins `I should have gone to bed with a sore

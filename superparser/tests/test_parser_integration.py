@@ -3362,3 +3362,62 @@ class AttestedApostropheNameTests(unittest.TestCase):
                          ('np_genitive', 'little Em’ly’s head'),
                          ('np_adj_proper', 'little Em’ly')]:
             self.assertIn(expected, spans)
+
+
+class TrailingDiscourseInciseAndNegativeSemimodalTests(unittest.TestCase):
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_trailing_comma_incise_requires_licensed_connective_and_comma(self):
+        parser = make_parser()
+        rule = 'parenthetical_discourse_trailing_comma'
+        best = parser.parse('Mary however, stayed.').result.best()
+        self.assertIsNotNone(best)
+        self.assertIn(rule, {n.rule_id for n in self.nodes(best)})
+        best = parser.parse('Mary, however, stayed.').result.best()
+        self.assertIsNotNone(best)
+        self.assertIn('parenthetical_discourse_adv_commas', {n.rule_id for n in self.nodes(best)})
+        incise = Parser(parser.resources, goal_category='PARENTHETICAL')
+        for text in ('however', 'however.', 'quickly,', 'again,'):
+            for tree in incise.parse(text).result.alternatives(limit=8):
+                self.assertNotIn(rule, {n.rule_id for n in self.nodes(tree)}, text)
+        self.assertTrue(any(c.category == 'ADV' for c in parser.parse('however').lattice.candidates))
+
+    def test_negative_semimodal_keeps_subject_and_selects_bare_complement(self):
+        parser = make_parser()
+        rule = 'vp_negative_semimodal_bare'
+        for text in ('I dared not enter it.', 'She need not leave.', 'They dare not speak.'):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            pred = next(n for n in self.nodes(best) if n.rule_id == rule)
+            self.assertEqual([c.category for c in pred.children], ['SEMI-MODAL', 'NEG', 'VP-NP'])
+            self.assertEqual(pred.features.as_dict()['negation'], 'true')
+            self.assertFalse(any(n.rule_id == 'np_part_ed' for n in self.nodes(best)), text)
+        for text in ('I tried not enter it.', 'I dared enter it.', 'I dared not entered it.'):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn(rule, {n.rule_id for n in self.nodes(tree)}, text)
+        candidates = parser.parse('dared').lattice.candidates
+        self.assertTrue(any(c.category == 'V' and c.features.as_dict().get('vform') == 'finite' for c in candidates))
+        self.assertTrue(any(c.category == 'V' and c.features.as_dict().get('vform') == 'ed' for c in candidates))
+
+    def test_pinned_356_preserves_incise_and_semimodal_without_punctuation_repair(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[356]['text'].startswith('This hovel however, joined'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[356], max_items=50000, kbest_work_limit=500000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get('budget_exceeded'))
+        self.assertEqual(prepared.source_text, cases[356]['source_text'])
+        self.assertEqual(lattice.text, cases[356]['balanced_analysis_text'])
+        text = prepared.analysis_text
+        nodes = list(self.nodes(result.best()))
+        spans = {(n.rule_id, text[n.start:n.end]) for n in nodes}
+        for expected in [('np_det_n', 'This hovel'),
+                         ('parenthetical_discourse_trailing_comma', 'however,'),
+                         ('vp_negative_semimodal_bare', 'dared not enter it'),
+                         ('vp_bare_trans', 'enter it')]:
+            self.assertIn(expected, spans)
+        self.assertNotIn(('np_part_ed', 'I dared'), spans)
+        self.assertTrue(any(n.category == 'OPEN-QUOTE' for n in nodes))
+        self.assertTrue(any(n.category == 'CLOSE-QUOTE' for n in nodes))
