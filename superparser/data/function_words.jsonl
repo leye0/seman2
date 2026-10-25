@@ -135,7 +135,7 @@
 {"lemma":"just","surfaces":["just"],"senses":[{"id":"just-1","category":"DEGREE","features":{},"semantic_type":"REFERENTIAL","score":1}],"provenance":{"source":"function-inventory"}}
 {"lemma":"only","surfaces":["only"],"senses":[{"id":"only-1","category":"DEGREE","features":{},"semantic_type":"REFERENTIAL","score":1}],"provenance":{"source":"function-inventory"}}
 {"lemma":"rather","surfaces":["rather"],"senses":[{"id":"rather-1","category":"DEGREE","features":{},"semantic_type":"REFERENTIAL","score":1}],"provenance":{"source":"function-inventory"}}
-{"lemma":",","surfaces":[","],"senses":[{"id":"comma-1","category":"COMMA","features":{},"score":1}],"provenance":{"source":"function-inventory"}}
+{"lemma":",","surfaces":[","],"senses":[{"id":"comma-1","category":"COMMA","features":{"literal_comma":"true"},"score":1}],"provenance":{"source":"function-inventory"}}
 {"lemma":"up","surfaces":["up"],"senses":[{"id":"up-part","category":"PARTICLE","features":{},"score":1}],"provenance":{"source":"function-inventory"}}
 {"lemma":"out","surfaces":["out"],"senses":[{"id":"out-part","category":"PARTICLE","features":{},"score":1}],"provenance":{"source":"function-inventory"}}
 {"lemma":"off","surfaces":["off"],"senses":[{"id":"off-part","category":"PARTICLE","features":{},"score":1}],"provenance":{"source":"function-inventory"}}
@@ -209,6 +209,7 @@
 {"lemma":"unless","surfaces":["unless"],"senses":[{"id":"unless-subordinator","category":"CONJ","features":{},"semantic_type":"CONDITION","score":1}],"provenance":{"source":"function-inventory","syntactic_role":"negative conditional adjunct subordinator; not an interrogative complementizer or degree marker"}}
 {"lemma":"aboard","surfaces":["aboard"],"senses":[{"id":"aboard-preposition","category":"PREP","features":{},"semantic_type":"LOCATION","score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true,"syntactic_role":"spatial preposition selecting a nominal complement"}}
 {"lemma":"round","surfaces":["round"],"senses":[{"id":"round-preposition","category":"PREP","features":{},"semantic_type":"AROUND","score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true,"syntactic_role":"spatial preposition selecting a nominal complement"}}
+
 {"lemma":"beyond","surfaces":["beyond"],"senses":[{"id":"beyond-preposition","category":"PREP","features":{},"score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true}}
 {"lemma":"any","surfaces":["any"],"senses":[{"id":"any-determiner","category":"DET","features":{},"score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true}}
 {"lemma":"before","surfaces":["before"],"senses":[{"id":"before-subordinator","category":"CONJ","features":{},"semantic_type":"TEMPORAL","score":1}],"provenance":{"source":"function-inventory","merge_wordnet":true,"syntactic_role":"temporal subordinator introducing a finite clause"}}

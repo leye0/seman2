@@ -3138,3 +3138,51 @@ if __name__ == "__main__":
             and c.features.as_dict().get("number") == "plural"
             for c in readings
         ))
+
+
+class NominalComparisonParenthesisTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from NominalComparisonParenthesisTests.nodes(child)
+
+    def test_like_readings_and_delimited_comparison(self):
+        parser = make_parser()
+        categories = {c.category for c in parser.parse('like').lattice.candidates}
+        self.assertTrue({'PREP', 'V', 'ADJ'} <= categories)
+        text = 'She walked, like a racer, to the house.'
+        best = parser.parse(text).result.best()
+        self.assertIsNotNone(best)
+        self.assertIn('comparison_pp_tail', {n.rule_id for n in self.nodes(best)})
+        for text in ('She walked, like a racer to the house.',
+                     'She walked like a racer, to the house.',
+                     'She walked, with a racer, to the house.'):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn('comparison_pp_tail', {n.rule_id for n in self.nodes(tree)})
+        lattice = parser.parse('set').lattice
+        self.assertTrue({'base', 'finite', 'ed'} <= {
+            c.features.as_dict().get('vform') for c in lattice.candidates if c.category == 'V'})
+
+    def test_pinned_467_preserves_perfect_passive_and_adverb_attachment(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[467]['text'].startswith('Every thought of his soul'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[467], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        nodes = list(self.nodes(best))
+        text = prepared.analysis_text
+        perfect = next(n for n in nodes if n.rule_id == 'vp_perfect_passive')
+        self.assertEqual([text[n.start:n.end] for n in perfect.children], ['had', 'been', 'set'])
+        self.assertEqual(perfect.features.as_dict()['voice'], 'passive')
+        adverb = next(n for n in nodes if n.rule_id == 'vp_adv')
+        self.assertEqual([text[n.start:n.end] for n in adverb.children], ['had been set', 'full-stretch'])
+        incise = next(n for n in nodes if n.rule_id == 'pp_equative_incise')
+        self.assertEqual([text[n.start:n.end] for n in incise.children], [',', 'like a racer,', 'on that money'])
+        tail = next(n for n in nodes if n.rule_id == 'comparison_pp_tail')
+        self.assertEqual([text[n.start:n.end] for n in tail.children], ['like', 'a racer', ','])
+        self.assertTrue(any(n.category == 'NP' and text[n.start:n.end] == 'Every thought of his soul' for n in nodes))
+
