@@ -513,6 +513,18 @@ def build_lattice(
 
     kept = filter_lattice_candidates(candidates, tokens)
     kept = _filter_by_position(kept, tokens)
+    # A typed lexical view keeps nominal-predicate searches from opening at
+    # every V span. Retain the original V and all its sense/span provenance;
+    # only positively attested base complex-transitive readings get this view.
+    nominal_heads = []
+    for candidate in kept:
+        features = candidate.features.as_dict()
+        valence = features.get("subcat")
+        if (candidate.category == "V" and features.get("vform") == "base"
+                and (valence == "complex_transitive" or
+                     isinstance(valence, list) and "complex_transitive" in valence)):
+            nominal_heads.append(replace(candidate, category="V-NOMINAL-PRED"))
+    kept = [*kept, *nominal_heads]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(

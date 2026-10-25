@@ -3248,3 +3248,71 @@ class TitledIndependentGenitiveTests(unittest.TestCase):
         self.assertFalse(any(n.category == 'COMMA' and n.start == place.start + 2 for n in nodes))
         self.assertTrue(any(n.category == 'OPEN-QUOTE' for n in nodes))
         self.assertTrue(any(n.category == 'CLOSE-QUOTE' for n in nodes))
+
+
+class ExtraposedInfinitiveNominalPredicateTests(unittest.TestCase):
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_bare_nominal_predicate_requires_complex_transitive_valence(self):
+        parser = Parser(make_parser().resources, goal_category='VP-NP')
+        rules = {'vpnp_object_nominal_predicate', 'vpnp_object_nominal_predicate_adverb'}
+        for text in ('see you the dupe', 'see you again the dupe', 'consider him a friend'):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertIn(best.rule_id, rules, text)
+            self.assertEqual(best.children[0].features.as_dict()['vform'], 'base')
+        for text in ('sleep you the dupe', 'see again the dupe', 'saw you the dupe'):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertFalse(rules & {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_extraposition_requires_it_and_licensed_experiencer_predicate(self):
+        parser = make_parser()
+        rule = 'clause_modal_extraposed_infinitive'
+        for text in ('It would vex me to see you.', 'It might please her to stay.',
+                     'It would annoy him, indeed, to leave.', 'It might surprise Mary to see him.'):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertTrue(any((n.rule_id or '').startswith(rule) for n in self.nodes(best)), text)
+        for text in ('He would vex me to see you.', 'It would greet me to see you.',
+                     'It would vexed me to see you.', 'It would vex to see you.'):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertFalse(any((n.rule_id or '').startswith(rule) for n in self.nodes(tree)), text)
+
+    def test_pinned_215_preserves_extraposition_incise_and_nominal_predicate(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[215]['text'].startswith('It would vex me, indeed,'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[215], max_items=50000, kbest_work_limit=500000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get('budget_exceeded'))
+        self.assertEqual(prepared.source_text, cases[215]['source_text'])
+        self.assertEqual(lattice.text, cases[215]['balanced_analysis_text'])
+        text = prepared.analysis_text
+        nodes = list(self.nodes(result.best()))
+        matrix = next(n for n in nodes if n.rule_id == 'clause_modal_extraposed_infinitive_parenthetical')
+        self.assertEqual([text[n.start:n.end] for n in matrix.children[:4]], ['It', 'would', 'vex', 'me'])
+        pred = next(n for n in nodes if n.rule_id == 'vpnp_object_nominal_predicate_adverb')
+        self.assertEqual([text[n.start:n.end] for n in pred.children],
+                         ['see', 'you', 'again', "the dupe of Miss Bingley's pretended regard"])
+        for rule, span in [('parenthetical_discourse_adv_commas', ', indeed,'),
+                           ('np_genitive', "Miss Bingley's pretended regard"),
+                           ('n_adj_n', 'pretended regard')]:
+            self.assertTrue(any(n.rule_id == rule and text[n.start:n.end] == span for n in nodes), (rule, span))
+        self.assertTrue(any(n.category == 'OPEN-QUOTE' for n in nodes))
+        self.assertTrue(any(n.category == 'CLOSE-QUOTE' for n in nodes))
+
+    def test_typed_nominal_heads_preserve_original_lexical_provenance(self):
+        parser = make_parser()
+        candidates = parser.parse('see consider sleep slept').lattice.candidates
+        heads = [c for c in candidates if c.category == 'V-NOMINAL-PRED']
+        self.assertTrue(heads)
+        for head in heads:
+            self.assertEqual(head.features.as_dict()['vform'], 'base')
+            self.assertIn('complex_transitive', head.features.as_dict()['subcat'])
+            self.assertTrue(any(c.category == 'V' and c.span_start == head.span_start
+                                and c.span_end == head.span_end and c.lemma == head.lemma
+                                and c.features == head.features and c.source == head.source
+                                and c.sense_ids == head.sense_ids for c in candidates))
+        self.assertFalse(any(c.surface in {'sleep', 'slept'} for c in heads))

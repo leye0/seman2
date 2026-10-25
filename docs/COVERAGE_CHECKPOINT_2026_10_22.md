@@ -1,5 +1,47 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
+## Sentence #215 — extraposed infinitival subject and nominal object predicate
+
+The selected analysis of `It would vex me, indeed, to see you again the dupe
+of Miss Bingley's pretended regard` now preserves anticipatory **it**, modal
+**would**, experiencer object **me**, the comma-delimited **indeed** incise,
+and the extraposed infinitival subject. Inside that infinitive, **you** is
+the object of **see**, **again** is an adverb, and **the dupe ...** is the
+nominal object predicate. The genitive and attributive **pretended regard**
+remain intact. This is not analyzed as object control by **vex**.
+
+The grammar adds base-form nominal object predication with and without an
+interposed adverb, licensed by existing `complex_transitive` lexical evidence.
+A `V-NOMINAL-PRED` lattice view is derived only from positively attested base
+complex-transitive readings. It retains each original V candidate, feature
+structure, span, score, sense IDs and source; no lexical hypothesis is removed.
+A distinct anticipatory-it reading anchors modal extraposition, whose base
+experiencer predicates are explicitly attested (`vex`, `please`, `annoy`,
+`surprise`). Ordinary referential-it and possessive hypotheses are unchanged.
+These typed entry categories keep irrelevant structural searches out of
+sentences that do not contain eligible lexical heads.
+
+Regression tests assert the actual selected #215 tree through
+`parse_corpus_case`, contrast eligible/ineligible verbs and inflections,
+require anticipatory it and an overt experiencer, and verify preservation
+of lexical provenance. The pinned corpus, quote-transfer implementation,
+public parsing gateway and budgets are unchanged (50,000 forest items,
+500,000 k-best work units, 10-second corpus deadline).
+
+Local verification against main `b63ab1d5858dfa253ebd3a9724c6397e623cd295`
+(Python 3.12, WordNet 3): **435 tests pass, with the same 7 expected failures**.
+The baseline reproduces **469/500**, the final version reaches **470/500 (94%)**.
+The only status change is #215: `roots_without_valid_analysis` -> `complete`.
+All 469 previously complete cases remain complete, including #359 and #485;
+all other non-complete statuses are unchanged. The corpus checksum is unchanged.
+
+Direct grammar quality passes: 120/120 complete, 114/120 annotations met,
+24/24 grammatical contrasts preserved, the same 9/24 existing negative
+acceptances and identical failed-gold IDs and negative-pair details.
+Canonical/adaptive/dialogue smoke passes. These are local measurements, not
+claims of a new GitHub Actions run. See `docs/case-215-validation.json` for
+machine-readable before/after counts and the exact test scope.
+
 ## Latest measured checkpoint — sentences #189 and #212 recovered, 469/500 (93.8%)
 
 Code commit `b6dd1780079c7eb80598dbc90f2c80770815583b` recognizes independent genitives of
