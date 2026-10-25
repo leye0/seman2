@@ -1,6 +1,27 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentences #113, #357 and #459 recovered, 466/500 (93.2%)
+## Latest measured checkpoint — sentence #467 recovered, 467/500 (93.4%)
+
+Code commit `b478469a7ffe43d31c737b74ea56410d103ec404` adds PREP and typed comparison-marker readings
+for like, an invariant past-participle reading for set, and the attested
+full-stretch adverb. Nominal comparisons reuse the existing equative incise
+before a resumed PP; an external adverb cannot attach across its opening comma.
+The comparison tail requires an actual comma, not the legacy COMMA category's
+terminal-punctuation alternatives. The selected #467 tree is tested for the
+complete subject, perfect passive had been set, full-stretch modifying that VP,
+and the comparison followed by on that money.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40159767750):
+428 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40159767724):
+467/500 complete; #467 is the only recovery from 466/500, with no completion
+loss and no status change among remaining non-complete cases.
+There are 28 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+[Scoped dialogue validation](https://github.com/leye0/seman2/actions/runs/40159767720)
+also passes. Corpus, quote transfer, budgets and coverage gate are unchanged.
+
+## Previous measured checkpoint — sentences #113, #357 and #459 recovered, 466/500 (93.2%)
 
 Code commits `ed35264e2289cb1b1e865408cf74e2f763c94df4` and
 `d6e2f801bb8af78576fee8f0e8f84eaa52e7d91a` add a typed each-of plural-pronoun distributive
