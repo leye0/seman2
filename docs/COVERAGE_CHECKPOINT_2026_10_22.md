@@ -1,6 +1,35 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
-## Latest measured checkpoint — sentence #467 recovered, 467/500 (93.4%)
+## Latest measured checkpoint — sentences #189 and #212 recovered, 469/500 (93.8%)
+
+Code commit `b6dd1780079c7eb80598dbc90f2c80770815583b` recognizes independent genitives of
+titled names, with an explicitly attested TITLE, proper name and apostrophe-s
+suffix. St./Saint is a title; the abbreviation period stays inside its lexical
+span. This is deliberately scoped to titled names, not all independent genitives.
+The omitted nominal head is preserved as ellipsis, not filled with an invented
+church/house. The in-that adverb retains its WordNet meaning but is marked
+non-prenominal; its causal conjunction reading remains available. The existing
+ADV+N rule rejects this explicit non-prenominal feature without tightening
+unspecified legacy adverbs.
+
+The selected #212 tree is tested for passive were married, the existing you know
+incise, TITLE St. + Clement + genitive suffix, Wickham's headed genitive,
+and compositional PREP in + DET that + N parish in the causal clause.
+Quote-transfer provenance is preserved by the canonical gateway.
+
+[Core validation](https://github.com/leye0/seman2/actions/runs/40160724897):
+431 tests, OK with 7 existing expected failures.
+[Fixed-cohort diagnostic](https://github.com/leye0/seman2/actions/runs/40160724853):
+469/500 complete; #189 and #212 recover from 467/500, with no completion
+loss and no status change among remaining non-complete cases.
+The #212 selected tree is certified by a regression test; #189 is an additional
+completion gain, not a newly certified complete syntactic gold analysis.
+There are 26 grammatical residuals, 4 forest-budget failures, 1 timeout and
+zero errors; 18 complete parses have forest saturation.
+[Scoped dialogue validation](https://github.com/leye0/seman2/actions/runs/40160724865)
+also passes. Corpus, quote transfer, budgets and coverage gate are unchanged.
+
+## Previous measured checkpoint — sentence #467 recovered, 467/500 (93.4%)
 
 Code commit `b478469a7ffe43d31c737b74ea56410d103ec404` adds PREP and typed comparison-marker readings
 for like, an invariant past-participle reading for set, and the attested
