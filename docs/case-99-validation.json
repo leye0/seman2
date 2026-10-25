@@ -1,0 +1,55 @@
+{
+  "base_commit": "c0f91f7878c058c6f82371f3406d28642809f028",
+  "verification": "local",
+  "gateway": "parse_corpus_case / QUOTE_BALANCED / Parser.parse",
+  "budgets": {
+    "max_items": 50000,
+    "kbest_work_limit": 500000,
+    "deadline_seconds": 10
+  },
+  "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
+  "before": {
+    "complete": 470,
+    "no_structural_root": 10,
+    "roots_without_valid_analysis": 15,
+    "forest_budget_exceeded": 4,
+    "timeout": 1
+  },
+  "after": {
+    "complete": 471,
+    "no_structural_root": 9,
+    "roots_without_valid_analysis": 15,
+    "forest_budget_exceeded": 4,
+    "timeout": 1
+  },
+  "status_changes": [
+    {
+      "index": 99,
+      "before": "no_structural_root",
+      "after": "complete"
+    }
+  ],
+  "tests": {
+    "run": 438,
+    "expected_failures": 7,
+    "unexpected_failures": 0,
+    "scope": "all 24 modules listed in core-seman2-validation.yml"
+  },
+  "direct_quality": {
+    "positive_gold": {
+      "tested": 120,
+      "completed": 120,
+      "annotations_met": 114,
+      "syntax_exported": 120,
+      "over_500_ms": 0
+    },
+    "negative_pairs": {
+      "negative_tested": 24,
+      "negative_completed": 9,
+      "grammatical_contrast_tested": 24,
+      "grammatical_contrast_completed": 24
+    },
+    "failed_gold_and_negative_pairs_unchanged": true
+  },
+  "remaining_quality_limitation": "Prepositional and exception attachment in selected #99 tree is not certified."
+}

@@ -389,6 +389,32 @@ def build_lattice(
                             score=1.25,
                         )
                     )
+    # Dictionary-attested names may contain lower-case elisions (Em'ly).
+    # Match the complete spelling before splitting a final possessive suffix.
+    # Never infer a name merely from apostrophe shape; preserve tokens/offsets.
+    for match in re.finditer(r"\b[A-Za-z]+(?:['’][A-Za-z]+)+", text):
+        surface = match.group(0)
+        normalized = surface.replace("’", "'")
+        name = normalized[:-2] if normalized.casefold().endswith("'s") else normalized
+        name_end = match.start() + len(name)
+        licensed = False
+        for _entry, sense, lemma in lexicon.lookup_morphology(name):
+            if sense.category != "PROPER-NOUN" or "'" not in name:
+                continue
+            licensed = True
+            candidates.append(_candidate_from_sense(
+                span_start=match.start(), span_end=name_end,
+                surface=text[match.start():name_end], lemma=lemma,
+                sense=sense, source="attested-apostrophe-name",
+            ))
+        if licensed and name_end < match.end():
+            for _entry, sense, lemma in lexicon.lookup_morphology("'s"):
+                candidates.append(_candidate_from_sense(
+                    span_start=name_end, span_end=match.end(),
+                    surface=text[name_end:match.end()], lemma=lemma,
+                    sense=sense, source="attested-name-clitic",
+                ))
+
     # Internal apostrophes in surnames (O'Brien, D'Artagnan, M'Graw)
     # are not possessive/contraction clitics. The uppercase continuation
     # distinguishes them from John's, I've, we'd, etc. Keep every other

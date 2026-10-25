@@ -1,5 +1,35 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
+## Sentence #99 — attested elided name and possessive, 471/500 (94.2%)
+
+The exact canonical sentence begins `I should have gone to bed with a sore
+heart indeed` and ends `which sheltered little Em’ly’s head.` It failed
+without budget exhaustion because the elided name and its possessive were
+not available as the required lexical spans. Register the attested Dickens
+spelling `Em'ly` / `Em’ly` in the literary dictionary and project dictionary-
+licensed internal-apostrophe names before separating a final apostrophe-s.
+This mechanism handles straight, curly and mixed apostrophes, requires an
+explicit proper-name lexical reading, and leaves all existing candidates,
+tokens and source offsets intact. No grammar rule or search budget changes.
+
+The selected tree preserves modal-perfect `should have gone`, the proper-name
+span `Em’ly`, separate genitive `’s`, possessor `little Em’ly` and head `head`.
+The new tests certify those structures, original corpus provenance and negative
+controls against inventing names from apostrophe shape. **This is a lexical
+recovery, not a claim of complete syntactic gold quality:** the selected tree
+still attaches the long prepositional sequence and the `but that which ...`
+exception too broadly under `to`; that attachment issue is left explicit.
+
+Local validation against `c0f91f7878c058c6f82371f3406d28642809f028`:
+**438 tests pass with the same 7 expected failures**. Canonical balanced
+coverage rises **470 -> 471/500**; #99 is the only status change, all previous
+complete cases remain complete, and all other residual statuses are unchanged.
+The SHA-pinned cohort and `parse_corpus_case` gateway remain unchanged, with
+50,000 forest items, 500,000 k-best work units and a 10-second corpus deadline.
+Direct grammar quality passes with unchanged 120/120 completions, 114/120
+annotations, 24/24 grammatical contrasts and 9/24 existing negative acceptances.
+These are local measurements; see `docs/case-99-validation.json`.
+
 ## Sentence #215 — extraposed infinitival subject and nominal object predicate
 
 The selected analysis of `It would vex me, indeed, to see you again the dupe

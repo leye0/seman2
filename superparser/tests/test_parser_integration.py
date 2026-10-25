@@ -3316,3 +3316,49 @@ class ExtraposedInfinitiveNominalPredicateTests(unittest.TestCase):
                                 and c.features == head.features and c.source == head.source
                                 and c.sense_ids == head.sense_ids for c in candidates))
         self.assertFalse(any(c.surface in {'sleep', 'slept'} for c in heads))
+
+
+class AttestedApostropheNameTests(unittest.TestCase):
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_ascii_and_curly_name_genitives_preserve_spans(self):
+        parser = Parser(make_parser().resources, goal_category='NP')
+        for text in ("little Em'ly's head", 'little Em’ly’s head', "little Em’ly's head"):
+            report = parser.parse(text)
+            self.assertTrue(report.result.completed, text)
+            nodes = list(self.nodes(report.result.best()))
+            name = next(n for n in nodes if n.category == 'PROPER-NOUN')
+            suffix = next(n for n in nodes if n.category == 'POSS')
+            self.assertEqual(text[name.start:name.end].replace('’', "'"), "Em'ly")
+            self.assertEqual(text[suffix.start:suffix.end].replace('’', "'"), "'s")
+            self.assertEqual(name.end, suffix.start)
+            self.assertEqual(suffix.features.as_dict()['genitive_clitic'], 'true')
+            self.assertEqual(report.lattice.text, text)
+
+    def test_apostrophe_shape_does_not_invent_attested_names(self):
+        parser = make_parser()
+        for text in ("Qz'xy's head", "John's head", "don't", "we'd"):
+            candidates = parser.parse(text).lattice.candidates
+            self.assertFalse(any(c.source == 'attested-apostrophe-name' for c in candidates), text)
+        candidates = parser.parse("Em'ly's head").lattice.candidates
+        self.assertTrue(any(c.category == 'PROPER-NOUN' and c.surface == "Em'ly" for c in candidates))
+        self.assertTrue(any(c.category == 'POSS' and c.surface == "'s" for c in candidates))
+        self.assertTrue(any(c.source != 'attested-apostrophe-name' and c.span_start == 0 for c in candidates))
+
+    def test_pinned_99_recovers_name_without_rewriting_corpus(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[99]['text'].startswith('I should have gone to bed'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[99], max_items=50000, kbest_work_limit=500000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get('budget_exceeded'))
+        self.assertEqual(prepared.source_text, cases[99]['source_text'])
+        self.assertEqual(lattice.text, cases[99]['balanced_analysis_text'])
+        text = prepared.analysis_text
+        spans = {(n.rule_id, text[n.start:n.end]) for n in self.nodes(result.best())}
+        for expected in [('vpnp_base_perfect_intransitive', 'have gone'),
+                         ('np_genitive', 'little Em’ly’s head'),
+                         ('np_adj_proper', 'little Em’ly')]:
+            self.assertIn(expected, spans)
