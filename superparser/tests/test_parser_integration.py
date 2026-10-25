@@ -3186,3 +3186,65 @@ class NominalComparisonParenthesisTests(unittest.TestCase):
         self.assertEqual([text[n.start:n.end] for n in tail.children], ['like', 'a racer', ','])
         self.assertTrue(any(n.category == 'NP' and text[n.start:n.end] == 'Every thought of his soul' for n in nodes))
 
+
+
+class TitledIndependentGenitiveTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from TitledIndependentGenitiveTests.nodes(child)
+
+    def test_titled_genitive_requires_suffix_and_keeps_abbreviation_span(self):
+        parser = make_parser()
+        np = Parser(parser.resources, goal_category='NP')
+        for text in ("St. Clement's", "Saint Paul's", "Sir William's"):
+            best = np.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertEqual(best.rule_id, 'np_titled_independent_genitive', text)
+            self.assertEqual(best.children[-1].features.as_dict()['genitive_clitic'], 'true')
+            if text.startswith('St.'):
+                title = best.children[0]
+                self.assertEqual((title.category, text[title.start:title.end]), ('TITLE', 'St.'))
+        for text in ('St. Clement', 'Saint Paul his', "'s", 'Sir his'):
+            for tree in np.parse(text).result.alternatives(limit=8):
+                self.assertNotIn('np_titled_independent_genitive', {n.rule_id for n in self.nodes(tree)})
+        best = np.parse("Wickham's lodgings").result.best()
+        self.assertIsNotNone(best)
+        self.assertNotIn('np_titled_independent_genitive', {n.rule_id for n in self.nodes(best)})
+
+    def test_in_that_parish_is_compositional_location_not_adverb_plus_noun(self):
+        parser = make_parser()
+        text = 'They were in that parish.'
+        best = parser.parse(text).result.best()
+        self.assertIsNotNone(best)
+        nodes = list(self.nodes(best))
+        self.assertTrue(any(n.category == 'PP' and text[n.start:n.end] == 'in that parish' for n in nodes))
+        self.assertTrue(any(n.category == 'DET' and text[n.start:n.end] == 'that' for n in nodes))
+        readings = parser.parse('in that').lattice.candidates
+        self.assertTrue(any(c.surface == 'in that' and c.category == 'CONJ' for c in readings))
+        self.assertTrue(any(c.surface == 'in that' and c.category == 'ADV' and c.features.as_dict().get('nominal_modifier') == 'false' for c in readings))
+        self.assertTrue(all(c.features.as_dict().get('nominal_modifier') == 'false' for c in readings if c.surface == 'in that' and c.category == 'ADV'))
+
+    def test_pinned_212_preserves_incise_titled_place_and_causal_location(self):
+        from scripts.diagnose_novel_parses import select_cases
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        cases, _ = select_cases(500)
+        self.assertTrue(cases[212]['text'].startswith('We were married, you know'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[212], max_items=50000, kbest_work_limit=500000)
+        best = result.best()
+        self.assertIsNotNone(best, result.stats)
+        text = prepared.analysis_text
+        nodes = list(self.nodes(best))
+        place = next(n for n in nodes if n.rule_id == 'np_titled_independent_genitive')
+        self.assertEqual([text[n.start:n.end] for n in place.children], ['St.', 'Clement', "'s"])
+        for rule, span in [('vp_passive', 'were married'),
+                           ('parenthetical_interpersonal_you_know', ', you know,'),
+                           ('np_genitive', "Wickham's lodgings"),
+                           ('pp_prep_np', 'in that parish')]:
+            self.assertTrue(any(n.rule_id == rule and text[n.start:n.end] == span for n in nodes), (rule, span))
+        self.assertTrue(any(n.rule_id == 'clause_comma_sub' for n in nodes))
+        self.assertFalse(any(n.category == 'COMMA' and n.start == place.start + 2 for n in nodes))
+        self.assertTrue(any(n.category == 'OPEN-QUOTE' for n in nodes))
+        self.assertTrue(any(n.category == 'CLOSE-QUOTE' for n in nodes))

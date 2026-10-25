@@ -53,3 +53,4 @@ Validate #209 typed degree nominal restriction and fixed-budget regressions.
 Validate #441 through existing VP+PP with typed equative markers; #359 local budget preserved.
 Validate #357 quoted nominal fallback preserves split dialogue precedence.
 2026-10-25: Validate case 467 nominal comparison, invariant set participle and full-stretch.
+2026-10-25: Validate case 212 titled independent genitive and compositional location.
