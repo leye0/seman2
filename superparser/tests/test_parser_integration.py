@@ -3421,3 +3421,169 @@ class TrailingDiscourseInciseAndNegativeSemimodalTests(unittest.TestCase):
         self.assertNotIn(('np_part_ed', 'I dared'), spans)
         self.assertTrue(any(n.category == 'OPEN-QUOTE' for n in nodes))
         self.assertTrue(any(n.category == 'CLOSE-QUOTE' for n in nodes))
+
+
+class SelectedAttachmentRegressionTests(unittest.TestCase):
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_pinned_356_selected_tree_attaches_all_modifiers(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+        cases, _ = select_cases(500)
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[356], max_items=50000, kbest_work_limit=500000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get('budget_exceeded'))
+        self.assertEqual(lattice.text, cases[356]['balanced_analysis_text'])
+        self.assertEqual(prepared.source_text, cases[356]['source_text'])
+        text = prepared.analysis_text
+        nodes = list(self.nodes(result.best()))
+        def node(rule, span):
+            return next(n for n in nodes if n.rule_id == rule and text[n.start:n.end] == span)
+        coordination = next(n for n in nodes if n.rule_id == 'clause_comma_coord')
+        self.assertEqual([n.category for n in coordination.children], ['CLAUSE', 'COMMA', 'COORD', 'CLAUSE'])
+        self.assertEqual(text[coordination.children[2].start:coordination.children[2].end], 'but')
+        right = coordination.children[-1]
+        self.assertEqual(right.rule_id, 'clause_front_pp')
+        self.assertEqual(text[right.children[0].start:right.children[0].end], 'after my late dearly bought experience')
+        self.assertEqual(text[right.children[-1].start:right.children[-1].end], 'I dared not enter it')
+        part = node('prenominal_adv_participle', 'dearly bought')
+        self.assertEqual([n.category for n in part.children], ['ADV-PRENOMINAL-PASSIVE', 'V-PRENOMINAL-PASSIVE'])
+        self.assertEqual(part.children[-1].features.as_dict()['vform'], 'ed')
+        head = node('n_modified_participle', 'dearly bought experience')
+        self.assertEqual(head.children[0], part)
+        outer = node('n_adj_n', 'late dearly bought experience')
+        self.assertEqual(outer.children[-1], head)
+        node('parenthetical_discourse_trailing_comma', 'however,')
+        node('adjp_coord', 'neat and pleasant')
+        node('vp_negative_semimodal_bare', 'dared not enter it')
+        self.assertFalse(any(n.rule_id == 'clause_post_adv_comma' and text[n.start:n.end].endswith('but') for n in nodes))
+
+    def test_prenominal_participles_require_passive_morphology_and_valency(self):
+        parser = Parser(make_parser().resources, goal_category='N')
+        rule = 'prenominal_adv_participle'
+        for text in ('carefully written letter', 'dearly bought experience', 'recently painted door'):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertIn(rule, {n.rule_id for n in self.nodes(best)}, text)
+        lattice = parser.parse('carefully written letter').lattice
+        for view in lattice.candidates:
+            original_category = {'ADV-PRENOMINAL-PASSIVE': 'ADV',
+                                 'V-PRENOMINAL-PASSIVE': 'V'}.get(view.category)
+            if original_category:
+                self.assertTrue(any(c.category == original_category
+                                    and c.span_start == view.span_start
+                                    and c.span_end == view.span_end
+                                    and c.lemma == view.lemma
+                                    and c.features == view.features
+                                    and c.source == view.source
+                                    and c.sense_ids == view.sense_ids
+                                    for c in lattice.candidates))
+        for text in ('carefully, written letter', 'written letter', 'carefully writes letter'):
+            self.assertFalse(any(c.category == 'ADV-PRENOMINAL-PASSIVE'
+                                 for c in parser.parse(text).lattice.candidates), text)
+        for text in ('carefully writes letter', 'dearly buy experience', 'recently slept child'):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn(rule, {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_postadjectival_and_supplementary_adverbs_are_licensed(self):
+        parser = make_parser()
+        adj = Parser(parser.resources, goal_category='ADJP')
+        for text in ('good indeed', 'good enough'):
+            best = adj.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertEqual(best.rule_id, 'adjp_adj_adv')
+        for text in ('late dearly', 'good carefully'):
+            for tree in adj.parse(text).result.alternatives(limit=8):
+                self.assertNotIn('adjp_adj_adv', {n.rule_id for n in self.nodes(tree)}, text)
+        candidates = parser.parse('but').lattice.candidates
+        self.assertTrue(any(c.category == 'COORD' for c in candidates))
+        adverbs = [c for c in candidates if c.category == 'ADV']
+        self.assertTrue(adverbs)
+        self.assertTrue(all(c.features.as_dict().get('supplementary') == 'false' for c in adverbs))
+        best = parser.parse('It was but a dream.').result.best()
+        self.assertIsNotNone(best)
+        self.assertTrue(any(n.category == 'ADV' for n in self.nodes(best)))
+
+
+class ExceptiveAndInstitutionalDestinationTests(unittest.TestCase):
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_pinned_99_selected_tree_preserves_distinct_predicate_adjuncts(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+        cases, _ = select_cases(500)
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), cases[99], max_items=50000, kbest_work_limit=500000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get('budget_exceeded'))
+        self.assertEqual(lattice.text, cases[99]['balanced_analysis_text'])
+        self.assertEqual(prepared.source_text, cases[99]['source_text'])
+        text = prepared.analysis_text
+        best = result.best()
+        self.assertEqual(best.rule_id, 'clause_np_vp')
+        self.assertEqual(text[best.children[0].start:best.children[0].end], 'I')
+        nodes = list(self.nodes(best))
+        pp_attachments = {text[n.children[-1].start:n.children[-1].end]: n
+                          for n in nodes if n.rule_id == 'vp_pp'}
+        self.assertEqual(set(pp_attachments), {
+            'to bed', 'with a sore heart',
+            'under any other roof but that which sheltered little Em’ly’s head'})
+        emphasis = next(n for n in nodes if n.rule_id == 'vp_adv')
+        self.assertEqual(text[emphasis.children[-1].start:emphasis.children[-1].end], 'indeed')
+        self.assertEqual(text[emphasis.children[0].start:emphasis.children[0].end],
+                         'should have gone to bed with a sore heart')
+        exception = next(n for n in nodes if n.rule_id == 'np_quantified_exceptive')
+        self.assertEqual(text[exception.start:exception.end],
+                         'any other roof but that which sheltered little Em’ly’s head')
+        self.assertEqual([n.category for n in exception.children], ['EXCEPTIVE-DET', 'N', 'EXCEPTIVE', 'NP'])
+        self.assertEqual(exception.features.as_dict()['number'], 'singular')
+        self.assertEqual(exception.children[-1].rule_id, 'np_relative_subj')
+        genitive = next(n for n in nodes if n.rule_id == 'np_genitive')
+        self.assertEqual(text[genitive.start:genitive.end], 'little Em’ly’s head')
+        self.assertFalse(any(n.rule_id in {'pp_np_coord', 'pp_adv_prep', 'np_pp_mod'} for n in nodes))
+
+    def test_exceptive_requires_licensed_quantifier_and_preserves_domain_number(self):
+        parser = Parser(make_parser().resources, goal_category='NP')
+        rule = 'np_quantified_exceptive'
+        for text, number in (('any room but this', 'singular'),
+                             ('every room but this', 'singular'),
+                             ('no room but this', 'singular'),
+                             ('all rooms but this', 'plural')):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertEqual(best.rule_id, rule, text)
+            self.assertEqual(best.features.as_dict()['number'], number)
+        for text in ('a room but this', 'the room but this', 'any room and this',
+                     'all room but this', 'every doors but this'):
+            for tree in parser.parse(text).result.alternatives(limit=8):
+                self.assertNotIn(rule, {n.rule_id for n in self.nodes(tree)}, text)
+
+    def test_destination_keeps_compositional_readings_and_local_nominal_modifiers(self):
+        parser = make_parser()
+        for text in ('I went to bed.', 'She retired to bed.'):
+            best = parser.parse(text).result.best()
+            self.assertIsNotNone(best, text)
+            self.assertTrue(any(n.category == 'PP' and n.rule_id is None
+                                and text[n.start:n.end] == 'to bed' for n in self.nodes(best)), text)
+        candidates = parser.parse('to bed').lattice.candidates
+        for category, surface in [('PREP', 'to'), ('N', 'bed'), ('PP', 'to bed')]:
+            self.assertTrue(any(c.category == category and c.surface == surface for c in candidates))
+        for text in ('to a bed', 'to the bed', 'to bread'):
+            self.assertFalse(any(c.features.as_dict().get('institutional_destination') == 'true'
+                                 for c in parser.parse(text).lattice.candidates), text)
+        nominal = Parser(parser.resources, goal_category='NP')
+        text = 'the bed with a canopy'
+        best = nominal.parse(text).result.best()
+        self.assertIsNotNone(best)
+        self.assertEqual(best.rule_id, 'np_pp_mod')
+        self.assertEqual(text[best.children[-1].start:best.children[-1].end], 'with a canopy')
+
+    def test_emphasis_does_not_masquerade_as_spatial_degree(self):
+        parser = make_parser()
+        pp = Parser(parser.resources, goal_category='PP')
+        self.assertEqual(pp.parse('far under the roof').result.best().rule_id, 'pp_adv_prep')
+        for tree in pp.parse('indeed under the roof').result.alternatives(limit=8):
+            self.assertNotIn('pp_adv_prep', {n.rule_id for n in self.nodes(tree)})
+        for text in ('I stayed indeed.', 'She was good indeed.', 'I stayed, indeed.'):
+            self.assertTrue(parser.parse(text).result.completed, text)

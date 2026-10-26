@@ -362,3 +362,6 @@
 {"id":"np_serial_three_coordinated_nominal_groups","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first_group","target":"second_group"},{"relation":"CONJUNCT","source":"second_group","target":"last_group"}]}}]}
 {"id":"vpnp_base_linking_adjective_phrase","semantic":[{"link":{"relation":"ATTRIBUTE","source":"linking_predicate","target":"predicative_attribute"}}]}
 {"id":"np_det_head_with_absolute_modifier","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"nominal_absolute_modifier"}]}}]}
+{"id":"prenominal_adv_participle","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"head","target":"modifier"}]}}]}
+{"id":"n_modified_participle","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"head","target":"attribute"}]}}]}
+{"id":"np_quantified_exceptive","semantic":[{"compose":{"links":[{"relation":"EXCEPTION","source":"head","target":"exception"}]}}]}

@@ -1,5 +1,48 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
+## Attachment follow-up #356 and #99 — 26 October 2026
+
+Both selected trees now have explicit attachment assertions through
+`parse_corpus_case`; the older recognition checkpoints below are historical.
+
+For **#356**, **but** coordinates the main clauses, **after** heads the fronted
+PP of the right clause, and **dearly bought** forms a passive prenominal
+modifier under **late ... experience**. Restrictive *but* cannot serve as a
+postposed supplementary adverb. Postadjectival adverbs need explicit lexical
+licensing (*indeed*, *enough*), so *late dearly* is no longer an adjective phrase.
+The original incise, coordinated adjectives and negative semi-modal remain.
+
+The adverb–participle construction projects typed lexical views only for
+adjacent adverbs and attested transitive past participles. Every original
+reading, span, sense and provenance remains available. This bounded activation
+keeps the fixed search budgets, including the near-limit #359 and #485 cases.
+
+For **#99**, the conventional institutional destination **to bed**, the state
+PP **with a sore heart**, and **under any other roof but ...** attach separately
+to the predicate. **Indeed** is predicate emphasis, not spatial degree on
+*under*. Typed quantified exception syntax attaches **but that which ...**
+inside the **roof** NP and preserves the singular domain head. The relative
+clause and **little Em’ly’s head** genitive retain their correct structure.
+Ordinary *to* / *bed* readings remain, and *the bed with a canopy* still permits
+local nominal PP modification. The exceptive construction requires a licensed
+quantifier and marker; it does not turn arbitrary nominal coordination into
+exceptions.
+
+Local verification against `85bd1f5f6813384381eb6136200fe3c0344a8b7c`:
+**448 tests, the same 7 expected failures, no unexpected failures**.
+The complete canonical 500-case run stays **472/500 (94.4%)**, with **no case
+changing status** and unchanged forest-saturation totals. The cohort hash,
+quotation provenance, 50,000 forest-item budget, 500,000 k-best work budget and
+10-second deadline are unchanged. Direct quality remains 120/120 complete,
+improves **114 -> 115/120 annotations**, and preserves 24/24 grammatical
+contrasts plus the same 9/24 existing negative acceptances. The newly satisfied
+annotation is v018 (*The blue truck stopped abruptly.*).
+
+See `attachment-validation-99-356.json` for measurements and
+`attachment-selected-trees-99-356.txt` for the exact retained trees and spans.
+These checks certify the specified attachments, not syntactic correctness of
+all 472 recognized corpus sentences. No GitHub Actions result is claimed.
+
 ## Sentence #356 — discourse incise and negative semi-modal, 472/500 (94.4%)
 
 Canonical text: `This hovel however, joined a cottage of a neat and pleasant
@@ -32,7 +75,7 @@ quality passes with unchanged 120/120 completions, 114/120 annotations,
 24/24 grammatical contrasts and 9/24 existing negative acceptances.
 These are local measurements; see `docs/case-356-validation.json`.
 
-**Remaining selected-tree limitations:** the existing ranking still treats
+**Historical selected-tree limitations (resolved by the attachment follow-up above):** the existing ranking still treats
 **but** as a postposed adverb and **after** as a conjunction governing a
 fronted NP, instead of selecting the intended coordination and fronted PP.
 It also groups **late dearly** rather than attaching **dearly** to **bought**.
@@ -57,7 +100,8 @@ The new tests certify those structures, original corpus provenance and negative
 controls against inventing names from apostrophe shape. **This is a lexical
 recovery, not a claim of complete syntactic gold quality:** the selected tree
 still attaches the long prepositional sequence and the `but that which ...`
-exception too broadly under `to`; that attachment issue is left explicit.
+exception too broadly under `to`. This historical limitation is resolved by
+the attachment follow-up above.
 
 Local validation against `c0f91f7878c058c6f82371f3406d28642809f028`:
 **438 tests pass with the same 7 expected failures**. Canonical balanced

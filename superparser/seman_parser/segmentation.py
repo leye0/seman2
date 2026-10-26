@@ -550,7 +550,26 @@ def build_lattice(
                 and (valence == "complex_transitive" or
                      isinstance(valence, list) and "complex_transitive" in valence)):
             nominal_heads.append(replace(candidate, category="V-NOMINAL-PRED"))
-    kept = [*kept, *nominal_heads]
+    # The prenominal construction consumes an adjacent lexical adverb and
+    # an attested transitive past participle. Project only complete lexical
+    # pairs: opening this search at every ADV exhausts the fixed forest budget.
+    # Original readings, senses and source spans are always retained.
+    participial_views = []
+    adverbs = [c for c in kept if c.category == "ADV"]
+    for candidate in kept:
+        features = candidate.features.as_dict()
+        valence = features.get("subcat")
+        if (candidate.category == "V" and features.get("vform") == "ed"
+                and (valence == "transitive" or
+                     isinstance(valence, list) and "transitive" in valence)):
+            adjacent = [adv for adv in adverbs
+                        if adv.span_end < candidate.span_start
+                        and text[adv.span_end:candidate.span_start].isspace()]
+            if adjacent:
+                participial_views.append(replace(candidate, category="V-PRENOMINAL-PASSIVE"))
+                participial_views.extend(replace(adv, category="ADV-PRENOMINAL-PASSIVE")
+                                         for adv in adjacent)
+    kept = [*kept, *nominal_heads, *participial_views]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(
