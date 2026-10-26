@@ -52,6 +52,40 @@ def main_predicate(item: Any) -> str | None:
     return None
 
 
+def matches_structure(item: Any, pattern: dict[str, Any], text: str) -> bool:
+    """Match an ordered subtree without depending on production rule names.
+
+    Children, when specified, are the exact immediate children: a matching
+    word elsewhere in the sentence cannot satisfy an attachment assertion.
+    Lexical lemmas and features are checked on the selected analysis only.
+    """
+    unknown = set(pattern) - {"category", "surface", "lemma", "features", "children"}
+    if unknown:
+        raise ValueError(f"Unknown structure assertion fields: {sorted(unknown)}")
+    category = pattern.get("category")
+    if category is not None:
+        categories = category if isinstance(category, list) else [category]
+        if item.category not in categories:
+            return False
+    if "surface" in pattern and text[item.start:item.end].casefold() != pattern["surface"].casefold():
+        return False
+    if "lemma" in pattern:
+        lexical = item.lexical_candidate
+        if lexical is None or lexical.lemma.casefold() != pattern["lemma"].casefold():
+            return False
+    features = item.features.as_dict()
+    if any(features.get(key) != value for key, value in pattern.get("features", {}).items()):
+        return False
+    if "children" in pattern:
+        children = pattern["children"]
+        if len(item.children) != len(children):
+            return False
+        if not all(matches_structure(child, expected, text)
+                   for child, expected in zip(item.children, children)):
+            return False
+    return True
+
+
 def checks_for(item: Any, row: dict[str, Any], text: str) -> dict[str, list[bool]]:
     nodes = tuple(walk(item))
     rules = rule_ids(item)
@@ -67,6 +101,8 @@ def checks_for(item: Any, row: dict[str, Any], text: str) -> dict[str, list[bool
         checks["required_rules"].append(required in rules)
     for forbidden in row.get("forbidden", ()):
         checks["forbidden_rules"].append(forbidden not in rules)
+    for pattern in row.get("structures", ()):
+        checks["structures"].append(any(matches_structure(node, pattern, text) for node in nodes))
     for category, surface in row.get("constituents", ()):
         checks["constituents"].append(any(
             node.category == category and text[node.start:node.end].casefold() == surface.casefold()

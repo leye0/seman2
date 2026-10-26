@@ -111,6 +111,7 @@ def run(wordnet_dir):
             for c in lattice.candidates))
     summary={
         "schema":"seman2-direct-grammar-consolidation-one-pass-v1",
+        "annotation_contract":"syntax-correctness-v2-ordered-subtrees",
         "design":"direct declarative grammar + lexical morphology, no runtime overlay",
         "positive_gold":dict(positive),"negative_pairs":dict(neg),
         "by_negative_family":{k:dict(v) for k,v in family.items()},
@@ -134,18 +135,17 @@ def run(wordnet_dir):
 
 
 def quality_gate(summary):
-    # A single system-level gate, not 24 phrase-specific assertions.
-    # Annotations still include old grammar rule IDs; an alternate
-    # equivalent licensed construction may differ without being wrong.
+    # Preserve the reviewed baseline. Production-name-dependent modal and
+    # WH annotations have been replaced with stronger ordered subtrees.
     p=summary["positive_gold"]
     n=summary["negative_pairs"]
     return {
         "full_sentence_trees_preserved":(
             p["tested"]==120 and p["completed"]==120
             and p["syntax_exported"]==120),
-        "annotations_not_materially_regressed":p["annotations_met"]>=113,
-        "fewer_ungrammatical_acceptances":n["negative_completed"]<=10,
-        "positive_contrasts_preserved":n["grammatical_contrast_completed"]>=22,
+        "all_annotations_satisfied":p["annotations_met"]==120,
+        "negative_acceptances_not_regressed":n["negative_tested"]==24 and n["negative_completed"]<=9,
+        "positive_contrasts_preserved":n["grammatical_contrast_tested"]==24 and n["grammatical_contrast_completed"]==24,
     }
 
 

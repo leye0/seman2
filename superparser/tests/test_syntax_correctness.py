@@ -740,3 +740,134 @@ def test_comparative_incise_keeps_an_adjectival_matrix() -> None:
         result = p.parse(text).result
         assert all('clause_discourse_coordinator_infinitive_incise' not in rules(root)
                    for root in result.alternatives(limit=20)), text
+
+
+def test_structural_annotations_check_selected_roles_not_rule_names():
+    import json
+    from dataclasses import replace
+    from scripts.evaluate_syntax_correctness import checks_for, all_pass, matches_structure
+    from seman_parser.features import FeatureStructure
+
+    rows = {r['id']: r for r in (json.loads(line) for line in
+            (DATA / 'syntax_correctness_validation.jsonl').read_text().splitlines())}
+    p = parser()
+    for identity in ('d013', 'v013', 'v047'):
+        row = rows[identity]
+        best = p.parse(row['text']).result.best()
+        assert all_pass(checks_for(best, row, row['text']))
+        pattern = row['structures'][0]
+        assert matches_structure(best, pattern, row['text'])
+        # Merely finding the same words elsewhere must not certify their roles.
+        swapped = replace(best, children=tuple(reversed(best.children)))
+        assert not matches_structure(swapped, pattern, row['text'])
+
+        def rename(node):
+            return replace(node, rule_id='equivalent-production' if node.rule_id else None,
+                           children=tuple(rename(child) for child in node.children))
+        assert matches_structure(rename(best), pattern, row['text'])
+
+    row = rows['d013']; text = row['text']; best = p.parse(text).result.best()
+    subject, vp = best.children
+    modal, bare = vp.children
+    verb, obj = bare.children
+    pattern = row['structures'][0]
+    finite_verb = replace(verb, features=FeatureStructure.build(
+        {**verb.features.as_dict(), 'vform': 'finite'}))
+    malformed = replace(best, children=(subject, replace(vp, children=(
+        modal, replace(bare, children=(finite_verb, obj))))))
+    assert not matches_structure(malformed, pattern, text)
+    wrong_modal = replace(modal, lexical_candidate=replace(modal.lexical_candidate, lemma='will'))
+    malformed = replace(best, children=(subject, replace(vp, children=(wrong_modal, bare))))
+    assert not matches_structure(malformed, pattern, text)
+    detached = replace(best, children=(subject, replace(vp, children=(modal, verb, obj))))
+    assert not matches_structure(detached, pattern, text)
+    assert not matches_structure(best, {'category': 'CLAUSE', 'children': []}, text)
+    # Existing rule assertions remain exact; no global alias or permissive fallback.
+    assert not all_pass(checks_for(best, {'required': ['nonexistent-production']}, text))
+    try:
+        matches_structure(best, {'childen': []}, text)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('Unknown assertion fields must not be silently ignored')
+
+
+def test_wh_structural_annotation_distinguishes_word_from_nominal_phrase():
+    import json
+    from dataclasses import replace
+    from scripts.evaluate_syntax_correctness import matches_structure
+    row = next(json.loads(line) for line in (DATA / 'syntax_correctness_validation.jsonl').read_text().splitlines()
+               if json.loads(line)['id'] == 'v047')
+    text = row['text']; best = parser().parse(text).result.best()
+    pattern = row['structures'][0]
+    subject, matrix = best.children
+    ask, embedded = matrix.children
+    filler, embedded_subject, predicate = embedded.children
+    which, noun = filler.children
+    assert text[filler.start:filler.end] == 'which route'
+    assert which.lexical_candidate.lemma == 'which'
+    alternate = replace(which, category='WH-NOM', lexical_candidate=replace(
+        which.lexical_candidate, category='WH-NOM'))
+    valid = replace(best, children=(subject, replace(matrix, children=(ask,
+        replace(embedded, children=(replace(filler, children=(alternate, noun)),
+                                    embedded_subject, predicate))))))
+    assert matches_structure(valid, pattern, text)
+    for children in ((embedded_subject, filler, predicate), (filler, predicate, embedded_subject)):
+        malformed = replace(best, children=(subject, replace(matrix, children=(ask,
+            replace(embedded, children=children)))))
+        assert not matches_structure(malformed, pattern, text)
+
+
+def test_linking_seem_has_canonical_lemma_and_overt_agreement():
+    from scripts.evaluate_syntax_correctness import main_predicate
+    p = parser()
+    for text in ('Neither answer seems correct.', 'Either route seems safe.',
+                 'The proposal seems reasonable.', 'The proposals seem reasonable.',
+                 'The proposal seemed reasonable.'):
+        best = p.parse(text).result.best()
+        assert best is not None, text
+        assert main_predicate(best) == 'seem', text
+    candidates = p.parse('seems').lattice.candidates
+    verbs = [c for c in candidates if c.category == 'V']
+    assert verbs and all(c.lemma == 'seem' for c in verbs)
+    assert all(c.features.as_dict().get('number') == 'singular'
+               and c.features.as_dict().get('person') == '3' for c in verbs)
+    for surface in ('seem', 'seemed', 'seeming'):
+        assert all(c.lemma == 'seem' for c in p.parse(surface).lattice.candidates if c.category == 'V')
+
+
+def test_unrelated_modal_and_wh_lexemes_are_not_morphological_aliases():
+    p = parser()
+    for word in ('can', 'could', 'should', 'might', 'may'):
+        candidates = p.parse(word).lattice.candidates
+        modals = [c for c in candidates if c.category == 'MODAL']
+        assert modals and all(c.lemma == word for c in modals), word
+        if word in {'can', 'might', 'may'}:
+            assert any(c.category != 'MODAL' for c in candidates), word
+    for word in ('which', 'what'):
+        candidates = p.parse(word).lattice.candidates
+        wh = [c for c in candidates if c.category in {'WH-NOM', 'WH-PRONOUN'}]
+        assert wh and all(c.lemma == word for c in wh), word
+        assert {'WH-NOM', 'WH-PRONOUN'} <= {c.category for c in wh}
+    assert any(c.category == 'WH-PRONOUN' and c.lemma == 'who'
+               for c in p.parse('whom').lattice.candidates)
+
+
+def test_quality_gate_rejects_annotation_or_contrast_regressions():
+    from copy import deepcopy
+    from scripts.validate_direct_grammar import quality_gate
+    baseline = {'positive_gold': {'tested': 120, 'completed': 120, 'syntax_exported': 120,
+                                  'annotations_met': 120},
+                'negative_pairs': {'negative_tested': 24, 'negative_completed': 9,
+                                   'grammatical_contrast_tested': 24,
+                                   'grammatical_contrast_completed': 24}}
+    assert all(quality_gate(baseline).values())
+    for family, field, value in (
+            ('positive_gold', 'annotations_met', 119),
+            ('positive_gold', 'completed', 119),
+            ('negative_pairs', 'negative_completed', 10),
+            ('negative_pairs', 'grammatical_contrast_completed', 23),
+            ('negative_pairs', 'negative_tested', 23)):
+        regressed = deepcopy(baseline)
+        regressed[family][field] = value
+        assert not all(quality_gate(regressed).values()), (family, field)

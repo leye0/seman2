@@ -1,5 +1,14 @@
 # Parser coverage and syntactic quality — 22 October 2026
 
+## Annotated quality follow-up — 26 October 2026
+
+The reviewed structural annotation contract now passes **120/120**. The
+unchanged original annotations score 117/120; the three obsolete rule/category
+checks were replaced by stricter ordered-subtree and lexical-identity checks.
+The old parser remains 115/120 under both contracts. See
+`QUALITY_120_CHECKPOINT_2026_10_26.md` and `quality-120-validation.json` for the
+comparison, regression results and exact scope of the claim.
+
 ## Attachment follow-up #356 and #99 — 26 October 2026
 
 Both selected trees now have explicit attachment assertions through

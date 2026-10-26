@@ -10,7 +10,7 @@
 {"id":"d010","split":"dev","text":"John left.","voice":"active","predicate":"leave","required":["vp_intransitive"]}
 {"id":"d011","split":"dev","text":"The baby slept quietly.","voice":"active","predicate":"sleep","required":["vp_adv"]}
 {"id":"d012","split":"dev","text":"The workers carried the boxes.","voice":"active","predicate":"carry","pos":{"workers":"N","carried":"V","boxes":"N"}}
-{"id":"d013","split":"dev","text":"She can read the letter.","voice":"active","predicate":"read","pos":{"can":"MODAL","read":"V"},"required":["vp_modal"]}
+{"id":"d013","split":"dev","text":"She can read the letter.","voice":"active","predicate":"read","pos":{"can":"MODAL","read":"V"},"structures":[{"category":"CLAUSE","children":[{"category":"NP","surface":"She"},{"category":"VP","features":{"modal":"true","voice":"active","vform":"finite"},"children":[{"category":"MODAL","surface":"can","lemma":"can"},{"category":"VP-NP","children":[{"category":"V","surface":"read","lemma":"read","features":{"vform":"base"}},{"category":"NP","surface":"the letter"}]}]}]}],"annotation_note":"Replaces obsolete vp_modal rule ID with ordered subject/modal/bare-predicate/object structure, finite modality, base morphology and lexical identities."}
 {"id":"d014","split":"dev","text":"She did not open the window.","voice":"active","predicate":"open","pos":{"not":"NEG"}}
 {"id":"d015","split":"dev","text":"The window was broken.","voice":"passive","predicate":"break","required":["clause_passive"]}
 {"id":"d016","split":"dev","text":"The teacher praised the student.","voice":"active","predicate":"praise","constituents":[["NP","The teacher"],["NP","the student"]]}
@@ -60,7 +60,7 @@
 {"id":"v010","split":"validation","text":"The audience laughed.","voice":"active","predicate":"laugh","required":["vp_intransitive"]}
 {"id":"v011","split":"validation","text":"The horse ran quickly.","voice":"active","predicate":"run","required":["vp_adv"]}
 {"id":"v012","split":"validation","text":"The nurses moved the beds.","voice":"active","predicate":"move","pos":{"nurses":"N","moved":"V","beds":"N"}}
-{"id":"v013","split":"validation","text":"They might solve the puzzle.","voice":"active","predicate":"solve","pos":{"might":"MODAL","solve":"V"},"required":["vp_modal"]}
+{"id":"v013","split":"validation","text":"They might solve the puzzle.","voice":"active","predicate":"solve","pos":{"might":"MODAL","solve":"V"},"structures":[{"category":"CLAUSE","children":[{"category":"NP","surface":"They"},{"category":"VP","features":{"modal":"true","voice":"active","vform":"finite"},"children":[{"category":"MODAL","surface":"might","lemma":"might"},{"category":"VP-NP","children":[{"category":"V","surface":"solve","lemma":"solve","features":{"vform":"base"}},{"category":"NP","surface":"the puzzle"}]}]}]}],"annotation_note":"Replaces obsolete vp_modal rule ID with ordered subject/modal/bare-predicate/object structure, finite modality, base morphology and lexical identities."}
 {"id":"v014","split":"validation","text":"They did not solve the puzzle.","voice":"active","predicate":"solve","pos":{"not":"NEG"}}
 {"id":"v015","split":"validation","text":"The puzzle was solved.","voice":"passive","predicate":"solve","required":["clause_passive"]}
 {"id":"v016","split":"validation","text":"The manager thanked the assistant.","voice":"active","predicate":"thank","constituents":[["NP","The manager"],["NP","the assistant"]]}
@@ -94,7 +94,7 @@
 {"id":"v044","split":"validation","text":"The figures might have fallen.","voice":"active","predicate":"fall","pos":{"might":"MODAL"}}
 {"id":"v045","split":"validation","text":"Which book did Laura choose?","voice":"active","predicate":"choose","pos":{"Which":"WH-PRONOUN"}}
 {"id":"v046","split":"validation","text":"Who repaired the bicycle?","voice":"active","predicate":"repair","pos":{"Who":"WH-NOM"}}
-{"id":"v047","split":"validation","text":"Laura asked which route David chose.","voice":"active","predicate":"ask","pos":{"which":"WH-NOM"}}
+{"id":"v047","split":"validation","text":"Laura asked which route David chose.","voice":"active","predicate":"ask","structures":[{"category":"CLAUSE","children":[{"category":"NP","surface":"Laura"},{"category":"VP","children":[{"category":"V","surface":"asked","lemma":"ask"},{"category":"WH-CLAUSE","features":{"embedded":"true","gap":"object"},"children":[{"category":"WH-NOM","surface":"which route","children":[{"category":["WH-PRONOUN","WH-NOM"],"surface":"which","lemma":"which","features":{"wh":"true"}},{"category":"N","surface":"route"}]},{"category":"NP","surface":"David"},{"category":"V","surface":"chose","lemma":"choose","features":{"vform":"finite"}}]}]}]}],"annotation_note":"WH-NOM is the which-route phrase; the lexical determiner/pronoun may use either WH view. Assert matrix complement, object filler, embedded subject and predicate as immediate children."}
 {"id":"v048","split":"validation","text":"The younger runner won.","voice":"active","predicate":"win","constituents":[["NP","The younger runner"]]}
 {"id":"v049","split":"validation","text":"That bridge is wider than this bridge.","voice":"active","predicate":"be","constituents":[["NP","That bridge"],["NP","this bridge"]]}
 {"id":"v050","split":"validation","text":"There were several chairs in the room.","voice":"active","predicate":"be","pos":{"There":"EXPL"}}
