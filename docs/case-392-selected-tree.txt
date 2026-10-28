@@ -1,0 +1,21 @@
+NOVEL_TREE_AUDIT {"index": 392, "book_id": 120, "source": "\"Ten to one this is a trick.\"", "analysis": "\"Ten to one this is a trick.\"", "completed": true, "root_rule": "dialogue_unattributed", "forest_nodes": 129, "budget_exceeded": false, "lexical_candidates": 29}
+NOVEL_TREE_BEGIN index=392 rank=1 score=3.9000
+CLAUSE          dialogue_unattributed                      [0:29] '"Ten to one this is a trick."'
+  DIRECT-SPEECH   dialogue_quote_clause_comma                [0:29] '"Ten to one this is a trick."'
+    OPEN-QUOTE      <lexical>                                  [0:1] '"'
+    CLAUSE          clause_initial_odds                        [1:27] 'Ten to one this is a trick'
+      ODDS-ADVERBIAL  odds_numeric_ratio                         [1:11] 'Ten to one'
+        NUM             <lexical>                                  [1:4] 'Ten'
+        TO              <lexical>                                  [5:7] 'to'
+        NUM             <lexical>                                  [8:11] 'one'
+      CLAUSE          clause_np_vp                               [12:27] 'this is a trick'
+        NP              np_demonstrative                           [12:16] 'this'
+          DET             <lexical>                                  [12:16] 'this'
+        VP              vp_cop_np                                  [17:27] 'is a trick'
+          COPULA          <lexical>                                  [17:19] 'is'
+          NP              np_det_n                                   [20:27] 'a trick'
+            DET             <lexical>                                  [20:21] 'a'
+            N               <lexical>                                  [22:27] 'trick'
+    COMMA           <lexical>                                  [27:28] '.'
+    CLOSE-QUOTE     <lexical>                                  [28:29] '"'
+NOVEL_TREE_END index=392 rank=1

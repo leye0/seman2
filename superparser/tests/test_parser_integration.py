@@ -3587,3 +3587,57 @@ class ExceptiveAndInstitutionalDestinationTests(unittest.TestCase):
             self.assertNotIn('pp_adv_prep', {n.rule_id for n in self.nodes(tree)})
         for text in ('I stayed indeed.', 'She was good indeed.', 'I stayed, indeed.'):
             self.assertTrue(parser.parse(text).result.completed, text)
+
+
+class NumericOddsAdjunctTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from NumericOddsAdjunctTests.nodes(child)
+
+    def test_pinned_392_keeps_probability_outside_subject(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+        cases, _ = select_cases(500)
+        prepared, _, result = parse_corpus_case(
+            make_parser(), cases[392], max_items=50000,
+            kbest_work_limit=500000,
+        )
+        self.assertTrue(result.completed, result.stats)
+        text = prepared.analysis_text
+        clause = next(n for n in self.nodes(result.best())
+                      if n.rule_id == 'clause_initial_odds')
+        odds, proposition = clause.children
+        self.assertEqual(text[odds.start:odds.end], 'Ten to one')
+        self.assertEqual([c.category for c in odds.children], ['NUM', 'TO', 'NUM'])
+        self.assertEqual(proposition.rule_id, 'clause_np_vp')
+        subject, predicate = proposition.children
+        self.assertEqual(text[subject.start:subject.end], 'this')
+        self.assertEqual(predicate.rule_id, 'vp_cop_np')
+        self.assertEqual(text[predicate.children[-1].start:predicate.children[-1].end], 'a trick')
+        self.assertFalse(result.stats['budget_exceeded'])
+        self.assertFalse(result.stats['kbest_budget_exceeded'])
+
+    def test_numeric_odds_generalize_with_optional_comma(self):
+        p = make_parser()
+        for text, rule in (
+            ('Two to one Mary wins.', 'clause_initial_odds'),
+            ('Five to two, John is right.', 'clause_initial_odds_comma'),
+        ):
+            with self.subTest(text=text):
+                best = p.parse(text).result.best()
+                self.assertIsNotNone(best)
+                self.assertEqual(best.rule_id, rule)
+                self.assertEqual(best.children[-1].rule_id, 'clause_np_vp')
+
+    def test_odds_require_two_numerals_and_to(self):
+        from seman_parser import Parser
+        p = make_parser()
+        odds = Parser(p.resources, goal_category='ODDS-ADVERBIAL', cache_size=0)
+        self.assertTrue(odds.parse('ten to one').result.completed)
+        for text in ('ten from one', 'ten to Mary', 'Mary to one', 'ten to'):
+            with self.subTest(text=text):
+                self.assertFalse(odds.parse(text).result.completed)
+        result = p.parse('Ten to one.').result
+        self.assertFalse(result.completed)
