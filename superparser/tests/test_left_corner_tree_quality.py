@@ -10,6 +10,8 @@ import unittest
 from pathlib import Path
 
 from seman_parser import Parser
+from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+from scripts.diagnose_novel_parses import select_cases
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 
@@ -23,34 +25,42 @@ def descendants(node):
 class ExperimentalTreeQualityTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.corpus_cases, _ = select_cases(500)
         cls.parser = Parser.from_dir(
             DATA, cache_size=0, lexical_left_corner_pruning=True,
         )
 
-    @unittest.expectedFailure
     def test_verb_particle_not_reinterpreted_as_second_imperative(self):
-        text = (
-            "As soon as the sun had climbed above our girdle of trees, "
-            "it fell with all its force upon the clearing and drank up "
-            "the vapours at a draught."
+        prepared, _, result = parse_corpus_case(
+            self.parser, self.corpus_cases[485],
+            max_items=50000, kbest_work_limit=500000,
         )
-        best = self.parser.parse(text, max_items=50000).result.best()
+        text = prepared.analysis_text
+        best = result.best()
         self.assertIsNotNone(best)
+        particle = next(n for n in descendants(best) if n.rule_id == "vp_particle_pre")
+        self.assertEqual(text[particle.children[0].start:particle.children[0].end], "drank")
+        self.assertEqual(text[particle.children[1].start:particle.children[1].end], "up")
         self.assertFalse(any(
             item.rule_id == "clause_imperative"
             and text[item.start:item.end].startswith("up the vapours")
             for item in descendants(best)
         ), "In an indicative narrative, 'drank up' is one verb-particle unit")
 
-    @unittest.expectedFailure
     def test_object_topicalization_does_not_absorb_subject_pronoun(self):
-        text = (
-            "“The turn of your countenance I shall never forget, as you said "
-            "that I could not have addressed you in any possible way that "
-            "would induce you to accept me.”"
+        prepared, _, result = parse_corpus_case(
+            self.parser, self.corpus_cases[248],
+            max_items=50000, kbest_work_limit=500000,
         )
-        best = self.parser.parse(text, max_items=50000).result.best()
+        text = prepared.analysis_text
+        best = result.best()
         self.assertIsNotNone(best)
+        self.assertIn("modal_object_gap_adv", {n.rule_id for n in descendants(best)})
+        topical = next(n for n in descendants(best)
+                       if n.rule_id == "clause_object_topicalization_modal")
+        self.assertEqual(text[topical.children[0].start:topical.children[0].end],
+                         "The turn of your countenance")
+        self.assertEqual(text[topical.children[1].start:topical.children[1].end], "I")
         self.assertFalse(any(
             item.category == "NP"
             and text[item.start:item.end].endswith(" I")
@@ -339,7 +349,6 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
                     report.result.stats, rules,
                 ))
 
-    @unittest.expectedFailure
     def test_tough_movement_requires_an_eligible_adjective(self):
         """A merely ADJ reading does not license every tough infinitive."""
         sentence = "The wall is green to believe."
@@ -349,7 +358,6 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
             node.rule_id == "vp_tough" for node in descendants(best)
         ), "Green is not a lexically licensed tough-movement predicate")
 
-    @unittest.expectedFailure
     def test_subject_control_infinitive_not_mislabeled_as_tough_movement(self):
         """'Ready to leave' is subject control, not object-gap tough syntax."""
         sentence = "Mary is ready to leave."
@@ -358,6 +366,13 @@ class ExperimentalTreeQualityTests(unittest.TestCase):
         self.assertFalse(any(
             node.rule_id == "vp_tough" for node in descendants(best)
         ), "The subject of 'leave' is Mary, not a gap object of 'leave'")
+        self.assertIn("adjp_licensed_to_infinitive", {n.rule_id for n in descendants(best)})
+
+    def test_tough_predicate_retains_object_gap(self):
+        best = self.parser.parse("The book is easy to read.").result.best()
+        self.assertIsNotNone(best)
+        tough = next(n for n in descendants(best) if n.rule_id == "vp_tough")
+        self.assertEqual(tough.children[-1].category, "VP-GAP")
 
 
 if __name__ == "__main__":

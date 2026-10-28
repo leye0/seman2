@@ -13,7 +13,7 @@ words (DET/PRON/PREP/…) are a small grammatical inventory loaded as data.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -215,6 +215,17 @@ class Lexicon:
                 if any(s.lemma == entry.lemma and s.senses and entry.senses
                        and s.senses[0].category == entry.senses[0].category for s in blockers):
                     continue
+                # Optional lexical countability declarations refine every noun
+                # sense without replacing WordNet's sense inventory or morphology.
+                if any(s.provenance.get("noun_countability") == "count"
+                       for s in static):
+                    entry = replace(entry, senses=tuple(
+                        replace(sense, features=FeatureStructure.build({
+                            **sense.features.as_dict(),
+                            "bare_nominal": "false" if sense.features.as_dict().get("number") == "singular" else "true",
+                        })) if sense.category == "N" else sense
+                        for sense in entry.senses
+                    ))
                 built.append(entry)
                 self._index(entry)
         self._cache[lemma] = tuple(built)

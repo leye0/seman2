@@ -300,11 +300,8 @@ class VectorChartTests(unittest.TestCase):
                     agenda.extend(item.children)
                 self.assertIn("vpnp_bare_coord", rule_ids)
 
-    @unittest.expectedFailure
-    def test_known_imperative_homograph_ranking_gap(self) -> None:
-        # Valid imperative, but the best current tree chooses nominal
-        # homographs instead. Keep this quality gap visible, not called
-        # a successful grammatical analysis just because a root exists.
+    def test_imperative_coordination_over_nominal_homographs(self) -> None:
+        # Coordination must preserve the shared imperative subject.
         result = self.parser.parse("Open the box and close it.").result
         self.assertTrue(result.completed, result.stats)
         todo = [result.best()]
@@ -328,7 +325,6 @@ class VectorChartTests(unittest.TestCase):
                     agenda.extend(item.children)
                 self.assertIn("clause_post_adv_comma", rules)
 
-    @unittest.expectedFailure
     def test_imperative_with_manner_adverb_is_preferred_over_fake_subject(self) -> None:
         # The ambiguous word 'Open' is a base-form imperative here,
         # not a noun subject to which 'the' somehow attaches.
@@ -747,13 +743,17 @@ class VectorChartTests(unittest.TestCase):
         # A singular determiner cannot unify with a plural nominal head.
         self.assertFalse(np_parser.parse("a heavy gales").result.completed)
 
-    @unittest.expectedFailure
-    def test_known_bare_singular_count_noun_gap(self) -> None:
-        # Existing np_bare + n_adj_n licenses this ungrammatical NP.
-        # Preserve this defect as an explicit ranking/coverage quality debt.
+    def test_bare_singular_count_noun_requires_determiner(self) -> None:
+        # Countability follows the nominal head through modifiers.
         from seman_parser.engine import Parser
         np_parser = Parser(self.parser.resources, goal_category="NP", cache_size=0)
-        self.assertFalse(np_parser.parse("heavy gale").result.completed)
+        for text in ("heavy gale", "severe blizzard"):
+            with self.subTest(text=text):
+                self.assertFalse(np_parser.parse(text).result.completed)
+        for text in ("a heavy gale", "the heavy gale", "heavy gales",
+                     "a severe blizzard", "severe blizzards", "heavy snow"):
+            with self.subTest(text=text):
+                self.assertTrue(np_parser.parse(text).result.completed)
 
     def test_degree_modified_adjective_with_pp_and_infinitive_complements(self) -> None:
         for text in ("Kitty was too much afraid of him to talk.",
