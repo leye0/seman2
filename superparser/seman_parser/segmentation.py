@@ -569,7 +569,17 @@ def build_lattice(
                 participial_views.append(replace(candidate, category="V-PRENOMINAL-PASSIVE"))
                 participial_views.extend(replace(adv, category="ADV-PRENOMINAL-PASSIVE")
                                          for adv in adjacent)
-    kept = [*kept, *nominal_heads, *participial_views]
+    # Open supplementary participial searches only at attested transitive
+    # present participles. Keep the V candidate and all lexical provenance.
+    present_participles = []
+    for candidate in kept:
+        features = candidate.features.as_dict()
+        valence = features.get("subcat")
+        if (candidate.category == "V" and features.get("vform") == "ing"
+                and (valence == "transitive" or
+                     isinstance(valence, list) and "transitive" in valence)):
+            present_participles.append(replace(candidate, category="V-TRANSITIVE-ING"))
+    kept = [*kept, *nominal_heads, *participial_views, *present_participles]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(

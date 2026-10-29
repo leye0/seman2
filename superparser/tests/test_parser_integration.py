@@ -3641,3 +3641,90 @@ class NumericOddsAdjunctTests(unittest.TestCase):
                 self.assertFalse(odds.parse(text).result.completed)
         result = p.parse('Ten to one.').result
         self.assertFalse(result.completed)
+
+
+class ModifiedParticipialSupplementTests(unittest.TestCase):
+    @staticmethod
+    def nodes(node):
+        yield node
+        for child in node.children:
+            yield from ModifiedParticipialSupplementTests.nodes(child)
+
+    def test_pinned_449_preserves_negation_object_and_supplement_adjuncts(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+        cases, _ = select_cases(500)
+        prepared, _, result = parse_corpus_case(
+            make_parser(), cases[449], max_items=50000,
+            kbest_work_limit=500000,
+        )
+        self.assertTrue(result.completed, result.stats)
+        text = prepared.analysis_text
+        best = result.best()
+        self.assertEqual(best.rule_id, 'clause_final_transitive_participle')
+        matrix, comma, supplement = best.children
+        self.assertEqual(text[matrix.start:matrix.end],
+                         'but the murderer minded him not a whit')
+        negated = next(n for n in self.nodes(matrix) if n.rule_id == 'vp_adv')
+        self.assertEqual(negated.features.as_dict()['negation'], 'true')
+        self.assertEqual(text[negated.children[-1].start:negated.children[-1].end], 'not a whit')
+        predicate = negated.children[0]
+        self.assertEqual(predicate.rule_id, 'vp_transitive')
+        self.assertEqual(text[predicate.children[-1].start:predicate.children[-1].end], 'him')
+        self.assertEqual(supplement.rule_id, 'transitive_participial_pp')
+        modified, pp = supplement.children
+        self.assertEqual(text[pp.start:pp.end], 'upon a wisp of grass')
+        self.assertEqual(modified.rule_id, 'transitive_participial_adverb')
+        core, temporal = modified.children
+        self.assertEqual(text[temporal.start:temporal.end], 'the while')
+        self.assertEqual(core.rule_id, 'transitive_present_participial')
+        self.assertEqual(text[core.children[0].start:core.children[0].end], 'cleansing')
+        self.assertEqual(text[core.children[1].start:core.children[1].end], 'his blood-stained knife')
+        self.assertFalse(result.stats['budget_exceeded'])
+        self.assertFalse(result.stats['kbest_budget_exceeded'])
+
+    def test_participial_modifiers_generalize_without_temporal_idiom(self):
+        p = make_parser()
+        text = 'He left, wiping his hands slowly on a cloth.'
+        best = p.parse(text).result.best()
+        self.assertIsNotNone(best)
+        self.assertEqual(best.rule_id, 'clause_final_transitive_participle')
+        supplement = best.children[-1]
+        self.assertEqual(supplement.rule_id, 'transitive_participial_pp')
+        self.assertEqual(supplement.children[0].rule_id, 'transitive_participial_adverb')
+        core = supplement.children[0].children[0]
+        self.assertEqual(text[core.children[-1].start:core.children[-1].end], 'his hands')
+
+    def test_supplement_requires_transitive_present_participle(self):
+        from seman_parser import Parser
+        p = make_parser()
+        part = Parser(p.resources, goal_category='TRANSITIVE-PARTICIPIAL', cache_size=0)
+        self.assertTrue(part.parse('wiping his hands slowly on a cloth').result.completed)
+        for text in ('wiped his hands', 'wipe his hands', 'arriving his hands'):
+            with self.subTest(text=text):
+                self.assertFalse(part.parse(text).result.completed)
+        # The new idiom does not remove the ordinary nominal reading.
+        nominal = Parser(p.resources, goal_category='NP', cache_size=0)
+        self.assertTrue(nominal.parse('a while').result.completed)
+
+    def test_typed_participle_keeps_original_lexical_evidence(self):
+        p = make_parser()
+        report = p.parse('wiping his hands')
+        candidates = report.lattice.candidates
+        typed = [c for c in candidates if c.category == 'V-TRANSITIVE-ING']
+        self.assertTrue(typed)
+        for view in typed:
+            self.assertEqual(view.features.as_dict()['vform'], 'ing')
+            self.assertTrue(any(
+                original.category == 'V'
+                and original.span_start == view.span_start
+                and original.span_end == view.span_end
+                and original.features == view.features
+                and original.interpretations == view.interpretations
+                and original.source == view.source
+                for original in candidates
+            ))
+        for text in ('wiped his hands', 'wipe his hands', 'arriving'):
+            with self.subTest(text=text):
+                self.assertFalse(any(c.category == 'V-TRANSITIVE-ING'
+                                     for c in p.parse(text).lattice.candidates))
