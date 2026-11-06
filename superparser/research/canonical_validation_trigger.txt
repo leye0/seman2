@@ -134,3 +134,4 @@ Validate #357 quoted nominal fallback preserves split dialogue precedence.
 2026-11-06: Validate case 202 infinitival subject, attached gerund PP, temporal incise and scoped nominal copula; compare all 500 statuses, preserve case 359 and unchanged budgets.
 2026-11-06: Validate case 354 copular contrast, shared so/as comparison scope and final PP-relative partitive antecedent; preserve 359 and 500-case budgets.
 2026-11-06: Validate case 370 participial supplements and coordinated absolutes; fixed corpus and case 359 witness.
+2026-11-06: Validate case 371 fronted possessive relative, other-than nominal comparison, coordinated partitive, and HAVE degree-NP; preserve case 359 and fixed budgets.

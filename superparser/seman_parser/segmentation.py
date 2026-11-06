@@ -633,6 +633,90 @@ def build_lattice(
         ):
             equative_partitive_markers.append(
                 replace(candidate, category="DET-EQUATIVE-PARTITIVE"))
+    # The adjective "other" selects a following than-standard only when
+    # an overt nominal head and comparative than are adjacent. A typed view
+    # avoids opening a new nominal-comparison search at every literary
+    # "other" (notably case 359: "far other plans" without a standard).
+    # The original WordNet adjective and all its senses remain untouched.
+    comparative_than = [c for c in kept if c.category == "PREP"
+                        and c.features.as_dict().get("comparative") == "true"]
+    comparative_other_views = []
+    for candidate in kept:
+        if candidate.category != "ADJ" or candidate.lemma.casefold() != "other":
+            continue
+        if any(
+            candidate.span_end < noun.span_start < than.span_start
+            and text[candidate.span_end:noun.span_start].isspace()
+            and text[noun.span_end:than.span_start].isspace()
+            for noun in kept if noun.category == "N"
+            for than in comparative_than
+        ):
+            comparative_other_views.append(
+                replace(candidate, category="ADJ-OTHER-THAN"))
+    comparative_degree_other_views = []
+    for candidate in kept:
+        if (candidate.category != "ADV" or
+                candidate.features.as_dict().get("comparative_modifier") != "true"):
+            continue
+        if any(
+            candidate.span_end < other.span_start
+            and text[candidate.span_end:other.span_start].isspace()
+            and other.span_start - candidate.span_end <= 2
+            for other in comparative_other_views
+        ):
+            comparative_degree_other_views.append(
+                replace(candidate, category="ADV-DEGREE-OTHER-THAN"))
+    # Bind longer compositional rules to independent overt lexical evidence,
+    # rather than starting their chart partials on every HAVE, PREP or DET.
+    # The original candidates and WordNet senses are never replaced.
+    possession_degree_views = []
+    degree_adverbs = [c for c in kept if c.category == "ADV"
+                      and c.features.as_dict().get("possessive_degree") == "true"]
+    for candidate in kept:
+        if candidate.category != "HAVE" or candidate.features.as_dict().get("vform") != "finite":
+            continue
+        if any(
+            candidate.span_end < degree.span_start < det.span_start
+            and text[candidate.span_end:degree.span_start].isspace()
+            and text[degree.span_end:det.span_start].isspace()
+            and degree.span_start - candidate.span_end <= 2
+            and det.span_start - degree.span_end <= 2
+            for degree in degree_adverbs for det in kept if det.category == "DET"
+        ):
+            possession_degree_views.append(
+                replace(candidate, category="HAVE-DEGREE-NP"))
+
+    relative_prep_views = []
+    poss_relatives = [c for c in kept if c.category == "WH-REL-POSS"]
+    nouns = [c for c in kept if c.category == "N"]
+    for candidate in kept:
+        if candidate.category != "PREP":
+            continue
+        if any(
+            candidate.span_end < noun.span_start
+            and noun.span_end == first.span_start
+            and first.span_end < relative.span_start
+            and text[first.span_end:relative.span_start].isspace()
+            and relative.span_end < last.span_start
+            for noun in nouns for first in literal_commas
+            for relative in poss_relatives for last in literal_commas
+        ):
+            relative_prep_views.append(
+                replace(candidate, category="PREP-WHOSE-REL"))
+
+    coordinated_partitive_views = []
+    for candidate in kept:
+        if (candidate.category != "DET" or
+                candidate.features.as_dict().get("anaphor") != "true"):
+            continue
+        if any(
+            candidate.span_end < of.span_start
+            and text[candidate.span_end:of.span_start].isspace()
+            and of.span_start - candidate.span_end <= 2
+            for of in partitive_of
+        ):
+            coordinated_partitive_views.append(
+                replace(candidate, category="DET-COORD-PARTITIVE"))
     # Multiple right-edge, nonfinite supplements need lexical anchors. A
     # generic NP + participle rule starts at almost every nominal and can
     # exhaust the fixed dialogue budget (#359). Project only lexical views
@@ -670,7 +754,11 @@ def build_lattice(
                 absolute_views.append(replace(candidate, category="V-SUPPLEMENT-ED"))
     kept = [*kept, *nominal_heads, *participial_views, *present_participles,
             *intransitive_gerunds, *temporal_subject_markers,
-            *equative_partitive_markers, *absolute_views]
+            *equative_partitive_markers, *comparative_other_views,
+            *comparative_degree_other_views,
+            *possession_degree_views, *relative_prep_views,
+            *coordinated_partitive_views,
+            *absolute_views]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(

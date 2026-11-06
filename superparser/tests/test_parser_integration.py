@@ -4107,3 +4107,166 @@ class LocativeClauseWithCoordinatedAbsolutesTests(unittest.TestCase):
                              {expected}, surface)
         self.assertTrue(p.parse('He threw the ball.').result.completed)
         self.assertTrue(p.parse('The ball was thrown.').result.completed)
+class FrontedPossessiveRelativeAndOtherComparisonTests(unittest.TestCase):
+    """Case 371: the relative, compared agent, and graded HAVE attach locally."""
+
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_pinned_371_selected_tree_has_exact_antecedent_and_scopes(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+
+        case = select_cases(500)[0][371]
+        self.assertTrue(case['text'].startswith('But to a Genevan magistrate,'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), case, max_items=50_000, kbest_work_limit=500_000)
+        self.assertEqual(prepared.source_text, case['source_text'])
+        self.assertEqual(lattice.text, case['balanced_analysis_text'])
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats['budget_exceeded'])
+        self.assertFalse(result.stats['kbest_budget_exceeded'])
+        root = result.best()
+        text = result.text
+        self.assertEqual(root.rule_id, 'coord_clause')
+        self.assertEqual(text[root.start:root.end], case['text'].rstrip('.'))
+        self.assertEqual(text[root.children[0].start:root.children[0].end], 'But')
+        front = root.children[1]
+        self.assertEqual(front.rule_id, 'clause_front_pp_nocomma')
+        pp, matrix = front.children
+        self.assertEqual(pp.rule_id,
+                         'pp_prep_np_possessive_subject_relative_pair')
+        self.assertEqual([c.category for c in pp.children], [
+            'PREP-WHOSE-REL', 'NP', 'COMMA', 'REL-CLAUSE-POSS', 'COMMA'])
+        self.assertEqual(text[pp.children[1].start:pp.children[1].end],
+                         'a Genevan magistrate')
+        self.assertEqual([text[pp.children[i].start:pp.children[i].end]
+                          for i in (2, 4)], [',', ','])
+        head = pp.children[1].children[1]
+        self.assertEqual(head.rule_id, 'n_adj_n')
+        self.assertEqual(head.children[0].category, 'ADJ')
+        self.assertEqual(text[head.children[0].start:head.children[0].end],
+                         'Genevan')
+
+        relative = pp.children[3]
+        self.assertEqual(relative.rule_id, 'rel_poss_subject_finite_vp')
+        possessed, passive = relative.children
+        self.assertEqual(possessed.rule_id, 'rel_poss_np')
+        self.assertEqual(text[possessed.start:possessed.end], 'whose mind')
+        self.assertEqual(passive.rule_id, 'vp_passive_by_flat')
+        self.assertEqual([c.category for c in passive.children],
+                         ['AUX-BE', 'V', 'PREP-BY', 'NP'])
+        compared = passive.children[3]
+        self.assertEqual(compared.rule_id, 'np_degree_comparative_other_than')
+        self.assertEqual([c.category for c in compared.children],
+                         ['ADV-DEGREE-OTHER-THAN', 'ADJ-OTHER-THAN',
+                          'N', 'PREP', 'NP'])
+        self.assertEqual(text[compared.start:compared.end],
+                         'far other ideas than those of devotion and heroism')
+        standard = compared.children[4]
+        self.assertEqual(standard.rule_id,
+                         'np_anaphoric_partitive_coordinated')
+        self.assertEqual(text[standard.start:standard.end],
+                         'those of devotion and heroism')
+        self.assertEqual([c.category for c in standard.children],
+                         ['DET-COORD-PARTITIVE', 'PREP', 'NP', 'COORD', 'NP'])
+        self.assertEqual([text[c.start:c.end] for c in standard.children],
+                         ['those', 'of', 'devotion', 'and', 'heroism'])
+
+        self.assertEqual(matrix.rule_id, 'clause_np_vp')
+        subject, predicate = matrix.children
+        self.assertEqual(text[subject.start:subject.end],
+                         'this elevation of mind')
+        self.assertEqual(predicate.rule_id,
+                         'vp_have_degree_adverb_nominal_object')
+        self.assertEqual([c.category for c in predicate.children],
+                         ['HAVE-DEGREE-NP', 'ADV', 'NP'])
+        self.assertEqual([text[c.start:c.end] for c in predicate.children],
+                         ['had', 'much', 'the appearance of madness'])
+        self.assertEqual(predicate.children[2].rule_id, 'np_det_n_of')
+        self.assertFalse(any(n.rule_id in (
+            'wh_vp_when_pp', 'clause_correlative', 'pp_np_coord')
+            for n in self.nodes(root)))
+
+        for typed, original in (
+            ('PREP-WHOSE-REL', 'PREP'),
+            ('HAVE-DEGREE-NP', 'HAVE'),
+            ('ADJ-OTHER-THAN', 'ADJ'),
+            ('ADV-DEGREE-OTHER-THAN', 'ADV'),
+            ('DET-COORD-PARTITIVE', 'DET'),
+        ):
+            views = [c for c in lattice.candidates if c.category == typed]
+            self.assertTrue(views, typed)
+            for view in views:
+                self.assertTrue(any(
+                    c.category == original and c.span_start == view.span_start
+                    and c.span_end == view.span_end and c.features == view.features
+                    and c.source == view.source and c.sense_ids == view.sense_ids
+                    for c in lattice.candidates), typed)
+        genevan = [c for c in lattice.candidates
+                   if c.surface == 'Genevan']
+        self.assertTrue(any(c.category == 'ADJ' for c in genevan))
+        self.assertTrue(any(c.category == 'N' and c.sense_ids for c in genevan))
+
+    def test_generalizes_to_independent_nominal_and_comparative_material(self):
+        p = make_parser()
+        for sentence, expected in (
+            ('To a village teacher, whose mind was occupied by far other plans '
+             'than those of duty and honor, this behavior had much the '
+             'appearance of folly.', 'np_degree_comparative_other_than'),
+            ('To a village elder, whose mind was occupied by other ideas '
+             'than those of duty and honor, this matter had much the '
+             'appearance of madness.', 'np_comparative_other_than'),
+        ):
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence, max_items=50_000,
+                                 kbest_work_limit=500_000).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertFalse(result.stats['budget_exceeded'])
+                selected = list(self.nodes(result.best()))
+                ids = {n.rule_id for n in selected}
+                self.assertIn('rel_poss_subject_finite_vp', ids)
+                self.assertIn(
+                    'pp_prep_np_possessive_subject_relative_pair', ids)
+                self.assertIn('np_anaphoric_partitive_coordinated', ids)
+                self.assertIn('vp_have_degree_adverb_nominal_object', ids)
+                self.assertIn(expected, ids)
+
+    def test_comparative_views_require_overt_other_noun_than(self):
+        p = make_parser()
+        for text in ('far other plans', 'far other plans of duty',
+                     'other plans and dreams'):
+            with self.subTest(text=text):
+                lattice = p.parse(text).lattice
+                self.assertFalse(any(
+                    c.category in ('ADJ-OTHER-THAN', 'ADV-DEGREE-OTHER-THAN')
+                    for c in lattice.candidates))
+        lattice = p.parse('far other ideas than those of duty and honor').lattice
+        self.assertTrue(any(c.category == 'ADV-DEGREE-OTHER-THAN'
+                            for c in lattice.candidates))
+
+    def test_rejects_bad_possessive_relative_agreement_and_degree(self):
+        p = make_parser()
+        good = ('To a village teacher, whose mind was occupied by far other '
+                'plans than those of duty and honor, this behavior had much '
+                'the appearance of folly.')
+        for wrong in (
+            # Without the final nominal coordination, exclude the legacy
+            # vp_coord ambiguity that can read "honor" as a finite verb.
+            good.replace('whose mind was', 'whose mind were')
+                .replace(' and honor', ''),
+            good.replace('whose mind', 'which mind'),
+            good.replace('honor, this', 'honor this'),
+        ):
+            with self.subTest(wrong=wrong):
+                result = p.parse(wrong, max_items=50_000,
+                                 kbest_work_limit=500_000).result
+                self.assertFalse(any(
+                    node.rule_id == 'pp_prep_np_possessive_subject_relative_pair'
+                    for root in result.alternatives(limit=2)
+                    for node in self.nodes(root)), wrong)
+        wrong_degree = good.replace('had much the', 'had very the')
+        result = p.parse(wrong_degree).result
+        self.assertFalse(any(
+            n.rule_id == 'vp_have_degree_adverb_nominal_object'
+            for root in result.alternatives(limit=2)
+            for n in self.nodes(root)))
