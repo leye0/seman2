@@ -602,8 +602,40 @@ def build_lattice(
             for post in literal_commas
         ):
             temporal_subject_markers.append(replace(candidate, category="TO-TEMPORAL-SUBJECT"))
+    # A postposed PP-relative can supplement the whole demonstrative partitive
+    # in an equative standard: "so calm and clear as that of X, through which...".
+    # Without this contextual anchor, opening the supplementary NP construction
+    # at every DET/NP saturates complex dialogue (pinned case 359). Only project
+    # a typed DET where the lexical evidence for the equative and partitive
+    # structure exists. The grammar still has to validate all attachments.
+    equative_degrees = [c for c in kept if c.category == "DEGREE"
+                        and c.features.as_dict().get("equative_so") == "true"]
+    equative_as = [c for c in kept if c.category == "CONJ"
+                   and c.features.as_dict().get("degree") == "true"
+                   and c.surface.lower() == "as"]
+    partitive_of = [c for c in kept if c.category == "PREP"
+                    and c.features.as_dict().get("nominal_complement") == "of"]
+    relative_obliques = [c for c in kept if c.category == "WH-REL-OBL"]
+    equative_partitive_markers = []
+    for candidate in kept:
+        if candidate.category != "DET":
+            continue
+        if any(
+            degree.span_end < marker.span_start
+            and marker.span_end < candidate.span_start
+            and text[marker.span_end:candidate.span_start].isspace()
+            and candidate.span_end < of.span_start
+            and text[candidate.span_end:of.span_start].isspace()
+            and of.span_end < comma.span_start < relative.span_start
+            for degree in equative_degrees for marker in equative_as
+            for of in partitive_of for comma in literal_commas
+            for relative in relative_obliques
+        ):
+            equative_partitive_markers.append(
+                replace(candidate, category="DET-EQUATIVE-PARTITIVE"))
     kept = [*kept, *nominal_heads, *participial_views, *present_participles,
-            *intransitive_gerunds, *temporal_subject_markers]
+            *intransitive_gerunds, *temporal_subject_markers,
+            *equative_partitive_markers]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(

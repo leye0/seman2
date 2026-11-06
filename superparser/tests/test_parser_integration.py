@@ -3856,3 +3856,127 @@ class InfinitivalSubjectTemporalInciseTests(unittest.TestCase):
         self.assertFalse(any(c.category == 'TO-TEMPORAL-SUBJECT'
                              for c in p.parse('To persuade him was the work of a moment.')
                              .lattice.candidates))
+
+
+class CopularContrastAndEquativeRelativeTests(unittest.TestCase):
+    """Rank-1 attachments for the Frankenstein 354 comparative sentence."""
+
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_pinned_354_ellipsis_equative_scope_and_full_relative_antecedent(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+
+        case = select_cases(500)[0][354]
+        self.assertTrue(case['text'].startswith('This valley is more wonderful'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), case, max_items=50_000, kbest_work_limit=500_000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats['budget_exceeded'])
+        self.assertFalse(result.stats['kbest_budget_exceeded'])
+        self.assertEqual(prepared.source_text, case['source_text'])
+        self.assertEqual(lattice.text, case['balanced_analysis_text'])
+        text = result.text
+        tree = result.best()
+        self.assertEqual(tree.rule_id, 'clause_np_vp')
+        self.assertEqual(text[tree.start:tree.end], case['text'].rstrip('.'))
+        self.assertEqual(text[tree.children[0].start:tree.children[0].end],
+                         'This valley')
+
+        vp = tree.children[1]
+        self.assertEqual(vp.rule_id, 'vp_copular_contrast_negated_ellipsis')
+        self.assertEqual([child.category for child in vp.children],
+                         ['COPULA', 'ADJP', 'COMMA', 'COORD', 'NEG', 'ADJP'])
+        self.assertEqual([text[c.start:c.end] for c in vp.children[2:5]],
+                         [',', 'but', 'not'])
+        self.assertEqual(text[vp.children[1].start:vp.children[1].end],
+                         'more wonderful and sublime')
+
+        right = vp.children[-1]
+        self.assertEqual(right.rule_id,
+                         'adjp_so_coord_adjectives_as_relative_standard')
+        self.assertEqual([c.category for c in right.children],
+                         ['DEGREE', 'ADJ', 'COORD', 'ADJ', 'CONJ',
+                          'NP-EQUATIVE-REL-TAIL'])
+        self.assertEqual([text[c.start:c.end] for c in right.children[:5]],
+                         ['so', 'beautiful', 'and', 'picturesque', 'as'])
+        self.assertEqual(right.children[0].features.as_dict()['equative_so'],
+                         'true')
+
+        standard = right.children[-1]
+        self.assertEqual(standard.rule_id,
+                         'np_relative_pp_equative_final_standard')
+        self.assertEqual([c.category for c in standard.children],
+                         ['DET-EQUATIVE-PARTITIVE', 'PREP', 'NP', 'COMMA',
+                          'REL-CLAUSE-PP'])
+        self.assertEqual([text[c.start:c.end] for c in standard.children[:4]],
+                         ['that', 'of', 'Servox', ','])
+        self.assertEqual(standard.children[2].rule_id, 'np_proper')
+        relative = standard.children[-1]
+        self.assertEqual(relative.rule_id, 'rel_pp_finite_np_vp')
+        self.assertEqual(text[relative.start:relative.end],
+                         'through which I had just passed')
+        self.assertEqual(relative.children[0].rule_id, 'rel_oblique_prep_pron')
+        self.assertEqual(text[relative.children[0].start:relative.children[0].end],
+                         'through which')
+        self.assertEqual([n for n in self.nodes(tree)
+                          if n.rule_id == 'np_relative_pp_comma_pair'
+                          and text[n.start:n.end].startswith('Servox,')], [])
+
+        so_candidates = [c for c in lattice.candidates
+                         if c.surface.lower() == 'so' and c.category == 'DEGREE']
+        self.assertTrue(any(c.features.as_dict().get('equative_so') == 'true'
+                            for c in so_candidates))
+        self.assertTrue(any(c.features.as_dict().get('inversion') == 'true'
+                            for c in so_candidates),
+                        'The new equative reading must preserve existing senses.')
+        for typed in (c for c in lattice.candidates
+                      if c.category == 'DET-EQUATIVE-PARTITIVE'):
+            self.assertTrue(any(
+                original.category == 'DET'
+                and original.span_start == typed.span_start
+                and original.span_end == typed.span_end
+                and original.features == typed.features
+                and original.sense_ids == typed.sense_ids
+                and original.source == typed.source
+                for original in lattice.candidates))
+
+    def test_independent_copular_contrast_and_equative_standard(self):
+        p = make_parser()
+        for text in ('The lake was calm, but not deep.',
+                     'The mountain is high, but not particularly steep.'):
+            with self.subTest(text=text):
+                tree = p.parse(text).result.best()
+                self.assertIsNotNone(tree, text)
+                self.assertEqual(tree.children[-1].rule_id,
+                                 'vp_copular_contrast_negated_ellipsis')
+        for text in ('This lake is not so calm and clear as the river.',
+                     'This valley is not so beautiful and picturesque as the lake.'):
+            with self.subTest(text=text):
+                tree = p.parse(text).result.best()
+                self.assertIsNotNone(tree, text)
+                self.assertIn('adjp_so_coord_adjectives_as_np',
+                              {n.rule_id for n in self.nodes(tree)})
+
+    def test_unlicensed_contrasts_do_not_use_new_structures(self):
+        p = make_parser()
+        invalid = (
+            ('The lake was calm but not deep.',
+             'vp_copular_contrast_negated_ellipsis'),
+            ('The lake was calm, but quickly.',
+             'vp_copular_contrast_negated_ellipsis'),
+            ('The valley is so lovely and tranquil than the lake.',
+             'adjp_so_coord_adjectives_as_np'),
+            ('The valley is so lovely and tranquil than the lake, '
+             'through which Mary had passed.',
+             'adjp_so_coord_adjectives_as_relative_standard'),
+            ('The valley is so lovely and tranquil as the lake, '
+             'under that Mary had passed.',
+             'np_relative_pp_equative_final_standard'),
+        )
+        for text, forbidden_rule in invalid:
+            with self.subTest(text=text):
+                trees = p.parse(text).result.alternatives(limit=8)
+                self.assertFalse(any(
+                    n.rule_id == forbidden_rule for tree in trees
+                    for n in self.nodes(tree)), (text, forbidden_rule))
