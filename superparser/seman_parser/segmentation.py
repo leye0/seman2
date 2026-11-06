@@ -572,6 +572,7 @@ def build_lattice(
     # Open supplementary participial searches only at attested transitive
     # present participles. Keep the V candidate and all lexical provenance.
     present_participles = []
+    intransitive_gerunds = []
     for candidate in kept:
         features = candidate.features.as_dict()
         valence = features.get("subcat")
@@ -579,7 +580,30 @@ def build_lattice(
                 and (valence == "transitive" or
                      isinstance(valence, list) and "transitive" in valence)):
             present_participles.append(replace(candidate, category="V-TRANSITIVE-ING"))
-    kept = [*kept, *nominal_heads, *participial_views, *present_participles]
+        if (candidate.category == "V" and features.get("vform") == "ing"
+                and (valence == "intransitive" or
+                     isinstance(valence, list) and "intransitive" in valence)):
+            intransitive_gerunds.append(replace(candidate, category="V-INTRANSITIVE-ING"))
+    # A delimited temporal incise licenses an infinitival-subject construction.
+    # Do not open that expensive seven-symbol rule at every TO in unrelated
+    # prose. The contextual view is only an anchor: grammar still validates
+    # both commas, the finite subordinate clause and matrix VP. Preserve TO.
+    temporal_markers = [c for c in kept if c.category == "CONJ"
+                        and c.features.as_dict().get("temporal_incise") == "true"]
+    literal_commas = [c for c in kept if c.category == "COMMA" and c.surface == ","]
+    temporal_subject_markers = []
+    for candidate in kept:
+        if candidate.category != "TO":
+            continue
+        if any(
+            candidate.span_end < pre.span_start and pre.span_end <= marker.span_start
+            and marker.span_end < post.span_start
+            for marker in temporal_markers for pre in literal_commas
+            for post in literal_commas
+        ):
+            temporal_subject_markers.append(replace(candidate, category="TO-TEMPORAL-SUBJECT"))
+    kept = [*kept, *nominal_heads, *participial_views, *present_participles,
+            *intransitive_gerunds, *temporal_subject_markers]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(

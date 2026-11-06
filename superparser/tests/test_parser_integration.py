@@ -3728,3 +3728,131 @@ class ModifiedParticipialSupplementTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertFalse(any(c.category == 'V-TRANSITIVE-ING'
                                      for c in p.parse(text).lattice.candidates))
+
+
+class InfinitivalSubjectTemporalInciseTests(unittest.TestCase):
+    """Complete, correctly attached trees for the pinned Austen case 202."""
+
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+
+    def test_pinned_202_has_complete_subject_incise_and_nominal_predicate(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+
+        cases, _ = select_cases(500)
+        case = cases[202]
+        self.assertTrue(case['text'].startswith(
+            'To persuade him against returning into Hertfordshire,'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), case, max_items=50_000, kbest_work_limit=500_000)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats['budget_exceeded'])
+        self.assertFalse(result.stats['kbest_budget_exceeded'])
+        self.assertEqual(lattice.text, case['balanced_analysis_text'])
+        self.assertEqual(prepared.source_text, case['source_text'])
+        text = prepared.analysis_text
+        nodes = list(self.nodes(result.best()))
+
+        def assert_node(rule, span):
+            matches = [n for n in nodes
+                       if n.rule_id == rule and text[n.start:n.end] == span]
+            self.assertTrue(matches, (rule, span))
+            return matches[0]
+
+        main = assert_node('clause_infinitive_subject_temporal_incise',
+                           'To persuade him against returning into Hertfordshire, '
+                           'when that conviction had been given, '
+                           'was scarcely the work of a moment')
+        self.assertEqual([child.category for child in main.children],
+                         ['TO-TEMPORAL-SUBJECT', 'VP-NP', 'COMMA', 'CONJ',
+                          'CLAUSE', 'COMMA', 'VP'])
+        self.assertEqual([text[c.start:c.end] for c in main.children[2:6]],
+                         [',', 'when', 'that conviction had been given', ','])
+        matrix = assert_node('vp_cop_adv_np_scoped',
+                             'was scarcely the work of a moment')
+        self.assertEqual(matrix.children[1].features.as_dict()
+                         ['predicative_nominal_scope'], 'true')
+        self.assertEqual(matrix.children[2].rule_id, 'np_det_n_of')
+        subject = assert_node('vpnp_transitive_base_pp',
+                              'persuade him against returning into Hertfordshire')
+        self.assertEqual(text[subject.children[1].start:subject.children[1].end], 'him')
+        self.assertEqual(subject.children[2].rule_id, 'pp_prep_np')
+        gerund = assert_node('np_intransitive_gerund_pp', 'returning into Hertfordshire')
+        self.assertEqual(gerund.children[0].category, 'V-INTRANSITIVE-ING')
+        self.assertEqual(gerund.children[0].features.as_dict()['vform'], 'ing')
+        self.assertEqual(gerund.children[1].rule_id, 'pp_prep_np')
+        # Contextual typed views must supplement, never replace, the exact
+        # original lexical alternatives, source spans or sense provenance.
+        for typed, original_category in (
+            ('TO-TEMPORAL-SUBJECT', 'TO'),
+            ('V-INTRANSITIVE-ING', 'V'),
+        ):
+            for view in (c for c in lattice.candidates if c.category == typed):
+                self.assertTrue(any(
+                    c.category == original_category
+                    and c.span_start == view.span_start
+                    and c.span_end == view.span_end
+                    and c.features == view.features
+                    and c.source == view.source
+                    and c.sense_ids == view.sense_ids
+                    for c in lattice.candidates))
+        self.assertNotIn(('np_relative_obj', 'him against returning'),
+                         {(n.rule_id, text[n.start:n.end]) for n in nodes})
+
+    def test_gerund_prepositional_complement_generalizes(self):
+        from seman_parser import Parser
+        p = make_parser()
+        pp = Parser(p.resources, goal_category='PP', cache_size=0)
+        for text in ('against returning into Hertfordshire',
+                     'against walking through the park',
+                     'against sleeping in the room'):
+            with self.subTest(text=text):
+                best = pp.parse(text).result.best()
+                self.assertIsNotNone(best, text)
+                self.assertEqual(best.rule_id, 'pp_prep_np')
+                self.assertEqual(best.children[-1].rule_id, 'np_intransitive_gerund_pp')
+        for text in ('against return into Hertfordshire',
+                     'against returned into Hertfordshire',
+                     'against returning into'):
+            with self.subTest(text=text):
+                for tree in pp.parse(text).result.alternatives(limit=8):
+                    self.assertNotIn('np_intransitive_gerund_pp',
+                                     {n.rule_id for n in self.nodes(tree)})
+        for text in ('return', 'returned', 'returning'):
+            candidates = p.parse(text).lattice.candidates
+            self.assertEqual(any(c.category == 'V-INTRANSITIVE-ING' for c in candidates),
+                             text == 'returning')
+
+    def test_nominal_scope_and_temporal_incise_are_lexically_restricted(self):
+        from seman_parser import Parser
+        p = make_parser()
+        vp = Parser(p.resources, goal_category='VP', cache_size=0)
+        for text in ('was scarcely the work of a moment',
+                     'was hardly the answer'):
+            with self.subTest(text=text):
+                best = vp.parse(text).result.best()
+                self.assertIsNotNone(best, text)
+                self.assertEqual(best.rule_id, 'vp_cop_adv_np_scoped')
+        for text in ('was swiftly the work of a moment',
+                     'was carefully the answer'):
+            with self.subTest(text=text):
+                self.assertFalse(any(
+                    n.rule_id == 'vp_cop_adv_np_scoped'
+                    for tree in vp.parse(text).result.alternatives(limit=8)
+                    for n in self.nodes(tree)))
+        for text in (
+            'To persuade him, whether that conviction had been given, '
+            'was scarcely the work of a moment.',
+            'To persuade him when that conviction had been given, '
+            'was scarcely the work of a moment.',
+            'To persuade him, when that conviction had been given '
+            'was scarcely the work of a moment.',
+        ):
+            with self.subTest(text=text):
+                self.assertFalse(any(
+                    n.rule_id == 'clause_infinitive_subject_temporal_incise'
+                    for tree in p.parse(text).result.alternatives(limit=8)
+                    for n in self.nodes(tree)))
+        self.assertFalse(any(c.category == 'TO-TEMPORAL-SUBJECT'
+                             for c in p.parse('To persuade him was the work of a moment.')
+                             .lattice.candidates))
