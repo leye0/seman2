@@ -48,6 +48,27 @@ La correction n'est terminée que lorsque **tous** ces points sont démontrés :
 
 ## Démarche rapide : ordre obligatoire des vérifications
 
+### Choisir la prochaine phrase : **aucune sélection manuelle**
+
+Le prochain cas n'est **jamais** choisi après exploration de plusieurs
+phrases, selon sa difficulté ou sa promesse de gain. L'ordre est
+**déterministe** : lire [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json),
+prendre le premier cas non résolu d'index strictement supérieur au dernier
+index tenté, puis revenir au début de la cohorte s'il n'y en a plus.
+
+```bash
+PYTHONPATH=superparser python -m scripts.next_grammar_case
+```
+
+Après la correction du cas 354, la prochaine phrase est **370**. Même si
+elle s'avère complexe, ne pas prospecter d'autres candidates. Si le cas est
+bloqué, **documenter le blocage**, conserver ce cas dans la file et avancer
+le curseur pour la prochaine demande; il sera revisité au prochain tour.
+Après chaque diagnostic global de 500 phrases, mettre à jour **dans le même
+commit** la file de cas non résolus, `completed_count`, `validated_commit` et
+`last_attempted_index`. Ne pas relancer les 500 analyses juste pour choisir
+un cas : la file est l'état issu du dernier bilan validé.
+
 ### 0. Fixer le point de départ (avant de coder)
 
 1. Relever le SHA exact de `main`, vérifier les modifications en cours et
