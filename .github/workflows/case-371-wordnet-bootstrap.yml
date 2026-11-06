@@ -1,0 +1,22 @@
+name: Temporary case 371 WordNet dependency cache
+on:
+  push:
+    branches: [case-371-bootstrap]
+    paths:
+      - '.github/workflows/case-371-wordnet-bootstrap.yml'
+permissions:
+  contents: read
+jobs:
+  wordnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Fetch exactly the reference WordNet 3.0 package
+        run: |
+          curl --fail --location --silent --show-error --max-time 100 -o wordnet.zip https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip
+          unzip -t wordnet.zip | tail -n 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wordnet3-371
+          path: wordnet.zip
+          retention-days: 1
