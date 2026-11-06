@@ -60,14 +60,18 @@ index tenté, puis revenir au début de la cohorte s'il n'y en a plus.
 PYTHONPATH=superparser python -m scripts.next_grammar_case
 ```
 
-Après la correction du cas 354, la prochaine phrase est **370**. Même si
-elle s'avère complexe, ne pas prospecter d'autres candidates. Si le cas est
+L'index affiché par cette commande est la seule « prochaine phrase » :
+ne pas coder de numéro en dur dans les consignes. Même si le cas
+s'avère complexe, ne pas prospecter d'autres candidates. Si le cas est
 bloqué, **documenter le blocage**, conserver ce cas dans la file et avancer
 le curseur pour la prochaine demande; il sera revisité au prochain tour.
-Après chaque diagnostic global de 500 phrases, mettre à jour **dans le même
-commit** la file de cas non résolus, `completed_count`, `validated_commit` et
-`last_attempted_index`. Ne pas relancer les 500 analyses juste pour choisir
-un cas : la file est l'état issu du dernier bilan validé.
+Après chaque diagnostic global de 500 phrases, mettre à jour **dans la même
+livraison** la file de cas non résolus, `completed_count`, `validated_commit`
+et `last_attempted_index`. Le SHA du commit validé ne pouvant être inscrit
+dans ce commit lui-même, enregistrer la file dans un **commit documentaire
+immédiatement suivant**, sans déclencher une nouvelle CI. Ne pas relancer
+les 500 analyses juste pour choisir un cas : la file est l'état issu du
+dernier bilan validé.
 
 ### 0. Fixer le point de départ (avant de coder)
 

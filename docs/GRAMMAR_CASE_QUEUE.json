@@ -1,9 +1,9 @@
 {
   "schema": "seman2-grammar-case-queue-v1",
   "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "validated_commit": "fe72800c0bb43512d536d7cc037609456bf81b2e",
-  "completed_count": 469,
-  "last_attempted_index": 354,
+  "validated_commit": "01c1d96bf77d394636828a8c549fc88214f6dacb",
+  "completed_count": 470,
+  "last_attempted_index": 370,
   "unresolved": [
     {"index": 8, "status": "no_structural_root"},
     {"index": 64, "status": "roots_without_valid_analysis"},
@@ -25,7 +25,6 @@
     {"index": 312, "status": "timeout"},
     {"index": 344, "status": "no_structural_root"},
     {"index": 347, "status": "roots_without_valid_analysis"},
-    {"index": 370, "status": "roots_without_valid_analysis"},
     {"index": 371, "status": "roots_without_valid_analysis"},
     {"index": 414, "status": "roots_without_valid_analysis"},
     {"index": 434, "status": "no_structural_root"},
