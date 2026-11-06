@@ -3980,3 +3980,130 @@ class CopularContrastAndEquativeRelativeTests(unittest.TestCase):
                 self.assertFalse(any(
                     n.rule_id == forbidden_rule for tree in trees
                     for n in self.nodes(tree)), (text, forbidden_rule))
+
+
+class LocativeClauseWithCoordinatedAbsolutesTests(unittest.TestCase):
+    """Case 370: nonfinite supplements with exact subject and PP attachment."""
+
+    nodes = staticmethod(TitledIndependentGenitiveTests.nodes)
+    rule = 'clause_locative_postposed_adjp_passive_and_absolutes'
+
+    def test_pinned_370_has_four_correctly_attached_supplements(self):
+        from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+        from scripts.diagnose_novel_parses import select_cases
+
+        case = select_cases(500)[0][370]
+        self.assertTrue(case['text'].startswith('She was there, lifeless'))
+        prepared, lattice, result = parse_corpus_case(
+            make_parser(), case, max_items=50_000, kbest_work_limit=500_000)
+        self.assertEqual(lattice.text, case['balanced_analysis_text'])
+        self.assertEqual(prepared.source_text, case['source_text'])
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats['budget_exceeded'])
+        self.assertFalse(result.stats['kbest_budget_exceeded'])
+        best = result.best()
+        text = result.text
+        self.assertEqual(best.rule_id, self.rule)
+        self.assertEqual(text[best.start:best.end], case['text'].rstrip('.'))
+        self.assertEqual([c.category for c in best.children], [
+            'NP-SUPPLEMENT-ABS', 'COPULA', 'ADV', 'COMMA', 'ADJP',
+            'COMMA', 'PART-PASSIVE-PP', 'COMMA', 'ABS-COORD'])
+        self.assertEqual([text[c.start:c.end] for c in best.children[:7]], [
+            'She', 'was', 'there', ',', 'lifeless and inanimate', ',',
+            'thrown across the bed'])
+        self.assertEqual(text[best.children[7].start:best.children[7].end], ',')
+        passive = best.children[6]
+        self.assertEqual(passive.rule_id, 'supplementary_passive_participle_pp')
+        self.assertEqual(passive.children[0].category, 'V-SUPPLEMENT-ED')
+        self.assertEqual(passive.children[0].features.as_dict()['vform'], 'ed')
+        self.assertEqual(passive.children[1].rule_id, 'pp_prep_np')
+
+        absolutes = best.children[8]
+        self.assertEqual(absolutes.rule_id,
+                         'absolute_coordinated_ing_passive')
+        self.assertEqual([c.category for c in absolutes.children],
+                         ['ABS-ING', 'COORD', 'ABS-PASSIVE'])
+        first = absolutes.children[0]
+        self.assertEqual(first.rule_id, 'absolute_ing_particle')
+        self.assertEqual(text[first.start:first.end], 'her head hanging down')
+        self.assertEqual(text[first.children[0].start:first.children[0].end],
+                         'her head')
+        self.assertEqual(first.children[1].category, 'V-INTRANSITIVE-ING')
+        self.assertEqual(first.children[1].features.as_dict()['vform'], 'ing')
+        self.assertEqual(text[first.children[2].start:first.children[2].end],
+                         'down')
+        second = absolutes.children[2]
+        self.assertEqual(second.rule_id, 'absolute_passive_adv_by')
+        self.assertEqual(text[second.start:second.end],
+                         'her pale and distorted features half covered by her hair')
+        self.assertEqual(second.children[0].rule_id,
+                         'np_absolute_possessive_adjectives_head')
+        self.assertEqual(text[second.children[0].start:second.children[0].end],
+                         'her pale and distorted features')
+        self.assertEqual(text[second.children[1].start:second.children[1].end],
+                         'half')
+        self.assertEqual(second.children[2].features.as_dict()['vform'], 'ed')
+        self.assertEqual(second.children[3].rule_id, 'pp_by_np')
+        self.assertEqual(text[second.children[3].start:second.children[3].end],
+                         'by her hair')
+        self.assertFalse(any(n.rule_id == 'clause_comma'
+                             for n in self.nodes(best)),
+                         'Absolute fragments are not independent finite clauses.')
+
+        for typed, original in (
+            ('PRONOUN-SUPPLEMENT-ABS', 'PRONOUN'),
+            ('POSS-SUPPLEMENT-ABS', 'POSS'),
+            ('V-SUPPLEMENT-ED', 'V'),
+        ):
+            views = [c for c in lattice.candidates if c.category == typed]
+            self.assertTrue(views, typed)
+            for view in views:
+                self.assertTrue(any(
+                    c.category == original and c.span_start == view.span_start
+                    and c.span_end == view.span_end
+                    and c.features == view.features
+                    and c.source == view.source and c.sense_ids == view.sense_ids
+                    for c in lattice.candidates), typed)
+
+    def test_construction_generalizes_to_other_lexical_material(self):
+        p = make_parser()
+        for sentence in (
+            'He was nearby, quiet and unresponsive, laid beside the fire, '
+            'his eyes looking up and his pale face partly covered by a cloth.',
+            'He was there, tired and silent, thrown against the wall, '
+            'his head hanging down and his eyes half covered by his hair.',
+        ):
+            with self.subTest(sentence=sentence):
+                result = p.parse(sentence).result
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, self.rule)
+
+    def test_requires_participles_and_delimited_supplements(self):
+        p = make_parser()
+        text = ('She was there, lifeless and inanimate, thrown across the bed, '
+                'her head hanging down and her pale and distorted features '
+                'half covered by her hair.')
+        for incorrect in (
+            text.replace('thrown across', 'threw across'),
+            text.replace('thrown across', 'throwing across'),
+            text.replace('inanimate, thrown', 'inanimate thrown'),
+            text.replace('head hanging down', 'head hung down'),
+            text.replace('features half covered', 'features half covering'),
+            text.replace('covered by her hair', 'covered without her hair'),
+        ):
+            with self.subTest(incorrect=incorrect):
+                self.assertFalse(any(
+                    n.rule_id == self.rule
+                    for tree in p.parse(incorrect).result.alternatives(limit=8)
+                    for n in self.nodes(tree)), incorrect)
+
+    def test_throw_irregular_form_distinguishes_past_from_participle(self):
+        p = make_parser()
+        for surface, expected in (('threw', 'finite'), ('thrown', 'ed')):
+            verbs = [c for c in p.parse(surface).lattice.candidates
+                     if c.category == 'V' and c.lemma.casefold() == 'throw']
+            self.assertTrue(verbs, surface)
+            self.assertEqual({c.features.as_dict().get('vform') for c in verbs},
+                             {expected}, surface)
+        self.assertTrue(p.parse('He threw the ball.').result.completed)
+        self.assertTrue(p.parse('The ball was thrown.').result.completed)

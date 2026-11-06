@@ -219,6 +219,8 @@ comparer seulement le total de phrases « reconnues ».
 | Des racines apparaissent, mais la phrase demeure invalide | Inspecter `best()`, `rule_id`, les spans et la matérialisation | Confondre reconnaissance et bonne analyse |
 | Une règle aide la cible mais casse une phrase comparative | Comparer **l'ordre des arbres**; revoir spécificité et priorité | Placer « scarcely less eager » sous une structure nominale fautive |
 | Le cas 359 passe en saturation | Examiner quels démarrages lexicaux/règles ajoutés ouvrent trop de chemins; tester leur retrait **temporaire en mémoire** | Monter les budgets pour cacher l'explosion |
+| Une incise ou une absolue `NP + participe` fait exploser la forêt | Confirmer d'abord les formes et valences des participes; ne projeter des **vues typées** que lorsque les bornes, la copule et les marqueurs lexicaux indépendants sont attestés; conserver leurs lectures originales | Déclencher la nouvelle règle à chaque groupe nominal, puis perdre les dialogues longs (#359) |
+| Un passé simple irrégulier est accepté comme participe passé | Examiner les candidats WordNet `V[vform]` et la table des paradigmes irréguliers avant d'ajouter une règle passive | Faire accepter *threw* dans un contexte qui exige *thrown* |
 | Une règle semble spécifique à un mot ou à une citation | Ajouter immédiatement un positif indépendant et deux contrastes grammaticaux | Surajustement à une seule phrase |
 | Plusieurs essais répètent 500 parsings et la CI | Garder le bilan SHA, faire cible + témoins pendant la boucle; validation globale **à la fin** | Refaire inutilement les passes les plus longues |
 

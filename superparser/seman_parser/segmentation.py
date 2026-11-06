@@ -633,9 +633,44 @@ def build_lattice(
         ):
             equative_partitive_markers.append(
                 replace(candidate, category="DET-EQUATIVE-PARTITIVE"))
+    # Multiple right-edge, nonfinite supplements need lexical anchors. A
+    # generic NP + participle rule starts at almost every nominal and can
+    # exhaust the fixed dialogue budget (#359). Project only lexical views
+    # supported by a locative copula, delimited passive supplement, and the
+    # coordinated -ing / passive absolute evidence in the *same* sentence.
+    absolute_views = []
+    passive_verbs = [c for c in kept if c.category == "V"
+                     and c.features.as_dict().get("vform") == "ed"]
+    by_markers = [c for c in kept if c.category == "PREP-BY"]
+    if (len(literal_commas) >= 3 and intransitive_gerunds and passive_verbs
+            and by_markers):
+        for candidate in kept:
+            if candidate.category == "PRONOUN" and any(
+                candidate.span_end < cop.span_start < adv.span_start
+                and adv.span_end < comma.span_start
+                for cop in kept if cop.category == "COPULA"
+                and cop.features.as_dict().get("vform") == "finite"
+                for adv in kept if adv.category == "ADV"
+                for comma in literal_commas
+            ):
+                absolute_views.append(replace(candidate, category="PRONOUN-SUPPLEMENT-ABS"))
+            if candidate.category == "POSS" and any(
+                comma.span_end < candidate.span_start < ing.span_start
+                or comma.span_end < candidate.span_start < by.span_start
+                for comma in literal_commas[2:]
+                for ing in intransitive_gerunds for by in by_markers
+            ):
+                absolute_views.append(replace(candidate, category="POSS-SUPPLEMENT-ABS"))
+            if candidate in passive_verbs and any(
+                comma.span_end < candidate.span_start < prep.span_start
+                and prep.span_start - candidate.span_end <= 2
+                for comma in literal_commas[1:]
+                for prep in kept if prep.category == "PREP"
+            ):
+                absolute_views.append(replace(candidate, category="V-SUPPLEMENT-ED"))
     kept = [*kept, *nominal_heads, *participial_views, *present_participles,
             *intransitive_gerunds, *temporal_subject_markers,
-            *equative_partitive_markers]
+            *equative_partitive_markers, *absolute_views]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(
