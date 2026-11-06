@@ -2,6 +2,7 @@
 
 **Dépôt privé : `leye0/seman2`, branche de travail `main`.**
 **SOURCE TECHNIQUE ABSOLUE : [`RUN_CURRENT_LAYER1.md`](RUN_CURRENT_LAYER1.md).**
+**PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
 ## Ce que nous construisons
@@ -40,8 +41,8 @@ Le dépôt courant a été nettoyé pour contenir uniquement le parseur grammati
 
 ## Prochaine tâche SANS instruction supplémentaire
 
-Améliorer la **couverture grammaticale et la justesse des analyses du Layer 1** sur les phrases qui échouent, en restant compatible avec les mots, traits, alternatives et les dialogues. Faire des tests positifs ET négatifs; mesurer les phrases réellement résolues et ne pas assouplir globalement des contraintes pour faire croire à des succès.
+Améliorer la **couverture grammaticale et la justesse des analyses du Layer 1** sur les phrases qui échouent, en restant compatible avec les mots, traits, alternatives et les dialogues. Pour chaque phrase, **appliquer le protocole de correction** : inspecter l'arbre sélectionné et les rattachements exacts, faire des tests positifs ET négatifs, mesurer les régressions sur la cohorte figée et ne pas assouplir globalement des contraintes pour faire croire à des succès.
 
 ## Phrase de reprise
 
-> « Continue Seman2 sur `main`. Lis d'abord `docs/RUN_CURRENT_LAYER1.md` puis `docs/CURRENT_RESEARCH_HANDOFF.md`. Seuls le canonique et le trie shared-prefix lazy opt-in existent, dialogues canoniques. Exécute `scripts.smoke_layer1` et la CI. N'ajoute pas d'anciennes approches : concentrons-nous sur l'analyse grammaticale actuelle, sa correction et sa couverture. »
+> « Continue Seman2 sur `main`. Lis `AGENTS.md`, `docs/RUN_CURRENT_LAYER1.md`, `docs/CURRENT_RESEARCH_HANDOFF.md` et, pour toute correction de phrase, `docs/GRAMMAR_CASE_FIX_PROTOCOL.md`. Seuls le canonique et le trie shared-prefix lazy opt-in existent, dialogues canoniques. Exécute `scripts.smoke_layer1` et la CI. N'ajoute pas d'anciennes approches : concentrons-nous sur l'analyse grammaticale actuelle, sa correction et sa couverture. »

@@ -49,3 +49,10 @@ the gateway, provenance, and the absence of direct parser calls in the
 500-case diagnostic. Modify these tests and this contract together when
 changing the architecture. The existing cohort checksum remains immutable
 unless the benchmark itself is deliberately versioned.
+
+**For every individual grammar/corpus sentence fix**, first read and follow
+[`docs/GRAMMAR_CASE_FIX_PROTOCOL.md`](docs/GRAMMAR_CASE_FIX_PROTOCOL.md).
+It defines the acceptance criteria for a correct selected tree, exact
+attachments, independent positive/negative tests, no regressions, unchanged
+budgets, and efficient staged validation. A completed parse alone is not
+proof of a grammatical correction.
