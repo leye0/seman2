@@ -137,3 +137,4 @@ Validate #357 quoted nominal fallback preserves split dialogue precedence.
 2026-11-06: Validate case 371 fronted possessive relative, other-than nominal comparison, coordinated partitive, and HAVE degree-NP; preserve case 359 and fixed budgets.
 2026-11-06: Validate case 414 quoted coordinated contextual ellipsis as a discourse fragment, not a fabricated finite predicate; preserve case 359 and fixed budgets.
 2026-11-06: Validate case 434 with closed 16-point compass notation and upper-level map-note fields; preserve original abbreviations, case 359 and fixed 500-case budgets.
+2026-11-06: Run Layer 1 CI with explicit case 414 contextual-dialogue and case 434 compass-note test modules as permanent regression witnesses.

@@ -64,6 +64,8 @@ jobs:
             superparser.tests.test_complexity_routing \
             superparser.tests.test_shared_trie_forest \
             superparser.tests.test_clean_novel_corpus \
+            superparser.tests.test_compass_notation \
+            superparser.tests.test_dialogue_contextual_fragments \
             superparser.tests.test_novel_parse_diagnostics \
             superparser.tests.test_context_dependencies \
             superparser.tests.test_syntax_correctness \
