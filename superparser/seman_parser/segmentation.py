@@ -640,6 +640,63 @@ def build_lattice(
     temporal_markers = [c for c in kept if c.category == "CONJ"
                         and c.features.as_dict().get("temporal_incise") == "true"]
     literal_commas = [c for c in kept if c.category == "COMMA" and c.surface == ","]
+    # A reduced conditional adjective is only licensed by the complete
+    # overt sequence ", if ADJ," (not by an arbitrary comma or adjective).
+    # Type the *opening punctuation*, then allow a finite ditransitive verb
+    # before it to start the corresponding valence rule. This keeps dormant
+    # grammar rules out of unrelated large forests, notably dialogue #359.
+    # No word surface is matched: conjunction features, word classes, comma
+    # adjacency and independently attested ditransitive valence are decisive.
+    conditional_conjunctions = [
+        c for c in kept if c.category == "CONJ"
+        and c.features.as_dict().get("complementizer") == "conditional"
+    ]
+    conditional_adjectives = [c for c in kept if c.category == "ADJ"]
+    conditional_openings = [
+        opening for opening in literal_commas
+        if any(
+            opening.span_end < conjunction.span_start
+            and text[opening.span_end:conjunction.span_start].isspace()
+            and conjunction.span_end < adjective.span_start
+            and text[conjunction.span_end:adjective.span_start].isspace()
+            and adjective.span_end == closing.span_start
+            for conjunction in conditional_conjunctions
+            for adjective in conditional_adjectives
+            for closing in literal_commas
+        )
+    ]
+    conditional_punctuation_views = [
+        replace(opening, category="COMMA-REDUCED-CONDITIONAL")
+        for opening in conditional_openings
+    ]
+    conditional_ditransitive_views = []
+    for candidate in kept:
+        if candidate.category != "V" or candidate.features.as_dict().get("vform") != "finite":
+            continue
+        valence = candidate.features.as_dict().get("subcat")
+        if valence != "ditransitive" and not (
+            isinstance(valence, (list, tuple)) and "ditransitive" in valence
+        ):
+            continue
+        if any(candidate.span_end < opening.span_start
+               for opening in conditional_openings):
+            conditional_ditransitive_views.append(
+                replace(candidate, category="V-DITRANSITIVE-CONDITIONAL")
+            )
+    # Preposed nominal focus belongs to the clause rather than inventing a
+    # DEGREE-headed NP. Require positive nominal-focus evidence followed by
+    # an overt subject start; the grammar will still check NP and finite VP.
+    nominal_starts = [c for c in kept if c.category in {
+        "PRONOUN", "DET", "POSS", "PROPER-NOUN", "TITLE"
+    }]
+    preposed_subject_focus_views = [
+        replace(adverb, category="ADV-PREPOSED-SUBJECT-FOCUS")
+        for adverb in kept if adverb.category == "ADV"
+        and adverb.features.as_dict().get("nominal_focus") == "true"
+        and any(adverb.span_end < subject.span_start
+                and text[adverb.span_end:subject.span_start].isspace()
+                for subject in nominal_starts)
+    ]
     temporal_subject_markers = []
     for candidate in kept:
         if candidate.category != "TO":
@@ -801,7 +858,9 @@ def build_lattice(
                 for prep in kept if prep.category == "PREP"
             ):
                 absolute_views.append(replace(candidate, category="V-SUPPLEMENT-ED"))
-    kept = [*kept, *nominal_heads, *participial_views, *present_participles,
+    kept = [*kept, *conditional_punctuation_views,
+            *conditional_ditransitive_views, *preposed_subject_focus_views,
+            *nominal_heads, *participial_views, *present_participles,
             *intransitive_gerunds, *temporal_subject_markers,
             *equative_partitive_markers, *comparative_other_views,
             *comparative_degree_other_views,
