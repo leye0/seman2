@@ -103,6 +103,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     try:
         for index, marked in SPECS:
             case = cases[index]
+            case_id = str(case["book_id"]) + ":" + sha256(
+                case.get("source_text", case["text"]).encode("utf8")
+            ).hexdigest()[:16]
             for repeat in range(args.repeats):
                 order = (False, True) if repeat % 2 == 0 else (True, False)
                 for enabled in order:
@@ -131,7 +134,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         if not enabled and evidence is not None:
                             raise AssertionError("Default parse unexpectedly collected preflight")
                         rows.append({
-                            "index": index, "case_id": case["case_id"],
+                            "index": index, "case_id": case_id,
                             "marked_opt_in": marked, "preflight_enabled": enabled,
                             "repeat": repeat, "full_parse_ms": round(elapsed, 3),
                             "outcome": status,
@@ -151,7 +154,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     except SentenceDeadline:
                         elapsed = (perf_counter_ns() - started) / 1e6
                         rows.append({
-                            "index": index, "case_id": case["case_id"],
+                            "index": index, "case_id": case_id,
                             "marked_opt_in": marked, "preflight_enabled": enabled,
                             "repeat": repeat, "full_parse_ms": round(elapsed, 3),
                             "outcome": "deadline_censored",
