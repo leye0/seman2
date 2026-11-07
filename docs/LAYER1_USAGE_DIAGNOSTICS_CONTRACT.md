@@ -149,3 +149,28 @@ peut être fabriquée à partir d'une forêt partielle.
 
 Ce n'est **pas** encore la tâche P2 de preuve locale en l'absence
 d'arbre complet, ni une détection exhaustive d'anomalies.
+
+## P3, première tranche — explication générée des traits prouvés
+
+Chaque `UsageDeviation.as_dict()` expose désormais `explanation`
+(`explanation_language=en`), une phrase déterministe dérivée des
+**surfaces du sujet et du prédicat**, des valeurs `expected` et
+`observed`, de la relation et du seul éventuel lexème fini
+`predicate_head` dont le trait est lexicalement attesté. Si cette
+preuve de tête est absente ou contradictoire, l'explication nomme
+le prédicat entier, sans inventer un mot. Les traits `number`
+et `person` reçoivent les labels singulier/pluriel et première,
+deuxième, troisième personne; toute autre valeur est reproduite
+littéralement sous la forme `feature=value`.
+
+L'explication commence par « In this parse » : elle ne parle **que
+de l'arbre où figure cette preuve**, principal ou alternatif.
+Elle n'indique ni correction textuelle, ni intention, ni origine
+dialectale, ni probabilité, ni jugement universel sur la phrase.
+Le champ `intent` reste `unknown` en l'absence de provenance
+annotée. Aucune explication n'est fabriquée à partir d'un parse
+incomplet.
+
+Cette tranche est une **présentation lisible des preuves déjà
+établies**, pas un corpus évalué de fautes ni une mesure de
+précision/faux positifs.

@@ -112,6 +112,11 @@ inféré d'un échec global ni d'une alternative non retenue.
 
 ### P3 — Explications exploitables et évaluation
 
+**Première tranche :** `explanation` déterministe en anglais, obtenue
+exclusivement des surfaces, traits et relations du `UsageDeviation`.
+Les évaluations de précision, le corpus annoté et l'analyse des faux
+positifs/négatifs restent à réaliser.
+
 - [ ] Exposer une explication lisible (« sujet pluriel `they`, verbe singulier `says` ») **dérivée des preuves structurées**, sans narration libre non vérifiée.
 - [ ] Constituer un petit corpus de phrases **standard / non standard attestées / fautes documentées / ambiguës / incomplètes**, avec provenance des annotations humaines lorsqu'elles existent.
 - [ ] Mesurer séparément : exactitude des localisations, exactitude du type d'écart, validité de l'arbre de rang 1, faux positifs et faux négatifs; **ne pas** optimiser seulement la complétion.

@@ -156,6 +156,12 @@ class Case480MarkedDialogueTests(unittest.TestCase):
                 self.assertEqual(deviation.expected, "plural")
                 self.assertEqual(deviation.observed, "singular")
                 self.assertEqual(deviation.intent, "unknown")
+                self.assertEqual(
+                    deviation.as_dict()["explanation"],
+                    "In this parse, the subject 'they' is plural, "
+                    "while the reporting verb 'says' is singular; "
+                    "the marked rule records a number mismatch.",
+                )
 
         self.assertTrue(any(candidate.surface == "As for" and
                             candidate.category == "TOPIC-MARKER" for candidate in lattice.candidates))
