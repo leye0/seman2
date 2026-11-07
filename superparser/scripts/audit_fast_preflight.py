@@ -17,6 +17,10 @@ from typing import Any, Mapping
 
 from scripts.diagnose_novel_parses import EXPECTED_500_COHORT_SHA256
 from seman_parser.fast_preflight import fast_preflight
+from seman_parser.engine import ParserResources
+from seman_parser.segmentation import build_lattice
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _load_rows(path: Path) -> list[dict[str, Any]]:
@@ -133,6 +137,101 @@ def audit(
     return observations, _summarize_measurements(observations, samples_us)
 
 
+
+def _spotcheck_indices(
+    rows: list[Mapping[str, Any]], control_count: int,
+) -> list[int]:
+    """Deterministic, outcome-stratified spotcheck; NOT a grammatical gold set."""
+    if control_count < 0:
+        raise ValueError("control_count must be nonnegative")
+    noncomplete = [i for i, r in enumerate(rows) if r["status"] != "complete"]
+    complete = [i for i, r in enumerate(rows) if r["status"] == "complete"]
+    if control_count > len(complete):
+        raise ValueError("control_count exceeds canonical completions")
+    # Uniform ordinal coverage among successes without selecting easy cases
+    # or fitting a feature threshold to the same cohort.
+    controls = [
+        complete[(2*i + 1) * len(complete) // (2*control_count)]
+        for i in range(control_count)
+    ] if control_count else []
+    return sorted(noncomplete + controls)
+
+
+def lexical_spotcheck(
+    diagnostics: list[Mapping[str, Any]],
+    contexts: list[Mapping[str, Any]],
+    wordnet_dir: Path,
+    *,
+    control_count: int = 26,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Charge the real lexical resources once; never invoke syntactic parsing."""
+    resources = ParserResources.from_dir(
+        ROOT / "data", wordnet_dict=wordnet_dir)
+    build_lattice("John opened the box.", resources.lexicon)  # lexical warm-up
+    outcomes = []
+    indices = _spotcheck_indices(diagnostics, control_count)
+    for index in indices:
+        row, ctx = diagnostics[index], contexts[index]
+        text = row["canonical_analysis_text"]
+        start = perf_counter_ns()
+        lattice = build_lattice(text, resources.lexicon)
+        lattice_us = (perf_counter_ns() - start) / 1000
+        start = perf_counter_ns()
+        prediction = fast_preflight(
+            text,
+            lattice=lattice,
+            preceding_semicolon_part=(
+                ctx["context"]["semicolon_part_index"] > 0),
+            transferred_prefix=row["canonical_synthetic_prefix"],
+            transferred_suffix=row["canonical_synthetic_suffix"],
+        )
+        classification_us = (perf_counter_ns() - start) / 1000
+        outcomes.append({
+            "index": index, "case_id": row["case_id"],
+            "canonical_status": row["status"],
+            "analysis_text": text,
+            "lexical_candidates": len(lattice.candidates),
+            "lexical_preparation_us": round(lattice_us, 3),
+            "classifier_existing_lattice_us": round(classification_us, 3),
+            "lexical_preparation_is_additional_if_no_cached_lattice": True,
+            "candidate_agreement_hypothesis": (
+                "adjacent_candidate_agreement_hypothesis" in prediction.signals),
+            "preflight": prediction.as_dict(),
+        })
+    lexical_times = [r["lexical_preparation_us"] for r in outcomes]
+    candidate_times = [r["classifier_existing_lattice_us"] for r in outcomes]
+    candidate_cases = [
+        r["index"] for r in outcomes if r["candidate_agreement_hypothesis"]
+    ]
+    return outcomes, {
+        "sample_size": len(outcomes),
+        "all_26_current_noncompletions_reexamined": len([
+            r for r in outcomes if r["canonical_status"] != "complete"
+        ]),
+        "success_controls": len([
+            r for r in outcomes if r["canonical_status"] == "complete"
+        ]),
+        "candidate_conflict_hypothesis_indices": candidate_cases,
+        "candidate_conflict_on_noncompletions": [
+            r["index"] for r in outcomes if r["candidate_agreement_hypothesis"]
+            and r["canonical_status"] != "complete"
+        ],
+        "candidate_conflict_on_success_controls": [
+            r["index"] for r in outcomes if r["candidate_agreement_hypothesis"]
+            and r["canonical_status"] == "complete"
+        ],
+        "lexical_build_median_us": round(median(lexical_times), 3) if lexical_times else 0.,
+        "lexical_build_p95_us": _percentile(lexical_times, 95),
+        "existing_lattice_preflight_median_us": (
+            round(median(candidate_times), 3) if candidate_times else 0.
+        ),
+        "existing_lattice_preflight_p95_us": _percentile(candidate_times, 95),
+        "not_a_gold_grammar_evaluation": True,
+        "no_syntactic_parser_called": True,
+        "no_automatic_parse_skips": True,
+    }
+
+
 def render(rows: list[dict[str, Any]], summary: dict[str, Any]) -> str:
     t = summary["surface_only_benchmark_us"]
     lines = [
@@ -172,6 +271,26 @@ def render(rows: list[dict[str, Any]], summary: dict[str, Any]) -> str:
             f"| {row['index']} | {row['canonical_status']} | "
             f"{pred['lane']} | {signals} |"
         )
+    spot = summary.get("lexical_spotcheck")
+    if spot:
+        lines.extend([
+            "", "## Optional lexical spotcheck — 26 failures + independent controls", "",
+            f"Prepared lexical lattices: **{spot['sample_size']}**. "
+            f"Lexical-build median: **{spot['lexical_build_median_us']} µs**, "
+            f"p95: **{spot['lexical_build_p95_us']} µs**.",
+            f"Preflight with existing lexical lattice: median "
+            f"**{spot['existing_lattice_preflight_median_us']} µs**, "
+            f"p95 **{spot['existing_lattice_preflight_p95_us']} µs**.",
+            "These costs must be kept separate: building a lattice solely "
+            "for triage is NOT free. A future parser integration must reuse "
+            "the canonical lattice, not build a duplicate.",
+            f"Candidate-local agreement hypotheses among failures: "
+            f"{spot['candidate_conflict_on_noncompletions']}. "
+            f"Among the sampled successful controls: "
+            f"{spot['candidate_conflict_on_success_controls']}.",
+            "A pair of adjacent lexical candidates never proves a "
+            "subject-verb relationship or an author error.", "",
+        ])
     lines.extend([
         "", "## Limits of interpretation", "",
         "- These are coarse, nonexclusive *surface* signals, not discovered",
@@ -200,6 +319,20 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     observations, result = audit(
         diagnostics, contexts, repetitions=args.repetitions)
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    if args.wordnet_dir is not None:
+        lexical_rows, lexical_summary = lexical_spotcheck(
+            diagnostics, contexts, args.wordnet_dir,
+            control_count=args.lexical_controls,
+        )
+        result["lexical_spotcheck"] = lexical_summary
+        (args.out_dir / "fast_preflight_lexical_spotcheck.jsonl").write_text(
+            "".join(json.dumps(row, ensure_ascii=False) + "\n"
+                    for row in lexical_rows), encoding="utf8",
+        )
+        (args.out_dir / "fast_preflight_lexical_spotcheck_summary.json").write_text(
+            json.dumps(lexical_summary, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf8",
+        )
     (args.out_dir / "fast_preflight_cases.jsonl").write_text(
         "".join(json.dumps(row, ensure_ascii=False) + "\n"
                 for row in observations), encoding="utf8")
@@ -216,6 +349,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "review_lane_noncomplete": result["review_lane_noncomplete"],
         "noncomplete_without_early_signal": result["noncomplete_without_early_signal"],
         "microseconds": result["surface_only_benchmark_us"],
+        "lexical_spotcheck": result.get("lexical_spotcheck"),
         "no_automatic_parser_changes": True,
     }, ensure_ascii=False), flush=True)
     return result
@@ -229,6 +363,8 @@ def main() -> None:
     p.add_argument("--canonical-summary", required=True, type=Path)
     p.add_argument("--out-dir", required=True, type=Path)
     p.add_argument("--repetitions", type=int, default=7)
+    p.add_argument("--wordnet-dir", type=Path)
+    p.add_argument("--lexical-controls", type=int, default=26)
     run(p.parse_args())
 
 
