@@ -140,6 +140,46 @@ class PreflightRoutingTests(unittest.TestCase):
         self.assertEqual(result.stats["fast_preflight"]["phase"],
                          "existing_lattice")
 
+    def test_warm_only_timing_ignores_initial_cache_outliers(self):
+        from scripts.benchmark_preflight_trie_pilot import summarize
+
+        pilot = [
+            {"index": 1, "expected_route": "trie"},
+            {"index": 2, "expected_route": "canonical"},
+        ]
+        records = []
+        for index, expected in ((1, "trie"), (2, "canonical")):
+            for rep in range(4):
+                # Simulate a severe first-use lexical cache asymmetry in an
+                # otherwise identical canonical control path.
+                baseline_ms = 300 if index == 2 and rep == 0 else 100
+                experiment_ms = (
+                    50 if index == 1 else 30 if rep == 0 else 100
+                )
+                for policy, duration, route in (
+                    ("canonical", baseline_ms, None),
+                    ("preflight", experiment_ms, expected),
+                ):
+                    records.append({
+                        "index": index, "repeat": rep,
+                        "policy": policy, "status": "complete",
+                        "selected_signature": "same-tree",
+                        "complexity_route": route,
+                        "forest_or_kbest_budget_exceeded": False,
+                        "full_parse_ms": duration,
+                    })
+        result = summarize(records, pilot)
+        self.assertEqual(result["pairs"], 8)
+        self.assertEqual(result["uncensored_pairs"], 8)
+        self.assertEqual(result["timing_trie_routed_warm_only"]
+                         ["median_paired_ratio"], 0.5)
+        self.assertEqual(result["timing_nonrouted_control_warm_only"]
+                         ["median_paired_ratio"], 1.0)
+        self.assertEqual(result["warm_control_adjusted_ratio"], 0.5)
+        self.assertEqual(result["cold_control_outlier_indices"], [2])
+        self.assertEqual(result["completed_canonical_lost_indices"], [])
+        self.assertEqual(result["unsaturated_tree_change_indices"], [])
+
     def test_quote_routing_does_not_activate_marked_grammar(self):
         text = '"The boys was playing," said Mary.'
         routed = self.routed.parse(
