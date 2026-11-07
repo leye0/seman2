@@ -444,10 +444,14 @@ class Parser:
                     self._parse_cache.put(cache_key, hierarchical)
                 return self._attach_fast_preflight(ParseReport(
                     result=hierarchical, resources=self.resources,
-                    lattice=self._lattice_for_text(normalized),
+                    lattice=(preflight_lattice if preflight_lattice is not None
+                             else self._lattice_for_text(normalized)),
                 ), preflight)
 
-        lattice = self._lattice_for_text(normalized)
+        lattice = (
+            preflight_lattice if preflight_lattice is not None
+            else self._lattice_for_text(normalized)
+        )
         result = self._parse_lattice(
             lattice, max_items=max_items,
             kbest_work_limit=kbest_work_limit,
