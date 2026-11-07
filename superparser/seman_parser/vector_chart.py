@@ -18,7 +18,7 @@ from .features import (
 from .grammar import Grammar, GrammarRule
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
-from .symbols import intern
+from .symbols import intern, resolve
 
 
 @dataclass(frozen=True, slots=True)
@@ -378,6 +378,7 @@ class VectorGrammar:
         goal_category: str,
         diagnostic_k: int | None = None,
         kbest_work_limit: int | None = None,
+        rejection_trace_limit: int = 0,
     ) -> ParseResult:
         recognition_start = perf_counter()
         if self.lazy_trie_recognition:
@@ -432,7 +433,10 @@ class VectorGrammar:
             if diagnostic_k is not None
             else min(beam, 2 if length > 160 else 4 if length > 80 else 8)
         )
-        materializer = _LazyMaterializer(self, forest, work_limit=kbest_work_limit)
+        materializer = _LazyMaterializer(
+            self, forest, work_limit=kbest_work_limit,
+            rejection_trace_limit=rejection_trace_limit,
+        )
         packed: dict[tuple[int, int, int], PackedNode] = {}
 
         def pack(item: ChartItem) -> None:
@@ -795,6 +799,80 @@ class KBestWorkBudgetExceeded(RuntimeError):
     """A full best-tree proof was not obtained within a measured work budget."""
 
 
+
+class _RejectionTrace:
+    """Bounded observations of rejected derivations, NOT grammatical faults."""
+
+    def __init__(self, limit: int) -> None:
+        self.limit = limit
+        self.counts: Counter[str] = Counter()
+        self.samples: list[dict[str, Any]] = []
+        self.stage_samples: Counter[str] = Counter()
+
+    def record(
+        self, stage: str, node: ForestNode, *,
+        rule_id: str | None = None,
+        expected: FeatureStructure | None = None,
+        offered: FeatureStructure | None = None,
+        bindings: Bindings | None = None,
+        child_index: int | None = None,
+        child_node: ForestNode | None = None,
+        surface: str | None = None,
+    ) -> None:
+        self.counts[stage] += 1
+        if (len(self.samples) >= self.limit
+                or self.stage_samples[stage] >= max(2, self.limit // 4)):
+            return
+        item: dict[str, Any] = {
+            "stage": stage,
+            "scope": "attempted_derivation_only",
+            "rule_id": rule_id,
+            "category": node.category,
+            "analysis_span": [node.start, node.end],
+        }
+        if child_index is not None:
+            item["child_index"] = child_index
+        if child_node is not None:
+            item["child_category"] = child_node.category
+            item["child_span"] = [child_node.start, child_node.end]
+        if surface is not None:
+            item["surface"] = surface
+        if expected is not None:
+            lhs = substitute_structure(expected, bindings or {})
+            item["required_features"] = lhs.as_dict()
+            if offered is not None:
+                rhs = substitute_structure(offered, bindings or {})
+                item["offered_features"] = rhs.as_dict()
+                # A genuine *local* atom conflict, not a global grammar
+                # diagnosis. Variables/TOP/disjunctions stay unlocalized.
+                item["direct_atom_conflicts"] = [
+                    {"feature": resolve(name),
+                     "required": lhs.features[name].name,
+                     "offered": rhs.features[name].name}
+                    for name in sorted(lhs.features.keys() & rhs.features.keys())
+                    if isinstance(lhs.features[name], Atom)
+                    and isinstance(rhs.features[name], Atom)
+                    and lhs.features[name].symbol != rhs.features[name].symbol
+                ]
+        self.samples.append(item)
+        self.stage_samples[stage] += 1
+
+    def as_dict(self) -> dict[str, Any]:
+        observed = sum(self.counts.values())
+        return {
+            "schema": "seman2-rejection-trace-v1",
+            "scope": "sampled_attempts_only",
+            "observed_events": observed,
+            "observed_by_stage": dict(sorted(self.counts.items())),
+            "sample_limit": self.limit,
+            "sampled_events": len(self.samples),
+            "truncated": observed > len(self.samples),
+            "events": self.samples,
+            "exhaustive": False,
+            "grammatical_fault_established": False,
+        }
+
+
 class _LazyMaterializer:
     """Demand-driven k-best extraction with feature-aware failure recovery."""
 
@@ -806,9 +884,16 @@ class _LazyMaterializer:
     RULE_COST = 2.0
 
     def __init__(self, compiled: VectorGrammar, forest: _VectorForest,
-                 *, work_limit: int | None = None) -> None:
+                 *, work_limit: int | None = None,
+                 rejection_trace_limit: int = 0) -> None:
         if work_limit is not None and work_limit < 1:
             raise ValueError("k-best work limit must be positive")
+        if not 0 <= rejection_trace_limit <= 100:
+            raise ValueError("rejection_trace_limit must be between 0 and 100")
+        self.rejection_trace = (
+            _RejectionTrace(rejection_trace_limit)
+            if rejection_trace_limit else None
+        )
         self.work_limit = work_limit
         self.work_units = 0
         self.compiled = compiled
@@ -1031,6 +1116,14 @@ class _LazyMaterializer:
                         result = unify(state.constraint, interface_item.features, state.bindings)
                         if result is None:
                             self.unification_rejections += 1
+                            if self.rejection_trace is not None:
+                                self.rejection_trace.record(
+                                    "interface_unification", node,
+                                    expected=state.constraint,
+                                    offered=interface_item.features,
+                                    bindings=state.bindings,
+                                    surface=candidate.surface,
+                                )
                             continue
                         merged, env = result
                         heappush(state.heap, (
@@ -1042,6 +1135,14 @@ class _LazyMaterializer:
                     result = unify(state.constraint, candidate.features, state.bindings)
                     if result is None:
                         self.unification_rejections += 1
+                        if self.rejection_trace is not None:
+                            self.rejection_trace.record(
+                                "lexical_unification", node,
+                                expected=state.constraint,
+                                offered=candidate.features,
+                                bindings=state.bindings,
+                                surface=candidate.surface,
+                            )
                         continue
                     merged, env = result
                     heappush(state.heap, (
@@ -1062,6 +1163,12 @@ class _LazyMaterializer:
                 self.unification_attempts += 1
                 if unify(state.constraint, rule.lhs.features, state.bindings) is None:
                     self.unification_rejections += 1
+                    if self.rejection_trace is not None:
+                        self.rejection_trace.record(
+                            "rule_lhs_unification", node, rule_id=rule.rule_id,
+                            expected=state.constraint, offered=rule.lhs.features,
+                            bindings=state.bindings,
+                        )
                     continue
                 partial_bound = self._constrained_partial_hint(derivation.partial_id)
                 if partial_bound == float("-inf"):
@@ -1116,6 +1223,12 @@ class _LazyMaterializer:
         lhs_result = unify(state.constraint, rule.lhs.features, state.bindings)
         if lhs_result is None:
             self.unification_rejections += 1
+            if self.rejection_trace is not None:
+                self.rejection_trace.record(
+                    "rule_lhs_unification", self.forest.nodes[node_id],
+                    rule_id=rule.rule_id, expected=state.constraint,
+                    offered=rule.lhs.features, bindings=state.bindings,
+                )
             return
         _lhs_merged, env = lhs_result
         for index, (child_id, rank) in enumerate(zip(path, ranks)):
@@ -1142,6 +1255,13 @@ class _LazyMaterializer:
                 # transient exact-context cycle also returns None, but may
                 # become productive after its active caller unwinds.
                 if child_state is not None and child_state.exhausted:
+                    if self.rejection_trace is not None:
+                        self.rejection_trace.record(
+                            "child_context_exhausted", self.forest.nodes[node_id],
+                            rule_id=rule.rule_id, child_index=index,
+                            child_node=self.forest.nodes[child_id],
+                            expected=child_constraint, bindings=child_bindings,
+                        )
                     if failure_key in state.failed_continuations:
                         self.failed_continuation_cache_hits += 1
                         return
@@ -1332,6 +1452,12 @@ class _LazyMaterializer:
                         best = max(best, candidate.score)
                     else:
                         self.hint_unification_rejections += 1
+                        if self.rejection_trace is not None:
+                            self.rejection_trace.record(
+                                "lexical_hint_unification", self.forest.nodes[node_id],
+                                expected=constraint, offered=candidate.features,
+                                surface=candidate.surface,
+                            )
             else:
                 rule = self.compiled.rules[derivation.rule_index].rule
                 if required_set and not _rule_may_provide_evidence(
@@ -1341,6 +1467,12 @@ class _LazyMaterializer:
                 self.hint_unification_attempts += 1
                 if not self._hint_compatible(constraint, rule.lhs.features):
                     self.hint_unification_rejections += 1
+                    if self.rejection_trace is not None:
+                        self.rejection_trace.record(
+                            "rule_hint_unification", self.forest.nodes[node_id],
+                            rule_id=rule.rule_id, expected=constraint,
+                            offered=rule.lhs.features,
+                        )
                     continue
                 best = max(
                     best,
@@ -1740,6 +1872,8 @@ class _LazyRoots:
         self.stats["combinations_visited_total"] = materializer.combinations_visited + offset.get("combinations_visited_total", 0)
         self.stats["packed_nodes"] = len({item.key for item in materializer.item_cache.values()})
         self.stats["goal_saturated"] = len(self.items) >= self.requested_k
+        if materializer.rejection_trace is not None:
+            self.stats["rejection_trace"] = materializer.rejection_trace.as_dict()
 
     def best(self) -> ChartItem | None:
         self.ensure(1, charge_kbest=False)
