@@ -151,6 +151,8 @@ def fast_preflight(
             "kind": "source_semicolon_continuation",
             "proof_scope": "source_adjacency_only_not_fragment_grammar",
         })
+    # A quote delimiter alone is extremely common in grammatical dialogue.
+    # Retain it as a feature, not as a reason to divert the normal parser.
     if _has_quotation(analysis_text, transferred_prefix, transferred_suffix):
         signals.add("dialogue_or_quote_surface")
         evidence.append({
@@ -183,8 +185,6 @@ def fast_preflight(
         lane = "candidate_morphology_review"
     elif "source_semicolon_continuation" in signals:
         lane = "context_review"
-    elif "dialogue_or_quote_surface" in signals:
-        lane = "dialogue_review"
     elif "length_attention" in signals or "many_comma_boundaries" in signals:
         lane = "complexity_attention"
     else:
