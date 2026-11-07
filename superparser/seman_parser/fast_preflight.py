@@ -66,7 +66,7 @@ def _atom(candidate: Any, key: str) -> str | None:
 def _local_candidate_observations(
     tokens: Sequence[Token], lattice: LexicalLattice,
 ) -> list[dict[str, Any]]:
-    """Look for *candidate-level* incompatibility of adjacent exact spans.
+    """Look for *candidate-level* incompatibility of adjacent nominal/finite spans.
 
     No shallow sequence is sufficient to prove a syntactic subject-predicate
     relationship. Even unanimous lexical incompatibility is only a hypothesis.
@@ -84,7 +84,7 @@ def _local_candidate_observations(
             continue
         subjects = [
             c for c in exact.get((left.start, left.end), ())
-            if c.category == "PRONOUN"
+            if c.category in {"PRONOUN", "N", "PROPER-NOUN"}
             and any(_atom(c, name) is not None for name in ("person", "number"))
         ]
         finites = [
@@ -115,6 +115,8 @@ def _local_candidate_observations(
                 "subject_text": left.text,
                 "predicate_text": right.text,
                 "candidate_pairs_examined": len(comparisons),
+                "nominal_candidate_categories": sorted(
+                    {candidate.category for candidate in subjects}),
                 "direct_atom_conflicts": comparisons[0],
                 "dependency_proven": False,
                 "ambiguity_exhausted": False,
