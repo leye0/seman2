@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 import os
 from pathlib import Path
 from time import perf_counter
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
@@ -142,8 +142,11 @@ class ParseReport:
             self.resources.grammar, self.resources.semantic_rules(), self.resources.lexicon,
         ).interpret(selected, sense_selection=sense_selection)
 
-    def as_dict(self) -> dict[str, Any]:
-        return self.result.as_dict()
+    def as_dict(
+        self, *, reference_span: Callable[[int, int], tuple[int, int] | None] | None = None,
+    ) -> dict[str, Any]:
+        """Preserve the public parse report; optionally map known corpus offsets."""
+        return self.result.as_dict(reference_span=reference_span)
 
 
 class Parser:
