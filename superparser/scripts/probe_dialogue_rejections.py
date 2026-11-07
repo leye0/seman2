@@ -349,7 +349,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, old_handler)
 
-    comparators = replay_comparisons(parser, all_cases, rows, args)
+    # The original signal handler was restored after the seven ordinary
+    # replays. Explicitly install it again for the four separate comparators.
+    control_handler = signal.signal(signal.SIGALRM, _deadline)
+    try:
+        comparators = replay_comparisons(parser, all_cases, rows, args)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, control_handler)
     summary = summary_for(records)
     summary["comparisons"] = comparison_summary(comparators)
     summary["target_indices"] = [record["index"] for record in records]
