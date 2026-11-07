@@ -72,8 +72,8 @@ def render(records: list[dict[str, Any]], summary: dict[str, Any]) -> str:
     for row in records:
         out.extend([
             f"## Case {row['index']} — {row['case_id']}", "",
-            f"Canonical: \`{row['canonical_status']}\`; replay: "
-            f"\`{row['replay_outcome']}\`.", "",
+            f"Canonical: `{row['canonical_status']}`; replay: "
+            f"`{row['replay_outcome']}`.", "",
             f"> {row['source_text'].replace(chr(10), ' ')}", "",
         ])
         for scope in ("scoped_dialogue", "ordinary_fallback"):
@@ -89,11 +89,11 @@ def render(records: list[dict[str, Any]], summary: dict[str, Any]) -> str:
             )
             for sample in trace["events"][:5]:
                 compact = (
-                    f"  - \`{sample['stage']}\` on \`{sample['category']}\` "
+                    f"  - `{sample['stage']}` on `{sample['category']}` "
                     f"{sample['analysis_span']}"
                 )
                 if sample.get("rule_id"):
-                    compact += f", rule \`{sample['rule_id']}\`"
+                    compact += f", rule `{sample['rule_id']}`"
                 if sample.get("direct_atom_conflicts"):
                     compact += ", explicit atoms " + json.dumps(
                         sample["direct_atom_conflicts"], ensure_ascii=False)
