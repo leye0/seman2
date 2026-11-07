@@ -346,3 +346,18 @@ Les cinq tests du synthétiseur ont passé en CI. L'enrichissement
 ultérieur des pistes multiples et hypothèses historiques a été
 réexécuté avec succès sur les artefacts réels de cette Action,
 sans refaire le parsing des 500 phrases.
+
+### Extension P2 : constituants validés localement
+
+Les traces opt-in enregistrent désormais séparément les **compositions
+réussies**, et non seulement les dérivations rejetées. Chaque témoin
+contient une règle réellement matérialisée, ses enfants ordonnés,
+ses traits/contextes et ses spans. Le pipeline de relecture associe
+les offsets source uniquement si leur correspondance est exacte;
+la synthèse ajoute ces témoins sans modifier le statut canonique.
+
+Ce sont des preuves d'unification **locales à la demande examinée** :
+ni arbre global ni faute de phrase ne sont déduits. Les 8 cas sans
+racine structurelle ne bénéficient pas encore automatiquement de
+cette instrumentation, car aucune racine ne lance leur matérialisation.
+Voir [REJECTION_TRACE_PROBE.md](REJECTION_TRACE_PROBE.md).

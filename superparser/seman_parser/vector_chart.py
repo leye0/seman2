@@ -16,6 +16,7 @@ from .features import (
     substitute_structure, unify,
 )
 from .grammar import Grammar, GrammarRule
+from .local_constituent_proofs import BoundedLocalConstituentProofs
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern, resolve
@@ -808,6 +809,9 @@ class _RejectionTrace:
         self.counts: Counter[str] = Counter()
         self.samples: list[dict[str, Any]] = []
         self.stage_samples: Counter[str] = Counter()
+        # Positive witnesses live in a separate bounded pool. A successful
+        # local composition must never be mistaken for a rejected attempt.
+        self.local_constituents = BoundedLocalConstituentProofs(limit)
         # Active requests are pushed only when opt-in tracing is enabled.
         # Their stack is not a derivation tree or a global proof.
         self.requests: list[dict[str, Any]] = []
@@ -926,6 +930,7 @@ class _RejectionTrace:
             "truncated": observed > len(self.samples),
             "sampling_policy": "per_stage_cap_with_priority_replacement",
             "events": self.samples,
+            "validated_local_constituents": self.local_constituents.as_dict(),
             "exhaustive": False,
             "grammatical_fault_established": False,
         }
@@ -1177,6 +1182,35 @@ class _LazyMaterializer:
                     )
                 continue
             state.results.append(analysis)
+            if (self.rejection_trace is not None and analysis.rule_index is not None
+                    and analysis.children
+                    and self.forest.nodes[node_id].start < self.forest.nodes[node_id].end):
+                # Only AFTER contextual unification, child composition and
+                # positive feature evidence succeeded. The same local tree
+                # can still be rejected by a later ancestor/sibling.
+                rule = self.compiled.rules[analysis.rule_index].rule
+                node = self.forest.nodes[node_id]
+                children = []
+                for use in analysis.children:
+                    child = use.analysis
+                    child_node = self.forest.nodes[child.node_id]
+                    children.append({
+                        "category": child_node.category,
+                        "analysis_span": (child_node.start, child_node.end),
+                        "rule_id": (
+                            self.compiled.rules[child.rule_index].rule.rule_id
+                            if child.rule_index is not None else None),
+                    })
+                self.rejection_trace.local_constituents.record(
+                    category=node.category,
+                    analysis_span=(node.start, node.end),
+                    rule_id=rule.rule_id,
+                    children=children,
+                    verified_features=analysis.features.as_dict(),
+                    required_context_features=state.constraint.as_dict(),
+                    required_positive_features=[resolve(x) for x in state.required_features],
+                    witnessed_positive_features=[resolve(x) for x in analysis.evidence],
+                )
             self.analysis_count += 1
         if len(state.results) <= rank:
             state.exhausted = True
@@ -2042,4 +2076,3 @@ class LazyRootSequence(Sequence[ChartItem]):
 
 
 __all__ = ["LazyRootSequence", "VectorGrammar"]
-

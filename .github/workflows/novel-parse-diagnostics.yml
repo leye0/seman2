@@ -94,7 +94,7 @@ jobs:
             --out-dir /tmp/novel-parse-diagnostics
       - name: Synthesize independently observed evidence for all 26 historical residuals
         run: |
-          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_residual_evidence_synthesis
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_residual_evidence_synthesis superparser.tests.test_local_constituent_proofs
           PYTHONPATH=superparser python -u -m scripts.synthesize_residual_evidence \
             --register /tmp/novel-parse-diagnostics/residual_research_cases.jsonl \
             --register-summary /tmp/novel-parse-diagnostics/residual_research_summary.json \

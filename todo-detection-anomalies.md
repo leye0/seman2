@@ -185,6 +185,15 @@ alternatifs déjà matérialisés sont exposés comme hypothèses
 **conditionnelles à chaque arbre**. Aucun diagnostic de faute n'est
 inféré d'un échec global ni d'une alternative non retenue.
 
+**P2 — tranche de preuves positives locales (opt-in) :** les traces de
+recherche comportent maintenant un échantillon distinct des analyses
+de sous-arbres effectivement matérialisées après vérification des
+contraintes contextuelles et des traits positifs. Elles portent règle,
+enfants, spans, traits et correspondances source exactes dans les relectures.
+Ce ne sont pas des arbres globaux ni des preuves de faute. L'extension aux
+forêts sans racine, la couverture exhaustive et la causalité des rejets
+restent ouvertes; les objectifs P2 ci-dessous ne sont donc pas clos.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

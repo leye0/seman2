@@ -129,3 +129,39 @@ compteurs d'origine sont conservés mais les événements retenus ne
 doivent pas servir à estimer une fréquence statistique ou une cause
 grammaticale. Les décisions du parseur, les budgets et l'arbre
 sélectionné ne dépendent jamais de ce choix d'observations.
+
+## P2 : preuves positives de sous-arbres réellement matérialisés
+
+Lorsque `rejection_trace_limit` est activé, un second échantillonneur
+borné collecte des **règles locales dont la composition a réussi**.
+Le point d'observation se trouve *après* l'unification des traits avec
+le contexte demandé, l'obtention des analyses enfants et la vérification
+positive de `requires`, lors de l'ajout effectif à `state.results`.
+
+La clé `validated_local_constituents` du même objet de trace conserve :
+
+- `category`, `rule_id`, `analysis_span`, traits vérifiés et contraintes du
+  contexte dans lequel l'analyse a été validée;
+- enfants ordonnés avec leurs catégories, règles et spans distincts;
+- compteurs `observed_materialized_rule_analyses` et
+  `sampled_local_constituents`, avec priorité aux plus grands spans et
+  maximum deux variantes d'un même couple catégorie/span;
+- les preuves positives présentes, ainsi que les limites
+  `exhaustive=false`, `global_tree_proven=false` et
+  `sentence_grammatical_fault_established=false`.
+
+Ce sont de **véritables compositions localement unifiées**, mais sous
+des contraintes propres à une tentative. Elles ne démontrent ni le bon
+rattachement à la matrice, ni l'existence d'un arbre global, ni une faute.
+Les lectures lexicales isolées et les simples nœuds structurels ne sont
+pas présentés comme des preuves de constituants.
+
+Le rejeu de dialogue transfère les spans des sous-arbres et **de chacun
+de leurs enfants** vers la référence source seulement lorsque le mapping
+est exact. La synthèse des 26 cas garde ces preuves séparées des rejets.
+
+**Limite :** sans racine globale ni racine de dialogue explorée, le
+matérialiseur n'est pas sollicité sur les sous-constituants. Ces cas
+peuvent donc produire zéro témoin positif : cela signifie *non observé*,
+pas *grammaticalement impossible*. Un sondage local contrôlé des forêts
+sans racine reste un travail distinct à réaliser.

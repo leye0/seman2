@@ -140,6 +140,23 @@ class RejectionTraceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "rejection_trace_limit"):
             parser.parse(text, rejection_trace_limit=101)
 
+    def test_successful_local_compositions_are_separate_from_rejections(self):
+        parser = Parser.from_dir(Path(__file__).resolve().parents[1] / "data", cache_size=0)
+        ordinary = parser.parse("John opened the box.")
+        observed = parser.parse("John opened the box.", rejection_trace_limit=16)
+        self.assertEqual(observed.result.completed, ordinary.result.completed)
+        self.assertEqual(observed.result.best().signature(), ordinary.result.best().signature())
+        self.assertNotIn("rejection_trace", ordinary.result.stats)
+        proofs = observed.result.stats["rejection_trace"]["validated_local_constituents"]
+        self.assertGreater(proofs["observed_materialized_rule_analyses"], 0)
+        self.assertGreater(proofs["sampled_local_constituents"], 0)
+        self.assertLessEqual(proofs["sampled_local_constituents"], 16)
+        self.assertTrue(all(w["rule_id"] and w["children"] and
+                            w["proof_basis"] == "materialized_rule_after_context_unification"
+                            for w in proofs["witnesses"]))
+        self.assertFalse(proofs["global_tree_proven"])
+        self.assertFalse(proofs["sentence_grammatical_fault_established"])
+
     def test_reference_mapping_only_for_nonsynthetic_original_characters(self):
         prepared = PreparedCorpusInput(
             analysis_text='"They says."',
@@ -162,6 +179,34 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertIsNone(mapped["events"][1]["child_reference_span"])
         self.assertEqual(original_trace["events"][0]["analysis_span"], [1, 5])
         self.assertFalse(mapped["exhaustive"])
+
+    def test_local_rule_proofs_map_every_child_only_at_exact_original_spans(self):
+        prepared = PreparedCorpusInput(
+            analysis_text='"They says."', reference_text="They says.",
+            source_text="They says.", synthetic_prefix='"', synthetic_suffix='"',
+            synthetic_terminal=False, mode=CorpusParseMode.QUOTE_BALANCED,
+        )
+        source = {"events": [], "validated_local_constituents": {
+            "schema": "seman2-local-constituent-proof-sample-v1",
+            "observed_materialized_rule_analyses": 1,
+            "sampled_local_constituents": 1, "exhaustive": False,
+            "global_tree_proven": False,
+            "sentence_grammatical_fault_established": False,
+            "witnesses": [{
+                "proof_basis": "materialized_rule_after_context_unification",
+                "analysis_span": [0, 12], "category": "CLAUSE", "rule_id": "clause_np_vp",
+                "children": [{"analysis_span": [1, 5], "category": "NP", "rule_id": None},
+                             {"analysis_span": [11, 12], "category": "PUNCT", "rule_id": None}],
+                "verified_features": {}, "required_context_features": {},
+            }],
+        }}
+        mapped = map_trace_to_reference(source, prepared)
+        witness = mapped["validated_local_constituents"]["witnesses"][0]
+        self.assertIsNone(witness["reference_span"])
+        self.assertEqual(witness["reference_span_mapping"], "unavailable")
+        self.assertEqual(witness["children"][0]["reference_span"], [0, 4])
+        self.assertIsNone(witness["children"][1]["reference_span"])
+        self.assertEqual(witness["children"][1]["reference_span_mapping"], "unavailable")
 
 
     def test_late_exhausted_child_displaces_early_hint_noise(self):

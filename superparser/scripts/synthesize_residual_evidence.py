@@ -71,6 +71,59 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
             "candidate_atom_conflicts": event.get("direct_atom_conflicts", []),
             "required_positive_features": event.get("required_positive_features", []),
         })
+    local = trace.get("validated_local_constituents")
+    local_view = None
+    if local is not None:
+        if (local.get("schema") != "seman2-local-constituent-proof-sample-v1" or
+                local.get("exhaustive") is not False or
+                local.get("global_tree_proven") is not False or
+                local.get("sentence_grammatical_fault_established") is not False):
+            raise ValueError("Local constituent witness provenance or limits invalid")
+        witnesses = local.get("witnesses", [])
+        if (not isinstance(witnesses, list) or
+                local.get("sampled_local_constituents") != len(witnesses) or
+                local.get("observed_materialized_rule_analyses", -1) < len(witnesses)):
+            raise ValueError("Inconsistent successful constituent samples")
+        if any(w.get("proof_basis") != "materialized_rule_after_context_unification"
+               or w.get("global_tree_selected") is not False
+               or w.get("whole_sentence_grammaticality_proven") is not False
+               or not w.get("rule_id") or not w.get("children")
+               or not set(w.get("required_positive_features", [])).issubset(
+                   w.get("witnessed_positive_features", []))
+               for w in witnesses):
+            raise ValueError("A sampled constituent lacks a verified local proof contract")
+
+        def source_span(frame):
+            if frame.get("reference_span_mapping") != "exact":
+                return None
+            span = frame.get("reference_span")
+            if not isinstance(span, list) or len(span) != 2:
+                raise ValueError("Local constituent exact span has no source proof")
+            return span
+
+        local_view = {
+            "observed_materialized_rule_analyses": local["observed_materialized_rule_analyses"],
+            "sampled_local_constituents": len(witnesses),
+            "sample_truncated": bool(local.get("truncated")),
+            "witnesses": [{
+                "proof_basis": w["proof_basis"],
+                "rule_id": w["rule_id"],
+                "category": w["category"],
+                "analysis_span": w["analysis_span"],
+                "source_span": source_span(w),
+                "verified_features": w["verified_features"],
+                "required_context_features": w["required_context_features"],
+                "children": [{"category": child["category"],
+                              "rule_id": child.get("rule_id"),
+                              "analysis_span": child["analysis_span"],
+                              "source_span": source_span(child)}
+                             for child in w["children"]],
+                "global_tree_selected": False,
+                "sentence_grammaticality_proven": False,
+            } for w in witnesses],
+            "exhaustive": False,
+            "sentence_grammatical_fault_established": False,
+        }
     return {
         "observed_events": trace.get("observed_events"),
         "sampled_events": len(events),
@@ -79,6 +132,7 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
         "local_atom_conflicts_in_retained_sample": sum(
             len(e.get("direct_atom_conflicts", [])) for e in events),
         "examples": examples,
+        "validated_local_constituents": local_view,
         "exhaustive": False,
         "sentence_fault_proven": False,
         "failure_cause_proven": False,
@@ -255,6 +309,10 @@ def synthesize(
             entry["sampled_events"] for row in rows
             for entry in row["sampled_local_rejection_evidence"].values()
             if entry is not None),
+        "validated_local_constituents_sampled": sum(
+            entry["validated_local_constituents"]["sampled_local_constituents"]
+            for row in rows for entry in row["sampled_local_rejection_evidence"].values()
+            if entry is not None and entry["validated_local_constituents"] is not None),
         "source_identity_validated": True,
         "no_causal_or_grammatical_fault_inference": True,
         "canonical_parse_not_reexecuted": True,
@@ -310,6 +368,19 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                     lines.append(f"  - `{event['stage']}` `{event['rule_id']}` "
                                  f"analysis {event['analysis_span']}; "
                                  f"source {event['reference_span'] if event['reference_mapping'] == 'exact' else 'unavailable'}")
+                local = trace["validated_local_constituents"]
+                if local is not None:
+                    lines.append(
+                        f"  - **Positive local proof samples**: "
+                        f"{local['sampled_local_constituents']} retained, "
+                        f"{local['observed_materialized_rule_analyses']} observed; "
+                        "not full-sentence proofs")
+                    for witness in local["witnesses"][:6]:
+                        lines.append(
+                            f"    - `{witness['category']}` via `{witness['rule_id']}` "
+                            f"analysis {witness['analysis_span']}, "
+                            f"source {witness['source_span'] if witness['source_span'] is not None else 'unavailable'} "
+                            f"with {len(witness['children'])} locally validated children")
         lines.append("")
     lines += [
         "## Interpretation limits", "",

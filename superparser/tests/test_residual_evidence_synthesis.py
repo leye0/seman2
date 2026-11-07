@@ -31,6 +31,30 @@ def trace(*, exact=True):
              "analysis_span": [0, 5], "reference_span": [0, 5],
              "reference_span_mapping": "exact"},
         ],
+        "validated_local_constituents": {
+            "schema": "seman2-local-constituent-proof-sample-v1",
+            "observed_materialized_rule_analyses": 4,
+            "sampled_local_constituents": 1,
+            "truncated": True,
+            "exhaustive": False, "global_tree_proven": False,
+            "sentence_grammatical_fault_established": False,
+            "witnesses": [{
+                "proof_basis": "materialized_rule_after_context_unification",
+                "rule_id": "vp_finite", "category": "VP", "analysis_span": [1, 5],
+                "reference_span_mapping": "exact" if exact else "unavailable",
+                "reference_span": [30, 34] if exact else None,
+                "verified_features": {"number": "plural"},
+                "required_context_features": {"vform": "finite"},
+                "required_positive_features": ["number"],
+                "witnessed_positive_features": ["number", "vform"],
+                "children": [{"category": "V", "rule_id": None,
+                              "analysis_span": [2, 4],
+                              "reference_span_mapping": "unavailable",
+                              "reference_span": None}],
+                "global_tree_selected": False,
+                "whole_sentence_grammaticality_proven": False,
+            }],
+        },
     }
 
 
@@ -132,6 +156,11 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(scoped["local_atom_conflicts_in_retained_sample"], 1)
         self.assertEqual(scoped["examples"][0]["rule_id"], "PROOF")
         self.assertIsNone(scoped["examples"][1]["reference_span"])
+        local = scoped["validated_local_constituents"]
+        self.assertEqual(local["sampled_local_constituents"], 1)
+        self.assertEqual(local["witnesses"][0]["rule_id"], "vp_finite")
+        self.assertIsNone(local["witnesses"][0]["source_span"])
+        self.assertFalse(local["sentence_grammatical_fault_established"])
         self.assertFalse(scoped["sentence_fault_proven"])
         self.assertFalse(scoped["failure_cause_proven"])
 
@@ -160,6 +189,9 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
             lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"].update(exhaustive=True),
             lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]["events"][0].update(
                 reference_span_mapping="exact", reference_span=None),
+            lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
+                ["validated_local_constituents"]["witnesses"][0].update(
+                    whole_sentence_grammaticality_proven=True),
             lambda a: a[4][0].update(analysis_text="wrong projection"),
         ]
         for change in mutators:
