@@ -292,3 +292,41 @@ canonique sert de contrôle d'environnement ; un ratio ajusté
 preuve causale ou gain généralisable. Toute perte de complétion
 canonique ou divergence d'arbre **sans saturation** provoque un échec
 de la CI du pilote.
+
+## Synthèse des preuves indépendantes par cas (P2, observation)
+
+Le script `scripts.synthesize_residual_evidence` croise **après**
+les 500 analyses canoniques et leurs audits, sans reparsing :
+
+- le registre stable des 26 cas (y compris récupérations et nouveaux échecs),
+  les segments source complets et les hypothèses de recherche;
+- le triage de surface sur les 500 cas et la sonde lexicale des cas non complets;
+- les relectures indépendantes des dialogues ayant une racine structurelle
+  non validée, et les contrôles stricts 76/244 et marqués 463/480;
+- les **échantillons bornés** de rejets de contraintes, les atomes de conflit
+  observés dans une dérivation et les spans source *uniquement* si leur
+  correspondance est marquée exacte.
+
+La jointure **échoue explicitement** si SHA de cohorte, identités,
+textes source/équilibrés, statuts, cibles de relecture et comparateurs
+divergent. Une case récupérée ne disparaît pas; un nouvel échec est
+conservé. Les pistes d'inspection sont **multiples et non exclusives**.
+Le script ne conclut jamais à une faute grammaticale ou à la cause
+unique d'un échec à partir d'une hypothèse lexicale, d'une proximité
+source ou d'un rejet local.
+
+Trois artefacts supplémentaires sont produits dans le workflow
+`novel-parse-diagnostics` :
+
+- `residual_evidence_synthesis.jsonl` — données séparées par cas et source;
+- `residual_evidence_summary.json` — bilan de couverture, provenance,
+  relectures et volume d'événements retenus;
+- `residual_evidence_report.md` — tableau des 26 cas et traces limitées,
+  avec vérifications à entreprendre.
+
+**Ce qui manque encore :** transformer des sous-constituants réellement
+validés en preuves locales malgré l'absence d'arbre global; distinguer
+les conflits syntaxiques démontrés des branches candidates rejetées;
+faire annoter indépendamment des phrases grammaticales, fautives,
+non standard et ambiguës pour mesurer les faux positifs. Cette synthèse
+ne remplace ni ces preuves ni un test de justesse de l'arbre sélectionné.

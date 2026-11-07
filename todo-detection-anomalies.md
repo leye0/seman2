@@ -170,6 +170,16 @@ grammaticale ni la cause exacte de chaque échec.
 
 
 
+**Synthèse transversale des 26 cas (observation seulement) :**
+`scripts.synthesize_residual_evidence` joint de façon vérifiée le
+registre historique, le triage de surface, les sondes lexicales,
+les relectures de dialogue et les contrôles marqués. Il conserve
+les récupérations et nouveaux échecs, distingue source/texte analysé
+et ne transforme jamais un rejet local en faute ou cause démontrée.
+Une matrice et des pistes de vérification non exclusives sont exportées
+dans l'artefact des diagnostics 500. Les preuves locales sans arbre
+complet et l'évaluation des faux positifs restent à réaliser.
+
 **Préparation additive :** les écarts d'usage des arbres complets
 alternatifs déjà matérialisés sont exposés comme hypothèses
 **conditionnelles à chaque arbre**. Aucun diagnostic de faute n'est
