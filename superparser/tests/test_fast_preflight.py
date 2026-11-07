@@ -6,7 +6,7 @@ import unittest
 from seman_parser.fast_preflight import fast_preflight, LONG_SENTENCE_TOKENS
 from seman_parser.segmentation import LexicalCandidate, LexicalLattice, tokenize
 from seman_parser.features import FeatureStructure
-from scripts.audit_fast_preflight import audit
+from scripts.audit_fast_preflight import audit, _spotcheck_indices
 
 
 def _lattice(text: str, subject: dict, predicates: list[dict]) -> LexicalLattice:
@@ -49,6 +49,12 @@ class FastPreflightTests(unittest.TestCase):
         self.assertNotIn(
             "source_semicolon_continuation",
             fast_preflight("John left; Mary remained.").signals)
+
+    def test_quote_alone_is_metadata_not_reason_to_divert_parser(self):
+        q = fast_preflight('"Hello!"')
+        self.assertIn("dialogue_or_quote_surface", q.signals)
+        self.assertEqual(q.lane, "no_early_signal")
+        self.assertFalse(q.as_dict()["can_skip_full_parse"])
 
     def test_actual_source_dependency_does_not_prove_grammar_ellipsis(self):
         a = fast_preflight("which I accordingly did.")
@@ -94,6 +100,22 @@ class FastPreflightTests(unittest.TestCase):
         self.assertEqual(fast_preflight(alternatives.text, lattice=alternatives).lane,
                          "no_early_signal")
 
+    def test_plural_nominal_adjacent_to_singular_finite_is_only_hypothesis(self):
+        text = "mothers was"
+        left, right = tokenize(text)
+        lattice = LexicalLattice(text, (left, right), (
+            LexicalCandidate(left.start, left.end, left.text, "mother",
+                             "N", FeatureStructure.build({"number": "plural"})),
+            LexicalCandidate(right.start, right.end, right.text, "be",
+                             "COPULA", FeatureStructure.build(
+                                 {"vform": "finite", "number": "singular"})),
+        ))
+        output = fast_preflight(text, lattice=lattice)
+        self.assertEqual(output.lane, "candidate_morphology_review")
+        self.assertIn("N", output.evidence[0]["nominal_candidate_categories"])
+        self.assertFalse(output.evidence[0]["dependency_proven"])
+        self.assertFalse(output.as_dict()["grammatical_fault_established"])
+
     def test_unbound_morphology_and_wrong_lattice_must_abstain(self):
         indeterminate = _lattice(
             "They say", {"person": "3", "number": "plural"},
@@ -103,6 +125,17 @@ class FastPreflightTests(unittest.TestCase):
             fast_preflight(indeterminate.text, lattice=indeterminate).signals)
         with self.assertRaisesRegex(ValueError, "exact analyzed text"):
             fast_preflight("Other text", lattice=indeterminate)
+
+    def test_spotcheck_includes_all_noncompletions_and_uniform_controls(self):
+        rows = [{"status": "no_structural_root" if i in (8, 463, 480)
+                 else "complete"} for i in range(500)]
+        indices = _spotcheck_indices(rows, 25)
+        self.assertEqual(len(indices), 28)
+        for i in (8, 463, 480):
+            self.assertIn(i, indices)
+        self.assertEqual(len(indices), len(set(indices)))
+        with self.assertRaisesRegex(ValueError, "control_count"):
+            _spotcheck_indices(rows, -1)
 
     def test_audit_joins_only_consistent_500_rows_without_reparsing(self):
         diagnostics, contexts = [], []
