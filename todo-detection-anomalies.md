@@ -100,6 +100,15 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Registre de recherche des 26 cas historiques :** `docs/RESIDUAL_26_RESEARCH.md`.
+Une phase d'audit reproductible garde leur identité et leur statut d'origine,
+conserve les cas récupérés, signale les nouveaux échecs et sépare les
+preuves mesurées des hypothèses (contexte, dialogues, constructions,
+usage marqué, ressources). Ce classement **ne démontre pas** la faute
+grammaticale ni la cause exacte de chaque échec.
+
+
+
 **Préparation additive :** les écarts d'usage des arbres complets
 alternatifs déjà matérialisés sont exposés comme hypothèses
 **conditionnelles à chaque arbre**. Aucun diagnostic de faute n'est

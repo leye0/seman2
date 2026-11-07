@@ -62,6 +62,16 @@ jobs:
           PYTHONPATH=superparser python -u -m scripts.audit_context_dependencies \
             --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
             --out-dir /tmp/novel-parse-diagnostics
+      - name: Triage frozen 26 residuals as research evidence
+        run: |
+          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_residual_research_triage
+          PYTHONPATH=superparser python -u -m scripts.triage_residual_26 \
+            --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
+            --contexts /tmp/novel-parse-diagnostics/context_dependency.jsonl \
+            --failed /tmp/novel-parse-diagnostics/failed_sentences.jsonl \
+            --summary /tmp/novel-parse-diagnostics/summary.json \
+            --reference superparser/research/residual_26_reference.json \
+            --out-dir /tmp/novel-parse-diagnostics
       - name: Guard fixed-cohort coverage near the verified 460/500 checkpoint
         run: |
           python - <<'PY'
