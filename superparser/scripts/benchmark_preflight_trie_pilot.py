@@ -112,6 +112,11 @@ def summarize(rows: list[dict[str, Any]],
     applicable = [x for x in pairs if x["comparable"]]
     actual = [x for x in applicable if x["actual_route"] == "trie"]
     controls = [x for x in applicable if x["actual_route"] != "trie"]
+    # First paired repetition runs with cold case-specific lexical and chart
+    # caches. Its ordering can make even the *same* canonical recognizer seem
+    # dramatically faster. Report warm-only metrics as the primary comparison.
+    warm_actual = [x for x in actual if x["repeat"] > 0]
+    warm_controls = [x for x in controls if x["repeat"] > 0]
     def med(values):
         return round(median(values), 4) if values else None
     def timing(group):
@@ -141,6 +146,20 @@ def summarize(rows: list[dict[str, Any]],
         "no_trie_controls": len(controls),
         "timing_trie_routed": timing(actual),
         "timing_nonrouted_control": timing(controls),
+        "warmup_repetition_excluded": 0,
+        "timing_trie_routed_warm_only": timing(warm_actual),
+        "timing_nonrouted_control_warm_only": timing(warm_controls),
+        "warm_control_adjusted_ratio": (
+            round(timing(warm_actual)["median_paired_ratio"] /
+                  timing(warm_controls)["median_paired_ratio"], 4)
+            if warm_actual and warm_controls
+            and timing(warm_controls)["median_paired_ratio"] else None
+        ),
+        "cold_control_outlier_indices": sorted({
+            x["index"] for x in controls
+            if x["repeat"] == 0 and x["ratio"] is not None
+            and (x["ratio"] < 0.25 or x["ratio"] > 4)
+        }),
         "completed_canonical_lost_indices": sorted({x["index"] for x in downgraded}),
         "changed_selected_tree_indices": sorted({x["index"] for x in changed}),
         "unsaturated_tree_change_indices": sorted({
@@ -158,8 +177,8 @@ def summarize(rows: list[dict[str, Any]],
 
 
 def run(args: argparse.Namespace) -> dict[str, Any]:
-    if args.repeats < 1 or args.repeats > 2:
-        raise ValueError("Limit repeats to 1..2 to bound CI")
+    if args.repeats < 2 or args.repeats > 4:
+        raise ValueError("Use 2..4 repeats; first repetition is warm-up")
     if args.deadline_seconds <= 0 or args.max_items <= 0 or args.kbest_work_limit <= 0:
         raise ValueError("Budgets must be positive")
     if sha256(args.cohort.read_bytes()).hexdigest() != EXPECTED_500_COHORT_SHA256:
@@ -242,6 +261,18 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, old_handler)
     summary = summarize(rows, pilot)
+    # A research route must not silently be mistaken for a safe optimization.
+    # Hard fail on observed loss of a canonical completion or an unsaturated
+    # change of the selected tree, even though defaults remain untouched.
+    quality_violations = (
+        summary["completed_canonical_lost_indices"]
+        + summary["unsaturated_tree_change_indices"]
+    )
+    if quality_violations:
+        raise AssertionError(
+            "Experimental trie route changed a proven complete analysis: "
+            + repr(sorted(set(quality_violations)))
+        )
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "preflight_trie_pilot.jsonl").write_text(
         "".join(json.dumps(x, ensure_ascii=False) + "\n" for x in rows),
@@ -258,8 +289,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         f"Total pairs: {summary['pairs']}, comparable: "
         f"{summary['uncensored_pairs']}, actually routed: "
         f"{summary['actually_trie_routed_pairs']}.", "",
-        f"Trie routed: {summary['timing_trie_routed']}.",
-        f"Nonrouted controls: {summary['timing_nonrouted_control']}.", "",
+        f"Trie routed (all repetitions): {summary['timing_trie_routed']}.",
+        f"Nonrouted controls (all): {summary['timing_nonrouted_control']}.", "",
+        "Warm-only comparison (excluding first pair with cold lexical caches):",
+        f"Trie routed: {summary['timing_trie_routed_warm_only']}.",
+        f"Nonrouted controls: {summary['timing_nonrouted_control_warm_only']}.",
+        f"Control-adjusted ratio (exploratory, not causal proof): "
+        f"{summary['warm_control_adjusted_ratio']}.", "",
         f"Previously completed cases lost: "
         f"{summary['completed_canonical_lost_indices']}.",
         f"Different selected trees: {summary['changed_selected_tree_indices']}.",
@@ -283,7 +319,7 @@ def main():
     ap.add_argument("--minimum-tokens", type=int, default=17)
     ap.add_argument("--routed-count", type=int, default=12)
     ap.add_argument("--control-count", type=int, default=6)
-    ap.add_argument("--repeats", type=int, default=2)
+    ap.add_argument("--repeats", type=int, default=4)
     ap.add_argument("--max-items", type=int, default=50000)
     ap.add_argument("--kbest-work-limit", type=int, default=500000)
     ap.add_argument("--deadline-seconds", type=float, default=10.0)
