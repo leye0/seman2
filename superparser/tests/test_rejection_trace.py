@@ -106,6 +106,40 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertFalse(mapped["exhaustive"])
 
 
+    def test_late_exhausted_child_displaces_early_hint_noise(self):
+        trace = _RejectionTrace(8)
+        node = ForestNode(0, 0, 12, 0, "CLAUSE", 0)
+        # Four early high-volume stages would otherwise completely
+        # occupy the retained window before useful children are examined.
+        for stage in (
+            "lexical_hint_unification",
+            "rule_hint_unification",
+            "positive_evidence_lexical_hint_missing",
+            "positive_evidence_rule_hint_impossible",
+        ):
+            for _ in range(20):
+                trace.record(stage, node)
+        before = trace.as_dict()
+        self.assertEqual(before["sampled_events"], 8)
+        self.assertNotIn("child_context_exhausted",
+                         {x["stage"] for x in before["events"]})
+
+        trace.record("child_context_exhausted", node,
+                     rule_id="clause_np_vp", child_index=1,
+                     child_node=ForestNode(1, 4, 12, 1, "VP", 0))
+        trace.record("positive_evidence_materialized_missing", node)
+        after = trace.as_dict()
+        self.assertEqual(after["sampled_events"], 8)
+        self.assertEqual(after["observed_events"], 82)
+        self.assertIn("child_context_exhausted",
+                      {x["stage"] for x in after["events"]})
+        self.assertIn("positive_evidence_materialized_missing",
+                      {x["stage"] for x in after["events"]})
+        self.assertEqual(after["sampling_policy"],
+                         "per_stage_cap_with_priority_replacement")
+        self.assertTrue(after["truncated"])
+        self.assertFalse(after["exhaustive"])
+
     def test_positive_evidence_tracks_required_witnessed_and_missing(self):
         from seman_parser.symbols import intern
 
