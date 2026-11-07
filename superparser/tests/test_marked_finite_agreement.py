@@ -53,8 +53,17 @@ class MarkedFiniteAgreementTests(unittest.TestCase):
         self.assertEqual(node.rule_id, rule_id)
         self.assertEqual(node.category, "MARKED-FINITE-CLAUSE")
         self.assertEqual([c.category for c in node.children], ["NP", "VP"])
-        self.assertIn("dialogue_quote_marked_finite_clause_stop",
-                      {n.rule_id for n in self._walk(marked.best())})
+        quoted = [n for n in self._walk(marked.best()) if n.rule_id in {
+            "dialogue_quote_marked_finite_clause_stop",
+            "dialogue_quote_marked_finite_clause_comma",
+        }]
+        self.assertEqual(len(quoted), 1)
+        self.assertEqual(quoted[0].children[1], node)
+        self.assertIn(quoted[0].children[2].category, {"COMMA", "SPEECH-STOP"})
+        # Quote punctuation can project a syntactic COMMA from a written dot;
+        # neither the source character nor its span is rewritten.
+        punctuation = quoted[0].children[2]
+        self.assertEqual(text[punctuation.start:punctuation.end], ".")
         leaf = marked.best()
         for i in bearer["path"]:
             leaf = leaf.children[i]
