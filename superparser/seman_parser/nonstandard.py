@@ -40,6 +40,12 @@ class UsageDeviation:
     subject_rule_id: str | None = None
     predicate_rule_id: str | None = None
     intent_provenance: str | None = None
+    predicate_head_span: tuple[int, int] | None = None
+    predicate_head_category: str | None = None
+    predicate_head_path: tuple[int, ...] = ()
+    predicate_head_features: dict[str, Any] | None = None
+    predicate_head_surface: str | None = None
+    predicate_head_rule_id: str | None = None
 
     def as_dict(
         self, *, reference_span: Callable[[int, int], tuple[int, int] | None] | None = None,
@@ -63,7 +69,7 @@ class UsageDeviation:
         parent_ref, parent_mapping = map_span(self.parent_span)
         subject_ref, subject_mapping = map_span(self.subject_span)
         predicate_ref, predicate_mapping = map_span(self.predicate_span)
-        return {
+        record = {
             "kind": self.kind,
             "status": "nonstandard_attested",
             "relation": self.relation,
@@ -111,6 +117,38 @@ class UsageDeviation:
                 },
             },
         }
+        if self.predicate_head_span is not None:
+            head_ref, head_mapping = map_span(self.predicate_head_span)
+            record["evidence"]["predicate_head"] = {
+                "category": self.predicate_head_category,
+                "path": list(self.predicate_head_path),
+                "rule_id": self.predicate_head_rule_id,
+                "surface": self.predicate_head_surface,
+                "analysis_span": list(self.predicate_head_span),
+                "reference_span": head_ref,
+                "reference_mapping": head_mapping,
+                "features": self.predicate_head_features,
+                "resolution": "unique_overt_finite_agreement_bearer",
+            }
+        return record
+
+
+def _finite_agreement_head(node: ChartItem, feature: str, observed: str):
+    """Project the overt finite head only when exactly one lexical bearer exists."""
+    candidates = []
+
+    def visit(current: ChartItem, path: tuple[int, ...]) -> None:
+        features = current.features.as_dict()
+        if (current.lexical_candidate is not None
+                and current.category in {"V", "COPULA", "AUX", "AUX-BE", "HAVE"}
+                and features.get("vform") == "finite"
+                and features.get(feature) == observed):
+            candidates.append((current, path))
+        for i, child in enumerate(current.children):
+            visit(child, path + (i,))
+
+    visit(node, ())
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def collect_usage_deviations(root: ChartItem | None, text: str) -> tuple[UsageDeviation, ...]:
@@ -148,6 +186,7 @@ def collect_usage_deviations(root: ChartItem | None, text: str) -> tuple[UsageDe
             intent_provenance = template.get("intent_provenance")
             if intent != "unknown" and not intent_provenance:
                 raise ValueError("Non-unknown intent requires explicit annotation provenance")
+            head = _finite_agreement_head(predicate, feature, observed) if predicate.children else None
             identity = (node.rule_id, node.start, node.end, subject.start, subject.end,
                         predicate.start, predicate.end, str(template["kind"]), feature)
             if identity not in seen:
@@ -177,6 +216,12 @@ def collect_usage_deviations(root: ChartItem | None, text: str) -> tuple[UsageDe
                 subject_rule_id=subject.rule_id,
                 predicate_rule_id=predicate.rule_id,
                 intent_provenance=str(intent_provenance) if intent_provenance else None,
+                predicate_head_span=(head[0].start, head[0].end) if head else None,
+                predicate_head_category=head[0].category if head else None,
+                predicate_head_path=path + (predicate_index,) + head[1] if head else (),
+                predicate_head_features=head[0].features.as_dict() if head else None,
+                predicate_head_surface=text[head[0].start:head[0].end] if head else None,
+                predicate_head_rule_id=head[0].rule_id if head else None,
                 ))
         for index, child in enumerate(node.children):
             visit(child, path + (index,))
