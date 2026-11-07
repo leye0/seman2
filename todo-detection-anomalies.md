@@ -100,6 +100,14 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Audit complémentaire :** coût du lattice lexical mesuré
+séparément sur les 26 échecs et 26 contrôles complets; le signal
+de désaccord entre candidats nom/pronom et verbe reste une simple
+hypothèse, sans preuve de relation syntaxique. Les guillemets isolés
+ne déclenchent désormais pas de revue : ils sont conservés comme
+métadonnée de contexte. Aucun nouveau seuil n'est ajusté sur
+les résultats des 500 phrases.
+
 **Première tranche de triage faible coût (non syntaxique) :** fonction
 `fast_preflight` disponible AVANT l'appel à `Parser.parse`, sans
 construction de lattice ni forêt; signaux de dialogue, provenance

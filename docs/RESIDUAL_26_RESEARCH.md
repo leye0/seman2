@@ -185,3 +185,23 @@ La proposition d'optimisation réelle (**arrêt anticipé,
 aiguillage de stratégie**) reste volontairement interdite tant que
 les taux d'alerte, les sorties sans signal et les coûts complets
 n'ont pas été mesurés et validés sur une cohorte indépendante.
+
+### Prédiagnostic lexical : coût de préparation mesuré séparément
+
+Le benchmark ajoute une **sonde lexicale** sur tous les échecs canoniques
+et 26 contrôles réussis répartis de façon déterministe. Il mesure
+séparément le coût de `build_lattice` avec les ressources WordNet 3.0
+habituelles et le coût de `fast_preflight` quand **ce lattice existe déjà**.
+Il ne déclenche aucun `Parser.parse` supplémentaire. C'est une
+exploration de coût, pas une nouvelle route publique de reconnaissance.
+
+Un indice adjacent `N/PRONOUN/PROPER-NOUN` + `V/COPULA/AUX` à
+accord incompatible reste **une hypothèse sans lien syntaxique démontré**.
+Ce choix permet d'examiner aussi les noms au pluriel suivis de formes
+finies singulières sans prétendre corriger ou condamner une phrase.
+
+Sorties dans le même artefact :
+`fast_preflight_lexical_spotcheck.jsonl` et
+`fast_preflight_lexical_spotcheck_summary.json`. On ne doit jamais
+présenter le temps de traitement du lattice comme un gain gratuit;
+une future intégration devra réutiliser celui du parseur canonique.

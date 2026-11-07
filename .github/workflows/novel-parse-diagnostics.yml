@@ -70,7 +70,8 @@ jobs:
             --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
             --contexts /tmp/novel-parse-diagnostics/context_dependency.jsonl \
             --canonical-summary /tmp/novel-parse-diagnostics/summary.json \
-            --repetitions 7 \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --lexical-controls 26 --repetitions 7 \
             --out-dir /tmp/novel-parse-diagnostics
       - name: Triage frozen 26 residuals as research evidence
         run: |
