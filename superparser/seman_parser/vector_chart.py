@@ -839,7 +839,10 @@ class _RejectionTrace:
         # This is a bounded call/request ancestry, not a causal chain of
         # *failed* nodes. Earlier ancestors can have other valid derivations.
         if self.requests:
-            item["request_chain"] = [dict(frame) for frame in self.requests[-6:]]
+            item["request_chain"] = [
+                {**frame, "analysis_span": list(frame["analysis_span"])}
+                for frame in self.requests[-6:]
+            ]
             item["request_chain_truncated"] = len(self.requests) > 6
         if required_positive:
             names = {resolve(name) for name in required_positive}
