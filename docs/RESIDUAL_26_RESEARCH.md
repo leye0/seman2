@@ -12,7 +12,12 @@ At the November 7 baseline on `main` (`3cfef10`), the parser completed
 | `forest_budget_exceeded` | 4 | Resource-censored, grammatical status **inconclusive** |
 | `timeout` | 1 | Resource-censored, grammatical status **inconclusive** |
 
-Among these 26, **7 have a structural root in their scoped dialogue attempt**\nbut no valid complete dialogue analysis; the ordinary fallback may still\nreport zero roots. These are evidence of internal dialogue recognition/\nunification issues, not proof of grammatical incorrectness.\n\nAll **25 failed cases with available lexical diagnostics** had an empty
+Among these 26, **7 have a structural root in their scoped dialogue attempt**
+but no valid complete dialogue analysis; the ordinary fallback may still
+report zero roots. These are evidence of internal dialogue recognition/
+unification issues, not proof of grammatical incorrectness.
+
+All **25 failed cases with available lexical diagnostics** had an empty
 `words_without_any_candidate` list. The timed-out case #312 lacks that
 diagnostic; do not extrapolate to it or assert that lexicon completeness
 means the constituent structure is correct.
