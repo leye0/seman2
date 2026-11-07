@@ -13,6 +13,9 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
+from time import perf_counter_ns
+
+from .complexity_routing import RoutingDecision
 
 from .features import Atom
 from .segmentation import LexicalLattice, Token, tokenize
@@ -133,6 +136,7 @@ def fast_preflight(
     transferred_prefix: str = "",
     transferred_suffix: str = "",
     lattice: LexicalLattice | None = None,
+    include_candidate_hypotheses: bool = True,
 ) -> FastPreflight:
     """Emit fast routing *hints* without running or replacing Parser.parse.
 
@@ -178,7 +182,7 @@ def fast_preflight(
             "count": comma_count,
             "syntax_type_proven": False,
         })
-    if lattice is not None:
+    if lattice is not None and include_candidate_hypotheses:
         candidate_observations = _local_candidate_observations(tokens, lattice)
         if candidate_observations:
             signals.add("adjacent_candidate_agreement_hypothesis")
@@ -197,5 +201,80 @@ def fast_preflight(
         lane=lane,
         evidence=tuple(evidence),
         token_count=len(tokens),
-        phase="existing_lattice" if lattice is not None else "surface_only",
+        phase=(
+            "surface_only" if lattice is None else
+            "existing_lattice" if include_candidate_hypotheses else
+            "existing_lattice_surface_only"
+        ),
     )
+
+
+@dataclass(frozen=True)
+class PreflightTriePolicy:
+    """Explicit research policy selecting the ALREADY EXISTING lazy-trie engine.
+
+    Surface observations identify where to *try* a different complete
+    recognizer, not where to delete a grammatical analysis or skip syntax.
+    No threshold is learned from the 26 difficult corpus cases.
+    """
+    minimum_tokens: int
+    route_on: tuple[str, ...] = (
+        "length_attention", "many_comma_boundaries",
+    )
+
+    def __post_init__(self) -> None:
+        if self.minimum_tokens < 1:
+            raise ValueError("Preflight routing requires positive minimum_tokens")
+        supported = {"length_attention", "many_comma_boundaries"}
+        if not self.route_on or len(set(self.route_on)) != len(self.route_on):
+            raise ValueError("Preflight route_on must contain unique signals")
+        if not set(self.route_on) <= supported:
+            raise ValueError("Only validated non-morphological surface signals route")
+
+
+class PreflightTrieRouter:
+    """Choose before chart recognition; no extra lexical preparation.
+
+    The route may alter which bounded search agenda saturates first, so this
+    policy stays opt-in until outcome/tree parity is established. Quotes,
+    including transferred quote delimiters present in the exact text, never
+    enter the experimental trie grammar.
+    """
+    def __init__(self, policy: PreflightTriePolicy) -> None:
+        self.policy = policy
+
+    def choose(
+        self, lattice: LexicalLattice, *, dialogue: bool = False,
+        observation: Mapping[str, Any] | None = None,
+    ) -> RoutingDecision:
+        token_count = len(lattice.tokens)
+        if dialogue:
+            return RoutingDecision(
+                "canonical", "preflight_dialogue_preserved", None, 0.0, token_count)
+        if token_count < self.policy.minimum_tokens:
+            return RoutingDecision(
+                "canonical", "preflight_below_minimum_tokens", None, 0.0,
+                token_count)
+        if _has_quotation(lattice.text, "", ""):
+            return RoutingDecision(
+                "canonical", "preflight_quote_preserved", None, 0.0, token_count)
+        started = perf_counter_ns()
+        # The existing lattice has already been produced by Parser.parse.
+        # Avoid the optional candidate-level morphology pass entirely here:
+        # a candidate conflict cannot justify a different parse strategy.
+        if observation is None:
+            observation = fast_preflight(
+                lattice.text, lattice=lattice,
+                include_candidate_hypotheses=False,
+            ).as_dict()
+        elif observation.get("analysis_text") != lattice.text:
+            raise ValueError("Preflight observation does not match lattice")
+        found = set(observation["signals"]).intersection(self.policy.route_on)
+        elapsed_ms = (perf_counter_ns() - started) / 1e6
+        if found:
+            return RoutingDecision(
+                "trie", "preflight_surface_" + "_and_".join(sorted(found)),
+                len(found), elapsed_ms, token_count)
+        return RoutingDecision(
+            "canonical", "preflight_no_routing_signal", 0, elapsed_ms,
+            token_count)

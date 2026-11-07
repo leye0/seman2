@@ -1,3 +1,10 @@
+**Calibration des performances :** les mesures distinguent désormais
+le premier passage (caches lexicaux froids) des suivants et rapportent
+une comparaison relative aux contrôles non routés. Les paires
+expérimentales échouent en CI si une analyse complète est perdue
+ou un arbre change sans saturation. Aucun gain n'est extrapolé
+à toute la population des phrases.
+
 # TODO — Détection et qualification des anomalies grammaticales
 
 > Projet **Seman2**, **Layer 1** (anglais). Document de conception et de travail, pas une fonctionnalité annoncée comme terminée.
@@ -99,6 +106,16 @@ complet de la famille des accords.
 - [ ] Pour chaque famille, documenter les exceptions légitimes, les contextes de validité et les **contre-exemples** : pas de jugement normatif déclenché uniquement par une chaîne de mots.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
+
+**Pilotage expérimental de performance (opt-in) :**
+`PreflightTriePolicy(minimum_tokens=...)` peut utiliser les indices
+de longueur et de ponctuation déjà mesurés pour aiguiller vers le
+reconnaisseur lazy trie existant. Les citations restent exclues,
+y compris les cas 463/480. Un benchmark apparié contrôle temps
+**du parsing complet**, sélection des arbres, dépassements
+de ressources et éventuelles pertes de couverture. Aucune route
+n'est activée par défaut ni considérée sûre sans preuves.
+
 
 **Intégration opt-in :** `Parser.parse(preflight_diagnostics=True)`
 capture le même lattice avant la syntaxe, sans calcul lexical doublé.

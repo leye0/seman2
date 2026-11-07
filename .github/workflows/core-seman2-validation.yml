@@ -85,7 +85,8 @@ jobs:
             superparser.tests.test_usage_explanations \
             superparser.tests.test_rejection_trace \
             superparser.tests.test_fast_preflight \
-            superparser.tests.test_integrated_fast_preflight
+            superparser.tests.test_integrated_fast_preflight \
+            superparser.tests.test_preflight_routing
       - name: Check global grammar quality for main commits and pull requests
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.validate_direct_grammar --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out "$RUNNER_TEMP/direct-grammar-quality.json"

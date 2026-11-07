@@ -17,7 +17,9 @@ from typing import Any, Callable, Mapping, Sequence
 from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
 from .dialogue import dialogue_lattice
-from .fast_preflight import fast_preflight
+from .fast_preflight import (
+    PreflightTriePolicy, PreflightTrieRouter, fast_preflight,
+)
 from .complexity_routing import ComplexityPolicy, RoutingDecision, StructuralRiskRouter
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
 from .runtime_gc import freeze_loaded_wordnet_once
@@ -163,9 +165,13 @@ class Parser:
         cache_size: int = 2048,
         deduplicate_lexical: bool = True,
         complexity_policy: ComplexityPolicy | None = None,
+        preflight_route_policy: PreflightTriePolicy | None = None,
         lexical_left_corner_pruning: bool = False,
         local_attachment_tiebreak: bool = True,
     ) -> None:
+        if complexity_policy is not None and preflight_route_policy is not None:
+            raise ValueError(
+                "Choose one experimental routing policy, not both")
         self.resources = resources
         self.beam = beam
         self.max_items = max_items
@@ -216,6 +222,11 @@ class Parser:
             StructuralRiskRouter(self._vector_grammar.grammar, complexity_policy)
             if complexity_policy is not None else None
         )
+        self._preflight_route_policy = preflight_route_policy
+        self._preflight_router = (
+            PreflightTrieRouter(preflight_route_policy)
+            if preflight_route_policy is not None else None
+        )
         self._difficult_vector_grammar = (
             VectorGrammar(
                 self._vector_grammar.grammar,
@@ -223,7 +234,8 @@ class Parser:
                 lexical_left_corner_pruning=lexical_left_corner_pruning,
                 local_attachment_tiebreak=local_attachment_tiebreak,
             )
-            if complexity_policy is not None else None
+            if (complexity_policy is not None
+                or preflight_route_policy is not None) else None
         )
         # Quotation rules exist only in a quote-aware forest, preserving the
         # baseline's canonical ranking and runtime on ordinary novel prose.
@@ -398,6 +410,7 @@ class Parser:
                     diagnostic_k=diagnostic_k, beam=beam,
                     allow_marked_deviations=allow_marked_deviations,
                     rejection_trace_limit=rejection_trace_limit,
+                    preflight_observation=preflight,
                 )
                 if use_cache:
                     self._parse_cache.put(dialogue_key, spoken)
@@ -458,6 +471,7 @@ class Parser:
             diagnostic_k=diagnostic_k, beam=beam,
             allow_marked_deviations=allow_marked_deviations,
             rejection_trace_limit=rejection_trace_limit,
+            preflight_observation=preflight,
         )
         if plan is not None and isinstance(result.stats, dict):
             result.stats["segmentation_fallback"] = True
@@ -469,8 +483,18 @@ class Parser:
 
     def _select_vector_grammar(
         self, lattice: Any, *, dialogue: bool = False,
+        preflight_observation: Mapping[str, Any] | None = None,
     ) -> tuple[VectorGrammar, RoutingDecision | None]:
         """Select before forest recognition; never repeat the completed parse."""
+        if self._preflight_router is not None:
+            decision = self._preflight_router.choose(
+                lattice, dialogue=dialogue,
+                observation=preflight_observation,
+            )
+            if decision.strategy == "canonical":
+                return self._vector_grammar, decision
+            assert self._difficult_vector_grammar is not None
+            return self._difficult_vector_grammar, decision
         if self._complexity_router is None:
             return self._vector_grammar, None
         # The fast path is decided by token count first: it must not
@@ -500,6 +524,11 @@ class Parser:
                 "complexity_score": decision.score,
                 "complexity_probe_ms": round(decision.measured_ms, 5),
                 "complexity_tokens": decision.token_count,
+                "complexity_router_source": (
+                    "fast_preflight_surface"
+                    if decision.reason.startswith("preflight_")
+                    else "structural_first_index"
+                ),
             })
         return result
 
@@ -513,6 +542,7 @@ class Parser:
         beam: int | None = None,
         allow_marked_deviations: bool = False,
         rejection_trace_limit: int = 0,
+        preflight_observation: Mapping[str, Any] | None = None,
     ) -> ParseResult:
         """Internal recognizer. Only Parser.parse dispatches public analyses.
 
@@ -574,11 +604,14 @@ class Parser:
                         if allow_marked_deviations:
                             spoken.stats["marked_mode"] = True
                     if self._complexity_router is not None:
-                        _, choice = self._select_vector_grammar(lattice, dialogue=True)
+                        _, choice = self._select_vector_grammar(
+                            lattice, dialogue=True,
+                            preflight_observation=preflight_observation)
                         self._attach_complexity_route(spoken, choice)
                     return spoken
         grammar, decision = self._select_vector_grammar(
             lattice, dialogue=is_dialogue,
+            preflight_observation=preflight_observation,
         )
         result = grammar.parse_lattice(
             lattice, beam=active_beam, max_items=budget,
