@@ -100,6 +100,15 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Intégration opt-in :** `Parser.parse(preflight_diagnostics=True)`
+capture le même lattice avant la syntaxe, sans calcul lexical doublé.
+Les incompatibilités locales demeurent hypothétiques tant qu'elles
+ne sont pas associées à une règle d'un arbre complet ; les preuves
+d'accord marqué déjà autorisées par la grammaire sont exportées avec
+leurs spans et identifiants de règle. Un audit en paires avec/sans
+option mesure la latence **totale** ; aucun gain de vitesse ni
+arrêt anticipé n'est présumé.
+
 **Audit complémentaire :** coût du lattice lexical mesuré
 séparément sur les 26 échecs et 26 contrôles complets; le signal
 de désaccord entre candidats nom/pronom et verbe reste une simple

@@ -11,12 +11,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import os
 from pathlib import Path
-from time import perf_counter
+from time import perf_counter, perf_counter_ns
 from typing import Any, Callable, Mapping, Sequence
 
 from .chart import ParseResult
 from .grammar import Grammar, load_grammar, load_grammar_rows
 from .dialogue import dialogue_lattice
+from .fast_preflight import fast_preflight
 from .complexity_routing import ComplexityPolicy, RoutingDecision, StructuralRiskRouter
 from .lexicon import Lexicon, load_lexicon, load_lexicon_rows
 from .runtime_gc import freeze_loaded_wordnet_once
@@ -294,6 +295,57 @@ class Parser:
             self._lattice_cache.put(text, lattice)
         return lattice
 
+    @staticmethod
+    def _capture_fast_preflight(lattice: LexicalLattice) -> dict[str, Any]:
+        """Observe exact prepared candidates before syntax; never rebuild them."""
+        started = perf_counter_ns()
+        result = fast_preflight(lattice.text, lattice=lattice).as_dict()
+        result["existing_lattice_probe_us"] = round(
+            (perf_counter_ns() - started) / 1000, 3)
+        result["lexical_lattice_reused"] = True
+        result["first_observed_before_syntax"] = True
+        return result
+
+    @staticmethod
+    def _attach_fast_preflight(
+        report: ParseReport,
+        observation: dict[str, Any] | None,
+    ) -> ParseReport:
+        if observation is None:
+            return report
+        if not isinstance(report.result.stats, dict):
+            raise TypeError("Parse stats must be mutable for opt-in preflight")
+        if report.lattice is None or report.lattice.text != report.result.text:
+            raise AssertionError("Preflight must reuse the exact original analysis lattice")
+        # A parsed tree is the ONLY proof of a particular dependency.
+        # The existing explicit marked-usage rules provide checked subject
+        # and predicate children; a candidate-only adjacency does not.
+        started = perf_counter_ns()
+        deviations = report.result.usage_deviations() if report.result.completed else ()
+        selected_links = [{
+            "relation": item.relation,
+            "licensing_rule_id": item.rule_id,
+            "parent_analysis_span": list(item.parent_span),
+            "subject_analysis_span": list(item.subject_span),
+            "predicate_analysis_span": list(item.predicate_span),
+            "subject_surface": item.subject_surface,
+            "predicate_surface": item.predicate_surface,
+            "feature": item.feature,
+            "subject_value": item.expected,
+            "predicate_value": item.observed,
+            "evidence_basis": "explicit_marked_rule_selected_complete_tree",
+            "scope": "selected_tree_only_not_sentence_error",
+        } for item in deviations]
+        observation["selected_tree_proven_marked_relations"] = selected_links
+        observation["selected_tree_proven_marked_relation_count"] = len(selected_links)
+        observation["selected_tree_checked"] = bool(report.result.completed)
+        observation["no_proven_relation_does_not_imply_no_dependency"] = True
+        observation["selected_tree_evidence_us"] = round(
+            (perf_counter_ns() - started) / 1000, 3)
+        observation["grammatical_fault_established"] = False
+        report.result.stats["fast_preflight"] = observation
+        return report
+
     def parse(
         self,
         text: str,
@@ -304,6 +356,7 @@ class Parser:
         beam: int | None = None,
         allow_marked_deviations: bool = False,
         rejection_trace_limit: int = 0,
+        preflight_diagnostics: bool = False,
     ) -> ParseReport:
         """SINGLE public parsing entry point, including corpus diagnostics.
 
@@ -314,7 +367,8 @@ class Parser:
         if not 0 <= rejection_trace_limit <= 100:
             raise ValueError("rejection_trace_limit must be in 0..100")
         original = text.strip()
-        use_cache = (not allow_marked_deviations and rejection_trace_limit == 0
+        use_cache = (not preflight_diagnostics and not allow_marked_deviations
+                     and rejection_trace_limit == 0
                      and all(value is None for value in (
             max_items, kbest_work_limit, diagnostic_k, beam,
         )))
@@ -332,6 +386,10 @@ class Parser:
                             lattice=self._lattice_for_text(original),
                         )
                 original_lattice = self._lattice_for_text(original)
+                preflight = (
+                    self._capture_fast_preflight(original_lattice)
+                    if preflight_diagnostics else None
+                )
                 # One recognizer call: it tries scoped dialogue then the
                 # ordinary grammar. NEVER discard quote marks and retry.
                 spoken = self._parse_lattice(
@@ -343,12 +401,12 @@ class Parser:
                 )
                 if use_cache:
                     self._parse_cache.put(dialogue_key, spoken)
-                return ParseReport(
+                return self._attach_fast_preflight(ParseReport(
                     result=spoken,
                     resources=(self._dialogue_resources or self.resources)
                     if spoken.stats.get("dialogue_scoped") else self.resources,
                     lattice=original_lattice,
-                )
+                ), preflight)
         # No silent normalization: an incomplete quoted sentence must fail
         # with its original quote context, not succeed as a different string.
         normalized = original
@@ -361,6 +419,15 @@ class Parser:
                     lattice=self._lattice_for_text(normalized),
                 )
 
+        # Diagnostic-only: the original code already exposes this lattice
+        # in its ParseReport. Materialize it once BEFORE syntax when opted in.
+        preflight_lattice = (
+            self._lattice_for_text(normalized) if preflight_diagnostics else None
+        )
+        preflight = (
+            self._capture_fast_preflight(preflight_lattice)
+            if preflight_lattice is not None else None
+        )
         light_tokens = tokenize(normalized)
         plan = self._clause_plan(normalized, light_tokens)
         if plan is None:
@@ -375,12 +442,16 @@ class Parser:
             if hierarchical is not None:
                 if use_cache:
                     self._parse_cache.put(cache_key, hierarchical)
-                return ParseReport(
+                return self._attach_fast_preflight(ParseReport(
                     result=hierarchical, resources=self.resources,
-                    lattice=self._lattice_for_text(normalized),
-                )
+                    lattice=(preflight_lattice if preflight_lattice is not None
+                             else self._lattice_for_text(normalized)),
+                ), preflight)
 
-        lattice = self._lattice_for_text(normalized)
+        lattice = (
+            preflight_lattice if preflight_lattice is not None
+            else self._lattice_for_text(normalized)
+        )
         result = self._parse_lattice(
             lattice, max_items=max_items,
             kbest_work_limit=kbest_work_limit,
@@ -392,9 +463,9 @@ class Parser:
             result.stats["segmentation_fallback"] = True
         if use_cache:
             self._parse_cache.put(cache_key, result)
-        return ParseReport(
+        return self._attach_fast_preflight(ParseReport(
             result=result, resources=self.resources, lattice=lattice,
-        )
+        ), preflight)
 
     def _select_vector_grammar(
         self, lattice: Any, *, dialogue: bool = False,

@@ -205,3 +205,32 @@ Sorties dans le même artefact :
 `fast_preflight_lexical_spotcheck_summary.json`. On ne doit jamais
 présenter le temps de traitement du lattice comme un gain gratuit;
 une future intégration devra réutiliser celui du parseur canonique.
+
+## Intégration opt-in dans le parseur et liens syntaxiques prouvés
+
+`Parser.parse(text, preflight_diagnostics=True)` est le **seul**
+nouveau point d'activation. Le prélèvement observe avant la recherche
+le lattice exact déjà nécessaire à l'analyse, et le cache des
+résultats ordinaires est laissé inchangé, sans contamination par les
+champs de diagnostic. Les résultats portent désormais
+`stats.fast_preflight` avec
+`existing_lattice_probe_us` et `lexical_lattice_reused=true`.
+Aucun second `build_lattice` ni second recognizer.
+
+Dans un arbre complet choisi, les liens sujet-verbe **déjà attestés
+par une règle marquée explicite** sont exposés dans
+`selected_tree_proven_marked_relations`, y compris l'identifiant de
+la règle, les positions des enfants, le trait, les valeurs et la
+provenance. Une proximité lexicale ne prouve aucun lien syntaxique;
+pour toute analyse incomplète, cette liste reste vide, et un lien
+absent n'est pas déclaré inexistant.
+
+L'audit séparé `scripts.benchmark_integrated_preflight` compare le
+temps total du chemin public `parse_corpus_case → Parser.parse`
+avec/sans option sur des cas stricts et marqués, via les mêmes budgets
+et le même texte balancé. Il conserve la parité des arbres sélectionnés
+sur les paires non censurées, mais ne permet **pas** de conclure à
+un gain de vitesse (aucun arrêt anticipé ou réaiguillage n'est activé).
+Artefacts : `integrated_preflight_timing.jsonl`,
+`integrated_preflight_timing_summary.json`,
+`integrated_preflight_timing.md`.
