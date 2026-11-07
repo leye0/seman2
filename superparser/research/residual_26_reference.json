@@ -1,0 +1,294 @@
+{
+  "schema": "seman2-residual-research-reference-v1",
+  "cohort_size": 500,
+  "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
+  "baseline_main_commit": "3cfef10ecf41081e579ea90d0e3315f02faca446",
+  "baseline_ci_run": "https://github.com/leye0/seman2/actions/runs/42399449908",
+  "description": "Historical unresolved 26; hypotheses are provisional, previous marked-mode proof is attested only by independently executed pinned parser tests; neither implies sentence-level author error.",
+  "cases": [
+    {
+      "index": 8,
+      "case_id": "766:098e9ecb7696095e",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "contextual_fragment"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Continuative which-relative after a semicolon depends on the preceding proposition; independent CLAUSE is the wrong target."
+    },
+    {
+      "index": 64,
+      "case_id": "766:bc614b374f3befb4",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "dialogue_structure",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Quoted question followed by coordinated reporting action (bent his eyes); inspect subject carry-over and quote/speech attachment."
+    },
+    {
+      "index": 94,
+      "case_id": "766:23e2ef4b282ad0d7",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "contextual_fragment",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Coordinated participial incise and turned share the subject in the preceding semicolon segment; missing subject is contextual, not attested agreement error."
+    },
+    {
+      "index": 96,
+      "case_id": "766:a6bdc4b39fc21c48",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "dialogue_structure",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Direct speech with dash interruption and free locative wherever; stage-cutch already has a lexical candidate in prior audits."
+    },
+    {
+      "index": 105,
+      "case_id": "766:d0ed6aa88ff7504a",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "dialogue_structure",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Question inside nested direct speech followed by dash plus causal for; inspect quoted clause boundary and report continuation."
+    },
+    {
+      "index": 109,
+      "case_id": "766:64bdcc0fb42ca8cb",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "dialogue_structure"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Multiple stacked historical quotation delimiters with inverted said-tag and participial supplement; inspect inherited quote context, not words."
+    },
+    {
+      "index": 115,
+      "case_id": "766:5ce40e020bbea3e9",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "finite_syntax",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Overt finite subject Dora and Agnes with infinitival complements and parenthetical relative/reporting incise; source semicolon does not make it a fragment."
+    },
+    {
+      "index": 116,
+      "case_id": "766:e8c77f1dbf514888",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "finite_syntax",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Finite matrix plus namely-apposition and that-complement; examine complement attachment and nonfinite tablecloth phrase."
+    },
+    {
+      "index": 167,
+      "case_id": "1342:e953f35a6bde2d3b",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "notation_or_genre",
+        "dialogue_structure"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Quoted letter/sign-off includes Yours, etc. after em dash; letter-register ending needs explicit treatment, not invented declarative syntax."
+    },
+    {
+      "index": 182,
+      "case_id": "1342:20245e34bbb516e6",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "contextual_fragment"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Bare coordinated comparative adjective predicates depend on preceding found her construction; semicolon extraction is context-dependent."
+    },
+    {
+      "index": 194,
+      "case_id": "1342:321270c51f586b3a",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "contextual_fragment"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Initial avoiding/saying nonfinite supplements attach to preceding attention predicate; no independent finite subject is overt."
+    },
+    {
+      "index": 220,
+      "case_id": "1342:94792d9f1b41ecee",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "dialogue_structure",
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Split quotation around inverted reporting tag cried a young Lucas and nested relative/conditional; inspect quote-boundary attachments."
+    },
+    {
+      "index": 226,
+      "case_id": "1342:454c633a9bffa21f",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Overt finite inversion arose the suspicion after fronted PP; not an indication of ungrammatical word order."
+    },
+    {
+      "index": 233,
+      "case_id": "1342:043dc6410c5da664",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "finite_syntax",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Initial But when subordination with it did not seem likely extraposition; finite clause follows semicolon but has its own subject."
+    },
+    {
+      "index": 235,
+      "case_id": "1342:d61205cfa3d42b58",
+      "baseline_status": "forest_budget_exceeded",
+      "research_tracks": [
+        "resource_limit",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Resource-censored quoted semicolon continuation with embedded that-clause; rerun targeted budget study before claiming syntax gap."
+    },
+    {
+      "index": 243,
+      "case_id": "1342:00a813319a3ac9a9",
+      "baseline_status": "forest_budget_exceeded",
+      "research_tracks": [
+        "resource_limit",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Resource-censored quoted conditional, relatives, control verbs and elliptical they are; assess budget and context separately."
+    },
+    {
+      "index": 248,
+      "case_id": "1342:88509993936c9786",
+      "baseline_status": "forest_budget_exceeded",
+      "research_tracks": [
+        "resource_limit",
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Resource-censored fronted object The turn of your countenance and nested relative/conditional; verify rank-1 attachment under controls."
+    },
+    {
+      "index": 312,
+      "case_id": "84:29d5e3853f60eff2",
+      "baseline_status": "timeout",
+      "research_tracks": [
+        "resource_limit",
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Timeout on an ordinary finite coordinated copular sentence; performance problem cannot be called a language anomaly."
+    },
+    {
+      "index": 344,
+      "case_id": "84:f81d1c585094a7a2",
+      "baseline_status": "no_structural_root",
+      "research_tracks": [
+        "finite_syntax",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Coordinated that complements, reporting parenthetical (as the painters call it), uppercase KEEPING; assess clause/parenthetical structure."
+    },
+    {
+      "index": 347,
+      "case_id": "84:d685d261e18beeba",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "finite_syntax",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "But + contrastive PP, inversion/coordination and paired not ... but to learn; source semicolon context is not itself cause."
+    },
+    {
+      "index": 463,
+      "case_id": "120:e414e9528e466f10",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "marked_agreement",
+        "dialogue_structure"
+      ],
+      "assessment": "verified_marked_mode_prior_test",
+      "hypothesis": "Pinned marked-mode parse witnesses plural mothers with singular was inside the postposed relative; strict failure must not be silently treated as malformed text.",
+      "test_reference": "superparser/tests/test_marked_nonstandard_usage.py::test_pinned_463_only_in_marked_mode_with_exact_relationships"
+    },
+    {
+      "index": 466,
+      "case_id": "120:990233ea73026451",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "dialogue_structure",
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Quote with vocative son and contracted he's dead plus postposed said Silver; inspect quote and reporting tag punctuation."
+    },
+    {
+      "index": 480,
+      "case_id": "120:4414537cf6568fe7",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "marked_agreement",
+        "dialogue_structure"
+      ],
+      "assessment": "verified_marked_mode_prior_test",
+      "hypothesis": "Pinned marked-mode split quoted report has two independent plural they / singular says violations; strict failure is not missing vocabulary.",
+      "test_reference": "superparser/tests/test_case_480_marked_dialogue.py::test_480_exact_attachments_and_two_attested_agreement_conflicts"
+    },
+    {
+      "index": 487,
+      "case_id": "120:afdbd6a1f4cd33e6",
+      "baseline_status": "forest_budget_exceeded",
+      "research_tracks": [
+        "resource_limit",
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Resource-censored semicolon continuation with broadside and coordinated finite matrix; preserve original context and measure cost."
+    },
+    {
+      "index": 491,
+      "case_id": "120:1a3c9fc15b2f59db",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "finite_syntax",
+        "discourse_construction"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Finite coordination with for all that idiom and participial being both shot and drowned; investigate attachment and shared predicate."
+    },
+    {
+      "index": 497,
+      "case_id": "120:1d6c54a55efa9bbd",
+      "baseline_status": "roots_without_valid_analysis",
+      "research_tracks": [
+        "discourse_construction",
+        "finite_syntax"
+      ],
+      "assessment": "provisional_hypothesis",
+      "hypothesis": "Contrastive rather, indeed continuation and of-growing nominal; likely ellipsis/attachment but unproven."
+    }
+  ]
+}
+
