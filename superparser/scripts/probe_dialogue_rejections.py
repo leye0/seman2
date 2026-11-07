@@ -23,6 +23,29 @@ from seman_parser.engine import Parser, ParserResources
 ROOT = Path(__file__).resolve().parents[1]
 
 
+
+def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, Any] | None:
+    """Preserve analysis offsets, map only spans proven original by the corpus gateway."""
+    if trace is None:
+        return None
+    mapped = dict(trace)
+    events = []
+    for raw in trace.get("events", []):
+        event = dict(raw)
+        for field, output_field in (("analysis_span", "reference_span"),
+                                    ("child_span", "child_reference_span")):
+            span = event.get(field)
+            if isinstance(span, list) and len(span) == 2:
+                original = prepared.reference_span(*span)
+                event[output_field] = list(original) if original is not None else None
+                event[output_field + "_mapping"] = (
+                    "exact" if original is not None else "unavailable")
+        events.append(event)
+    mapped["events"] = events
+    mapped["reference_scope"] = "frozen_case_text_exact_only"
+    return mapped
+
+
 def eligible_dialogue_residuals(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Choose by *observed* scoped roots, never by presumed grammar mistakes."""
     result = []
@@ -92,6 +115,8 @@ def render(records: list[dict[str, Any]], summary: dict[str, Any]) -> str:
                     f"  - `{sample['stage']}` on `{sample['category']}` "
                     f"{sample['analysis_span']}"
                 )
+                if sample.get("reference_span") is not None:
+                    compact += f"; original span {sample['reference_span']}"
                 if sample.get("rule_id"):
                     compact += f", rule `{sample['rule_id']}`"
                 if sample.get("direct_atom_conflicts"):
@@ -157,10 +182,15 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     raise ValueError("Quoted analysis text differs from canonical")
                 stats = parsed.stats
                 record["replay_outcome"] = classify(parsed.completed, stats)
-                record["scoped_dialogue"] = stats.get("dialogue_attempt") or {}
+                scoped = dict(stats.get("dialogue_attempt") or {})
+                if "rejection_trace" in scoped:
+                    scoped["rejection_trace"] = map_trace_to_reference(
+                        scoped["rejection_trace"], prepared)
+                record["scoped_dialogue"] = scoped
                 record["ordinary_fallback"] = {
                     "structural_root_nodes": int(stats.get("structural_root_nodes", 0)),
-                    "rejection_trace": stats.get("rejection_trace"),
+                    "rejection_trace": map_trace_to_reference(
+                        stats.get("rejection_trace"), prepared),
                 }
             except SentenceDeadline:
                 record["replay_outcome"] = "deadline_censored"

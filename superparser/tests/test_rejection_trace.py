@@ -7,7 +7,10 @@ from pathlib import Path
 from seman_parser.engine import Parser
 from seman_parser.features import Atom, FeatureStructure
 from seman_parser.vector_chart import ForestNode, _RejectionTrace
-from scripts.probe_dialogue_rejections import eligible_dialogue_residuals, summary_for
+from scripts.probe_dialogue_rejections import (
+    eligible_dialogue_residuals, summary_for, map_trace_to_reference,
+)
+from research.verbnet_lr.corpus_pipeline import PreparedCorpusInput, CorpusParseMode
 
 
 class RejectionTraceTests(unittest.TestCase):
@@ -76,6 +79,29 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertNotIn("rejection_trace", baseline.stats)
         with self.assertRaisesRegex(ValueError, "rejection_trace_limit"):
             parser.parse(text, rejection_trace_limit=101)
+
+    def test_reference_mapping_only_for_nonsynthetic_original_characters(self):
+        prepared = PreparedCorpusInput(
+            analysis_text='"They says."',
+            reference_text="They says.",
+            source_text="They says.",
+            synthetic_prefix='"', synthetic_suffix='"',
+            synthetic_terminal=False, mode=CorpusParseMode.QUOTE_BALANCED,
+        )
+        original_trace = {"events": [
+            {"analysis_span": [1, 5], "child_span": [6, 10]},
+            {"analysis_span": [0, 1], "child_span": [10, 11]},
+        ], "exhaustive": False}
+        mapped = map_trace_to_reference(original_trace, prepared)
+        self.assertEqual(mapped["events"][0]["reference_span"], [0, 4])
+        self.assertEqual(mapped["events"][0]["child_reference_span"], [5, 9])
+        self.assertEqual(mapped["events"][0]["reference_span_mapping"], "exact")
+        self.assertIsNone(mapped["events"][1]["reference_span"])
+        self.assertEqual(mapped["events"][1]["reference_span_mapping"],
+                         "unavailable")
+        self.assertIsNone(mapped["events"][1]["child_reference_span"])
+        self.assertEqual(original_trace["events"][0]["analysis_span"], [1, 5])
+        self.assertFalse(mapped["exhaustive"])
 
     def test_dialogue_selection_is_by_root_evidence_not_language_guess(self):
         cases = [

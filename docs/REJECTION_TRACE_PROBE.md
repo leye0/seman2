@@ -46,3 +46,12 @@ violation is inferred from a failed parse alone.
 
 This is the **first research instrument**, not yet a complete causal
 explainer or a proof-licensed local anomaly detector.
+
+## Source coordinates
+
+The independent replay report retains original `analysis_span` coordinates,
+then maps `reference_span` (and child spans) with
+`PreparedCorpusInput.reference_span`. Mapping is `exact` only for
+characters in the original frozen case; synthetic quotation delimiters
+or unavailable regions are `null` with `reference_span_mapping=unavailable`.
+No offset is inferred from token order or from source neighbors.
