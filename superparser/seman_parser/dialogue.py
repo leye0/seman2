@@ -9,7 +9,7 @@ and possessives, not dialogue delimiters.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from .features import FeatureStructure
 from .segmentation import LexicalCandidate, LexicalLattice
@@ -108,6 +108,58 @@ def dialogue_lattice(base: LexicalLattice) -> LexicalLattice | None:
                     source="dialogue-delimiter",score=0,
                     provenance={"boundary":"terminal_punctuation"},
                 ))
+    # A verbless quoted continuation may inherit its omitted predicate from
+    # the preceding discourse unit. Only expose the start of that structural
+    # analysis when the lexical lattice independently attests an opening
+    # quotation, an immediately following coordinator, adjacent adverbs,
+    # a PP start, a literal comma, and another PP start. This does not
+    # synthesize a predicate or replace any original lexical candidate.
+    # Crucially, unrelated long quotations must not start fragment searches
+    # (the canonical literary dialogue at index 359 is near its budget).
+    def next_to(left: int, right: int) -> bool:
+        return right > left and base.text[left:right].isspace()
+
+    lexical = base.candidates
+    literal_commas = [c for c in lexical if c.category == "COMMA"
+                      and c.features.as_dict().get("literal_comma") == "true"]
+
+    def next_candidates(left: int, category: str):
+        return (c for c in lexical if c.category == category
+                and next_to(left, c.span_start))
+
+    def has_parenthetical_pp(prep: LexicalCandidate) -> bool:
+        return any(
+            any(closer.side == "close" and trailing.span_end < closer.start
+                for closer in boundaries)
+            for comma in literal_commas if prep.span_end < comma.span_start
+            for trailing in next_candidates(comma.span_end, "PREP")
+        )
+
+    def has_fragment_start(coord: LexicalCandidate) -> bool:
+        return any(
+            has_parenthetical_pp(prep)
+            for first in next_candidates(coord.span_end, "ADV")
+            for second in next_candidates(first.span_end, "ADV")
+            for prep in next_candidates(second.span_end, "PREP")
+        )
+
+    for boundary in boundaries:
+        if boundary.side == "close":
+            continue
+        coordinators = [c for c in lexical if c.category == "COORD"
+                        and c.features.as_dict().get("nominal_coordination") == "true"
+                        and (boundary.end == c.span_start
+                             or next_to(boundary.end, c.span_start))]
+        if not coordinators:
+            continue
+        candidate_opener = next((c for c in candidates
+                                 if c.category == "OPEN-QUOTE"
+                                 and c.span_start == boundary.start), None)
+        if candidate_opener is None:
+            continue
+        if any(has_fragment_start(coord) for coord in coordinators):
+            candidates.append(replace(
+                candidate_opener, category="OPEN-QUOTE-ELLIPTICAL-COORD"))
     return LexicalLattice(
         text=base.text,
         tokens=base.tokens,
