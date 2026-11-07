@@ -112,6 +112,7 @@ def parse_corpus_case(
     kbest_work_limit: int | None = None,
     allow_marked_deviations: bool = False,
     rejection_trace_limit: int = 0,
+    preflight_diagnostics: bool = False,
 ):
     """One canonical way to parse a novel case, including quotation context.
 
@@ -125,6 +126,8 @@ def parse_corpus_case(
         options["allow_marked_deviations"] = True
     if rejection_trace_limit:
         options["rejection_trace_limit"] = rejection_trace_limit
+    if preflight_diagnostics:
+        options["preflight_diagnostics"] = True
     report = parser.parse(prepared.analysis_text, **options)
     # The diagnostic sees EXACTLY the lexical lattice used by the parser,
     # not a separately rebuilt or differently configured approximation.
