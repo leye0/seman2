@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
-from hashlib import sha256
 import json
 from pathlib import Path
 from typing import Any, Mapping
@@ -110,6 +109,7 @@ def triage(
         prior = ref_by_index.get(index)
         status = observed["status"]
         evidence = f_by_index.get(index, {}).get("lexical_diagnostic")
+        dialogue = observed.get("dialogue_attempt")
         lexical = None if evidence is None else {
             "words_without_any_candidate": evidence["words_without_any_candidate"],
             "words_without_exact_candidate": evidence["words_without_exact_candidate"],
@@ -134,6 +134,11 @@ def triage(
             "marked_parse_reexecuted_in_this_audit": False,
             "observed_evidence": {
                 "structural_root_nodes": observed.get("structural_root_nodes"),
+                "dialogue_attempt": {
+                    "structural_root_nodes": dialogue.get("structural_root_nodes"),
+                    "budget_exceeded": bool(dialogue.get("budget_exceeded")),
+                    "kbest_budget_exceeded": bool(dialogue.get("kbest_budget_exceeded")),
+                } if isinstance(dialogue, dict) else None,
                 "forest_budget_exceeded": bool(observed.get("forest_budget_exceeded")),
                 "kbest_budget_exceeded": bool(observed.get("kbest_budget_exceeded")),
                 "dialogue_scoped": bool(observed.get("dialogue_scoped")),
@@ -164,6 +169,10 @@ def triage(
         "new_unreviewed_failures": len([x for x in rows if x["trajectory"] == "new_unreviewed_failure"]),
         "current_total_failed": len(current),
         "current_status_counts": dict(sorted(Counter(x["current_status"] for x in current).items())),
+        "failed_with_dialogue_roots_but_no_complete_analysis": sum(
+            (x["observed_evidence"]["dialogue_attempt"] or {}).get(
+                "structural_root_nodes", 0) > 0 for x in current
+        ),
         "original_track_counts_overlapping": dict(sorted(tracks.items())),
         "current_failed_with_lexical_diagnostic": sum(x["observed_evidence"]["lexical_diagnostic"] is not None for x in current),
         "current_failed_without_full_lexical_candidate": sum(
@@ -210,6 +219,9 @@ def render_overview(rows: list[dict[str, Any]], summary: Mapping[str, Any]) -> s
         before = row["observed_evidence"]["source_context"]["preceding_semicolon_part"]
         if before:
             lines.extend(["Preceding part of the same original sentence:", "", "> " + before.replace("\n", " "), ""])
+        dialogue = row["observed_evidence"]["dialogue_attempt"]
+        if dialogue is not None:
+            lines.extend(["Dialogue attempt: " + repr(dialogue) + ".", ""])
         lex = row["observed_evidence"]["lexical_diagnostic"]
         if lex is None:
             lines.extend(["Full lexical diagnostic: **not available** (e.g. timed out or recovered).", ""])
