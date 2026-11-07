@@ -162,7 +162,8 @@ class PreflightRoutingTests(unittest.TestCase):
                 ):
                     records.append({
                         "index": index, "repeat": rep,
-                        "policy": policy, "status": "complete",
+                        "policy": policy, "expected_route": expected,
+                        "status": "complete",
                         "selected_signature": "same-tree",
                         "complexity_route": route,
                         "forest_or_kbest_budget_exceeded": False,
