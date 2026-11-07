@@ -104,3 +104,28 @@ de démonstration de causalité globale. Il faut ensuite explorer les
 derivations concurrentes, l'absence de preuve dans *toutes*
 les solutions, les rapports positifs de contrôles et les tronquages
 de recherche avant de conclure à une anomalie de phrase.
+
+## Échantillonnage priorisé (sans changer l'exécution)
+
+Le rapport conserve toujours les compteurs `observed_by_stage` de
+toutes les tentatives observées sous instrumentation. La limite globale
+sur `events` et une limite par type empêchent de déborder la mémoire.
+
+Si des incompatibilités de bornes k-best ont déjà rempli la fenêtre,
+un événement ultérieur **plus directement établi** peut remplacer un
+échantillon de priorité inférieure, de manière déterministe :
+
+1. Flux d'enfant contextuel réellement épuisé.
+2. Analyse matérialisée dépourvue d'une preuve `requires`.
+3. Rejet d'unification réellement tenté et preuve statiquement
+   impossible dans une règle.
+4. Preuve non fournie dans l'estimation des bornes.
+5. Incompatibilités ordinaires des bornes k-best.
+
+La sortie expose
+`sampling_policy=per_stage_cap_with_priority_replacement`. Il s'agit
+d'un **échantillon non chronologique et non exhaustif** ; les
+compteurs d'origine sont conservés mais les événements retenus ne
+doivent pas servir à estimer une fréquence statistique ou une cause
+grammaticale. Les décisions du parseur, les budgets et l'arbre
+sélectionné ne dépendent jamais de ce choix d'observations.
