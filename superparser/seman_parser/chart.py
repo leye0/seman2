@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from heapq import heappop, heappush
-from typing import Any, Hashable, Mapping, Sequence
+from typing import Any, Callable, Hashable, Mapping, Sequence
 
 from .features import (
     Bindings,
@@ -190,27 +190,72 @@ class ParseResult:
         return ordered if limit is None else ordered[:limit]
 
     def usage_deviations(self):
-        """Provenance-backed, local mismatches in the selected analysis only."""
+        """Rule-proven conflicts in the selected complete tree, never in failures."""
         from .nonstandard import collect_usage_deviations
 
-        return collect_usage_deviations(self.best(), self.text)
+        return collect_usage_deviations(self.best(), self.text) if self.completed else ()
 
-    def as_dict(self) -> dict[str, Any]:
-        best = self.best()
+    def diagnostic_summary(self) -> dict[str, Any]:
+        """Conservative Layer 1 diagnostic; no inference from a failed parse.
+
+        The grammatical status describes only the selected tree licensed by
+        the current grammar, not the sentence's intent or every possible tree.
+        """
+        return self._diagnostic_summary(self.usage_deviations())
+
+    def _diagnostic_summary(self, deviations: Sequence[Any]) -> dict[str, Any]:
+        limits = []
+        if self.stats.get("budget_exceeded"):
+            limits.append("recognition_budget_exceeded")
+        if self.stats.get("kbest_budget_exceeded"):
+            limits.append("kbest_budget_exceeded")
+        dialogue = self.stats.get("dialogue_attempt")
+        if isinstance(dialogue, Mapping):
+            if dialogue.get("budget_exceeded"):
+                limits.append("dialogue_recognition_budget_exceeded")
+            if dialogue.get("kbest_budget_exceeded"):
+                limits.append("dialogue_kbest_budget_exceeded")
+        if not self.completed:
+            limits.append("no_certified_complete_analysis")
+        return {
+            "parse_status": "complete" if self.completed else "incomplete",
+            "grammatical_status": (
+                "inconclusive" if not self.completed else
+                "nonstandard_attested" if deviations else "standard"
+            ),
+            "diagnostic_scope": "selected_complete_tree" if self.completed else "none",
+            "search_limitations": limits,
+        }
+
+    def as_dict(
+        self, *, reference_span: Callable[[int, int], tuple[int, int] | None] | None = None,
+    ) -> dict[str, Any]:
+        best = self.best() if self.completed else None
         from .nonstandard import collect_usage_deviations
 
         deviations = collect_usage_deviations(best, self.text)
+        alternatives = self.alternatives() if self.completed else ()
+        # K-best is a *sample*, not an exhaustive proof that the sentence
+        # lacks another valid analysis; report this ambiguity independently.
+        unmarked = sum(not collect_usage_deviations(item, self.text)
+                       for item in alternatives)
+        diagnostic = self._diagnostic_summary(deviations)
         return {
             "text": self.text,
             "completed": self.completed,
-            "grammatical_status": (
-                "unresolved" if not self.completed else
-                "nonstandard_attested" if deviations else "standard"
-            ),
-            "usage_deviations": [item.as_dict() for item in deviations],
+            **diagnostic,
+            "usage_deviations": [
+                item.as_dict(reference_span=reference_span) for item in deviations
+            ],
+            "ambiguity": {
+                "examined_complete_trees": len(alternatives),
+                "unmarked_trees": unmarked,
+                "marked_trees": len(alternatives) - unmarked,
+                "exhaustive": False,
+            },
             "lattice": self.lattice.as_dict(),
             "best": best.as_dict() if best else None,
-            "alternatives": [item.as_dict() for item in self.alternatives()],
+            "alternatives": [item.as_dict() for item in alternatives],
             "stats": dict(self.stats),
         }
 

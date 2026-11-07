@@ -108,6 +108,36 @@ class Case480MarkedDialogueTests(unittest.TestCase):
         deviations = marked.usage_deviations()
         self.assertEqual(len(deviations), 2)
         self.assertEqual([d.rule_id for d in deviations], [MARKED_INVERTED, MARKED_POST])
+        diagnostic = marked.as_dict(reference_span=prepared.reference_span)
+        self.assertEqual(diagnostic["parse_status"], "complete")
+        self.assertEqual(diagnostic["diagnostic_scope"], "selected_complete_tree")
+        self.assertEqual(diagnostic["search_limitations"], [])
+        self.assertEqual(len(diagnostic["usage_deviations"]), 2)
+        self.assertEqual(diagnostic["ambiguity"]["exhaustive"], False)
+        for observed, expected_subject, expected_predicate in zip(
+            diagnostic["usage_deviations"],
+            ((34, 38), (59, 63)),
+            ((29, 33), (64, 68)),
+        ):
+            self.assertEqual(observed["evidence"]["type"], "explicit_marked_grammar_rule")
+            self.assertEqual(observed["intent_provenance"], None)
+            self.assertEqual(observed["subject"]["reference_span"], list(expected_subject))
+            self.assertEqual(observed["predicate"]["reference_span"], list(expected_predicate))
+            self.assertEqual(observed["subject"]["reference_mapping"], "exact")
+            self.assertEqual(observed["predicate"]["reference_mapping"], "exact")
+            parent = root
+            for index in observed["evidence"]["parent"]["path"]:
+                parent = parent.children[index]
+            self.assertEqual(parent.rule_id, observed["rule_id"])
+            self.assertEqual(list((parent.start, parent.end)), observed["parent_span"])
+            for role in ("subject", "predicate"):
+                item = root
+                for index in observed["evidence"][role]["path"]:
+                    item = item.children[index]
+                self.assertEqual(item.category, observed["evidence"][role]["category"])
+                self.assertEqual(
+                    [item.start, item.end], observed[role]["analysis_span"])
+                self.assertEqual(item.rule_id, observed["evidence"][role]["rule_id"])
         for deviation, subject_span, predicate_span, source_subject, source_verb in (
             (deviations[0], (35, 39), (30, 34), (34, 38), (29, 33)),
             (deviations[1], (60, 64), (65, 69), (59, 63), (64, 68)),

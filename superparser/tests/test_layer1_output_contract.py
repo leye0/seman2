@@ -53,6 +53,15 @@ class Layer1ContractTests(unittest.TestCase):
         report=self.parser.parse("John opened the box.")
         exported=report.as_dict()
         self.assertEqual(exported["text"],"John opened the box.")
+        self.assertEqual(exported["parse_status"],"complete")
+        self.assertEqual(exported["grammatical_status"],"standard")
+        self.assertEqual(exported["diagnostic_scope"],"selected_complete_tree")
+        self.assertEqual(exported["usage_deviations"],[])
+        self.assertEqual(exported["ambiguity"]["exhaustive"],False)
+        self.assertEqual(
+            report.as_dict(reference_span=lambda a,b: (a,b))["parse_status"],
+            "complete",
+        )
         self.assertIn("lattice",exported)
         self.assertIn("best",exported)
         self.assertIn("syntax",exported["best"])

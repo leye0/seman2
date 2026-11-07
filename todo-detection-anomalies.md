@@ -74,11 +74,15 @@ Les positions, références de nœuds et provenance source doivent être **prés
 
 ### P0 — Formaliser et fiabiliser le diagnostic existant
 
-- [ ] Recenser les champs et invariants réels de `UsageDeviation`, `ParseResult`, `ParseReport` et du mapping des spans; définir un contrat public stable **sans nouveau point d'entrée de parsing**.
-- [ ] Distinguer dans les résultats `completed`, `grammatical_status`, écarts constatés, ambigüités et limites de recherche; **ne jamais** inférer « fautif » de `completed=False`.
-- [ ] Exiger une preuve locale pour chaque anomalie (traits, relation, nœuds, règle, offsets); permettre **plusieurs écarts distincts dans une seule phrase** sans duplication.
-- [ ] Garantir que le mode strict ne fabrique ni accord ni faux succès; le mode marqué reste un **choix explicite** jusqu'à décision documentée.
-- [ ] Faire apparaître les contradictions grammaticales dans les diagnostics sans les confondre avec les constructions valides **elliptiques, dialectales ou littéraires**.
+**Contrat P0 implémenté :** [`docs/LAYER1_USAGE_DIAGNOSTICS_CONTRACT.md`](docs/LAYER1_USAGE_DIAGNOSTICS_CONTRACT.md).
+Il fiabilise les conflits des règles marquées existantes, sans prétendre
+détecter les familles de fautes non encore modélisées (P1–P3).
+
+- [x] Recenser les champs et invariants réels de `UsageDeviation`, `ParseResult`, `ParseReport` et du mapping des spans; définir un contrat public stable **sans nouveau point d'entrée de parsing**.
+- [x] Distinguer dans les résultats `completed`, `grammatical_status`, écarts constatés, ambigüités et limites de recherche; **ne jamais** inférer « fautif » de `completed=False`.
+- [x] Exiger une preuve locale pour chaque anomalie **prise en charge** (traits, relation, nœuds, règle, offsets); permettre **plusieurs écarts distincts dans une seule phrase** sans duplication.
+- [x] Garantir que le mode strict ne fabrique ni accord ni faux succès; le mode marqué reste un **choix explicite** jusqu'à décision documentée.
+- [x] Faire apparaître les contradictions **déjà modélisées** dans les diagnostics sans assimiler absence de parse, ellipse ou autre construction licite à une faute.
 
 ### P1 — Généraliser par familles de contraintes
 
