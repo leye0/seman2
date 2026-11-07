@@ -274,3 +274,21 @@ Un pilotage rapide ne pourra être promu que si des cohortes
 indépendantes et un audit qualitatif des arbres montrent une
 amélioration mesurable et sans dégradation, au-delà des petites
 variations de latence de l'environnement CI.
+
+### Calibration des coûts : premier passage à exclure
+
+Le premier pilotage a montré une asymétrie de cache importante même
+sur un contrôle qui emprunte **exactement le même reconnaisseur** :
+le cas témoin 56 a pris 272 ms au premier appel témoin et
+14 ms au premier appel expérimental, puis environ 12 ms des deux
+côtés au passage suivant. Attribuer ce premier écart au choix
+du trie serait erroné.
+
+Le benchmark est renforcé à **quatre paires contrebalancées**,
+et publie les temps de l'ensemble des paires ainsi que les ratios
+**hors premier passage**. Le ratio des cas restés sur le chemin
+canonique sert de contrôle d'environnement ; un ratio ajusté
+(trie/témoin) est présenté comme estimation exploratoire, pas comme
+preuve causale ou gain généralisable. Toute perte de complétion
+canonique ou divergence d'arbre **sans saturation** provoque un échec
+de la CI du pilote.

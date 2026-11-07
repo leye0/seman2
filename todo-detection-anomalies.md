@@ -1,3 +1,10 @@
+**Calibration des performances :** les mesures distinguent désormais
+le premier passage (caches lexicaux froids) des suivants et rapportent
+une comparaison relative aux contrôles non routés. Les paires
+expérimentales échouent en CI si une analyse complète est perdue
+ou un arbre change sans saturation. Aucun gain n'est extrapolé
+à toute la population des phrases.
+
 # TODO — Détection et qualification des anomalies grammaticales
 
 > Projet **Seman2**, **Layer 1** (anglais). Document de conception et de travail, pas une fonctionnalité annoncée comme terminée.

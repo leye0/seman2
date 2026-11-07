@@ -108,7 +108,7 @@ jobs:
             --cohort /tmp/novel-parse-diagnostics/cohort.jsonl \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --minimum-tokens 17 --routed-count 12 --control-count 6 \
-            --repeats 2 --max-items 50000 --kbest-work-limit 500000 \
+            --repeats 4 --max-items 50000 --kbest-work-limit 500000 \
             --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
       - name: Guard fixed-cohort coverage near the verified 460/500 checkpoint
         run: |
