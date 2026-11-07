@@ -20,6 +20,55 @@ _TOKEN_RE = re.compile(
     re.UNICODE,
 )
 
+# The fixed 16-point compass rose is a closed notation system, not an
+# open-class word-guessing heuristic. A dotted bearing (N.N.E., E.S.E., W.)
+# is one lexical span; its constituent letter and period readings remain in
+# the original lattice as independent alternatives.
+_DOTTED_COMPASS_RE = re.compile(r"(?<![A-Za-z.])(?:[NSEW]\.){1,3}(?![A-Za-z])")
+_COMPASS_ROSE = frozenset({
+    "N", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW",
+    "WSW", "W", "WNW", "NW", "NNW", "NNE",
+})
+
+
+def _compass_notation_candidates(text: str, base: list[LexicalCandidate]) -> list[LexicalCandidate]:
+    """Retain the ordinary letters while adding exact dotted compass spans."""
+    views = []
+    for match in _DOTTED_COMPASS_RE.finditer(text):
+        bearing = match.group().replace(".", "")
+        if bearing not in _COMPASS_ROSE:
+            continue
+        views.append(LexicalCandidate(
+            span_start=match.start(), span_end=match.end(),
+            surface=match.group(), lemma=bearing.casefold(),
+            category="COMPASS-POINT",
+            features=FeatureStructure.build({"compass_point": "true"}),
+            normalized=bearing,
+            interpretations=(LexicalInterpretation(
+                None, bearing.casefold(), provenance={"system": "16_point_compass_rose"}),),
+            source="compass-notation", score=0.75,
+            provenance={"construction": "dotted_compass_abbreviation",
+                        "system": "16_point_compass_rose"},
+        ))
+    if len(views) >= 2:
+        # Only a notation with at least two attested compass points can
+        # license a terminal stop for the dedicated bearing/measure record.
+        views.extend(replace(candidate, category="NOTATION-STOP")
+                     for candidate in base
+                     if candidate.surface == "." and candidate.span_end == len(text))
+        # Bind the opening of a location/bearing note to an attested name
+        # BEFORE the first compass direction. Without this typed anchor, a
+        # general NP-leading reference rule would start inside essentially
+        # every sentence, including long dialogues close to their budget.
+        first_point = min(view.span_start for view in views
+                          if view.category == "COMPASS-POINT")
+        views.extend(replace(candidate, category="NOTATION-PLACE-START")
+                     for candidate in base
+                     if candidate.category == "PROPER-NOUN"
+                     and candidate.span_start == 0
+                     and candidate.span_end < first_point)
+    return views
+
 
 @dataclass(frozen=True, slots=True)
 class LexicalInterpretation:
@@ -759,6 +808,7 @@ def build_lattice(
             *possession_degree_views, *relative_prep_views,
             *coordinated_partitive_views,
             *absolute_views]
+    kept.extend(_compass_notation_candidates(text, kept))
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(
