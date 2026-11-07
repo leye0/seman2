@@ -145,3 +145,63 @@ Les nouveaux résultats sont stockés dans les fichiers
 `dialogue_rejection_comparators.md` de l'artefact CI ; ils ne changent
 ni le score ni le statut strict de la cohorte.
 Voir [`REJECTION_TRACE_PROBE.md`](REJECTION_TRACE_PROBE.md).
+
+## Première étape de triage rapide, avant tout parsing
+
+Le module `seman_parser.fast_preflight` expose une classification
+**non syntaxique** depuis le texte d'analyse préparé. Cette fonction
+ne charge pas WordNet, ne construit pas de lattice et n'explore
+pas les dérivations ; elle propose des **pistes** :
+
+- `source_semicolon_continuation` : véritable provenance de partie
+  postérieure au point-virgule, sans déduction grammaticale
+- `dialogue_or_quote_surface` : indices typographiques
+  et guillemets transférés
+- `length_attention` et `many_comma_boundaries` :
+  repères descriptifs, pas un prédicteur de saturation démontré
+- `adjacent_candidate_agreement_hypothesis` uniquement si le caller
+  possède **déjà** le lattice lexical et que toutes les lectures
+  finies adjacentes observées sont incompatibles avec les pronoms
+  candidats ; aucun lien sujet-prédicat n'est prouvé par juxtaposition
+
+Le résultat signale explicitement
+`can_skip_full_parse=false`,
+`grammatical_fault_established=false`,
+`failure_cause_established=false` et `exhaustive=false`.
+Les catégories de triage ne doivent jamais être confondues avec
+une faute ni un succès de reconnaissance.
+
+Le nouveau script `scripts.audit_fast_preflight` rejoint les 500
+résultats canoniques existants *après* leur calcul, en respectant la
+provenance des sources et l'empreinte SHA-256 figée. Le chronométrage
+porte seulement sur le passage surface, répété sans disque ni parsing.
+Les 474 arbres complétés ne sont pas un jeu de validation annoté
+grammaticalement; les 26 échecs ne sont pas 26 fautes. Les
+`fast_preflight_cases.jsonl`,
+`fast_preflight_summary.json` et
+`fast_preflight_report.md` seront dans l'artefact CI.
+
+La proposition d'optimisation réelle (**arrêt anticipé,
+aiguillage de stratégie**) reste volontairement interdite tant que
+les taux d'alerte, les sorties sans signal et les coûts complets
+n'ont pas été mesurés et validés sur une cohorte indépendante.
+
+### Prédiagnostic lexical : coût de préparation mesuré séparément
+
+Le benchmark ajoute une **sonde lexicale** sur tous les échecs canoniques
+et 26 contrôles réussis répartis de façon déterministe. Il mesure
+séparément le coût de `build_lattice` avec les ressources WordNet 3.0
+habituelles et le coût de `fast_preflight` quand **ce lattice existe déjà**.
+Il ne déclenche aucun `Parser.parse` supplémentaire. C'est une
+exploration de coût, pas une nouvelle route publique de reconnaissance.
+
+Un indice adjacent `N/PRONOUN/PROPER-NOUN` + `V/COPULA/AUX` à
+accord incompatible reste **une hypothèse sans lien syntaxique démontré**.
+Ce choix permet d'examiner aussi les noms au pluriel suivis de formes
+finies singulières sans prétendre corriger ou condamner une phrase.
+
+Sorties dans le même artefact :
+`fast_preflight_lexical_spotcheck.jsonl` et
+`fast_preflight_lexical_spotcheck_summary.json`. On ne doit jamais
+présenter le temps de traitement du lattice comme un gain gratuit;
+une future intégration devra réutiliser celui du parseur canonique.
