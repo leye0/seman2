@@ -100,6 +100,17 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Première tranche de triage faible coût (non syntaxique) :** fonction
+`fast_preflight` disponible AVANT l'appel à `Parser.parse`, sans
+construction de lattice ni forêt; signaux de dialogue, provenance
+de continuation après point-virgule, longueur et ponctuation.
+Un lattice **déjà disponible** peut ajouter des hypothèses
+morphologiques candidates, toujours sans prouver un lien syntaxique.
+Audit systématique des 500 phrases et temps médian/p95 conservés dans
+l'artefact CI. Ce module **n'autorise jamais** à sauter ou modifier
+l'analyse; aucune prédiction de faute n'est déclarée.
+
+
 **Suite P2 (observation seulement) :** trace de `requires` sans preuve
 positive et ascendance bornée des requêtes syntaxiques, avec contrôles
 stricts #76/#244 et comparaison opt-in marquée #463/#480. Cette
