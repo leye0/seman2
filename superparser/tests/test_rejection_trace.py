@@ -90,7 +90,7 @@ class RejectionTraceTests(unittest.TestCase):
         )
         original_trace = {"events": [
             {"analysis_span": [1, 5], "child_span": [6, 10]},
-            {"analysis_span": [0, 1], "child_span": [10, 11]},
+            {"analysis_span": [0, 1], "child_span": [11, 12]},
         ], "exhaustive": False}
         mapped = map_trace_to_reference(original_trace, prepared)
         self.assertEqual(mapped["events"][0]["reference_span"], [0, 4])
