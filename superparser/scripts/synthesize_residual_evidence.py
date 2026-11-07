@@ -180,10 +180,15 @@ def synthesize(
             checks.append("compare_strict_with_independent_marked_tree")
         if lexical_row and lexical_row["candidate_agreement_hypothesis"]:
             checks.append("inspect_candidate_agreement_with_actual_syntactic_links")
+        if "notation_or_genre" in source["research_tracks"]:
+            checks.append("inspect_register_or_notation_without_forcing_a_finite_clause")
         if (observed["lexical_diagnostic"] is not None and
                 observed["lexical_diagnostic"]["words_without_any_candidate"]):
             checks.append("inspect_missing_lexical_candidates")
-        if not checks:
+        # Semicolon and dialogue signals are never a substitute for examining
+        # the finite syntax. In particular, residual #115 has overt subjects
+        # despite being a continuation of its original source sentence.
+        if source["current_outcome"] == "structural_unresolved":
             checks.append("inspect_constituents_valence_and_selected_attachments")
         traces = {}
         if replay:
@@ -203,6 +208,9 @@ def synthesize(
             "canonical_outcome": source["current_outcome"],
             "trajectory": source["trajectory"],
             "research_tracks_are_hypotheses": source["research_tracks"],
+            "research_hypothesis": source["hypothesis"],
+            "hypothesis_assessment": source["hypothesis_assessment"],
+            "prior_marked_test_reference": source["test_reference"],
             "source_context": context,
             "preflight": {
                 "lane": surface["lane"],
@@ -280,7 +288,13 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
             "> " + r["source_text"].replace("\n", " "), "",
             f"Strict: `{r['canonical_status']}`; trajectory: `{r['trajectory']}`. "
             "Surface/lexical clues are hypotheses, not dependencies.", "",
+            f"Historical review ({r['hypothesis_assessment']}): "
+            f"{r['research_hypothesis'] or 'unreviewed'}", "",
         ]
+        before = r["source_context"].get("preceding_semicolon_part")
+        if before:
+            lines += ["Preceding source segment (not a proven grammatical dependency):", "",
+                      "> " + before.replace("\n", " "), ""]
         lex = r["lexical_spotcheck"]
         lines.append("Lexical spotcheck: " + (
             f"{lex['candidate_count']} candidates; adjacent agreement hypothesis="

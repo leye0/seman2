@@ -315,6 +315,12 @@ Le script ne conclut jamais à une faute grammaticale ou à la cause
 unique d'un échec à partir d'une hypothèse lexicale, d'une proximité
 source ou d'un rejet local.
 
+L'hypothèse manuelle originale et son niveau de provenance restent
+visibles dans chaque fiche : **#115** demande à la fois l'examen de
+la continuation source et celui de sa proposition finie explicite;
+**#167** suggère l'étude du registre épistolaire et de sa notation.
+Un indice de point-virgule ne peut donc masquer une lacune syntaxique.
+
 Trois artefacts supplémentaires sont produits dans le workflow
 `novel-parse-diagnostics` :
 
@@ -330,3 +336,13 @@ les conflits syntaxiques démontrés des branches candidates rejetées;
 faire annoter indépendamment des phrases grammaticales, fautives,
 non standard et ambiguës pour mesurer les faux positifs. Cette synthèse
 ne remplace ni ces preuves ni un test de justesse de l'arbre sélectionné.
+
+**Validation du 7 novembre 2026 :** le workflow
+[42419458446](https://github.com/leye0/seman2/actions/runs/42419458446)
+a confirmé **474/500** analyses strictes complètes, les **26** membres
+historiques encore non complets, **7** relectures de dialogue,
+**2** comparateurs marqués et **432** événements locaux retenus.
+Les cinq tests du synthétiseur ont passé en CI. L'enrichissement
+ultérieur des pistes multiples et hypothèses historiques a été
+réexécuté avec succès sur les artefacts réels de cette Action,
+sans refaire le parsing des 500 phrases.

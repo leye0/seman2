@@ -46,7 +46,10 @@ def fixture():
             "current_outcome": "complete" if status == "complete" else
             "resource_censored" if status == "timeout" else "structural_unresolved",
             "trajectory": "recovered" if status == "complete" else "unresolved",
-            "research_tracks": ["finite_syntax"],
+            "research_tracks": ["notation_or_genre"] if i == 167 else ["finite_syntax"],
+            "hypothesis": "Check overt finite structure" if i == 115 else "Provisional review",
+            "hypothesis_assessment": "provisional_hypothesis",
+            "test_reference": None,
             "observed_evidence": {
                 "lexical_diagnostic": None if i == 312 else {
                     "words_without_any_candidate": [], "candidate_count": 2},
@@ -109,6 +112,12 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(by_index[480]["marked_comparator"]["selected_deviation_count"], 2)
         self.assertIn("compare_source_continuation_with_independent_finite_clauses",
                       by_index[8]["suggested_checks_not_diagnoses"])
+        self.assertIn("inspect_constituents_valence_and_selected_attachments",
+                      by_index[8]["suggested_checks_not_diagnoses"])
+        self.assertEqual(by_index[115]["research_hypothesis"],
+                         "Check overt finite structure")
+        self.assertIn("inspect_register_or_notation_without_forcing_a_finite_clause",
+                      by_index[167]["suggested_checks_not_diagnoses"])
         self.assertTrue(all(not r["grammatical_fault_established"] and
                             not r["unique_failure_cause_established"] and
                             not r["exhaustive"] for r in rows))
