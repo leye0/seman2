@@ -928,6 +928,23 @@ def build_lattice(
             *coordinated_partitive_views,
             *absolute_views]
     kept.extend(_compass_notation_candidates(text, kept))
+    # A surface that already has an overt determiner reading must not be
+    # silently recycled as an attributive noun modifier. Keep its original N
+    # candidate (letter names and other homographs are still legitimate), but
+    # expose the lexical competition as a feature to the noun-compound rule.
+    # This uses category evidence, never a list of individual function words.
+    determiner_spans = {
+        (candidate.span_start, candidate.span_end)
+        for candidate in kept if candidate.category == "DET"
+    }
+    kept = [
+        replace(candidate, features=candidate.features.with_feature(
+            "determiner_homograph", Atom.of("true")))
+        if candidate.category == "N" and (
+            candidate.span_start, candidate.span_end) in determiner_spans
+        else candidate
+        for candidate in kept
+    ]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(
