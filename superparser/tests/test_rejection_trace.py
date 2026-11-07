@@ -65,6 +65,64 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertTrue(observed["truncated"])
         self.assertFalse(observed["exhaustive"])
 
+    def test_priority_sampling_retains_later_exhausted_child_over_hint_flood(self):
+        node = ForestNode(0, 2, 15, 0, "VP", 0)
+        trace = _RejectionTrace(4)
+        # Four independent pruning classes can exhaust the bounded pool
+        # before any materialized evidence is available.
+        initial = (
+            "lexical_hint_unification", "rule_hint_unification",
+            "positive_evidence_lexical_hint_missing",
+            "positive_evidence_rule_hint_impossible",
+        )
+        for stage in initial:
+            trace.record(stage, node)
+        self.assertEqual(trace.as_dict()["sampled_events"], 4)
+        trace.record("child_context_exhausted", node,
+                     rule_id="dialogue_tag", child_index=1,
+                     required_positive=())
+        trace.record("positive_evidence_materialized_missing", node,
+                     required_positive=(), witnessed_positive=())
+        saved = trace.as_dict()
+        self.assertEqual(saved["sampled_events"], 4)
+        self.assertEqual(saved["observed_events"], 6)
+        self.assertEqual(saved["sampling_policy"],
+                         "per_stage_cap_with_priority_replacement")
+        preserved = {e["stage"] for e in saved["events"]}
+        self.assertIn("child_context_exhausted", preserved)
+        self.assertIn("positive_evidence_materialized_missing", preserved)
+        self.assertEqual(saved["observed_by_stage"]["lexical_hint_unification"], 1)
+        self.assertTrue(saved["truncated"])
+        self.assertFalse(saved["grammatical_fault_established"])
+
+        # Later low-priority noise must never displace stronger witnesses.
+        for _ in range(10):
+            trace.record("lexical_hint_unification", node)
+        later = {e["stage"] for e in trace.as_dict()["events"]}
+        self.assertIn("child_context_exhausted", later)
+        self.assertIn("positive_evidence_materialized_missing", later)
+
+    def test_stage_cap_and_sample_count_remain_bounded_after_replacement(self):
+        node = ForestNode(0, 0, 3, 0, "NP", 0)
+        trace = _RejectionTrace(8)
+        for kind in (
+            "lexical_hint_unification",
+            "rule_hint_unification",
+            "positive_evidence_lexical_hint_missing",
+            "positive_evidence_rule_hint_impossible",
+        ):
+            for _ in range(9):
+                trace.record(kind, node)
+        for _ in range(11):
+            trace.record("child_context_exhausted", node)
+        saved = trace.as_dict()
+        self.assertEqual(saved["observed_events"], 47)
+        self.assertLessEqual(saved["sampled_events"], 8)
+        from collections import Counter
+        sampled_by_stage = Counter(e["stage"] for e in saved["events"])
+        self.assertLessEqual(max(sampled_by_stage.values()), 2)
+        self.assertEqual(sampled_by_stage["child_context_exhausted"], 2)
+
     def test_public_parser_option_preserves_status_and_is_not_cached(self):
         parser = Parser.from_dir(
             Path(__file__).resolve().parents[1] / "data", cache_size=8)
