@@ -808,6 +808,9 @@ class _RejectionTrace:
         self.counts: Counter[str] = Counter()
         self.samples: list[dict[str, Any]] = []
         self.stage_samples: Counter[str] = Counter()
+        # Active requests are pushed only when opt-in tracing is enabled.
+        # Their stack is not a derivation tree or a global proof.
+        self.requests: list[dict[str, Any]] = []
 
     def record(
         self, stage: str, node: ForestNode, *,
@@ -818,6 +821,9 @@ class _RejectionTrace:
         child_index: int | None = None,
         child_node: ForestNode | None = None,
         surface: str | None = None,
+        required_positive: Sequence[int] = (),
+        witnessed_positive: Sequence[int] | None = None,
+        evidence_basis: str | None = None,
     ) -> None:
         self.counts[stage] += 1
         if (len(self.samples) >= self.limit
@@ -830,6 +836,20 @@ class _RejectionTrace:
             "category": node.category,
             "analysis_span": [node.start, node.end],
         }
+        # This is a bounded call/request ancestry, not a causal chain of
+        # *failed* nodes. Earlier ancestors can have other valid derivations.
+        if self.requests:
+            item["request_chain"] = [dict(frame) for frame in self.requests[-6:]]
+            item["request_chain_truncated"] = len(self.requests) > 6
+        if required_positive:
+            names = {resolve(name) for name in required_positive}
+            item["required_positive_features"] = sorted(names)
+            if witnessed_positive is not None:
+                witnessed = {resolve(name) for name in witnessed_positive}
+                item["witnessed_positive_features"] = sorted(witnessed)
+                item["missing_positive_features"] = sorted(names - witnessed)
+            if evidence_basis:
+                item["evidence_basis"] = evidence_basis
         if child_index is not None:
             item["child_index"] = child_index
         if child_node is not None:
@@ -964,6 +984,8 @@ class _LazyMaterializer:
         constraint: FeatureStructure | None = None,
         bindings: Bindings | None = None,
         required_features: Sequence[str | int] = (),
+        source_rule_id: str | None = None,
+        source_child_index: int | None = None,
     ) -> CompactAnalysis | None:
         required = constraint if constraint is not None else FeatureStructure.empty()
         required_ids = _required_feature_ids(required_features)
@@ -980,6 +1002,17 @@ class _LazyMaterializer:
         if active_key in self._active_contexts:
             return None
         self._active_contexts.add(active_key)
+        if self.rejection_trace is not None:
+            node = self.forest.nodes[node_id]
+            frame: dict[str, Any] = {
+                "category": node.category,
+                "analysis_span": [node.start, node.end],
+                "required_positive_features": sorted(resolve(x) for x in required_ids),
+            }
+            if source_rule_id is not None:
+                frame["via_rule_id"] = source_rule_id
+                frame["via_child_index"] = source_child_index
+            self.rejection_trace.requests.append(frame)
         try:
             analysis = self._get_contextual(
                 node_id, rank, required, projected, required_ids, context_key,
@@ -994,6 +1027,8 @@ class _LazyMaterializer:
                     merged_bindings[name] = value
             return replace(analysis, bindings=merged_bindings)
         finally:
+            if self.rejection_trace is not None:
+                self.rejection_trace.requests.pop()
             self._active_contexts.remove(active_key)
 
     def _get_contextual(
@@ -1086,6 +1121,22 @@ class _LazyMaterializer:
                     rule_index=derivation.rule_index, children=uses,
                 )
             if not set(state.required_features).issubset(analysis.evidence):
+                if self.rejection_trace is not None:
+                    rule_id = (
+                        self.compiled.rules[analysis.rule_index].rule.rule_id
+                        if analysis.rule_index is not None else None
+                    )
+                    self.rejection_trace.record(
+                        "positive_evidence_materialized_missing",
+                        self.forest.nodes[node_id], rule_id=rule_id,
+                        required_positive=state.required_features,
+                        witnessed_positive=analysis.evidence,
+                        evidence_basis="materialized_analysis",
+                        surface=(
+                            analysis.candidate.surface
+                            if analysis.candidate is not None else None
+                        ),
+                    )
                 continue
             state.results.append(analysis)
             self.analysis_count += 1
@@ -1111,6 +1162,15 @@ class _LazyMaterializer:
                         if not set(state.required_features).issubset(
                             _feature_evidence(interface_item.features)
                         ):
+                            if self.rejection_trace is not None:
+                                self.rejection_trace.record(
+                                    "positive_evidence_interface_missing", node,
+                                    required_positive=state.required_features,
+                                    witnessed_positive=_feature_evidence(
+                                        interface_item.features),
+                                    evidence_basis="interface_intrinsic",
+                                    surface=candidate.surface,
+                                )
                             continue
                         self.unification_attempts += 1
                         result = unify(state.constraint, interface_item.features, state.bindings)
@@ -1159,6 +1219,13 @@ class _LazyMaterializer:
                 if state.required_features and not _rule_may_provide_evidence(
                     rule, set(state.required_features),
                 ):
+                    if self.rejection_trace is not None:
+                        self.rejection_trace.record(
+                            "positive_evidence_rule_impossible", node,
+                            rule_id=rule.rule_id,
+                            required_positive=state.required_features,
+                            evidence_basis="rule_static_may_provide_check",
+                        )
                     continue
                 self.unification_attempts += 1
                 if unify(state.constraint, rule.lhs.features, state.bindings) is None:
@@ -1236,6 +1303,8 @@ class _LazyMaterializer:
             child = self.get(
                 child_id, rank, child_constraint, env,
                 required_features=rule.rhs[index].requires,
+                source_rule_id=rule.rule_id,
+                source_child_index=index,
             )
             if child is None:
                 child_bindings, _ = _project_bindings(child_constraint, env)
@@ -1261,6 +1330,8 @@ class _LazyMaterializer:
                             rule_id=rule.rule_id, child_index=index,
                             child_node=self.forest.nodes[child_id],
                             expected=child_constraint, bindings=child_bindings,
+                            required_positive=child_required_ids,
+                            evidence_basis="exhausted_constrained_child_stream",
                         )
                     if failure_key in state.failed_continuations:
                         self.failed_continuation_cache_hits += 1
@@ -1446,6 +1517,15 @@ class _LazyMaterializer:
                             _feature_evidence(candidate.features)
                         )
                     ):
+                        if self.rejection_trace is not None:
+                            self.rejection_trace.record(
+                                "positive_evidence_lexical_hint_missing",
+                                self.forest.nodes[node_id],
+                                required_positive=required_ids,
+                                witnessed_positive=_feature_evidence(candidate.features),
+                                evidence_basis="lexical_intrinsic_hint",
+                                surface=candidate.surface,
+                            )
                         continue
                     self.hint_unification_attempts += 1
                     if self._hint_compatible(constraint, candidate.features):
@@ -1463,6 +1543,13 @@ class _LazyMaterializer:
                 if required_set and not _rule_may_provide_evidence(
                     rule, required_set,
                 ):
+                    if self.rejection_trace is not None:
+                        self.rejection_trace.record(
+                            "positive_evidence_rule_hint_impossible",
+                            self.forest.nodes[node_id], rule_id=rule.rule_id,
+                            required_positive=required_ids,
+                            evidence_basis="rule_static_may_provide_hint",
+                        )
                     continue
                 self.hint_unification_attempts += 1
                 if not self._hint_compatible(constraint, rule.lhs.features):
