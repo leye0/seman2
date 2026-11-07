@@ -303,6 +303,7 @@ class Parser:
         diagnostic_k: int | None = None,
         beam: int | None = None,
         allow_marked_deviations: bool = False,
+        rejection_trace_limit: int = 0,
     ) -> ParseReport:
         """SINGLE public parsing entry point, including corpus diagnostics.
 
@@ -310,10 +311,13 @@ class Parser:
         follow the same order for every caller. Explicit budgets disable the
         ordinary result cache so trials cannot silently reuse a different run.
         """
+        if not 0 <= rejection_trace_limit <= 100:
+            raise ValueError("rejection_trace_limit must be in 0..100")
         original = text.strip()
-        use_cache = not allow_marked_deviations and all(value is None for value in (
+        use_cache = (not allow_marked_deviations and rejection_trace_limit == 0
+                     and all(value is None for value in (
             max_items, kbest_work_limit, diagnostic_k, beam,
-        ))
+        )))
         dialogue_key = (original, self.goal_category)
         if self.goal_category == "CLAUSE" and self._dialogue_vector_grammar is not None:
             from .dialogue import quotation_boundaries
@@ -335,6 +339,7 @@ class Parser:
                     kbest_work_limit=kbest_work_limit,
                     diagnostic_k=diagnostic_k, beam=beam,
                     allow_marked_deviations=allow_marked_deviations,
+                    rejection_trace_limit=rejection_trace_limit,
                 )
                 if use_cache:
                     self._parse_cache.put(dialogue_key, spoken)
@@ -365,6 +370,7 @@ class Parser:
                 normalized, light_tokens, plan, max_items=max_items,
                 kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
+                rejection_trace_limit=rejection_trace_limit,
             )
             if hierarchical is not None:
                 if use_cache:
@@ -380,6 +386,7 @@ class Parser:
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k, beam=beam,
             allow_marked_deviations=allow_marked_deviations,
+            rejection_trace_limit=rejection_trace_limit,
         )
         if plan is not None and isinstance(result.stats, dict):
             result.stats["segmentation_fallback"] = True
@@ -434,6 +441,7 @@ class Parser:
         diagnostic_k: int | None = None,
         beam: int | None = None,
         allow_marked_deviations: bool = False,
+        rejection_trace_limit: int = 0,
     ) -> ParseResult:
         """Internal recognizer. Only Parser.parse dispatches public analyses.
 
@@ -459,6 +467,7 @@ class Parser:
                     goal_category=self.goal_category,
                     kbest_work_limit=kbest_work_limit,
                     diagnostic_k=diagnostic_k,
+                    rejection_trace_limit=rejection_trace_limit,
                 )
                 if not spoken.completed:
                     # A scoped dialogue parse may exhaust the forest or k-best
@@ -484,6 +493,9 @@ class Parser:
                         "unreachable_prefix_proposals": int(
                             spoken.stats.get("unreachable_prefix_proposals", 0)),
                     }
+                    if rejection_trace_limit:
+                        dialogue_attempt["rejection_trace"] = spoken.stats.get(
+                            "rejection_trace")
                 if spoken.completed:
                     if isinstance(spoken.stats, dict):
                         spoken.stats["dialogue_scoped"] = True
@@ -502,6 +514,7 @@ class Parser:
             goal_category=self.goal_category,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,
+            rejection_trace_limit=rejection_trace_limit,
         )
         if dialogue_attempt is not None and isinstance(result.stats, dict):
             result.stats["dialogue_attempt"] = dialogue_attempt
@@ -532,6 +545,7 @@ class Parser:
         kbest_work_limit: int | None = None,
         diagnostic_k: int | None = None,
         beam: int | None = None,
+        rejection_trace_limit: int = 0,
     ) -> ParseResult:
         """Internal segment recognition through the SAME core dispatcher."""
         lexical_start = perf_counter()
@@ -541,6 +555,7 @@ class Parser:
             lattice, max_items=max_items,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k, beam=beam,
+            rejection_trace_limit=rejection_trace_limit,
         )
         if isinstance(result.stats, dict):
             result.stats["lexical_ms"] = round(lexical_ms, 4)
@@ -664,6 +679,7 @@ class Parser:
         kbest_work_limit: int | None = None,
         diagnostic_k: int | None = None,
         beam: int | None = None,
+        rejection_trace_limit: int = 0,
     ) -> ParseResult | None:
         """Validate clause pieces, then parse only their compact interfaces."""
         spans, separators = plan
@@ -676,6 +692,7 @@ class Parser:
                 local_text, max_items=max_items,
                 kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
+                rejection_trace_limit=rejection_trace_limit,
             )
             if not segment.completed:
                 return None
@@ -713,6 +730,7 @@ class Parser:
             goal_category=self.goal_category,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,
+            rejection_trace_limit=rejection_trace_limit,
         )
         if not assembly.completed:
             return None

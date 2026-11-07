@@ -100,6 +100,16 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Instrumentation additionnelle (observation seulement) :** trace bornée
+des rejets d'unification, contraintes de traits et enfants contextuels
+réellement épuisés; rejeu indépendant des dialogues avec racines
+non validées après la cohorte 500. Toutes les traces restent des
+événements locaux à une dérivation candidate, non des fautes établies.
+La causalité complète et les constituants prouvés sans arbre restent
+à implémenter.
+
+
+
 **Registre de recherche des 26 cas historiques :** `docs/RESIDUAL_26_RESEARCH.md`.
 Une phase d'audit reproductible garde leur identité et leur statut d'origine,
 conserve les cas récupérés, signale les nouveaux échecs et sépare les

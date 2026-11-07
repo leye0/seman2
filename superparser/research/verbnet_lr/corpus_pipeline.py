@@ -111,6 +111,7 @@ def parse_corpus_case(
     max_items: int | None = None,
     kbest_work_limit: int | None = None,
     allow_marked_deviations: bool = False,
+    rejection_trace_limit: int = 0,
 ):
     """One canonical way to parse a novel case, including quotation context.
 
@@ -122,6 +123,8 @@ def parse_corpus_case(
     options = {"max_items": max_items, "kbest_work_limit": kbest_work_limit}
     if allow_marked_deviations:
         options["allow_marked_deviations"] = True
+    if rejection_trace_limit:
+        options["rejection_trace_limit"] = rejection_trace_limit
     report = parser.parse(prepared.analysis_text, **options)
     # The diagnostic sees EXACTLY the lexical lattice used by the parser,
     # not a separately rebuilt or differently configured approximation.

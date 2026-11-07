@@ -72,6 +72,15 @@ jobs:
             --summary /tmp/novel-parse-diagnostics/summary.json \
             --reference superparser/research/residual_26_reference.json \
             --out-dir /tmp/novel-parse-diagnostics
+      - name: Independently probe scoped dialogue rejection evidence
+        run: |
+          PYTHONPATH=superparser python -u -m scripts.probe_dialogue_rejections \
+            --cohort /tmp/novel-parse-diagnostics/cohort.jsonl \
+            --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-items 50000 --kbest-work-limit 500000 \
+            --deadline-seconds 10 --trace-limit 48 \
+            --out-dir /tmp/novel-parse-diagnostics
       - name: Guard fixed-cohort coverage near the verified 460/500 checkpoint
         run: |
           python - <<'PY'
