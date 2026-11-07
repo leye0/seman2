@@ -1474,12 +1474,15 @@ class _LazyMaterializer:
         rule = self.compiled.rules[analysis.rule_index].rule
         children = tuple(self._item_for_use(use) for use in analysis.children)
         syntax = _compose_syntax(rule, children)
+        rule_detail = {
+            "rule_id": rule.rule_id,
+            "children": tuple(child.provenance for child in children),
+        }
+        if "usage_deviation" in rule.provenance:
+            rule_detail["usage_deviation"] = rule.provenance["usage_deviation"]
         item = ChartItem(
             node.start, node.end, node.category, features, None, analysis.score,
-            Provenance("rule", {
-                "rule_id": rule.rule_id,
-                "children": tuple(child.provenance for child in children),
-            }),
+            Provenance("rule", rule_detail),
             children=children,
             rule_id=rule.rule_id,
             bindings=bindings,

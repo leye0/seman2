@@ -108,6 +108,7 @@ class ParserResources:
                 "source": str(directory),
                 "semantic_rules": str(semantic_path),
                 "dialogue_rules": str(directory / "dialogue_grammar.jsonl"),
+                "marked_usage_rules": str(directory / "marked_usage_grammar.jsonl"),
                 "dialogue_semantic_rules": str(directory / "dialogue_semantic_rules.jsonl"),
             },
         )
@@ -225,6 +226,7 @@ class Parser:
         dialogue_path = resources.metadata.get("dialogue_rules")
         self._dialogue_resources: ParserResources | None = None
         self._dialogue_vector_grammar: VectorGrammar | None = None
+        self._marked_dialogue_vector_grammar: VectorGrammar | None = None
         if dialogue_path and Path(dialogue_path).is_file():
             dialogue_rules = tuple(load_grammar(dialogue_path))
             if dialogue_rules:
@@ -240,6 +242,19 @@ class Parser:
                     types=resources.types,
                     metadata=resources.metadata,
                 )
+                # Optional, explicitly marked, dialogue-only alternatives.
+                # This separate compiled grammar never runs in the canonical
+                # path; standard feature unification remains untouched.
+                marked_path = resources.metadata.get("marked_usage_rules")
+                if marked_path and Path(marked_path).is_file():
+                    marked_rules = tuple(load_grammar(marked_path))
+                    if marked_rules:
+                        marked_grammar = Grammar((*syntax_rules, *dialogue_rules, *marked_rules))
+                        self._marked_dialogue_vector_grammar = VectorGrammar(
+                            marked_grammar, preserve_quote_delimiters=True,
+                            lexical_left_corner_pruning=lexical_left_corner_pruning,
+                            local_attachment_tiebreak=local_attachment_tiebreak,
+                        )
         # Derived solely from the static function-word inventory.  Looking
         # for an early boundary must never wake WordNet up.
         self._coord_surfaces = frozenset(
@@ -284,6 +299,7 @@ class Parser:
         kbest_work_limit: int | None = None,
         diagnostic_k: int | None = None,
         beam: int | None = None,
+        allow_marked_deviations: bool = False,
     ) -> ParseReport:
         """SINGLE public parsing entry point, including corpus diagnostics.
 
@@ -292,7 +308,7 @@ class Parser:
         ordinary result cache so trials cannot silently reuse a different run.
         """
         original = text.strip()
-        use_cache = all(value is None for value in (
+        use_cache = not allow_marked_deviations and all(value is None for value in (
             max_items, kbest_work_limit, diagnostic_k, beam,
         ))
         dialogue_key = (original, self.goal_category)
@@ -315,6 +331,7 @@ class Parser:
                     original_lattice, max_items=max_items,
                     kbest_work_limit=kbest_work_limit,
                     diagnostic_k=diagnostic_k, beam=beam,
+                    allow_marked_deviations=allow_marked_deviations,
                 )
                 if use_cache:
                     self._parse_cache.put(dialogue_key, spoken)
@@ -359,6 +376,7 @@ class Parser:
             lattice, max_items=max_items,
             kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k, beam=beam,
+            allow_marked_deviations=allow_marked_deviations,
         )
         if plan is not None and isinstance(result.stats, dict):
             result.stats["segmentation_fallback"] = True
@@ -412,6 +430,7 @@ class Parser:
         kbest_work_limit: int | None = None,
         diagnostic_k: int | None = None,
         beam: int | None = None,
+        allow_marked_deviations: bool = False,
     ) -> ParseResult:
         """Internal recognizer. Only Parser.parse dispatches public analyses.
 
@@ -427,7 +446,12 @@ class Parser:
             extended = dialogue_lattice(lattice)
             if extended is not None:
                 is_dialogue = True
-                spoken = self._dialogue_vector_grammar.parse_lattice(
+                dialogue_grammar = (
+                    self._marked_dialogue_vector_grammar
+                    if allow_marked_deviations and self._marked_dialogue_vector_grammar
+                    else self._dialogue_vector_grammar
+                )
+                spoken = dialogue_grammar.parse_lattice(
                     extended, beam=active_beam, max_items=budget,
                     goal_category=self.goal_category,
                     kbest_work_limit=kbest_work_limit,
@@ -461,6 +485,8 @@ class Parser:
                     if isinstance(spoken.stats, dict):
                         spoken.stats["dialogue_scoped"] = True
                         spoken.stats["dialogue_source"] = "explicit_balanced_quotes"
+                        if allow_marked_deviations:
+                            spoken.stats["marked_mode"] = True
                     if self._complexity_router is not None:
                         _, choice = self._select_vector_grammar(lattice, dialogue=True)
                         self._attach_complexity_route(spoken, choice)

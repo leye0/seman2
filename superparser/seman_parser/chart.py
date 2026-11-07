@@ -189,11 +189,25 @@ class ParseResult:
         ordered = sorted(self.roots, key=lambda item: item.score, reverse=True)
         return ordered if limit is None else ordered[:limit]
 
+    def usage_deviations(self):
+        """Provenance-backed, local mismatches in the selected analysis only."""
+        from .nonstandard import collect_usage_deviations
+
+        return collect_usage_deviations(self.best(), self.text)
+
     def as_dict(self) -> dict[str, Any]:
         best = self.best()
+        from .nonstandard import collect_usage_deviations
+
+        deviations = collect_usage_deviations(best, self.text)
         return {
             "text": self.text,
             "completed": self.completed,
+            "grammatical_status": (
+                "unresolved" if not self.completed else
+                "nonstandard_attested" if deviations else "standard"
+            ),
+            "usage_deviations": [item.as_dict() for item in deviations],
             "lattice": self.lattice.as_dict(),
             "best": best.as_dict() if best else None,
             "alternatives": [item.as_dict() for item in self.alternatives()],

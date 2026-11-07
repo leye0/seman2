@@ -32,6 +32,21 @@ class PreparedCorpusInput:
     synthetic_terminal: bool
     mode: CorpusParseMode
 
+    def reference_span(self, analysis_start: int, analysis_end: int) -> tuple[int, int] | None:
+        """Map a non-synthetic analysis span to the frozen reference exactly.
+
+        A span inside a transferred quote has no original character position.
+        Refuse mappings when the prepared core differs from the reference;
+        never guess original offsets from a normalized or altered string.
+        """
+        core_start = len(self.synthetic_prefix)
+        core_end = len(self.analysis_text) - len(self.synthetic_suffix)
+        if not (core_start <= analysis_start < analysis_end <= core_end):
+            return None
+        if self.analysis_text[core_start:core_end] != self.reference_text:
+            return None
+        return (analysis_start - core_start, analysis_end - core_start)
+
 
 def prepare_corpus_input(
     case: Mapping[str, Any],
@@ -95,6 +110,7 @@ def parse_corpus_case(
     mode: CorpusParseMode = CorpusParseMode.QUOTE_BALANCED,
     max_items: int | None = None,
     kbest_work_limit: int | None = None,
+    allow_marked_deviations: bool = False,
 ):
     """One canonical way to parse a novel case, including quotation context.
 
@@ -103,11 +119,10 @@ def parse_corpus_case(
     legacy 500-case measurements comparable without changing their SHA.
     """
     prepared = prepare_corpus_input(case, mode=mode)
-    report = parser.parse(
-        prepared.analysis_text,
-        max_items=max_items,
-        kbest_work_limit=kbest_work_limit,
-    )
+    options = {"max_items": max_items, "kbest_work_limit": kbest_work_limit}
+    if allow_marked_deviations:
+        options["allow_marked_deviations"] = True
+    report = parser.parse(prepared.analysis_text, **options)
     # The diagnostic sees EXACTLY the lexical lattice used by the parser,
     # not a separately rebuilt or differently configured approximation.
     lattice = report.lattice

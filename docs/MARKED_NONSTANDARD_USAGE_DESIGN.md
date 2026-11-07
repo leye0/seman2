@@ -1,6 +1,9 @@
 # Usages non standards marques — contrat de conception
 
-**Statut : proposition architecturale, non implementee.** Elle ne change ni la grammaire, ni le lexique, ni les scores. Cas pilote : 463 (*Treasure Island*).
+**Statut : implementation pilote opt-in sur le cas 463 (*Treasure Island*).**
+La reconnaissance standard et son score restent stricts. Les deviations sont
+des annotations sur des liens de l'arbre choisi, pas des rectifications de la
+grammaire ou du lexique.
 
 ## Probleme
 
@@ -14,11 +17,13 @@ Il faut distinguer trois diagnostics, et ne jamais les confondre dans les result
 
 L'intention de l'auteur ne se deduit **pas** automatiquement d'un accord fautif ou de guillemets synthetiques. `intent=unknown` est la valeur sure ; `intent=deliberate` exige une preuve contextuelle ou une annotation explicite.
 
-## Representation proposee
+## Representation implementee
 
 Un `UsageDeviation` est une annotation immuable sur un **lien d'arbre** (sujet/predicat, tete/complement, etc.), et non une propriete permanente du lexeme `was` ni du lexeme `mothers`. Les spans utilisent des intervalles semi-ouverts ; on conserve le texte analyse, le texte original et la provenance des guillemets transferes.
 
-Exemple precis du conflit d'accord du cas 463 :
+Exemple de sortie structuree du conflit d'accord du cas 463 (les
+`reference_span` sont derives separement par `PreparedCorpusInput.reference_span`,
+et ne figurent pas dans la sortie generique du parser) :
 
 ```json
 {
@@ -28,38 +33,47 @@ Exemple precis du conflit d'accord du cas 463 :
   "subject": {
     "surface": "your mothers",
     "analysis_span": [64, 76],
-    "reference_span": [63, 75],
-    "features": { "number": "plural", "person": "3" }
+    "features": { "number": "plural", "person": "3", "incidental_subject": "true" }
   },
-  "copula": {
+  "predicate": {
     "surface": "was",
     "analysis_span": [77, 80],
-    "reference_span": [76, 79],
     "features": { "number": "singular", "vform": "finite" }
   },
-  "constraint": "subject.number == copula.number",
-  "expected": { "copula_number": "plural", "illustrative_form": "were" },
-  "observed": { "copula_number": "singular", "surface": "was" },
-  "scope": "attested_literary_dialogue",
-  "intent": "unknown",
-  "source_evidence": {
-    "book_id": 120,
-    "case_index": 463,
-    "balanced_quote_prefix_is_synthetic": true
-  }
+  "constraint": "subject.number == predicate.number",
+  "expected": "plural",
+  "observed": "singular",
+  "register": "literary_dialogue",
+  "intent": "unknown"
 }
 ```
 
-Le champ `illustrative_form` aide a expliquer l'ecart sans **corriger** la citation ou generer une nouvelle hypothese lexicale. La correspondance entre `reference_span` et le passage complet d'origine doit etre validee par la provenance de l'extracteur et non reconstruite a l'aveugle.
+Le schema enregistre les **valeurs reelles** du sujet et de la copule, leurs
+spans, leur relation, la regle qui autorise l'analyse, le registre et
+`intent=unknown`. Les offsets du texte analyse ne sont pas confondus avec
+ceux du texte de reference : `PreparedCorpusInput.reference_span` effectue
+la correspondance et renvoie `None` sur les guillemets synthetiques.
 
-## Mecanisme de reconnaissance
+## Mecanisme de reconnaissance implemente
 
 - Conserver en premier le parsing **strict** avec la meme unification de traits, le meme lexique et les memes budgets. Aucune relaxation globale de `number`, `person`, `case` ou `subcat`.
-- Si une construction contient un conflit local **precisement type** et que le contexte permet un emploi marque, produire une **hypothese alternative**. Celle-ci garde les traits effectivement observes et attache la preuve d'une seule relaxation a la relation concernee. Elle ne doit pas injecter une forme corrigee dans le lattice.
-- Le mode marque doit etre explicite et borne (types de conflits autorises, nombre maximal d'ecarts, penalite de rang, preuve contextuelle). Il doit rester accessible par `Parser.parse` : ne pas introduire une seconde entree publique ou contourner `parse_corpus_case`.
-- Les arbres stricts sont toujours preferes, a structure equivalente. Un arbre marque dont les autres rattachements sont errones demeure **invalide**.
-- Publier separement `strict_completed`, `marked_completed` et la liste des deviations. Le score historique des 500 reste calcule **strictement comme avant** ; annoncer un second score annote distinct, jamais une augmentation implicite du score canonique.
-- Les deviations se transmettent a la racine selectionnee avec leur origine locale et leurs spans ; elles restent consultables par les consommateurs semantiques sans etre transformees en « faits grammaticaux ».
+- La grammaire `data/marked_usage_grammar.jsonl` est compilee separément,
+  superposee a la grammaire de dialogue **uniquement** avec
+  `Parser.parse(..., allow_marked_deviations=True)` et une citation reconnue.
+  La meme option est transmise par `parse_corpus_case` pour les textes de roman.
+- La regle pilote `wh_clause_postposed_relative_marked_plural_subject_singular_copula`
+  exige les quatre constituants explicites `WH-NOM + NP[plural,person3]
+  + COPULA[singular,finite] + WH-SUBJ`. Elle n'ajoute aucune possibilite
+  d'accord dans les autres constructions.
+- Le materialiseur preserve la provenance `usage_deviation` de cette regle.
+  `ParseResult.usage_deviations()` reconstruit des `UsageDeviation` immuables
+  en verifiant les traits reellement presents sur les enfants selectionnes.
+  `ParseResult.as_dict()` expose `grammatical_status` et `usage_deviations`.
+- Les analyses canoniques et le score des 500 utilisent toujours l'appel
+  **sans option**. Le mode marque desactive le cache de parsing pour eviter
+  une confusion entre les deux chemins. Un arbre marque n'est pas presente
+  comme une derivation standard; les deux resultats sont exposes separement
+  par leurs appels.
 
 ## Application au cas 463
 
@@ -71,11 +85,15 @@ L'annotation ci-dessus **ne suffit pas** a terminer la phrase. Le parser devra a
 
 La correction de ces constructions sera verifiee sur des phrases independantes. Le seul ecart marque devrait etre l'**accord de nombre**, jamais un rattachement incorrect explique a posteriori comme licence dialectale.
 
-## Tests et garanties indispensables avant implementation
+## Tests et garanties de l'implementation pilote
 
 - **Positifs** : `where the sailors were` est strict ; `where the sailors was` peut etre structurellement analysable **uniquement** en mode marque et avec une annotation explicite de conflit ; le cas 463 preserve exactement son original.
 - **Negatifs** : `The sailors was` est rejete par le mode strict ; aucun contexte de citation ajoute artificiellement un ecart ; un conflit arbitraire de valence ou de categorie ne devient pas acceptable.
 - **Arbres** : comparer les liens et spans du rang 1, les hypotheses alternatives, l'emplacement de l'ecart et la provenance. Les erreurs de relative et d'infinitive ne doivent pas disparaitre sous le marqueur dialectal.
 - **Regression** : cas 359, tests d'accord existants, 120/120, 24/24, diagnostic sur la cohorte gelee avec budgets inchanges, CI verte.
 
-**Decision de suivi** : le cas 463 reste actif et non resolu. Ne pas avancer la file a 473 tant qu'il est en cours d'elaboration ; aucun credit de completion n'est attribue avant l'arbre complet et fidele.
+**Decision de suivi** : l'arbre marque du cas 463 est complet et ses
+rattachements sont controles. Le cas demeure non resolu au sens de
+**l'anglais standard strict**. La file canonique conserve cet echec et son
+score strict; le curseur peut avancer a 463, avec 473 comme prochaine phrase
+deterministe. Aucun credit de completion strict n'est attribue pour 463.

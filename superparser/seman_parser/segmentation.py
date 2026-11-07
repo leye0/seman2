@@ -588,6 +588,65 @@ def build_lattice(
 
     kept = filter_lattice_candidates(candidates, tokens)
     kept = _filter_by_position(kept, tokens)
+    # Correlative negation and complex-transitive infinitival questions need
+    # **contextual lexical starters**. A generic DET, HAVE or V first symbol
+    # adds chart partials throughout long quotations (case 359 lies near the
+    # fixed 50k-item budget). Do not remove or rewrite their source readings.
+    def follows(left: LexicalCandidate, right: LexicalCandidate) -> bool:
+        return (right.span_start > left.span_end
+                and text[left.span_end:right.span_start].isspace())
+
+    negative_correlative_det_views = []
+    for determinant in kept:
+        if (determinant.category != "DET" or
+                determinant.features.as_dict().get("negation") != "true"):
+            continue
+        if any(
+            follows(determinant, noun)
+            and follows(noun, coordinator)
+            for noun in kept if noun.category == "N"
+            for coordinator in kept if coordinator.category == "COORD"
+            and coordinator.features.as_dict().get("negation") == "true"
+            and coordinator.features.as_dict().get("nominal_coordination") == "true"
+        ):
+            negative_correlative_det_views.append(
+                replace(determinant, category="DET-NEG-CORR"))
+
+    negative_have_views = [
+        replace(have, category="HAVE-NEG-CORR")
+        for have in kept if have.category == "HAVE"
+        and have.features.as_dict().get("vform") == "finite"
+        and any(follows(have, det) for det in negative_correlative_det_views)
+    ]
+
+    complex_wh_infinitive_views = []
+    to_markers = [c for c in kept if c.category == "TO"]
+    wh_markers = [c for c in kept if c.category == "WH-NOM"
+                  and c.features.as_dict().get("wh") == "true"]
+    clausal_bases = [c for c in kept if c.category == "V"
+                     and c.features.as_dict().get("vform") == "base"
+                     and (c.features.as_dict().get("subcat") == "clausal"
+                          or isinstance(c.features.as_dict().get("subcat"), list)
+                          and "clausal" in c.features.as_dict()["subcat"])]
+    object_starts = [c for c in kept if c.category in {
+        "PRONOUN", "DET", "POSS", "N", "PROPER-NOUN", "TITLE"
+    }]
+    for verb in kept:
+        features = verb.features.as_dict()
+        valence = features.get("subcat")
+        if (verb.category != "V" or features.get("vform") != "finite"
+                or not (valence == "complex_transitive" or
+                        isinstance(valence, list) and "complex_transitive" in valence)):
+            continue
+        if any(
+            follows(verb, obj) and follows(obj, to)
+            and follows(to, predicate) and follows(predicate, wh)
+            and to.span_start - verb.span_end <= 50
+            for obj in object_starts for to in to_markers
+            for predicate in clausal_bases for wh in wh_markers
+        ):
+            complex_wh_infinitive_views.append(
+                replace(verb, category="V-COMPLEX-WH-INF"))
     # A typed lexical view keeps nominal-predicate searches from opening at
     # every V span. Retain the original V and all its sense/span provenance;
     # only positively attested base complex-transitive readings get this view.
@@ -858,7 +917,8 @@ def build_lattice(
                 for prep in kept if prep.category == "PREP"
             ):
                 absolute_views.append(replace(candidate, category="V-SUPPLEMENT-ED"))
-    kept = [*kept, *conditional_punctuation_views,
+    kept = [*kept, *negative_correlative_det_views, *negative_have_views,
+            *complex_wh_infinitive_views, *conditional_punctuation_views,
             *conditional_ditransitive_views, *preposed_subject_focus_views,
             *nominal_heads, *participial_views, *present_participles,
             *intransitive_gerunds, *temporal_subject_markers,

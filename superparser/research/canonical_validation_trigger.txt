@@ -139,3 +139,4 @@ Validate #357 quoted nominal fallback preserves split dialogue precedence.
 2026-11-06: Validate case 434 with closed 16-point compass notation and upper-level map-note fields; preserve original abbreviations, case 359 and fixed 500-case budgets.
 2026-11-06: Run Layer 1 CI with explicit case 414 contextual-dialogue and case 434 compass-note test modules as permanent regression witnesses.
 2026-11-06: Validate case 438 generic reduced conditional between ditransitive objects, preposed subject focus, vocatives, 500-case regression and case 359 invariants.
+2026-11-07: Verify case 463 opt-in explicitly marked nonstandard subject/copula disagreement and independently attached negative correlative, matrix infinitive, and postposed relative; compare strict 500 cohort and 359 budget.
