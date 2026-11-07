@@ -39,6 +39,13 @@ Le moteur adaptatif à préfixes partagés a démontré **−15,6 % de CPU** sur
 
 Le dépôt courant a été nettoyé pour contenir uniquement le parseur grammatical retenu, ses tests de qualité, les données et un benchmark du chemin actif.
 
+## Dernier jalon de correction (cas 473)
+
+- Commit valide par les tests locaux : `274379374d6078f2dc7d0fe88ca4b91c3df2766a` ; voir [`CASE_473_COORDINATED_NONRESTRICTIVE_RELATIVES.md`](CASE_473_COORDINATED_NONRESTRICTIVE_RELATIVES.md).
+- La phrase **473** a maintenant un arbre correct avec deux relatives coordonnees, verbe parfait avec trou d'objet, et infinitif attache a `the intelligence`.
+- Bilan strict **474/500** a budgets constants : **473 gagnee**, mais **466 retiree** car l'ancien arbre `stars he`/`'s dead` etait un **faux positif**, pas une analyse recevable. Les 498 autres statuts et tous les indicateurs de budget/delai sont inchanges. Le cas **359** conserve exactement ses couts et son arbre.
+- Prochaine phrase deterministe dans `GRAMMAR_CASE_QUEUE.json` : **480**. Le cas **466** reste explicitement dans la file pour une future solution structurelle du discours, jamais par restauration du nom compose fallacieux.
+
 ## Prochaine tâche SANS instruction supplémentaire
 
 Améliorer la **couverture grammaticale et la justesse des analyses du Layer 1** sur les phrases qui échouent, en restant compatible avec les mots, traits, alternatives et les dialogues. Pour chaque phrase, **appliquer le protocole de correction** : inspecter l'arbre sélectionné et les rattachements exacts, faire des tests positifs ET négatifs, mesurer les régressions sur la cohorte figée et ne pas assouplir globalement des contraintes pour faire croire à des succès.

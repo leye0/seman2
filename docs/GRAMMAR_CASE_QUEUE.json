@@ -1,9 +1,9 @@
 {
   "schema": "seman2-grammar-case-queue-v1",
   "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "validated_commit": "49384f5031f141981a0401bcedfceb41eb7cad26",
+  "validated_commit": "274379374d6078f2dc7d0fe88ca4b91c3df2766a",
   "completed_count": 474,
-  "last_attempted_index": 463,
+  "last_attempted_index": 473,
   "unresolved": [
     {"index": 8, "status": "no_structural_root"},
     {"index": 64, "status": "roots_without_valid_analysis"},
@@ -26,7 +26,7 @@
     {"index": 344, "status": "no_structural_root"},
     {"index": 347, "status": "roots_without_valid_analysis"},
     {"index": 463, "status": "roots_without_valid_analysis"},
-    {"index": 473, "status": "roots_without_valid_analysis"},
+    {"index": 466, "status": "roots_without_valid_analysis"},
     {"index": 480, "status": "roots_without_valid_analysis"},
     {"index": 487, "status": "forest_budget_exceeded"},
     {"index": 491, "status": "roots_without_valid_analysis"},
