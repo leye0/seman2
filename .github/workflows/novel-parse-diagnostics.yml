@@ -48,7 +48,7 @@ jobs:
           PY
       - name: Validate diagnostic reporting
         run: |
-          python -m py_compile superparser/scripts/benchmark_integrated_preflight.py superparser/seman_parser/fast_preflight.py superparser/scripts/audit_fast_preflight.py superparser/scripts/probe_dialogue_rejections.py superparser/scripts/diagnose_novel_parses.py superparser/research/verbnet_lr/corpus_pipeline.py superparser/seman_parser/engine.py superparser/seman_parser/vector_chart.py superparser/seman_parser/sentence_boundaries.py
+          python -m py_compile superparser/scripts/benchmark_preflight_trie_pilot.py superparser/scripts/benchmark_integrated_preflight.py superparser/seman_parser/fast_preflight.py superparser/scripts/audit_fast_preflight.py superparser/scripts/probe_dialogue_rejections.py superparser/scripts/diagnose_novel_parses.py superparser/research/verbnet_lr/corpus_pipeline.py superparser/seman_parser/engine.py superparser/seman_parser/vector_chart.py superparser/seman_parser/sentence_boundaries.py
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics superparser.tests.test_sentence_boundaries superparser.tests.test_parser_integration superparser.tests.test_complexity_routing
       - name: Diagnose 500 cleaned novel sentences, once each
         run: |
@@ -101,6 +101,15 @@ jobs:
             --max-items 50000 --kbest-work-limit 500000 \
             --repeats 2 --deadline-seconds 10 \
             --out-dir /tmp/novel-parse-diagnostics
+      - name: Pilot experimental preflight-to-trie routing with whole-parser parity audit
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_preflight_routing
+          PYTHONPATH=superparser python -u -m scripts.benchmark_preflight_trie_pilot \
+            --cohort /tmp/novel-parse-diagnostics/cohort.jsonl \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --minimum-tokens 17 --routed-count 12 --control-count 6 \
+            --repeats 2 --max-items 50000 --kbest-work-limit 500000 \
+            --deadline-seconds 10 --out-dir /tmp/novel-parse-diagnostics
       - name: Guard fixed-cohort coverage near the verified 460/500 checkpoint
         run: |
           python - <<'PY'

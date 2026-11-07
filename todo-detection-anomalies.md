@@ -100,6 +100,16 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Pilotage expérimental de performance (opt-in) :**
+`PreflightTriePolicy(minimum_tokens=...)` peut utiliser les indices
+de longueur et de ponctuation déjà mesurés pour aiguiller vers le
+reconnaisseur lazy trie existant. Les citations restent exclues,
+y compris les cas 463/480. Un benchmark apparié contrôle temps
+**du parsing complet**, sélection des arbres, dépassements
+de ressources et éventuelles pertes de couverture. Aucune route
+n'est activée par défaut ni considérée sûre sans preuves.
+
+
 **Intégration opt-in :** `Parser.parse(preflight_diagnostics=True)`
 capture le même lattice avant la syntaxe, sans calcul lexical doublé.
 Les incompatibilités locales demeurent hypothétiques tant qu'elles

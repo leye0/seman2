@@ -234,3 +234,43 @@ un gain de vitesse (aucun arrêt anticipé ou réaiguillage n'est activé).
 Artefacts : `integrated_preflight_timing.jsonl`,
 `integrated_preflight_timing_summary.json`,
 `integrated_preflight_timing.md`.
+
+## Pilotage de la vitesse : routage optionnel vers lazy trie (novembre 2026)
+
+Le parseur permet un second choix de stratégie **uniquement si construit
+explicitement avec** `preflight_route_policy=PreflightTriePolicy(...)`.
+Ce contrat est mutuellement exclusif avec `complexity_policy`. La
+fonction de décision analyse les signaux de surface du lattice
+**existant** avant de construire la forêt et peut choisir le reconnaisseur
+`lazy_trie_recognition` déjà présent, qui utilise exactement les mêmes
+règles. Aucune lecture lexicale n'est retirée et aucune faute n'est
+déclarée à partir d'une mauvaise relation supposée.
+
+La politique autorise seulement `length_attention` et
+`many_comma_boundaries`, avec un minimum de tokens **explicite**,
+et refuse catégoriquement les textes cités/dialogués et les
+indices morphologiques seuls. L'option est une expérience de
+**changement d'ordre/représentation de recherche** : en présence de
+budgets, les agendas peuvent s'épuiser à des points différents.
+Aucun argument de parité n'est donc présumé.
+
+Le script `scripts.benchmark_preflight_trie_pilot` sélectionne
+de façon déterministe 12 textes non cités possédant un signal
+préparsing, six contrôles (dont 463 et 480, qui doivent rester sur
+le chemin du dialogue), et exécute **deux paires contrebalancées**
+par cas. Tous les rejouements passent par
+`parse_corpus_case → Parser.parse`, avec le même original équilibré
+et les mêmes budgets `50000/500000/10s`; seuls la configuration du
+moteur et l'ordre du test changent. Le rapport sépare les temps totaux
+des cas réellement routés des contrôles, et recense toute perte de
+couverture, divergence d'arbre, saturation ou délai dépassé.
+Artefacts : `preflight_trie_pilot.jsonl`,
+`preflight_trie_pilot_summary.json` et
+`preflight_trie_pilot_report.md`.
+
+**Important :** aucune optimisation par défaut, ni saut anticipé,
+ni règle qui traite une non-détection comme faute n'est activée.
+Un pilotage rapide ne pourra être promu que si des cohortes
+indépendantes et un audit qualitatif des arbres montrent une
+amélioration mesurable et sans dégradation, au-delà des petites
+variations de latence de l'environnement CI.
