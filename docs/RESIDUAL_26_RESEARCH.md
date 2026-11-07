@@ -357,7 +357,18 @@ les offsets source uniquement si leur correspondance est exacte;
 la synthèse ajoute ces témoins sans modifier le statut canonique.
 
 Ce sont des preuves d'unification **locales à la demande examinée** :
-ni arbre global ni faute de phrase ne sont déduits. Les 8 cas sans
-racine structurelle ne bénéficient pas encore automatiquement de
-cette instrumentation, car aucune racine ne lance leur matérialisation.
+ni arbre global ni faute de phrase ne sont déduits. L'Action
+[42421159717](https://github.com/leye0/seman2/actions/runs/42421159717)
+avait observé 103 témoins **uniquement** dans les deux relectures
+marquées complètes, et zéro dans les relectures restées incomplètes.
+
+Un **sondage local indépendant**, conditionnel à l'échec non saturé de
+la racine dans les relectures opt-in, essaie maintenant des constituants
+NP/PP/ADJP/VP/SPEECH-TAG/CLAUSE présents dans la forêt, avec un
+matérialiseur distinct et **12 000 unités de travail séparées**. Les
+témoins qu'il valide figurent dans `independent_local_probe`, avec
+spans et enfants à provenance exacte si disponible; ils sont comptés
+**séparément** dans la synthèse. Aucune lecture partielle n'est promue
+en parse global. Les huit cas sans racine du groupe figé demandent
+encore des relectures dédiées, hors de la seule sonde dialogue.
 Voir [REJECTION_TRACE_PROBE.md](REJECTION_TRACE_PROBE.md).

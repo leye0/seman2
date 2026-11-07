@@ -19,7 +19,7 @@ UNRESOLVED = {8: "no_structural_root", 312: "timeout",
 
 
 def trace(*, exact=True):
-    return {
+    result = {
         "exhaustive": False, "grammatical_fault_established": False,
         "observed_events": 100, "sampled_events": 2, "truncated": True,
         "events": [
@@ -56,6 +56,19 @@ def trace(*, exact=True):
             }],
         },
     }
+    result["independent_local_probe"] = {
+        **deepcopy(result["validated_local_constituents"]),
+        "probe_kind": "independent_unconstrained_local_subtree_search",
+        "selected_structural_nodes": 7,
+        "attempted_structural_nodes": 4,
+        "accepted_requested_nodes": 2,
+        "separate_work_units": 85,
+        "separate_work_limit": 12000,
+        "probe_budget_exceeded": False,
+        "not_exhaustive_or_a_global_failure_proof": True,
+        "canonical_work_budget_unchanged": True,
+    }
+    return result
 
 
 def fixture():
@@ -127,6 +140,8 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(summary["current_unresolved"], 4)
         self.assertEqual(summary["marked_opt_in_comparisons"], 2)
         self.assertEqual(summary["scoped_dialogue_replays"], 1)
+        self.assertEqual(summary["independent_local_probe_witnesses_sampled"], 2)
+        self.assertEqual(summary["incomplete_replays_with_independent_local_proofs"], 1)
         self.assertTrue(summary["source_identity_validated"])
         by_index = {r["index"]: r for r in rows}
         self.assertEqual(by_index[312]["canonical_outcome"], "resource_censored")
@@ -163,6 +178,11 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertFalse(local["sentence_grammatical_fault_established"])
         self.assertFalse(scoped["sentence_fault_proven"])
         self.assertFalse(scoped["failure_cause_proven"])
+        independent = scoped["independent_local_probe"]
+        self.assertEqual(independent["accepted_requested_nodes"], 2)
+        self.assertEqual(independent["sampled_local_constituents"], 1)
+        self.assertTrue(independent["canonical_work_budget_unchanged"])
+        self.assertIn("Independent failed-root local probes", render(*synthesize(*fixture())))
 
     def test_new_failure_remains_unreviewed_and_joined(self):
         args = fixture()
@@ -192,6 +212,10 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
             lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
                 ["validated_local_constituents"]["witnesses"][0].update(
                     whole_sentence_grammaticality_proven=True),
+            lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
+                ["independent_local_probe"].update(canonical_work_budget_unchanged=False),
+            lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
+                ["independent_local_probe"].update(accepted_requested_nodes=5),
             lambda a: a[4][0].update(analysis_text="wrong projection"),
         ]
         for change in mutators:

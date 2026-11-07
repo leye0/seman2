@@ -190,9 +190,13 @@ recherche comportent maintenant un échantillon distinct des analyses
 de sous-arbres effectivement matérialisées après vérification des
 contraintes contextuelles et des traits positifs. Elles portent règle,
 enfants, spans, traits et correspondances source exactes dans les relectures.
-Ce ne sont pas des arbres globaux ni des preuves de faute. L'extension aux
-forêts sans racine, la couverture exhaustive et la causalité des rejets
-restent ouvertes; les objectifs P2 ci-dessous ne sont donc pas clos.
+Les premiers 103 témoins provenaient seulement des comparateurs
+marqués complets. Un **sondage indépendant et borné des constituants**
+est ajouté aux relectures opt-in sans racine valide et sans saturation,
+avec budget diagnostique propre et sortie `independent_local_probe`
+distincte. Ce ne sont pas des arbres globaux ni des preuves de faute.
+Le rejeu des huit cas sans racine, la couverture exhaustive et la
+causalité des rejets restent ouverts; P2 n'est pas clos.
 
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).

@@ -57,8 +57,10 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, 
             ]
         events.append(event)
     mapped["events"] = events
-    local = trace.get("validated_local_constituents")
-    if isinstance(local, dict):
+    for pool in ("validated_local_constituents", "independent_local_probe"):
+        local = trace.get(pool)
+        if not isinstance(local, dict):
+            continue
         local_mapped = dict(local)
         witnesses = []
         for witness in local.get("witnesses", []):
@@ -69,7 +71,7 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, 
             ]
             witnesses.append(item)
         local_mapped["witnesses"] = witnesses
-        mapped["validated_local_constituents"] = local_mapped
+        mapped[pool] = local_mapped
     mapped["reference_scope"] = "frozen_case_text_exact_only"
     return mapped
 

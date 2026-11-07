@@ -56,3 +56,4 @@ Validate #357 quoted nominal fallback preserves split dialogue precedence.
 2026-10-25: Validate case 212 titled independent genitive and compositional location.
 Checkpoint request 2026-11-07: generate joined evidence for the 26 original residual cases with independent provenance checks.
 Checkpoint request 2026-11-07: validate positive local constituents on scoped residual replays and exact source mapping.
+Checkpoint request 2026-11-07: measure independently validated local subtrees in genuinely incomplete dialogue replays, with separate bounded work.

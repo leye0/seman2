@@ -137,8 +137,32 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertLessEqual(trace["sampled_events"], 16)
         self.assertFalse(trace["grammatical_fault_established"])
         self.assertNotIn("rejection_trace", baseline.stats)
+        if not observed.completed and not observed.stats.get("kbest_budget_exceeded"):
+            probe = trace["independent_local_probe"]
+            self.assertIsNotNone(probe)
+            self.assertTrue(probe["canonical_work_budget_unchanged"])
+            self.assertLessEqual(probe["sampled_local_constituents"], 16)
+            self.assertGreaterEqual(probe["selected_structural_nodes"],
+                                    probe["attempted_structural_nodes"])
         with self.assertRaisesRegex(ValueError, "rejection_trace_limit"):
             parser.parse(text, rejection_trace_limit=101)
+
+    def test_failed_global_parse_keeps_local_probes_diagnostic_only(self):
+        parser = Parser.from_dir(Path(__file__).resolve().parents[1] / "data", cache_size=0)
+        source = "John opened the box but."
+        ordinary = parser.parse(source).result
+        observed = parser.parse(source, rejection_trace_limit=24).result
+        self.assertFalse(ordinary.completed)
+        self.assertEqual(observed.completed, ordinary.completed)
+        self.assertEqual(observed.stats.get("kbest_work_units"),
+                         ordinary.stats.get("kbest_work_units"))
+        probe = observed.stats["rejection_trace"]["independent_local_probe"]
+        self.assertIsNotNone(probe)
+        self.assertTrue(probe["canonical_work_budget_unchanged"])
+        self.assertGreater(probe["sampled_local_constituents"], 0)
+        self.assertTrue(all(not witness["global_tree_selected"]
+                            and not witness["whole_sentence_grammaticality_proven"]
+                            for witness in probe["witnesses"]))
 
     def test_successful_local_compositions_are_separate_from_rejections(self):
         parser = Parser.from_dir(Path(__file__).resolve().parents[1] / "data", cache_size=0)
@@ -207,6 +231,11 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertEqual(witness["children"][0]["reference_span"], [0, 4])
         self.assertIsNone(witness["children"][1]["reference_span"])
         self.assertEqual(witness["children"][1]["reference_span_mapping"], "unavailable")
+        source["independent_local_probe"] = source["validated_local_constituents"]
+        independent = map_trace_to_reference(source, prepared)["independent_local_probe"]
+        self.assertEqual(independent["witnesses"][0]["children"][0]["reference_span"],
+                         [0, 4])
+        self.assertIsNone(independent["witnesses"][0]["reference_span"])
 
 
     def test_late_exhausted_child_displaces_early_hint_noise(self):

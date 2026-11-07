@@ -38,6 +38,82 @@ def _identity(source: Mapping[str, Any], other: Mapping[str, Any], name: str) ->
         raise ValueError(f"{name}: case identity mismatch at {source['index']}")
 
 
+def _local_proof_view(local: Mapping[str, Any] | None, *,
+                      independent: bool = False) -> dict[str, Any] | None:
+    if local is None:
+        return None
+    if (local.get("schema") != "seman2-local-constituent-proof-sample-v1" or
+            local.get("exhaustive") is not False or
+            local.get("global_tree_proven") is not False or
+            local.get("sentence_grammatical_fault_established") is not False):
+        raise ValueError("Local constituent witness provenance or limits invalid")
+    witnesses = local.get("witnesses", [])
+    if (not isinstance(witnesses, list) or
+            local.get("sampled_local_constituents") != len(witnesses) or
+            local.get("observed_materialized_rule_analyses", -1) < len(witnesses)):
+        raise ValueError("Inconsistent successful constituent samples")
+    if any(w.get("proof_basis") != "materialized_rule_after_context_unification"
+           or w.get("global_tree_selected") is not False
+           or w.get("whole_sentence_grammaticality_proven") is not False
+           or not w.get("rule_id") or not w.get("children")
+           or not set(w.get("required_positive_features", [])).issubset(
+               w.get("witnessed_positive_features", []))
+           for w in witnesses):
+        raise ValueError("A sampled constituent lacks a verified local proof contract")
+
+    def source_span(frame):
+        if frame.get("reference_span_mapping") != "exact":
+            return None
+        span = frame.get("reference_span")
+        if not isinstance(span, list) or len(span) != 2:
+            raise ValueError("Local constituent exact span has no source proof")
+        return span
+
+    result = {
+        "observed_materialized_rule_analyses": local["observed_materialized_rule_analyses"],
+        "sampled_local_constituents": len(witnesses),
+        "sample_truncated": bool(local.get("truncated")),
+        "witnesses": [{
+            "proof_basis": w["proof_basis"],
+            "rule_id": w["rule_id"],
+            "category": w["category"],
+            "analysis_span": w["analysis_span"],
+            "source_span": source_span(w),
+            "verified_features": w["verified_features"],
+            "required_context_features": w["required_context_features"],
+            "children": [{"category": child["category"],
+                          "rule_id": child.get("rule_id"),
+                          "analysis_span": child["analysis_span"],
+                          "source_span": source_span(child)}
+                         for child in w["children"]],
+            "global_tree_selected": False,
+            "sentence_grammaticality_proven": False,
+        } for w in witnesses],
+        "exhaustive": False,
+        "sentence_grammatical_fault_established": False,
+    }
+    if independent:
+        if (local.get("probe_kind") != "independent_unconstrained_local_subtree_search" or
+                local.get("canonical_work_budget_unchanged") is not True or
+                local.get("not_exhaustive_or_a_global_failure_proof") is not True or
+                not 0 <= local.get("accepted_requested_nodes", -1)
+                <= local.get("attempted_structural_nodes", -1)
+                <= local.get("selected_structural_nodes", -1) <= 48 or
+                not 0 <= local.get("separate_work_units", -1)
+                <= local.get("separate_work_limit", -1) + 1 or
+                type(local.get("probe_budget_exceeded")) is not bool):
+            raise ValueError("Independent local probe must disclose its separate finite budget")
+        result["probe_kind"] = local["probe_kind"]
+        result["selected_structural_nodes"] = local["selected_structural_nodes"]
+        result["attempted_structural_nodes"] = local["attempted_structural_nodes"]
+        result["accepted_requested_nodes"] = local["accepted_requested_nodes"]
+        result["separate_work_units"] = local["separate_work_units"]
+        result["separate_work_limit"] = local["separate_work_limit"]
+        result["probe_budget_exceeded"] = local["probe_budget_exceeded"]
+        result["canonical_work_budget_unchanged"] = True
+    return result
+
+
 def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
     if not isinstance(trace, dict):
         return None
@@ -71,59 +147,8 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
             "candidate_atom_conflicts": event.get("direct_atom_conflicts", []),
             "required_positive_features": event.get("required_positive_features", []),
         })
-    local = trace.get("validated_local_constituents")
-    local_view = None
-    if local is not None:
-        if (local.get("schema") != "seman2-local-constituent-proof-sample-v1" or
-                local.get("exhaustive") is not False or
-                local.get("global_tree_proven") is not False or
-                local.get("sentence_grammatical_fault_established") is not False):
-            raise ValueError("Local constituent witness provenance or limits invalid")
-        witnesses = local.get("witnesses", [])
-        if (not isinstance(witnesses, list) or
-                local.get("sampled_local_constituents") != len(witnesses) or
-                local.get("observed_materialized_rule_analyses", -1) < len(witnesses)):
-            raise ValueError("Inconsistent successful constituent samples")
-        if any(w.get("proof_basis") != "materialized_rule_after_context_unification"
-               or w.get("global_tree_selected") is not False
-               or w.get("whole_sentence_grammaticality_proven") is not False
-               or not w.get("rule_id") or not w.get("children")
-               or not set(w.get("required_positive_features", [])).issubset(
-                   w.get("witnessed_positive_features", []))
-               for w in witnesses):
-            raise ValueError("A sampled constituent lacks a verified local proof contract")
-
-        def source_span(frame):
-            if frame.get("reference_span_mapping") != "exact":
-                return None
-            span = frame.get("reference_span")
-            if not isinstance(span, list) or len(span) != 2:
-                raise ValueError("Local constituent exact span has no source proof")
-            return span
-
-        local_view = {
-            "observed_materialized_rule_analyses": local["observed_materialized_rule_analyses"],
-            "sampled_local_constituents": len(witnesses),
-            "sample_truncated": bool(local.get("truncated")),
-            "witnesses": [{
-                "proof_basis": w["proof_basis"],
-                "rule_id": w["rule_id"],
-                "category": w["category"],
-                "analysis_span": w["analysis_span"],
-                "source_span": source_span(w),
-                "verified_features": w["verified_features"],
-                "required_context_features": w["required_context_features"],
-                "children": [{"category": child["category"],
-                              "rule_id": child.get("rule_id"),
-                              "analysis_span": child["analysis_span"],
-                              "source_span": source_span(child)}
-                             for child in w["children"]],
-                "global_tree_selected": False,
-                "sentence_grammaticality_proven": False,
-            } for w in witnesses],
-            "exhaustive": False,
-            "sentence_grammatical_fault_established": False,
-        }
+    local_view = _local_proof_view(trace.get("validated_local_constituents"))
+    independent_view = _local_proof_view(trace.get("independent_local_probe"), independent=True)
     return {
         "observed_events": trace.get("observed_events"),
         "sampled_events": len(events),
@@ -133,6 +158,7 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
             len(e.get("direct_atom_conflicts", [])) for e in events),
         "examples": examples,
         "validated_local_constituents": local_view,
+        "independent_local_probe": independent_view,
         "exhaustive": False,
         "sentence_fault_proven": False,
         "failure_cause_proven": False,
@@ -313,6 +339,16 @@ def synthesize(
             entry["validated_local_constituents"]["sampled_local_constituents"]
             for row in rows for entry in row["sampled_local_rejection_evidence"].values()
             if entry is not None and entry["validated_local_constituents"] is not None),
+        "independent_local_probe_witnesses_sampled": sum(
+            entry["independent_local_probe"]["sampled_local_constituents"]
+            for row in rows for entry in row["sampled_local_rejection_evidence"].values()
+            if entry is not None and entry["independent_local_probe"] is not None),
+        "incomplete_replays_with_independent_local_proofs": sum(
+            any(entry is not None and entry["independent_local_probe"] is not None
+                and entry["independent_local_probe"]["sampled_local_constituents"] > 0
+                for name, entry in row["sampled_local_rejection_evidence"].items()
+                if name in TRACE_SCOPES)
+            for row in rows if row["canonical_status"] != "complete"),
         "source_identity_validated": True,
         "no_causal_or_grammatical_fault_inference": True,
         "canonical_parse_not_reexecuted": True,
@@ -381,6 +417,23 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                             f"analysis {witness['analysis_span']}, "
                             f"source {witness['source_span'] if witness['source_span'] is not None else 'unavailable'} "
                             f"with {len(witness['children'])} locally validated children")
+                independent = trace["independent_local_probe"]
+                if independent is not None:
+                    lines.append(
+                        f"  - **Independent failed-root local probes**: "
+                        f"{independent['sampled_local_constituents']} verified, "
+                        f"{independent['accepted_requested_nodes']}/"
+                        f"{independent['attempted_structural_nodes']} targeted nodes; "
+                        f"separate work {independent['separate_work_units']}/"
+                        f"{independent['separate_work_limit']} "
+                        f"(exceeded={independent['probe_budget_exceeded']}); "
+                        "no global tree proof")
+                    for witness in independent["witnesses"][:6]:
+                        lines.append(
+                            f"    - `{witness['category']}` via `{witness['rule_id']}` "
+                            f"analysis {witness['analysis_span']}, "
+                            f"source {witness['source_span'] if witness['source_span'] is not None else 'unavailable'} "
+                            f"with {len(witness['children'])} proven child analyses")
         lines.append("")
     lines += [
         "## Interpretation limits", "",

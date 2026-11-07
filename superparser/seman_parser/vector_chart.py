@@ -543,6 +543,16 @@ class VectorGrammar:
         stats["best_ms"] = round((perf_counter() - best_start) * 1000, 4)
         stats["nodes_visited_for_best"] = materializer.nodes_initialized
         stats["combinations_visited_for_best"] = materializer.combinations_visited
+        if (rejection_trace_limit and not root_provider.items
+                and not forest.budget_exceeded
+                and materializer.rejection_trace is not None):
+            # A second, *separately budgeted* diagnostic search can validate
+            # local subtrees even when no goal tree was materialized. It has
+            # no influence on recognition, root ranking or the canonical
+            # k-best work counter. It never promotes a partial to completion.
+            materializer.rejection_trace.independent_local_probe = (
+                _probe_unselected_local_nodes(self, forest, rejection_trace_limit)
+            )
         root_provider.refresh_stats()
         if self.lazy_trie_recognition:
             stats["lazy_rule_partials_materialized"]=len(forest.partials.cached)
@@ -812,6 +822,7 @@ class _RejectionTrace:
         # Positive witnesses live in a separate bounded pool. A successful
         # local composition must never be mistaken for a rejected attempt.
         self.local_constituents = BoundedLocalConstituentProofs(limit)
+        self.independent_local_probe: dict[str, Any] | None = None
         # Active requests are pushed only when opt-in tracing is enabled.
         # Their stack is not a derivation tree or a global proof.
         self.requests: list[dict[str, Any]] = []
@@ -931,6 +942,7 @@ class _RejectionTrace:
             "sampling_policy": "per_stage_cap_with_priority_replacement",
             "events": self.samples,
             "validated_local_constituents": self.local_constituents.as_dict(),
+            "independent_local_probe": self.independent_local_probe,
             "exhaustive": False,
             "grammatical_fault_established": False,
         }
@@ -1782,6 +1794,71 @@ class _LazyMaterializer:
         )
         self.item_cache[cache_key] = item
         return item
+
+
+def _probe_unselected_local_nodes(
+    compiled: VectorGrammar, forest: _VectorForest, limit: int,
+) -> dict[str, Any]:
+    """Bounded diagnostic-only local unification after unsuccessful roots.
+
+    The *existing* recognizer already populated the forest. Reusing it in a
+    fresh materializer is strictly observational: never feed these results
+    back to the root provider or change a ParseResult's completion status.
+    """
+    categories = ("NP", "PP", "ADJP", "VP", "SPEECH-TAG", "CLAUSE")
+    buckets: dict[str, list[ForestNode]] = {name: [] for name in categories}
+    for node in forest.nodes:
+        if (node.category in buckets and node.end - node.start >= 3 and
+                any(isinstance(d, RuleDerivation) for d in node.derivations)):
+            buckets[node.category].append(node)
+    sampled: dict[str, list[ForestNode]] = {}
+    for category, nodes in buckets.items():
+        nodes.sort(key=lambda n: (n.end - n.start, n.start, n.node_id))
+        chosen = nodes[:4] + nodes[-4:]
+        seen: set[int] = set()
+        sampled[category] = []
+        for node in chosen:
+            if node.node_id not in seen:
+                sampled[category].append(node)
+                seen.add(node.node_id)
+
+    # Round-robin over categories prevents dozens of overlapping NP spans
+    # from consuming all attempts before any VP or dialogue subtree is tried.
+    selected: list[ForestNode] = []
+    for position in range(8):
+        for category in categories:
+            if position < len(sampled[category]):
+                selected.append(sampled[category][position])
+    separate_work_limit = 12000
+    probe = _LazyMaterializer(
+        compiled, forest, work_limit=separate_work_limit,
+        rejection_trace_limit=limit,
+    )
+    accepted = 0
+    attempted = 0
+    exhausted = False
+    for node in selected:
+        attempted += 1
+        try:
+            analysis = probe.get(node.node_id, 0)
+        except KBestWorkBudgetExceeded:
+            exhausted = True
+            break
+        if analysis is not None and analysis.rule_index is not None:
+            accepted += 1
+    positive = probe.rejection_trace.local_constituents.as_dict()
+    positive.update({
+        "probe_kind": "independent_unconstrained_local_subtree_search",
+        "selected_structural_nodes": len(selected),
+        "attempted_structural_nodes": attempted,
+        "accepted_requested_nodes": accepted,
+        "separate_work_units": probe.work_units,
+        "separate_work_limit": separate_work_limit,
+        "probe_budget_exceeded": exhausted,
+        "not_exhaustive_or_a_global_failure_proof": True,
+        "canonical_work_budget_unchanged": True,
+    })
+    return positive
 
 def _shift_chart_item(item: ChartItem, offset: int) -> ChartItem:
     """Translate a local clause tree to source offsets without semantics."""

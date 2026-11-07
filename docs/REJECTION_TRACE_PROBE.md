@@ -160,8 +160,38 @@ Le rejeu de dialogue transfère les spans des sous-arbres et **de chacun
 de leurs enfants** vers la référence source seulement lorsque le mapping
 est exact. La synthèse des 26 cas garde ces preuves séparées des rejets.
 
-**Limite :** sans racine globale ni racine de dialogue explorée, le
-matérialiseur n'est pas sollicité sur les sous-constituants. Ces cas
-peuvent donc produire zéro témoin positif : cela signifie *non observé*,
-pas *grammaticalement impossible*. Un sondage local contrôlé des forêts
-sans racine reste un travail distinct à réaliser.
+**Constat de contrôle :** sur l'Action 42421159717, les **103** preuves
+de cette première forme provenaient toutes des deux comparateurs *marqués
+déjà complets* (#463 et #480). Les relectures de dialogue incomplètes
+n'ont fourni aucune preuve positive par ce seul mécanisme. Il serait
+incorrect de compter ces 103 éléments comme preuves obtenues *malgré*
+l'échec d'une racine globale.
+
+## P2 : sondage indépendant de constituants après racine introuvable
+
+Si le rejeu opt-in a fini d'explorer la racine, sans analyse complète
+et **sans saturation de la forêt**, la même forêt reconnue est sondée
+avec un **nouveau** matérialiseur à contexte local libre. Il n'ajoute
+aucune règle et ne change ni la racine choisie, ni l'ordre des analyses,
+ni `kbest_work_units`, ni les budgets canoniques : il possède son propre
+plafond de **12 000 unités de travail**.
+
+Le sondage sélectionne au maximum 48 nœuds structurels contenant des
+règles, de catégories NP/PP/ADJP/VP/SPEECH-TAG/CLAUSE, avec des spans
+non triviaux. Quatre petits et quatre grands spans par catégorie sont
+alternés. Chaque règle publiée sous `independent_local_probe.witnesses`
+doit avoir effectivement réussi l'unification de ses enfants et traits,
+et son mapping source (y compris celui de ses enfants) demeure exact ou
+explicitement indisponible. On publie également nombre de nœuds
+essayés/acceptés, travail séparé consommé et éventuelle saturation
+du sondage. `validated_local_constituents` reste la preuve recueillie
+pendant l'essai normal de racine : les deux provenances ne sont jamais
+mélangées dans la synthèse des 26 cas.
+
+**Limites maintenues :** un sous-arbre prouvé dans un contexte libre
+n'établit pas son rattachement à la phrase, la validité d'une proposition
+complète, la cause de l'échec global ou une faute grammaticale. Une
+absence de preuve après 12 000 unités signifie seulement *non observé*.
+Ce sondage ne s'exécute pas si la forêt canonique a déjà saturé ; pour
+les 8 cas sans racine structurelle non rejoués par le protocole de
+dialogue, il faut encore organiser un rejeu distinct.
