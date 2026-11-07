@@ -127,3 +127,25 @@ ni l'intention, et ne certifie pas la faute de toutes les lectures.
 Le mode strict, la préparation des citations et les budgets
 restent identiques. Morphologie, valence, ordre et diagnostic local
 sans arbre restent à développer dans P1/P2.
+
+## P2 exploratoire — preuves attachées aux arbres complets alternatifs
+
+`ParseResult.as_dict()` ajoute `alternative_usage_deviations`, uniquement
+pour les arbres **complets matérialisés** autres que l'analyse de rang 1
+qui contiennent une règle marquée explicitement prouvée. Chaque entrée
+expose `rank` (1-based), `root_rule_id`, `root_span`,
+`diagnostic_scope=materialized_alternative_complete_tree`,
+`certainty=conditional_on_alternative_tree` et les diagnostics locaux
+entiers, avec leurs chemins et mappings source disponibles.
+
+Une analyse principale **standard** peut donc exposer une hypothèse
+marquée concurrente *sans changer* `grammatical_status=standard`,
+`usage_deviations=[]` ni présenter l'hypothèse comme faute certaine.
+Réciproquement, une alternative sans écart ne crée aucun signal.
+`ambiguity.exhaustive` reste `false` et toutes les limites
+opérationnelles restent inchangées. Sans parse complet certifié,
+`alternative_usage_deviations=[]` : aucune relation globale ne
+peut être fabriquée à partir d'une forêt partielle.
+
+Ce n'est **pas** encore la tâche P2 de preuve locale en l'absence
+d'arbre complet, ni une détection exhaustive d'anomalies.
