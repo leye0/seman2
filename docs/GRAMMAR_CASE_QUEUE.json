@@ -1,9 +1,9 @@
 {
   "schema": "seman2-grammar-case-queue-v1",
   "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "validated_commit": "aa49159dae957fca9c42aa870bfc614b7ef97ca3",
+  "validated_commit": "49384f5031f141981a0401bcedfceb41eb7cad26",
   "completed_count": 474,
-  "last_attempted_index": 438,
+  "last_attempted_index": 463,
   "unresolved": [
     {"index": 8, "status": "no_structural_root"},
     {"index": 64, "status": "roots_without_valid_analysis"},

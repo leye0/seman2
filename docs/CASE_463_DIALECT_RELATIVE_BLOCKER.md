@@ -92,6 +92,15 @@ meme ecart dans une phrase non citee. Le temoin historique 359 conserve son
 arbre et ses budgets de reference. L'audit grammatical direct donne 120/120
 positifs et 24/24 contrastes.
 
+Le diagnostic integral de la cohorte de 500 phrases confirme **474/500** en
+mode strict, comme avant. Les 500 statuts, indicateurs de saturation de foret
+et limites k-best sont **identiques** a ceux du bilan initial, et le cas 359
+conserve exactement `forest_nodes=1472` et `partial_states=48529`.
+Le cas 463 demeure `roots_without_valid_analysis` dans l'evaluation stricte;
+il devient complet **uniquement** dans le mode marque avec une deviation
+structurale explicitement enregistree. Le commit de code est
+`49384f5031f141981a0401bcedfceb41eb7cad26`.
+
 **Comptabilisation** : le succes annote de 463 est **distinct** du bilan
 canonique. La phrase reste dans la liste des cas non resolus **en analyse
 stricte**; aucun point de couverture standard n'est attribue a un accord
