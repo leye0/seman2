@@ -47,6 +47,39 @@ class UsageDeviation:
     predicate_head_surface: str | None = None
     predicate_head_rule_id: str | None = None
 
+    def explanation(self) -> str:
+        """Readable evidence, never a claim about alternative parses or intent."""
+        descriptors = {
+            "number": {"singular": "singular", "plural": "plural"},
+            "person": {"1": "first person", "2": "second person",
+                       "3": "third person"},
+        }
+
+        def describe(value: str) -> str:
+            descriptive = descriptors.get(self.feature, {}).get(value)
+            return (f"is {descriptive}" if descriptive is not None
+                    else f"has {self.feature}={value!r}")
+
+        overt_head = (
+            self.predicate_head_surface
+            if self.predicate_head_surface and self.predicate_head_features
+            and self.predicate_head_features.get(self.feature) == self.observed
+            else None
+        )
+        predicate = overt_head or self.predicate_surface
+        role = (
+            "reporting verb" if self.relation == "speaker_to_reporting_verb"
+            else "copula" if self.relation == "subject_to_copula"
+            else "finite verb" if overt_head is not None
+            else "predicate"
+        )
+        return (
+            f"In this parse, the subject {self.subject_surface!r} "
+            f"{describe(self.expected)}, while the {role} {predicate!r} "
+            f"{describe(self.observed)}; the marked rule records a "
+            f"{self.feature} mismatch."
+        )
+
     def as_dict(
         self, *, reference_span: Callable[[int, int], tuple[int, int] | None] | None = None,
     ) -> dict[str, Any]:
@@ -72,6 +105,8 @@ class UsageDeviation:
         record = {
             "kind": self.kind,
             "status": "nonstandard_attested",
+            "explanation": self.explanation(),
+            "explanation_language": "en",
             "relation": self.relation,
             "rule_id": self.rule_id,
             "parent_span": list(self.parent_span),
