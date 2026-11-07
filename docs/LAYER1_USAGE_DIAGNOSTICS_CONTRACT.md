@@ -104,14 +104,15 @@ Quatre règles supplémentaires sont disponibles **seulement** lorsque
 `allow_marked_deviations=True` rencontre une citation explicitement balisée :
 `CLAUSE → NP VP` avec (a) sujet 3pl / prédicat 3sg,
 (b) sujet 3sg / prédicat 3pl, (c) sujet 1sg / prédicat 3sg,
-ou (d) sujet 3sg / prédicat 1sg. Les NP/VP conservent leurs
+ou (d) sujet 3sg / prédicat 1sg. Seuls les NP avec le trait **pronominal** positivement établi
+sont admis dans cette première tranche. Les NP/VP conservent leurs
 traits réels; le prédicat est fini et actif et le trait conflictuel
 est positivement établi des deux côtés. Ce sont des **alternatives
 marquées**, jamais de la grammaire strictement permissive.
 
 `usage_deviations[].predicate` désigne le VP entier, avec son span
-exact. Lorsqu'**un seul** terminal lexical fini à l'intérieur du
-VP porte explicitement le trait observé, la sortie ajoute
+exact. Lorsqu'**un seul** candidat lexical fini à l'intérieur du
+VP porte **dans ses traits lexicaux d'origine** le trait observé, la sortie ajoute
 `evidence.predicate_head` : surface, traits, catégorie, chemin
 complet dans l'arbre, offsets d'analyse et mapping source
 (optionnel). Si aucune tête unique n'est prouvée, ce champ est

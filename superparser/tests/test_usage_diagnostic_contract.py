@@ -177,5 +177,47 @@ class UsageDiagnosticContractTests(unittest.TestCase):
             ), self.text)
 
 
+    def test_finite_head_evidence_never_confuses_unification_with_lexical_fact(self):
+        from types import SimpleNamespace
+        text = "They runs"
+        subject = leaf(0, 4, "NP", "plural")
+
+        def make(raw):
+            lexical = ChartItem(
+                start=5, end=9, category="V",
+                features=FeatureStructure.build({"vform": "finite", "number": "singular"}),
+                semantic=None, score=1.0, provenance=Provenance("lexicon"),
+                lexical_candidate=SimpleNamespace(features=FeatureStructure.build(raw)),
+            )
+            predicate = ChartItem(
+                start=5, end=9, category="VP",
+                features=FeatureStructure.build({"vform": "finite", "number": "singular"}),
+                semantic=None, score=1.0, provenance=Provenance("rule"),
+                rule_id="vp_intransitive", children=(lexical,),
+            )
+            return ChartItem(
+                start=0, end=9, category="CLAUSE",
+                features=FeatureStructure.empty(), semantic=None, score=1.0,
+                provenance=Provenance("rule", {"usage_deviation": {
+                    "kind": "subject_verb_number_agreement",
+                    "relation": "subject_to_finite_predicate",
+                    "subject_child": 0, "predicate_child": 1,
+                    "feature": "number", "expected": "plural", "observed": "singular",
+                }}),
+                rule_id="marked_clause_example", children=(subject, predicate),
+            )
+
+        inferred = collect_usage_deviations(make({"vform": "finite"}), text)[0]
+        self.assertNotIn("predicate_head", inferred.as_dict()["evidence"],
+                         "A head must not inherit proof solely from unification")
+        overt = collect_usage_deviations(
+            make({"vform": "finite", "number": "singular"}), text
+        )[0].as_dict()
+        self.assertEqual(overt["evidence"]["predicate_head"]["surface"], "runs")
+        self.assertEqual(overt["evidence"]["predicate_head"]["analysis_span"], [5, 9])
+        self.assertEqual(overt["evidence"]["predicate_head"]["features"]["number"],
+                         "singular")
+
+
 if __name__ == "__main__":
     unittest.main()

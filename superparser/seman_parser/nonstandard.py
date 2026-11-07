@@ -138,8 +138,9 @@ def _finite_agreement_head(node: ChartItem, feature: str, observed: str):
     candidates = []
 
     def visit(current: ChartItem, path: tuple[int, ...]) -> None:
-        features = current.features.as_dict()
-        if (current.lexical_candidate is not None
+        lexical = current.lexical_candidate
+        features = lexical.features.as_dict() if lexical is not None else {}
+        if (lexical is not None
                 and current.category in {"V", "COPULA", "AUX", "AUX-BE", "HAVE"}
                 and features.get("vform") == "finite"
                 and features.get(feature) == observed):
@@ -219,7 +220,7 @@ def collect_usage_deviations(root: ChartItem | None, text: str) -> tuple[UsageDe
                 predicate_head_span=(head[0].start, head[0].end) if head else None,
                 predicate_head_category=head[0].category if head else None,
                 predicate_head_path=path + (predicate_index,) + head[1] if head else (),
-                predicate_head_features=head[0].features.as_dict() if head else None,
+                predicate_head_features=head[0].lexical_candidate.features.as_dict() if head else None,
                 predicate_head_surface=text[head[0].start:head[0].end] if head else None,
                 predicate_head_rule_id=head[0].rule_id if head else None,
                 ))

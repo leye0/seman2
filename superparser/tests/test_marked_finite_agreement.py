@@ -50,7 +50,7 @@ class MarkedFiniteAgreementTests(unittest.TestCase):
         for i in bearer["path"]:
             leaf = leaf.children[i]
         self.assertIsNotNone(leaf.lexical_candidate)
-        self.assertEqual(leaf.features.as_dict()[feature], observed)
+        self.assertEqual(leaf.lexical_candidate.features.as_dict()[feature], observed)
 
     def test_number_mismatch_plural_subject_singular_finite(self):
         self.verify_marked('"They exclaims."',
