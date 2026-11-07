@@ -188,10 +188,36 @@ du sondage. `validated_local_constituents` reste la preuve recueillie
 pendant l'essai normal de racine : les deux provenances ne sont jamais
 mélangées dans la synthèse des 26 cas.
 
+**Résultat mesuré sur l'Action
+[42422126032](https://github.com/leye0/seman2/actions/runs/42422126032)** :
+les sept relectures de dialogue incomplètes ont maintenant **521**
+témoins indépendants, dont **510** avec une correspondance exacte
+de tous les spans source/descendants. Les sept cas ont des preuves
+locales observées ; trois sondages signalent l'atteinte de leur plafond
+séparé. Les 26 statuts canoniques restent inchangés (474/500).
+
 **Limites maintenues :** un sous-arbre prouvé dans un contexte libre
 n'établit pas son rattachement à la phrase, la validité d'une proposition
 complète, la cause de l'échec global ou une faute grammaticale. Une
 absence de preuve après 12 000 unités signifie seulement *non observé*.
-Ce sondage ne s'exécute pas si la forêt canonique a déjà saturé ; pour
-les 8 cas sans racine structurelle non rejoués par le protocole de
-dialogue, il faut encore organiser un rejeu distinct.
+Ce sondage ne s'exécute pas si la forêt canonique a déjà saturé.
+
+## P2 : couverture des résidus hors scope dialogue
+
+Le nouveau `scripts.probe_unscoped_residuals` sélectionne à partir des
+**seules sorties canoniques** les résidus sans racine structurelle et
+ceux dont la racine n'a fourni aucune analyse valide, **à condition**
+qu'aucune racine dialogue exploitable n'ait déjà justifié un rejeu
+scopé. Les 4 saturations de forêt et le timeout initial restent exclus
+des tentatives de preuve locale et signalés comme censurés.
+
+Pour la cohorte figée du 7 novembre, cela correspond à **14 relectures**
+complémentaires : 8 `no_structural_root` et 6
+`roots_without_valid_analysis` non dialoguées. Chacune passe par
+`parse_corpus_case` puis le seul `Parser.parse`, sur texte préparé,
+budgets 50 000/500 000 et échéance 10 s, avec le sondage interne borné
+décrit ci-dessus. Les nouvelles sorties `unscoped_local_probes.jsonl`,
+`unscoped_local_probe_summary.json` et
+`unscoped_local_probe_report.md` sont jointes à la synthèse par ID
+et SHA de cohorte ; toute dérive d'identité/éligibilité provoque un échec.
+Une échéance n'est jamais comptée comme absence grammaticale.

@@ -330,8 +330,8 @@ Trois artefacts supplémentaires sont produits dans le workflow
 - `residual_evidence_report.md` — tableau des 26 cas et traces limitées,
   avec vérifications à entreprendre.
 
-**Ce qui manque encore :** transformer des sous-constituants réellement
-validés en preuves locales malgré l'absence d'arbre global; distinguer
+**Ce qui manque encore :** exploiter les sous-constituants réellement
+validés sans arbre global pour distinguer
 les conflits syntaxiques démontrés des branches candidates rejetées;
 faire annoter indépendamment des phrases grammaticales, fautives,
 non standard et ambiguës pour mesurer les faux positifs. Cette synthèse
@@ -369,6 +369,21 @@ matérialiseur distinct et **12 000 unités de travail séparées**. Les
 témoins qu'il valide figurent dans `independent_local_probe`, avec
 spans et enfants à provenance exacte si disponible; ils sont comptés
 **séparément** dans la synthèse. Aucune lecture partielle n'est promue
-en parse global. Les huit cas sans racine du groupe figé demandent
-encore des relectures dédiées, hors de la seule sonde dialogue.
+en parse global.
+
+L'Action
+[42422126032](https://github.com/leye0/seman2/actions/runs/42422126032)
+a effectivement retenu **521** preuves locales indépendantes sur les
+**7/7** relectures de dialogue non complètes, dont **510** avec mapping
+source et enfants exact. Trois sondages ont signalé leur saturation
+diagnostique distincte. Les 103 témoins du premier mécanisme restent
+comptés **à part** ; aucun n'a changé le strict **474/500**.
+
+Un nouveau rejeu hors scope dialogue étend cette observation aux **8**
+résidus sans racine et aux **6** résidus sans analyse valide et sans
+racine dialogue exploitable. Le choix dérive des statuts figés, vérifie
+les identités source et exclut les cinq cas dont le statut est censuré
+par les ressources (4 budgets de forêt, 1 timeout). Les fichiers
+`unscoped_local_probes.jsonl`, `unscoped_local_probe_summary.json`
+et `unscoped_local_probe_report.md` rejoignent les artefacts des 500 cas.
 Voir [REJECTION_TRACE_PROBE.md](REJECTION_TRACE_PROBE.md).

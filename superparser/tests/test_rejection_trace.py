@@ -149,7 +149,10 @@ class RejectionTraceTests(unittest.TestCase):
 
     def test_failed_global_parse_keeps_local_probes_diagnostic_only(self):
         parser = Parser.from_dir(Path(__file__).resolve().parents[1] / "data", cache_size=0)
-        source = "John opened the box but."
+        # Pinned corpus residual #94 has a valid local participial/nominal
+        # structure but no independent main-clause subject in this segment.
+        source = ("and, keeping me close to her shawl, turned to thank the "
+                  "gentleman for taking so much trouble as to bring her home.")
         ordinary = parser.parse(source).result
         observed = parser.parse(source, rejection_trace_limit=24).result
         self.assertFalse(ordinary.completed)

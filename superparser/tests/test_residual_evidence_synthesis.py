@@ -198,6 +198,32 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(len(rows), 27)
         self.assertEqual(summary["new_unreviewed_failures"], 1)
 
+    def test_unscoped_structural_replays_join_only_eligible_cases(self):
+        args = fixture()
+        eligible = (8, 480)  # Other fixture residuals: timeout or scoped dialogue.
+        extra = [{
+            "index": i, "case_id": f"case:{i}",
+            "canonical_status": UNRESOLVED[i],
+            "source_text": f"Source {i}", "analysis_text": f"Balanced {i}",
+            "independent_replay": True, "same_canonical_budgets": True,
+            "grammatical_fault_established": False,
+            "replay_outcome": "no_structural_root",
+            "rejection_trace": trace(exact=True),
+        } for i in eligible]
+        extra_summary = {"cohort_sha256": "frozen", "cases": len(extra),
+                         "target_indices": list(eligible)}
+        rows, summary = synthesize(*args, extra, extra_summary)
+        self.assertEqual(summary["unscoped_structural_replays"], 2)
+        self.assertEqual(summary["independent_local_probe_witnesses_sampled"], 4)
+        self.assertEqual(summary["incomplete_replays_with_independent_local_proofs"], 3)
+        r8 = next(r for r in rows if r["index"] == 8)
+        self.assertEqual(r8["sampled_local_rejection_evidence"]
+                         ["unscoped_replay"]["independent_local_probe"]
+                         ["witnesses"][0]["source_span"], [30, 34])
+        self.assertEqual(r8["canonical_status"], "no_structural_root")
+        with self.assertRaisesRegex(ValueError, "Unscoped replay identity"):
+            synthesize(*args, extra[:1], extra_summary)
+
     def test_wrong_identity_status_targets_and_trace_claims_fail_closed(self):
         mutators = [
             lambda a: a[1].update(cohort_sha256="other"),

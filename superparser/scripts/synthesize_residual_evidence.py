@@ -42,6 +42,8 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                       independent: bool = False) -> dict[str, Any] | None:
     if local is None:
         return None
+    if not isinstance(local, Mapping):
+        raise ValueError("Local proof sample must be a mapping")
     if (local.get("schema") != "seman2-local-constituent-proof-sample-v1" or
             local.get("exhaustive") is not False or
             local.get("global_tree_proven") is not False or
@@ -173,6 +175,8 @@ def synthesize(
     dialogue: list[Mapping[str, Any]],
     dialogue_summary: Mapping[str, Any],
     comparators: list[Mapping[str, Any]],
+    unscoped: list[Mapping[str, Any]] | None = None,
+    unscoped_summary: Mapping[str, Any] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Fail closed on inconsistent sources; never reinterpret parser outcomes."""
     digest = register_summary["cohort_sha256"]
@@ -189,6 +193,21 @@ def synthesize(
     lex = _indexed(lexical, "lexical")
     dial = _indexed(dialogue, "dialogue")
     comp = _indexed(comparators, "comparators")
+    if (unscoped is None) != (unscoped_summary is None):
+        raise ValueError("Unscoped probes and their summary must be supplied together")
+    extra = _indexed(unscoped or [], "unscoped")
+    if unscoped_summary is not None:
+        eligible = {
+            i for i, r in registered.items()
+            if r["current_status"] in {"no_structural_root", "roots_without_valid_analysis"}
+            and int((r["observed_evidence"].get("dialogue_attempt") or {})
+                    .get("structural_root_nodes", 0)) == 0
+        }
+        if (unscoped_summary.get("cohort_sha256") != digest or
+                set(extra) != eligible or
+                set(extra) != set(unscoped_summary.get("target_indices", [])) or
+                unscoped_summary.get("cases") != len(extra)):
+            raise ValueError("Unscoped replay identity or selection mismatch")
     if (set(dial) != set(dialogue_summary["target_indices"]) or
             dialogue_summary["cases"] != len(dial)):
         raise ValueError("Dialogue target indices do not match replay summary")
@@ -202,7 +221,8 @@ def synthesize(
         if (source["current_status"] != pf[index]["canonical_status"] or
                 source["source_text"] != pf[index]["source_text"]):
             raise ValueError(f"Canonical/preflight outcome mismatch at {index}")
-    for name, items in (("lexical", lex), ("dialogue", dial), ("comparator", comp)):
+    for name, items in (("lexical", lex), ("dialogue", dial),
+                        ("comparator", comp), ("unscoped", extra)):
         for index, row in items.items():
             source = registered.get(index) or pf.get(index)
             if source is None:
@@ -228,6 +248,11 @@ def synthesize(
                 scoped["structural_root_nodes"] != row["canonical_dialogue_root_nodes"] or
                 row.get("independent_replay") is not True):
             raise ValueError(f"Dialogue replay not eligible/independent at {index}")
+    if any(r.get("independent_replay") is not True
+           or r.get("same_canonical_budgets") is not True
+           or r.get("grammatical_fault_established") is not False
+           for r in extra.values()):
+        raise ValueError("Unscoped replay provenance missing")
 
     # Lexical spotchecks cover all *current* failures and sampled controls;
     # absence in a recovered case must not be interpreted as lexical absence.
@@ -243,6 +268,7 @@ def synthesize(
         surface = pf[index]["preflight"]
         lexical_row = lex.get(index)
         replay = dial.get(index)
+        other = extra.get(index)
         marked = comp.get(index) if index in (463, 480) else None
         if marked and marked["canonical_status"] == "complete":
             raise ValueError("Marked comparison silently substituted for strict outcome")
@@ -256,6 +282,8 @@ def synthesize(
             checks.append("compare_source_continuation_with_independent_finite_clauses")
         if replay is not None:
             checks.append("inspect_scoped_dialogue_unification_and_validity")
+        if other is not None:
+            checks.append("inspect_independently_validated_local_subtrees")
         if marked is not None:
             checks.append("compare_strict_with_independent_marked_tree")
         if lexical_row and lexical_row["candidate_agreement_hypothesis"]:
@@ -274,6 +302,8 @@ def synthesize(
         if replay:
             for name in TRACE_SCOPES:
                 traces[name] = _trace_view((replay.get(name) or {}).get("rejection_trace"))
+        if other is not None:
+            traces["unscoped_replay"] = _trace_view(other.get("rejection_trace"))
         if marked:
             for name, trace in marked.get("traces", {}).items():
                 traces["marked_" + name] = _trace_view(trace)
@@ -315,6 +345,11 @@ def synthesize(
                 "opt_in_only": True,
                 "does_not_replace_canonical_status": True,
             },
+            "unscoped_replay": None if other is None else {
+                "outcome": other["replay_outcome"],
+                "independent": True,
+                "does_not_replace_canonical_status": True,
+            },
             "sampled_local_rejection_evidence": traces,
             "suggested_checks_not_diagnoses": checks,
             "grammatical_fault_established": False,
@@ -330,6 +365,7 @@ def synthesize(
         "recovered_historical": sum(r["trajectory"] == "recovered" for r in rows),
         "new_unreviewed_failures": sum(r["trajectory"] == "new_unreviewed_failure" for r in rows),
         "scoped_dialogue_replays": len(dial),
+        "unscoped_structural_replays": len(extra),
         "marked_opt_in_comparisons": 2,
         "local_sample_events": sum(
             entry["sampled_events"] for row in rows
@@ -347,7 +383,7 @@ def synthesize(
             any(entry is not None and entry["independent_local_probe"] is not None
                 and entry["independent_local_probe"]["sampled_local_constituents"] > 0
                 for name, entry in row["sampled_local_rejection_evidence"].items()
-                if name in TRACE_SCOPES)
+                if name in TRACE_SCOPES or name == "unscoped_replay")
             for row in rows if row["canonical_status"] != "complete"),
         "source_identity_validated": True,
         "no_causal_or_grammatical_fault_inference": True,
@@ -373,6 +409,8 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
         paired = ("dialogue: " + replay["outcome"] if replay else "—")
         if marked:
             paired += "; marked opt-in: " + marked["outcome"]
+        if r["unscoped_replay"] is not None:
+            paired += "; unscoped: " + r["unscoped_replay"]["outcome"]
         lines.append("| " + " | ".join((str(r["index"]), r["canonical_status"],
                         surface, paired, ", ".join(r["suggested_checks_not_diagnoses"]))) + " |")
     lines += ["", "## Local observations by case", ""]
@@ -451,6 +489,8 @@ def main() -> None:
     for name in ("register", "register_summary", "preflight", "lexical", "dialogue",
                  "dialogue_summary", "comparators", "out_dir"):
         parser.add_argument("--" + name.replace("_", "-"), type=Path, required=True)
+    parser.add_argument("--unscoped", type=Path)
+    parser.add_argument("--unscoped-summary", type=Path)
     args = parser.parse_args()
     rows, summary = synthesize(
         read_jsonl(args.register),
@@ -459,6 +499,9 @@ def main() -> None:
         read_jsonl(args.dialogue),
         json.loads(args.dialogue_summary.read_text(encoding="utf8")),
         read_jsonl(args.comparators),
+        read_jsonl(args.unscoped) if args.unscoped is not None else None,
+        json.loads(args.unscoped_summary.read_text(encoding="utf8"))
+        if args.unscoped_summary is not None else None,
     )
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "residual_evidence_synthesis.jsonl").write_text(

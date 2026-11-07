@@ -145,3 +145,4 @@ Validate #357 quoted nominal fallback preserves split dialogue precedence.
 Checkpoint request 2026-11-07: validate residual-evidence synthesis tests and unchanged Layer 1 grammar.
 Checkpoint request 2026-11-07: bounded positive local-constituent witness instrumentation with unchanged canonical outcomes.
 Checkpoint request 2026-11-07: verify independent failed-root local probing preserves Layer 1 work budgets, 120/120 quality and strict controls.
+Checkpoint request 2026-11-07: verify failed-root test against frozen corpus case 94 and preserve all strict grammar gates.

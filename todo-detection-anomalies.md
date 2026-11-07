@@ -195,8 +195,11 @@ marqués complets. Un **sondage indépendant et borné des constituants**
 est ajouté aux relectures opt-in sans racine valide et sans saturation,
 avec budget diagnostique propre et sortie `independent_local_probe`
 distincte. Ce ne sont pas des arbres globaux ni des preuves de faute.
-Le rejeu des huit cas sans racine, la couverture exhaustive et la
-causalité des rejets restent ouverts; P2 n'est pas clos.
+Le nouveau rejeu distinct des 8 cas sans racine et des 6 cas à racine
+non validée hors scope dialogue couvre maintenant ces formes d'échec
+structurel en préservant l'issue canonique et les budgets. La couverture
+exhaustive, les cas censurés par les ressources et la causalité des
+rejets restent ouverts; P2 n'est pas clos.
 
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
