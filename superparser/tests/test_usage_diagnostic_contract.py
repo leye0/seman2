@@ -133,6 +133,7 @@ class UsageDiagnosticContractTests(unittest.TestCase):
         self.assertEqual(reported["grammatical_status"], "inconclusive")
         self.assertIsNone(reported["best"])
         self.assertEqual(reported["usage_deviations"], [])
+        self.assertEqual(reported["alternative_usage_deviations"], [])
         self.assertEqual(reported["diagnostic_scope"], "none")
         self.assertCountEqual(reported["search_limitations"], (
             "recognition_budget_exceeded", "kbest_budget_exceeded",
@@ -149,10 +150,60 @@ class UsageDiagnosticContractTests(unittest.TestCase):
         diagnostic = parsed.as_dict()
         self.assertEqual(diagnostic["grammatical_status"], "nonstandard_attested")
         self.assertEqual(diagnostic["diagnostic_scope"], "selected_complete_tree")
+        self.assertEqual(diagnostic["alternative_usage_deviations"], [],
+                         "An unmarked alternative must not invent a fault")
         self.assertEqual(diagnostic["ambiguity"], {
             "examined_complete_trees": 2, "unmarked_trees": 1,
             "marked_trees": 1, "exhaustive": False,
         })
+
+
+    def test_unmarked_selected_tree_reports_only_conditional_alternative_proofs(self):
+        unmarked = ChartItem(
+            start=0, end=22, category="CLAUSE",
+            features=FeatureStructure.empty(), semantic=None, score=4.0,
+            provenance=Provenance("rule"), rule_id="standard_alternative",
+        )
+        parsed = result(self.text, unmarked, other_roots=(self.root,))
+        mapped = parsed.as_dict(reference_span=lambda a, b: (a - 1, b - 1)
+                                if 1 <= a < b <= 21 else None)
+        self.assertEqual(mapped["parse_status"], "complete")
+        self.assertEqual(mapped["grammatical_status"], "standard")
+        self.assertEqual(mapped["diagnostic_scope"], "selected_complete_tree")
+        self.assertEqual(mapped["usage_deviations"], [],
+                         "A non-selected marked tree cannot change the verdict")
+        self.assertEqual(mapped["ambiguity"], {
+            "examined_complete_trees": 2, "unmarked_trees": 1,
+            "marked_trees": 1, "exhaustive": False,
+        })
+        self.assertEqual(len(mapped["alternative_usage_deviations"]), 1)
+        witness = mapped["alternative_usage_deviations"][0]
+        self.assertEqual(witness["rank"], 2)
+        self.assertEqual(witness["root_rule_id"], "two_reporting_tags")
+        self.assertEqual(witness["root_span"], [0, 22])
+        self.assertEqual(witness["diagnostic_scope"],
+                         "materialized_alternative_complete_tree")
+        self.assertEqual(witness["certainty"], "conditional_on_alternative_tree")
+        first, second = witness["usage_deviations"]
+        self.assertEqual(first["subject"]["reference_span"], [5, 9])
+        self.assertEqual(first["predicate"]["reference_span"], [0, 4])
+        self.assertEqual(second["subject"]["reference_span"], [11, 15])
+        self.assertEqual(second["predicate"]["reference_span"], [16, 20])
+        self.assertEqual(first["evidence"]["parent"]["path"], [0])
+        self.assertEqual(second["evidence"]["parent"]["path"], [1])
+        self.assertEqual(parsed.usage_deviations(), ())
+
+    def test_alternative_without_source_mapping_does_not_invent_offsets(self):
+        unmarked = ChartItem(
+            start=0, end=22, category="CLAUSE",
+            features=FeatureStructure.empty(), semantic=None, score=2.0,
+            provenance=Provenance("rule"), rule_id="standard_alternative",
+        )
+        serialized = result(self.text, unmarked, other_roots=(self.root,)).as_dict()
+        item = serialized["alternative_usage_deviations"][0]["usage_deviations"][0]
+        self.assertIsNone(item["subject"]["reference_span"])
+        self.assertEqual(item["subject"]["reference_mapping"], "not_provided")
+        self.assertFalse(serialized["ambiguity"]["exhaustive"])
 
     def test_rule_must_prove_both_sides_and_cannot_infer_author_intent(self):
         first = self.root.children[0]

@@ -235,10 +235,27 @@ class ParseResult:
 
         deviations = collect_usage_deviations(best, self.text)
         alternatives = self.alternatives() if self.completed else ()
-        # K-best is a *sample*, not an exhaustive proof that the sentence
-        # lacks another valid analysis; report this ambiguity independently.
-        unmarked = sum(not collect_usage_deviations(item, self.text)
-                       for item in alternatives)
+        # Materialized k-best is not exhaustive. A marked *other* tree is
+        # evidence conditional on that derivation, never a sentence-level
+        # fault and never a replacement for the selected-tree status.
+        unmarked = 0
+        alternate_witnesses = []
+        for rank, item in enumerate(alternatives, start=1):
+            witnessed = collect_usage_deviations(item, self.text)
+            if not witnessed:
+                unmarked += 1
+            elif rank > 1:
+                alternate_witnesses.append({
+                    "rank": rank,
+                    "root_rule_id": item.rule_id,
+                    "root_span": [item.start, item.end],
+                    "diagnostic_scope": "materialized_alternative_complete_tree",
+                    "certainty": "conditional_on_alternative_tree",
+                    "usage_deviations": [
+                        entry.as_dict(reference_span=reference_span)
+                        for entry in witnessed
+                    ],
+                })
         diagnostic = self._diagnostic_summary(deviations)
         return {
             "text": self.text,
@@ -247,6 +264,7 @@ class ParseResult:
             "usage_deviations": [
                 item.as_dict(reference_span=reference_span) for item in deviations
             ],
+            "alternative_usage_deviations": alternate_witnesses,
             "ambiguity": {
                 "examined_complete_trees": len(alternatives),
                 "unmarked_trees": unmarked,

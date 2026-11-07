@@ -100,6 +100,11 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Préparation additive :** les écarts d'usage des arbres complets
+alternatifs déjà matérialisés sont exposés comme hypothèses
+**conditionnelles à chaque arbre**. Aucun diagnostic de faute n'est
+inféré d'un échec global ni d'une alternative non retenue.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.
