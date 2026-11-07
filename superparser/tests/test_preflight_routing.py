@@ -16,9 +16,16 @@ from seman_parser.segmentation import build_lattice
 DATA = Path(__file__).resolve().parents[1] / "data"
 HARD = (
     "John opened the box, and Mary gave the book to Robert while the other "
-    "children waited near the doorway for their parents to arrive.",
+    "children waited near the doorway for their parents to arrive near the "
+    "old stone bridge on the quiet country road beside the church.",
     "The doctor opened the door, and the old man stood beside the table "
-    "while the younger children waited quietly in the hallway.",
+    "while the younger children waited quietly in the hallway and the "
+    "neighbors gathered in the street before the morning sun appeared.",
+)
+UNSEGMENTED_LONG = (
+    "John opened the box in the room near the window across the house "
+    "behind the church beside the river on the road before the old stone "
+    "bridge under the cloudy sky over the hills."
 )
 
 
@@ -119,7 +126,7 @@ class PreflightRoutingTests(unittest.TestCase):
                 lattice, observation={"analysis_text": "other", "signals": []})
 
     def test_diagnostic_preflight_observation_is_reused_by_router(self):
-        sentence = HARD[0]
+        sentence = UNSEGMENTED_LONG
         with patch.object(self.routed._preflight_router, "choose",
                           wraps=self.routed._preflight_router.choose) as choose:
             result = self.routed.parse(
