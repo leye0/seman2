@@ -199,7 +199,7 @@ class UsageDiagnosticContractTests(unittest.TestCase):
             features=FeatureStructure.empty(), semantic=None, score=2.0,
             provenance=Provenance("rule"), rule_id="standard_alternative",
         )
-        serialized = result(self.text, unmarked, other_roots=(self.root)).as_dict()
+        serialized = result(self.text, unmarked, other_roots=(self.root,)).as_dict()
         item = serialized["alternative_usage_deviations"][0]["usage_deviations"][0]
         self.assertIsNone(item["subject"]["reference_span"])
         self.assertEqual(item["subject"]["reference_mapping"], "not_provided")
