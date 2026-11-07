@@ -386,4 +386,13 @@ les identités source et exclut les cinq cas dont le statut est censuré
 par les ressources (4 budgets de forêt, 1 timeout). Les fichiers
 `unscoped_local_probes.jsonl`, `unscoped_local_probe_summary.json`
 et `unscoped_local_probe_report.md` rejoignent les artefacts des 500 cas.
+
+L'Action
+[42422741254](https://github.com/leye0/seman2/actions/runs/42422741254)
+valide maintenant **406** preuves sur les **14/14** cas hors dialogue.
+La synthèse complète contient **927** témoins indépendants sur
+**21/21** cas structurels, dont **906** possèdent une référence source
+et enfants exacte; cinq sondages ont été bornés par leur plafond
+diagnostique. Les cinq cas déjà censurés (budget/délai) restent hors
+de ce protocole. **474/500** est inchangé.
 Voir [REJECTION_TRACE_PROBE.md](REJECTION_TRACE_PROBE.md).

@@ -221,3 +221,16 @@ décrit ci-dessus. Les nouvelles sorties `unscoped_local_probes.jsonl`,
 `unscoped_local_probe_report.md` sont jointes à la synthèse par ID
 et SHA de cohorte ; toute dérive d'identité/éligibilité provoque un échec.
 Une échéance n'est jamais comptée comme absence grammaticale.
+
+**Validation complète sur l'Action
+[42422741254](https://github.com/leye0/seman2/actions/runs/42422741254)** :
+les **14/14** cas supplémentaires ont produit **406** témoins positifs
+locaux. Les sept dialogues en ont fourni à nouveau **521** : au total
+**927** preuves sur **21/21** résidus structurels non complétés.
+**906** témoins sont mappés exactement à la source *et* à tous les
+enfants ; les autres demeurent explicitement non mappés. Sur les 28
+sondages locaux distincts (deux par dialogue et un par cas hors dialogue),
+**cinq** ont atteint leur budget indépendant. Les cinq cas canoniques
+initialement censurés par les ressources sont restés exclus. Le résultat
+canonique demeure **474/500**, sans déclaration de faute issue d'une
+non-détection.

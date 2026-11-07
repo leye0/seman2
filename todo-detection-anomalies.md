@@ -201,6 +201,16 @@ structurel en préservant l'issue canonique et les budgets. La couverture
 exhaustive, les cas censurés par les ressources et la causalité des
 rejets restent ouverts; P2 n'est pas clos.
 
+**Validation mesurée (Action 42422741254) :** 21/21 résidus structurels
+sondés possèdent des témoins positifs, **927** compositions locales
+unifiées (dont **906** avec mapping exact de la source et des enfants),
+et **5** sondages locaux plafonnés. Les cinq cas canoniques censurés
+par la recherche ne sont pas interprétés comme fautifs. La cohorte
+stricte reste **474/500**; les **565 tests Layer 1** sont verts dans
+l'Action 42422741275. Prochaine étape : confronter ces sous-arbres
+concurrents à des liens sujet-prédicat et à des contraintes contradictoires
+localisées, sans convertir une non-détection en faute.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.
