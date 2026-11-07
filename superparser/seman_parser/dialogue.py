@@ -146,16 +146,34 @@ def dialogue_lattice(base: LexicalLattice) -> LexicalLattice | None:
     for boundary in boundaries:
         if boundary.side == "close":
             continue
+        # A few context-dependent utterance fragments have deliberately
+        # narrow entry points.  Adding their general OPEN-QUOTE rules to the
+        # shared dialogue forest would consume the near-saturated #359 budget
+        # even when neither fragment is lexically possible.  These overlays
+        # only expose a *category* on a real opening quote; no token, source
+        # span, or lexical reading is changed or synthesized.
+        candidate_opener = next((c for c in candidates
+                                 if c.category == "OPEN-QUOTE"
+                                 and c.span_start == boundary.start), None)
+        if candidate_opener is None:
+            continue
+        if any(c.category == "TOPIC-MARKER"
+               and c.features.as_dict().get("topic_marker") == "true"
+               and (boundary.end == c.span_start or next_to(boundary.end, c.span_start))
+               for c in lexical):
+            candidates.append(replace(
+                candidate_opener, category="OPEN-QUOTE-DISCOURSE-TOPIC"))
+        if any(c.category == "COORD"
+               and c.features.as_dict().get("nominal_coordination") == "true"
+               and (boundary.end == c.span_start or next_to(boundary.end, c.span_start))
+               for c in lexical):
+            candidates.append(replace(
+                candidate_opener, category="OPEN-QUOTE-NOMINAL-CONTINUATION"))
         coordinators = [c for c in lexical if c.category == "COORD"
                         and c.features.as_dict().get("nominal_coordination") == "true"
                         and (boundary.end == c.span_start
                              or next_to(boundary.end, c.span_start))]
         if not coordinators:
-            continue
-        candidate_opener = next((c for c in candidates
-                                 if c.category == "OPEN-QUOTE"
-                                 and c.span_start == boundary.start), None)
-        if candidate_opener is None:
             continue
         if any(has_fragment_start(coord) for coord in coordinators):
             candidates.append(replace(
