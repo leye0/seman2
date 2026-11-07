@@ -100,6 +100,12 @@ complet de la famille des accords.
 
 ### P2 — Diagnostic lorsque l'analyse complète échoue
 
+**Suite P2 (observation seulement) :** trace de `requires` sans preuve
+positive et ascendance bornée des requêtes syntaxiques, avec contrôles
+stricts #76/#244 et comparaison opt-in marquée #463/#480. Cette
+instrumentation ne certifie pas la cause unique d'un échec, et
+ne transforme pas la non-détection en faute grammaticale.
+
 **Instrumentation additionnelle (observation seulement) :** trace bornée
 des rejets d'unification, contraintes de traits et enfants contextuels
 réellement épuisés; rejeu indépendant des dialogues avec racines
