@@ -1,0 +1,131 @@
+# TODO — Détection et qualification des anomalies grammaticales
+
+> Projet **Seman2**, **Layer 1** (anglais). Document de conception et de travail, pas une fonctionnalité annoncée comme terminée.
+>
+> Point de départ : [cas 480](docs/CASE_480_MARKED_REPORTED_DIALOGUE.md). Respecter [AGENTS.md](AGENTS.md), [l'architecture active](docs/RUN_CURRENT_LAYER1.md) et [le protocole de correction des phrases](docs/GRAMMAR_CASE_FIX_PROTOCOL.md).
+
+## Objectif
+
+Seman2 doit pouvoir **analyser le plus fidèlement possible une phrase qui comporte un usage grammatical inhabituel ou incorrect**, tout en expliquant **précisément quelle contrainte est enfreinte**, où, entre quels constituants, et sur quelle preuve grammaticale repose le diagnostic.
+
+**Principe fondamental :** une anomalie ne doit pas être « réparée » silencieusement pour rendre l'arbre acceptable. On conserve la forme réellement écrite, ses traits lexicaux, ses positions, ses interprétations concurrentes et la preuve du conflit. Une phrase peut être compréhensible et structurellement analysable sans être conforme à la grammaire standard.
+
+Il faut distinguer impérativement :
+
+1. **Usage standard** : toutes les contraintes vérifiées dans l'analyse retenue.
+2. **Usage non standard attesté** : construction analysable, avec un écart grammatical explicite et documenté (dialecte, dialogue littéraire, etc.).
+3. **Anomalie probable ou démontrée** : conflit localisé par des règles indépendantes, sans supposer automatiquement une intention d'auteur.
+4. **Analyse incomplète ou incertaine** : éléments manquants, ambiguïté non résolue, budget/délai dépassé, ou absence de règle. **Un échec de parsing ne prouve pas une faute.**
+
+Les notions d'**intention** (faute involontaire, choix littéraire délibéré, dialecte, ironie) et de **conformité à un registre** sont distinctes de l'observation objective d'un conflit. Par défaut, `intent=unknown`. Une intention explicitement fournie par un corpus annoté doit porter une provenance, et ne doit pas être présentée comme une déduction du parseur.
+
+## État actuel — cas 480, acquis
+
+Texte : `'As for you, Benjamin Gunn,' says they, 'here's a musket,' they says, 'and a spade, and pick-axe.`
+
+- En mode **strict**, le cas 480 demeure `roots_without_valid_analysis` et n'est **pas compté comme une réussite** dans la cohorte.
+- Avec `Parser.parse(..., allow_marked_deviations=True)` (pour un cas Gutenberg, toujours via `parse_corpus_case`), le meilleur arbre est **complet et structurellement vérifié** : thème, vocatif, présentative, deux incises et continuation nominale elliptique.
+- Il fournit **deux** `UsageDeviation` indépendantes : `says they` et `they says`, chaque fois avec sujet `they` (pluriel) et verbe `says` (singulier), `kind=subject_verb_number_agreement`, `relation=speaker_to_reporting_verb`, `expected=plural`, `observed=singular`, `intent=unknown`, `register=literary_dialogue`.
+- Chaque écart contient les **spans exacts du sujet et du prédicat**; `prepared.reference_span(...)` permet de retrouver leur position dans le texte original malgré les guillemets transférés.
+- Les règles marquées sont **opt-in** et contraintes : elles n'affaiblissent pas les accords de la grammaire ordinaire et ne remplacent pas les traits lexicaux originaux.
+
+**Limite majeure actuelle :** ce mécanisme reconnaît seulement les cas pour lesquels une construction marquée a été **explicitement modélisée**. Il ne constitue **pas** encore un détecteur générique de fautes. De plus, un arbre complet mais mal rattaché, ou un ancien faux positif issu d'une lecture lexicale ambiguë, ne doit pas masquer une anomalie.
+
+## Contrat de diagnostic à viser
+
+Pour chaque analyse retenue, pouvoir exposer une liste éventuellement vide d'anomalies **indépendantes et ancrées dans l'arbre**, et conserver le statut global du parsing séparément de son jugement grammatical.
+
+Chaque diagnostic devrait indiquer, dans la mesure prouvée :
+
+- **Nature précise** : accord sujet-verbe, forme verbale, contrainte de valence, ordre des constituants, ponctuation structurelle, etc.
+- **Relation grammaticale en cause** : `subject_to_verb`, `speaker_to_reporting_verb`, `head_to_modifier`, etc., avec références aux nœuds et aux `rule_id`.
+- **Constat vérifiable** : traits attendus et observés (**sans réécriture**), ou contrainte structurelle attendue et structure observée.
+- **Localisation** : surface et spans exacts de **chaque partie** du conflit dans le texte analysé **et** le texte source; provenance des éventuels caractères synthétiques.
+- **Portée et contexte** : proposition, incise, citation, dialecte/registre *si établi*; différence entre exception attestée et faute non documentée.
+- **Degré de certitude et justification** : anomalie démontrée, hypothèse concurrente ou diagnostic suspendu; ne pas inventer un score de probabilité non calibré.
+- **Intention** : `unknown` par défaut, même pour un dialogue clairement littéraire; provenance obligatoire si une annotation humaine renseigne une intention.
+
+### Exemple conceptuel de sortie
+
+Le schéma exact de l'API reste à concevoir. Illustration **non contractuelle** (et non sortie littérale actuelle) :
+
+```json
+{
+  "parse_status": "complete",
+  "grammatical_status": "nonstandard_attested",
+  "deviations": [
+    {
+      "kind": "subject_verb_number_agreement",
+      "relation": "speaker_to_reporting_verb",
+      "subject": { "surface": "they", "number": "plural" },
+      "predicate": { "surface": "says", "number": "singular" },
+      "expected": "plural",
+      "observed": "singular",
+      "intent": "unknown",
+      "evidence": "explicit_marked_grammar_rule"
+    }
+  ]
+}
+```
+
+Les positions, références de nœuds et provenance source doivent être **présentes dans l'implémentation finale**, même si elles sont omises de cet exemple abrégé.
+
+## Travaux à réaliser
+
+### P0 — Formaliser et fiabiliser le diagnostic existant
+
+- [ ] Recenser les champs et invariants réels de `UsageDeviation`, `ParseResult`, `ParseReport` et du mapping des spans; définir un contrat public stable **sans nouveau point d'entrée de parsing**.
+- [ ] Distinguer dans les résultats `completed`, `grammatical_status`, écarts constatés, ambigüités et limites de recherche; **ne jamais** inférer « fautif » de `completed=False`.
+- [ ] Exiger une preuve locale pour chaque anomalie (traits, relation, nœuds, règle, offsets); permettre **plusieurs écarts distincts dans une seule phrase** sans duplication.
+- [ ] Garantir que le mode strict ne fabrique ni accord ni faux succès; le mode marqué reste un **choix explicite** jusqu'à décision documentée.
+- [ ] Faire apparaître les contradictions grammaticales dans les diagnostics sans les confondre avec les constructions valides **elliptiques, dialectales ou littéraires**.
+
+### P1 — Généraliser par familles de contraintes
+
+- [ ] **Accords** : nombre, personne, formes finies et copules; prévoir la généralisation au-delà de `SPEECH-TAG`, sans règle universelle permissive.
+- [ ] **Morphologie** : formes verbales incompatibles avec le contexte (participe vs prétérit, infinitif, temps, etc.) et autres traits réellement observés.
+- [ ] **Valence et constituants** : complément requis/forbidden, type de complément, structure et relation des dépendances.
+- [ ] **Ordre et ponctuation** : constructions exigées par la grammaire, avec traitement explicite des dialogues et citations; préserver le transfert canonique des guillemets.
+- [ ] Pour chaque famille, documenter les exceptions légitimes, les contextes de validité et les **contre-exemples** : pas de jugement normatif déclenché uniquement par une chaîne de mots.
+
+### P2 — Diagnostic lorsque l'analyse complète échoue
+
+- [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
+- [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
+- [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.
+- [ ] Proposer éventuellement des **analyses concurrentes** ou des attentes non satisfaites, toujours liées à des règles et spans concrets; aucun diagnostic certain en cas d'ambiguïté réelle.
+
+### P3 — Explications exploitables et évaluation
+
+- [ ] Exposer une explication lisible (« sujet pluriel `they`, verbe singulier `says` ») **dérivée des preuves structurées**, sans narration libre non vérifiée.
+- [ ] Constituer un petit corpus de phrases **standard / non standard attestées / fautes documentées / ambiguës / incomplètes**, avec provenance des annotations humaines lorsqu'elles existent.
+- [ ] Mesurer séparément : exactitude des localisations, exactitude du type d'écart, validité de l'arbre de rang 1, faux positifs et faux négatifs; **ne pas** optimiser seulement la complétion.
+- [ ] Tester les usages non standards intentionnels **et** les fautes involontaires, sans supposer qu'on peut distinguer leur intention par la syntaxe seule.
+- [ ] Contrôler les effets de bord sur la richesse des alternatives lexicales et les performances de reconnaissance.
+
+## Scénarios d'acceptation minimaux
+
+| Entrée | Attente |
+| --- | --- |
+| `he says` / `says he` | Accord ordinaire, aucune anomalie. |
+| `they say` / `they said` | Accord ordinaire, aucune anomalie. |
+| `they says` / `says they` **dans le dialogue attesté du cas 480** | Analyse marquée opt-in; conflit localisé sujet pluriel / verbe singulier; `intent=unknown`. |
+| Les **deux** emplois non standards du cas 480 | Deux annotations indépendantes aux bons spans; thème, vocatif et reprise nominale correctement attachés. |
+| `Here are a lantern` | Ne pas accepter cette présentative comme un accord standard; une éventuelle explication doit être prouvée. |
+| Citation/ellipse licite ou fragment sans contexte | Ne pas produire de « faute » automatique faute de proposition complète. |
+| Phrase sans analyse complète / cas saturé | Statut **inconclusif**; ne pas assimiler absence de parse à anomalie linguistique. |
+| Phrase ambiguë avec une lecture grammaticale valide | Ne pas déclarer une faute certaine à partir d'une seule lecture concurrente défectueuse. |
+
+## Garde-fous du projet
+
+- Toujours utiliser **`Parser.parse`**, seul point d'entrée public; pour les cas de roman, **`parse_corpus_case`** et préparation **`QUOTE_BALANCED`**. Préserver texte original, WordNet, lattice, alternatives et spans.
+- Règles **compositionnelles, généralisables et restrictives**; pas de table de corrections spécifique aux citations, pas de correction automatique silencieuse, pas de second parseur.
+- Ne pas changer les budgets pour masquer des saturations; vérifier le témoin sensible **359** et les rattachements exacts du rang 1.
+- Garder inchangés les seuils existants : qualité **120/120**, positifs **24/24**, au plus **9** contre-exemples négatifs encore acceptés dans le jeu connu; vérifier les tests et la cohorte figée **500 cas** index par index selon le protocole.
+- Les écarts de grammaire sont **distincts** des erreurs factuelles, de l'analyse sémantique du Layer 2 et de l'évaluation de la qualité littéraire.
+
+## Définition de « terminé »
+
+Une phrase standard ne déclenche pas d'alerte parasite; une anomalie prise en charge donne une **explication reproductible avec les deux côtés du conflit et leurs positions exactes**; une construction non standard attestée reste analysable sans changer ses traits; une analyse ambiguë ou bloquée affiche explicitement ses limites. Les scénarios et témoins doivent être validés sans régression du chemin strict.
+
+**Important :** ce document est une **feuille de route**. Seul le comportement attesté dans « État actuel — cas 480 » est implémenté aujourd'hui.
