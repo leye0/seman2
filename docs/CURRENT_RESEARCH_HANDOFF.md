@@ -39,12 +39,13 @@ Le moteur adaptatif à préfixes partagés a démontré **−15,6 % de CPU** sur
 
 Le dépôt courant a été nettoyé pour contenir uniquement le parseur grammatical retenu, ses tests de qualité, les données et un benchmark du chemin actif.
 
-## Dernier jalon de correction (cas 473)
+## Dernier jalon de correction (cas 480)
 
-- Commit valide par les tests locaux : `274379374d6078f2dc7d0fe88ca4b91c3df2766a` ; voir [`CASE_473_COORDINATED_NONRESTRICTIVE_RELATIVES.md`](CASE_473_COORDINATED_NONRESTRICTIVE_RELATIVES.md).
-- La phrase **473** a maintenant un arbre correct avec deux relatives coordonnees, verbe parfait avec trou d'objet, et infinitif attache a `the intelligence`.
-- Bilan strict **474/500** a budgets constants : **473 gagnee**, mais **466 retiree** car l'ancien arbre `stars he`/`'s dead` etait un **faux positif**, pas une analyse recevable. Les 498 autres statuts et tous les indicateurs de budget/delai sont inchanges. Le cas **359** conserve exactement ses couts et son arbre.
-- Prochaine phrase deterministe dans `GRAMMAR_CASE_QUEUE.json` : **480**. Le cas **466** reste explicitement dans la file pour une future solution structurelle du discours, jamais par restauration du nom compose fallacieux.
+- Commit de code validé localement : `08a5aecef12457e72c97776380bfd6e200d04752` ; voir [`CASE_480_MARKED_REPORTED_DIALOGUE.md`](CASE_480_MARKED_REPORTED_DIALOGUE.md).
+- Le cas **480** est un dialogue rapporté à deux incises dialectales (`says they` et `they says`). En mode explicite `allow_marked_deviations=True`, le meilleur arbre est entièrement structuré : thème `As for you`, adresse `Benjamin Gunn`, présentative `here's a musket`, puis liste nominale coordonnée elliptique, avec **deux écarts d'accord indépendants** et leurs offsets. En mode strict le cas reste incomplet et `intent=unknown` : aucune prétendue normalisation du dialecte.
+- Les règles `SPEECH-TAG` ordinaires vérifient désormais les accords en nombre et en personne ; les écarts n'apparaissent que sous règles marquées avec provenance précise. Les deux ouvertures lexicalement typées de fragments préservent strictement le témoin de saturation **359** (arbre correct, **1472** nœuds / **48529** états).
+- CI principale [42381648511](https://github.com/leye0/seman2/actions/runs/42381648511) et CI dialogue [42381648518](https://github.com/leye0/seman2/actions/runs/42381648518) **vertes**. Suite locale : **499 tests** réussis ; qualité **120/120**, contrastes **24/24**, faux négatifs acceptés encore **9/24** ; smoke vert. Cohorte stricte **474/500**, aucun nouveau changement de statut ou de budget. Les seuls changements par rapport à l'ancien snapshot du cas 463 sont les ajustements **466** et **473**, déjà établis au jalon précédent.
+- Prochaine phrase déterministe selon `GRAMMAR_CASE_QUEUE.json` : **487**. Le cas **480** reste dans la file stricte pour une future discussion des usages marqués, sans inflation artificielle du score.
 
 ## Prochaine tâche SANS instruction supplémentaire
 
