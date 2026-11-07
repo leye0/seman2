@@ -95,3 +95,37 @@ and the three new files: `residual_research_cases.jsonl`,
 The CI checks exact cohort checksum, 500 aligned identities and statuses,
 failed-only lexicon rows, the 26 pinned original case IDs, recovery
 retention and explicit appearance of newly failed cases.
+
+## Instruments opt-in : rejets de contraintes
+
+`Parser.parse(text, rejection_trace_limit=48)` utilise exactement le
+recognizer habituel, avec une collection **bornée** d'événements de
+`_LazyMaterializer`. La valeur par défaut **0** désactive toute collecte.
+Les résultats d'usage standard ou marqué ne changent pas de contrat.
+
+Le champ `stats.rejection_trace` comporte `schema`,
+`observed_by_stage`, `observed_events`, `sample_limit`, `events`,
+`truncated`, `exhaustive=false` et
+`grammatical_fault_established=false`. Chaque événement expose
+`stage`, `rule_id` le cas échéant, `category`,
+`analysis_span` et éventuellement le contexte d'un enfant refusé.
+Les étapes observées incluent les rejets d'unification lexicale,
+de LHS des règles, les indices lexicaux/règles en k-best, et un
+`child_context_exhausted` **uniquement** si le flux contextuel est
+réellement épuisé (pas un cycle provisoire).
+
+`direct_atom_conflicts` n'est rempli que pour des atomes explicitement
+opposés après application des bindings **de cet essai**. Une variable
+libre, un trait inconnu, une disjonction ou un enfant épuisé ne suffit
+pas à conclure à un désaccord grammatical. Une alternative lexicale
+rejetée peut être parfaitement normale.
+
+L'audit canonique continue d'appeler le parseur une seule fois par
+phrase, sans collecte active. **Après** la cohorte de référence,
+`scripts.probe_dialogue_rejections` sélectionne les échecs où le
+scope dialogue avait au moins une racine, puis rejoue uniquement ces
+cas avec les mêmes budgets et le texte balancé. Il stocke
+`dialogue_rejection_probes.jsonl`, `dialogue_rejection_summary.json`
+et `dialogue_rejection_report.md` dans l'artefact GitHub Actions.
+Le statut de ce replay diagnostique ne remplace **jamais** celui de
+la première passe et un délai de replay reste censuré.
