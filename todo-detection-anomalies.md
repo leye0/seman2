@@ -87,7 +87,7 @@ détecter les familles de fautes non encore modélisées (P1–P3).
 ### P1 — Généraliser par familles de contraintes
 
 **Tranche P1 initiale :** alternatives opt-in pour désaccords explicites de
-nombre et de personne sur une proposition finie citée à sujet pronominal explicite; la preuve est
+nombre et de personne sur une proposition finie directement citée à sujet pronominal explicite; la preuve est
 attachée au NP/VP, et à la tête finie lorsqu'un seul lexème convient.
 Ce n'est pas une généralisation à tous les contextes, ni un achèvement
 complet de la famille des accords.

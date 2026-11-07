@@ -10,6 +10,12 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 
 
 class MarkedFiniteAgreementTests(unittest.TestCase):
+    @staticmethod
+    def _walk(node):
+        yield node
+        for child in node.children:
+            yield from MarkedFiniteAgreementTests._walk(child)
+
     @classmethod
     def setUpClass(cls):
         cls.parser = Parser(ParserResources.from_dir(DATA), cache_size=0)
@@ -45,7 +51,10 @@ class MarkedFiniteAgreementTests(unittest.TestCase):
         for i in proof["evidence"]["parent"]["path"]:
             node = node.children[i]
         self.assertEqual(node.rule_id, rule_id)
+        self.assertEqual(node.category, "MARKED-FINITE-CLAUSE")
         self.assertEqual([c.category for c in node.children], ["NP", "VP"])
+        self.assertIn("dialogue_quote_marked_finite_clause_stop",
+                      {n.rule_id for n in self._walk(marked.best())})
         leaf = marked.best()
         for i in bearer["path"]:
             leaf = leaf.children[i]

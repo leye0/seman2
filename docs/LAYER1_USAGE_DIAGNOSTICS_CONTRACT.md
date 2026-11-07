@@ -102,10 +102,13 @@ d'un `UsageDeviation` ne signifie pas absence d'anomalie.**
 
 Quatre règles supplémentaires sont disponibles **seulement** lorsque
 `allow_marked_deviations=True` rencontre une citation explicitement balisée :
-`CLAUSE → NP VP` avec (a) sujet 3pl / prédicat 3sg,
+`MARKED-FINITE-CLAUSE → NP VP` avec (a) sujet 3pl / prédicat 3sg,
 (b) sujet 3sg / prédicat 3pl, (c) sujet 1sg / prédicat 3sg,
 ou (d) sujet 3sg / prédicat 1sg. Seuls les NP avec le trait **pronominal** positivement établi
-sont admis dans cette première tranche. Les NP/VP conservent leurs
+sont admis dans cette première tranche. La nouvelle catégorie ne peut être
+atteinte que par les règles `DIRECT-SPEECH` d'encadrement explicite
+(avec ou sans ponctuation terminale), **jamais** via une conversion
+générique vers `CLAUSE`. Les NP/VP conservent leurs
 traits réels; le prédicat est fini et actif et le trait conflictuel
 est positivement établi des deux côtés. Ce sont des **alternatives
 marquées**, jamais de la grammaire strictement permissive.
