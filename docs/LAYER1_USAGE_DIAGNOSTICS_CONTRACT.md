@@ -97,3 +97,29 @@ P1–P3 restent à faire : nouvelles familles de contraintes, preuves
 prudentes sans analyse globale, diagnostics et incertitudes plus riches,
 corpus annoté de fautes, métriques indépendantes de précision. **Absence
 d'un `UsageDeviation` ne signifie pas absence d'anomalie.**
+
+## P1, première tranche — accord du prédicat fini dans une citation
+
+Quatre règles supplémentaires sont disponibles **seulement** lorsque
+`allow_marked_deviations=True` rencontre une citation explicitement balisée :
+`CLAUSE → NP VP` avec (a) sujet 3pl / prédicat 3sg,
+(b) sujet 3sg / prédicat 3pl, (c) sujet 1sg / prédicat 3sg,
+ou (d) sujet 3sg / prédicat 1sg. Les NP/VP conservent leurs
+traits réels; le prédicat est fini et actif et le trait conflictuel
+est positivement établi des deux côtés. Ce sont des **alternatives
+marquées**, jamais de la grammaire strictement permissive.
+
+`usage_deviations[].predicate` désigne le VP entier, avec son span
+exact. Lorsqu'**un seul** terminal lexical fini à l'intérieur du
+VP porte explicitement le trait observé, la sortie ajoute
+`evidence.predicate_head` : surface, traits, catégorie, chemin
+complet dans l'arbre, offsets d'analyse et mapping source
+(optionnel). Si aucune tête unique n'est prouvée, ce champ est
+absent : aucun span verbal n'est inventé.
+
+`register=unknown` et `intent=unknown` pour ces nouvelles règles.
+Une dérivation marquée sur le meilleur arbre n'établit ni un dialecte
+ni l'intention, et ne certifie pas la faute de toutes les lectures.
+Le mode strict, la préparation des citations et les budgets
+restent identiques. Morphologie, valence, ordre et diagnostic local
+sans arbre restent à développer dans P1/P2.
