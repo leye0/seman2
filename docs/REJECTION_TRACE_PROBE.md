@@ -55,3 +55,77 @@ then maps `reference_span` (and child spans) with
 characters in the original frozen case; synthetic quotation delimiters
 or unavailable regions are `null` with `reference_span_mapping=unavailable`.
 No offset is inferred from token order or from source neighbors.
+
+## Second tranche : exigences de preuve positive et ascendance des requêtes
+
+L'instrument observe désormais les branches rejetées parce qu'un trait
+`requires` **n'est pas positivement établi**, ce qui est distinct
+d'une incompatibilité de valeur atomique :
+
+- `positive_evidence_lexical_hint_missing` : lecture lexicale intrinsèque
+  dépourvue d'un trait requis dans un calcul de borne k-best
+- `positive_evidence_interface_missing` : interface segmentée sans preuve
+  intrinsèque requise
+- `positive_evidence_rule_hint_impossible` et
+  `positive_evidence_rule_impossible` : règle incapable de fournir
+  statiquement la preuve demandée (test conservateur
+  `_rule_may_provide_evidence`)
+- `positive_evidence_materialized_missing` : une analyse
+  effectivement matérialisée ne porte pas toute la preuve exigée,
+  même si ses traits sont par ailleurs unifiables
+
+Une trace inclut `required_positive_features`,
+`witnessed_positive_features` et `missing_positive_features`
+**seulement** lorsque les traits observés sont réellement disponibles.
+Le rejet d'une règle statiquement incapable de fournir la preuve
+ne signifie pas que toutes les autres règles sont incapables de la
+fournir.
+
+`request_chain` expose jusqu'à **six** contextes de calcul imbriqués
+avec catégorie, span, `via_rule_id` et `via_child_index`, ainsi que
+`request_chain_truncated`. Ce sont des demandes de constituants
+lors d'une même recherche — **pas** une chaîne d'échecs nécessaire
+et suffisante ni l'assurance que tous les ancêtres échouent.
+Les spans du chaînage suivent les mêmes règles de correspondance
+exacte à la source ; les guillemets transférés demeurent non mappés.
+
+Deux contrôles stricts déjà complets (**76, 244**) et les deux cas
+à analyse marquée prouvée par tests indépendants (**463, 480**) sont
+rejoués séparément avec le même texte préparé et les mêmes
+budgets que l'analyse canonique. Des résultats
+`deadline_censored` restent possibles sous instrumentation.
+Les rapports supplémentaires
+`dialogue_rejection_comparators.jsonl` et
+`dialogue_rejection_comparators.md` ne remplacent jamais
+les mesures de référence.
+
+**Limite non levée :** cette instrumentation n'est pas un moteur
+de démonstration de causalité globale. Il faut ensuite explorer les
+derivations concurrentes, l'absence de preuve dans *toutes*
+les solutions, les rapports positifs de contrôles et les tronquages
+de recherche avant de conclure à une anomalie de phrase.
+
+## Échantillonnage priorisé (sans changer l'exécution)
+
+Le rapport conserve toujours les compteurs `observed_by_stage` de
+toutes les tentatives observées sous instrumentation. La limite globale
+sur `events` et une limite par type empêchent de déborder la mémoire.
+
+Si des incompatibilités de bornes k-best ont déjà rempli la fenêtre,
+un événement ultérieur **plus directement établi** peut remplacer un
+échantillon de priorité inférieure, de manière déterministe :
+
+1. Flux d'enfant contextuel réellement épuisé.
+2. Analyse matérialisée dépourvue d'une preuve `requires`.
+3. Rejet d'unification réellement tenté et preuve statiquement
+   impossible dans une règle.
+4. Preuve non fournie dans l'estimation des bornes.
+5. Incompatibilités ordinaires des bornes k-best.
+
+La sortie expose
+`sampling_policy=per_stage_cap_with_priority_replacement`. Il s'agit
+d'un **échantillon non chronologique et non exhaustif** ; les
+compteurs d'origine sont conservés mais les événements retenus ne
+doivent pas servir à estimer une fréquence statistique ou une cause
+grammaticale. Les décisions du parseur, les budgets et l'arbre
+sélectionné ne dépendent jamais de ce choix d'observations.

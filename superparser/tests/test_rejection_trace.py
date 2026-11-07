@@ -9,6 +9,8 @@ from seman_parser.features import Atom, FeatureStructure
 from seman_parser.vector_chart import ForestNode, _RejectionTrace
 from scripts.probe_dialogue_rejections import (
     eligible_dialogue_residuals, summary_for, map_trace_to_reference,
+    comparison_targets, comparison_summary, STRICT_CONTROL_INDICES,
+    MARKED_COMPARISON_INDICES,
 )
 from research.verbnet_lr.corpus_pipeline import PreparedCorpusInput, CorpusParseMode
 
@@ -63,6 +65,64 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertTrue(observed["truncated"])
         self.assertFalse(observed["exhaustive"])
 
+    def test_priority_sampling_retains_later_exhausted_child_over_hint_flood(self):
+        node = ForestNode(0, 2, 15, 0, "VP", 0)
+        trace = _RejectionTrace(4)
+        # Four independent pruning classes can exhaust the bounded pool
+        # before any materialized evidence is available.
+        initial = (
+            "lexical_hint_unification", "rule_hint_unification",
+            "positive_evidence_lexical_hint_missing",
+            "positive_evidence_rule_hint_impossible",
+        )
+        for stage in initial:
+            trace.record(stage, node)
+        self.assertEqual(trace.as_dict()["sampled_events"], 4)
+        trace.record("child_context_exhausted", node,
+                     rule_id="dialogue_tag", child_index=1,
+                     required_positive=())
+        trace.record("positive_evidence_materialized_missing", node,
+                     required_positive=(), witnessed_positive=())
+        saved = trace.as_dict()
+        self.assertEqual(saved["sampled_events"], 4)
+        self.assertEqual(saved["observed_events"], 6)
+        self.assertEqual(saved["sampling_policy"],
+                         "per_stage_cap_with_priority_replacement")
+        preserved = {e["stage"] for e in saved["events"]}
+        self.assertIn("child_context_exhausted", preserved)
+        self.assertIn("positive_evidence_materialized_missing", preserved)
+        self.assertEqual(saved["observed_by_stage"]["lexical_hint_unification"], 1)
+        self.assertTrue(saved["truncated"])
+        self.assertFalse(saved["grammatical_fault_established"])
+
+        # Later low-priority noise must never displace stronger witnesses.
+        for _ in range(10):
+            trace.record("lexical_hint_unification", node)
+        later = {e["stage"] for e in trace.as_dict()["events"]}
+        self.assertIn("child_context_exhausted", later)
+        self.assertIn("positive_evidence_materialized_missing", later)
+
+    def test_stage_cap_and_sample_count_remain_bounded_after_replacement(self):
+        node = ForestNode(0, 0, 3, 0, "NP", 0)
+        trace = _RejectionTrace(8)
+        for kind in (
+            "lexical_hint_unification",
+            "rule_hint_unification",
+            "positive_evidence_lexical_hint_missing",
+            "positive_evidence_rule_hint_impossible",
+        ):
+            for _ in range(9):
+                trace.record(kind, node)
+        for _ in range(11):
+            trace.record("child_context_exhausted", node)
+        saved = trace.as_dict()
+        self.assertEqual(saved["observed_events"], 47)
+        self.assertLessEqual(saved["sampled_events"], 8)
+        from collections import Counter
+        sampled_by_stage = Counter(e["stage"] for e in saved["events"])
+        self.assertLessEqual(max(sampled_by_stage.values()), 2)
+        self.assertEqual(sampled_by_stage["child_context_exhausted"], 2)
+
     def test_public_parser_option_preserves_status_and_is_not_cached(self):
         parser = Parser.from_dir(
             Path(__file__).resolve().parents[1] / "data", cache_size=8)
@@ -102,6 +162,138 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertIsNone(mapped["events"][1]["child_reference_span"])
         self.assertEqual(original_trace["events"][0]["analysis_span"], [1, 5])
         self.assertFalse(mapped["exhaustive"])
+
+
+    def test_late_exhausted_child_displaces_early_hint_noise(self):
+        trace = _RejectionTrace(8)
+        node = ForestNode(0, 0, 12, 0, "CLAUSE", 0)
+        # Four early high-volume stages would otherwise completely
+        # occupy the retained window before useful children are examined.
+        for stage in (
+            "lexical_hint_unification",
+            "rule_hint_unification",
+            "positive_evidence_lexical_hint_missing",
+            "positive_evidence_rule_hint_impossible",
+        ):
+            for _ in range(20):
+                trace.record(stage, node)
+        before = trace.as_dict()
+        self.assertEqual(before["sampled_events"], 8)
+        self.assertNotIn("child_context_exhausted",
+                         {x["stage"] for x in before["events"]})
+
+        trace.record("child_context_exhausted", node,
+                     rule_id="clause_np_vp", child_index=1,
+                     child_node=ForestNode(1, 4, 12, 1, "VP", 0))
+        trace.record("positive_evidence_materialized_missing", node)
+        after = trace.as_dict()
+        self.assertEqual(after["sampled_events"], 8)
+        self.assertEqual(after["observed_events"], 82)
+        self.assertIn("child_context_exhausted",
+                      {x["stage"] for x in after["events"]})
+        self.assertIn("positive_evidence_materialized_missing",
+                      {x["stage"] for x in after["events"]})
+        self.assertEqual(after["sampling_policy"],
+                         "per_stage_cap_with_priority_replacement")
+        self.assertTrue(after["truncated"])
+        self.assertFalse(after["exhaustive"])
+
+    def test_positive_evidence_tracks_required_witnessed_and_missing(self):
+        from seman_parser.symbols import intern
+
+        trace = _RejectionTrace(10)
+        node = ForestNode(0, 2, 7, 0, "VP", 0)
+        trace.record(
+            "positive_evidence_materialized_missing", node,
+            required_positive=(intern("person"), intern("number")),
+            witnessed_positive=(intern("person"), intern("vform")),
+            evidence_basis="materialized_analysis",
+        )
+        evidence = trace.as_dict()["events"][0]
+        self.assertEqual(evidence["required_positive_features"],
+                         ["number", "person"])
+        self.assertEqual(evidence["witnessed_positive_features"],
+                         ["person", "vform"])
+        self.assertEqual(evidence["missing_positive_features"], ["number"])
+        self.assertEqual(evidence["evidence_basis"], "materialized_analysis")
+        self.assertNotIn("direct_atom_conflicts", evidence)
+        self.assertFalse(trace.as_dict()["grammatical_fault_established"])
+
+    def test_request_ancestry_is_bounded_and_not_a_causal_claim(self):
+        trace = _RejectionTrace(10)
+        trace.requests.extend([
+            {"category": "CLAUSE", "analysis_span": [0, 35]},
+            {"category": "SPEECH-TAG", "analysis_span": [8, 35],
+             "via_rule_id": "tag_inverted", "via_child_index": 1},
+            {"category": "VP", "analysis_span": [18, 35],
+             "via_rule_id": "vp_finite", "via_child_index": 2},
+        ])
+        node = ForestNode(0, 18, 35, 0, "VP", 0)
+        trace.record("positive_evidence_rule_impossible", node,
+                     rule_id="vp_nonfinite", required_positive=(),
+                     evidence_basis="rule_static_may_provide_check")
+        evt = trace.as_dict()["events"][0]
+        self.assertEqual([x["category"] for x in evt["request_chain"]],
+                         ["CLAUSE", "SPEECH-TAG", "VP"])
+        self.assertEqual(evt["request_chain"][-1]["via_rule_id"], "vp_finite")
+        self.assertFalse(evt["request_chain_truncated"])
+        trace.requests[-1]["analysis_span"][0] = 20
+        self.assertEqual(evt["request_chain"][-1]["analysis_span"], [18, 35])
+
+        trace.requests = [{"category": f"L{i}", "analysis_span": [i, i+1]}
+                          for i in range(12)]
+        trace.record("child_context_exhausted", node)
+        chain = trace.as_dict()["events"][1]["request_chain"]
+        self.assertEqual(len(chain), 6)
+        self.assertEqual(chain[0]["category"], "L6")
+        self.assertTrue(trace.as_dict()["events"][1]["request_chain_truncated"])
+
+    def test_original_source_mapping_of_request_chain_remains_exact(self):
+        prepared = PreparedCorpusInput(
+            analysis_text='"They says."',
+            reference_text="They says.",
+            source_text="They says.",
+            synthetic_prefix='"', synthetic_suffix='"',
+            synthetic_terminal=False, mode=CorpusParseMode.QUOTE_BALANCED,
+        )
+        mapped = map_trace_to_reference({"events": [{
+            "analysis_span": [1, 5],
+            "request_chain": [
+                {"category": "QUOTED", "analysis_span": [0, 12]},
+                {"category": "NP", "analysis_span": [1, 5]},
+            ],
+        }]}, prepared)
+        event = mapped["events"][0]
+        self.assertIsNone(event["request_chain"][0]["reference_span"])
+        self.assertEqual(event["request_chain"][0]["reference_span_mapping"],
+                         "unavailable")
+        self.assertEqual(event["request_chain"][1]["reference_span"], [0, 4])
+
+    def test_comparison_targets_are_pinned_and_require_correct_control_status(self):
+        rows = [{"index": i, "status": "complete"} for i in range(500)]
+        for i in MARKED_COMPARISON_INDICES:
+            rows[i]["status"] = "roots_without_valid_analysis"
+        targets = comparison_targets(rows)
+        self.assertEqual(targets, [
+            (76, "successful_strict_control"),
+            (244, "successful_strict_control"),
+            (463, "marked_opt_in"),
+            (480, "marked_opt_in"),
+        ])
+        rows[244]["status"] = "no_structural_root"
+        with self.assertRaisesRegex(ValueError, "no longer complete"):
+            comparison_targets(rows)
+
+        report = comparison_summary([
+            {"kind": "successful_strict_control", "replay_outcome": "complete",
+             "traces": {}},
+            {"kind": "marked_opt_in", "replay_outcome": "complete",
+             "traces": {"selected_or_fallback": {"events": [
+                 {"stage": "positive_evidence_materialized_missing"}
+             ]}}},
+        ])
+        self.assertEqual(report["positive_evidence_events_sampled"], 1)
+        self.assertTrue(report["paired_observation_only"])
 
     def test_dialogue_selection_is_by_root_evidence_not_language_guess(self):
         cases = [

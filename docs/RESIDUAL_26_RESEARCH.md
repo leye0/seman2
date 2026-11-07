@@ -129,3 +129,19 @@ cas avec les mêmes budgets et le texte balancé. Il stocke
 et `dialogue_rejection_report.md` dans l'artefact GitHub Actions.
 Le statut de ce replay diagnostique ne remplace **jamais** celui de
 la première passe et un délai de replay reste censuré.
+
+## P2 : second niveau de traces (Nov. 2026)
+
+Le système de traces optionnelles enregistre maintenant aussi les
+`requires` **non prouvés** et l'ascendance syntaxique bornée
+(`request_chain`) des requêtes. Un trait requis manquant n'est pas
+un conflit atomique, et l'échec local d'une règle ne prouve
+pas qu'aucune alternative ne fonctionne.
+
+Le rejeu séparé ajoute des contrôles complets stricts **76** et
+**244**, ainsi que des analyses marquées opt-in sur **463** et **480**.
+Les nouveaux résultats sont stockés dans les fichiers
+`dialogue_rejection_comparators.jsonl` et
+`dialogue_rejection_comparators.md` de l'artefact CI ; ils ne changent
+ni le score ni le statut strict de la cohorte.
+Voir [`REJECTION_TRACE_PROBE.md`](REJECTION_TRACE_PROBE.md).

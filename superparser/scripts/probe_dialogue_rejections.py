@@ -21,6 +21,9 @@ from scripts.diagnose_novel_parses import (
 from seman_parser.engine import Parser, ParserResources
 
 ROOT = Path(__file__).resolve().parents[1]
+# Independent positive controls and independently pinned marked-use cases.
+STRICT_CONTROL_INDICES = (76, 244)
+MARKED_COMPARISON_INDICES = (463, 480)
 
 
 
@@ -29,17 +32,29 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, 
     if trace is None:
         return None
     mapped = dict(trace)
-    events = []
-    for raw in trace.get("events", []):
-        event = dict(raw)
-        for field, output_field in (("analysis_span", "reference_span"),
-                                    ("child_span", "child_reference_span")):
-            span = event.get(field)
+
+    def mapped_frame(frame: dict[str, Any], spans: tuple[tuple[str, str], ...]) -> dict[str, Any]:
+        output = dict(frame)
+        for source_field, target_field in spans:
+            span = frame.get(source_field)
             if isinstance(span, list) and len(span) == 2:
                 original = prepared.reference_span(*span)
-                event[output_field] = list(original) if original is not None else None
-                event[output_field + "_mapping"] = (
+                output[target_field] = list(original) if original is not None else None
+                output[target_field + "_mapping"] = (
                     "exact" if original is not None else "unavailable")
+        return output
+
+    events = []
+    for raw in trace.get("events", []):
+        event = mapped_frame(raw, (
+            ("analysis_span", "reference_span"),
+            ("child_span", "child_reference_span"),
+        ))
+        if "request_chain" in raw:
+            event["request_chain"] = [
+                mapped_frame(frame, (("analysis_span", "reference_span"),))
+                for frame in raw["request_chain"]
+            ]
         events.append(event)
     mapped["events"] = events
     mapped["reference_scope"] = "frozen_case_text_exact_only"
@@ -56,6 +71,42 @@ def eligible_dialogue_residuals(rows: list[dict[str, Any]]) -> list[dict[str, An
                 and int(scoped.get("structural_root_nodes", 0)) > 0):
             result.append(row)
     return result
+
+
+def comparison_targets(rows: list[dict[str, Any]]) -> list[tuple[int, str]]:
+    """Fixed independent controls; verify their canonical status before replay."""
+    if len(rows) != 500:
+        raise ValueError("Comparator selection requires the canonical 500")
+    targets: list[tuple[int, str]] = []
+    for index in STRICT_CONTROL_INDICES:
+        if rows[index]["index"] != index or rows[index]["status"] != "complete":
+            raise ValueError(f"Strict successful control {index} is no longer complete")
+        targets.append((index, "successful_strict_control"))
+    for index in MARKED_COMPARISON_INDICES:
+        if rows[index]["index"] != index or rows[index]["status"] == "complete":
+            raise ValueError(f"Pinned marked comparison {index} is no longer a strict residual")
+        targets.append((index, "marked_opt_in"))
+    return targets
+
+
+def comparison_summary(comparisons: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "cases": len(comparisons),
+        "outcomes_by_kind": {
+            kind: dict(sorted(Counter(x["replay_outcome"]
+                                     for x in comparisons if x["kind"] == kind).items()))
+            for kind in ("successful_strict_control", "marked_opt_in")
+        },
+        "positive_evidence_events_sampled": sum(
+            event["stage"].startswith("positive_evidence_")
+            for row in comparisons
+            for trace in row.get("traces", {}).values()
+            if isinstance(trace, dict)
+            for event in trace.get("events", ())
+        ),
+        "paired_observation_only": True,
+        "no_causal_or_sentence_level_error_inference": True,
+    }
 
 
 def summary_for(records: list[dict[str, Any]]) -> dict[str, Any]:
@@ -110,7 +161,12 @@ def render(records: list[dict[str, Any]], summary: dict[str, Any]) -> str:
                 f"{trace['sampled_events']} retained; truncated="
                 f"{trace['truncated']}; exhaustive=false."
             )
-            for sample in trace["events"][:5]:
+            priority = [e for e in trace["events"]
+                        if e["stage"].startswith("positive_evidence_")
+                        or e["stage"] == "child_context_exhausted"]
+            # Present constraint/proof observations before ordinary pruning.
+            preview = (priority + [e for e in trace["events"] if e not in priority])[:8]
+            for sample in preview:
                 compact = (
                     f"  - `{sample['stage']}` on `{sample['category']}` "
                     f"{sample['analysis_span']}"
@@ -122,8 +178,98 @@ def render(records: list[dict[str, Any]], summary: dict[str, Any]) -> str:
                 if sample.get("direct_atom_conflicts"):
                     compact += ", explicit atoms " + json.dumps(
                         sample["direct_atom_conflicts"], ensure_ascii=False)
+                if sample.get("missing_positive_features"):
+                    compact += ", missing proof " + json.dumps(
+                        sample["missing_positive_features"], ensure_ascii=False)
+                elif sample.get("required_positive_features"):
+                    compact += ", required proof " + json.dumps(
+                        sample["required_positive_features"], ensure_ascii=False)
+                if sample.get("request_chain"):
+                    compact += ", request chain " + " → ".join(
+                        f"{frame['category']} {frame['analysis_span']}" +
+                        (f" via {frame['via_rule_id']}[{frame['via_child_index']}]"
+                         if frame.get("via_rule_id") else "")
+                        for frame in sample["request_chain"]
+                    )
                 out.append(compact)
             out.append("")
+    return "\n".join(out) + "\n"
+
+
+
+def replay_comparisons(
+    parser: Parser, cases: list[dict[str, Any]],
+    rows: list[dict[str, Any]], args: argparse.Namespace,
+) -> list[dict[str, Any]]:
+    """Separate controls and marked alternatives; original 500 remain unchanged."""
+    results = []
+    for index, kind in comparison_targets(rows):
+        case, original = cases[index], rows[index]
+        row: dict[str, Any] = {
+            "index": index, "kind": kind, "case_id": original["case_id"],
+            "canonical_status": original["status"],
+            "analysis_text": original["canonical_analysis_text"],
+            "source_text": original["source_text"],
+            "marked_opt_in": kind == "marked_opt_in",
+            "same_canonical_budgets": True,
+            "independent_replay": True,
+            "grammatical_fault_established": False,
+            "traces": {},
+        }
+        signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
+        try:
+            prepared, _lattice, parsed = parse_corpus_case(
+                parser, case,
+                max_items=args.max_items,
+                kbest_work_limit=args.kbest_work_limit,
+                allow_marked_deviations=kind == "marked_opt_in",
+                rejection_trace_limit=args.trace_limit,
+            )
+            if prepared.analysis_text != row["analysis_text"]:
+                raise ValueError("Comparator quote-balanced text mismatch")
+            stats = parsed.stats
+            row["replay_outcome"] = classify(parsed.completed, stats)
+            row["selected_rule"] = parsed.best().rule_id if parsed.completed else None
+            row["selected_usage_deviation_count"] = (
+                len(parsed.usage_deviations()) if parsed.completed else None
+            )
+            attempt = stats.get("dialogue_attempt") or {}
+            for name, trace in (
+                ("scoped_failed_dialogue_attempt", attempt.get("rejection_trace")),
+                ("selected_or_fallback", stats.get("rejection_trace")),
+            ):
+                if isinstance(trace, dict):
+                    row["traces"][name] = map_trace_to_reference(trace, prepared)
+        except SentenceDeadline:
+            row["replay_outcome"] = "deadline_censored"
+            row["selected_rule"] = None
+            row["selected_usage_deviation_count"] = None
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+        results.append(row)
+    return results
+
+
+def render_comparisons(rows: list[dict[str, Any]]) -> str:
+    out = [
+        "# Controls and marked alternatives — independent diagnostic runs", "",
+        "Cases 76 and 244 are strict-parser *success controls*. Cases 463 and",
+        "480 are separately parsed in opt-in marked mode. No canonical status",
+        "or selected tree in the first 500-case pass is replaced.", "",
+        "| Index | Comparison | Canonical | Replay | Selected rule | Attested deviations |",
+        "|---:|---|---|---|---|---:|",
+    ]
+    for row in rows:
+        out.append(
+            f"| {row['index']} | {row['kind']} | {row['canonical_status']} | "
+            f"{row['replay_outcome']} | {row['selected_rule'] or '—'} | "
+            f"{row['selected_usage_deviation_count'] if row['selected_usage_deviation_count'] is not None else '—'} |"
+        )
+    out += [
+        "", "All rejections above and in the JSONL are **candidate-local**.",
+        "Do not interpret a higher/lower rejection count as a causal proof:",
+        "strict and marked grammars need not explore identical alternatives.",
+    ]
     return "\n".join(out) + "\n"
 
 
@@ -203,7 +349,16 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, old_handler)
 
+    # The original signal handler was restored after the seven ordinary
+    # replays. Explicitly install it again for the four separate comparators.
+    control_handler = signal.signal(signal.SIGALRM, _deadline)
+    try:
+        comparators = replay_comparisons(parser, all_cases, rows, args)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, control_handler)
     summary = summary_for(records)
+    summary["comparisons"] = comparison_summary(comparators)
     summary["target_indices"] = [record["index"] for record in records]
     summary["cohort_sha256"] = EXPECTED_500_COHORT_SHA256
     summary["original_500_reparsed"] = False
@@ -218,6 +373,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     (args.out_dir / "dialogue_rejection_report.md").write_text(
         render(records, summary), encoding="utf8",
+    )
+    (args.out_dir / "dialogue_rejection_comparators.jsonl").write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in comparators),
+        encoding="utf8",
+    )
+    (args.out_dir / "dialogue_rejection_comparators.md").write_text(
+        render_comparisons(comparators), encoding="utf8",
     )
     print("DIALOGUE_REJECTION_PROBE_SUMMARY",
           json.dumps(summary, ensure_ascii=False), flush=True)
