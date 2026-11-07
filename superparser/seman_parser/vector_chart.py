@@ -812,6 +812,27 @@ class _RejectionTrace:
         # Their stack is not a derivation tree or a global proof.
         self.requests: list[dict[str, Any]] = []
 
+    @staticmethod
+    def _priority(stage: str) -> int:
+        # A bounded first-N sample of hint pruning can hide the only
+        # experimentally useful materialization/child-exhaustion events.
+        # Retain later and more concrete events without changing counts,
+        # grammar decisions or the work budget.
+        if stage == "child_context_exhausted":
+            return 4
+        if stage == "positive_evidence_materialized_missing":
+            return 3
+        if stage in {
+            "positive_evidence_interface_missing",
+            "positive_evidence_rule_impossible",
+            "lexical_unification", "rule_lhs_unification",
+            "interface_unification",
+        }:
+            return 2
+        if stage.startswith("positive_evidence_"):
+            return 1
+        return 0
+
     def record(
         self, stage: str, node: ForestNode, *,
         rule_id: str | None = None,
@@ -826,9 +847,17 @@ class _RejectionTrace:
         evidence_basis: str | None = None,
     ) -> None:
         self.counts[stage] += 1
-        if (len(self.samples) >= self.limit
-                or self.stage_samples[stage] >= max(2, self.limit // 4)):
+        if self.stage_samples[stage] >= max(2, self.limit // 4):
             return
+        replacement_index: int | None = None
+        if len(self.samples) >= self.limit:
+            replacement_index = min(
+                range(len(self.samples)),
+                key=lambda i: (self._priority(self.samples[i]["stage"]), i),
+            )
+            if (self._priority(stage) <=
+                    self._priority(self.samples[replacement_index]["stage"])):
+                return
         item: dict[str, Any] = {
             "stage": stage,
             "scope": "attempted_derivation_only",
@@ -877,7 +906,12 @@ class _RejectionTrace:
                     and isinstance(rhs.features[name], Atom)
                     and lhs.features[name].symbol != rhs.features[name].symbol
                 ]
-        self.samples.append(item)
+        if replacement_index is None:
+            self.samples.append(item)
+        else:
+            displaced_stage = self.samples[replacement_index]["stage"]
+            self.samples[replacement_index] = item
+            self.stage_samples[displaced_stage] -= 1
         self.stage_samples[stage] += 1
 
     def as_dict(self) -> dict[str, Any]:
@@ -890,6 +924,7 @@ class _RejectionTrace:
             "sample_limit": self.limit,
             "sampled_events": len(self.samples),
             "truncated": observed > len(self.samples),
+            "sampling_policy": "per_stage_cap_with_priority_replacement",
             "events": self.samples,
             "exhaustive": False,
             "grammatical_fault_established": False,
