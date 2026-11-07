@@ -77,7 +77,8 @@ class ResidualResearchTriageTests(unittest.TestCase):
         self.assertFalse(by_index[463]["marked_parse_reexecuted_in_this_audit"])
         self.assertEqual(by_index[8]["observed_evidence"]["source_context"]
                          ["preceding_semicolon_part"], "Previous;")
-        self.assertEqual(summary["current_failed_with_lexical_diagnostic"], 1)\n        self.assertEqual(summary["failed_with_dialogue_roots_but_no_complete_analysis"], 0)
+        self.assertEqual(summary["current_failed_with_lexical_diagnostic"], 1)
+        self.assertEqual(summary["failed_with_dialogue_roots_but_no_complete_analysis"], 0)
         self.assertIn("provisional_hypothesis", render_overview(rows, summary))
 
     def test_new_failure_is_surfaced_as_unreviewed(self):
