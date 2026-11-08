@@ -577,3 +577,22 @@ catégorie, span d'analyse et span de source exact. Les deux contextes
 de demande sont distincts. C'est une preuve que ces rejets-là sont
 **dépendants d'une tentative**, pas que les phrases sont incorrectes.
 La recherche reste exclusivement dans la grammaire Layer 1.
+
+### P2 : contradictions attestées dans une case de règle (pas des fautes globales)
+
+Un sous-ensemble plus fort des rejets lexicaux peut désormais être
+relié directement à un enfant **RHS** de règle grammaticale dans une
+tentative de matérialisation (`lexical_unification`, pas le *hint*).
+Le lien exige `via_rule_id` et index d'enfant, catégorie et spans
+concordants, plus la surface exacte dans le texte source. Les atomes
+requis/offerts sont revérifiés; les rejets réessayés sont dédupliqués.
+
+Résultat du rejeu des **26** résidus : dialogue **13** événements,
+**7** conflits distincts (**3** `number`, **2** `vform`, **2** `subcat`);
+contrôles marqués **20** événements, **8** distincts; sondages non
+restreints **0** dans l'échantillon. Exemple #480 : le `says`
+singulier au span `[64,68]` ne peut remplir le RHS `[1]` pluriel de
+`dialogue_speech_tag_post`. Les véritables écarts sujet-verbe de #480
+sont déjà attestés **ailleurs** par l'analyse marquée opt-in. Une case
+rejetée ne prouve jamais, à elle seule, que cette lecture est la
+bonne ou que la phrase entière est fautive.

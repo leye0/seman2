@@ -154,3 +154,4 @@ Checkpoint 2026-11-08 UTC: verify grounded local child feature atoms and compare
 Checkpoint 2026-11-08 UTC: validate exact compiled local RHS number/person equality contracts without changing canonical grammar or search budgets.
 Checkpoint 2026-11-08 UTC: validate pre-unification grammatical atoms on exact selected lexical leaves versus accepted local child feature structures.
 Checkpoint 2026-11-08 UTC: audit rule-level versus lexical-candidate rejection atom conflicts and exact-source independent local acceptance counterexamples, no sentence-fault inference.
+Checkpoint 2026-11-08 UTC: verify materializer lexical unification conflicts tied to exact grammar RHS child requests, original source surface and distinct feature atoms.

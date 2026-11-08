@@ -65,3 +65,4 @@ Checkpoint 2026-11-08 UTC: quantify materialized child number/person atom compar
 Checkpoint 2026-11-08 UTC: measure directly shared RHS unification variables for locally proven subject-predicate relations in all 500 canonical cases.
 Checkpoint 2026-11-08 UTC: compare original selected lexical-candidate number/person atoms against post-unification child features on fixed residuals.
 Checkpoint 2026-11-08 UTC: audit attempted rule/lexical atom conflicts separately and identify same-rule same-span independent positive local witnesses within unchanged 500-case diagnostics.
+Checkpoint 2026-11-08 UTC: classify contextual lexical_unification by exact RHS grammar slot and source position; report deduplicated contradictions without inferring global grammatical faults.

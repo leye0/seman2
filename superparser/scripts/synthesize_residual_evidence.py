@@ -437,7 +437,7 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
     return result
 
 
-def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
+def _trace_view(trace: Mapping[str, Any] | None, *, source_text: str) -> dict[str, Any] | None:
     if not isinstance(trace, dict):
         return None
     if trace.get("exhaustive") is not False or trace.get("grammatical_fault_established") is not False:
@@ -517,6 +517,65 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
         "sentence_fault_proven": False,
         "failure_cause_proven": False,
     }
+    # Materializer-level lexical unification is stronger evidence than the
+    # pre-materialization lexical *hint*. When its active request identifies
+    # an actual grammar rule RHS child, prove the source occurrence and its
+    # atom-to-slot conflict. Do not infer subject/predicate relations from
+    # this child alone: its ancestor may have another successful derivation.
+    slot_attempts = 0
+    distinct_slots: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for event in events:
+        if event.get("stage") != "lexical_unification" or not event.get("direct_atom_conflicts"):
+            continue
+        chain = event.get("request_chain")
+        if not isinstance(chain, list) or not chain or not isinstance(chain[-1], Mapping):
+            continue
+        request = chain[-1]
+        rule_id = request.get("via_rule_id")
+        child_index = request.get("via_child_index")
+        reference_span = event.get("reference_span")
+        if (not isinstance(rule_id, str) or not rule_id
+                or type(child_index) is not int or child_index < 0
+                or request.get("category") != event.get("category")
+                or request.get("analysis_span") != event.get("analysis_span")
+                or request.get("reference_span_mapping") != "exact"
+                or event.get("reference_span_mapping") != "exact"
+                or request.get("reference_span") != reference_span
+                or not isinstance(reference_span, list) or len(reference_span) != 2
+                or not all(type(v) is int for v in reference_span)
+                or not 0 <= reference_span[0] < reference_span[1] <= len(source_text)
+                or source_text[reference_span[0]:reference_span[1]] != event.get("surface")):
+            continue
+        slot_attempts += 1
+        for conflict in event["direct_atom_conflicts"]:
+            feature, required, offered = (conflict["feature"], conflict["required"],
+                                          conflict["offered"])
+            key = (rule_id, child_index, event["category"], tuple(reference_span),
+                   feature, required, offered)
+            distinct_slots[key] = {
+                "proof_basis": "materializer_lexical_rejection_in_exact_rule_rhs_child_request",
+                "rule_id": rule_id,
+                "rule_rhs_child_index": child_index,
+                "child_category": event["category"],
+                "source_span": list(reference_span),
+                "source_surface": event["surface"],
+                "feature": feature,
+                "required_atom": required,
+                "offered_atom": offered,
+                "candidate_reading_only": True,
+                "subject_predicate_relation_proven": False,
+                "grammatical_fault_proven": False,
+            }
+    slot_conflicts = {
+        "materializer_lexical_rejection_events_in_exact_rule_slot": slot_attempts,
+        "distinct_rule_slot_atom_conflicts": len(distinct_slots),
+        "distinct_by_feature": dict(sorted(Counter(
+            key[4] for key in distinct_slots).items())),
+        "examples": list(distinct_slots.values())[:12],
+        "hint_pruning_excluded": True,
+        "exhaustive": False,
+        "sentence_fault_proven": False,
+    }
     priority = [e for e in events if e.get("stage", "").startswith("positive_evidence_")
                 or e.get("stage") == "child_context_exhausted"]
     # Retain only a few already sampled local events; this is neither a
@@ -578,6 +637,7 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
         "local_atom_conflicts_in_retained_sample": sum(
             len(e.get("direct_atom_conflicts", [])) for e in events),
         "attempted_atom_conflict_audit": conflict_audit,
+        "exact_rule_rhs_lexical_conflicts": slot_conflicts,
         "independent_accepted_same_rule_and_span_as_rejected_attempt": {
             "matched_local_rule_spans": len(matches),
             "examples": list(matches.values())[:8],
@@ -681,6 +741,34 @@ def _sampled_conflict_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
                 for origin, features in sorted(origins.items())}
         for scope, origins in sorted(grouped.items())
     }
+
+
+def _exact_rule_slot_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
+    """Aggregate verified lexical-to-RHS-slot conflicts *within* replay lanes.
+
+    Each case has at most one trace in each lane. Per-trace identities already
+    deduplicate repeated attempts; never collapse independent replay contexts
+    into a single alleged error.
+    """
+    by_scope: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        for scope, trace in row["sampled_local_rejection_evidence"].items():
+            if trace is None:
+                continue
+            lane = by_scope.setdefault(scope, {"sampled_materializer_rejections": 0,
+                                                "distinct": 0,
+                                                "features": Counter()})
+            slots = trace["exact_rule_rhs_lexical_conflicts"]
+            lane["sampled_materializer_rejections"] += slots[
+                "materializer_lexical_rejection_events_in_exact_rule_slot"]
+            lane["distinct"] += slots["distinct_rule_slot_atom_conflicts"]
+            lane["features"].update(slots["distinct_by_feature"])
+    return {scope: {
+        "sampled_materializer_rejections": data["sampled_materializer_rejections"],
+        "distinct_rule_slot_atom_conflicts": data["distinct"],
+        "distinct_by_feature": dict(sorted(data["features"].items())),
+        "whole_sentence_faults_proven": 0,
+    } for scope, data in sorted(by_scope.items())}
 
 
 def synthesize(
@@ -817,12 +905,15 @@ def synthesize(
         traces = {}
         if replay:
             for name in TRACE_SCOPES:
-                traces[name] = _trace_view((replay.get(name) or {}).get("rejection_trace"))
+                traces[name] = _trace_view((replay.get(name) or {}).get("rejection_trace"),
+                                           source_text=source["source_text"])
         if other is not None:
-            traces["unscoped_replay"] = _trace_view(other.get("rejection_trace"))
+            traces["unscoped_replay"] = _trace_view(other.get("rejection_trace"),
+                                                    source_text=source["source_text"])
         if marked:
             for name, trace in marked.get("traces", {}).items():
-                traces["marked_" + name] = _trace_view(trace)
+                traces["marked_" + name] = _trace_view(
+                    trace, source_text=source["source_text"])
         for trace in traces.values():
             if not trace or not trace.get("independent_local_probe"):
                 continue
@@ -907,6 +998,8 @@ def synthesize(
             if entry is not None),
         "attempted_atom_conflicts_by_replay_origin_and_feature":
             _sampled_conflict_totals(rows),
+        "materializer_lexical_conflicts_in_exact_grammar_rhs_slots_by_replay":
+            _exact_rule_slot_totals(rows),
         "rejected_rules_independently_accepted_at_same_exact_source_span_sampled": sum(
             trace["independent_accepted_same_rule_and_span_as_rejected_attempt"][
                 "matched_local_rule_spans"]
@@ -1061,6 +1154,20 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
         for origin, features in origins.items():
             for feature, count in features.items():
                 lines.append(f"| `{scope}` | `{origin}` | `{feature}` | {count} |")
+    lines += ["", "### Materialized lexical readings rejected in exact grammar slots", "",
+              "Unlike preliminary lexical hints, these events occurred under "
+              "a specific materializer request for a real RHS rule slot. "
+              "Exact source surfaces and spans are verified, and repeated "
+              "attempts of the same atom/slot are deduplicated per case. "
+              "They establish a **candidate-to-rule-slot** mismatch, not a "
+              "subject–predicate link or a sentence-level grammar fault.", "",
+              "| Replay lane | Materializer attempts | Distinct slot conflicts | Features |",
+              "|---|---:|---:|---|"]
+    for scope, stats in summary[
+            "materializer_lexical_conflicts_in_exact_grammar_rhs_slots_by_replay"].items():
+        lines.append(f"| `{scope}` | {stats['sampled_materializer_rejections']} | "
+                     f"{stats['distinct_rule_slot_atom_conflicts']} | "
+                     f"{json.dumps(stats['distinct_by_feature'], sort_keys=True)} |")
     lines += ["", "## Local observations by case", ""]
     for r in rows:
         lines += [
@@ -1100,6 +1207,16 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                     + "; grammar-rule number/person conflicts in this sample: "
                     + str(audit["grammar_rule_number_or_person_conflicts"])
                     + "; neither errors nor failure causes proven")
+                slots = trace["exact_rule_rhs_lexical_conflicts"]
+                for slot in slots["examples"]:
+                    lines.append(
+                        f"  - **Exact grammar RHS slot candidate conflict**: "
+                        f"`{slot['rule_id']}` RHS[{slot['rule_rhs_child_index']}] "
+                        f"`{slot['child_category']}` source {slot['source_span']} "
+                        f"`{slot['source_surface']}`; "
+                        f"`{slot['feature']}` requires `{slot['required_atom']}`, "
+                        f"candidate offers `{slot['offered_atom']}`; "
+                        "no subject–predicate relation or sentence fault proven")
                 matches = trace["independent_accepted_same_rule_and_span_as_rejected_attempt"]
                 for match in matches["examples"]:
                     lines.append(

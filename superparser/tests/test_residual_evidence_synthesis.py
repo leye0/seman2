@@ -314,6 +314,57 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(summary[
             "rejected_rules_independently_accepted_at_same_exact_source_span_sampled"], 0)
 
+    def test_exact_rule_rhs_slot_conflict_requires_materialized_request_and_source(self):
+        args = fixture()
+        trace_data = args[4][0]["scoped_dialogue"]["rejection_trace"]
+        observation = {
+            "stage": "lexical_unification", "rule_id": None, "category": "N",
+            "analysis_span": [0, 6], "reference_span": [0, 6],
+            "reference_span_mapping": "exact", "surface": "Source",
+            "request_chain": [{
+                "category": "N", "analysis_span": [0, 6],
+                "reference_span": [0, 6], "reference_span_mapping": "exact",
+                "via_rule_id": "np_bare", "via_child_index": 0,
+            }],
+            "required_features": {"number": "plural"},
+            "offered_features": {"number": "singular"},
+            "direct_atom_conflicts": [{"feature": "number", "required": "plural",
+                                       "offered": "singular"}],
+        }
+        trace_data["events"][0] = observation
+        trace_data["events"].append(deepcopy(observation))
+        trace_data["sampled_events"] = 3
+        rows, summary = synthesize(*args)
+        local = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "exact_rule_rhs_lexical_conflicts"]
+        self.assertEqual(local["materializer_lexical_rejection_events_in_exact_rule_slot"], 2)
+        self.assertEqual(local["distinct_rule_slot_atom_conflicts"], 1)
+        self.assertEqual(local["distinct_by_feature"], {"number": 1})
+        self.assertEqual(local["examples"][0]["rule_id"], "np_bare")
+        self.assertFalse(local["examples"][0]["subject_predicate_relation_proven"])
+        self.assertFalse(local["sentence_fault_proven"])
+        lane = summary["materializer_lexical_conflicts_in_exact_grammar_rhs_slots_by_replay"][
+            "scoped_dialogue"]
+        self.assertEqual(lane["sampled_materializer_rejections"], 2)
+        self.assertEqual(lane["distinct_rule_slot_atom_conflicts"], 1)
+
+        for wrong in (
+            ("stage", "lexical_hint_unification"),
+            ("surface", "NotTheActualText"),
+            ("reference_span_mapping", "unavailable"),
+        ):
+            bad = deepcopy(args)
+            changed = bad[4][0]["scoped_dialogue"]["rejection_trace"]["events"]
+            for event in changed[:1]:
+                event[wrong[0]] = wrong[1]
+            # The second occurrence is retained intentionally; only the
+            # corrupted one must cease to count as a materializer witness.
+            rows, summary = synthesize(*bad)
+            self.assertEqual(summary[
+                "materializer_lexical_conflicts_in_exact_grammar_rhs_slots_by_replay"][
+                    "scoped_dialogue"]["sampled_materializer_rejections"], 1)
+
     def test_new_failure_remains_unreviewed_and_joined(self):
         args = fixture()
         args[0].append({**deepcopy(args[0][0]), "index": 42, "case_id": "case:42",

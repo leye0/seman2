@@ -503,3 +503,31 @@ face à une règle active, tandis que la composition locale acceptée est
 prouvée dans son propre contexte. Cela invalide le raccourci « rejet de
 branche = règle impossible = faute dans la phrase ». Le relevé est
 échantillonné, non exhaustif, et n'établit aucun diagnostic de phrase.
+
+### P2 : contrainte grammaticale locale réelle sur une feuille rejetée
+
+Les rejets lexicaux ne sont pas tous de simples *hints* : un rejet
+`lexical_unification` provient de la matérialisation d'un enfant sous
+les traits exigés par une **case RHS d'une règle précise**. La trace
+contient sa dernière requête (`via_rule_id`, `via_child_index`). Le
+rapport P2 conserve cette provenance uniquement lorsque catégorie,
+span d'analyse, span de source **exact** et surface originale du mot
+s'accordent; il recalcule également les deux atomes en conflit. Les
+rejets `lexical_hint_unification` sont exclus de ce niveau de preuve.
+
+Dans les **7** traces de dialogue, **13** événements de matérialisation
+répétés se réduisent à **7** conflits distincts de case grammaticale
+au span de source exact : **3** de `number`, **2** de `vform` et **2**
+de `subcat`. Les contrôles marqués donnent **20** événements pour
+**8** conflits distincts (**3** de `number`, **2** de `vform`, **3**
+de `subcat`); les traces non restreintes ne livrent pas de témoin de
+ce type dans leur échantillon conservé.
+
+Exemple du cas **480**, lecture candidate `says` à la source `[64,68]`
+dans `dialogue_speech_tag_post` RHS `[1]` : la case demande
+`number=plural`, mais le candidat singulier offre `number=singular`.
+C'est bien une **incompatibilité locale entre le mot proposé et une
+contrainte de règle**. Le cas 480 a, *séparément*, deux écarts d'accord
+prouvés par son arbre **marqué opt-in**; on ne les infère pas de ce
+rejet isolé, qui ne prouve ni rattachement sujet–prédicat ni erreur de
+phrase. Ce contrôle reste exclusivement morphosyntaxique (Layer 1).

@@ -331,6 +331,21 @@ résidus inchangés. Suite : confronter les observations de rejets
 *réellement associés à une dérivation* aux contraintes de grammaire,
 sans reconstruire une faute présumée à partir de l'absence d'analyse.
 
+**Progrès P2 sur rejets grammaticaux :** les rejets de règles et les
+rejets de lectures lexicales sont distingués et tous les conflits
+atomiques revérifiés. **7** rejets de règle possèdent une acceptation
+locale indépendante au même `rule_id`, catégorie et span de source
+exact (contexts de traits différents); ils ne prouvent aucune faute.
+Un sous-ensemble plus concret de `lexical_unification` pendant la
+matérialisation a été localisé dans une case RHS précise : **13**
+tentatives pour **7** conflits distincts dans le dialogue (**3** de
+`number`, **2** de `vform`, **2** de `subcat`). Cas #480 : `says`
+singulier rejeté de `dialogue_speech_tag_post` RHS `[1]` qui exige
+le pluriel, au span source `[64,68]`. Il s'agit d'une incompatibilité
+locale de candidat; les **deux véritables écarts sujet-verbe** du
+cas 480 sont prouvés indépendamment en mode marqué. P2 n'affirme
+toujours aucune faute à partir d'un parse incomplet.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.
