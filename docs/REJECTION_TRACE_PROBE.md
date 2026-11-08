@@ -132,6 +132,28 @@ ni que cette lecture est linguistiquement voulue, ni qu'elle réussit
 dans la grammaire stricte. L'absence de correspondance dans quatre arbres
 ne démontre rien sur les arbres non échantillonnés.
 
+### Mesures vérifiées sur le corpus gelé (CI `42522241184`, 2026-11-08)
+
+Les contrôles stricts #76 et #244 livrent chacun **4/4 arbres complets
+sans déviation marquée**. Les deux cas expérimentaux donnent :
+
+| Cas | Arbres complets marqués | Relation exacte attestée | Sans déviation enregistrée |
+|---|---:|---|---:|
+| #463 | 4/4 | `your mothers` [63,75] ↔ `was` [76,79] | 0/4 |
+| #480 | 4/4 | `they` [59,63] ↔ `says` [64,68] | 0/4 |
+
+Le cas #480 conserve aussi, dans chacun de ses quatre arbres, une **seconde
+relation marquée distincte** : `says` [29,33] ↔ `they` [34,38].
+Les huit correspondances entre les deux positions de refus strict et
+les relations marquées appartiennent à **deux cas sources distincts**,
+pas à huit phrases ou huit erreurs indépendantes.
+
+Ce résultat augmente la preuve **sur ces analyses complètes**. Il ne
+certifie ni l'exhaustivité des analyses, ni la fausseté grammaticale de
+toute interprétation possible, ni une lecture « correcte » imposée par
+le sens. La couverture canonique reste **474/500**, avec 26 résiduels,
+sans modification de la grammaire ou des budgets 50k/500k/10 s.
+
 ## Échantillonnage priorisé (sans changer l'exécution)
 
 Le rapport conserve toujours les compteurs `observed_by_stage` de
