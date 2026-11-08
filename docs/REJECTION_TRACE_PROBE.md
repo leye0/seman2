@@ -179,8 +179,37 @@ Dans `dialogue_extended_grammar_competition.jsonl` et `.md`, on distingue :
 - les censures et les éventuelles troncatures, avec conservation du rang
   et des positions originales vérifiées.
 
-Les résultats de cette série devront être rapportés **après** la
-validation GitHub Actions, sans modifier le score canonique 474/500.
+Les résultats ci-dessous sont tirés de la **validation GitHub Actions** ;
+ils ne modifient pas le score canonique 474/500.
+
+### Résultats observés — CI `42527736728` (2026-11-08)
+
+L'expérience a été exécutée avec succès sur le commit `5b757eb` ;
+la suite de régression de la couche 1 a aussi réussi (CI `42527736672`).
+
+| Cas | Rejeu strict (analyse complète) | Rejeu marqué | Motifs de relations marquées distincts | Motifs de liens grammaticaux distincts |
+|---|---|---|---:|---:|
+| #463 `your mothers was` | Aucun arbre complet dans le rejeu borné | 16/16 arbres avec 1 déviation de nombre | 1 | 1 |
+| #480 `they says` | Aucun arbre complet dans le rejeu borné | 16/16 arbres avec 2 déviations de nombre | 1 | 1 |
+
+Les rejouages marqués ont parcouru les trois plafonds 4, 8 et 16 sans
+censure (environ 0,22 s pour #463 et 0,06 s pour #480). Les deux rejouages
+stricts restent `roots_without_valid_analysis`, sans arbre complet
+sélectionné dans ces budgets. L'absence de racine dans le **résultat de
+repli final** ne doit pas être confondue avec une absence de racines
+proposées dans la tentative de dialogue cadrée, déjà observée séparément.
+
+La conclusion importante est que les 16 dérivations de chaque cas
+reproduisent **le même ensemble de relations grammaticales attestées**.
+Elles ne sont donc pas 16 preuves indépendantes, et l'augmentation de `k`
+ne révèle, dans cet échantillon, aucun autre rattachement sujet–prédicat
+qui expliquerait les mêmes mots sans marquage. L'absence de solution
+stricte demeure **bornée**, non universelle.
+
+La couverture canonique vérifiée reste **474/500 (94,8 %)** avec les mêmes
+26 résiduels. Le prochain travail utile doit porter sur les dépendances
+syntaxiques internes et les nouvelles structures distinctes, et non sur
+l'accumulation de classements lexicaux identiques.
 
 ## Échantillonnage priorisé (sans changer l'exécution)
 
