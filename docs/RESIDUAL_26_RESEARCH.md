@@ -415,5 +415,31 @@ sans filtrer la reconnaissance ni modifier le lexique.
 La synthèse vérifie que la paire appartient à un des constituants
 effectivement retenus et refuse toute revendication de faute ou de
 rattachement à une phrase complète. Le nombre de telles paires doit
-être mesuré par l'Action suivante; il n'est pas extrapolé du nombre
+être mesuré sur les relectures réelles; il n'est pas extrapolé du nombre
 de règles possédant simplement des `exports`.
+
+**Mesure validée :** le rejeu 500
+[42430167386](https://github.com/leye0/seman2/actions/runs/42430167386)
+recense **38** paires échantillonnées dans **12** résidus structurels;
+après dédoublonnage des lectures réobservées, **26 paires distinctes**
+par cas/règle/ancres source exactes. Le contrôle complet de la Layer 1
+[42430167415](https://github.com/leye0/seman2/actions/runs/42430167415)
+est vert (**571 tests**). Le score strict reste **474/500**.
+Ces paires prouvent uniquement ce que le parseur a accepté *localement* :
+elles ne prouvent pas la bonne lecture grammaticale du texte. Notamment,
+des variantes lexicales très peu plausibles en contexte (p. ex. « as »
+ou « good » étiquetés noms) demeurent possibles même après exclusion
+des têtes `OPEN-QUOTE` et des copules en position de sujet. La prochaine
+recherche doit comparer ces alternatives et ne diagnostiquer une faute
+que si les liens et le conflit sont établis indépendamment.
+
+**Première comparaison ancrée, sans hypothèse grammaticale :** une
+nouvelle sortie de synthèse regroupe les sujets *locaux* distincts
+qui pointent vers la même occurrence prédicative exactement mappée.
+Les cas **#109, #182, #220 et #344** ont chacun deux têtes sujet
+concurrentes dans les témoins échantillonnés. Ces observations ne
+prouvent pas une ambiguïté entre arbres globaux ni une contradiction;
+elles orientent la vérification de la plausibilité lexicale et des
+rattachements. Les contre-vérifications imposent en plus que les
+spans source des rôles concordent avec leurs enfants et le témoin
+de composition acceptée. Aucune phrase n'est reclassée.

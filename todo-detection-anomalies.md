@@ -226,6 +226,24 @@ une tête nominale et une tête verbale effectivement résolues, sans
 modifier l'analyse elle-même. Le nombre final de paires est mesuré
 après cette restriction, pas extrapolé des 40 liens bruts.
 
+**Validation mesurée (Actions 42430167386 et 42430167415) :** sur
+les **927** compositions positives locales, **38** paires de rôles
+échantillonnées concernent **12** cas; le dédoublonnage par identité
+de source et règle donne **26** paires distinctes. **571 tests** verts,
+**474/500** analyses strictes inchangées. Les paires sont des **lectures
+localement acceptées par le parseur**, pas des rattachements gold :
+des analyses lexicales contextuellement douteuses subsistent. Le
+prochain verrou est la plausibilité et la comparaison des lectures
+concurrentes, avant toute affirmation de désaccord grammatical.
+
+**Comparaison P2 ajoutée :** le rapport de synthèse distingue maintenant
+les **4** cas (#109, #182, #220, #344) où une tête de prédicat unique
+(occurrence et catégorie lexicales exactes) reçoit deux sujets candidats
+dans les constituants localement acceptés. Règles, scopes et spans source
+restent attachés à chacun. Les mappings tête/enfant/constituant sont
+contre-vérifiés. Cette coexistence de candidats n'est **pas** une preuve
+de faute ou d'ambiguïté grammaticale globale.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

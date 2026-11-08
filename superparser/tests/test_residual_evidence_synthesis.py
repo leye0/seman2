@@ -190,6 +190,9 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(summary["independent_local_probe_witnesses_sampled"], 2)
         self.assertEqual(summary["incomplete_replays_with_independent_local_proofs"], 1)
         self.assertEqual(summary["resolved_local_subject_predicate_pairs_sampled"], 2)
+        self.assertEqual(summary["distinct_resolved_local_role_pairs_by_case"], 2)
+        self.assertEqual(
+            summary["cases_with_multiple_local_subject_candidates_for_shared_predicate"], 0)
         self.assertTrue(summary["source_identity_validated"])
         by_index = {r["index"]: r for r in rows}
         self.assertEqual(by_index[312]["canonical_outcome"], "resource_censored")
@@ -267,6 +270,9 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(summary["unscoped_structural_replays"], 2)
         self.assertEqual(summary["independent_local_probe_witnesses_sampled"], 4)
         self.assertEqual(summary["incomplete_replays_with_independent_local_proofs"], 3)
+        # #480's marked and unscoped reports refer to the *same* source
+        # heads and rule, so they cannot count as two distinct links.
+        self.assertEqual(summary["distinct_resolved_local_role_pairs_by_case"], 3)
         r8 = next(r for r in rows if r["index"] == 8)
         self.assertEqual(r8["sampled_local_rejection_evidence"]
                          ["unscoped_replay"]["independent_local_probe"]
@@ -278,6 +284,46 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(r8["canonical_status"], "no_structural_root")
         with self.assertRaisesRegex(ValueError, "Unscoped replay identity"):
             synthesize(*args, extra[:1], extra_summary)
+
+    def test_shared_source_predicate_multiple_local_subjects_are_not_faults(self):
+        args = fixture()
+        first = trace(exact=True)
+        second = trace(exact=True)
+        second_role = second["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        second_role["subject"]["head_analysis_span"] = [2, 4]
+        second_role["subject"]["head_reference_span"] = [31, 33]
+        args[4][0]["scoped_dialogue"]["rejection_trace"] = first
+        args[4][0]["ordinary_fallback"]["rejection_trace"] = second
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary["resolved_local_subject_predicate_pairs_sampled"], 3)
+        self.assertEqual(summary["distinct_resolved_local_role_pairs_by_case"], 3)
+        self.assertEqual(
+            summary["cases_with_multiple_local_subject_candidates_for_shared_predicate"], 1)
+        self.assertEqual(summary["shared_predicate_heads_with_multiple_local_subject_candidates"], 1)
+        item = next(r for r in rows if r["index"] == 463)
+        alternatives = item["shared_predicate_local_subject_candidates"]
+        self.assertEqual(alternatives[0]["predicate_head_source_span"], [35, 38])
+        self.assertEqual([head["source_span"] for head in alternatives[0]["candidate_subject_heads"]],
+                         [[30, 33], [31, 33]])
+        self.assertFalse(alternatives[0]["whole_sentence_ambiguity_proven"])
+        self.assertFalse(alternatives[0]["grammatical_conflict_proven"])
+        self.assertFalse(item["grammatical_fault_established"])
+        self.assertIn("Distinct local subject candidates", render(rows, summary))
+
+    def test_exact_role_source_must_match_its_accepted_local_constituent(self):
+        for change in (
+            lambda role: role["subject"].update(head_reference_span=[29, 32]),
+            lambda role: role["subject"].update(child_reference_span=[29, 33]),
+            lambda role: role.update(reference_span=[31, 40]),
+        ):
+            with self.subTest(change=change):
+                args = fixture()
+                local = trace(exact=True)
+                role = local["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+                change(role)
+                args[4][0]["scoped_dialogue"]["rejection_trace"] = local
+                with self.assertRaisesRegex(ValueError, "no matching validated local subtree"):
+                    synthesize(*args)
 
     def test_wrong_identity_status_targets_and_trace_claims_fail_closed(self):
         mutators = [

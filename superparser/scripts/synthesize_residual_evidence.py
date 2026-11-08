@@ -150,6 +150,9 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                             and w["analysis_span"] == pair.get("analysis_span")]
                 def supported(w):
                     children = w["children"]
+                    if (source_span(pair) is not None and source_span(w) is not None
+                            and source_span(pair) != source_span(w)):
+                        return False
                     for name in ("subject", "predicate"):
                         role = pair.get(name, {})
                         index = role.get("child_index", -1)
@@ -161,6 +164,22 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                         child_span = role["child_analysis_span"]
                         if (not isinstance(head, list) or len(head) != 2
                                 or not child_span[0] <= head[0] < head[1] <= child_span[1]):
+                            return False
+                        mapped_head = source_span({
+                            "reference_span_mapping": role.get("head_reference_span_mapping"),
+                            "reference_span": role.get("head_reference_span"),
+                        })
+                        mapped_child = source_span({
+                            "reference_span_mapping": role.get("child_reference_span_mapping"),
+                            "reference_span": role.get("child_reference_span"),
+                        })
+                        witness_child = source_span(children[index])
+                        if (mapped_head is not None and mapped_child is not None
+                                and not mapped_child[0] <= mapped_head[0]
+                                < mapped_head[1] <= mapped_child[1]):
+                            return False
+                        if (mapped_child is not None and witness_child is not None
+                                and mapped_child != witness_child):
                             return False
                     subject, predicate = pair["subject"], pair["predicate"]
                     return (subject["role"] == "subject" and
@@ -257,6 +276,73 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
         "sentence_fault_proven": False,
         "failure_cause_proven": False,
     }
+
+
+def _distinct_local_role_pairs(row: Mapping[str, Any]) -> int:
+    """Count source-located pairs once per case across independent replays.
+
+    Unmapped diagnostic projections are kept scope-specific: without an
+    exact source span, two offsets from different projections are not
+    proven to refer to the same original occurrence.
+    """
+    distinct = set()
+    for scope, trace in row["sampled_local_rejection_evidence"].items():
+        if not trace or not trace.get("independent_local_probe"):
+            continue
+        roles = trace["independent_local_probe"].get("resolved_local_role_pairs")
+        if roles is None:
+            continue
+        for pair in roles["pairs"]:
+            source_subject = pair["subject"]["head_source_span"]
+            source_predicate = pair["predicate"]["head_source_span"]
+            if source_subject is not None and source_predicate is not None:
+                identity = ("exact_source", pair["rule_id"],
+                            tuple(source_subject), tuple(source_predicate))
+            else:
+                identity = ("analysis_only", scope, pair["rule_id"],
+                            tuple(pair["subject"]["head_analysis_span"]),
+                            tuple(pair["predicate"]["head_analysis_span"]))
+            distinct.add(identity)
+    return len(distinct)
+
+
+def _shared_predicate_local_subject_candidates(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Find differently anchored *local* subjects of one source verb.
+
+    This is a comparison of accepted local compositions, never an assertion
+    that both readings can attach to a complete sentence or are grammatical.
+    Missing source mappings must not create artificial coincidences.
+    """
+    by_predicate: dict[tuple[Any, ...], dict[tuple[int, int], dict[str, set[str]]]] = {}
+    for scope, trace in row["sampled_local_rejection_evidence"].items():
+        if not trace or not trace.get("independent_local_probe"):
+            continue
+        pairs = (trace["independent_local_probe"].get("resolved_local_role_pairs") or {})
+        for pair in pairs.get("pairs", []):
+            subject, predicate = pair["subject"], pair["predicate"]
+            if subject["head_source_span"] is None or predicate["head_source_span"] is None:
+                continue
+            verb = (tuple(predicate["head_source_span"]),
+                    predicate["head_lexical_category"])
+            head = tuple(subject["head_source_span"])
+            origins = by_predicate.setdefault(verb, {}).setdefault(
+                head, {"categories": set(), "rules": set(), "scopes": set()})
+            origins["categories"].add(subject["head_lexical_category"])
+            origins["rules"].add(pair["rule_id"])
+            origins["scopes"].add(scope)
+    return [{
+        "predicate_head_source_span": list(verb_span),
+        "predicate_head_lexical_category": verb_category,
+        "candidate_subject_heads": [{
+            "source_span": list(subject_span),
+            "lexical_categories": sorted(origins["categories"]),
+            "local_rule_ids": sorted(origins["rules"]),
+            "replay_scopes": sorted(origins["scopes"]),
+        } for subject_span, origins in sorted(subjects.items())],
+        "whole_sentence_ambiguity_proven": False,
+        "grammatical_conflict_proven": False,
+    } for (verb_span, verb_category), subjects in sorted(by_predicate.items())
+        if len(subjects) >= 2]
 
 
 def synthesize(
@@ -448,6 +534,10 @@ def synthesize(
             "unique_failure_cause_established": False,
             "exhaustive": False,
         })
+        rows[-1]["shared_predicate_local_subject_candidates"] = (
+            _shared_predicate_local_subject_candidates(rows[-1]))
+        if rows[-1]["shared_predicate_local_subject_candidates"]:
+            checks.append("inspect_competing_local_subject_candidates_for_shared_predicate")
     summary = {
         "schema": SCHEMA,
         "cohort_sha256": digest,
@@ -482,6 +572,12 @@ def synthesize(
                     .get("sampled_pairs", 0) > 0
                 for entry in row["sampled_local_rejection_evidence"].values())
             for row in rows if row["canonical_status"] != "complete"),
+        "distinct_resolved_local_role_pairs_by_case": sum(
+            _distinct_local_role_pairs(row) for row in rows),
+        "shared_predicate_heads_with_multiple_local_subject_candidates": sum(
+            len(row["shared_predicate_local_subject_candidates"]) for row in rows),
+        "cases_with_multiple_local_subject_candidates_for_shared_predicate": sum(
+            bool(row["shared_predicate_local_subject_candidates"]) for row in rows),
         "incomplete_replays_with_independent_local_proofs": sum(
             any(entry is not None and entry["independent_local_probe"] is not None
                 and entry["independent_local_probe"]["sampled_local_constituents"] > 0
@@ -534,6 +630,13 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
         lines.append("Lexical spotcheck: " + (
             f"{lex['candidate_count']} candidates; adjacent agreement hypothesis="
             f"{lex['candidate_agreement_hypothesis']}." if lex else "not sampled."))
+        for alternatives in r["shared_predicate_local_subject_candidates"]:
+            lines.append(
+                "- **Distinct local subject candidates for one predicate head** "
+                f"{alternatives['predicate_head_source_span']}: "
+                + ", ".join(str(head["source_span"])
+                            for head in alternatives["candidate_subject_heads"])
+                + "; exact source positions; no global ambiguity or fault proven")
         for scope, trace in r["sampled_local_rejection_evidence"].items():
             if trace is None:
                 lines.append(f"- `{scope}`: no completed bounded trace")

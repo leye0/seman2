@@ -148,3 +148,4 @@ Checkpoint request 2026-11-07: verify independent failed-root local probing pres
 Checkpoint request 2026-11-07: verify failed-root test against frozen corpus case 94 and preserve all strict grammar gates.
 Checkpoint 2026-11-08 UTC: verify opt-in resolved subject/predicate role links do not change canonical Layer 1 parses or budgets.
 Checkpoint 2026-11-08 UTC: reject inherited OPEN-QUOTE and COPULA anchors as nominal subjects; revalidate strict Layer 1.
+Checkpoint 2026-11-08 UTC: validate exact local role source containment, replay deduplication and shared-predicate subject candidates with no grammatical fault inference.

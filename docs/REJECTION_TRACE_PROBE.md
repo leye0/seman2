@@ -266,3 +266,31 @@ locale**. Elle n'établit pas que cette lecture appartient à un arbre
 global, qu'elle est préférable à une alternative, ou qu'elle expose
 un désaccord grammatical. Les relations ambiguës, sans ancre lexicale
 résolue, sont volontairement absentes plutôt qu'inventées.
+
+**Validation sur les 500 cas, après filtrage conservateur :** l'Action
+[42430167386](https://github.com/leye0/seman2/actions/runs/42430167386)
+conserve les **26** résidus, les **927** compositions positives et
+**38** occurrences échantillonnées de paires sujet–prédicat dans
+**12** cas. La synthèse indépendante ne trouve que **26 paires distinctes**
+après dédoublonnage par cas, règle et offsets source exacts; une paire
+sans mapping exact n'est pas fusionnée entre projections. Les 38 sont
+des observations répétables de lectures *acceptées localement*, et non
+38 relations grammaticales humainement validées. Certaines catégories
+lexicales permises demeurent surprenantes en contexte (par exemple une
+lecture nominale de « as »); le filtre de catégories ne garantit donc
+**ni plausibilité lexicale contextuelle ni arbre global**. Toute future
+qualification d'anomalie devra confronter les lectures concurrentes et
+établir séparément une incompatibilité effectivement démontrée.
+
+**Comparaison sans nouveau parsing :** la synthèse peut regrouper, par
+occurrence source exacte d'une **même tête prédicative et même catégorie
+lexicale**, les différentes têtes sujet proposées par ces constituants
+acceptés localement. Elle dédouble les observations identiques de
+plusieurs relectures, retient règle/scope/catégorie de chaque candidat,
+et refuse de regrouper les offsets non mappés. Sur les artefacts de
+l'Action ci-dessus, **4 cas** (#109, #182, #220, #344) présentent chacun
+une tête prédicative avec **2 têtes sujet candidates**. Le rapport les
+expose sous `shared_predicate_local_subject_candidates` ; les indicateurs
+`whole_sentence_ambiguity_proven` et `grammatical_conflict_proven`
+restent explicitement `false`. Les correspondances source tête/enfant/
+constituant sont aussi contre-vérifiées lors de la synthèse.
