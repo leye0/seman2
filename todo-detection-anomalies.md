@@ -271,6 +271,18 @@ obligation d'accord ni faute n'est présumée. Pour démontrer un conflit,
 il reste à relier ces deux atomes à une **contrainte de règle applicable**
 et au rattachement global ou local adéquat.
 
+**Mesure P2 (Actions 42444014909 / 42444014895) :** strict **474/500**,
+**26** résidus; **38/38** paires avec observation, **27/38** avec nombre
+comparable, **27/27** égalités de nombre et **27/27** égalités de
+personne sur ces compositions déjà acceptées. **577 tests** réussis.
+Ces égalités peuvent résulter de l'unification : dans un témoin du cas
+#220, le sujet à tête `I` est matérialisé avec `person=3`. Il faut
+maintenant **séparer les atomes lexicalement attestés des atomes
+hérités/imposés par les règles**, comparer les alternatives de la même
+occurrence et seulement ensuite établir une contrainte d'accord
+effectivement applicable. Les 11 paires sans comparaison complète
+restent non mesurées, non fautives par défaut.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

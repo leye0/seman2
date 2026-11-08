@@ -488,3 +488,17 @@ grammatical n'est inférée de ces valeurs isolées et le statut des
 phrases reste inchangé. Les oppositions constatées ouvriront une
 recherche ciblée dans les règles et analyses alternatives, pas un
 classement automatique comme anomalie.
+
+Le rejeu figé de
+[42444014909](https://github.com/leye0/seman2/actions/runs/42444014909)
+maintient **474/500**, les **26 résidus** et les **38 paires locales** :
+**38/38** paires documentent des traits enfants, **27/38** portent à
+la fois des `number` atomiques, et leurs **27 nombres / 27 personnes**
+comparables sont égaux. Ces chiffres reflètent **l'acceptation locale
+après unification**, pas une confirmation indépendante d'accord.
+L'exemple #220 (`I`/`was`, `person=3` matérialisé des deux côtés)
+illustre le risque de prendre un trait propagé pour un trait lexical
+intrinsèque. Aucune faute supplémentaire ni cause unique des 26
+échecs n'est établie. La CI
+[42444014895](https://github.com/leye0/seman2/actions/runs/42444014895)
+confirme **577 tests** et les contrôles Layer 1.

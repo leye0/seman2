@@ -361,3 +361,24 @@ applicable et ses rattachements, et confronter les lectures rivales.
 La synthèse recalcule les comparaisons depuis les atomes conservés et
 refuse une valeur ouverte ou une conclusion surévaluée. Les anciens
 artefacts sans ces observations restent explicitement non mesurés.
+
+**Mesure réelle :** l'Action 500
+[42444014909](https://github.com/leye0/seman2/actions/runs/42444014909)
+conserve **474/500** et les **26 résidus**. Les **38/38 paires** locales
+échantillonnées ont une observation des traits enfants; **27/38** ont
+simultanément un atome `number` côté sujet et prédicat. Cela produit
+**27 comparaisons de nombre et 27 de personne**, toutes égales dans
+ces constituants *déjà acceptés après unification*. Il n'en découle
+aucune vérification indépendante de l'accord : une composition peut
+propager ses contraintes à l'enfant. Dans le cas #220, un témoin ayant
+la tête de surface `I` expose ainsi `person=3` des deux côtés pour
+`I`/`was` : c'est la **valeur enfant matérialisée**, pas la preuve que
+`I` possède intrinsèquement cette personne. La suite doit distinguer
+les traits d'origine lexicale des traits obtenus par propagation,
+avant de qualifier le moindre conflit. Les 11 autres paires n'ont pas
+de comparaison de nombre atomique des deux côtés; leur absence de
+valeur est **inconclusive**.
+
+La CI globale
+[42444014895](https://github.com/leye0/seman2/actions/runs/42444014895)
+est verte : **577 tests**, contrôles de qualité Layer 1 et smoke.
