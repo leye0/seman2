@@ -283,6 +283,17 @@ occurrence et seulement ensuite établir une contrainte d'accord
 effectivement applicable. Les 11 paires sans comparaison complète
 restent non mesurées, non fautives par défaut.
 
+**P2 — exigence d'égalité explicitement imposée par la grammaire :**
+le sondage indépendant conserve désormais les termes RHS `number` et
+`person` du *même rule_id compilé* que chaque composition localement
+acceptée, après vérification des positions des enfants sujet/prédicat.
+Une même variable RHS des deux côtés prouve seulement la contrainte
+d'égalité **locale de cette règle**; la synthèse contre-vérifie les
+termes et refuse d'extrapoler au texte complet. Prochaine étape :
+mettre ces obligations en regard des traits réellement *attestés*
+(et non simplement unifiés) et des rejets associés. Aucun besoin
+d'inférer le sens des mots ni l'intention des auteurs.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

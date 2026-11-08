@@ -158,6 +158,49 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
             "grammatical_conflict_proven": False,
         }
 
+    def rule_rhs_constraints(pair):
+        evidence = pair.get("local_rule_rhs_feature_constraints")
+        if evidence is None:
+            return None  # Historical runs, not an observed lack of constraints.
+        if (not isinstance(evidence, Mapping)
+                or evidence.get("proof_basis") !=
+                    "exact_compiled_rule_rhs_for_accepted_local_composition"
+                or evidence.get("other_indirect_constraints_excluded_from_this_audit")
+                    is not True
+                or evidence.get("whole_sentence_agreement_proven") is not False):
+            raise ValueError("Invalid local grammatical RHS constraint provenance")
+        terms = {}
+        for side in ("subject", "predicate"):
+            value = evidence.get(f"{side}_rhs_feature_terms")
+            if (not isinstance(value, Mapping)
+                    or set(value) != {"number", "person"}
+                    or any(term is not None and not isinstance(term, (str, list))
+                           for term in value.values())):
+                raise ValueError("Invalid declared rule RHS feature terms")
+            terms[side] = dict(value)
+        expected = []
+        for feature in ("number", "person"):
+            left = terms["subject"][feature]
+            right = terms["predicate"][feature]
+            if isinstance(left, str) and left.startswith("?") and len(left) > 1 \
+                    and left == right:
+                expected.append({
+                    "feature": feature,
+                    "shared_rhs_variable": left,
+                    "basis": "same_unification_variable_on_both_rhs_children",
+                })
+        if evidence.get("explicit_shared_rhs_variable_equalities") != expected:
+            raise ValueError("Declared local RHS equalities do not match actual terms")
+        return {
+            "proof_basis": evidence["proof_basis"],
+            "subject_rhs_feature_terms": terms["subject"],
+            "predicate_rhs_feature_terms": terms["predicate"],
+            "explicit_shared_rhs_variable_equalities": expected,
+            "other_indirect_constraints_excluded_from_this_audit": True,
+            "whole_sentence_agreement_proven": False,
+            "grammatical_conflict_proven": False,
+        }
+
     result = {
         "observed_materialized_rule_analyses": local["observed_materialized_rule_analyses"],
         "sampled_local_constituents": len(witnesses),
@@ -279,6 +322,7 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                     "analysis_span": pair["analysis_span"],
                     "source_span": source_span(pair),
                     "local_child_feature_observation": feature_observation(pair),
+                    "local_rule_rhs_feature_constraints": rule_rhs_constraints(pair),
                     **{name: {
                         "role": pair[name]["role"],
                         "child_index": pair[name]["child_index"],
@@ -711,6 +755,20 @@ def synthesize(
             for pair in (trace["independent_local_probe"]
                          .get("resolved_local_role_pairs") or {}).get("pairs", [])
             if pair.get("local_child_feature_observation") is not None),
+        "local_role_pairs_with_direct_rhs_number_equality_sampled": sum(
+            any(entry["feature"] == "number" for entry in
+                pair["local_rule_rhs_feature_constraints"]["explicit_shared_rhs_variable_equalities"])
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if isinstance(trace, Mapping) and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"].get("resolved_local_role_pairs") or {}).get("pairs", [])
+            if pair.get("local_rule_rhs_feature_constraints") is not None),
+        "local_role_pairs_with_direct_rhs_person_equality_sampled": sum(
+            any(entry["feature"] == "person" for entry in
+                pair["local_rule_rhs_feature_constraints"]["explicit_shared_rhs_variable_equalities"])
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if isinstance(trace, Mapping) and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"].get("resolved_local_role_pairs") or {}).get("pairs", [])
+            if pair.get("local_rule_rhs_feature_constraints") is not None),
         "shared_predicate_heads_with_multiple_local_subject_candidates": sum(
             len(row["shared_predicate_local_subject_candidates"]) for row in rows),
         "cases_with_multiple_local_subject_candidates_for_shared_predicate": sum(
@@ -839,7 +897,21 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                                     + "; cross-child comparable atoms: "
                                     + json.dumps(features["cross_child_grounded_atom_comparisons"],
                                                  ensure_ascii=False)
-                                    + "; no agreement requirement or fault proven")
+                                    + "; no whole-sentence agreement or fault proven")
+                            rule_constraints = pair.get("local_rule_rhs_feature_constraints")
+                            if rule_constraints is not None:
+                                lines.append(
+                                    "      - Exact local rule RHS: subject "
+                                    + json.dumps(rule_constraints["subject_rhs_feature_terms"],
+                                                 ensure_ascii=False, sort_keys=True)
+                                    + "; predicate "
+                                    + json.dumps(rule_constraints["predicate_rhs_feature_terms"],
+                                                 ensure_ascii=False, sort_keys=True)
+                                    + "; direct shared variables "
+                                    + json.dumps(rule_constraints[
+                                        "explicit_shared_rhs_variable_equalities"],
+                                        ensure_ascii=False)
+                                    + "; **local rule only**, no global anomaly proof")
                             for name, head in (("subject", subject), ("predicate", predicate)):
                                 audit = head["lexical_lattice_evidence"]
                                 if audit is not None:

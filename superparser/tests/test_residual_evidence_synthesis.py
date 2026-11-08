@@ -406,6 +406,48 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ungrounded"):
             synthesize(*bad)
 
+    def test_rule_rhs_shared_variable_proof_is_local_and_recomputed(self):
+        args = fixture()
+        pair = args[4][0]["scoped_dialogue"]["rejection_trace"][
+            "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        pair["local_rule_rhs_feature_constraints"] = {
+            "proof_basis": "exact_compiled_rule_rhs_for_accepted_local_composition",
+            "subject_rhs_feature_terms": {"number": "?n", "person": "?p"},
+            "predicate_rhs_feature_terms": {"number": "?n", "person": "?p"},
+            "explicit_shared_rhs_variable_equalities": [
+                {"feature": "number", "shared_rhs_variable": "?n",
+                 "basis": "same_unification_variable_on_both_rhs_children"},
+                {"feature": "person", "shared_rhs_variable": "?p",
+                 "basis": "same_unification_variable_on_both_rhs_children"},
+            ],
+            "other_indirect_constraints_excluded_from_this_audit": True,
+            "whole_sentence_agreement_proven": False,
+        }
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary["local_role_pairs_with_direct_rhs_number_equality_sampled"], 1)
+        self.assertEqual(summary["local_role_pairs_with_direct_rhs_person_equality_sampled"], 1)
+        annotated = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "independent_local_probe"]["resolved_local_role_pairs"]["pairs"][0]
+        self.assertEqual(len(annotated["local_rule_rhs_feature_constraints"][
+            "explicit_shared_rhs_variable_equalities"]), 2)
+        self.assertFalse(annotated["grammatical_conflict_proven"])
+
+        bad = deepcopy(args)
+        bad_pair = bad[4][0]["scoped_dialogue"]["rejection_trace"][
+            "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        bad_pair["local_rule_rhs_feature_constraints"]["predicate_rhs_feature_terms"][
+            "number"] = "?different"
+        with self.assertRaisesRegex(ValueError, "equalities"):
+            synthesize(*bad)
+
+        bad = deepcopy(args)
+        bad_pair = bad[4][0]["scoped_dialogue"]["rejection_trace"][
+            "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        bad_pair["local_rule_rhs_feature_constraints"]["whole_sentence_agreement_proven"] = True
+        with self.assertRaisesRegex(ValueError, "provenance"):
+            synthesize(*bad)
+
     def test_wrong_identity_status_targets_and_trace_claims_fail_closed(self):
         mutators = [
             lambda a: a[1].update(cohort_sha256="other"),

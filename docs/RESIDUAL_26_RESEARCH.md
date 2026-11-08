@@ -502,3 +502,17 @@ intrinsèque. Aucune faute supplémentaire ni cause unique des 26
 échecs n'est établie. La CI
 [42444014895](https://github.com/leye0/seman2/actions/runs/42444014895)
 confirme **577 tests** et les contrôles Layer 1.
+
+### P2 : provenance des contraintes de règle, sans sémantique
+
+Le sondage expose maintenant, pour chaque paire locale acceptée,
+les contraintes `number`/`person` réellement déclarées par ses deux
+symboles RHS (sujet et prédicat) dans la **règle compilée de cette
+analyse même**. Deux références à la même variable `?n` ou `?p`
+établissent une exigence d'égalité **locale de cette règle**. Elles ne
+garantissent pas des traits lexicaux indépendants ni un arbre global;
+une absence de variable partagée ne réfute pas d'autres contraintes
+indirectes. Ce nouveau témoin cible exclusivement la grammaire,
+pour distinguer un véritable contrat syntaxique des simples valeurs
+matérialisées par unification. La synthèse contrôle cette provenance
+et reste compatible avec les artefacts antérieurs.

@@ -40,6 +40,50 @@ def _grounded_child_atoms(child: Any) -> dict[str, str]:
             and value and not value.startswith("?")}
 
 
+def _declared_rhs_feature_equalities(rule: Any, children: tuple[Any, ...],
+                                     subject_index: int,
+                                     predicate_index: int) -> dict[str, Any]:
+    """Audit only *direct* RHS equality in the exact selected grammar rule.
+
+    Two occurrences of the same unification variable make the two RHS slots
+    equal for that feature. Other restrictions (ancestors, semantic context,
+    lexical alternatives, indirect bindings) are deliberately not inferred.
+    Missing RHS features do not mean the language lacks an agreement rule.
+    """
+    rhs = tuple(rule.rhs)
+    if len(rhs) != len(children) or any(
+            symbol.category != child.category
+            for symbol, child in zip(rhs, children)):
+        raise ValueError("Materialized local children disagree with compiled rule RHS")
+    side_features = {
+        "subject": rhs[subject_index].features.as_dict(),
+        "predicate": rhs[predicate_index].features.as_dict(),
+    }
+    equalities = []
+    for feature in ("number", "person"):
+        left = side_features["subject"].get(feature)
+        right = side_features["predicate"].get(feature)
+        if isinstance(left, str) and left.startswith("?") and len(left) > 1 \
+                and left == right:
+            equalities.append({
+                "feature": feature,
+                "shared_rhs_variable": left,
+                "basis": "same_unification_variable_on_both_rhs_children",
+            })
+    return {
+        "proof_basis": "exact_compiled_rule_rhs_for_accepted_local_composition",
+        "subject_rhs_feature_terms": {
+            feature: side_features["subject"].get(feature)
+            for feature in ("number", "person")},
+        "predicate_rhs_feature_terms": {
+            feature: side_features["predicate"].get(feature)
+            for feature in ("number", "person")},
+        "explicit_shared_rhs_variable_equalities": equalities,
+        "other_indirect_constraints_excluded_from_this_audit": True,
+        "whole_sentence_agreement_proven": False,
+    }
+
+
 def _resolved_link(link: Any, children: tuple[Any, ...]) -> dict[str, Any] | None:
     if (type(link.child_index) is not int or link.child_index < 0
             or link.child_index >= len(children)
@@ -66,7 +110,8 @@ def _resolved_link(link: Any, children: tuple[Any, ...]) -> dict[str, Any] | Non
     }
 
 
-def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
+def resolved_local_subject_predicate_pairs(item: Any, *,
+                                           compiled_rule: Any = None) -> list[dict[str, Any]]:
     """Prove *local* links only when both syntax anchors really resolved.
 
     ``item`` is the materialized ChartItem corresponding to the same
@@ -76,6 +121,8 @@ def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
     if not item.rule_id or not item.children or not item.start < item.end:
         return []
     children = tuple(item.children)
+    if compiled_rule is not None and compiled_rule.rule_id != item.rule_id:
+        raise ValueError("Selected local rule and compiled rule identity disagree")
     subjects: list[dict[str, Any]] = []
     predicates: list[tuple[str, dict[str, Any]]] = []
     for link in item.syntax.links:
@@ -112,6 +159,11 @@ def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
             seen.add(key)
             subject_atoms = _grounded_child_atoms(children[subject["child_index"]])
             predicate_atoms = _grounded_child_atoms(children[predicate["child_index"]])
+            rule_constraints = (
+                _declared_rhs_feature_equalities(
+                    compiled_rule, children,
+                    subject["child_index"], predicate["child_index"])
+                if compiled_rule is not None else None)
             comparisons = [{
                 "feature": key,
                 "subject_atom": subject_atoms[key],
@@ -131,6 +183,7 @@ def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
                     "predicate": predicate_atoms,
                 },
                 "cross_child_grounded_atom_comparisons": comparisons,
+                "local_rule_rhs_feature_constraints": rule_constraints,
                 "grammatical_agreement_requirement_proven": False,
                 "same_accepted_local_composition": True,
                 "global_tree_proven": False,

@@ -106,6 +106,53 @@ class LocalResolvedRoleTests(unittest.TestCase):
         self.assertFalse(pair["grammatical_agreement_requirement_proven"])
         self.assertFalse(pair["grammatical_conflict_proven"])
 
+    def test_direct_rhs_agreement_proven_from_same_compiled_rule(self):
+        def features(**data):
+            return Obj(as_dict=lambda: data)
+
+        rule = Obj(rule_id="clause_np_vp", rhs=(
+            Obj(category="NP", features=features(number="?n", person="?p")),
+            Obj(category="VP", features=features(number="?n", person="?p")),
+        ))
+        pair = resolved_local_subject_predicate_pairs(item(links=[
+            Obj(relation="subject", target="lex:0:4:PRONOUN:they", child_index=0),
+            Obj(relation="event", target="lex:5:11:V:says", child_index=1),
+        ]), compiled_rule=rule)[0]
+        contract = pair["local_rule_rhs_feature_constraints"]
+        self.assertEqual(contract["explicit_shared_rhs_variable_equalities"], [
+            {"feature": "number", "shared_rhs_variable": "?n",
+             "basis": "same_unification_variable_on_both_rhs_children"},
+            {"feature": "person", "shared_rhs_variable": "?p",
+             "basis": "same_unification_variable_on_both_rhs_children"},
+        ])
+        self.assertFalse(contract["whole_sentence_agreement_proven"])
+        self.assertFalse(pair["grammatical_conflict_proven"])
+
+        # A rule that does not share variables is not silently credited
+        # with an agreement obligation, even if its accepted children match.
+        rule.rhs = (
+            Obj(category="NP", features=features(number="?subject_n")),
+            Obj(category="VP", features=features(number="?verb_n")),
+        )
+        no_direct = resolved_local_subject_predicate_pairs(item(links=[
+            Obj(relation="subject", target="lex:0:4:PRONOUN:they", child_index=0),
+            Obj(relation="event", target="lex:5:11:V:says", child_index=1),
+        ]), compiled_rule=rule)[0]
+        self.assertEqual(no_direct["local_rule_rhs_feature_constraints"][
+            "explicit_shared_rhs_variable_equalities"], [])
+
+    def test_different_compiled_rule_identity_or_rhs_fails_closed(self):
+        analysis = item(links=[
+            Obj(relation="subject", target="lex:0:4:N:John", child_index=0),
+            Obj(relation="event", target="lex:5:11:V:opened", child_index=1),
+        ])
+        with self.assertRaisesRegex(ValueError, "identity"):
+            resolved_local_subject_predicate_pairs(analysis,
+                compiled_rule=Obj(rule_id="not_this_rule", rhs=[]))
+        with self.assertRaisesRegex(ValueError, "compiled rule RHS"):
+            resolved_local_subject_predicate_pairs(analysis,
+                compiled_rule=Obj(rule_id="clause_np_vp", rhs=[Obj(category="CLAUSE")]))
+
 
 if __name__ == "__main__":
     unittest.main()

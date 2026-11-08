@@ -62,3 +62,4 @@ Checkpoint 2026-11-08 UTC: measure genuine resolved local subject/event anchors 
 Checkpoint 2026-11-08 UTC: rerun 21 residual role proofs with nominal/verb head evidence gates and source-mapping assertions.
 Checkpoint 2026-11-08 UTC: audit local subject and predicate head lemmas against exact lexical candidates and same-span alternatives on the 500-case residual pipeline.
 Checkpoint 2026-11-08 UTC: quantify materialized child number/person atom comparisons on the fixed 500 residual evidence pipeline.
+Checkpoint 2026-11-08 UTC: measure directly shared RHS unification variables for locally proven subject-predicate relations in all 500 canonical cases.

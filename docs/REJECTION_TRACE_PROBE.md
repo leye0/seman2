@@ -382,3 +382,27 @@ valeur est **inconclusive**.
 La CI globale
 [42444014895](https://github.com/leye0/seman2/actions/runs/42444014895)
 est verte : **577 tests**, contrôles de qualité Layer 1 et smoke.
+
+## P2 : vérifier les égalités réellement déclarées par les règles grammaticales
+
+La comparaison de deux enfants déjà unifiés ne suffit pas à démontrer
+qu'une règle *exige* leur accord. Le sondage local consulte désormais
+la règle **exactement utilisée par la composition retenue**, dans le
+même `_LazyMaterializer`, en vérifiant son identifiant, sa longueur RHS
+et les catégories de ses enfants. Pour les positions portant des liens
+réellement résolus `subject` et `event`/`predicate`, la preuve expose
+les termes RHS de `number` et `person`. Elle reconnaît une égalité
+**directement exprimée** lorsque les deux positions RHS partagent la
+*même variable d'unification* pour ce trait (p. ex. `?n` dans
+`clause_np_vp` sur `NP` et `VP`). Une règle sans variable partagée
+reste **non concluante** sur les contraintes indirectes : son silence
+ne prouve pas l'absence d'autres contraintes.
+
+Cette preuve est syntaxique et compositionnelle, sans classement
+lexical contextuel ni interprétation sémantique. La synthèse recalcule
+les égalités à partir des deux côtés de la règle, refuse une preuve
+surévaluée et traite les artefacts historiques comme non mesurés.
+Même lorsqu'une égalité locale RHS est établie, elle **ne démontre pas
+la grammaticalité ou la faute de la phrase entière** : les caractères
+originaux, alternatives, rattachements complets et contraintes lexicales
+indépendamment établies doivent encore être vérifiés.

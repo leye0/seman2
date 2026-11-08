@@ -1869,7 +1869,8 @@ def _probe_unselected_local_nodes(
                 [item.start, item.end] != sampled["analysis_span"] or
                 len(item.children) != len(sampled["children"])):
             raise AssertionError("Role proof and validated local analysis diverged")
-        role_pairs.extend(resolved_local_subject_predicate_pairs(item))
+        role_pairs.extend(resolved_local_subject_predicate_pairs(
+            item, compiled_rule=probe.compiled.rules[analysis.rule_index].rule))
     role_sample = role_pairs[:limit]
     positive["validated_local_role_pairs"] = {
         "schema": "seman2-local-resolved-role-pairs-v1",
