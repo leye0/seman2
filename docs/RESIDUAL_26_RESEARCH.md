@@ -436,10 +436,15 @@ que si les liens et le conflit sont établis indépendamment.
 **Première comparaison ancrée, sans hypothèse grammaticale :** une
 nouvelle sortie de synthèse regroupe les sujets *locaux* distincts
 qui pointent vers la même occurrence prédicative exactement mappée.
-Les cas **#109, #182, #220 et #344** ont chacun deux têtes sujet
+La re-synthèse des artefacts originaux conserve les **26** résidus et
+les **38** paires retenues sans refaire le parse : les cas
+**#109, #182, #220 et #344** ont chacun deux têtes sujet
 concurrentes dans les témoins échantillonnés. Ces observations ne
 prouvent pas une ambiguïté entre arbres globaux ni une contradiction;
 elles orientent la vérification de la plausibilité lexicale et des
 rattachements. Les contre-vérifications imposent en plus que les
 spans source des rôles concordent avec leurs enfants et le témoin
-de composition acceptée. Aucune phrase n'est reclassée.
+de composition acceptée. Aucune phrase n'est reclassée. La CI du
+commit de comparaison,
+[42430945036](https://github.com/leye0/seman2/actions/runs/42430945036),
+confirme **573 tests** réussis et les contrôles de qualité Layer 1.

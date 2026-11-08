@@ -287,10 +287,14 @@ occurrence source exacte d'une **même tête prédicative et même catégorie
 lexicale**, les différentes têtes sujet proposées par ces constituants
 acceptés localement. Elle dédouble les observations identiques de
 plusieurs relectures, retient règle/scope/catégorie de chaque candidat,
-et refuse de regrouper les offsets non mappés. Sur les artefacts de
-l'Action ci-dessus, **4 cas** (#109, #182, #220, #344) présentent chacun
+et refuse de regrouper les offsets non mappés. La **re-synthèse** des
+artefacts de l'Action ci-dessus trouve **4 cas** (#109, #182, #220, #344)
+présentant chacun
 une tête prédicative avec **2 têtes sujet candidates**. Le rapport les
 expose sous `shared_predicate_local_subject_candidates` ; les indicateurs
 `whole_sentence_ambiguity_proven` et `grammatical_conflict_proven`
 restent explicitement `false`. Les correspondances source tête/enfant/
 constituant sont aussi contre-vérifiées lors de la synthèse.
+La validation Layer 1
+[42430945036](https://github.com/leye0/seman2/actions/runs/42430945036)
+est verte avec **573 tests** et les contrôles de qualité globaux.

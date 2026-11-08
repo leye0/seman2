@@ -242,7 +242,9 @@ les **4** cas (#109, #182, #220, #344) où une tête de prédicat unique
 dans les constituants localement acceptés. Règles, scopes et spans source
 restent attachés à chacun. Les mappings tête/enfant/constituant sont
 contre-vérifiés. Cette coexistence de candidats n'est **pas** une preuve
-de faute ou d'ambiguïté grammaticale globale.
+de faute ou d'ambiguïté grammaticale globale. L'Action
+[42430945036](https://github.com/leye0/seman2/actions/runs/42430945036)
+confirme **573 tests** et l'ensemble des contrôles de qualité globale.
 
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
