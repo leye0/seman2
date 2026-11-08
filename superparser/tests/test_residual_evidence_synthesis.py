@@ -8,7 +8,9 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from scripts.synthesize_residual_evidence import synthesize, render, main
+from scripts.synthesize_residual_evidence import (
+    synthesize, render, main, _complete_tree_competition_against_rejected_pairs,
+)
 
 HISTORICAL = (8, 64, 94, 96, 105, 109, 115, 116, 167, 182, 194, 220,
               226, 233, 235, 243, 248, 312, 344, 347, 463, 466, 480,
@@ -183,6 +185,59 @@ def fixture():
 
 
 class ResidualEvidenceSynthesisTests(unittest.TestCase):
+    def test_complete_tree_competition_joins_exact_rejected_grammar_heads_only(self):
+        source = "they says. " + " " * 40
+        rejected = {
+            "feature": "number", "rule_id": "dialogue_speech_tag_post",
+            "subject_source_span": [0, 4],
+            "subject_lexical_head_source_span": [0, 4],
+            "subject_lexical_head_category": "PRONOUN",
+            "subject_lexical_head_lemma": "they",
+            "predicate_source_span": [5, 9],
+        }
+        traces = {"scoped_dialogue": {
+            "same_attempt_original_lexical_subject_predicate_conflicts": {
+                "examples": [rejected]}}}
+        comparison = {
+            "replay_outcome": "complete", "selected_usage_deviation_count": 1,
+            "bounded_complete_tree_competition": {
+                "status": "sampled", "requested_limit": 4,
+                "sampled_complete_trees": 2, "exhaustive": False,
+                "strict_grammar_acceptance_proven": False,
+                "trees_without_recorded_marked_deviations": 1,
+                "trees": [{
+                    "rank": 1, "usage_deviation_count": 1,
+                    "marked_subject_predicate_relations": [{
+                        "rule_id": "marked_speech_tag", "feature": "number",
+                        "subject_source_span": [0, 4],
+                        "predicate_source_span": [5, 9],
+                    }], "accepted_local_role_pairs": [],
+                }, {
+                    "rank": 2, "usage_deviation_count": 0,
+                    "marked_subject_predicate_relations": [],
+                    "accepted_local_role_pairs": [{
+                        "rule_id": "alternate_tag", "subject_head_source_span": [0, 4],
+                        "subject_head_lexical_category": "PRONOUN",
+                        "subject_head_lemma": "they",
+                        "predicate_head_source_span": [5, 9],
+                    }],
+                }],
+            },
+        }
+        evidence = _complete_tree_competition_against_rejected_pairs(
+            comparison, traces, source)
+        self.assertEqual(evidence["sampled_complete_trees"], 2)
+        self.assertEqual(evidence["distinct_rejected_head_pairs_compared"], 1)
+        self.assertEqual({x["type"] for x in evidence["exact_source_pair_witnesses"]}, {
+            "marked_relation_in_complete_tree", "accepted_local_link_in_complete_tree"})
+        self.assertFalse(evidence["strict_grammar_acceptance_proven"])
+        self.assertFalse(evidence["grammatical_fault_established"])
+        bad = deepcopy(comparison)
+        bad["bounded_complete_tree_competition"]["trees"][1][
+            "accepted_local_role_pairs"][0]["predicate_head_source_span"] = [100, 120]
+        with self.assertRaisesRegex(ValueError, "Invalid exact source span"):
+            _complete_tree_competition_against_rejected_pairs(bad, traces, source)
+
     def test_all_26_retained_with_independent_evidence_and_no_fault_inference(self):
         rows, summary = synthesize(*fixture())
         self.assertEqual(len(rows), 26)

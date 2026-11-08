@@ -936,6 +936,103 @@ def _same_attempt_agreement_totals(rows: list[Mapping[str, Any]], *,
     } for scope, counts in sorted(by_scope.items())}
 
 
+def _complete_tree_competition_against_rejected_pairs(
+    marked: Mapping[str, Any] | None,
+    traces: Mapping[str, Any],
+    source_text: str,
+) -> dict[str, Any] | None:
+    """Compare exact source head spans, without asserting an intended reading.
+
+    One failed strict rule attempt can coexist with a different *complete*
+    parse under marked grammar.  A bounded sample cannot disprove a missing
+    alternative, and a marked-mode analysis never certifies strict grammar.
+    """
+    if marked is None:
+        return None
+    audit = marked.get("bounded_complete_tree_competition")
+    if audit is None:
+        return None  # Backwards-compatible historical synthesis fixtures.
+    if (audit.get("strict_grammar_acceptance_proven") is not False
+            or audit.get("exhaustive") is not False
+            or audit.get("requested_limit") != 4):
+        raise ValueError("Complete-tree audit overclaims its scope or sampling bound")
+    trees = audit.get("trees", [])
+    if (not isinstance(trees, list) or len(trees) > 4
+            or audit.get("sampled_complete_trees") != len(trees)):
+        raise ValueError("Invalid bounded complete-tree count")
+    if trees and (marked.get("replay_outcome") != "complete"
+                  or trees[0]["usage_deviation_count"]
+                  != marked.get("selected_usage_deviation_count")):
+        raise ValueError("Complete-tree ranking does not match selected comparator")
+    conflicts: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for trace in traces.values():
+        if not trace:
+            continue
+        evidence = trace["same_attempt_original_lexical_subject_predicate_conflicts"]
+        for item in evidence["examples"]:
+            key = (tuple(item["subject_lexical_head_source_span"]),
+                   tuple(item["predicate_source_span"]),
+                   item["subject_lexical_head_category"],
+                   item["subject_lexical_head_lemma"])
+            conflicts[key] = item
+
+    def checked_span(span: Any) -> tuple[int, int] | None:
+        if span is None:
+            return None
+        if (not isinstance(span, list) or len(span) != 2
+                or not all(type(v) is int for v in span)
+                or not 0 <= span[0] < span[1] <= len(source_text)):
+            raise ValueError("Invalid exact source span in complete-tree evidence")
+        return tuple(span)
+
+    matches = []
+    for expected_rank, tree in enumerate(trees, start=1):
+        if tree.get("rank") != expected_rank:
+            raise ValueError("Invalid alternative tree rank")
+        for pair in tree.get("accepted_local_role_pairs", []):
+            subj = checked_span(pair["subject_head_source_span"])
+            pred = checked_span(pair["predicate_head_source_span"])
+            for key, conflict in conflicts.items():
+                if (subj == key[0] and pred == key[1]
+                        and pair["subject_head_lexical_category"] == key[2]
+                        and pair["subject_head_lemma"] == key[3]):
+                    matches.append({
+                        "rank": tree["rank"], "type": "accepted_local_link_in_complete_tree",
+                        "rejected_attempt_rule": conflict["rule_id"],
+                        "complete_tree_rule": pair["rule_id"],
+                        "subject_head_source_span": list(subj),
+                        "predicate_head_source_span": list(pred),
+                        "strict_acceptance_proven": False,
+                    })
+        for relation in tree.get("marked_subject_predicate_relations", []):
+            subj = checked_span(relation["subject_source_span"])
+            pred = checked_span(relation["predicate_source_span"])
+            for conflict in conflicts.values():
+                if (subj == tuple(conflict["subject_source_span"])
+                        and pred == tuple(conflict["predicate_source_span"])
+                        and relation["feature"] == conflict["feature"]):
+                    matches.append({
+                        "rank": tree["rank"], "type": "marked_relation_in_complete_tree",
+                        "rejected_attempt_rule": conflict["rule_id"],
+                        "complete_tree_rule": relation["rule_id"],
+                        "subject_source_span": list(subj),
+                        "predicate_source_span": list(pred),
+                        "strict_acceptance_proven": False,
+                    })
+    return {
+        "status": audit["status"],
+        "sampled_complete_trees": len(trees),
+        "trees_without_recorded_marked_deviations": audit.get(
+            "trees_without_recorded_marked_deviations"),
+        "distinct_rejected_head_pairs_compared": len(conflicts),
+        "exact_source_pair_witnesses": matches,
+        "no_witness_in_sample_does_not_disprove_an_alternative": True,
+        "strict_grammar_acceptance_proven": False,
+        "grammatical_fault_established": False,
+        "exhaustive": False,
+    }
+
+
 def synthesize(
     register: list[Mapping[str, Any]],
     register_summary: Mapping[str, Any],
@@ -1128,6 +1225,9 @@ def synthesize(
                 "outcome": marked["replay_outcome"],
                 "selected_rule": marked.get("selected_rule"),
                 "selected_deviation_count": marked.get("selected_usage_deviation_count"),
+                "complete_tree_competition":
+                    _complete_tree_competition_against_rejected_pairs(
+                        marked, traces, source["source_text"]),
                 "opt_in_only": True,
                 "does_not_replace_canonical_status": True,
             },
@@ -1157,6 +1257,14 @@ def synthesize(
         "scoped_dialogue_replays": len(dial),
         "unscoped_structural_replays": len(extra),
         "marked_opt_in_comparisons": 2,
+        "complete_alternative_trees_sampled_for_marked_comparisons": sum(
+            ((row.get("marked_comparator") or {}).get("complete_tree_competition") or {})
+            .get("sampled_complete_trees", 0)
+            for row in rows),
+        "exact_rejected_pair_witnesses_in_complete_marked_trees": sum(
+            len(((row.get("marked_comparator") or {}).get("complete_tree_competition") or {})
+                .get("exact_source_pair_witnesses", []))
+            for row in rows),
         "local_sample_events": sum(
             entry["sampled_events"] for row in rows
             for entry in row["sampled_local_rejection_evidence"].values()

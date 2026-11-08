@@ -105,6 +105,33 @@ derivations concurrentes, l'absence de preuve dans *toutes*
 les solutions, les rapports positifs de contrôles et les tronquages
 de recherche avant de conclure à une anomalie de phrase.
 
+## P2 : concurrence entre arbres grammaticaux complets
+
+Les comparateurs indépendants (contrôles stricts #76/#244, grammaire
+marquée #463/#480) échantillonnent maintenant **au plus quatre arbres
+complets** déjà accessibles dans le même `ParseResult`. Aucun nouvel
+appel du parseur, budget, texte ou mode grammatical n'est introduit.
+
+`bounded_complete_tree_competition` dans
+`dialogue_rejection_comparators.jsonl` conserve, par rang :
+
+- la règle racine et le nombre de déviations **expressément attestées**
+  dans cet arbre ;
+- les relations sujet/prédicat attestées par la règle marquée sélectionnée
+  (mapping exact vers la phrase source) ;
+- les couples de têtes sujet/verbe **réellement liés** par une composition
+  locale acceptée et appartenant à cet arbre complet, dans une limite
+  de 32 couples et 4096 nœuds visités par arbre ;
+- les indicateurs de troncature et de censure par délai.
+
+Le document `residual_evidence_synthesis.jsonl` rapproche ces positions
+originales des conflits observés dans une **tentative rejetée** du parseur
+strict. Une correspondance prouve la coexistence de ces positions dans
+une dérivation complète **sous le mode du comparateur** ; elle ne prouve
+ni que cette lecture est linguistiquement voulue, ni qu'elle réussit
+dans la grammaire stricte. L'absence de correspondance dans quatre arbres
+ne démontre rien sur les arbres non échantillonnés.
+
 ## Échantillonnage priorisé (sans changer l'exécution)
 
 Le rapport conserve toujours les compteurs `observed_by_stage` de

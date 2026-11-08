@@ -19,11 +19,103 @@ from scripts.diagnose_novel_parses import (
     EXPECTED_500_COHORT_SHA256, SentenceDeadline, _deadline, classify, select_cases,
 )
 from seman_parser.engine import Parser, ParserResources
+from seman_parser.local_role_proofs import resolved_local_subject_predicate_pairs
+from seman_parser.nonstandard import collect_usage_deviations
+from seman_parser.vector_chart import KBestWorkBudgetExceeded
 
 ROOT = Path(__file__).resolve().parents[1]
 # Independent positive controls and independently pinned marked-use cases.
 STRICT_CONTROL_INDICES = (76, 244)
 MARKED_COMPARISON_INDICES = (463, 480)
+COMPLETE_TREE_SAMPLE_LIMIT = 4
+COMPLETE_TREE_ROLE_PAIR_LIMIT = 32
+COMPLETE_TREE_NODE_VISIT_LIMIT = 4096
+
+
+def inspect_complete_tree_competition(parsed, prepared, *, limit: int = COMPLETE_TREE_SAMPLE_LIMIT) -> dict[str, Any]:
+    """Audit *actual complete trees*, never rejected candidates or guessed attachments.
+
+    The parse's existing k-best cap and work budget still apply.  No separate
+    Parser.parse, new lexical choice or unbounded grammar enumeration occurs.
+    These are alternative derivations in the same parser mode as the comparator,
+    not evidence that the ordinary strict grammar could accept them.
+    """
+    if not 1 <= limit <= COMPLETE_TREE_SAMPLE_LIMIT:
+        raise ValueError("Complete-tree competition limit exceeds bounded audit")
+    if not parsed.completed:
+        return {"status": "no_complete_tree", "requested_limit": limit,
+                "sampled_complete_trees": 0, "trees": [], "exhaustive": False,
+                "strict_grammar_acceptance_proven": False}
+    trees = []
+    for rank, root in enumerate(parsed.alternatives(limit=limit), start=1):
+        deviations = collect_usage_deviations(root, parsed.text)
+        marked_relations = []
+        for deviation in deviations:
+            item = deviation.as_dict(reference_span=prepared.reference_span)
+            marked_relations.append({
+                "rule_id": item["rule_id"],
+                "feature": deviation.feature,
+                "subject_source_span": item["subject"]["reference_span"],
+                "predicate_source_span": item["predicate"]["reference_span"],
+                "subject_expected": deviation.expected,
+                "predicate_observed": deviation.observed,
+                "same_complete_tree": True,
+            })
+        local_pairs = []
+        observed_pairs = 0
+        source_mappable_pairs = 0
+        stack, visited = [root], set()
+        while stack and len(visited) < COMPLETE_TREE_NODE_VISIT_LIMIT:
+            node = stack.pop()
+            if id(node) in visited:
+                continue
+            visited.add(id(node))
+            for pair in resolved_local_subject_predicate_pairs(node):
+                observed_pairs += 1
+                subj, pred = pair["subject"], pair["predicate"]
+                subj_ref = prepared.reference_span(*subj["head_analysis_span"])
+                pred_ref = prepared.reference_span(*pred["head_analysis_span"])
+                if subj_ref is None or pred_ref is None:
+                    continue  # An inserted balanced quote is not original evidence.
+                source_mappable_pairs += 1
+                if len(local_pairs) >= COMPLETE_TREE_ROLE_PAIR_LIMIT:
+                    continue
+                local_pairs.append({
+                    "rule_id": pair["rule_id"],
+                    "subject_head_source_span": list(subj_ref),
+                    "subject_head_lexical_category": subj["head_lexical_category"],
+                    "subject_head_lemma": subj["head_lemma"],
+                    "predicate_head_source_span": list(pred_ref),
+                    "predicate_head_lexical_category": pred["head_lexical_category"],
+                    "predicate_head_lemma": pred["head_lemma"],
+                    "same_accepted_local_composition_in_complete_tree": True,
+                })
+            stack.extend(reversed(getattr(node, "children", ()) or ()))
+        trees.append({
+            "rank": rank,
+            "root_rule_id": root.rule_id,
+            "usage_deviation_count": len(deviations),
+            "marked_subject_predicate_relations": marked_relations,
+            "accepted_local_role_pairs": local_pairs,
+            "observed_local_pairs": observed_pairs,
+            "source_mappable_local_pairs": source_mappable_pairs,
+            "role_pairs_truncated": source_mappable_pairs > len(local_pairs),
+            "tree_nodes_visited": len(visited),
+            "tree_traversal_truncated": bool(stack),
+        })
+    return {
+        "status": "sampled", "requested_limit": limit,
+        "sampled_complete_trees": len(trees),
+        "trees_without_recorded_marked_deviations": sum(
+            tree["usage_deviation_count"] == 0 for tree in trees),
+        "trees_with_recorded_marked_deviations": sum(
+            tree["usage_deviation_count"] > 0 for tree in trees),
+        "trees": trees,
+        "exhaustive": False,
+        "strict_grammar_acceptance_proven": False,
+        "sentence_grammatical_fault_established": False,
+        "sampling_scope": "bounded_kbest_complete_trees_in_same_comparator_parser_mode",
+    }
 
 
 
@@ -319,6 +411,24 @@ def replay_comparisons(
             ):
                 if isinstance(trace, dict):
                     row["traces"][name] = map_trace_to_reference(trace, prepared, lattice)
+            # Read complete grammatical competitors *after* the existing
+            # comparator outcome/traces have been frozen.  A slower k-best
+            # audit must never turn a proven completed replay into a timeout.
+            try:
+                row["bounded_complete_tree_competition"] = (
+                    inspect_complete_tree_competition(parsed, prepared))
+            except SentenceDeadline:
+                row["bounded_complete_tree_competition"] = {
+                    "status": "deadline_censored", "requested_limit": COMPLETE_TREE_SAMPLE_LIMIT,
+                    "sampled_complete_trees": 0, "trees": [], "exhaustive": False,
+                    "strict_grammar_acceptance_proven": False,
+                }
+            except KBestWorkBudgetExceeded:
+                row["bounded_complete_tree_competition"] = {
+                    "status": "kbest_budget_censored", "requested_limit": COMPLETE_TREE_SAMPLE_LIMIT,
+                    "sampled_complete_trees": 0, "trees": [], "exhaustive": False,
+                    "strict_grammar_acceptance_proven": False,
+                }
         except SentenceDeadline:
             row["replay_outcome"] = "deadline_censored"
             row["selected_rule"] = None
@@ -348,7 +458,24 @@ def render_comparisons(rows: list[dict[str, Any]]) -> str:
         "", "All rejections above and in the JSONL are **candidate-local**.",
         "Do not interpret a higher/lower rejection count as a causal proof:",
         "strict and marked grammars need not explore identical alternatives.",
+        "", "## Bounded complete-tree competition", "",
+        "The independent comparators also inspect up to four *materialized",
+        "complete* k-best trees under their own parser mode and unchanged work",
+        "budgets. Each records explicit marked subject/predicate relations and",
+        "actually resolved local grammatical links with exact original spans.",
+        "A marked-mode tree with no recorded deviation is **not** proof that",
+        "the strict parser accepts that analysis. Non-sampled trees may exist.", "",
+        "| Index | Audit | Complete trees sampled | With marked deviation | Without recorded deviation |",
+        "|---:|---|---:|---:|---:|",
     ]
+    for row in rows:
+        audit = row.get("bounded_complete_tree_competition") or {}
+        out.append(
+            f"| {row['index']} | {audit.get('status', 'not_available')} | "
+            f"{audit.get('sampled_complete_trees', 0)} | "
+            f"{audit.get('trees_with_recorded_marked_deviations', '—')} | "
+            f"{audit.get('trees_without_recorded_marked_deviations', '—')} |"
+        )
     return "\n".join(out) + "\n"
 
 

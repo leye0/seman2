@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from seman_parser.engine import Parser
 from seman_parser.features import Atom, FeatureStructure
@@ -11,13 +13,59 @@ from scripts.probe_dialogue_rejections import (
     eligible_dialogue_residuals, summary_for, map_trace_to_reference,
     lexical_head_lattice_evidence,
     comparison_targets, comparison_summary, STRICT_CONTROL_INDICES,
-    MARKED_COMPARISON_INDICES,
+    MARKED_COMPARISON_INDICES, inspect_complete_tree_competition,
 )
 from research.verbnet_lr.corpus_pipeline import PreparedCorpusInput, CorpusParseMode
 from seman_parser.segmentation import LexicalCandidate, LexicalLattice
 
 
 class RejectionTraceTests(unittest.TestCase):
+    def test_complete_competition_samples_real_roots_and_maps_only_exact_heads(self):
+        class Prepared:
+            @staticmethod
+            def reference_span(start, end):
+                return (start + 20, end + 20) if end <= 10 else None
+
+        class Deviation:
+            feature = "number"
+            expected = "plural"
+            observed = "singular"
+
+            @staticmethod
+            def as_dict(*, reference_span):
+                return {
+                    "rule_id": "marked_speech_tag",
+                    "subject": {"reference_span": list(reference_span(0, 4))},
+                    "predicate": {"reference_span": list(reference_span(5, 9))},
+                }
+
+        first = SimpleNamespace(rule_id="dialogue", children=(), start=0, end=10)
+        second = SimpleNamespace(rule_id="alternate_dialogue", children=(),
+                                 start=0, end=10)
+        parsed = SimpleNamespace(completed=True, text="they says.",
+                                 alternatives=lambda limit: [first, second][:limit])
+        pair = {"rule_id": "speech_tag", "subject": {
+            "head_analysis_span": [0, 4], "head_lexical_category": "PRONOUN",
+            "head_lemma": "they"}, "predicate": {
+            "head_analysis_span": [5, 9], "head_lexical_category": "V",
+            "head_lemma": "say"}}
+        with patch("scripts.probe_dialogue_rejections.collect_usage_deviations",
+                   side_effect=lambda root, _text: [Deviation()] if root is first else []), \
+             patch("scripts.probe_dialogue_rejections.resolved_local_subject_predicate_pairs",
+                   side_effect=lambda root: [pair] if root is second else []):
+            audit = inspect_complete_tree_competition(parsed, Prepared())
+        self.assertEqual(audit["sampled_complete_trees"], 2)
+        self.assertEqual(audit["trees_with_recorded_marked_deviations"], 1)
+        self.assertEqual(audit["trees_without_recorded_marked_deviations"], 1)
+        self.assertEqual(audit["trees"][0]["marked_subject_predicate_relations"][0]
+                         ["subject_source_span"], [20, 24])
+        self.assertEqual(audit["trees"][1]["accepted_local_role_pairs"][0]
+                         ["predicate_head_source_span"], [25, 29])
+        self.assertFalse(audit["strict_grammar_acceptance_proven"])
+        self.assertFalse(audit["exhaustive"])
+        with self.assertRaisesRegex(ValueError, "exceeds bounded audit"):
+            inspect_complete_tree_competition(parsed, Prepared(), limit=5)
+
     def test_source_mapping_reaches_prior_materialized_subject_in_request_chain(self):
         class Prepared:
             @staticmethod
