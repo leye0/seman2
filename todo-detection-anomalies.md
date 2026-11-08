@@ -256,6 +256,13 @@ score de plausibilité contextuelle ni une déclaration de faute. Les
 rapports historiques dépourvus de cet audit restent explicitement
 non mesurés plutôt que considérés comme négatifs.
 
+**Mesure réelle (Actions 42441843744 et 42441843750) :**
+**76/76 têtes échantillonnées** de 38 paires ont une provenance
+lexicale exacte; **67/76** ont d'autres catégories possibles au même
+span. **575 tests** passent, le strict reste **474/500**. Ce résultat
+borne la suite : mettre en concurrence les analyses *contextuelles*
+au lieu de qualifier d'erronées des entrées lexicales existantes.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

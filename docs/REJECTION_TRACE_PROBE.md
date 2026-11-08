@@ -324,3 +324,19 @@ comme une probabilité de justesse : `contextual_plausibility_proven=false`
 et `grammatical_conflict_proven=false` restent obligatoires. Un candidat
 manquant indique une insuffisance de provenance de cette tête locale,
 **pas** une faute dans la phrase.
+
+**Mesure reproductible (Action
+[42441843744](https://github.com/leye0/seman2/actions/runs/42441843744)) :**
+le passage canonique reste **474/500**. Les **38 paires** conservées
+représentent **76 observations de têtes** (avec doublons possibles entre
+relectures) : les **76/76** disposent d'au moins un candidat lexical de
+mêmes span, catégorie et lemme; **67/76** présentent **en outre** une
+autre catégorie au même span. Ainsi, un accord avec le lattice **n'est
+pas** une preuve de validité grammaticale : par exemple, au cas #182,
+`as` est trouvé comme `N` en parallèle de `ADV`, `CONJ`, `EQUATIVE-AS`
+et `PREP`; `good` comme `N` en parallèle de `ADJ` et `ADV`;
+`natured` comme `V` en parallèle de `ADJ` et `N`. Ces lectures
+localement unifiées restent des **candidats**, pas des corrections.
+L'Action
+[42441843750](https://github.com/leye0/seman2/actions/runs/42441843750)
+confirme **575 tests** et les contrôles de qualité Layer 1.

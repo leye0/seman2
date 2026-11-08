@@ -461,3 +461,17 @@ vérifie le schéma et la surface exacte contre le texte analysé;
 un ancien artefact sans ce champ reste compatible, avec statut de
 preuve lexicale **non mesurée**. Aucune plausibilité contextuelle,
 analyse complète ou faute grammaticale n'est déduite de ce bilan.
+
+L'Action 500
+[42441843744](https://github.com/leye0/seman2/actions/runs/42441843744)
+confirme le strict **474/500**, les **26** résidus, les **927** preuves
+locales et les **38** paires de rôles. Les **76 têtes** ainsi observées
+correspondent toutes à une entrée exacte du lattice; **67** ont
+également des catégories alternatives au même span. Les comptes sont
+des *observations échantillonnées* pouvant répéter la même tête entre
+scopes, pas une fréquence représentative d'erreurs de langage. Le
+cas #182 (`as good natured`) montre pourquoi la simple correspondance
+au lexique ne garantit pas une lecture recevable en contexte.
+La CI Layer 1
+[42441843750](https://github.com/leye0/seman2/actions/runs/42441843750)
+est verte avec **575 tests**.
