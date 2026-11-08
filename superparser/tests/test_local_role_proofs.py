@@ -26,6 +26,8 @@ class LocalResolvedRoleTests(unittest.TestCase):
         pair = pairs[0]
         self.assertEqual(pair["subject"]["head_analysis_span"], [0, 4])
         self.assertEqual(pair["predicate"]["head_analysis_span"], [5, 11])
+        self.assertEqual(pair["subject"]["head_lemma"], "John")
+        self.assertEqual(pair["predicate"]["head_lemma"], "opened")
         self.assertEqual(pair["subject"]["child_analysis_span"], [0, 4])
         self.assertTrue(pair["same_accepted_local_composition"])
         self.assertFalse(pair["whole_sentence_relation_proven"])

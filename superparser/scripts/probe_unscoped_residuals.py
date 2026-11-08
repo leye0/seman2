@@ -121,7 +121,7 @@ def run(args: argparse.Namespace) -> dict:
             }
             signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
             try:
-                prepared, _lattice, parsed = parse_corpus_case(
+                prepared, lattice, parsed = parse_corpus_case(
                     parser, case, max_items=args.max_items,
                     kbest_work_limit=args.kbest_work_limit,
                     rejection_trace_limit=args.trace_limit,
@@ -130,7 +130,7 @@ def run(args: argparse.Namespace) -> dict:
                     raise ValueError("Canonical quote-balanced text mismatch")
                 record["replay_outcome"] = classify(parsed.completed, parsed.stats)
                 record["rejection_trace"] = map_trace_to_reference(
-                    parsed.stats.get("rejection_trace"), prepared)
+                    parsed.stats.get("rejection_trace"), prepared, lattice)
             except SentenceDeadline:
                 record["replay_outcome"] = "deadline_censored"
                 record["rejection_trace"] = None

@@ -325,6 +325,49 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "no matching validated local subtree"):
                     synthesize(*args)
 
+    def test_lattice_head_evidence_is_not_contextual_or_grammatical_proof(self):
+        args = fixture()
+        local = args[4][0]["scoped_dialogue"]["rejection_trace"]
+        pair = local["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        for name, surface in (("subject", "ala"), ("predicate", "ed ")):
+            role = pair[name]
+            role["head_lemma"] = name
+            role["lexical_lattice_evidence"] = {
+                "schema": "seman2-local-head-lattice-audit-v1",
+                "basis": "same_public_parse_original_lexical_lattice",
+                "head_analysis_span": role["head_analysis_span"],
+                "head_lexical_category": role["head_lexical_category"],
+                "head_lemma": name,
+                "head_analysis_surface": surface,
+                "matching_head_candidate_count": 1,
+                "matching_candidate_sources": ["lexicon"],
+                "all_same_span_candidate_categories": [role["head_lexical_category"]],
+                "alternate_same_span_categories": [],
+                "head_lexical_candidate_present": True,
+                "contextual_plausibility_proven": False,
+                "grammatical_conflict_proven": False,
+            }
+        pair["subject"]["lexical_lattice_evidence"]["all_same_span_candidate_categories"] = [
+            "PREP", "PRONOUN"]
+        pair["subject"]["lexical_lattice_evidence"]["alternate_same_span_categories"] = [
+            "PREP"]
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary["local_role_heads_with_lattice_audit_sampled"], 2)
+        self.assertEqual(summary["local_role_heads_with_cross_category_alternatives_sampled"], 1)
+        self.assertEqual(summary["local_role_heads_without_matching_lattice_candidate_sampled"], 0)
+        self.assertFalse(next(row for row in rows if row["index"] == 463)[
+            "grammatical_fault_established"])
+        for field, value in (("contextual_plausibility_proven", True),
+                             ("head_analysis_surface", "not-in-source"),
+                             ("matching_head_candidate_count", 0)):
+            with self.subTest(field=field):
+                changed = deepcopy(args)
+                changed[4][0]["scoped_dialogue"]["rejection_trace"][
+                    "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0][
+                    "subject"]["lexical_lattice_evidence"][field] = value
+                with self.assertRaises(ValueError):
+                    synthesize(*changed)
+
     def test_wrong_identity_status_targets_and_trace_claims_fail_closed(self):
         mutators = [
             lambda a: a[1].update(cohort_sha256="other"),

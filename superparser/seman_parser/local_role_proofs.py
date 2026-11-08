@@ -30,7 +30,7 @@ def _resolved_link(link: Any, children: tuple[Any, ...]) -> dict[str, Any] | Non
         return None
     # Only actual lexical occurrence anchors, not inferred words or names.
     fields = link.target.split(":", 4)
-    if len(fields) != 5 or fields[0] != "lex" or not fields[3]:
+    if len(fields) != 5 or fields[0] != "lex" or not fields[3] or not fields[4]:
         return None
     try:
         start, end = int(fields[1]), int(fields[2])
@@ -45,6 +45,7 @@ def _resolved_link(link: Any, children: tuple[Any, ...]) -> dict[str, Any] | Non
         "child_analysis_span": [child.start, child.end],
         "head_analysis_span": [start, end],
         "head_lexical_category": fields[3],
+        "head_lemma": fields[4],
     }
 
 

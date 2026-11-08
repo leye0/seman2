@@ -448,3 +448,16 @@ de composition acceptée. Aucune phrase n'est reclassée. La CI du
 commit de comparaison,
 [42430945036](https://github.com/leye0/seman2/actions/runs/42430945036),
 confirme **573 tests** réussis et les contrôles de qualité Layer 1.
+
+### P2 : contrôle des têtes dans le lattice lexical réel
+
+Les relectures opt-in emportent maintenant pour chaque tête sujet et
+prédicat une confrontation avec le **lattice déjà construit par le
+parseur public** : correspondance exacte (span, catégorie, lemme),
+provenance du candidat et catégories concurrentes au même span.
+Le but est d'étudier des lectures comme `as`/`good` nominales sans
+requalifier un mot ni imposer une lecture dite correcte. La synthèse
+vérifie le schéma et la surface exacte contre le texte analysé;
+un ancien artefact sans ce champ reste compatible, avec statut de
+preuve lexicale **non mesurée**. Aucune plausibilité contextuelle,
+analyse complète ou faute grammaticale n'est déduite de ce bilan.

@@ -246,6 +246,16 @@ de faute ou d'ambiguïté grammaticale globale. L'Action
 [42430945036](https://github.com/leye0/seman2/actions/runs/42430945036)
 confirme **573 tests** et l'ensemble des contrôles de qualité globale.
 
+**Audit lexical P2 ajouté :** chaque ancre sujet/prédicat locale
+conserve aussi sa lemme et reçoit la preuve (ou l'absence de preuve)
+d'une entrée dans le lattice original du **même** appel `Parser.parse`,
+avec ses catégories alternatives au même span et la provenance des
+candidats exacts. La synthèse vérifie également la surface d'analyse.
+Ce constat est une mesure d'**ambiguïté lexicale disponible**, pas un
+score de plausibilité contextuelle ni une déclaration de faute. Les
+rapports historiques dépourvus de cet audit restent explicitement
+non mesurés plutôt que considérés comme négatifs.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

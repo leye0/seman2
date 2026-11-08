@@ -27,7 +27,42 @@ MARKED_COMPARISON_INDICES = (463, 480)
 
 
 
-def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, Any] | None:
+def lexical_head_lattice_evidence(role: dict[str, Any], lattice) -> dict[str, Any]:
+    """Audit one *resolved* syntax head against this parse's original lattice.
+
+    A category surviving in the lattice is an available lexical reading, not
+    evidence that it is contextually appropriate. Do not rank or prune it.
+    """
+    span = role.get("head_analysis_span")
+    category, lemma = role.get("head_lexical_category"), role.get("head_lemma")
+    if (not isinstance(span, list) or len(span) != 2 or
+            type(span[0]) is not int or type(span[1]) is not int or
+            not 0 <= span[0] < span[1] <= len(lattice.text) or
+            not isinstance(category, str) or not category or
+            not isinstance(lemma, str) or not lemma):
+        raise ValueError("Resolved local head lacks a verifiable lexical anchor")
+    candidates = lattice.covering(*span)
+    matched = [c for c in candidates if c.category == category and c.lemma == lemma]
+    return {
+        "schema": "seman2-local-head-lattice-audit-v1",
+        "basis": "same_public_parse_original_lexical_lattice",
+        "head_analysis_span": list(span),
+        "head_lexical_category": category,
+        "head_lemma": lemma,
+        "head_analysis_surface": lattice.text[span[0]:span[1]],
+        "matching_head_candidate_count": len(matched),
+        "matching_candidate_sources": sorted({c.source for c in matched}),
+        "all_same_span_candidate_categories": sorted({c.category for c in candidates}),
+        "alternate_same_span_categories": sorted({c.category for c in candidates
+                                                 if c.category != category}),
+        "head_lexical_candidate_present": bool(matched),
+        "contextual_plausibility_proven": False,
+        "grammatical_conflict_proven": False,
+    }
+
+
+def map_trace_to_reference(trace: dict[str, Any] | None, prepared,
+                           lattice=None) -> dict[str, Any] | None:
     """Preserve analysis offsets, map only spans proven original by the corpus gateway."""
     if trace is None:
         return None
@@ -82,6 +117,9 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, 
                         ("child_analysis_span", "child_reference_span"),
                         ("head_analysis_span", "head_reference_span"),
                     ))
+                    if lattice is not None:
+                        linked[name]["lexical_lattice_evidence"] = (
+                            lexical_head_lattice_evidence(pair[name], lattice))
                 role_mapped["pairs"].append(linked)
             local_mapped["validated_local_role_pairs"] = role_mapped
         mapped[pool] = local_mapped
@@ -246,7 +284,7 @@ def replay_comparisons(
         }
         signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
         try:
-            prepared, _lattice, parsed = parse_corpus_case(
+            prepared, lattice, parsed = parse_corpus_case(
                 parser, case,
                 max_items=args.max_items,
                 kbest_work_limit=args.kbest_work_limit,
@@ -267,7 +305,7 @@ def replay_comparisons(
                 ("selected_or_fallback", stats.get("rejection_trace")),
             ):
                 if isinstance(trace, dict):
-                    row["traces"][name] = map_trace_to_reference(trace, prepared)
+                    row["traces"][name] = map_trace_to_reference(trace, prepared, lattice)
         except SentenceDeadline:
             row["replay_outcome"] = "deadline_censored"
             row["selected_rule"] = None
@@ -347,7 +385,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             }
             signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
             try:
-                prepared, _lattice, parsed = parse_corpus_case(
+                prepared, lattice, parsed = parse_corpus_case(
                     parser, case, max_items=args.max_items,
                     kbest_work_limit=args.kbest_work_limit,
                     rejection_trace_limit=args.trace_limit,
@@ -359,12 +397,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 scoped = dict(stats.get("dialogue_attempt") or {})
                 if "rejection_trace" in scoped:
                     scoped["rejection_trace"] = map_trace_to_reference(
-                        scoped["rejection_trace"], prepared)
+                        scoped["rejection_trace"], prepared, lattice)
                 record["scoped_dialogue"] = scoped
                 record["ordinary_fallback"] = {
                     "structural_root_nodes": int(stats.get("structural_root_nodes", 0)),
                     "rejection_trace": map_trace_to_reference(
-                        stats.get("rejection_trace"), prepared),
+                        stats.get("rejection_trace"), prepared, lattice),
                 }
             except SentenceDeadline:
                 record["replay_outcome"] = "deadline_censored"

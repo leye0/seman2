@@ -298,3 +298,29 @@ constituant sont aussi contre-vérifiées lors de la synthèse.
 La validation Layer 1
 [42430945036](https://github.com/leye0/seman2/actions/runs/42430945036)
 est verte avec **573 tests** et les contrôles de qualité globaux.
+
+## P2 : confrontation de chaque tête résolue au lattice original
+
+Une étape de preuve **additionnelle**, sans nouvelle lexicalisation,
+conserve désormais la **lemme de l'ancre syntaxique réelle** et confronte
+chaque tête à `LexicalLattice.covering(start, end)` reçu directement de
+`parse_corpus_case` avec le `Parser.parse` public. Le témoin indique :
+
+- si une entrée au même span, à la **même catégorie et à la même lemme**
+  existe vraiment dans le lattice; le nombre et les provenances de ces
+  candidats;
+- toutes les **autres catégories proposées au même span** par le même
+  lattice, sans en éliminer aucune et sans chercher à établir laquelle
+  convient au contexte;
+- la surface exacte dans le texte d'analyse, contrôlée de nouveau lors
+  de la synthèse, et la correspondance source déjà conditionnée à un
+  mapping exact.
+
+La sortie `lexical_lattice_evidence` reste attachée à chacune des deux
+têtes de `validated_local_role_pairs`; l'ancien schéma sans cet ajout
+reste analysable, mais ne doit **jamais** être compté comme un audit
+lexical effectué. Aucune valeur de score lexical n'est interprétée
+comme une probabilité de justesse : `contextual_plausibility_proven=false`
+et `grammatical_conflict_proven=false` restent obligatoires. Un candidat
+manquant indique une insuffisance de provenance de cette tête locale,
+**pas** une faute dans la phrase.

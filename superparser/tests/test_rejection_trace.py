@@ -9,13 +9,38 @@ from seman_parser.features import Atom, FeatureStructure
 from seman_parser.vector_chart import ForestNode, _RejectionTrace
 from scripts.probe_dialogue_rejections import (
     eligible_dialogue_residuals, summary_for, map_trace_to_reference,
+    lexical_head_lattice_evidence,
     comparison_targets, comparison_summary, STRICT_CONTROL_INDICES,
     MARKED_COMPARISON_INDICES,
 )
 from research.verbnet_lr.corpus_pipeline import PreparedCorpusInput, CorpusParseMode
+from seman_parser.segmentation import LexicalCandidate, LexicalLattice
 
 
 class RejectionTraceTests(unittest.TestCase):
+    def test_local_head_lattice_audit_preserves_competing_categories_without_ranking(self):
+        candidates = tuple(LexicalCandidate(
+            0, 2, "as", "as", category, FeatureStructure.build({}),
+            source=source, score=score)
+            for category, source, score in (
+                ("N", "wordnet", 0.15), ("PREP", "lexicon", 1.0),
+                ("ADV", "lexicon", 0.6)))
+        lattice = LexicalLattice("as good", (), candidates)
+        role = {"head_analysis_span": [0, 2], "head_lexical_category": "N",
+                "head_lemma": "as"}
+        evidence = lexical_head_lattice_evidence(role, lattice)
+        self.assertTrue(evidence["head_lexical_candidate_present"])
+        self.assertEqual(evidence["matching_head_candidate_count"], 1)
+        self.assertEqual(evidence["matching_candidate_sources"], ["wordnet"])
+        self.assertEqual(evidence["alternate_same_span_categories"], ["ADV", "PREP"])
+        self.assertFalse(evidence["contextual_plausibility_proven"])
+        self.assertFalse(evidence["grammatical_conflict_proven"])
+        missing = lexical_head_lattice_evidence({**role, "head_lemma": "else"}, lattice)
+        self.assertFalse(missing["head_lexical_candidate_present"])
+        self.assertEqual(missing["all_same_span_candidate_categories"], ["ADV", "N", "PREP"])
+        with self.assertRaisesRegex(ValueError, "verifiable lexical anchor"):
+            lexical_head_lattice_evidence({**role, "head_analysis_span": [0, 30]}, lattice)
+
     def test_only_ground_atomic_conflicts_are_named(self):
         trace = _RejectionTrace(8)
         node = ForestNode(0, 0, 9, 0, "VP", 0)

@@ -75,6 +75,54 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
             raise ValueError("Local constituent exact span has no source proof")
         return span
 
+    def lexical_evidence(role):
+        audit = role.get("lexical_lattice_evidence")
+        if audit is None:
+            return None  # Older frozen runs did not observe the lattice here.
+        if (not isinstance(audit, Mapping)
+                or audit.get("schema") != "seman2-local-head-lattice-audit-v1"
+                or audit.get("basis") != "same_public_parse_original_lexical_lattice"
+                or audit.get("head_analysis_span") != role.get("head_analysis_span")
+                or audit.get("head_lexical_category") != role.get("head_lexical_category")
+                or audit.get("head_lemma") != role.get("head_lemma")
+                or not isinstance(role.get("head_lemma"), str)
+                or not role["head_lemma"]
+                or type(audit.get("matching_head_candidate_count")) is not int
+                or audit["matching_head_candidate_count"] < 0
+                or audit.get("head_lexical_candidate_present") is not
+                    (audit["matching_head_candidate_count"] > 0)
+                or audit.get("contextual_plausibility_proven") is not False
+                or audit.get("grammatical_conflict_proven") is not False):
+            raise ValueError("Unsupported or overstated local lexical lattice evidence")
+        all_categories = audit.get("all_same_span_candidate_categories")
+        alternatives = audit.get("alternate_same_span_categories")
+        sources = audit.get("matching_candidate_sources")
+        if (not isinstance(audit.get("head_analysis_surface"), str)
+                or not isinstance(all_categories, list)
+                or any(not isinstance(c, str) for c in all_categories)
+                or all_categories != sorted(set(all_categories))
+                or not isinstance(alternatives, list)
+                or alternatives != [c for c in all_categories
+                                    if c != role["head_lexical_category"]]
+                or not isinstance(sources, list)
+                or any(not isinstance(s, str) for s in sources)
+                or sources != sorted(set(sources))
+                or (audit["head_lexical_candidate_present"]
+                    != bool(sources))
+                or (audit["head_lexical_candidate_present"]
+                    and role["head_lexical_category"] not in all_categories)):
+            raise ValueError("Local lexical lattice categories or origins inconsistent")
+        return {
+            "head_analysis_surface": audit["head_analysis_surface"],
+            "matching_head_candidate_count": audit["matching_head_candidate_count"],
+            "matching_candidate_sources": sources,
+            "all_same_span_candidate_categories": all_categories,
+            "alternate_same_span_categories": alternatives,
+            "head_lexical_candidate_present": audit["head_lexical_candidate_present"],
+            "contextual_plausibility_proven": False,
+            "grammatical_conflict_proven": False,
+        }
+
     result = {
         "observed_materialized_rule_analyses": local["observed_materialized_rule_analyses"],
         "sampled_local_constituents": len(witnesses),
@@ -212,6 +260,8 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                             "reference_span": pair[name].get("head_reference_span"),
                         }),
                         "head_lexical_category": pair[name]["head_lexical_category"],
+                        "head_lemma": pair[name].get("head_lemma"),
+                        "lexical_lattice_evidence": lexical_evidence(pair[name]),
                     } for name in ("subject", "predicate")},
                     "whole_sentence_relation_proven": False,
                     "grammatical_conflict_proven": False,
@@ -485,6 +535,20 @@ def synthesize(
         if marked:
             for name, trace in marked.get("traces", {}).items():
                 traces["marked_" + name] = _trace_view(trace)
+        for trace in traces.values():
+            if not trace or not trace.get("independent_local_probe"):
+                continue
+            pairs = (trace["independent_local_probe"].get("resolved_local_role_pairs") or {})
+            for pair in pairs.get("pairs", []):
+                for name in ("subject", "predicate"):
+                    head = pair[name]
+                    audit = head["lexical_lattice_evidence"]
+                    if audit is not None:
+                        start, end = head["head_analysis_span"]
+                        if (not 0 <= start < end <= len(source["analysis_text"])
+                                or source["analysis_text"][start:end]
+                                != audit["head_analysis_surface"]):
+                            raise ValueError("Local lattice surface is not the analyzed source span")
         rows.append({
             "index": index,
             "case_id": source["case_id"],
@@ -574,6 +638,29 @@ def synthesize(
             for row in rows if row["canonical_status"] != "complete"),
         "distinct_resolved_local_role_pairs_by_case": sum(
             _distinct_local_role_pairs(row) for row in rows),
+        "local_role_heads_with_lattice_audit_sampled": sum(
+            head["lexical_lattice_evidence"] is not None
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            for head in (pair["subject"], pair["predicate"])),
+        "local_role_heads_with_cross_category_alternatives_sampled": sum(
+            bool(head["lexical_lattice_evidence"]["alternate_same_span_categories"])
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            for head in (pair["subject"], pair["predicate"])
+            if head["lexical_lattice_evidence"] is not None),
+        "local_role_heads_without_matching_lattice_candidate_sampled": sum(
+            not head["lexical_lattice_evidence"]["head_lexical_candidate_present"]
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            for head in (pair["subject"], pair["predicate"])
+            if head["lexical_lattice_evidence"] is not None),
         "shared_predicate_heads_with_multiple_local_subject_candidates": sum(
             len(row["shared_predicate_local_subject_candidates"]) for row in rows),
         "cases_with_multiple_local_subject_candidates_for_shared_predicate": sum(
@@ -693,6 +780,17 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                                 f"→ {predicate['role']} head "
                                 f"{predicate['head_source_span'] or predicate['head_analysis_span']}; "
                                 f"locally validated `{pair['category']}` {pair['analysis_span']}")
+                            for name, head in (("subject", subject), ("predicate", predicate)):
+                                audit = head["lexical_lattice_evidence"]
+                                if audit is not None:
+                                    lines.append(
+                                        f"      - {name} lexical lattice: "
+                                        f"`{audit['head_analysis_surface']}` as "
+                                        f"`{head['head_lexical_category']}`; matched="
+                                        f"{audit['head_lexical_candidate_present']}; "
+                                        "same-span alternative categories="
+                                        f"{audit['alternate_same_span_categories']}; "
+                                        "contextual plausibility NOT proven")
         lines.append("")
     lines += [
         "## Interpretation limits", "",
