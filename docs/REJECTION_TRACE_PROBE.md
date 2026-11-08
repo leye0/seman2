@@ -154,6 +154,34 @@ toute interprétation possible, ni une lecture « correcte » imposée par
 le sens. La couverture canonique reste **474/500**, avec 26 résiduels,
 sans modification de la grammaire ou des budgets 50k/500k/10 s.
 
+### Expérience supplémentaire : élargissement contrôlé à 16 arbres
+
+Une deuxième série, strictement distincte des comparateurs à quatre
+arbres et de la cohorte canonique, relance **chacun des deux cas**
+#463/#480 en grammaire **stricte** puis en grammaire **marquée**. Elle
+utilise le même `parse_corpus_case` (guillemets équilibrés, coordonnées
+d'origine), la même limite de forêt (50k), le même budget de matérialisation
+(500k) et le même délai indépendant de 10 secondes. La seule nouvelle option
+est `diagnostic_k=16`, explicitement transmise par le passage public.
+
+L'énumération des arbres complets se fait par étapes 4 → 8 → 16 : un
+épuisement du budget ou du délai conserve le dernier échantillon terminé.
+Dans `dialogue_extended_grammar_competition.jsonl` et `.md`, on distingue :
+
+- la réussite ou la non-réussite **strictement grammaticale** de chaque
+  rejeu ; une absence d'arbre dans les budgets n'est pas une preuve
+  d'absence universelle ;
+- les déviations des arbres matérialisés ; un arbre sans déviation
+  enregistré en **mode marqué** ne devient jamais un succès strict ;
+- les **motifs distincts de relations sujet–prédicat marquées** et les
+  motifs de liens syntaxiques locaux résolus, afin de ne pas prendre
+  16 variantes lexicales pour 16 structures grammaticales distinctes ;
+- les censures et les éventuelles troncatures, avec conservation du rang
+  et des positions originales vérifiées.
+
+Les résultats de cette série devront être rapportés **après** la
+validation GitHub Actions, sans modifier le score canonique 474/500.
+
 ## Échantillonnage priorisé (sans changer l'exécution)
 
 Le rapport conserve toujours les compteurs `observed_by_stage` de

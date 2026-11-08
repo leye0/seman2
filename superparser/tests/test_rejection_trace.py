@@ -14,8 +14,11 @@ from scripts.probe_dialogue_rejections import (
     lexical_head_lattice_evidence,
     comparison_targets, comparison_summary, STRICT_CONTROL_INDICES,
     MARKED_COMPARISON_INDICES, inspect_complete_tree_competition,
+    replay_extended_grammar_competition, EXTENDED_TREE_SAMPLE_LIMIT,
 )
-from research.verbnet_lr.corpus_pipeline import PreparedCorpusInput, CorpusParseMode
+from research.verbnet_lr.corpus_pipeline import (
+    PreparedCorpusInput, CorpusParseMode, parse_corpus_case,
+)
 from seman_parser.segmentation import LexicalCandidate, LexicalLattice
 
 
@@ -42,21 +45,27 @@ class RejectionTraceTests(unittest.TestCase):
         first = SimpleNamespace(rule_id="dialogue", children=(), start=0, end=10)
         second = SimpleNamespace(rule_id="alternate_dialogue", children=(),
                                  start=0, end=10)
+        third = SimpleNamespace(rule_id="dialogue", children=(), start=0, end=10)
         parsed = SimpleNamespace(completed=True, text="they says.",
-                                 alternatives=lambda limit: [first, second][:limit])
+                                 alternatives=lambda limit: [first, second, third][:limit])
         pair = {"rule_id": "speech_tag", "subject": {
             "head_analysis_span": [0, 4], "head_lexical_category": "PRONOUN",
             "head_lemma": "they"}, "predicate": {
             "head_analysis_span": [5, 9], "head_lexical_category": "V",
             "head_lemma": "say"}}
         with patch("scripts.probe_dialogue_rejections.collect_usage_deviations",
-                   side_effect=lambda root, _text: [Deviation()] if root is first else []), \
+                   side_effect=lambda root, _text: [Deviation()]
+                   if root is first or root is third else []), \
              patch("scripts.probe_dialogue_rejections.resolved_local_subject_predicate_pairs",
                    side_effect=lambda root: [pair] if root is second else []):
             audit = inspect_complete_tree_competition(parsed, Prepared())
-        self.assertEqual(audit["sampled_complete_trees"], 2)
-        self.assertEqual(audit["trees_with_recorded_marked_deviations"], 1)
+        self.assertEqual(audit["sampled_complete_trees"], 3)
+        self.assertEqual(audit["trees_with_recorded_marked_deviations"], 2)
         self.assertEqual(audit["trees_without_recorded_marked_deviations"], 1)
+        self.assertEqual(audit["distinct_sampled_grammatical_link_patterns"], 2)
+        self.assertEqual(audit["distinct_sampled_marked_relation_patterns"], 2)
+        self.assertEqual([p["ranks"] for p in audit["grammatical_link_patterns"]],
+                         [[1, 3], [2]])
         self.assertEqual(audit["trees"][0]["marked_subject_predicate_relations"][0]
                          ["subject_source_span"], [20, 24])
         self.assertEqual(audit["trees"][1]["accepted_local_role_pairs"][0]
@@ -64,7 +73,74 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertFalse(audit["strict_grammar_acceptance_proven"])
         self.assertFalse(audit["exhaustive"])
         with self.assertRaisesRegex(ValueError, "exceeds bounded audit"):
-            inspect_complete_tree_competition(parsed, Prepared(), limit=5)
+            inspect_complete_tree_competition(parsed, Prepared(), limit=17)
+
+    def test_gateway_only_forwards_explicit_bounded_diagnostic_k(self):
+        case = {
+            "text": "They says.", "source_text": "They says.",
+            "balanced_analysis_text": "'They says.'",
+            "balanced_synthetic_prefix": "'",
+            "balanced_synthetic_suffix": "'",
+            "balanced_synthetic_terminal": False,
+        }
+        class ParserStub:
+            calls = []
+
+            def parse(self, text, **options):
+                self.calls.append((text, options))
+                return SimpleNamespace(lattice=SimpleNamespace(text=text),
+                                       result=SimpleNamespace(text=text))
+
+        parser = ParserStub()
+        prepared, _, _ = parse_corpus_case(parser, case, diagnostic_k=16,
+                                          max_items=50000, kbest_work_limit=500000)
+        self.assertEqual(prepared.analysis_text, "'They says.'")
+        self.assertEqual(parser.calls[0][1]["diagnostic_k"], 16)
+        parse_corpus_case(parser, case)
+        self.assertNotIn("diagnostic_k", parser.calls[1][1])
+        for invalid in (0, 65):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(
+                    ValueError, "diagnostic_k must be 1..64"):
+                parse_corpus_case(parser, case, diagnostic_k=invalid)
+
+    def test_extended_strict_marked_replays_keep_independent_modes_and_budgets(self):
+        cases = [{"index": i} for i in range(500)]
+        rows = [{"case_id": f"case:{i}", "source_text": f"Original {i}",
+                 "canonical_analysis_text": f"Balanced {i}",
+                 "status": "roots_without_valid_analysis"}
+                for i in range(500)]
+        args = SimpleNamespace(max_items=50000, kbest_work_limit=500000,
+                               deadline_seconds=10)
+        def fake_gateway(_parser, case, **options):
+            is_marked = options.get("allow_marked_deviations", False)
+            text = f"Balanced {case['index']}"
+            parsed = SimpleNamespace(
+                completed=is_marked, text=text,
+                stats={"structural_root_nodes": 2},
+                usage_deviations=lambda: [object()] if is_marked else [],
+            )
+            return SimpleNamespace(analysis_text=text), None, parsed
+        def fake_inspect(parsed, prepared, *, limit, strict_grammar):
+            return {"status": "sampled" if parsed.completed else "no_complete_tree",
+                    "sampled_complete_trees": 3 if parsed.completed else 0,
+                    "requested_limit": limit, "strict_grammar_acceptance_proven": False}
+        with patch("scripts.probe_dialogue_rejections.parse_corpus_case",
+                   side_effect=fake_gateway) as gateway, \
+             patch("scripts.probe_dialogue_rejections.inspect_complete_tree_competition",
+                   side_effect=fake_inspect):
+            result = replay_extended_grammar_competition(object(), cases, rows, args)
+        self.assertEqual(len(result), 4)
+        self.assertEqual([r["grammar_mode"] for r in result],
+                         ["strict", "marked_opt_in", "strict", "marked_opt_in"])
+        self.assertEqual(sum(r["replay_outcome"] == "complete" for r in result), 2)
+        self.assertTrue(all(r["same_canonical_forest_and_kbest_work_budgets"]
+                            for r in result))
+        self.assertTrue(all(r["diagnostic_k"] == EXTENDED_TREE_SAMPLE_LIMIT
+                            for r in result))
+        self.assertEqual([call.kwargs.get("allow_marked_deviations", False)
+                          for call in gateway.call_args_list], [False, True, False, True])
+        self.assertEqual({call.kwargs["diagnostic_k"]
+                          for call in gateway.call_args_list}, {16})
 
     def test_source_mapping_reaches_prior_materialized_subject_in_request_chain(self):
         class Prepared:

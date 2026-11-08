@@ -12,6 +12,7 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import signal
+from time import perf_counter
 from typing import Any
 
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
@@ -28,11 +29,15 @@ ROOT = Path(__file__).resolve().parents[1]
 STRICT_CONTROL_INDICES = (76, 244)
 MARKED_COMPARISON_INDICES = (463, 480)
 COMPLETE_TREE_SAMPLE_LIMIT = 4
+EXTENDED_TREE_SAMPLE_LIMIT = 16
 COMPLETE_TREE_ROLE_PAIR_LIMIT = 32
 COMPLETE_TREE_NODE_VISIT_LIMIT = 4096
 
 
-def inspect_complete_tree_competition(parsed, prepared, *, limit: int = COMPLETE_TREE_SAMPLE_LIMIT) -> dict[str, Any]:
+def inspect_complete_tree_competition(
+    parsed, prepared, *, limit: int = COMPLETE_TREE_SAMPLE_LIMIT,
+    strict_grammar: bool = False,
+) -> dict[str, Any]:
     """Audit *actual complete trees*, never rejected candidates or guessed attachments.
 
     The parse's existing k-best cap and work budget still apply.  No separate
@@ -40,7 +45,7 @@ def inspect_complete_tree_competition(parsed, prepared, *, limit: int = COMPLETE
     These are alternative derivations in the same parser mode as the comparator,
     not evidence that the ordinary strict grammar could accept them.
     """
-    if not 1 <= limit <= COMPLETE_TREE_SAMPLE_LIMIT:
+    if not 1 <= limit <= EXTENDED_TREE_SAMPLE_LIMIT:
         raise ValueError("Complete-tree competition limit exceeds bounded audit")
     if not parsed.completed:
         return {"status": "no_complete_tree", "requested_limit": limit,
@@ -103,6 +108,37 @@ def inspect_complete_tree_competition(parsed, prepared, *, limit: int = COMPLETE
             "tree_nodes_visited": len(visited),
             "tree_traversal_truncated": bool(stack),
         })
+    # Multiple k-best roots can differ lexically while providing exactly the
+    # same grammatical subject/predicate relations.  Count *patterns* instead
+    # of treating these roots as independent syntactic alternatives.
+    grammatical_patterns: dict[str, dict[str, Any]] = {}
+    marked_relation_patterns: dict[str, list[int]] = {}
+    for tree in trees:
+        relations = sorted((
+            relation["rule_id"], relation["feature"],
+            tuple(relation["subject_source_span"] or ()),
+            tuple(relation["predicate_source_span"] or ()),
+            relation["subject_expected"], relation["predicate_observed"]
+        ) for relation in tree["marked_subject_predicate_relations"])
+        local_links = sorted((
+            pair["rule_id"], tuple(pair["subject_head_source_span"]),
+            tuple(pair["predicate_head_source_span"]),
+            pair["subject_head_lexical_category"], pair["predicate_head_lexical_category"]
+        ) for pair in tree["accepted_local_role_pairs"])
+        marked_relation_patterns.setdefault(
+            json.dumps(relations, ensure_ascii=False), []).append(tree["rank"])
+        key = json.dumps([relations, local_links], ensure_ascii=False)
+        existing = grammatical_patterns.get(key)
+        if existing is None:
+            grammatical_patterns[key] = {
+                "pattern_id": sha256(key.encode("utf8")).hexdigest()[:16],
+                "ranks": [], "marked_relations": len(relations),
+                "local_links": len(local_links),
+                "tree_local_links_truncated": tree["role_pairs_truncated"] or
+                    tree["tree_traversal_truncated"],
+            }
+            existing = grammatical_patterns[key]
+        existing["ranks"].append(tree["rank"])
     return {
         "status": "sampled", "requested_limit": limit,
         "sampled_complete_trees": len(trees),
@@ -110,9 +146,16 @@ def inspect_complete_tree_competition(parsed, prepared, *, limit: int = COMPLETE
             tree["usage_deviation_count"] == 0 for tree in trees),
         "trees_with_recorded_marked_deviations": sum(
             tree["usage_deviation_count"] > 0 for tree in trees),
+        "distinct_sampled_grammatical_link_patterns": len(grammatical_patterns),
+        "grammatical_link_patterns": list(grammatical_patterns.values()),
+        "distinct_sampled_marked_relation_patterns": len(marked_relation_patterns),
+        "marked_relation_patterns": [
+            {"pattern_id": sha256(key.encode("utf8")).hexdigest()[:16],
+             "ranks": ranks, "marked_relation_count": len(json.loads(key))}
+            for key, ranks in marked_relation_patterns.items()],
         "trees": trees,
         "exhaustive": False,
-        "strict_grammar_acceptance_proven": False,
+        "strict_grammar_acceptance_proven": bool(strict_grammar),
         "sentence_grammatical_fault_established": False,
         "sampling_scope": "bounded_kbest_complete_trees_in_same_comparator_parser_mode",
     }
@@ -416,7 +459,9 @@ def replay_comparisons(
             # audit must never turn a proven completed replay into a timeout.
             try:
                 row["bounded_complete_tree_competition"] = (
-                    inspect_complete_tree_competition(parsed, prepared))
+                    inspect_complete_tree_competition(
+                        parsed, prepared,
+                        strict_grammar=kind == "successful_strict_control"))
             except SentenceDeadline:
                 row["bounded_complete_tree_competition"] = {
                     "status": "deadline_censored", "requested_limit": COMPLETE_TREE_SAMPLE_LIMIT,
@@ -437,6 +482,122 @@ def replay_comparisons(
             signal.setitimer(signal.ITIMER_REAL, 0)
         results.append(row)
     return results
+
+
+def replay_extended_grammar_competition(
+    parser: Parser, cases: list[dict[str, Any]],
+    canonical_rows: list[dict[str, Any]], args: argparse.Namespace,
+) -> list[dict[str, Any]]:
+    """Two marked residuals × strict/marked modes, independently bounded.
+
+    This is *not* part of the 500-case score or the original four-tree
+    comparator.  It changes only the opt-in k-best sampling cap (to 16),
+    preserving the public parsing gateway, source, forest/k-best work limits
+    and per-case 10-second deadline.  The modes never share parse results.
+    """
+    results = []
+    for index in MARKED_COMPARISON_INDICES:
+        case, canonical = cases[index], canonical_rows[index]
+        for mode in ("strict", "marked_opt_in"):
+            record: dict[str, Any] = {
+                "index": index, "case_id": canonical["case_id"],
+                "source_text": canonical["source_text"],
+                "analysis_text": canonical["canonical_analysis_text"],
+                "canonical_status": canonical["status"],
+                "grammar_mode": mode,
+                "diagnostic_k": EXTENDED_TREE_SAMPLE_LIMIT,
+                "default_comparator_kbest_cap_unchanged": False,
+                "same_canonical_forest_and_kbest_work_budgets": True,
+                "same_canonical_deadline_seconds": args.deadline_seconds,
+                "independent_replay": True,
+                "grammatical_fault_established": False,
+                "strict_grammar_acceptance_proven": False,
+                "complete_tree_competition": None,
+            }
+            started = perf_counter()
+            current_cap = EXTENDED_TREE_SAMPLE_LIMIT
+            signal.setitimer(signal.ITIMER_REAL, args.deadline_seconds)
+            try:
+                prepared, _, parsed = parse_corpus_case(
+                    parser, case,
+                    max_items=args.max_items,
+                    kbest_work_limit=args.kbest_work_limit,
+                    diagnostic_k=EXTENDED_TREE_SAMPLE_LIMIT,
+                    allow_marked_deviations=mode == "marked_opt_in",
+                )
+                if prepared.analysis_text != record["analysis_text"]:
+                    raise ValueError("Extended competitor quote-balanced text mismatch")
+                stats = parsed.stats
+                record["replay_outcome"] = classify(parsed.completed, stats)
+                record["structural_root_nodes"] = int(
+                    stats.get("structural_root_nodes", 0))
+                record["recognition_budget_exceeded"] = bool(
+                    stats.get("budget_exceeded"))
+                record["kbest_budget_exceeded"] = bool(
+                    stats.get("kbest_budget_exceeded"))
+                record["selected_usage_deviation_count"] = (
+                    len(parsed.usage_deviations()) if parsed.completed else None)
+                record["strict_grammar_acceptance_proven"] = (
+                    mode == "strict" and bool(parsed.completed))
+                # Preserve the last successful sample if more distant k-best
+                # competitors hit the same work limit or wall deadline.
+                record["completed_sampling_caps"] = []
+                for cap in ((4, 8, EXTENDED_TREE_SAMPLE_LIMIT)
+                            if parsed.completed else (EXTENDED_TREE_SAMPLE_LIMIT,)):
+                    current_cap = cap
+                    record["complete_tree_competition"] = (
+                        inspect_complete_tree_competition(
+                            parsed, prepared, limit=cap,
+                            strict_grammar=mode == "strict"))
+                    record["completed_sampling_caps"].append(cap)
+            except (SentenceDeadline, KBestWorkBudgetExceeded) as exc:
+                censored = ("deadline_censored" if isinstance(exc, SentenceDeadline)
+                            else "kbest_budget_censored")
+                if "replay_outcome" not in record:
+                    record["replay_outcome"] = censored
+                record["extension_censored_at_cap"] = current_cap
+                record["extension_censor_reason"] = censored
+                if record["complete_tree_competition"] is None:
+                    record["complete_tree_competition"] = {
+                        "status": censored, "requested_limit": EXTENDED_TREE_SAMPLE_LIMIT,
+                        "sampled_complete_trees": 0, "trees": [], "exhaustive": False,
+                        "strict_grammar_acceptance_proven": False,
+                    }
+            finally:
+                signal.setitimer(signal.ITIMER_REAL, 0)
+                record["elapsed_seconds"] = round(perf_counter() - started, 3)
+            results.append(record)
+    return results
+
+
+def render_extended_grammar_competition(rows: list[dict[str, Any]]) -> str:
+    out = [
+        "# Independent extended grammatical competitors (16-tree cap)", "",
+        "Only residuals #463 and #480 are reanalyzed, once under strict",
+        "grammar and once under opt-in marked grammar. The original 500-case",
+        "run and its default k-best cap are unchanged. The extended replay",
+        "retains the 50k/500k/10s resource limits and exact quote-balanced",
+        "source text, but requests up to 16 materialized complete trees.", "",
+        "| Case | Grammar | Replay | Complete trees sampled | Distinct grammatical-link patterns | Without recorded deviation |",
+        "|---:|---|---|---:|---:|---:|",
+    ]
+    for row in rows:
+        audit = row.get("complete_tree_competition") or {}
+        out.append(
+            f"| {row['index']} | {row['grammar_mode']} | {row['replay_outcome']} | "
+            f"{audit.get('sampled_complete_trees', 0)} | "
+            f"{audit.get('distinct_sampled_grammatical_link_patterns', '—')} | "
+            f"{audit.get('trees_without_recorded_marked_deviations', '—')} |"
+        )
+    out.extend([
+        "", "Patterns group actual **source-anchored grammatical links**, not",
+        "the number of k-best roots: lexical/scoring variants can repeat one",
+        "syntactic attachment. A strict incomplete replay does not prove",
+        "absence of all strict derivations, and a marked derivation without",
+        "a recorded deviation does not certify strict grammar acceptance.",
+        "All counts are bounded and cannot prove author intent or a sentence fault.",
+    ])
+    return "\n".join(out) + "\n"
 
 
 def render_comparisons(rows: list[dict[str, Any]]) -> str:
@@ -560,11 +721,31 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     control_handler = signal.signal(signal.SIGALRM, _deadline)
     try:
         comparators = replay_comparisons(parser, all_cases, rows, args)
+        extended_competitors = replay_extended_grammar_competition(
+            parser, all_cases, rows, args)
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, control_handler)
     summary = summary_for(records)
     summary["comparisons"] = comparison_summary(comparators)
+    summary["extended_grammar_competition"] = {
+        "replays": len(extended_competitors),
+        "cases": list(MARKED_COMPARISON_INDICES),
+        "diagnostic_k": EXTENDED_TREE_SAMPLE_LIMIT,
+        "strict_complete_replays": sum(
+            row["grammar_mode"] == "strict"
+            and row["replay_outcome"] == "complete"
+            for row in extended_competitors),
+        "marked_complete_replays": sum(
+            row["grammar_mode"] == "marked_opt_in"
+            and row["replay_outcome"] == "complete"
+            for row in extended_competitors),
+        "sampled_trees": sum(
+            (row.get("complete_tree_competition") or {}).get(
+                "sampled_complete_trees", 0)
+            for row in extended_competitors),
+        "canonical_500_untouched": True,
+    }
     summary["target_indices"] = [record["index"] for record in records]
     summary["cohort_sha256"] = EXPECTED_500_COHORT_SHA256
     summary["original_500_reparsed"] = False
@@ -586,6 +767,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     (args.out_dir / "dialogue_rejection_comparators.md").write_text(
         render_comparisons(comparators), encoding="utf8",
+    )
+    (args.out_dir / "dialogue_extended_grammar_competition.jsonl").write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n"
+                for row in extended_competitors), encoding="utf8",
+    )
+    (args.out_dir / "dialogue_extended_grammar_competition.md").write_text(
+        render_extended_grammar_competition(extended_competitors), encoding="utf8",
     )
     print("DIALOGUE_REJECTION_PROBE_SUMMARY",
           json.dumps(summary, ensure_ascii=False), flush=True)

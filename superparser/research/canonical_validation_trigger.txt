@@ -158,3 +158,4 @@ Checkpoint 2026-11-08 UTC: verify materializer lexical unification conflicts tie
 Checkpoint 2026-11-08 UTC: validate opt-in preceding materialized NP subject provenance in the same RHS rule attempt before a contradictory lexical predicate, preserving canonical Layer 1 and budgets.
 Checkpoint 2026-11-08 UTC: verify original selected nominal-head lexical number/person atom on the prior subject NP, independent of post-unification child agreement, preserving fixed 500 and 359.
 Checkpoint 2026-11-08 UTC: validate bounded competing complete-tree subject-predicate grammatical proofs without changing canonical parser selection.
+Checkpoint 2026-11-08 UTC: test explicit diagnostic_k forwarding via balanced corpus gateway and separate strict/marked extended grammar replays without changing canonical budgets.
