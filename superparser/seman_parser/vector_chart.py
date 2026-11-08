@@ -17,6 +17,7 @@ from .features import (
 )
 from .grammar import Grammar, GrammarRule
 from .local_constituent_proofs import BoundedLocalConstituentProofs
+from .local_role_proofs import resolved_local_subject_predicate_pairs
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern, resolve
@@ -1222,6 +1223,7 @@ class _LazyMaterializer:
                     required_context_features=state.constraint.as_dict(),
                     required_positive_features=[resolve(x) for x in state.required_features],
                     witnessed_positive_features=[resolve(x) for x in analysis.evidence],
+                    materialized_analysis=analysis,
                 )
             self.analysis_count += 1
         if len(state.results) <= rank:
@@ -1847,6 +1849,41 @@ def _probe_unselected_local_nodes(
         if analysis is not None and analysis.rule_index is not None:
             accepted += 1
     positive = probe.rejection_trace.local_constituents.as_dict()
+    role_pairs: list[dict[str, Any]] = []
+    # Evaluate role evidence only for ALREADY retained successful analyses;
+    # never turn a speculative packed node or declared grammar export into
+    # a proof. Materialization here is observational and sample-bounded.
+    retained = probe.rejection_trace.local_constituents.retained_analyses()
+    retained.sort(key=lambda sample: (
+        -(sample[0]["analysis_span"][1] - sample[0]["analysis_span"][0]),
+        sample[0]["analysis_span"][0], sample[0]["rule_id"],
+    ))
+    for sampled, analysis in retained:
+        if analysis.rule_index is None:
+            continue
+        item = probe._build_item(
+            analysis, analysis.features, analysis.bindings,
+            ("diagnostic-role-proof", analysis.analysis_id),
+        )
+        if (item.rule_id != sampled["rule_id"] or
+                [item.start, item.end] != sampled["analysis_span"] or
+                len(item.children) != len(sampled["children"])):
+            raise AssertionError("Role proof and validated local analysis diverged")
+        role_pairs.extend(resolved_local_subject_predicate_pairs(item))
+    role_sample = role_pairs[:limit]
+    positive["validated_local_role_pairs"] = {
+        "schema": "seman2-local-resolved-role-pairs-v1",
+        "proof_basis": "accepted_local_rule_with_resolved_syntax_links",
+        "sample_limit": limit,
+        "observed_pairs": len(role_pairs),
+        "sampled_pairs": len(role_sample),
+        "truncated": len(role_pairs) > len(role_sample),
+        "pairs": role_sample,
+        "bounded_post_materialization_of_retained_proofs": True,
+        "exhaustive": False,
+        "global_tree_proven": False,
+        "grammatical_conflict_proven": False,
+    }
     positive.update({
         "probe_kind": "independent_unconstrained_local_subtree_search",
         "selected_structural_nodes": len(selected),

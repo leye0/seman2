@@ -113,6 +113,92 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
         result["separate_work_limit"] = local["separate_work_limit"]
         result["probe_budget_exceeded"] = local["probe_budget_exceeded"]
         result["canonical_work_budget_unchanged"] = True
+        roles = local.get("validated_local_role_pairs")
+        if roles is not None:
+            if (not isinstance(roles, Mapping) or
+                    roles.get("schema") != "seman2-local-resolved-role-pairs-v1" or
+                    roles.get("proof_basis") != "accepted_local_rule_with_resolved_syntax_links" or
+                    roles.get("bounded_post_materialization_of_retained_proofs") is not True or
+                    roles.get("exhaustive") is not False or
+                    roles.get("global_tree_proven") is not False or
+                    roles.get("grammatical_conflict_proven") is not False):
+                raise ValueError("Local resolved-role provenance invalid")
+            pairs = roles.get("pairs", [])
+            if (not isinstance(pairs, list) or
+                    roles.get("sampled_pairs") != len(pairs) or
+                    not isinstance(roles.get("observed_pairs"), int) or
+                    not 0 <= len(pairs) <= roles["observed_pairs"] or
+                    not 1 <= roles.get("sample_limit", -1) <= 100 or
+                    len(pairs) > roles["sample_limit"] or
+                    roles.get("truncated") is not (roles["observed_pairs"] > len(pairs))):
+                raise ValueError("Bounded local role-pair counts inconsistent")
+            linked = []
+            for pair in pairs:
+                if (pair.get("proof_basis") != roles["proof_basis"] or
+                        pair.get("same_accepted_local_composition") is not True or
+                        pair.get("global_tree_proven") is not False or
+                        pair.get("whole_sentence_relation_proven") is not False or
+                        pair.get("grammatical_conflict_proven") is not False):
+                    raise ValueError("Role pair incorrectly claims whole-sentence proof")
+                matching = [w for w in witnesses
+                            if w["category"] == pair.get("category")
+                            and w["rule_id"] == pair.get("rule_id")
+                            and w["analysis_span"] == pair.get("analysis_span")]
+                def supported(w):
+                    children = w["children"]
+                    for name in ("subject", "predicate"):
+                        role = pair.get(name, {})
+                        index = role.get("child_index", -1)
+                        if (type(index) is not int or not 0 <= index < len(children)
+                                or children[index]["category"] != role.get("child_category")
+                                or children[index]["analysis_span"] != role.get("child_analysis_span")):
+                            return False
+                        head = role.get("head_analysis_span")
+                        child_span = role["child_analysis_span"]
+                        if (not isinstance(head, list) or len(head) != 2
+                                or not child_span[0] <= head[0] < head[1] <= child_span[1]):
+                            return False
+                    subject, predicate = pair["subject"], pair["predicate"]
+                    return (subject["role"] == "subject" and
+                            predicate["role"] in {"event", "predicate"} and
+                            subject["child_index"] != predicate["child_index"])
+                if not any(supported(w) for w in matching):
+                    raise ValueError("Role pair has no matching validated local subtree")
+                linked.append({
+                    "proof_basis": pair["proof_basis"],
+                    "rule_id": pair["rule_id"],
+                    "category": pair["category"],
+                    "analysis_span": pair["analysis_span"],
+                    "source_span": source_span(pair),
+                    **{name: {
+                        "role": pair[name]["role"],
+                        "child_index": pair[name]["child_index"],
+                        "child_category": pair[name]["child_category"],
+                        "child_analysis_span": pair[name]["child_analysis_span"],
+                        "child_source_span": source_span({
+                            "reference_span_mapping": pair[name].get(
+                                "child_reference_span_mapping"),
+                            "reference_span": pair[name].get("child_reference_span"),
+                        }),
+                        "head_analysis_span": pair[name]["head_analysis_span"],
+                        "head_source_span": source_span({
+                            "reference_span_mapping": pair[name].get(
+                                "head_reference_span_mapping"),
+                            "reference_span": pair[name].get("head_reference_span"),
+                        }),
+                        "head_lexical_category": pair[name]["head_lexical_category"],
+                    } for name in ("subject", "predicate")},
+                    "whole_sentence_relation_proven": False,
+                    "grammatical_conflict_proven": False,
+                })
+            result["resolved_local_role_pairs"] = {
+                "observed_pairs": roles["observed_pairs"],
+                "sampled_pairs": len(linked),
+                "sample_truncated": roles["truncated"],
+                "pairs": linked,
+                "exhaustive": False,
+                "grammatical_conflict_proven": False,
+            }
     return result
 
 
@@ -379,6 +465,17 @@ def synthesize(
             entry["independent_local_probe"]["sampled_local_constituents"]
             for row in rows for entry in row["sampled_local_rejection_evidence"].values()
             if entry is not None and entry["independent_local_probe"] is not None),
+        "resolved_local_subject_predicate_pairs_sampled": sum(
+            (entry["independent_local_probe"].get("resolved_local_role_pairs") or {})
+            .get("sampled_pairs", 0)
+            for row in rows for entry in row["sampled_local_rejection_evidence"].values()
+            if entry is not None and entry["independent_local_probe"] is not None),
+        "cases_with_resolved_local_subject_predicate_pairs": sum(
+            any(entry is not None and entry["independent_local_probe"] is not None
+                and (entry["independent_local_probe"].get("resolved_local_role_pairs") or {})
+                    .get("sampled_pairs", 0) > 0
+                for entry in row["sampled_local_rejection_evidence"].values())
+            for row in rows if row["canonical_status"] != "complete"),
         "incomplete_replays_with_independent_local_proofs": sum(
             any(entry is not None and entry["independent_local_probe"] is not None
                 and entry["independent_local_probe"]["sampled_local_constituents"] > 0
@@ -472,6 +569,21 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                             f"analysis {witness['analysis_span']}, "
                             f"source {witness['source_span'] if witness['source_span'] is not None else 'unavailable'} "
                             f"with {len(witness['children'])} proven child analyses")
+                    links = independent.get("resolved_local_role_pairs")
+                    if links is not None:
+                        lines.append(
+                            f"  - **Resolved local subject/predicate pairs**: "
+                            f"{links['sampled_pairs']} retained, "
+                            f"{links['observed_pairs']} observed; "
+                            "no global attachment or grammatical fault proven")
+                        for pair in links["pairs"][:5]:
+                            subject, predicate = pair["subject"], pair["predicate"]
+                            lines.append(
+                                f"    - `{pair['rule_id']}` "
+                                f"subject head {subject['head_source_span'] or subject['head_analysis_span']} "
+                                f"→ {predicate['role']} head "
+                                f"{predicate['head_source_span'] or predicate['head_analysis_span']}; "
+                                f"locally validated `{pair['category']}` {pair['analysis_span']}")
         lines.append("")
     lines += [
         "## Interpretation limits", "",

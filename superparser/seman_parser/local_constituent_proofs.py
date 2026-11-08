@@ -20,6 +20,10 @@ class BoundedLocalConstituentProofs:
         self.observed = 0
         self.samples: list[dict[str, Any]] = []
         self._keys: set[tuple[Any, ...]] = set()
+        # References are never serialized. They allow the opt-in diagnostic
+        # caller to inspect actual resolved syntactic anchors *after* bounded
+        # sampling, rather than pretending a rule's declared exports resolve.
+        self._analysis_refs: dict[tuple[Any, ...], Any] = {}
 
     @staticmethod
     def _rank(item: Mapping[str, Any]) -> tuple[int, int]:
@@ -40,7 +44,8 @@ class BoundedLocalConstituentProofs:
                verified_features: Mapping[str, Any],
                required_context_features: Mapping[str, Any],
                required_positive_features: Sequence[str],
-               witnessed_positive_features: Sequence[str]) -> None:
+               witnessed_positive_features: Sequence[str],
+               materialized_analysis: Any = None) -> None:
         """Record an actual accepted rule composition, never a candidate hint."""
         start, end = analysis_span
         if not (isinstance(start, int) and isinstance(end, int) and
@@ -86,11 +91,21 @@ class BoundedLocalConstituentProofs:
                 return
             replace_index = weakest
         if replace_index is not None:
-            self._keys.remove(self._key(self.samples[replace_index]))
+            old_key = self._key(self.samples[replace_index])
+            self._keys.remove(old_key)
+            self._analysis_refs.pop(old_key, None)
             self.samples[replace_index] = item
         else:
             self.samples.append(item)
         self._keys.add(key)
+        if materialized_analysis is not None:
+            self._analysis_refs[key] = materialized_analysis
+
+    def retained_analyses(self) -> list[tuple[dict[str, Any], Any]]:
+        """Private, bounded successful samples for optional role verification."""
+        return [(sample, self._analysis_refs[self._key(sample)])
+                for sample in self.samples
+                if self._key(sample) in self._analysis_refs]
 
     def as_dict(self) -> dict[str, Any]:
         return {

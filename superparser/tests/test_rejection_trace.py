@@ -163,6 +163,11 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertIsNotNone(probe)
         self.assertTrue(probe["canonical_work_budget_unchanged"])
         self.assertGreater(probe["sampled_local_constituents"], 0)
+        roles = probe["validated_local_role_pairs"]
+        self.assertEqual(roles["schema"], "seman2-local-resolved-role-pairs-v1")
+        self.assertLessEqual(roles["sampled_pairs"], 24)
+        self.assertFalse(roles["global_tree_proven"])
+        self.assertFalse(roles["grammatical_conflict_proven"])
         self.assertTrue(all(not witness["global_tree_selected"]
                             and not witness["whole_sentence_grammaticality_proven"]
                             for witness in probe["witnesses"]))
@@ -235,10 +240,24 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertIsNone(witness["children"][1]["reference_span"])
         self.assertEqual(witness["children"][1]["reference_span_mapping"], "unavailable")
         source["independent_local_probe"] = source["validated_local_constituents"]
+        source["independent_local_probe"]["validated_local_role_pairs"] = {
+            "pairs": [{
+                "analysis_span": [0, 12],
+                "subject": {"child_analysis_span": [1, 5],
+                            "head_analysis_span": [1, 5]},
+                "predicate": {"child_analysis_span": [11, 12],
+                              "head_analysis_span": [11, 12]},
+            }],
+        }
         independent = map_trace_to_reference(source, prepared)["independent_local_probe"]
         self.assertEqual(independent["witnesses"][0]["children"][0]["reference_span"],
                          [0, 4])
         self.assertIsNone(independent["witnesses"][0]["reference_span"])
+        linked = independent["validated_local_role_pairs"]["pairs"][0]
+        self.assertEqual(linked["subject"]["head_reference_span"], [0, 4])
+        self.assertIsNone(linked["predicate"]["head_reference_span"])
+        self.assertEqual(linked["predicate"]["head_reference_span_mapping"],
+                         "unavailable")
 
 
     def test_late_exhausted_child_displaces_early_hint_noise(self):

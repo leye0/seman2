@@ -211,6 +211,15 @@ l'Action 42422741275. Prochaine étape : confronter ces sous-arbres
 concurrents à des liens sujet-prédicat et à des contraintes contradictoires
 localisées, sans convertir une non-détection en faute.
 
+**P2 — qualification des liens résolus (opt-in) :** dans les témoins
+locaux déjà acceptés, seules les ancres sujet et événement/prédicat
+réellement résolues par les liens syntaxiques sont conservées comme
+paires de rôles locaux. Les enfants, têtes lexicales, règles et spans
+source y sont vérifiés, avec comptage séparé des simples constituants.
+Une déclaration `exports` sans ancre ne suffit pas et aucun conflit
+grammatical n'est conclu. Les attaches à une phrase globale et les
+alternatives concurrentes restent à démontrer.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

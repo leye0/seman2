@@ -71,6 +71,19 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared) -> dict[str, 
             ]
             witnesses.append(item)
         local_mapped["witnesses"] = witnesses
+        roles = local.get("validated_local_role_pairs")
+        if isinstance(roles, dict):
+            role_mapped = dict(roles)
+            role_mapped["pairs"] = []
+            for pair in roles.get("pairs", []):
+                linked = mapped_frame(pair, (("analysis_span", "reference_span"),))
+                for name in ("subject", "predicate"):
+                    linked[name] = mapped_frame(pair[name], (
+                        ("child_analysis_span", "child_reference_span"),
+                        ("head_analysis_span", "head_reference_span"),
+                    ))
+                role_mapped["pairs"].append(linked)
+            local_mapped["validated_local_role_pairs"] = role_mapped
         mapped[pool] = local_mapped
     mapped["reference_scope"] = "frozen_case_text_exact_only"
     return mapped

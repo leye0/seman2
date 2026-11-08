@@ -68,6 +68,53 @@ def trace(*, exact=True):
         "not_exhaustive_or_a_global_failure_proof": True,
         "canonical_work_budget_unchanged": True,
     }
+    def framed(span, mapped):
+        return {"analysis_span": span,
+                "reference_span_mapping": "exact" if exact else "unavailable",
+                "reference_span": mapped if exact else None}
+    result["independent_local_probe"]["witnesses"] = [{
+        **deepcopy(result["validated_local_constituents"]["witnesses"][0]),
+        "rule_id": "clause_np_vp", "category": "CLAUSE",
+        **framed([1, 10], [30, 39]),
+        "children": [
+            {"category": "NP", "rule_id": "np_pronoun", **framed([1, 5], [30, 34])},
+            {"category": "VP", "rule_id": "vp_finite", **framed([6, 10], [35, 39])},
+        ],
+    }]
+    result["independent_local_probe"]["validated_local_role_pairs"] = {
+        "schema": "seman2-local-resolved-role-pairs-v1",
+        "proof_basis": "accepted_local_rule_with_resolved_syntax_links",
+        "sample_limit": 48, "observed_pairs": 1, "sampled_pairs": 1,
+        "truncated": False, "bounded_post_materialization_of_retained_proofs": True,
+        "exhaustive": False, "global_tree_proven": False,
+        "grammatical_conflict_proven": False,
+        "pairs": [{
+            "proof_basis": "accepted_local_rule_with_resolved_syntax_links",
+            "rule_id": "clause_np_vp", "category": "CLAUSE",
+            **framed([1, 10], [30, 39]),
+            "subject": {
+                "role": "subject", "child_index": 0, "child_category": "NP",
+                "child_analysis_span": [1, 5],
+                "child_reference_span_mapping": "exact" if exact else "unavailable",
+                "child_reference_span": [30, 34] if exact else None,
+                "head_analysis_span": [1, 4], "head_lexical_category": "PRON",
+                "head_reference_span_mapping": "exact" if exact else "unavailable",
+                "head_reference_span": [30, 33] if exact else None,
+            },
+            "predicate": {
+                "role": "event", "child_index": 1, "child_category": "VP",
+                "child_analysis_span": [6, 10],
+                "child_reference_span_mapping": "exact" if exact else "unavailable",
+                "child_reference_span": [35, 39] if exact else None,
+                "head_analysis_span": [6, 9], "head_lexical_category": "V",
+                "head_reference_span_mapping": "exact" if exact else "unavailable",
+                "head_reference_span": [35, 38] if exact else None,
+            },
+            "same_accepted_local_composition": True,
+            "global_tree_proven": False, "whole_sentence_relation_proven": False,
+            "grammatical_conflict_proven": False,
+        }],
+    }
     return result
 
 
@@ -142,6 +189,7 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(summary["scoped_dialogue_replays"], 1)
         self.assertEqual(summary["independent_local_probe_witnesses_sampled"], 2)
         self.assertEqual(summary["incomplete_replays_with_independent_local_proofs"], 1)
+        self.assertEqual(summary["resolved_local_subject_predicate_pairs_sampled"], 2)
         self.assertTrue(summary["source_identity_validated"])
         by_index = {r["index"]: r for r in rows}
         self.assertEqual(by_index[312]["canonical_outcome"], "resource_censored")
@@ -182,6 +230,9 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(independent["accepted_requested_nodes"], 2)
         self.assertEqual(independent["sampled_local_constituents"], 1)
         self.assertTrue(independent["canonical_work_budget_unchanged"])
+        self.assertEqual(independent["resolved_local_role_pairs"]["sampled_pairs"], 1)
+        self.assertIsNone(independent["resolved_local_role_pairs"]["pairs"][0]
+                          ["subject"]["head_source_span"])
         self.assertIn("Independent failed-root local probes", render(*synthesize(*fixture())))
 
     def test_new_failure_remains_unreviewed_and_joined(self):
@@ -219,7 +270,11 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         r8 = next(r for r in rows if r["index"] == 8)
         self.assertEqual(r8["sampled_local_rejection_evidence"]
                          ["unscoped_replay"]["independent_local_probe"]
-                         ["witnesses"][0]["source_span"], [30, 34])
+                         ["witnesses"][0]["source_span"], [30, 39])
+        self.assertEqual(r8["sampled_local_rejection_evidence"]
+                         ["unscoped_replay"]["independent_local_probe"]
+                         ["resolved_local_role_pairs"]["pairs"][0]
+                         ["subject"]["head_source_span"], [30, 33])
         self.assertEqual(r8["canonical_status"], "no_structural_root")
         with self.assertRaisesRegex(ValueError, "Unscoped replay identity"):
             synthesize(*args, extra[:1], extra_summary)
@@ -242,6 +297,12 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
                 ["independent_local_probe"].update(canonical_work_budget_unchanged=False),
             lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
                 ["independent_local_probe"].update(accepted_requested_nodes=5),
+            lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
+                ["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+                ["subject"].update(head_analysis_span=[0, 11]),
+            lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
+                ["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+                .update(grammatical_conflict_proven=True),
             lambda a: a[4][0].update(analysis_text="wrong projection"),
         ]
         for change in mutators:

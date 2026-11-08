@@ -7,7 +7,7 @@ from seman_parser.local_constituent_proofs import BoundedLocalConstituentProofs
 
 
 def record(pool, *, category="VP", start=1, end=15, rule="vp_transitive",
-           child_count=2, requested=(), witnessed=()):
+           child_count=2, requested=(), witnessed=(), ref=None):
     pool.record(
         category=category, analysis_span=(start, end), rule_id=rule,
         children=[{"category": "NP", "analysis_span": (start + i, start + i + 1),
@@ -16,6 +16,7 @@ def record(pool, *, category="VP", start=1, end=15, rule="vp_transitive",
         required_context_features={"number": "plural"},
         required_positive_features=requested,
         witnessed_positive_features=witnessed,
+        materialized_analysis=ref,
     )
 
 
@@ -61,6 +62,17 @@ class LocalConstituentProofTests(unittest.TestCase):
         result = pool.as_dict()
         self.assertLessEqual(result["sampled_local_constituents"], 2)
         self.assertEqual(result["observed_materialized_rule_analyses"], 20)
+
+    def test_private_materialized_references_follow_bounded_replacement(self):
+        pool = BoundedLocalConstituentProofs(1)
+        first, second = object(), object()
+        record(pool, category="NP", start=0, end=2, ref=first)
+        record(pool, category="NP", start=0, end=11, ref=second)
+        retained = pool.retained_analyses()
+        self.assertEqual(len(retained), 1)
+        self.assertIs(retained[0][1], second)
+        self.assertEqual(retained[0][0]["analysis_span"], [0, 11])
+        self.assertNotIn("materialized_analysis", str(pool.as_dict()))
 
 
 if __name__ == "__main__":

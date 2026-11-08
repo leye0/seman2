@@ -234,3 +234,31 @@ sondages locaux distincts (deux par dialogue et un par cas hors dialogue),
 initialement censurés par les ressources sont restés exclus. Le résultat
 canonique demeure **474/500**, sans déclaration de faute issue d'une
 non-détection.
+
+## P2 : relations de rôles réellement résolues dans les constituants
+
+Une étape additionnelle **postérieure au sondage** transforme seulement
+les sous-arbres déjà retenus et localement acceptés en objets `ChartItem`
+pour consulter leurs véritables `SyntacticLink`. La relation sujet–prédicat
+est conservée sous `independent_local_probe.validated_local_role_pairs`
+**uniquement** si :
+
+- les deux liens `subject` et `event`/`predicate` ont réellement des ancres
+  lexicales résolues, de la forme `lex:start:end:catégorie:lemme`;
+- les positions des deux têtes restent **dans leurs enfants respectifs**,
+  et ces enfants sont distincts et non chevauchants;
+- le tout appartient à la **même composition locale acceptée** déjà
+  échantillonnée, avec une règle, des enfants et des spans vérifiables.
+
+Une déclaration statique `exports` dans une règle **ne suffit jamais**.
+Le nombre de preuves de rôle est à nouveau borné par `trace_limit`, et
+la construction de leurs seuls `ChartItem` est limitée aux constituants
+déjà retenus; elle ne relance pas la recherche k-best et ne modifie pas
+son budget canonique. Les deux têtes et les enfants sont mappés dans
+la source **seulement** si le texte équilibré le permet explicitement.
+
+Cette nouvelle preuve établit une paire de rôles **interne à une lecture
+locale**. Elle n'établit pas que cette lecture appartient à un arbre
+global, qu'elle est préférable à une alternative, ou qu'elle expose
+un désaccord grammatical. Les relations ambiguës, sans ancre lexicale
+résolue, sont volontairement absentes plutôt qu'inventées.

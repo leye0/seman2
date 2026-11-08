@@ -396,3 +396,18 @@ et enfants exacte; cinq sondages ont été bornés par leur plafond
 diagnostique. Les cinq cas déjà censurés (budget/délai) restent hors
 de ce protocole. **474/500** est inchangé.
 Voir [REJECTION_TRACE_PROBE.md](REJECTION_TRACE_PROBE.md).
+
+### P2 : ancres sujet–prédicat des sous-constituants
+
+Après l'obtention des 927 preuves locales, le diagnostic procède
+désormais à une qualification **plus forte mais toujours locale** :
+seules les ancres `subject` et `event`/`predicate` réellement construites
+par `_compose_syntax` sur une analyse acceptée sont publiées en
+`validated_local_role_pairs`. La paire porte règle, catégorie, spans
+parents/enfants, têtes lexicales et correspondance source si exacte.
+Une règle qui déclare un rôle sans ancre résolue n'est pas comptée.
+La synthèse vérifie que la paire appartient à un des constituants
+effectivement retenus et refuse toute revendication de faute ou de
+rattachement à une phrase complète. Le nombre de telles paires doit
+être mesuré par l'Action suivante; il n'est pas extrapolé du nombre
+de règles possédant simplement des `exports`.
