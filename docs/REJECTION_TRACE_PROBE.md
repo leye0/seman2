@@ -471,3 +471,35 @@ grammatical autonome. Aucune faute de phrase n'est inférée.
 La CI complète
 [42486130169](https://github.com/leye0/seman2/actions/runs/42486130169)
 est verte (**583 tests** et contrôles Layer 1).
+
+### P2 : séparer les rejets de règles des lectures lexicales rejetées
+
+Un relevé complémentaire sur les **mêmes traces bornées**, sans nouveau
+parse, recalcule chaque contradiction atomique `required` / `offered`
+à partir des deux structures de traits d'origine. Il sépare :
+
+- **Rejet d'une tentative de règle** (`rule_*` avec `rule_id`) : conflit
+  de contraintes grammaticales de cette branche précise.
+- **Rejet d'une lecture lexicale candidate** (`lexical_*` sans règle) :
+  ne témoigne pas, à lui seul, d'un accord sujet/prédicat incorrect.
+
+Dans les **7** traces de dialogue échantillonnées : **78** conflits
+`voice`, **3** `vform` et **2** `pronominal` dans les tentatives de
+règles; les lectures lexicales rejetées ont notamment **15** conflits
+`number` et **43** `vform`. Dans les **14** traces non restreintes :
+**57** conflits de `voice`, **8** de `stype`, **7** de `vform` pour
+les règles; **16** `number`, **47** `vform` pour les lectures lexicales.
+**Aucun conflit de `number` ou de `person` n'est observé dans les
+tentatives de règles de ces deux échantillons.** C'est une limite des
+traces, non une preuve d'absence de fautes d'accord dans le corpus.
+
+Fait plus discriminant : **7** occurrences échantillonnées de rejet de
+règle ont aussi une analyse **localement acceptée indépendamment** pour
+la **même règle, la même catégorie et les mêmes spans d'analyse et
+de source exacts** (4 dans les traces dialogue, 3 non restreintes).
+Ce ne sont *pas* deux résultats de la même dérivation : le rejet se
+produit sous une demande de traits différente, typiquement `voice=passive`
+face à une règle active, tandis que la composition locale acceptée est
+prouvée dans son propre contexte. Cela invalide le raccourci « rejet de
+branche = règle impossible = faute dans la phrase ». Le relevé est
+échantillonné, non exhaustif, et n'établit aucun diagnostic de phrase.

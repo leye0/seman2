@@ -559,3 +559,21 @@ alternative du parseur, **pas** une faute démontrée de l'auteur.
 Le score strict reste **474/500**, **26** résidus; la CI
 [42486130169](https://github.com/leye0/seman2/actions/runs/42486130169)
 est verte avec **583 tests**.
+
+### P2 : contrôle des contradictions dans les branches rejetées
+
+La synthèse distingue désormais les rejets de **règles grammaticales**
+des rejets de **lectures lexicales**, en vérifiant chaque atome contre
+les valeurs de traits réellement offertes et requises. Aucun conflit
+de personne ou de nombre n'est attesté dans les rejets de règles
+échantillonnés : les **15** (`dialogue`) et **16** (`unscoped`) conflits
+de nombre relevés appartiennent à des lectures lexicales candidates.
+La voix active/passive domine les rejets de règles (**78** et **57**
+respectivement), ce qui n'établit pas une faute de voix dans le texte.
+
+Dans **7** événements échantillonnés, une règle localement rejetée
+possède aussi un **témoin local indépendant accepté**, même `rule_id`,
+catégorie, span d'analyse et span de source exact. Les deux contextes
+de demande sont distincts. C'est une preuve que ces rejets-là sont
+**dépendants d'une tentative**, pas que les phrases sont incorrectes.
+La recherche reste exclusivement dans la grammaire Layer 1.

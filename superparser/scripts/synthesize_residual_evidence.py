@@ -450,6 +450,73 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
             trace["observed_events"] < len(events) or
             bool(trace.get("truncated")) != (trace["observed_events"] > len(events))):
         raise ValueError("Inconsistent bounded rejection sample metadata")
+    # A rejected *grammar-rule* attempt and a rejected lexical reading are
+    # different evidence populations. Neither implies a sentence-level fault.
+    # Audit the original required/offered atoms rather than trusting an
+    # unverified conflict counter emitted by a diagnostic run.
+    conflicts_by_origin: dict[str, Counter[str]] = {
+        "grammar_rule_attempt": Counter(),
+        "lexical_candidate_attempt": Counter(),
+        "other_attempt": Counter(),
+    }
+    conflict_examples: list[dict[str, Any]] = []
+    for event in events:
+        direct = event.get("direct_atom_conflicts", [])
+        if not isinstance(direct, list):
+            raise ValueError("Direct atom conflicts must be a list")
+        if not direct:
+            continue
+        required, offered = event.get("required_features"), event.get("offered_features")
+        if not isinstance(required, Mapping) or not isinstance(offered, Mapping):
+            raise ValueError("An atom conflict requires both attempted feature structures")
+        stage = event.get("stage", "")
+        rule_id = event.get("rule_id")
+        if stage.startswith("rule_") and isinstance(rule_id, str) and rule_id:
+            origin = "grammar_rule_attempt"
+        elif stage.startswith("lexical_") and rule_id is None:
+            origin = "lexical_candidate_attempt"
+        else:
+            origin = "other_attempt"
+        for conflict in direct:
+            if not isinstance(conflict, Mapping):
+                raise ValueError("Direct atom conflict must identify the conflicting atoms")
+            feature = conflict.get("feature")
+            left, right = conflict.get("required"), conflict.get("offered")
+            if (not isinstance(feature, str) or not feature
+                    or not isinstance(left, str) or not left or left.startswith("?")
+                    or not isinstance(right, str) or not right or right.startswith("?")
+                    or left == right or required.get(feature) != left
+                    or offered.get(feature) != right):
+                raise ValueError("Candidate conflict not backed by required/offered atoms")
+            conflicts_by_origin[origin][feature] += 1
+            if len(conflict_examples) < 8:
+                exact = event.get("reference_span_mapping") == "exact"
+                conflict_examples.append({
+                    "candidate_stage": stage,
+                    "origin": origin,
+                    "rule_id": rule_id,
+                    "feature": feature,
+                    "required_atom": left,
+                    "offered_atom": right,
+                    "reference_span": event.get("reference_span") if exact else None,
+                    "source_span_exact": exact,
+                    "attempted_branch_only": True,
+                    "grammatical_fault_proven": False,
+                })
+    conflict_audit = {
+        "proof_basis": "required_vs_offered_atomic_features_in_sampled_rejection_attempts",
+        "by_origin_and_feature": {
+            origin: dict(sorted(counts.items()))
+            for origin, counts in conflicts_by_origin.items()},
+        "grammar_rule_number_or_person_conflicts": sum(
+            conflicts_by_origin["grammar_rule_attempt"][feature]
+            for feature in ("number", "person")),
+        "examples": conflict_examples,
+        "same_attempt_may_have_multiple_conflicts": True,
+        "exhaustive": False,
+        "sentence_fault_proven": False,
+        "failure_cause_proven": False,
+    }
     priority = [e for e in events if e.get("stage", "").startswith("positive_evidence_")
                 or e.get("stage") == "child_context_exhausted"]
     # Retain only a few already sampled local events; this is neither a
@@ -472,6 +539,37 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
         })
     local_view = _local_proof_view(trace.get("validated_local_constituents"))
     independent_view = _local_proof_view(trace.get("independent_local_probe"), independent=True)
+    # Exact same rule + category + projected span + original source span:
+    # a rule rejected under one requested context was also *materialized*
+    # under an independent local context. This is evidence of context-specific
+    # pruning, not acceptance of the failed derivation or the full sentence.
+    accepted = {
+        (w["rule_id"], w["category"], tuple(w["analysis_span"]),
+         tuple(w["source_span"]))
+        for w in (independent_view or {}).get("witnesses", [])
+        if w.get("source_span") is not None
+    }
+    matches = {}
+    for event in events:
+        if (not event.get("stage", "").startswith("rule_")
+                or not event.get("direct_atom_conflicts")
+                or event.get("reference_span_mapping") != "exact"
+                or event.get("rule_id") is None):
+            continue
+        key = (event["rule_id"], event["category"],
+               tuple(event["analysis_span"]), tuple(event["reference_span"]))
+        if key not in accepted:
+            continue
+        matches[key] = {
+            "rule_id": key[0], "category": key[1],
+            "analysis_span": list(key[2]), "source_span": list(key[3]),
+            "rejected_features_in_sample": sorted({
+                c["feature"] for c in event["direct_atom_conflicts"]}),
+            "rejected_context_and_accepted_context_are_independent": True,
+            "same_derivation_proven": False,
+            "whole_sentence_grammaticality_proven": False,
+            "grammatical_fault_proven": False,
+        }
     return {
         "observed_events": trace.get("observed_events"),
         "sampled_events": len(events),
@@ -479,6 +577,14 @@ def _trace_view(trace: Mapping[str, Any] | None) -> dict[str, Any] | None:
         "stages_in_retained_sample": dict(sorted(Counter(e["stage"] for e in events).items())),
         "local_atom_conflicts_in_retained_sample": sum(
             len(e.get("direct_atom_conflicts", [])) for e in events),
+        "attempted_atom_conflict_audit": conflict_audit,
+        "independent_accepted_same_rule_and_span_as_rejected_attempt": {
+            "matched_local_rule_spans": len(matches),
+            "examples": list(matches.values())[:8],
+            "exhaustive": False,
+            "same_derivation_proven": False,
+            "sentence_fault_proven": False,
+        },
         "examples": examples,
         "validated_local_constituents": local_view,
         "independent_local_probe": independent_view,
@@ -553,6 +659,28 @@ def _shared_predicate_local_subject_candidates(row: Mapping[str, Any]) -> list[d
         "grammatical_conflict_proven": False,
     } for (verb_span, verb_category), subjects in sorted(by_predicate.items())
         if len(subjects) >= 2]
+
+
+def _sampled_conflict_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
+    """Count sampled branch conflicts by replay lane, never as unique faults.
+
+    Different replays can resample identical local failures; preserve their
+    provenance instead of adding them into an apparent count of errors.
+    """
+    grouped: dict[str, dict[str, Counter[str]]] = {}
+    for row in rows:
+        for scope, trace in row["sampled_local_rejection_evidence"].items():
+            if trace is None:
+                continue
+            sampled = trace["attempted_atom_conflict_audit"]["by_origin_and_feature"]
+            lane = grouped.setdefault(scope, {})
+            for origin, features in sampled.items():
+                lane.setdefault(origin, Counter()).update(features)
+    return {
+        scope: {origin: dict(sorted(features.items()))
+                for origin, features in sorted(origins.items())}
+        for scope, origins in sorted(grouped.items())
+    }
 
 
 def synthesize(
@@ -777,6 +905,13 @@ def synthesize(
             entry["sampled_events"] for row in rows
             for entry in row["sampled_local_rejection_evidence"].values()
             if entry is not None),
+        "attempted_atom_conflicts_by_replay_origin_and_feature":
+            _sampled_conflict_totals(rows),
+        "rejected_rules_independently_accepted_at_same_exact_source_span_sampled": sum(
+            trace["independent_accepted_same_rule_and_span_as_rejected_attempt"][
+                "matched_local_rule_spans"]
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace is not None),
         "validated_local_constituents_sampled": sum(
             entry["validated_local_constituents"]["sampled_local_constituents"]
             for row in rows for entry in row["sampled_local_rejection_evidence"].values()
@@ -914,6 +1049,18 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
             paired += "; unscoped: " + r["unscoped_replay"]["outcome"]
         lines.append("| " + " | ".join((str(r["index"]), r["canonical_status"],
                         surface, paired, ", ".join(r["suggested_checks_not_diagnoses"]))) + " |")
+    lines += ["", "## Rejected candidate atoms, separated from grammatical errors", "",
+              "Counts below are **sampled attempted-branch contradictions**. "
+              "A lexical reading rejected for `number` is not a "
+              "subject–verb agreement fault. A rule rejected for `voice` is not "
+              "proof that the original sentence has the wrong voice. "
+              "Traces can be truncated and replay lanes may overlap.", "",
+              "| Replay lane | Rejected origin | Feature | Sampled conflicts |",
+              "|---|---|---|---:|"]
+    for scope, origins in summary["attempted_atom_conflicts_by_replay_origin_and_feature"].items():
+        for origin, features in origins.items():
+            for feature, count in features.items():
+                lines.append(f"| `{scope}` | `{origin}` | `{feature}` | {count} |")
     lines += ["", "## Local observations by case", ""]
     for r in rows:
         lines += [
@@ -946,6 +1093,20 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                 lines.append(f"- `{scope}`: {trace['sampled_events']} retained local events; "
                              f"{trace['local_atom_conflicts_in_retained_sample']} candidate atom conflicts; "
                              f"truncated={trace['sample_truncated']}; exhaustive=false")
+                audit = trace["attempted_atom_conflict_audit"]
+                lines.append(
+                    "  - Attempted conflicts by origin/feature: "
+                    + json.dumps(audit["by_origin_and_feature"], sort_keys=True)
+                    + "; grammar-rule number/person conflicts in this sample: "
+                    + str(audit["grammar_rule_number_or_person_conflicts"])
+                    + "; neither errors nor failure causes proven")
+                matches = trace["independent_accepted_same_rule_and_span_as_rejected_attempt"]
+                for match in matches["examples"]:
+                    lines.append(
+                        f"  - **Context-specific rejection/acceptance**: `{match['rule_id']}` "
+                        f"source {match['source_span']}, rejected candidate features "
+                        f"{match['rejected_features_in_sample']}; independently accepted "
+                        "local rule at same span, but not the same derivation or a full parse")
                 for event in trace["examples"]:
                     lines.append(f"  - `{event['stage']}` `{event['rule_id']}` "
                                  f"analysis {event['analysis_span']}; "

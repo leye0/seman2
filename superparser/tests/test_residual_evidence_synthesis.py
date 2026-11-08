@@ -23,10 +23,13 @@ def trace(*, exact=True):
         "exhaustive": False, "grammatical_fault_established": False,
         "observed_events": 100, "sampled_events": 2, "truncated": True,
         "events": [
-            {"stage": "unify_rule", "rule_id": "UNRELATED", "category": "NP",
+            {"stage": "rule_hint_unification", "rule_id": "UNRELATED", "category": "NP",
              "analysis_span": [1, 5], "reference_span": [30, 34],
              "reference_span_mapping": "exact" if exact else "unavailable",
-             "direct_atom_conflicts": [{"expected": "plural", "actual": "singular"}]},
+             "required_features": {"number": "plural"},
+             "offered_features": {"number": "singular"},
+             "direct_atom_conflicts": [{"feature": "number", "required": "plural",
+                                        "offered": "singular"}]},
             {"stage": "positive_evidence_require", "rule_id": "PROOF", "category": "VP",
              "analysis_span": [0, 5], "reference_span": [0, 5],
              "reference_span_mapping": "exact"},
@@ -221,6 +224,12 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(scoped["sampled_events"], 2)
         self.assertEqual(scoped["observed_events"], 100)
         self.assertEqual(scoped["local_atom_conflicts_in_retained_sample"], 1)
+        audited = scoped["attempted_atom_conflict_audit"]
+        self.assertEqual(audited["by_origin_and_feature"]["grammar_rule_attempt"],
+                         {"number": 1})
+        self.assertEqual(audited["grammar_rule_number_or_person_conflicts"], 1)
+        self.assertEqual(audited["examples"][0]["rule_id"], "UNRELATED")
+        self.assertFalse(audited["examples"][0]["grammatical_fault_proven"])
         self.assertEqual(scoped["examples"][0]["rule_id"], "PROOF")
         self.assertIsNone(scoped["examples"][1]["reference_span"])
         local = scoped["validated_local_constituents"]
@@ -238,6 +247,72 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertIsNone(independent["resolved_local_role_pairs"]["pairs"][0]
                           ["subject"]["head_source_span"])
         self.assertIn("Independent failed-root local probes", render(*synthesize(*fixture())))
+
+    def test_grammar_vs_lexical_rejection_provenance_and_fake_conflicts(self):
+        args = fixture()
+        traced = args[4][0]["scoped_dialogue"]["rejection_trace"]
+        traced["events"][0] = {
+            "stage": "lexical_hint_unification", "rule_id": None,
+            "category": "N", "analysis_span": [0, 2],
+            "reference_span": [0, 2], "reference_span_mapping": "exact",
+            "required_features": {"number": "plural"},
+            "offered_features": {"number": "singular"},
+            "direct_atom_conflicts": [{"feature": "number", "required": "plural",
+                                       "offered": "singular"}],
+        }
+        rows, summary = synthesize(*args)
+        audit = next(r for r in rows if r["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+            "attempted_atom_conflict_audit"]
+        self.assertEqual(audit["by_origin_and_feature"]["lexical_candidate_attempt"],
+                         {"number": 1})
+        self.assertEqual(audit["by_origin_and_feature"]["grammar_rule_attempt"], {})
+        self.assertEqual(audit["grammar_rule_number_or_person_conflicts"], 0)
+        self.assertEqual(summary["attempted_atom_conflicts_by_replay_origin_and_feature"][
+            "scoped_dialogue"]["lexical_candidate_attempt"], {"number": 1})
+        self.assertFalse(audit["sentence_fault_proven"])
+        for invalid in (
+            {"feature": "number", "required": "singular", "offered": "plural"},
+            {"feature": "number", "required": "?number", "offered": "singular"},
+            {"feature": "person", "required": "3", "offered": "1"},
+        ):
+            bad = deepcopy(args)
+            bad[4][0]["scoped_dialogue"]["rejection_trace"]["events"][0][
+                "direct_atom_conflicts"] = [invalid]
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(
+                    ValueError, "not backed by required/offered atoms"):
+                synthesize(*bad)
+
+    def test_rejected_rule_can_have_independent_positive_witness_at_same_span(self):
+        args = fixture()
+        traced = trace(exact=True)
+        reject = traced["events"][0]
+        reject.update({"rule_id": "clause_np_vp", "category": "CLAUSE",
+                       "analysis_span": [1, 10], "reference_span": [30, 39]})
+        args[4][0]["scoped_dialogue"]["rejection_trace"] = traced
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary[
+            "rejected_rules_independently_accepted_at_same_exact_source_span_sampled"], 1)
+        same = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "independent_accepted_same_rule_and_span_as_rejected_attempt"]
+        self.assertEqual(same["matched_local_rule_spans"], 1)
+        self.assertEqual(same["examples"][0]["source_span"], [30, 39])
+        self.assertFalse(same["examples"][0]["same_derivation_proven"])
+        self.assertFalse(same["examples"][0]["grammatical_fault_proven"])
+        self.assertFalse(same["sentence_fault_proven"])
+
+        # A projection/source mismatch must never be presented as a match.
+        reject["reference_span"] = [29, 39]
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary[
+            "rejected_rules_independently_accepted_at_same_exact_source_span_sampled"], 0)
+        # No exact mapping => also no alleged same-source witness.
+        reject["reference_span"] = [30, 39]
+        reject["reference_span_mapping"] = "unavailable"
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary[
+            "rejected_rules_independently_accepted_at_same_exact_source_span_sampled"], 0)
 
     def test_new_failure_remains_unreviewed_and_joined(self):
         args = fixture()
