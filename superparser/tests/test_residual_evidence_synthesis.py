@@ -97,7 +97,7 @@ def trace(*, exact=True):
                 "child_analysis_span": [1, 5],
                 "child_reference_span_mapping": "exact" if exact else "unavailable",
                 "child_reference_span": [30, 34] if exact else None,
-                "head_analysis_span": [1, 4], "head_lexical_category": "PRON",
+                "head_analysis_span": [1, 4], "head_lexical_category": "PRONOUN",
                 "head_reference_span_mapping": "exact" if exact else "unavailable",
                 "head_reference_span": [30, 33] if exact else None,
             },
@@ -303,6 +303,9 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
             lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
                 ["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
                 .update(grammatical_conflict_proven=True),
+            lambda a: a[4][0]["scoped_dialogue"]["rejection_trace"]
+                ["independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+                ["subject"].update(head_lexical_category="OPEN-QUOTE"),
             lambda a: a[4][0].update(analysis_text="wrong projection"),
         ]
         for change in mutators:

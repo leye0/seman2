@@ -406,6 +406,12 @@ par `_compose_syntax` sur une analyse acceptée sont publiées en
 `validated_local_role_pairs`. La paire porte règle, catégorie, spans
 parents/enfants, têtes lexicales et correspondance source si exacte.
 Une règle qui déclare un rôle sans ancre résolue n'est pas comptée.
+Une ancre résolue doit de plus appartenir à une catégorie lexicale
+compatible avec la tête attendue du sujet ou du prédicat : l'audit
+initial des 40 liens avait révélé une ouverture de guillemet et une
+copule reprises par erreur comme têtes d'un NP sujet. Ces deux liens
+sont désormais exclus par une contrainte de preuve conservatrice,
+sans filtrer la reconnaissance ni modifier le lexique.
 La synthèse vérifie que la paire appartient à un des constituants
 effectivement retenus et refuse toute revendication de faute ou de
 rattachement à une phrase complète. Le nombre de telles paires doit

@@ -11,6 +11,18 @@ from __future__ import annotations
 from typing import Any
 
 
+# A resolved referent is not automatically a nominal head: the current
+# open-world syntax package can inherit the first lexical anchor of a
+# construction (including an OPEN-QUOTE or COPULA). Keep this *evidence*
+# threshold conservative; it is not a lexical filter on recognition.
+NOMINAL_SUBJECT_HEADS = frozenset({
+    "N", "PRONOUN", "PROPER-NOUN", "WH-PRONOUN",
+})
+PREDICATE_EVENT_HEADS = frozenset({
+    "V", "COPULA", "AUX", "AUX-BE",
+})
+
+
 def _resolved_link(link: Any, children: tuple[Any, ...]) -> dict[str, Any] | None:
     if (type(link.child_index) is not int or link.child_index < 0
             or link.child_index >= len(children)
@@ -55,9 +67,11 @@ def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
         if resolved is None:
             continue
         if link.relation == "subject":
-            subjects.append(resolved)
+            if resolved["head_lexical_category"] in NOMINAL_SUBJECT_HEADS:
+                subjects.append(resolved)
         else:
-            predicates.append((link.relation, resolved))
+            if resolved["head_lexical_category"] in PREDICATE_EVENT_HEADS:
+                predicates.append((link.relation, resolved))
     # A named predicate outranks an auxiliary/event when both were exported
     # by this rule. Do not assert which reading is linguistically intended.
     predicates.sort(key=lambda pair: (pair[0] != "predicate", pair[1]["child_index"]))

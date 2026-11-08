@@ -219,6 +219,12 @@ source y sont vérifiés, avec comptage séparé des simples constituants.
 Une déclaration `exports` sans ancre ne suffit pas et aucun conflit
 grammatical n'est conclu. Les attaches à une phrase globale et les
 alternatives concurrentes restent à démontrer.
+**Contre-exemples découverts dans l'audit :** la tête héritée du NP peut
+résoudre vers `OPEN-QUOTE` (#480) ou `COPULA` (#115), même si le lien
+structural `subject` existe. La qualification des preuves impose donc
+une tête nominale et une tête verbale effectivement résolues, sans
+modifier l'analyse elle-même. Le nombre final de paires est mesuré
+après cette restriction, pas extrapolé des 40 liens bruts.
 
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).

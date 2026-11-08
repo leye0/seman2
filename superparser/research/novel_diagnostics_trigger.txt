@@ -59,3 +59,4 @@ Checkpoint request 2026-11-07: validate positive local constituents on scoped re
 Checkpoint request 2026-11-07: measure independently validated local subtrees in genuinely incomplete dialogue replays, with separate bounded work.
 Checkpoint request 2026-11-07: join all 14 unscoped structural residual probes with the seven dialogue replays, retaining source provenance.
 Checkpoint 2026-11-08 UTC: measure genuine resolved local subject/event anchors across the 21 structural residual replays.
+Checkpoint 2026-11-08 UTC: rerun 21 residual role proofs with nominal/verb head evidence gates and source-mapping assertions.

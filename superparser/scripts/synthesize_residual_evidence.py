@@ -13,6 +13,10 @@ import json
 from pathlib import Path
 from typing import Any, Mapping
 
+from seman_parser.local_role_proofs import (
+    NOMINAL_SUBJECT_HEADS, PREDICATE_EVENT_HEADS,
+)
+
 SCHEMA = "seman2-residual-evidence-synthesis-v1"
 TRACE_SCOPES = ("scoped_dialogue", "ordinary_fallback")
 
@@ -161,6 +165,8 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                     subject, predicate = pair["subject"], pair["predicate"]
                     return (subject["role"] == "subject" and
                             predicate["role"] in {"event", "predicate"} and
+                            subject.get("head_lexical_category") in NOMINAL_SUBJECT_HEADS and
+                            predicate.get("head_lexical_category") in PREDICATE_EVENT_HEADS and
                             subject["child_index"] != predicate["child_index"])
                 if not any(supported(w) for w in matching):
                     raise ValueError("Role pair has no matching validated local subtree")

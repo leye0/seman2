@@ -245,6 +245,10 @@ est conservée sous `independent_local_probe.validated_local_role_pairs`
 
 - les deux liens `subject` et `event`/`predicate` ont réellement des ancres
   lexicales résolues, de la forme `lex:start:end:catégorie:lemme`;
+- la tête du sujet possède une catégorie **nominale** reconnue (nom,
+  pronom, nom propre, pronom interrogatif), et celle de l'événement une
+  catégorie **verbale** reconnue. Une ancre héritée d'un guillemet ou
+  d'une copule ne constitue pas une preuve de tête nominale;
 - les positions des deux têtes restent **dans leurs enfants respectifs**,
   et ces enfants sont distincts et non chevauchants;
 - le tout appartient à la **même composition locale acceptée** déjà
