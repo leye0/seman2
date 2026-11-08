@@ -516,3 +516,16 @@ indirectes. Ce nouveau témoin cible exclusivement la grammaire,
 pour distinguer un véritable contrat syntaxique des simples valeurs
 matérialisées par unification. La synthèse contrôle cette provenance
 et reste compatible avec les artefacts antérieurs.
+
+Mesure : le rejeu
+[42446924524](https://github.com/leye0/seman2/actions/runs/42446924524)
+retrouve **26/38** liens locaux dont les règles RHS imposent
+directement l'égalité de `number` et `person` (25 `clause_np_vp`,
+1 `wh_supplementary_subject_comma`). Une paire `wh_obj_clause`
+présente des atomes déjà égaux sans cette obligation *directe*.
+**12/38** n'ont pas de preuve d'égalité directe issue de ce contrôle,
+ce qui ne suffit jamais à affirmer qu'il n'existe aucune autre
+contrainte. Les **26 résidus**, le strict **474/500** et la cohorte
+originale restent inchangés. La CI
+[42446924528](https://github.com/leye0/seman2/actions/runs/42446924528)
+est verte (**580 tests**).

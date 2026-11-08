@@ -406,3 +406,20 @@ Même lorsqu'une égalité locale RHS est établie, elle **ne démontre pas
 la grammaticalité ou la faute de la phrase entière** : les caractères
 originaux, alternatives, rattachements complets et contraintes lexicales
 indépendamment établies doivent encore être vérifiés.
+
+**Mesure du rejeu réel** :
+[42446924524](https://github.com/leye0/seman2/actions/runs/42446924524)
+préserve **474/500**, les **26** résidus et les **38** couples locaux.
+**26/38** ont une égalité directe de `number` **et** de `person`
+déclarée par leurs RHS : **25** compositions `clause_np_vp` et **1**
+`wh_supplementary_subject_comma`. Parmi les **27** paires possédant
+des atomes de nombre comparables, **une** (`wh_obj_clause`) ne porte
+pas de variable RHS partagée sur les deux rôles. Cette différence
+démontre pourquoi comparer des atomes déjà unifiés ne suffisait pas.
+Les **12** autres paires restent *non prouvées par ce contrôle direct*,
+et non fautives par défaut. Les **580 tests**, les contrôles de qualité
+et le smoke sont verts dans
+[42446924528](https://github.com/leye0/seman2/actions/runs/42446924528);
+les tests de dialogue de
+[42446924515](https://github.com/leye0/seman2/actions/runs/42446924515)
+sont également verts.

@@ -294,6 +294,18 @@ mettre ces obligations en regard des traits réellement *attestés*
 (et non simplement unifiés) et des rejets associés. Aucun besoin
 d'inférer le sens des mots ni l'intention des auteurs.
 
+**Résultat vérifié P2 (42446924524 / 42446924528) :** sur les 38
+paires sujet–prédicat acceptées localement, **26** ont un contrat RHS
+direct de nombre **et** personne, dont **25** par `clause_np_vp` et
+**1** par `wh_supplementary_subject_comma`. Les **12 autres** restent
+non concluantes pour ce contrôle seulement. Le cas d'une paire
+`wh_obj_clause` aux atomes observés égaux mais sans variable RHS
+partagée prouve l'intérêt de séparer observation et obligation.
+**580 tests** réussis, **474/500** stricts, **26** résidus. La prochaine
+étape doit confronter ces obligations locales à des **traits attestés
+avant propagation** et aux échecs de dérivation, sans interprétation
+sémantique et sans promotion d'un échec global en faute de langue.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.
