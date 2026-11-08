@@ -448,6 +448,75 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "provenance"):
             synthesize(*bad)
 
+    def test_selected_lexical_candidate_atoms_not_confused_with_unified_children(self):
+        args = fixture()
+        pair = args[4][0]["scoped_dialogue"]["rejection_trace"][
+            "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        for side in ("subject", "predicate"):
+            pair[side]["head_lemma"] = side
+        pair["materialized_child_feature_atoms"] = {
+            "subject": {"number": "singular", "person": "3"},
+            "predicate": {"number": "singular", "person": "3"},
+        }
+        pair["cross_child_grounded_atom_comparisons"] = [
+            {"feature": feature, "subject_atom": value,
+             "predicate_atom": value, "same_atom": True}
+            for feature, value in (("number", "singular"), ("person", "3"))]
+        pair["grammatical_agreement_requirement_proven"] = False
+        pair["selected_lexical_head_feature_observations"] = {
+            side: {
+                "proof_basis": "selected_materialized_child_lexical_leaf_exact_match",
+                "status": "unique_selected_lexical_leaf",
+                "head_analysis_span": pair[side]["head_analysis_span"],
+                "head_lexical_category": pair[side]["head_lexical_category"],
+                "head_lemma": side,
+                "matching_selected_leaf_count": 1,
+                "candidate_feature_atoms": {"number": "singular", "person": person},
+                "candidate_source": "lexicon",
+                "whole_sentence_grammaticality_proven": False,
+            } for side, person in (("subject", "1"), ("predicate", "3"))}
+        pair["lexical_candidate_vs_child_atom_comparisons"] = [
+            {"role": side, "feature": feature,
+             "lexical_candidate_atom": atom,
+             "materialized_child_atom": child_atom,
+             "same_atom": atom == child_atom}
+            for side, person in (("subject", "1"), ("predicate", "3"))
+            for feature, atom, child_atom in (("number", "singular", "singular"),
+                                             ("person", person, "3"))]
+        pair["cross_lexical_candidate_atom_comparisons"] = [
+            {"feature": "number", "subject_lexical_candidate_atom": "singular",
+             "predicate_lexical_candidate_atom": "singular", "same_atom": True},
+            {"feature": "person", "subject_lexical_candidate_atom": "1",
+             "predicate_lexical_candidate_atom": "3", "same_atom": False},
+        ]
+        pair["lexical_candidate_conflict_proven"] = False
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary["local_role_heads_with_unique_selected_lexical_leaf_sampled"], 2)
+        self.assertEqual(summary[
+            "local_role_pairs_with_comparable_selected_lexical_number_atoms_sampled"], 1)
+        self.assertEqual(summary[
+            "local_selected_lexical_candidate_vs_child_atom_differences_sampled"], 1)
+        result = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "independent_local_probe"]["resolved_local_role_pairs"]["pairs"][0]
+        evidence = result["selected_lexical_head_feature_evidence"]
+        self.assertEqual(evidence["selected_lexical_head_feature_observations"][
+            "subject"]["candidate_feature_atoms"]["person"], "1")
+        self.assertFalse(evidence["whole_sentence_grammaticality_proven"])
+        for mutate in (
+            lambda p: p["lexical_candidate_vs_child_atom_comparisons"][1].update(
+                same_atom=True),
+            lambda p: p["selected_lexical_head_feature_observations"]["subject"].update(
+                status="not_uniquely_observed"),
+            lambda p: p.update(lexical_candidate_conflict_proven=True),
+        ):
+            bad = deepcopy(args)
+            bad_pair = bad[4][0]["scoped_dialogue"]["rejection_trace"][
+                "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+            mutate(bad_pair)
+            with self.assertRaises(ValueError):
+                synthesize(*bad)
+
     def test_wrong_identity_status_targets_and_trace_claims_fail_closed(self):
         mutators = [
             lambda a: a[1].update(cohort_sha256="other"),

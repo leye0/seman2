@@ -106,6 +106,69 @@ class LocalResolvedRoleTests(unittest.TestCase):
         self.assertFalse(pair["grammatical_agreement_requirement_proven"])
         self.assertFalse(pair["grammatical_conflict_proven"])
 
+    def test_selected_lexical_leaf_preserves_pre_unification_person(self):
+        def features(**values):
+            return Obj(as_dict=lambda: values)
+
+        original_i = Obj(span_start=0, span_end=1, category="PRONOUN",
+                         lemma="I", source="lexicon", features=features(
+                             number="singular", person="1"))
+        original_was = Obj(span_start=2, span_end=5, category="V",
+                           lemma="be", source="wordnet", features=features(
+                               number="singular", person="3", vform="finite"))
+        children = (
+            Obj(start=0, end=1, category="NP", features=features(
+                number="singular", person="3"), children=(
+                    Obj(lexical_candidate=original_i, children=()),)),
+            Obj(start=2, end=5, category="VP", features=features(
+                number="singular", person="3"), children=(
+                    Obj(lexical_candidate=original_was, children=()),)),
+        )
+        analysis = Obj(rule_id="clause_np_vp", category="CLAUSE",
+                       start=0, end=5, children=children, syntax=Obj(links=(
+                           Obj(relation="subject", target="lex:0:1:PRONOUN:I", child_index=0),
+                           Obj(relation="event", target="lex:2:5:V:be", child_index=1),
+                       )))
+        pair = resolved_local_subject_predicate_pairs(analysis)[0]
+        lexical = pair["selected_lexical_head_feature_observations"]
+        self.assertEqual(lexical["subject"]["candidate_feature_atoms"]["person"], "1")
+        self.assertEqual(lexical["predicate"]["candidate_feature_atoms"]["person"], "3")
+        self.assertEqual(pair["cross_lexical_candidate_atom_comparisons"], [
+            {"feature": "number", "subject_lexical_candidate_atom": "singular",
+             "predicate_lexical_candidate_atom": "singular", "same_atom": True},
+            {"feature": "person", "subject_lexical_candidate_atom": "1",
+             "predicate_lexical_candidate_atom": "3", "same_atom": False},
+        ])
+        self.assertIn({
+            "role": "subject", "feature": "person", "lexical_candidate_atom": "1",
+            "materialized_child_atom": "3", "same_atom": False,
+        }, pair["lexical_candidate_vs_child_atom_comparisons"])
+        # Even this discrepancy is about a selected lexical hypothesis,
+        # not a proof that the source sentence is ill-formed.
+        self.assertFalse(pair["grammatical_conflict_proven"])
+
+    def test_unmatched_or_nonunique_selected_head_cannot_supply_atoms(self):
+        def features(**values):
+            return Obj(as_dict=lambda: values)
+
+        candidate = Obj(span_start=0, span_end=4, category="PRONOUN",
+                        lemma="they", source="lexicon",
+                        features=features(number="plural"))
+        leaves = (Obj(lexical_candidate=candidate, children=()),
+                  Obj(lexical_candidate=candidate, children=()))
+        subject = Obj(start=0, end=4, category="NP", children=leaves)
+        predicate = Obj(start=5, end=9, category="VP", children=())
+        pair = resolved_local_subject_predicate_pairs(item(children=(subject, predicate),
+            links=[
+                Obj(relation="subject", target="lex:0:4:PRONOUN:they", child_index=0),
+                Obj(relation="event", target="lex:5:9:V:say", child_index=1),
+            ]))[0]
+        self.assertEqual(pair["selected_lexical_head_feature_observations"][
+            "subject"]["status"], "not_uniquely_observed")
+        self.assertEqual(pair["selected_lexical_head_feature_observations"][
+            "subject"]["matching_selected_leaf_count"], 2)
+        self.assertEqual(pair["cross_lexical_candidate_atom_comparisons"], [])
+
     def test_direct_rhs_agreement_proven_from_same_compiled_rule(self):
         def features(**data):
             return Obj(as_dict=lambda: data)

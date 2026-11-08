@@ -529,3 +529,15 @@ contrainte. Les **26 résidus**, le strict **474/500** et la cohorte
 originale restent inchangés. La CI
 [42446924528](https://github.com/leye0/seman2/actions/runs/42446924528)
 est verte (**580 tests**).
+
+### P2 : traits morphosyntaxiques avant propagation
+
+Pour chaque tête de sujet/prédicat résolue, les relectures conserveront
+maintenant les atomes du **candidat lexical réellement sélectionné**
+dans l'enfant de la composition locale. Les correspondances doivent
+être exactes en span, catégorie et lemme, avec une feuille unique;
+sinon l'observation reste indisponible. Ces valeurs sont distinctes
+des traits du NP/VP après unification et des obligations RHS déjà
+mesurées. Les différences sont des preuves de provenance des **lectures
+grammaticales candidates**, pas des verdicts sur le texte original,
+et aucune analyse sémantique n'intervient.

@@ -201,6 +201,85 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
             "grammatical_conflict_proven": False,
         }
 
+    def selected_lexical_head_features(pair):
+        heads = pair.get("selected_lexical_head_feature_observations")
+        child_comparisons = pair.get("lexical_candidate_vs_child_atom_comparisons")
+        cross_comparisons = pair.get("cross_lexical_candidate_atom_comparisons")
+        if heads is None and child_comparisons is None and cross_comparisons is None:
+            return None  # Previous samples did not inspect selected lexical leaves.
+        if (not isinstance(heads, Mapping)
+                or set(heads) != {"subject", "predicate"}
+                or not isinstance(child_comparisons, list)
+                or not isinstance(cross_comparisons, list)
+                or pair.get("lexical_candidate_conflict_proven") is not False):
+            raise ValueError("Selected lexical leaf provenance is missing or overstated")
+        actual_atoms = pair.get("materialized_child_feature_atoms")
+        if not isinstance(actual_atoms, Mapping):
+            raise ValueError("Selected lexical leaf requires original child observations")
+        verified = {}
+        for side in ("subject", "predicate"):
+            observed = heads[side]
+            if not isinstance(observed, Mapping):
+                raise ValueError("Selected lexical leaf observation must be a mapping")
+            role = pair[side]
+            count = observed.get("matching_selected_leaf_count")
+            status = observed.get("status")
+            atoms = observed.get("candidate_feature_atoms")
+            source = observed.get("candidate_source")
+            if (observed.get("proof_basis") !=
+                    "selected_materialized_child_lexical_leaf_exact_match"
+                    or observed.get("head_analysis_span") != role.get("head_analysis_span")
+                    or observed.get("head_lexical_category") != role.get("head_lexical_category")
+                    or observed.get("head_lemma") != role.get("head_lemma")
+                    or observed.get("whole_sentence_grammaticality_proven") is not False
+                    or type(count) is not int or count < 0
+                    or not isinstance(atoms, Mapping)
+                    or any(key not in GROUNDABLE_ROLE_FEATURES
+                           or not isinstance(value, str) or not value
+                           or value.startswith("?") for key, value in atoms.items())):
+                raise ValueError("Selected lexical leaf identity or atoms invalid")
+            if status == "unique_selected_lexical_leaf":
+                if count != 1 or not isinstance(source, str) or not source:
+                    raise ValueError("Unique selected lexical leaf lacks proof")
+                lattice = role.get("lexical_lattice_evidence")
+                if lattice is not None and source not in lattice.get("matching_candidate_sources", []):
+                    raise ValueError("Selected leaf source not found in original lattice")
+            elif status == "not_uniquely_observed":
+                if count == 1 or atoms or source is not None:
+                    raise ValueError("Unavailable lexical evidence must remain unmeasured")
+            else:
+                raise ValueError("Unsupported selected lexical leaf observation")
+            verified[side] = {**observed, "candidate_feature_atoms": dict(atoms)}
+        expected_child = [{
+            "role": side,
+            "feature": feature,
+            "lexical_candidate_atom": verified[side]["candidate_feature_atoms"][feature],
+            "materialized_child_atom": actual_atoms[side][feature],
+            "same_atom": (verified[side]["candidate_feature_atoms"][feature]
+                          == actual_atoms[side][feature]),
+        } for side in ("subject", "predicate")
+            for feature in ("number", "person")
+            if feature in verified[side]["candidate_feature_atoms"]
+            and feature in actual_atoms[side]]
+        subject_atoms = verified["subject"]["candidate_feature_atoms"]
+        predicate_atoms = verified["predicate"]["candidate_feature_atoms"]
+        expected_cross = [{
+            "feature": feature,
+            "subject_lexical_candidate_atom": subject_atoms[feature],
+            "predicate_lexical_candidate_atom": predicate_atoms[feature],
+            "same_atom": subject_atoms[feature] == predicate_atoms[feature],
+        } for feature in ("number", "person")
+            if feature in subject_atoms and feature in predicate_atoms]
+        if child_comparisons != expected_child or cross_comparisons != expected_cross:
+            raise ValueError("Selected lexical/child feature comparisons must be recomputed")
+        return {
+            "selected_lexical_head_feature_observations": verified,
+            "lexical_candidate_vs_child_atom_comparisons": expected_child,
+            "cross_lexical_candidate_atom_comparisons": expected_cross,
+            "lexical_candidate_conflict_proven": False,
+            "whole_sentence_grammaticality_proven": False,
+        }
+
     result = {
         "observed_materialized_rule_analyses": local["observed_materialized_rule_analyses"],
         "sampled_local_constituents": len(witnesses),
@@ -323,6 +402,7 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                     "source_span": source_span(pair),
                     "local_child_feature_observation": feature_observation(pair),
                     "local_rule_rhs_feature_constraints": rule_rhs_constraints(pair),
+                    "selected_lexical_head_feature_evidence": selected_lexical_head_features(pair),
                     **{name: {
                         "role": pair[name]["role"],
                         "child_index": pair[name]["child_index"],
@@ -769,6 +849,33 @@ def synthesize(
             if isinstance(trace, Mapping) and trace.get("independent_local_probe")
             for pair in (trace["independent_local_probe"].get("resolved_local_role_pairs") or {}).get("pairs", [])
             if pair.get("local_rule_rhs_feature_constraints") is not None),
+        "local_role_heads_with_unique_selected_lexical_leaf_sampled": sum(
+            head["status"] == "unique_selected_lexical_leaf"
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            if pair.get("selected_lexical_head_feature_evidence") is not None
+            for head in pair["selected_lexical_head_feature_evidence"][
+                "selected_lexical_head_feature_observations"].values()),
+        "local_role_pairs_with_comparable_selected_lexical_number_atoms_sampled": sum(
+            any(c["feature"] == "number" for c in
+                pair["selected_lexical_head_feature_evidence"][
+                    "cross_lexical_candidate_atom_comparisons"])
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            if pair.get("selected_lexical_head_feature_evidence") is not None),
+        "local_selected_lexical_candidate_vs_child_atom_differences_sampled": sum(
+            not c["same_atom"]
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            if pair.get("selected_lexical_head_feature_evidence") is not None
+            for c in pair["selected_lexical_head_feature_evidence"][
+                "lexical_candidate_vs_child_atom_comparisons"]),
         "shared_predicate_heads_with_multiple_local_subject_candidates": sum(
             len(row["shared_predicate_local_subject_candidates"]) for row in rows),
         "cases_with_multiple_local_subject_candidates_for_shared_predicate": sum(
@@ -912,6 +1019,22 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                                         "explicit_shared_rhs_variable_equalities"],
                                         ensure_ascii=False)
                                     + "; **local rule only**, no global anomaly proof")
+                            selected_lexical = pair.get("selected_lexical_head_feature_evidence")
+                            if selected_lexical is not None:
+                                leaves = selected_lexical[
+                                    "selected_lexical_head_feature_observations"]
+                                lines.append(
+                                    "      - Selected lexical head candidates (pre-unification): "
+                                    + json.dumps({name: {
+                                        "status": head["status"],
+                                        "atoms": head["candidate_feature_atoms"],
+                                    } for name, head in leaves.items()},
+                                        ensure_ascii=False, sort_keys=True)
+                                    + "; candidate vs child atoms: "
+                                    + json.dumps(selected_lexical[
+                                        "lexical_candidate_vs_child_atom_comparisons"],
+                                        ensure_ascii=False)
+                                    + "; candidate-level evidence only, no sentence fault")
                             for name, head in (("subject", subject), ("predicate", predicate)):
                                 audit = head["lexical_lattice_evidence"]
                                 if audit is not None:

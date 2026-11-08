@@ -40,6 +40,56 @@ def _grounded_child_atoms(child: Any) -> dict[str, str]:
             and value and not value.startswith("?")}
 
 
+def _selected_lexical_head_atoms(child: Any, role: dict[str, Any]) -> dict[str, Any]:
+    """Read a head's original features from the *selected* lexical leaf.
+
+    Matching the original lattice by span/category alone would mix alternate
+    readings. Here we only inspect the actual selected child's descendants;
+    no lexical candidate is re-ranked, guessed, or assigned a new feature.
+    """
+    target = (tuple(role["head_analysis_span"]),
+              role["head_lexical_category"], role["head_lemma"])
+    stack = [child]
+    visited: set[int] = set()
+    matched: list[Any] = []
+    while stack:
+        node = stack.pop()
+        if id(node) in visited:
+            continue
+        visited.add(id(node))
+        candidate = getattr(node, "lexical_candidate", None)
+        if candidate is not None and (
+                (candidate.span_start, candidate.span_end),
+                candidate.category, candidate.lemma) == target:
+            matched.append(candidate)
+        stack.extend(getattr(node, "children", ()) or ())
+    if len(matched) != 1:
+        return {
+            "proof_basis": "selected_materialized_child_lexical_leaf_exact_match",
+            "status": "not_uniquely_observed",
+            "head_analysis_span": list(role["head_analysis_span"]),
+            "head_lexical_category": role["head_lexical_category"],
+            "head_lemma": role["head_lemma"],
+            "matching_selected_leaf_count": len(matched),
+            "candidate_feature_atoms": {},
+            "candidate_source": None,
+            "whole_sentence_grammaticality_proven": False,
+        }
+    candidate = matched[0]
+    # The candidate is a lexical *hypothesis*, not a ground-truth reading.
+    return {
+        "proof_basis": "selected_materialized_child_lexical_leaf_exact_match",
+        "status": "unique_selected_lexical_leaf",
+        "head_analysis_span": list(role["head_analysis_span"]),
+        "head_lexical_category": role["head_lexical_category"],
+        "head_lemma": role["head_lemma"],
+        "matching_selected_leaf_count": 1,
+        "candidate_feature_atoms": _grounded_child_atoms(candidate),
+        "candidate_source": candidate.source,
+        "whole_sentence_grammaticality_proven": False,
+    }
+
+
 def _declared_rhs_feature_equalities(rule: Any, children: tuple[Any, ...],
                                      subject_index: int,
                                      predicate_index: int) -> dict[str, Any]:
@@ -159,6 +209,35 @@ def resolved_local_subject_predicate_pairs(item: Any, *,
             seen.add(key)
             subject_atoms = _grounded_child_atoms(children[subject["child_index"]])
             predicate_atoms = _grounded_child_atoms(children[predicate["child_index"]])
+            lexical_heads = {
+                "subject": _selected_lexical_head_atoms(
+                    children[subject["child_index"]], subject),
+                "predicate": _selected_lexical_head_atoms(
+                    children[predicate["child_index"]], predicate),
+            }
+            lexical_child_comparisons = [{
+                "role": name,
+                "feature": feature,
+                "lexical_candidate_atom": lexical_heads[name]["candidate_feature_atoms"][feature],
+                "materialized_child_atom": child_atoms[feature],
+                "same_atom": (
+                    lexical_heads[name]["candidate_feature_atoms"][feature]
+                    == child_atoms[feature]),
+            } for name, child_atoms in (("subject", subject_atoms),
+                                        ("predicate", predicate_atoms))
+                for feature in ("number", "person")
+                if feature in lexical_heads[name]["candidate_feature_atoms"]
+                and feature in child_atoms]
+            subject_lexical_atoms = lexical_heads["subject"]["candidate_feature_atoms"]
+            predicate_lexical_atoms = lexical_heads["predicate"]["candidate_feature_atoms"]
+            cross_lexical_comparisons = [{
+                "feature": feature,
+                "subject_lexical_candidate_atom": subject_lexical_atoms[feature],
+                "predicate_lexical_candidate_atom": predicate_lexical_atoms[feature],
+                "same_atom": (subject_lexical_atoms[feature]
+                              == predicate_lexical_atoms[feature]),
+            } for feature in ("number", "person")
+                if feature in subject_lexical_atoms and feature in predicate_lexical_atoms]
             rule_constraints = (
                 _declared_rhs_feature_equalities(
                     compiled_rule, children,
@@ -183,6 +262,10 @@ def resolved_local_subject_predicate_pairs(item: Any, *,
                     "predicate": predicate_atoms,
                 },
                 "cross_child_grounded_atom_comparisons": comparisons,
+                "selected_lexical_head_feature_observations": lexical_heads,
+                "lexical_candidate_vs_child_atom_comparisons": lexical_child_comparisons,
+                "cross_lexical_candidate_atom_comparisons": cross_lexical_comparisons,
+                "lexical_candidate_conflict_proven": False,
                 "local_rule_rhs_feature_constraints": rule_constraints,
                 "grammatical_agreement_requirement_proven": False,
                 "same_accepted_local_composition": True,

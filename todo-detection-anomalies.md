@@ -306,6 +306,16 @@ partagée prouve l'intérêt de séparer observation et obligation.
 avant propagation** et aux échecs de dérivation, sans interprétation
 sémantique et sans promotion d'un échec global en faute de langue.
 
+**P2 — observation lexicale morphosyntaxique sans analyse du sens :**
+sur les mêmes couples locaux, relever les traits *avant unification*
+de la feuille lexicale **effectivement sélectionnée** sous chaque
+enfant sujet/prédicat. Ne retenir que les ancres exactes et uniques;
+comparer ensuite candidat → enfant matérialisé et candidat sujet →
+candidat prédicat, sans prendre l'unification pour une preuve d'accord
+indépendante. La prochaine recherche portera sur les rejets de
+contraintes réellement observés et sur les alternatives, sans établir
+une faute globale à partir d'une seule branche.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

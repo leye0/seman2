@@ -423,3 +423,25 @@ et le smoke sont verts dans
 les tests de dialogue de
 [42446924515](https://github.com/leye0/seman2/actions/runs/42446924515)
 sont également verts.
+
+## P2 : séparer les traits du candidat lexical sélectionné des traits unifiés
+
+Une feuille `ChartItem` retenue possède son `lexical_candidate` original.
+Le sondage descend désormais **dans le véritable enfant matérialisé**
+et n'accepte une observation de traits initiaux que si **une seule**
+feuille possède exactement le span, la catégorie et la lemme de l'ancre
+syntaxique résolue. Il relève uniquement les atomes déjà présents de
+`number`, `person`, `vform` et `tense` sur ce candidat, sans inventer
+de valeurs ni retenir une autre lecture du lattice. Les valeurs
+ouvertes, les feuilles absentes et les identités non uniques sont
+explicitement non probantes.
+
+La synthèse compare séparément ces atomes **pré-unification** aux
+atomes de l'enfant NP/VP **post-unification**, puis les deux candidats
+lexicaux sélectionnés si les deux côtés possèdent un trait atomique.
+Elle recalcule et valide toutes les comparaisons, l'identité des têtes
+et la provenance des feuilles, et refuse toute conclusion de faute.
+Un candidat lexical demeure une **hypothèse morphosyntaxique** : même
+une opposition attestée entre ses traits et ceux d'une règle locale
+n'établit pas encore que la phrase originale est agrammaticale.
+Cette étape n'évalue ni signification ni plausibilité contextuelle.

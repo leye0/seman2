@@ -152,3 +152,4 @@ Checkpoint 2026-11-08 UTC: validate exact local role source containment, replay 
 Checkpoint 2026-11-08 UTC: prove local lexical head candidates against the original public Parser.parse lattice without contextual-grammatical claims.
 Checkpoint 2026-11-08 UTC: verify grounded local child feature atoms and compare only actual number/person observations without inferring agreement obligations.
 Checkpoint 2026-11-08 UTC: validate exact compiled local RHS number/person equality contracts without changing canonical grammar or search budgets.
+Checkpoint 2026-11-08 UTC: validate pre-unification grammatical atoms on exact selected lexical leaves versus accepted local child feature structures.
