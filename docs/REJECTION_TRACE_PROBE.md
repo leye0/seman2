@@ -584,3 +584,17 @@ est un guillemet, une copule, un ancrage absent/ambigu, un candidat
 sans atome ou un span non exactement projeté, ce second témoin n'est
 **pas** établi. Il n'existe toujours aucun verdict automatique sur
 le texte source ni sur l'intention de l'auteur.
+
+**Résultat du rejeu**
+[42520753139](https://github.com/leye0/seman2/actions/runs/42520753139) :
+les **2** conflits source distincts franchissent aussi ce seuil plus
+strict. #463 : la tête `mothers` (N, lemme `mother`, source `lexicon`)
+au span `[68,75]` porte intrinsèquement `number=plural` face à `was`
+singulier `[76,79]`; #480 : `they` (PRONOUN, `lexicon`) au span
+`[59,63]` porte `number=plural` face à `says` singulier `[64,68]`.
+La trace dialogue retient **1** conflit, les contrôles marqués **2**,
+avec #463 commun aux deux : on compte **2**, non 3, conflits sources.
+Les traits de leur NP après unification et leurs variables RHS
+correspondent aux mêmes atomes. Le candidat lexical est attesté
+comme **sélectionné dans cette tentative**, pas comme intention
+linguistique certaine de l'auteur. Les 500 cas restent à **474/500**.

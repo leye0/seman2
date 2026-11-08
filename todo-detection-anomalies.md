@@ -369,6 +369,16 @@ distinct des 2 conflits de NP post-unification et refuse les têtes
 non nominales, non uniques ou sans atome explicite. Ne pas augmenter
 artificiellement les succès en interprétant une contrainte héritée.
 
+**Mesure obtenue :** les deux conflits du corpus satisfont également
+ce nouveau seuil d'origine lexicale : #463 `mothers` (N pluriel
+intrinsèque) face à `was` singulier, #480 `they` (PRONOUN pluriel
+intrinsèque) face à `says` singulier. Chaque témoin a sa feuille
+lexicale unique, l'atome avant unification et le contrat RHS partagé.
+Le diagnostic ne prétend pas encore expliquer l'échec de toute une
+phrase. Actions **42520753139** (474/500) et **42520753146**
+(589 tests) vertes. Étape suivante : discriminer les analyses
+alternatives possibles avant toute décision de faute globale.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

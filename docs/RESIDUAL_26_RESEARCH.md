@@ -627,3 +627,18 @@ son atome `number`/`person` pré-unification. Sans ancre nominale
 exacte, feuille unique et atome égal au NP post-unification et à la
 variable RHS, le nouveau témoin est absent. Cette sélection ne lit
 ni le sens de l'énoncé ni les candidats lexicaux concurrents.
+
+Le rejeu
+[42520753139](https://github.com/leye0/seman2/actions/runs/42520753139)
+observe **2 conflits source distincts** satisfaisant même ce seuil :
+
+- #463 : `mothers` `[68,75]`, tête N (`mother`) sélectionnée,
+  `number=plural` **avant** unification contre `was` singulier `[76,79]` ;
+- #480 : `they` `[59,63]`, tête PRONOUN sélectionnée,
+  `number=plural` **avant** unification contre `says` singulier `[64,68]`.
+
+Le corpus strict conserve **474/500** complétions et **26** résidus.
+La CI [42520753146](https://github.com/leye0/seman2/actions/runs/42520753146)
+est verte avec **589 tests**. Les deux témoins sont localement
+probants **dans leurs tentatives de règles**, sans diagnostic de faute
+de phrase tiré de l'absence de parse global.
