@@ -445,3 +445,29 @@ Un candidat lexical demeure une **hypothèse morphosyntaxique** : même
 une opposition attestée entre ses traits et ceux d'une règle locale
 n'établit pas encore que la phrase originale est agrammaticale.
 Cette étape n'évalue ni signification ni plausibilité contextuelle.
+
+**Résultats mesurés**, [Action 42486130297](https://github.com/leye0/seman2/actions/runs/42486130297) :
+le strict demeure **474/500**, avec **26** résidus, **38** couples
+sujet/prédicat locaux et **26** obligations directes de `number` et
+`person` dans leurs règles. Les **76/76 têtes** ont une **feuille
+lexicale sélectionnée unique** au span/catégorie/lemme exacts.
+Seules **10/38 paires** ont deux atomes *lexicaux originaux* de
+`number` comparables (10 égalités), et **6/38** ont deux atomes de
+`person` comparables (6 égalités). Sur les paires à égalité RHS
+directement déclarée, la preuve lexicale des deux côtés est présente
+pour **9** comparaisons de nombre et **5** de personne. On observe
+**zéro différence** entre atome lexical et atome d'enfant lorsque les
+deux sont effectivement renseignés. L'absence de comparaison n'est
+pas une confirmation d'accord.
+
+**Contre-exemple de provenance #220 :** la paire locale de surface
+`I was` dont l'enfant sujet est unifié avec `person=3` sélectionne
+en réalité une tête `I` **catégorie `N`, lemme `i`**, sans personne
+lexicale d'origine. La troisième personne n'est donc **pas une
+propriété intrinsèque prouvée de ce `I`**; elle est obtenue via
+la composition. Cela montre pourquoi les 27 égalités initiales
+entre enfants post-unification ne permettaient aucun jugement
+grammatical autonome. Aucune faute de phrase n'est inférée.
+La CI complète
+[42486130169](https://github.com/leye0/seman2/actions/runs/42486130169)
+est verte (**583 tests** et contrôles Layer 1).

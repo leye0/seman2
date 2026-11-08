@@ -316,6 +316,21 @@ indépendante. La prochaine recherche portera sur les rejets de
 contraintes réellement observés et sur les alternatives, sans établir
 une faute globale à partir d'une seule branche.
 
+**Validation P2 (42486130297 / 42486130169) :** **76/76** têtes
+locales ont une feuille lexicale sélectionnée unique; **10** couples
+ont un nombre d'origine comparable des deux côtés et **6** une
+personne, toutes égales sur les lectures locales retenues. Parmi les
+**26** contrats d'égalité RHS, seuls **9** nombres et **5** personnes
+sont directement comparables avant unification. **0** différence
+lexique/enfant parmi les valeurs toutes deux établies. Le contre-
+exemple #220 (`I was` : `I` sélectionné comme `N` sans `person`
+intrinsèque, mais NP matérialisé avec `person=3`) interdit toujours
+de qualifier une lecture locale comme « bon accord » par la seule
+égalité enfant-enfant. **583 tests**, **474/500** stricts, **26**
+résidus inchangés. Suite : confronter les observations de rejets
+*réellement associés à une dérivation* aux contraintes de grammaire,
+sans reconstruire une faute présumée à partir de l'absence d'analyse.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

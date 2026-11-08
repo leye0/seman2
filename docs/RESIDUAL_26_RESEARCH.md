@@ -541,3 +541,21 @@ des traits du NP/VP après unification et des obligations RHS déjà
 mesurées. Les différences sont des preuves de provenance des **lectures
 grammaticales candidates**, pas des verdicts sur le texte original,
 et aucune analyse sémantique n'intervient.
+
+Le rejeu
+[42486130297](https://github.com/leye0/seman2/actions/runs/42486130297)
+valide **76/76** ancres lexicales sélectionnées uniques, mais seulement
+**10** paires avec un nombre lexical explicite sur les deux têtes et
+**6** avec une personne : toutes égales dans cet échantillon de
+lectures localement acceptées; **aucune** différence lexique → enfant
+sur des atomes directement comparables. Parmi les **26** contrats
+d'égalité RHS déjà prouvés, **9** paires ont deux nombres lexicaux
+comparables et **5** deux personnes. L'illustration #220 est
+fondamentale : dans la composition locale `I was` à troisième personne,
+la tête `I` sélectionnée est **un nom `N` (`i`)**, sans trait lexical
+de personne, et non le pronom grammatical `I` intrinsèquement à la
+première personne. Ce témoin signale une lecture grammaticale
+alternative du parseur, **pas** une faute démontrée de l'auteur.
+Le score strict reste **474/500**, **26** résidus; la CI
+[42486130169](https://github.com/leye0/seman2/actions/runs/42486130169)
+est verte avec **583 tests**.
