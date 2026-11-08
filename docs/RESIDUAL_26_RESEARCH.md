@@ -606,5 +606,14 @@ spans originaux exacts. Une synthèse distincte vérifie la variable
 RHS partagée de nombre/personne et l'opposition réelle de l'atome
 verbal proposé. Cela distingue un accord *localement tenté* du simple
 rejet lexical isolé, sans déclarer la faute de phrase et sans inférer
-le bon arbre global. Les anciennes données ne permettent pas encore
-ce dénombrement : nouvelle CI diagnostique requise.
+le bon arbre global. Le rejeu
+[42508955694](https://github.com/leye0/seman2/actions/runs/42508955694)
+produit **2 conflits de source distincts**, tous deux sur `number` :
+#463 `your mothers` `[63,75]` / `was` `[76,79]`, liés par `?n_whr`,
+et #480 `they` `[59,63]` / `says` `[64,68]`, liés par `?n_tag`.
+Un témoin #463 apparaît à la fois dans le rejeu dialogue et le contrôle
+marqué (ne pas le recompter). Le rapport mesure **1** conflit en
+dialogue, **2** dans les contrôles marqués, **0** dans l'échantillon
+unscoped; cela ne constitue pas une fréquence exhaustive. La qualité
+canonique demeure **474/500**, 26 résidus. La suite Layer 1 est verte
+à **588 tests** ([42508955710](https://github.com/leye0/seman2/actions/runs/42508955710)).

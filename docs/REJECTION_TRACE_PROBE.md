@@ -555,5 +555,14 @@ essai. Le sujet a été accepté **dans cet essai partiel**, pas
 nécessairement sous la bonne lecture intrinsèque du texte; le verbe,
 la règle complète et la phrase ne l'ont **pas** été. `same_rule_attempt`
 ne doit donc jamais être présenté comme `sentence_fault_proven`.
-Les traces antérieures ne contiennent pas ces frères antérieurs : une
-nouvelle exécution des diagnostics est nécessaire pour mesurer ce lien.
+Les traces antérieures ne contenaient pas ces frères antérieurs. La
+nouvelle [Action 42508955694](https://github.com/leye0/seman2/actions/runs/42508955694)
+confirme **deux témoins distincts dans le texte source** : #463,
+`your mothers` `[63,75]` (NP pluriel) face à `was` `[76,79]`
+(COPULA singulier), contrat commun `?n_whr` ; #480, `they` `[59,63]`
+(NP pluriel) face à `says` `[64,68]` (V singulier), contrat commun
+`?n_tag`. Le premier apparaît en rejeu dialogue et en contrôle marqué,
+le second en contrôle marqué : **3 observations cumulées entre canaux, mais
+seulement 2 conflits source distincts**. Aucune n'est comptée comme
+faute prouvée de la phrase par ce seul instrument. La couverture
+canonique reste **474/500**.
