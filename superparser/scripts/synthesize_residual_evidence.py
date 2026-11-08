@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from seman_parser.local_role_proofs import (
-    NOMINAL_SUBJECT_HEADS, PREDICATE_EVENT_HEADS,
+    GROUNDABLE_ROLE_FEATURES, NOMINAL_SUBJECT_HEADS, PREDICATE_EVENT_HEADS,
 )
 
 SCHEMA = "seman2-residual-evidence-synthesis-v1"
@@ -120,6 +120,41 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
             "alternate_same_span_categories": alternatives,
             "head_lexical_candidate_present": audit["head_lexical_candidate_present"],
             "contextual_plausibility_proven": False,
+            "grammatical_conflict_proven": False,
+        }
+
+    def feature_observation(pair):
+        atoms = pair.get("materialized_child_feature_atoms")
+        comparisons = pair.get("cross_child_grounded_atom_comparisons")
+        if atoms is None and comparisons is None:
+            return None  # Earlier independently verified role samples.
+        if (not isinstance(atoms, Mapping)
+                or set(atoms) != {"subject", "predicate"}
+                or not isinstance(comparisons, list)
+                or pair.get("grammatical_agreement_requirement_proven") is not False):
+            raise ValueError("Role-child feature evidence is missing its limits")
+        for child in ("subject", "predicate"):
+            observed = atoms[child]
+            if (not isinstance(observed, Mapping)
+                    or any(key not in GROUNDABLE_ROLE_FEATURES
+                           or not isinstance(value, str) or not value
+                           or value.startswith("?")
+                           for key, value in observed.items())):
+                raise ValueError("Role-child feature evidence contains ungrounded atoms")
+        expected = [{
+            "feature": key,
+            "subject_atom": atoms["subject"][key],
+            "predicate_atom": atoms["predicate"][key],
+            "same_atom": atoms["subject"][key] == atoms["predicate"][key],
+        } for key in ("number", "person")
+            if key in atoms["subject"] and key in atoms["predicate"]]
+        if comparisons != expected:
+            raise ValueError("Cross-child atom comparisons must come from actual feature values")
+        return {
+            "materialized_child_feature_atoms": {
+                name: dict(atoms[name]) for name in ("subject", "predicate")},
+            "cross_child_grounded_atom_comparisons": comparisons,
+            "grammatical_agreement_requirement_proven": False,
             "grammatical_conflict_proven": False,
         }
 
@@ -243,6 +278,7 @@ def _local_proof_view(local: Mapping[str, Any] | None, *,
                     "category": pair["category"],
                     "analysis_span": pair["analysis_span"],
                     "source_span": source_span(pair),
+                    "local_child_feature_observation": feature_observation(pair),
                     **{name: {
                         "role": pair[name]["role"],
                         "child_index": pair[name]["child_index"],
@@ -661,6 +697,20 @@ def synthesize(
                          .get("resolved_local_role_pairs") or {}).get("pairs", [])
             for head in (pair["subject"], pair["predicate"])
             if head["lexical_lattice_evidence"] is not None),
+        "local_role_pairs_with_child_feature_observation_sampled": sum(
+            pair.get("local_child_feature_observation") is not None
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])),
+        "local_role_pairs_with_comparable_grounded_number_atoms_sampled": sum(
+            any(c["feature"] == "number" for c in
+                pair["local_child_feature_observation"]["cross_child_grounded_atom_comparisons"])
+            for row in rows for trace in row["sampled_local_rejection_evidence"].values()
+            if trace and trace.get("independent_local_probe")
+            for pair in (trace["independent_local_probe"]
+                         .get("resolved_local_role_pairs") or {}).get("pairs", [])
+            if pair.get("local_child_feature_observation") is not None),
         "shared_predicate_heads_with_multiple_local_subject_candidates": sum(
             len(row["shared_predicate_local_subject_candidates"]) for row in rows),
         "cases_with_multiple_local_subject_candidates_for_shared_predicate": sum(
@@ -780,6 +830,16 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                                 f"→ {predicate['role']} head "
                                 f"{predicate['head_source_span'] or predicate['head_analysis_span']}; "
                                 f"locally validated `{pair['category']}` {pair['analysis_span']}")
+                            features = pair.get("local_child_feature_observation")
+                            if features is not None:
+                                lines.append(
+                                    "      - Materialized child atom observations: "
+                                    + json.dumps(features["materialized_child_feature_atoms"],
+                                                 ensure_ascii=False, sort_keys=True)
+                                    + "; cross-child comparable atoms: "
+                                    + json.dumps(features["cross_child_grounded_atom_comparisons"],
+                                                 ensure_ascii=False)
+                                    + "; no agreement requirement or fault proven")
                             for name, head in (("subject", subject), ("predicate", predicate)):
                                 audit = head["lexical_lattice_evidence"]
                                 if audit is not None:

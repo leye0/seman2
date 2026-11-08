@@ -150,3 +150,4 @@ Checkpoint 2026-11-08 UTC: verify opt-in resolved subject/predicate role links d
 Checkpoint 2026-11-08 UTC: reject inherited OPEN-QUOTE and COPULA anchors as nominal subjects; revalidate strict Layer 1.
 Checkpoint 2026-11-08 UTC: validate exact local role source containment, replay deduplication and shared-predicate subject candidates with no grammatical fault inference.
 Checkpoint 2026-11-08 UTC: prove local lexical head candidates against the original public Parser.parse lattice without contextual-grammatical claims.
+Checkpoint 2026-11-08 UTC: verify grounded local child feature atoms and compare only actual number/person observations without inferring agreement obligations.

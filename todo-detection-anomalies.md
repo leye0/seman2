@@ -263,6 +263,14 @@ span. **575 tests** passent, le strict reste **474/500**. Ce résultat
 borne la suite : mettre en concurrence les analyses *contextuelles*
 au lieu de qualifier d'erronées des entrées lexicales existantes.
 
+**Prochaine preuve locale P2 :** les enfants effectivement matérialisés
+des 38 paires peuvent maintenant fournir des atomes sûrs de `number`,
+`person`, `vform`, `tense`. Les comparaisons nombre/personne ne sont
+effectuées que lorsque les deux valeurs sont atomiques; aucune
+obligation d'accord ni faute n'est présumée. Pour démontrer un conflit,
+il reste à relier ces deux atomes à une **contrainte de règle applicable**
+et au rattachement global ou local adéquat.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

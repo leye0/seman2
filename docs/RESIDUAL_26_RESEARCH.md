@@ -475,3 +475,16 @@ au lexique ne garantit pas une lecture recevable en contexte.
 La CI Layer 1
 [42441843750](https://github.com/leye0/seman2/actions/runs/42441843750)
 est verte avec **575 tests**.
+
+### P2 : traits morphosyntaxiques des enfants locaux
+
+Une nouvelle observation des constituants acceptés conserve les atomes
+matérialisés `number`, `person`, `vform`, `tense` des enfants portant
+les liens sujet/prédicat. Elle signale uniquement les égalités ou
+différences de `number`/`person` **effectivement renseignées des deux
+côtés**. Une variable, une disjonction et un trait non présent ne sont
+jamais traités comme des atomes établis. Aucune obligation d'accord
+grammatical n'est inférée de ces valeurs isolées et le statut des
+phrases reste inchangé. Les oppositions constatées ouvriront une
+recherche ciblée dans les règles et analyses alternatives, pas un
+classement automatique comme anomalie.

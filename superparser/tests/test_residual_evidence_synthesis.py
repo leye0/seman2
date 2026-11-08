@@ -191,6 +191,7 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertEqual(summary["incomplete_replays_with_independent_local_proofs"], 1)
         self.assertEqual(summary["resolved_local_subject_predicate_pairs_sampled"], 2)
         self.assertEqual(summary["distinct_resolved_local_role_pairs_by_case"], 2)
+        self.assertEqual(summary["local_role_pairs_with_child_feature_observation_sampled"], 0)
         self.assertEqual(
             summary["cases_with_multiple_local_subject_candidates_for_shared_predicate"], 0)
         self.assertTrue(summary["source_identity_validated"])
@@ -367,6 +368,43 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
                     "subject"]["lexical_lattice_evidence"][field] = value
                 with self.assertRaises(ValueError):
                     synthesize(*changed)
+
+    def test_grounded_child_atoms_are_compared_without_inventing_grammar_requirement(self):
+        args = fixture()
+        pair = args[4][0]["scoped_dialogue"]["rejection_trace"][
+            "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0]
+        pair["materialized_child_feature_atoms"] = {
+            "subject": {"number": "plural", "person": "3"},
+            "predicate": {"number": "singular", "vform": "finite"},
+        }
+        pair["cross_child_grounded_atom_comparisons"] = [{
+            "feature": "number", "subject_atom": "plural",
+            "predicate_atom": "singular", "same_atom": False,
+        }]
+        pair["grammatical_agreement_requirement_proven"] = False
+        rows, summary = synthesize(*args)
+        self.assertEqual(summary["local_role_pairs_with_child_feature_observation_sampled"], 1)
+        self.assertEqual(summary["local_role_pairs_with_comparable_grounded_number_atoms_sampled"], 1)
+        annotated = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "independent_local_probe"]["resolved_local_role_pairs"]["pairs"][0][
+                    "local_child_feature_observation"]
+        self.assertFalse(annotated["grammatical_conflict_proven"])
+        self.assertFalse(annotated["grammatical_agreement_requirement_proven"])
+        for field, value in (("same_atom", True),):
+            with self.subTest(field=field):
+                bad = deepcopy(args)
+                bad[4][0]["scoped_dialogue"]["rejection_trace"][
+                    "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0][
+                        "cross_child_grounded_atom_comparisons"][0][field] = value
+                with self.assertRaisesRegex(ValueError, "comparisons"):
+                    synthesize(*bad)
+        bad = deepcopy(args)
+        bad[4][0]["scoped_dialogue"]["rejection_trace"][
+            "independent_local_probe"]["validated_local_role_pairs"]["pairs"][0][
+                "materialized_child_feature_atoms"]["subject"]["number"] = "?unknown"
+        with self.assertRaisesRegex(ValueError, "ungrounded"):
+            synthesize(*bad)
 
     def test_wrong_identity_status_targets_and_trace_claims_fail_closed(self):
         mutators = [

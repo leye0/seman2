@@ -82,6 +82,30 @@ class LocalResolvedRoleTests(unittest.TestCase):
         self.assertEqual([x["predicate"]["role"] for x in pairs],
                          ["predicate"])
 
+    def test_child_features_are_observed_without_asserting_agreement(self):
+        children = (
+            Obj(start=0, end=4, category="NP", features=Obj(as_dict=lambda: {
+                "number": "plural", "person": "3", "vform": ["finite", "base"],
+            })),
+            Obj(start=5, end=16, category="VP", features=Obj(as_dict=lambda: {
+                "number": "singular", "person": "?unbound", "vform": "finite",
+            })),
+        )
+        pair = resolved_local_subject_predicate_pairs(item(children=children, links=[
+            Obj(relation="subject", target="lex:0:4:PRONOUN:they", child_index=0),
+            Obj(relation="event", target="lex:5:11:V:says", child_index=1),
+        ]))[0]
+        self.assertEqual(pair["materialized_child_feature_atoms"], {
+            "subject": {"number": "plural", "person": "3"},
+            "predicate": {"number": "singular", "vform": "finite"},
+        })
+        self.assertEqual(pair["cross_child_grounded_atom_comparisons"], [{
+            "feature": "number", "subject_atom": "plural",
+            "predicate_atom": "singular", "same_atom": False,
+        }])
+        self.assertFalse(pair["grammatical_agreement_requirement_proven"])
+        self.assertFalse(pair["grammatical_conflict_proven"])
+
 
 if __name__ == "__main__":
     unittest.main()

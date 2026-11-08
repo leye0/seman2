@@ -340,3 +340,24 @@ localement unifiées restent des **candidats**, pas des corrections.
 L'Action
 [42441843750](https://github.com/leye0/seman2/actions/runs/42441843750)
 confirme **575 tests** et les contrôles de qualité Layer 1.
+
+## P2 : comparer des atomes de traits réellement matérialisés
+
+Après la vérification des têtes, les mêmes `ChartItem` locaux acceptés
+livrent maintenant les traits *de leurs enfants sujet et prédicat*
+effectivement matérialisés : `number`, `person`, `vform` et `tense`.
+Seules les valeurs **atomiques** du `FeatureStructure` sont retenues;
+une variable `?…`, un `TOP`, une disjonction ou un trait absent reste
+non comparable. Les atomes `number` et `person` présents sur les **deux**
+enfants sont comparés en égalité/différence, avec leurs valeurs
+originales, sous `cross_child_grounded_atom_comparisons`.
+
+Le fait de voir `plural` d'un côté et `singular` de l'autre n'est **pas
+en soi** une preuve de faute ni même une preuve que la règle locale
+exige leur accord : `grammatical_agreement_requirement_proven=false` et
+`grammatical_conflict_proven=false`. Pour franchir cette étape il
+faudra identifier dans la règle grammaticale elle-même une contrainte
+applicable et ses rattachements, et confronter les lectures rivales.
+La synthèse recalcule les comparaisons depuis les atomes conservés et
+refuse une valeur ouverte ou une conclusion surévaluée. Les anciens
+artefacts sans ces observations restent explicitement non mesurés.

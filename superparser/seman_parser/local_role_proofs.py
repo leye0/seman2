@@ -21,6 +21,23 @@ NOMINAL_SUBJECT_HEADS = frozenset({
 PREDICATE_EVENT_HEADS = frozenset({
     "V", "COPULA", "AUX", "AUX-BE",
 })
+GROUNDABLE_ROLE_FEATURES = ("number", "person", "vform", "tense")
+
+
+def _grounded_child_atoms(child: Any) -> dict[str, str]:
+    """Inspect actual materialized child features, excluding open values.
+
+    Strings here are the existing FeatureStructure serialization of atoms;
+    `?variables`, lists of alternatives, nested structures and TOP cannot
+    justify comparisons. No speculative lexical agreement is introduced.
+    """
+    features = getattr(child, "features", None)
+    data = features.as_dict() if features is not None else {}
+    if not isinstance(data, dict):
+        return {}
+    return {key: value for key in GROUNDABLE_ROLE_FEATURES
+            if isinstance((value := data.get(key)), str)
+            and value and not value.startswith("?")}
 
 
 def _resolved_link(link: Any, children: tuple[Any, ...]) -> dict[str, Any] | None:
@@ -93,6 +110,15 @@ def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
             if key in seen:
                 continue
             seen.add(key)
+            subject_atoms = _grounded_child_atoms(children[subject["child_index"]])
+            predicate_atoms = _grounded_child_atoms(children[predicate["child_index"]])
+            comparisons = [{
+                "feature": key,
+                "subject_atom": subject_atoms[key],
+                "predicate_atom": predicate_atoms[key],
+                "same_atom": subject_atoms[key] == predicate_atoms[key],
+            } for key in ("number", "person")
+                if key in subject_atoms and key in predicate_atoms]
             result.append({
                 "proof_basis": "accepted_local_rule_with_resolved_syntax_links",
                 "category": item.category,
@@ -100,6 +126,12 @@ def resolved_local_subject_predicate_pairs(item: Any) -> list[dict[str, Any]]:
                 "analysis_span": [item.start, item.end],
                 "subject": {"role": "subject", **subject},
                 "predicate": {"role": role, **predicate},
+                "materialized_child_feature_atoms": {
+                    "subject": subject_atoms,
+                    "predicate": predicate_atoms,
+                },
+                "cross_child_grounded_atom_comparisons": comparisons,
+                "grammatical_agreement_requirement_proven": False,
                 "same_accepted_local_composition": True,
                 "global_tree_proven": False,
                 "whole_sentence_relation_proven": False,
