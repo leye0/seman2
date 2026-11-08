@@ -1042,6 +1042,9 @@ class _LazyMaterializer:
         required_features: Sequence[str | int] = (),
         source_rule_id: str | None = None,
         source_child_index: int | None = None,
+        source_rhs_feature_terms: dict[str, Any] | None = None,
+        source_rhs_role_exports: dict[str, str] | None = None,
+        preceding_materialized_siblings: Sequence[dict[str, Any]] = (),
     ) -> CompactAnalysis | None:
         required = constraint if constraint is not None else FeatureStructure.empty()
         required_ids = _required_feature_ids(required_features)
@@ -1068,6 +1071,13 @@ class _LazyMaterializer:
             if source_rule_id is not None:
                 frame["via_rule_id"] = source_rule_id
                 frame["via_child_index"] = source_child_index
+                if source_rhs_feature_terms is not None:
+                    frame["rhs_feature_terms"] = source_rhs_feature_terms
+                if source_rhs_role_exports is not None:
+                    frame["rhs_role_exports"] = source_rhs_role_exports
+                if preceding_materialized_siblings:
+                    frame["preceding_materialized_siblings"] = list(
+                        preceding_materialized_siblings)
             self.rejection_trace.requests.append(frame)
         try:
             analysis = self._get_contextual(
@@ -1386,11 +1396,45 @@ class _LazyMaterializer:
         _lhs_merged, env = lhs_result
         for index, (child_id, rank) in enumerate(zip(path, ranks)):
             child_constraint = rule.rhs[index].features
+            # Opt-in diagnostic provenance: these are analyses *actually*
+            # accepted for earlier RHS positions in this very rule attempt.
+            # Their features are post-unification observations, not proof
+            # that the entire rule (or sentence) has been accepted.
+            preceding = []
+            if self.rejection_trace is not None:
+                for prior_index, prior in enumerate(combo):
+                    prior_symbol = rule.rhs[prior_index]
+                    role = prior_symbol.exports.get("referent")
+                    if prior_symbol.category != "NP" or not isinstance(role, str) \
+                            or not (role.startswith("subject") or role == "speaker"):
+                        continue
+                    prior_node = self.forest.nodes[prior.node_id]
+                    observed = prior.features.as_dict()
+                    preceding.append({
+                        "rule_rhs_child_index": prior_index,
+                        "category": prior_node.category,
+                        "analysis_span": [prior_node.start, prior_node.end],
+                        "rhs_feature_terms": prior_symbol.features.as_dict(),
+                        "rhs_role_exports": dict(prior_symbol.exports),
+                        "materialized_child_feature_atoms": {
+                            feature: observed[feature]
+                            for feature in ("number", "person")
+                            if isinstance(observed.get(feature), str)
+                            and observed[feature] and not observed[feature].startswith("?")
+                        },
+                        "accepted_before_current_child_in_same_rule_attempt": True,
+                        "whole_rule_accepted": False,
+                    })
             child = self.get(
                 child_id, rank, child_constraint, env,
                 required_features=rule.rhs[index].requires,
                 source_rule_id=rule.rule_id,
                 source_child_index=index,
+                source_rhs_feature_terms=(rule.rhs[index].features.as_dict()
+                                          if self.rejection_trace is not None else None),
+                source_rhs_role_exports=(dict(rule.rhs[index].exports)
+                                         if self.rejection_trace is not None else None),
+                preceding_materialized_siblings=preceding,
             )
             if child is None:
                 child_bindings, _ = _project_bindings(child_constraint, env)

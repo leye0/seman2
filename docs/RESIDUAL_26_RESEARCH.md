@@ -596,3 +596,15 @@ singulier au span `[64,68]` ne peut remplir le RHS `[1]` pluriel de
 sont déjà attestés **ailleurs** par l'analyse marquée opt-in. Une case
 rejetée ne prouve jamais, à elle seule, que cette lecture est la
 bonne ou que la phrase entière est fautive.
+
+### P2 : provenance d'une tentative d'accord sujet–verbe
+
+Le diagnostic conserve désormais, à chaque demande lexicale verbale,
+les `NP` de rôle `subject`/`speaker` **déjà matérialisés dans le même
+essai de règle**, avec leurs traits observés, leurs cases RHS et leurs
+spans originaux exacts. Une synthèse distincte vérifie la variable
+RHS partagée de nombre/personne et l'opposition réelle de l'atome
+verbal proposé. Cela distingue un accord *localement tenté* du simple
+rejet lexical isolé, sans déclarer la faute de phrase et sans inférer
+le bon arbre global. Les anciennes données ne permettent pas encore
+ce dénombrement : nouvelle CI diagnostique requise.

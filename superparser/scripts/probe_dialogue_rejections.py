@@ -86,10 +86,16 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared,
             ("child_span", "child_reference_span"),
         ))
         if "request_chain" in raw:
-            event["request_chain"] = [
-                mapped_frame(frame, (("analysis_span", "reference_span"),))
-                for frame in raw["request_chain"]
-            ]
+            mapped_chain = []
+            for frame in raw["request_chain"]:
+                request = mapped_frame(frame, (("analysis_span", "reference_span"),))
+                if "preceding_materialized_siblings" in frame:
+                    request["preceding_materialized_siblings"] = [
+                        mapped_frame(sibling, (("analysis_span", "reference_span"),))
+                        for sibling in frame["preceding_materialized_siblings"]
+                    ]
+                mapped_chain.append(request)
+            event["request_chain"] = mapped_chain
         events.append(event)
     mapped["events"] = events
     for pool in ("validated_local_constituents", "independent_local_probe"):

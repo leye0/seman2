@@ -576,6 +576,103 @@ def _trace_view(trace: Mapping[str, Any] | None, *, source_text: str) -> dict[st
         "exhaustive": False,
         "sentence_fault_proven": False,
     }
+    # A narrowly stronger *attempted* agreement witness: an earlier NP was
+    # materialized in this very rule combination, its RHS explicitly exports
+    # a subject/speaker, the current V/COPULA RHS exports an event, both RHS
+    # number/person slots share one exact unification variable, and that
+    # earlier child's grounded atom explains the rejected lexical atom.
+    # No global/selected-tree dependency is inferred from this attempt.
+    attempted_agreements = {}
+    for event in events:
+        if (event.get("stage") != "lexical_unification"
+                or event.get("category") not in {"V", "COPULA"}
+                or event.get("reference_span_mapping") != "exact"
+                or not event.get("direct_atom_conflicts")):
+            continue
+        chain = event.get("request_chain")
+        if not isinstance(chain, list) or not chain or not isinstance(chain[-1], Mapping):
+            continue
+        frame = chain[-1]
+        rule_id = frame.get("via_rule_id")
+        target_index = frame.get("via_child_index")
+        target_rhs = frame.get("rhs_feature_terms")
+        target_exports = frame.get("rhs_role_exports")
+        if (not isinstance(rule_id, str) or not rule_id
+                or type(target_index) is not int or target_index < 1
+                or not isinstance(target_rhs, Mapping)
+                or not isinstance(target_exports, Mapping)
+                or not target_exports.get("event")
+                or frame.get("category") != event.get("category")
+                or frame.get("analysis_span") != event.get("analysis_span")
+                or frame.get("reference_span_mapping") != "exact"
+                or frame.get("reference_span") != event.get("reference_span")):
+            continue
+        pred_span = event["reference_span"]
+        if (not isinstance(pred_span, list) or len(pred_span) != 2
+                or not all(type(x) is int for x in pred_span)
+                or not 0 <= pred_span[0] < pred_span[1] <= len(source_text)
+                or source_text[pred_span[0]:pred_span[1]] != event.get("surface")):
+            continue
+        for subject in frame.get("preceding_materialized_siblings", []):
+            if not isinstance(subject, Mapping):
+                continue
+            role_exports = subject.get("rhs_role_exports")
+            rhs = subject.get("rhs_feature_terms")
+            atoms = subject.get("materialized_child_feature_atoms")
+            subject_span = subject.get("reference_span")
+            subject_role = role_exports.get("referent") if isinstance(role_exports, Mapping) else None
+            if (subject.get("accepted_before_current_child_in_same_rule_attempt") is not True
+                    or subject.get("whole_rule_accepted") is not False
+                    or subject.get("category") != "NP"
+                    or type(subject.get("rule_rhs_child_index")) is not int
+                    or not 0 <= subject["rule_rhs_child_index"] < target_index
+                    or not isinstance(subject_role, str)
+                    or not (subject_role.startswith("subject") or subject_role == "speaker")
+                    or not isinstance(rhs, Mapping) or not isinstance(atoms, Mapping)
+                    or subject.get("reference_span_mapping") != "exact"
+                    or not isinstance(subject_span, list) or len(subject_span) != 2
+                    or not all(type(x) is int for x in subject_span)
+                    or not 0 <= subject_span[0] < subject_span[1] <= len(source_text)
+                    or not (subject_span[1] <= pred_span[0]
+                            or pred_span[1] <= subject_span[0])):
+                continue
+            for conflict in event["direct_atom_conflicts"]:
+                feature = conflict["feature"]
+                if feature not in ("number", "person"):
+                    continue
+                variable = rhs.get(feature)
+                if (not isinstance(variable, str) or not variable.startswith("?")
+                        or len(variable) < 2 or target_rhs.get(feature) != variable
+                        or atoms.get(feature) != conflict["required"]):
+                    continue
+                key = (rule_id, subject["rule_rhs_child_index"], target_index,
+                       tuple(subject_span), tuple(pred_span), feature,
+                       conflict["required"], conflict["offered"])
+                attempted_agreements[key] = {
+                    "proof_basis": "same_attempt_prior_materialized_subject_and_shared_rhs_variable",
+                    "rule_id": rule_id,
+                    "subject_rhs_child_index": subject["rule_rhs_child_index"],
+                    "predicate_rhs_child_index": target_index,
+                    "subject_source_span": list(subject_span),
+                    "subject_source_surface": source_text[subject_span[0]:subject_span[1]],
+                    "predicate_source_span": list(pred_span),
+                    "predicate_source_surface": event["surface"],
+                    "feature": feature,
+                    "shared_rhs_variable": variable,
+                    "materialized_subject_child_atom": atoms[feature],
+                    "rejected_predicate_lexical_atom": conflict["offered"],
+                    "same_rule_attempt": True,
+                    "lexical_subject_intrinsic_atom_proven": False,
+                    "whole_rule_or_sentence_accepted": False,
+                    "sentence_fault_proven": False,
+                }
+    attempted_agreement_view = {
+        "distinct_attempted_agreement_conflicts": len(attempted_agreements),
+        "by_feature": dict(sorted(Counter(key[5] for key in attempted_agreements).items())),
+        "examples": list(attempted_agreements.values())[:12],
+        "exhaustive": False,
+        "sentence_fault_proven": False,
+    }
     priority = [e for e in events if e.get("stage", "").startswith("positive_evidence_")
                 or e.get("stage") == "child_context_exhausted"]
     # Retain only a few already sampled local events; this is neither a
@@ -638,6 +735,8 @@ def _trace_view(trace: Mapping[str, Any] | None, *, source_text: str) -> dict[st
             len(e.get("direct_atom_conflicts", [])) for e in events),
         "attempted_atom_conflict_audit": conflict_audit,
         "exact_rule_rhs_lexical_conflicts": slot_conflicts,
+        "same_attempt_materialized_subject_lexical_predicate_conflicts":
+            attempted_agreement_view,
         "independent_accepted_same_rule_and_span_as_rejected_attempt": {
             "matched_local_rule_spans": len(matches),
             "examples": list(matches.values())[:8],
@@ -769,6 +868,21 @@ def _exact_rule_slot_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
         "distinct_by_feature": dict(sorted(data["features"].items())),
         "whole_sentence_faults_proven": 0,
     } for scope, data in sorted(by_scope.items())}
+
+
+def _same_attempt_agreement_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
+    by_scope: dict[str, Counter[str]] = {}
+    for row in rows:
+        for scope, trace in row["sampled_local_rejection_evidence"].items():
+            if trace is None:
+                continue
+            evidence = trace["same_attempt_materialized_subject_lexical_predicate_conflicts"]
+            by_scope.setdefault(scope, Counter()).update(evidence["by_feature"])
+    return {scope: {
+        "attempted_subject_predicate_conflicts": sum(counts.values()),
+        "by_feature": dict(sorted(counts.items())),
+        "whole_sentence_faults_proven": 0,
+    } for scope, counts in sorted(by_scope.items())}
 
 
 def synthesize(
@@ -1000,6 +1114,8 @@ def synthesize(
             _sampled_conflict_totals(rows),
         "materializer_lexical_conflicts_in_exact_grammar_rhs_slots_by_replay":
             _exact_rule_slot_totals(rows),
+        "same_attempt_subject_predicate_conflicts_by_replay":
+            _same_attempt_agreement_totals(rows),
         "rejected_rules_independently_accepted_at_same_exact_source_span_sampled": sum(
             trace["independent_accepted_same_rule_and_span_as_rejected_attempt"][
                 "matched_local_rule_spans"]
@@ -1168,6 +1284,18 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
         lines.append(f"| `{scope}` | {stats['sampled_materializer_rejections']} | "
                      f"{stats['distinct_rule_slot_atom_conflicts']} | "
                      f"{json.dumps(stats['distinct_by_feature'], sort_keys=True)} |")
+    lines += ["", "### An earlier materialized subject in the same failed rule attempt", "",
+              "A narrower, genuinely relational proof requires a preceding materialized "
+              "subject/speaker NP from **the same rule attempt**, a finite V/COPULA "
+              "candidate rejected later, and a directly shared RHS number/person "
+              "unification variable. The subject child atom is post-unification; "
+              "its intrinsic lexical source and the completed rule remain unproven. "
+              "This is not a full-sentence fault diagnosis.", "",
+              "| Replay lane | Distinct same-attempt conflicts | Features |",
+              "|---|---:|---|"]
+    for scope, stats in summary["same_attempt_subject_predicate_conflicts_by_replay"].items():
+        lines.append(f"| `{scope}` | {stats['attempted_subject_predicate_conflicts']} | "
+                     f"{json.dumps(stats['by_feature'], sort_keys=True)} |")
     lines += ["", "## Local observations by case", ""]
     for r in rows:
         lines += [
@@ -1217,6 +1345,18 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                         f"`{slot['feature']}` requires `{slot['required_atom']}`, "
                         f"candidate offers `{slot['offered_atom']}`; "
                         "no subject–predicate relation or sentence fault proven")
+                attempts = trace["same_attempt_materialized_subject_lexical_predicate_conflicts"]
+                for attempt in attempts["examples"]:
+                    lines.append(
+                        f"  - **Same-attempt agreement candidate**: `{attempt['rule_id']}` "
+                        f"subject `{attempt['subject_source_surface']}` "
+                        f"{attempt['subject_source_span']} has materialized "
+                        f"`{attempt['feature']}={attempt['materialized_subject_child_atom']}`; "
+                        f"predicate `{attempt['predicate_source_surface']}` "
+                        f"{attempt['predicate_source_span']} offers "
+                        f"`{attempt['rejected_predicate_lexical_atom']}`; "
+                        "direct RHS shared variable, **failed rule attempt only**, "
+                        "not a proven sentence error")
                 matches = trace["independent_accepted_same_rule_and_span_as_rejected_attempt"]
                 for match in matches["examples"]:
                     lines.append(

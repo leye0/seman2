@@ -365,6 +365,72 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
                 "materializer_lexical_conflicts_in_exact_grammar_rhs_slots_by_replay"][
                     "scoped_dialogue"]["sampled_materializer_rejections"], 1)
 
+    def test_same_attempt_subject_predicate_conflict_requires_explicit_role_and_shared_slot(self):
+        args = fixture()
+        observation = {
+            "stage": "lexical_unification", "rule_id": None, "category": "V",
+            "analysis_span": [7, 10], "reference_span": [7, 10],
+            "reference_span_mapping": "exact", "surface": "463",
+            "request_chain": [{
+                "category": "V", "analysis_span": [7, 10],
+                "reference_span": [7, 10], "reference_span_mapping": "exact",
+                "via_rule_id": "dialogue_speech_tag_post", "via_child_index": 1,
+                "rhs_feature_terms": {"vform": "finite", "number": "?n", "person": "?p"},
+                "rhs_role_exports": {"event": "report"},
+                "preceding_materialized_siblings": [{
+                    "rule_rhs_child_index": 0, "category": "NP",
+                    "analysis_span": [0, 6], "reference_span": [0, 6],
+                    "reference_span_mapping": "exact",
+                    "rhs_feature_terms": {"number": "?n", "person": "?p"},
+                    "rhs_role_exports": {"referent": "speaker"},
+                    "materialized_child_feature_atoms": {"number": "plural"},
+                    "accepted_before_current_child_in_same_rule_attempt": True,
+                    "whole_rule_accepted": False,
+                }],
+            }],
+            "required_features": {"number": "plural"},
+            "offered_features": {"number": "singular"},
+            "direct_atom_conflicts": [{"feature": "number", "required": "plural",
+                                       "offered": "singular"}],
+        }
+        args[4][0]["scoped_dialogue"]["rejection_trace"]["events"][0] = observation
+
+        rows, summary = synthesize(*args)
+        evidence = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "same_attempt_materialized_subject_lexical_predicate_conflicts"]
+        self.assertEqual(evidence["distinct_attempted_agreement_conflicts"], 1)
+        self.assertEqual(evidence["by_feature"], {"number": 1})
+        self.assertEqual(evidence["examples"][0]["subject_source_surface"], "Source")
+        self.assertEqual(evidence["examples"][0]["predicate_source_surface"], "463")
+        self.assertEqual(evidence["examples"][0]["rule_id"], "dialogue_speech_tag_post")
+        self.assertTrue(evidence["examples"][0]["same_rule_attempt"])
+        self.assertFalse(evidence["examples"][0]["sentence_fault_proven"])
+        self.assertEqual(summary["same_attempt_subject_predicate_conflicts_by_replay"][
+            "scoped_dialogue"]["attempted_subject_predicate_conflicts"], 1)
+
+        for path, value in (
+            (("rhs_feature_terms", "number"), "?another_variable"),
+            (("materialized_child_feature_atoms", "number"), "singular"),
+            (("accepted_before_current_child_in_same_rule_attempt",), False),
+            (("rhs_role_exports", "referent"), "object"),
+            (("reference_span_mapping",), "unavailable"),
+            (("reference_span",), [5, 8]),
+        ):
+            bad = deepcopy(args)
+            sibling = bad[4][0]["scoped_dialogue"]["rejection_trace"][
+                "events"][0]["request_chain"][0]["preceding_materialized_siblings"][0]
+            target = sibling
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            with self.subTest(path=path):
+                rows, _ = synthesize(*bad)
+                actual = next(row for row in rows if row["index"] == 463)[
+                    "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                        "same_attempt_materialized_subject_lexical_predicate_conflicts"]
+                self.assertEqual(actual["distinct_attempted_agreement_conflicts"], 0)
+
     def test_new_failure_remains_unreviewed_and_joined(self):
         args = fixture()
         args[0].append({**deepcopy(args[0][0]), "index": 42, "case_id": "case:42",

@@ -18,6 +18,30 @@ from seman_parser.segmentation import LexicalCandidate, LexicalLattice
 
 
 class RejectionTraceTests(unittest.TestCase):
+    def test_source_mapping_reaches_prior_materialized_subject_in_request_chain(self):
+        class Prepared:
+            @staticmethod
+            def reference_span(start, end):
+                return (start + 11, end + 11)
+
+        raw = {"events": [{
+            "stage": "lexical_unification", "analysis_span": [6, 10],
+            "request_chain": [{
+                "analysis_span": [6, 10],
+                "preceding_materialized_siblings": [{
+                    "analysis_span": [0, 5], "rule_rhs_child_index": 0,
+                    "accepted_before_current_child_in_same_rule_attempt": True,
+                }],
+            }],
+        }]}
+        mapped = map_trace_to_reference(raw, Prepared())
+        event = mapped["events"][0]
+        sibling = event["request_chain"][0]["preceding_materialized_siblings"][0]
+        self.assertEqual(event["reference_span"], [17, 21])
+        self.assertEqual(sibling["analysis_span"], [0, 5])
+        self.assertEqual(sibling["reference_span"], [11, 16])
+        self.assertEqual(sibling["reference_span_mapping"], "exact")
+
     def test_local_head_lattice_audit_preserves_competing_categories_without_ranking(self):
         candidates = tuple(LexicalCandidate(
             0, 2, "as", "as", category, FeatureStructure.build({}),

@@ -346,6 +346,15 @@ locale de candidat; les **deux véritables écarts sujet-verbe** du
 cas 480 sont prouvés indépendamment en mode marqué. P2 n'affirme
 toujours aucune faute à partir d'un parse incomplet.
 
+**Provenance P2 plus stricte :** pendant le même essai de règle,
+conserver les seuls NP `subject`/`speaker` réellement matérialisés
+avant un V/COPULA rejeté. Le conflit local de nombre/personne doit
+être attribuable à la **même variable RHS explicite** et à deux spans
+source exacts, avec un atome de sujet observé et un atome de candidat
+verbal contradictoire. Testé sur témoins synthétiques positifs/négatifs ;
+le nombre sur le vrai corpus attend le rejeu diagnostique. Ni la
+validité de l'arbre entier ni la faute de phrase ne sont établies.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

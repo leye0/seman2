@@ -531,3 +531,29 @@ contrainte de règle**. Le cas 480 a, *séparément*, deux écarts d'accord
 prouvés par son arbre **marqué opt-in**; on ne les infère pas de ce
 rejet isolé, qui ne prouve ni rattachement sujet–prédicat ni erreur de
 phrase. Ce contrôle reste exclusivement morphosyntaxique (Layer 1).
+
+### P2 : sujet matérialisé avant une lecture verbale incompatible
+
+Une instrumentation **opt-in** supplémentaire associe un rejet lexical
+`lexical_unification` aux enfants **déjà matérialisés** aux positions
+précédentes du **même essai de combinaison RHS**, au moment où le verbe
+est demandé. Le rapport ne retient un conflit sujet/prédicat que si :
+
+- l'enfant antérieur est un `NP` dont la position de règle exporte
+  explicitement `referent=subject*` ou `referent=speaker` ;
+- la position courante est `V` ou `COPULA` et exporte un `event` ;
+- les deux positions partagent littéralement la même variable RHS
+  (`number` ou `person`), et la valeur atomique du NP matérialisé est
+  celle qu'exige le contexte du verbe ;
+- le candidat verbal offre un atome opposé, et les positions du sujet
+  et du verbe sont chacune repérées **exactement** dans le texte source.
+
+Cette preuve n'exige **aucun raisonnement lexical ou sémantique** :
+elle s'appuie uniquement sur la règle grammaticale, les traits
+morphosyntaxiques et deux morceaux réellement visités lors du même
+essai. Le sujet a été accepté **dans cet essai partiel**, pas
+nécessairement sous la bonne lecture intrinsèque du texte; le verbe,
+la règle complète et la phrase ne l'ont **pas** été. `same_rule_attempt`
+ne doit donc jamais être présenté comme `sentence_fault_proven`.
+Les traces antérieures ne contiennent pas ces frères antérieurs : une
+nouvelle exécution des diagnostics est nécessaire pour mesurer ce lien.
