@@ -4,7 +4,9 @@ from __future__ import annotations
 from types import SimpleNamespace as Obj
 import unittest
 
-from seman_parser.local_role_proofs import resolved_local_subject_predicate_pairs
+from seman_parser.local_role_proofs import (
+    resolved_local_subject_predicate_pairs, selected_nominal_subject_head_atoms,
+)
 
 
 def item(*, links, children=None):
@@ -16,6 +18,31 @@ def item(*, links, children=None):
 
 
 class LocalResolvedRoleTests(unittest.TestCase):
+    def test_prior_np_selected_nominal_head_original_number_is_not_child_unification(self):
+        lexical = Obj(span_start=5, span_end=9, category="N", lemma="mothers",
+                      source="wordnet", features=Obj(as_dict=lambda: {
+                          "number": "plural", "person": "?unknown"}))
+        word = Obj(lexical_candidate=lexical, children=())
+        subject = Obj(start=0, end=9, category="NP",
+                      features=Obj(as_dict=lambda: {"number": "singular"}),
+                      syntax=Obj(anchors={"head": "lex:5:9:N:mothers",
+                                          "referent": "lex:5:9:N:mothers"}),
+                      children=(word,))
+        evidence = selected_nominal_subject_head_atoms(subject)
+        self.assertEqual(evidence["status"], "unique_selected_nominal_head")
+        self.assertEqual(evidence["head_analysis_span"], [5, 9])
+        self.assertEqual(evidence["candidate_feature_atoms"], {"number": "plural"})
+        self.assertEqual(evidence["candidate_source"], "wordnet")
+        self.assertFalse(evidence["whole_sentence_grammaticality_proven"])
+
+        subject.syntax.anchors["head"] = "lex:5:9:COPULA:was"
+        self.assertEqual(selected_nominal_subject_head_atoms(subject)["status"],
+                         "not_uniquely_proven")
+        subject.syntax.anchors["head"] = "lex:5:9:N:mothers"
+        subject.children = (word, Obj(lexical_candidate=lexical, children=()))
+        self.assertEqual(selected_nominal_subject_head_atoms(subject)["status"],
+                         "not_uniquely_proven")
+
     def test_pair_requires_both_resolved_occurrence_anchors_same_rule(self):
         analysis = item(links=[
             Obj(relation="subject", target="lex:0:4:PROPER-NOUN:John", child_index=0),

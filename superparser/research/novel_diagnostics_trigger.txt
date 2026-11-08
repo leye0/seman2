@@ -67,3 +67,4 @@ Checkpoint 2026-11-08 UTC: compare original selected lexical-candidate number/pe
 Checkpoint 2026-11-08 UTC: audit attempted rule/lexical atom conflicts separately and identify same-rule same-span independent positive local witnesses within unchanged 500-case diagnostics.
 Checkpoint 2026-11-08 UTC: classify contextual lexical_unification by exact RHS grammar slot and source position; report deduplicated contradictions without inferring global grammatical faults.
 Checkpoint 2026-11-08 UTC: measure same-attempt prior materialized subject NP plus shared RHS number/person variable for lexically rejected V/COPULA in exact original source coordinates.
+Checkpoint 2026-11-08 UTC: measure same-attempt subject NP's uniquely selected original nominal-head lexical agreement atoms against rejected V/COPULA with exact original source spans.

@@ -8,7 +8,7 @@ intent, alternatives or grammatical faults.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Mapping
 
 
 # A resolved referent is not automatically a nominal head: the current
@@ -86,6 +86,63 @@ def _selected_lexical_head_atoms(child: Any, role: dict[str, Any]) -> dict[str, 
         "matching_selected_leaf_count": 1,
         "candidate_feature_atoms": _grounded_child_atoms(candidate),
         "candidate_source": candidate.source,
+        "whole_sentence_grammaticality_proven": False,
+    }
+
+
+def selected_nominal_subject_head_atoms(item: Any) -> dict[str, Any]:
+    """Observe an NP's *original* selected nominal-head lexical features.
+
+    A failed parent rule can have a successfully materialized NP child, but
+    that child's number may have been supplied by contextual unification.
+    Follow only an occurrence anchor actually exported by the NP and require
+    exactly one matching selected lexical descendant; never infer a head
+    from its surface, lexical lattice alternatives or sentence meaning.
+    """
+    unknown: dict[str, Any] = {
+        "proof_basis": "selected_np_nominal_head_anchor_and_unique_lexical_leaf",
+        "status": "not_uniquely_proven",
+        "head_analysis_span": None,
+        "head_lexical_category": None,
+        "head_lemma": None,
+        "candidate_feature_atoms": {},
+        "candidate_source": None,
+        "whole_sentence_grammaticality_proven": False,
+    }
+    if getattr(item, "category", None) != "NP":
+        return unknown
+    anchors = getattr(getattr(item, "syntax", None), "anchors", {})
+    if not isinstance(anchors, Mapping):
+        return unknown
+    anchor = anchors.get("head") or anchors.get("referent")
+    if not isinstance(anchor, str):
+        return unknown
+    fields = anchor.split(":", 4)
+    if len(fields) != 5 or fields[0] != "lex" \
+            or fields[3] not in NOMINAL_SUBJECT_HEADS or not fields[4]:
+        return unknown
+    try:
+        start, end = int(fields[1]), int(fields[2])
+    except ValueError:
+        return unknown
+    if not item.start <= start < end <= item.end:
+        return unknown
+    proof = _selected_lexical_head_atoms(item, {
+        "head_analysis_span": [start, end],
+        "head_lexical_category": fields[3],
+        "head_lemma": fields[4],
+    })
+    return {
+        "proof_basis": "selected_np_nominal_head_anchor_and_unique_lexical_leaf",
+        "status": ("unique_selected_nominal_head"
+                   if proof["status"] == "unique_selected_lexical_leaf"
+                   else "not_uniquely_proven"),
+        "head_analysis_span": [start, end],
+        "head_lexical_category": fields[3],
+        "head_lemma": fields[4],
+        "candidate_feature_atoms": proof["candidate_feature_atoms"],
+        "candidate_source": proof["candidate_source"],
+        "matching_selected_leaf_count": proof["matching_selected_leaf_count"],
         "whole_sentence_grammaticality_proven": False,
     }
 

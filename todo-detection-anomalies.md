@@ -361,6 +361,14 @@ même #463) : ne pas additionner ces canaux comme trois erreurs.
 Ni la validité de l'arbre entier ni la faute de phrase ne sont établies
 par cet instrument seul.
 
+**Prochain verrou P2 en implémentation :** pour les conflits déjà
+observés dans le même essai de règle, vérifier maintenant que l'atome
+de nombre/personne était porté par la **feuille lexicale sélectionnée
+de la tête nominale**, avant l'unification. Le nouveau décompte est
+distinct des 2 conflits de NP post-unification et refuse les têtes
+non nominales, non uniques ou sans atome explicite. Ne pas augmenter
+artificiellement les succès en interprétant une contrainte héritée.
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.

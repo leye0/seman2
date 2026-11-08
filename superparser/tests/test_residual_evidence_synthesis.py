@@ -384,6 +384,15 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
                     "rhs_feature_terms": {"number": "?n", "person": "?p"},
                     "rhs_role_exports": {"referent": "speaker"},
                     "materialized_child_feature_atoms": {"number": "plural"},
+                    "selected_subject_nominal_head_lexical_evidence": {
+                        "proof_basis": "selected_np_nominal_head_anchor_and_unique_lexical_leaf",
+                        "status": "unique_selected_nominal_head",
+                        "head_analysis_span": [0, 6], "head_reference_span": [0, 6],
+                        "head_reference_span_mapping": "exact",
+                        "head_lexical_category": "PRONOUN", "head_lemma": "they",
+                        "candidate_feature_atoms": {"number": "plural"},
+                        "candidate_source": "lexicon", "matching_selected_leaf_count": 1,
+                    },
                     "accepted_before_current_child_in_same_rule_attempt": True,
                     "whole_rule_accepted": False,
                 }],
@@ -408,6 +417,41 @@ class ResidualEvidenceSynthesisTests(unittest.TestCase):
         self.assertFalse(evidence["examples"][0]["sentence_fault_proven"])
         self.assertEqual(summary["same_attempt_subject_predicate_conflicts_by_replay"][
             "scoped_dialogue"]["attempted_subject_predicate_conflicts"], 1)
+        stronger = next(row for row in rows if row["index"] == 463)[
+            "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                "same_attempt_original_lexical_subject_predicate_conflicts"]
+        self.assertEqual(stronger["distinct_original_lexical_subject_predicate_conflicts"], 1)
+        self.assertEqual(stronger["examples"][0]["subject_lexical_head_source_surface"],
+                         "Source")
+        self.assertTrue(stronger["examples"][0]["lexical_subject_intrinsic_atom_proven"])
+        self.assertFalse(stronger["examples"][0]["sentence_fault_proven"])
+        self.assertEqual(summary[
+            "same_attempt_original_lexical_subject_predicate_conflicts_by_replay"][
+                "scoped_dialogue"]["original_lexical_subject_predicate_conflicts"], 1)
+
+        for path, value in (
+            (("status",), "not_uniquely_proven"),
+            (("candidate_feature_atoms", "number"), "singular"),
+            (("head_reference_span_mapping",), "unavailable"),
+            (("head_reference_span",), [5, 8]),
+            (("head_lexical_category",), "COPULA"),
+            (("matching_selected_leaf_count",), 2),
+        ):
+            bad = deepcopy(args)
+            head = bad[4][0]["scoped_dialogue"]["rejection_trace"][
+                "events"][0]["request_chain"][0]["preceding_materialized_siblings"][0][
+                    "selected_subject_nominal_head_lexical_evidence"]
+            target = head
+            for field in path[:-1]:
+                target = target[field]
+            target[path[-1]] = value
+            with self.subTest(path=path):
+                rows, _ = synthesize(*bad)
+                evidence = next(row for row in rows if row["index"] == 463)[
+                    "sampled_local_rejection_evidence"]["scoped_dialogue"][
+                        "same_attempt_original_lexical_subject_predicate_conflicts"]
+                self.assertEqual(evidence[
+                    "distinct_original_lexical_subject_predicate_conflicts"], 0)
 
         for path, value in (
             (("rhs_feature_terms", "number"), "?another_variable"),

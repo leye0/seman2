@@ -566,3 +566,21 @@ le second en contrôle marqué : **3 observations cumulées entre canaux, mais
 seulement 2 conflits source distincts**. Aucune n'est comptée comme
 faute prouvée de la phrase par ce seul instrument. La couverture
 canonique reste **474/500**.
+
+### P2 : vérifier l'atome lexical d'origine de la tête nominale
+
+La preuve précédente conserve un `NP` **après** unification. Son atome
+`number` peut provenir du contexte grammatical et non de ses mots.
+Le nouveau niveau de preuve descend donc dans **ce même NP matérialisé**,
+lit l'ancre nominale `head`/`referent` réellement exportée, exige une
+seule feuille lexicale sélectionnée avec exactement les mêmes span,
+catégorie et lemme, puis lit ses traits initiaux non unifiés.
+
+La synthèse compare `number`/`person` du candidat lexical original
+du sujet, la valeur du NP matérialisé et la valeur exigée par la
+variable RHS commune. Les trois doivent être le **même atome explicite**;
+le candidat verbal rejeté doit proposer un atome différent. Si la tête
+est un guillemet, une copule, un ancrage absent/ambigu, un candidat
+sans atome ou un span non exactement projeté, ce second témoin n'est
+**pas** établi. Il n'existe toujours aucun verdict automatique sur
+le texte source ni sur l'intention de l'auteur.

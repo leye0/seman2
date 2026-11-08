@@ -583,6 +583,7 @@ def _trace_view(trace: Mapping[str, Any] | None, *, source_text: str) -> dict[st
     # earlier child's grounded atom explains the rejected lexical atom.
     # No global/selected-tree dependency is inferred from this attempt.
     attempted_agreements = {}
+    original_head_agreements = {}
     for event in events:
         if (event.get("stage") != "lexical_unification"
                 or event.get("category") not in {"V", "COPULA"}
@@ -666,10 +667,53 @@ def _trace_view(trace: Mapping[str, Any] | None, *, source_text: str) -> dict[st
                     "whole_rule_or_sentence_accepted": False,
                     "sentence_fault_proven": False,
                 }
+                # Stronger, independent morphology check: the actual NP's
+                # selected nominal head must have had this atomic feature
+                # *before* any contextual unification, with a unique leaf.
+                # An NP's post-unification value alone is insufficient.
+                head = subject.get("selected_subject_nominal_head_lexical_evidence")
+                if not isinstance(head, Mapping):
+                    continue
+                head_span = head.get("head_reference_span")
+                lexical_atoms = head.get("candidate_feature_atoms")
+                if (head.get("proof_basis") !=
+                    "selected_np_nominal_head_anchor_and_unique_lexical_leaf"
+                        or head.get("status") != "unique_selected_nominal_head"
+                        or head.get("matching_selected_leaf_count") != 1
+                        or head.get("head_lexical_category") not in {
+                            "N", "PRONOUN", "PROPER-NOUN", "WH-PRONOUN"}
+                        or head.get("head_reference_span_mapping") != "exact"
+                        or not isinstance(head_span, list) or len(head_span) != 2
+                        or not all(type(x) is int for x in head_span)
+                        or not subject_span[0] <= head_span[0] < head_span[1] <= subject_span[1]
+                        or not isinstance(lexical_atoms, Mapping)
+                        or lexical_atoms.get(feature) != conflict["required"]):
+                    continue
+                original_head_agreements[key] = {
+                    **attempted_agreements[key],
+                    "proof_basis": "same_attempt_prior_selected_nominal_head_original_lexical_atom",
+                    "subject_lexical_head_source_span": list(head_span),
+                    "subject_lexical_head_source_surface": source_text[head_span[0]:head_span[1]],
+                    "subject_lexical_head_category": head["head_lexical_category"],
+                    "subject_lexical_head_lemma": head.get("head_lemma"),
+                    "subject_original_lexical_atom": lexical_atoms[feature],
+                    "subject_selected_lexical_candidate_source": head.get("candidate_source"),
+                    "lexical_subject_intrinsic_atom_proven": True,
+                    "selected_candidate_is_unique_for_this_attempt": True,
+                    "linguistically_intended_reading_proven": False,
+                    "sentence_fault_proven": False,
+                }
     attempted_agreement_view = {
         "distinct_attempted_agreement_conflicts": len(attempted_agreements),
         "by_feature": dict(sorted(Counter(key[5] for key in attempted_agreements).items())),
         "examples": list(attempted_agreements.values())[:12],
+        "exhaustive": False,
+        "sentence_fault_proven": False,
+    }
+    original_head_agreement_view = {
+        "distinct_original_lexical_subject_predicate_conflicts": len(original_head_agreements),
+        "by_feature": dict(sorted(Counter(key[5] for key in original_head_agreements).items())),
+        "examples": list(original_head_agreements.values())[:12],
         "exhaustive": False,
         "sentence_fault_proven": False,
     }
@@ -737,6 +781,8 @@ def _trace_view(trace: Mapping[str, Any] | None, *, source_text: str) -> dict[st
         "exact_rule_rhs_lexical_conflicts": slot_conflicts,
         "same_attempt_materialized_subject_lexical_predicate_conflicts":
             attempted_agreement_view,
+        "same_attempt_original_lexical_subject_predicate_conflicts":
+            original_head_agreement_view,
         "independent_accepted_same_rule_and_span_as_rejected_attempt": {
             "matched_local_rule_spans": len(matches),
             "examples": list(matches.values())[:8],
@@ -870,16 +916,21 @@ def _exact_rule_slot_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
     } for scope, data in sorted(by_scope.items())}
 
 
-def _same_attempt_agreement_totals(rows: list[Mapping[str, Any]]) -> dict[str, Any]:
+def _same_attempt_agreement_totals(rows: list[Mapping[str, Any]], *,
+                                   original_lexical_head: bool = False) -> dict[str, Any]:
     by_scope: dict[str, Counter[str]] = {}
     for row in rows:
         for scope, trace in row["sampled_local_rejection_evidence"].items():
             if trace is None:
                 continue
-            evidence = trace["same_attempt_materialized_subject_lexical_predicate_conflicts"]
+            name = ("same_attempt_original_lexical_subject_predicate_conflicts"
+                    if original_lexical_head else
+                    "same_attempt_materialized_subject_lexical_predicate_conflicts")
+            evidence = trace[name]
             by_scope.setdefault(scope, Counter()).update(evidence["by_feature"])
     return {scope: {
-        "attempted_subject_predicate_conflicts": sum(counts.values()),
+        ("original_lexical_subject_predicate_conflicts" if original_lexical_head
+         else "attempted_subject_predicate_conflicts"): sum(counts.values()),
         "by_feature": dict(sorted(counts.items())),
         "whole_sentence_faults_proven": 0,
     } for scope, counts in sorted(by_scope.items())}
@@ -1116,6 +1167,8 @@ def synthesize(
             _exact_rule_slot_totals(rows),
         "same_attempt_subject_predicate_conflicts_by_replay":
             _same_attempt_agreement_totals(rows),
+        "same_attempt_original_lexical_subject_predicate_conflicts_by_replay":
+            _same_attempt_agreement_totals(rows, original_lexical_head=True),
         "rejected_rules_independently_accepted_at_same_exact_source_span_sampled": sum(
             trace["independent_accepted_same_rule_and_span_as_rejected_attempt"][
                 "matched_local_rule_spans"]
@@ -1357,6 +1410,19 @@ def render(rows: list[Mapping[str, Any]], summary: Mapping[str, Any]) -> str:
                         f"`{attempt['rejected_predicate_lexical_atom']}`; "
                         "direct RHS shared variable, **failed rule attempt only**, "
                         "not a proven sentence error")
+                original = trace["same_attempt_original_lexical_subject_predicate_conflicts"]
+                for conflict in original["examples"]:
+                    lines.append(
+                        f"  - **Original selected nominal-head agreement candidate**: "
+                        f"`{conflict['subject_lexical_head_source_surface']}` "
+                        f"{conflict['subject_lexical_head_source_span']} has original "
+                        f"`{conflict['feature']}={conflict['subject_original_lexical_atom']}` "
+                        f"in the accepted NP `{conflict['subject_source_surface']}`; "
+                        f"`{conflict['predicate_source_surface']}` "
+                        f"{conflict['predicate_source_span']} offers "
+                        f"`{conflict['rejected_predicate_lexical_atom']}`; "
+                        "unique selected grammatical leaf and same-rule RHS contract, "
+                        "but attempted analysis only, not a proven sentence error")
                 matches = trace["independent_accepted_same_rule_and_span_as_rejected_attempt"]
                 for match in matches["examples"]:
                     lines.append(

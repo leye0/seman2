@@ -17,7 +17,9 @@ from .features import (
 )
 from .grammar import Grammar, GrammarRule
 from .local_constituent_proofs import BoundedLocalConstituentProofs
-from .local_role_proofs import resolved_local_subject_predicate_pairs
+from .local_role_proofs import (
+    resolved_local_subject_predicate_pairs, selected_nominal_subject_head_atoms,
+)
 from .segmentation import LexicalCandidate, LexicalLattice
 from .syntax import SyntacticLink, SyntacticPackage
 from .symbols import intern, resolve
@@ -1396,6 +1398,9 @@ class _LazyMaterializer:
         _lhs_merged, env = lhs_result
         for index, (child_id, rank) in enumerate(zip(path, ranks)):
             child_constraint = rule.rhs[index].features
+            predicate_symbol = rule.rhs[index]
+            predicate_terms = (predicate_symbol.features.as_dict()
+                               if self.rejection_trace is not None else {})
             # Opt-in diagnostic provenance: these are analyses *actually*
             # accepted for earlier RHS positions in this very rule attempt.
             # Their features are post-unification observations, not proof
@@ -1410,11 +1415,12 @@ class _LazyMaterializer:
                         continue
                     prior_node = self.forest.nodes[prior.node_id]
                     observed = prior.features.as_dict()
-                    preceding.append({
+                    prior_rhs_terms = prior_symbol.features.as_dict()
+                    sibling = {
                         "rule_rhs_child_index": prior_index,
                         "category": prior_node.category,
                         "analysis_span": [prior_node.start, prior_node.end],
-                        "rhs_feature_terms": prior_symbol.features.as_dict(),
+                        "rhs_feature_terms": prior_rhs_terms,
                         "rhs_role_exports": dict(prior_symbol.exports),
                         "materialized_child_feature_atoms": {
                             feature: observed[feature]
@@ -1424,13 +1430,29 @@ class _LazyMaterializer:
                         },
                         "accepted_before_current_child_in_same_rule_attempt": True,
                         "whole_rule_accepted": False,
-                    })
+                    }
+                    if (predicate_symbol.category in {"V", "COPULA"}
+                            and predicate_symbol.exports.get("event")
+                            and any(
+                                isinstance(term, str) and term.startswith("?")
+                                and term == predicate_terms.get(feature)
+                                and feature in sibling["materialized_child_feature_atoms"]
+                                for feature, term in prior_rhs_terms.items()
+                                if feature in {"number", "person"}
+                            )):
+                        # The selected NP's lexical head predates unification;
+                        # unlike its child feature atoms it cannot be inferred
+                        # from the current rule's requested agreement value.
+                        sibling["selected_subject_nominal_head_lexical_evidence"] = (
+                            selected_nominal_subject_head_atoms(self.item(prior))
+                        )
+                    preceding.append(sibling)
             child = self.get(
                 child_id, rank, child_constraint, env,
                 required_features=rule.rhs[index].requires,
                 source_rule_id=rule.rule_id,
                 source_child_index=index,
-                source_rhs_feature_terms=(rule.rhs[index].features.as_dict()
+                source_rhs_feature_terms=(predicate_terms
                                           if self.rejection_trace is not None else None),
                 source_rhs_role_exports=(dict(rule.rhs[index].exports)
                                          if self.rejection_trace is not None else None),

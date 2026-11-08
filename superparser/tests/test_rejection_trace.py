@@ -31,6 +31,10 @@ class RejectionTraceTests(unittest.TestCase):
                 "preceding_materialized_siblings": [{
                     "analysis_span": [0, 5], "rule_rhs_child_index": 0,
                     "accepted_before_current_child_in_same_rule_attempt": True,
+                    "selected_subject_nominal_head_lexical_evidence": {
+                        "head_analysis_span": [1, 5],
+                        "status": "unique_selected_nominal_head",
+                    },
                 }],
             }],
         }]}
@@ -41,6 +45,9 @@ class RejectionTraceTests(unittest.TestCase):
         self.assertEqual(sibling["analysis_span"], [0, 5])
         self.assertEqual(sibling["reference_span"], [11, 16])
         self.assertEqual(sibling["reference_span_mapping"], "exact")
+        head = sibling["selected_subject_nominal_head_lexical_evidence"]
+        self.assertEqual(head["head_reference_span"], [12, 16])
+        self.assertEqual(head["head_reference_span_mapping"], "exact")
 
     def test_local_head_lattice_audit_preserves_competing_categories_without_ranking(self):
         candidates = tuple(LexicalCandidate(

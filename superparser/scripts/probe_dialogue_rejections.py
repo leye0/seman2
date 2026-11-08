@@ -90,10 +90,17 @@ def map_trace_to_reference(trace: dict[str, Any] | None, prepared,
             for frame in raw["request_chain"]:
                 request = mapped_frame(frame, (("analysis_span", "reference_span"),))
                 if "preceding_materialized_siblings" in frame:
-                    request["preceding_materialized_siblings"] = [
-                        mapped_frame(sibling, (("analysis_span", "reference_span"),))
-                        for sibling in frame["preceding_materialized_siblings"]
-                    ]
+                    mapped_siblings = []
+                    for sibling in frame["preceding_materialized_siblings"]:
+                        mapped_sibling = mapped_frame(
+                            sibling, (("analysis_span", "reference_span"),))
+                        head = sibling.get("selected_subject_nominal_head_lexical_evidence")
+                        if isinstance(head, dict):
+                            mapped_sibling["selected_subject_nominal_head_lexical_evidence"] = (
+                                mapped_frame(head, (("head_analysis_span", "head_reference_span"),))
+                            )
+                        mapped_siblings.append(mapped_sibling)
+                    request["preceding_materialized_siblings"] = mapped_siblings
                 mapped_chain.append(request)
             event["request_chain"] = mapped_chain
         events.append(event)

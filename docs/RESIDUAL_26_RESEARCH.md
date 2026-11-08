@@ -617,3 +617,13 @@ dialogue, **2** dans les contrôles marqués, **0** dans l'échantillon
 unscoped; cela ne constitue pas une fréquence exhaustive. La qualité
 canonique demeure **474/500**, 26 résidus. La suite Layer 1 est verte
 à **588 tests** ([42508955710](https://github.com/leye0/seman2/actions/runs/42508955710)).
+
+### P2 : l'atome du NP vient-il vraiment du mot sélectionné ?
+
+Un audit plus strict associe aux essais d'accord précédents la tête
+nominale **résolue à l'intérieur du NP déjà accepté**, puis la feuille
+lexicale originale de cette analyse précise. Il conserve séparément
+son atome `number`/`person` pré-unification. Sans ancre nominale
+exacte, feuille unique et atome égal au NP post-unification et à la
+variable RHS, le nouveau témoin est absent. Cette sélection ne lit
+ni le sens de l'énoncé ni les candidats lexicaux concurrents.
