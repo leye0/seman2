@@ -47,13 +47,6 @@ jobs:
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             python -m unittest -v superparser.tests.test_parser_integration.ResidualLiteraryCoverageTests \
             2>&1 | tee /tmp/residual-focused-tests.log
-      - name: Verify case 497 corrective complement under constrained rule
-        if: always()
-        run: |
-          set -o pipefail
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
-            python -m unittest -v superparser.tests.test_case_497_corrective_pp \
-            2>&1 | tee /tmp/case497-tests.log
       - name: Diagnose raising alternatives, discourse attachments and ranking
         if: always()
         run: |
@@ -183,7 +176,6 @@ jobs:
             /tmp/residual-focused-tests.log
             /tmp/residual-trees.txt
             /tmp/quote-regression-ablation.log
-            /tmp/case497-tests.log
             /tmp/case497-full-audit.log
             /tmp/case497-constituents.log
           if-no-files-found: warn

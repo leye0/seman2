@@ -5,11 +5,17 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
-## Mise à jour de la file (2026-11-08, après le jalon 480)
+## Mise à jour de la file (2026-11-08, après le diagnostic 497)
 
-- Le prochain cas **déterministe** est maintenant **497** selon
+- Le prochain cas **déterministe** est maintenant **8** (retour au début) selon
   [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json), qui fait autorité ;
-  `last_attempted_index=491`, `completed_count=474`.
+  `last_attempted_index=497`, `completed_count=474`.
+- **497** : deux tentatives de composition d'un complément nominal rectificatif
+  « rather, indeed, of ... » ont reconnu la citation mais sélectionnaient
+  un rattachement fautif de « at the irreverence of his words » à la
+  proposition principale, et faisaient échouer le témoin **359**.
+  Elles ont été retirées ; voir
+  [`CASE_497_CORRECTIVE_NOMINAL_COMPLEMENT.md`](CASE_497_CORRECTIVE_NOMINAL_COMPLEMENT.md).
 - **487** : diagnostic d'une proposition temporelle antéposée non reconnue
   puis saturation de la forêt globale ; voir
   [`CASE_487_RESOURCE_CENSORED_COORDINATION.md`](CASE_487_RESOURCE_CENSORED_COORDINATION.md).
@@ -17,8 +23,8 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
   participiale passive « being both shot and drowned ») et une relative
   locative non reconnue ; voir
   [`CASE_491_CONCESSIVE_PASSIVE_RELATIVE.md`](CASE_491_CONCESSIVE_PASSIVE_RELATIVE.md).
-- Les deux cas restent **non résolus** : aucune règle grammaticale n'a été
-  modifiée, aucune augmentation du score ne doit être revendiquée. CI ciblées
+- Les trois cas restent **non résolus** : aucune règle grammaticale de ces
+  tentatives n'est conservée, aucune augmentation du score ne doit être revendiquée. CI ciblées
   [487](https://github.com/leye0/seman2/actions/runs/42544413611) et
   [491](https://github.com/leye0/seman2/actions/runs/42552398902) vertes.
   Le dernier contrôle exhaustif des 500 reste celui du code `5b757eb` :
