@@ -98,18 +98,18 @@ jobs:
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
               --indices 359,414 --budget 50000 --raised-budget 60000 \
             2>&1 | tee /tmp/quote-regression-ablation.log
-      - name: Diagnose queued case 497 and its corrective prepositional attachment
+      - name: Diagnose queued case 8 and its supplementary object-relative fragment
         if: always()
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             timeout 100s python -u -m scripts.audit_novel_tree_quality \
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-              --indices 497,359 --alternatives 3 \
+              --indices 8,359 --alternatives 3 --lexical-audit \
               --max-items 50000 --kbest-work-limit 500000 \
-            2>&1 | tee /tmp/case497-full-audit.log
+            2>&1 | tee /tmp/case8-full-audit.log
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
-            timeout 100s python -u - <<'PY' 2>&1 | tee /tmp/case497-constituents.log
+            timeout 100s python -u - <<'PY' 2>&1 | tee /tmp/case8-constituents.log
           import json
           from pathlib import Path
           from seman_parser.engine import Parser, ParserResources
@@ -118,19 +118,20 @@ jobs:
           resources = ParserResources.from_dir(Path('superparser/data'))
           parser = Parser(resources, cache_size=0, max_items=50000)
           fragments = (
-              'But there was no sign of reawakening courage in his followers.',
-              'There was no sign of reawakening courage in his followers.',
-              'There was no sign of growing terror at the irreverence of his words.',
-              'There was no sign of reawakening courage, rather of growing terror.',
-              'There was no sign of reawakening courage, rather, indeed, of growing terror.',
-              'But there was no sign of reawakening courage in his followers, rather, indeed, of growing terror at the irreverence of his words.',
+              'Which I accordingly did.',
+              'Which I did.',
+              'I accordingly did.',
+              'I did.',
+              'I did the task.',
+              'I made my friend known to them; which I accordingly did.',
+              'I made my friend known to them, which I accordingly did.',
           )
           for fragment in fragments:
               report = parser.parse(fragment, max_items=50000,
                                     kbest_work_limit=500000, diagnostic_k=3)
               result = report.result
               stats = result.stats
-              print('CASE497_FRAGMENT', json.dumps({
+              print('CASE8_FRAGMENT', json.dumps({
                   'text': fragment, 'completed': result.completed,
                   'root_rule': result.best().rule_id if result.best() else None,
                   'budget_exceeded': stats.get('budget_exceeded'),
@@ -142,22 +143,25 @@ jobs:
                   'segmentation_fallback': stats.get('segmentation_fallback'),
               }, ensure_ascii=False), flush=True)
               for item in result.alternatives(limit=1):
-                  print('CASE497_FRAGMENT_TREE', fragment, flush=True)
+                  print('CASE8_FRAGMENT_TREE', fragment, flush=True)
                   print('\n'.join(display_tree(item, result.text)), flush=True)
           for category, fragment in (
-              ('NP', 'no sign of reawakening courage in his followers'),
-              ('NP', 'reawakening courage'),
-              ('NP', 'growing terror'),
-              ('PP', 'of reawakening courage in his followers'),
-              ('PP', 'of growing terror at the irreverence of his words'),
-              ('NP', 'no sign of reawakening courage, rather of growing terror'),
+              ('VP-GAP', 'did'),
+              ('VP-GAP', 'accordingly did'),
+              ('WH-OBJ', 'I did'),
+              ('WH-OBJ', 'I accordingly did'),
+              ('REL-CLAUSE-OBJ', 'which I did'),
+              ('REL-CLAUSE-OBJ', 'which I accordingly did'),
+              ('WH-CLAUSE', 'which I accordingly did'),
+              ('NP', 'which I accordingly did'),
+              ('NP', 'the task which I accordingly did'),
           ):
               constituent_parser = Parser(resources, goal_category=category,
                                           cache_size=0, max_items=50000)
               result = constituent_parser.parse(fragment, max_items=50000,
                                                 kbest_work_limit=500000,
                                                 diagnostic_k=3).result
-              print('CASE497_CONSTITUENT', json.dumps({
+              print('CASE8_CONSTITUENT', json.dumps({
                   'category': category, 'text': fragment,
                   'completed': result.completed,
                   'root_rule': result.best().rule_id if result.best() else None,
@@ -176,7 +180,7 @@ jobs:
             /tmp/residual-focused-tests.log
             /tmp/residual-trees.txt
             /tmp/quote-regression-ablation.log
-            /tmp/case497-full-audit.log
-            /tmp/case497-constituents.log
+            /tmp/case8-full-audit.log
+            /tmp/case8-constituents.log
           if-no-files-found: warn
           retention-days: 7
