@@ -98,6 +98,52 @@ jobs:
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
               --indices 359,414 --budget 50000 --raised-budget 60000 \
             2>&1 | tee /tmp/quote-regression-ablation.log
+      - name: Diagnose queued resource-censored case 487 and its finite clauses
+        if: always()
+        run: |
+          set -o pipefail
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            timeout 100s python -u -m scripts.audit_novel_tree_quality \
+              --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+              --indices 487,359 --alternatives 2 \
+              --max-items 50000 --kbest-work-limit 500000 \
+            2>&1 | tee /tmp/case487-full-audit.log
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            timeout 100s python -u - <<'PY' 2>&1 | tee /tmp/case487-constituents.log
+          import json
+          from pathlib import Path
+          from seman_parser.engine import Parser, ParserResources
+          from scripts.audit_novel_tree_quality import display_tree
+
+          parser = Parser(ParserResources.from_dir(Path('superparser/data')),
+                          cache_size=0, max_items=50000)
+          fragments = (
+              'the most part of the time we were broadside on',
+              'we were broadside on',
+              'I am very sure I never should have made the ship at all but for the tide',
+              'I never should have made the ship at all but for the tide',
+              'I am very sure',
+          )
+          for fragment in fragments:
+              report = parser.parse(fragment, max_items=50000,
+                                    kbest_work_limit=500000, diagnostic_k=2)
+              result = report.result
+              stats = result.stats
+              print('CASE487_FRAGMENT', json.dumps({
+                  'text': fragment, 'completed': result.completed,
+                  'root_rule': result.best().rule_id if result.best() else None,
+                  'budget_exceeded': stats.get('budget_exceeded'),
+                  'kbest_budget_exceeded': stats.get('kbest_budget_exceeded'),
+                  'forest_nodes': stats.get('forest_nodes'),
+                  'partial_states': stats.get('partial_states'),
+                  'saturation_top_rules': stats.get('saturation_top_rules', []),
+                  'saturation_top_categories': stats.get('saturation_top_categories', []),
+                  'segmentation_fallback': stats.get('segmentation_fallback'),
+              }, ensure_ascii=False), flush=True)
+              for item in result.alternatives(limit=1):
+                  print('CASE487_FRAGMENT_TREE', fragment, flush=True)
+                  print('\n'.join(display_tree(item, result.text)), flush=True)
+          PY
       - name: Preserve focused evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -107,5 +153,7 @@ jobs:
             /tmp/residual-focused-tests.log
             /tmp/residual-trees.txt
             /tmp/quote-regression-ablation.log
+            /tmp/case487-full-audit.log
+            /tmp/case487-constituents.log
           if-no-files-found: warn
           retention-days: 7

@@ -92,6 +92,12 @@ def audit(indices: tuple[int, ...], *, wordnet_dir: str | None,
             "root_rule": result.best().rule_id if result.best() else None,
             "forest_nodes": result.stats.get("forest_nodes"),
             "budget_exceeded": result.stats.get("budget_exceeded"),
+            "partial_states": result.stats.get("partial_states"),
+            "partial_proposals": result.stats.get("partial_proposals"),
+            "structural_root_nodes": result.stats.get("structural_root_nodes"),
+            "saturation_top_rules": result.stats.get("saturation_top_rules", []),
+            "saturation_top_categories": result.stats.get("saturation_top_categories", []),
+            "kbest_work_units": result.stats.get("kbest_work_units"),
             "lexical_candidates": len(lattice.candidates),
         }, ensure_ascii=False), flush=True)
         if lexical_audit:
