@@ -98,38 +98,41 @@ jobs:
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
               --indices 359,414 --budget 50000 --raised-budget 60000 \
             2>&1 | tee /tmp/quote-regression-ablation.log
-      - name: Diagnose queued resource-censored case 487 and its finite clauses
+      - name: Diagnose queued case 491 and its concessive participial attachments
         if: always()
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             timeout 100s python -u -m scripts.audit_novel_tree_quality \
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
-              --indices 487,359 --alternatives 2 \
+              --indices 491,359 --alternatives 3 \
               --max-items 50000 --kbest-work-limit 500000 \
-            2>&1 | tee /tmp/case487-full-audit.log
+            2>&1 | tee /tmp/case491-full-audit.log
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
-            timeout 100s python -u - <<'PY' 2>&1 | tee /tmp/case487-constituents.log
+            timeout 100s python -u - <<'PY' 2>&1 | tee /tmp/case491-constituents.log
           import json
           from pathlib import Path
           from seman_parser.engine import Parser, ParserResources
           from scripts.audit_novel_tree_quality import display_tree
 
-          parser = Parser(ParserResources.from_dir(Path('superparser/data')),
-                          cache_size=0, max_items=50000)
+          resources = ParserResources.from_dir(Path('superparser/data'))
+          parser = Parser(resources, cache_size=0, max_items=50000)
           fragments = (
-              'the most part of the time we were broadside on',
-              'we were broadside on',
-              'I am very sure I never should have made the ship at all but for the tide',
-              'I never should have made the ship at all but for the tide',
-              'I am very sure',
+              'But he was dead enough.',
+              'He was dead enough.',
+              'He was dead enough, for all that.',
+              'He was dead enough, being both shot and drowned.',
+              'He was dead enough, for all that, being both shot and drowned.',
+              'He was dead enough and was food for fish.',
+              'He was food for fish in the very place where he had designed my slaughter.',
+              'He was dead enough, for all that, being both shot and drowned, and was food for fish in the very place where he had designed my slaughter.',
           )
           for fragment in fragments:
               report = parser.parse(fragment, max_items=50000,
-                                    kbest_work_limit=500000, diagnostic_k=2)
+                                    kbest_work_limit=500000, diagnostic_k=3)
               result = report.result
               stats = result.stats
-              print('CASE487_FRAGMENT', json.dumps({
+              print('CASE491_FRAGMENT', json.dumps({
                   'text': fragment, 'completed': result.completed,
                   'root_rule': result.best().rule_id if result.best() else None,
                   'budget_exceeded': stats.get('budget_exceeded'),
@@ -141,7 +144,27 @@ jobs:
                   'segmentation_fallback': stats.get('segmentation_fallback'),
               }, ensure_ascii=False), flush=True)
               for item in result.alternatives(limit=1):
-                  print('CASE487_FRAGMENT_TREE', fragment, flush=True)
+                  print('CASE491_FRAGMENT_TREE', fragment, flush=True)
+                  print('\n'.join(display_tree(item, result.text)), flush=True)
+          for category, fragment in (
+              ('PP', 'for all that'),
+              ('NP', 'all that'),
+              ('VP', 'being both shot and drowned'),
+              ('PASSIVE-PART', 'shot and drowned'),
+          ):
+              constituent_parser = Parser(resources, goal_category=category,
+                                          cache_size=0, max_items=50000)
+              result = constituent_parser.parse(fragment, max_items=50000,
+                                                kbest_work_limit=500000,
+                                                diagnostic_k=3).result
+              print('CASE491_CONSTITUENT', json.dumps({
+                  'category': category, 'text': fragment,
+                  'completed': result.completed,
+                  'root_rule': result.best().rule_id if result.best() else None,
+                  'budget_exceeded': result.stats.get('budget_exceeded'),
+                  'partial_states': result.stats.get('partial_states'),
+              }, ensure_ascii=False), flush=True)
+              for item in result.alternatives(limit=1):
                   print('\n'.join(display_tree(item, result.text)), flush=True)
           PY
       - name: Preserve focused evidence
@@ -153,7 +176,7 @@ jobs:
             /tmp/residual-focused-tests.log
             /tmp/residual-trees.txt
             /tmp/quote-regression-ablation.log
-            /tmp/case487-full-audit.log
-            /tmp/case487-constituents.log
+            /tmp/case491-full-audit.log
+            /tmp/case491-constituents.log
           if-no-files-found: warn
           retention-days: 7
