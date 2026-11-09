@@ -16,6 +16,11 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
   proposition principale, et faisaient échouer le témoin **359**.
   Elles ont été retirées ; voir
   [`CASE_497_CORRECTIVE_NOMINAL_COMPLEMENT.md`](CASE_497_CORRECTIVE_NOMINAL_COMPLEMENT.md).
+  Après restauration, CI de grammaire
+  [42554373845](https://github.com/leye0/seman2/actions/runs/42554373845)
+  et de dialogues
+  [42554374055](https://github.com/leye0/seman2/actions/runs/42554374055)
+  toutes deux **vertes**.
 - **487** : diagnostic d'une proposition temporelle antéposée non reconnue
   puis saturation de la forêt globale ; voir
   [`CASE_487_RESOURCE_CENSORED_COORDINATION.md`](CASE_487_RESOURCE_CENSORED_COORDINATION.md).

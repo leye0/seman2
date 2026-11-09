@@ -14,6 +14,12 @@ règles n'est conservée dans la grammaire active.
   [CI 42553670350](https://github.com/leye0/seman2/actions/runs/42553670350), échec.
 - Essai en constituants typés : `98ca189fb29f11f9ee2a2155cba08e59241e33c4`,
   [CI 42554044343](https://github.com/leye0/seman2/actions/runs/42554044343), échec.
+- Restauration du code grammatical initial et avancement documentaire de la
+  file : `df234cf804fbc95c181b102629cd3013f2f1e8ab` ;
+  [CI de grammaire ciblée 42554373845](https://github.com/leye0/seman2/actions/runs/42554373845)
+  **verte** et [CI de dialogues 42554374055](https://github.com/leye0/seman2/actions/runs/42554374055)
+  **verte**. Les fichiers `grammar.jsonl` et `syntax_lexicon.jsonl` sont
+  bit à bit identiques à ceux du commit de diagnostic initial.
 - Cohorte figée SHA-256
   `cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a`.
   Dernier bilan intégral valide : code `5b757eb329ab706ef082a939f070d3dad9ee97af`,
