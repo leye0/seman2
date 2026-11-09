@@ -5,11 +5,18 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
-## Mise à jour de la file (2026-11-08, après le diagnostic 497)
+## Mise à jour de la file (2026-11-08, après le diagnostic 8)
 
-- Le prochain cas **déterministe** est maintenant **8** (retour au début) selon
+- Le prochain cas **déterministe** est maintenant **64** selon
   [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json), qui fait autorité ;
-  `last_attempted_index=497`, `completed_count=474`.
+  `last_attempted_index=8`, `completed_count=474`.
+- **8** : « which I accordingly did. » est une relative supplémentaire
+  **séparée de son antécédent par le découpage conservé au point-virgule**.
+  Sans son contexte, elle n'est pas une clause indépendante ; lorsqu'on
+  fournit artificiellement le contexte, le meilleur arbre rattache
+  incorrectement la relative à `them` comme apposition nominale. Ne pas
+  confondre cette fausse complétion avec une correction ; voir
+  [`CASE_8_SEMICOLON_RELATIVE_CONTINUATION.md`](CASE_8_SEMICOLON_RELATIVE_CONTINUATION.md).
 - **497** : deux tentatives de composition d'un complément nominal rectificatif
   « rather, indeed, of ... » ont reconnu la citation mais sélectionnaient
   un rattachement fautif de « at the irreverence of his words » à la
@@ -28,10 +35,11 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
   participiale passive « being both shot and drowned ») et une relative
   locative non reconnue ; voir
   [`CASE_491_CONCESSIVE_PASSIVE_RELATIVE.md`](CASE_491_CONCESSIVE_PASSIVE_RELATIVE.md).
-- Les trois cas restent **non résolus** : aucune règle grammaticale de ces
+- Ces cas restent **non résolus** : aucune règle grammaticale de ces
   tentatives n'est conservée, aucune augmentation du score ne doit être revendiquée. CI ciblées
   [487](https://github.com/leye0/seman2/actions/runs/42544413611) et
-  [491](https://github.com/leye0/seman2/actions/runs/42552398902) vertes.
+  [491](https://github.com/leye0/seman2/actions/runs/42552398902) et
+  [8](https://github.com/leye0/seman2/actions/runs/42558920460) vertes.
   Le dernier contrôle exhaustif des 500 reste celui du code `5b757eb` :
   **474/500**.
 
