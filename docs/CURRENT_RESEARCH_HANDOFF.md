@@ -5,6 +5,25 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Mise à jour de la file (2026-11-08, après le jalon 480)
+
+- Le prochain cas **déterministe** est maintenant **497** selon
+  [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json), qui fait autorité ;
+  `last_attempted_index=491`, `completed_count=474`.
+- **487** : diagnostic d'une proposition temporelle antéposée non reconnue
+  puis saturation de la forêt globale ; voir
+  [`CASE_487_RESOURCE_CENSORED_COORDINATION.md`](CASE_487_RESOURCE_CENSORED_COORDINATION.md).
+- **491** : plusieurs analyses trompeuses (concession « for all that »,
+  participiale passive « being both shot and drowned ») et une relative
+  locative non reconnue ; voir
+  [`CASE_491_CONCESSIVE_PASSIVE_RELATIVE.md`](CASE_491_CONCESSIVE_PASSIVE_RELATIVE.md).
+- Les deux cas restent **non résolus** : aucune règle grammaticale n'a été
+  modifiée, aucune augmentation du score ne doit être revendiquée. CI ciblées
+  [487](https://github.com/leye0/seman2/actions/runs/42544413611) et
+  [491](https://github.com/leye0/seman2/actions/runs/42552398902) vertes.
+  Le dernier contrôle exhaustif des 500 reste celui du code `5b757eb` :
+  **474/500**.
+
 ## Ce que nous construisons
 
 Un **Layer 1 grammatical anglais symbolique** qui préserve toutes les lectures / sous-types lexicaux, les mots, leurs spans, traits, règles, variantes et sorties syntaxiques pour un Layer 2 futur. Nous développons la couverture et la correction sur phrases de romans, dialogues, accords et cas lourds. **Le Layer 2 cognitif, les anciens moteurs de coref/discours et les prototypes de snapping ne font pas partie du code présent.**

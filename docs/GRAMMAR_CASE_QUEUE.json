@@ -3,7 +3,7 @@
   "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
   "validated_commit": "5b757eb329ab706ef082a939f070d3dad9ee97af",
   "completed_count": 474,
-  "last_attempted_index": 487,
+  "last_attempted_index": 491,
   "unresolved": [
     {
       "index": 8,
