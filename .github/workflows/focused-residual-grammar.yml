@@ -47,7 +47,8 @@ jobs:
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             python -m unittest -v superparser.tests.test_parser_integration.ResidualLiteraryCoverageTests \
             2>&1 | tee /tmp/residual-focused-tests.log
-      - name: Verify case 497 corrective complement and counterexample
+      - name: Verify case 497 corrective complement under constrained rule
+        if: always()
         run: |
           set -o pipefail
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \

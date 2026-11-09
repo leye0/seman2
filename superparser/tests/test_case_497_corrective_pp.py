@@ -15,7 +15,7 @@ from seman_parser.engine import Parser, ParserResources
 
 
 DATA = Path(__file__).resolve().parents[1] / "data"
-CORRECTIVE = "np_det_n_of_corrective_with_incise"
+CORRECTIVE = "np_of_complement_corrective_with_incise"
 
 
 def walk(node):
@@ -49,14 +49,22 @@ class Case497CorrectivePPTests(unittest.TestCase):
                          "rather, indeed, of growing terror at the irreverence "
                          "of his words")
         self.assertEqual([n.category for n in nominal.children],
-                         ["DET", "N", "PREP", "NP", "COMMA", "ADV",
-                          "COMMA", "ADV", "COMMA", "PREP", "NP"])
-        self.assertEqual(result.text[nominal.children[3].start:
-                                     nominal.children[3].end],
+                         ["NP", "COMMA", "OF-CORRECTION-TAIL"])
+        original = nominal.children[0]
+        self.assertEqual(original.rule_id, "np_det_n_of")
+        self.assertEqual(result.text[original.children[3].start:
+                                     original.children[3].end],
                          "reawakening courage in his followers")
-        self.assertEqual(result.text[nominal.children[10].start:
-                                     nominal.children[10].end],
-                         "growing terror at the irreverence of his words")
+        tail = nominal.children[2]
+        self.assertEqual(tail.rule_id, "of_correction_tail_incise_with_pp")
+        replacement = tail.children[-2]
+        self.assertEqual(replacement.category, "NP")
+        self.assertEqual(result.text[replacement.start:replacement.end],
+                         "growing terror")
+        modifier = tail.children[-1]
+        self.assertEqual(modifier.category, "PP")
+        self.assertEqual(result.text[modifier.start:modifier.end],
+                         "at the irreverence of his words")
 
     def test_independent_corrective_and_negative_operator(self):
         positive = self.parser.parse(
