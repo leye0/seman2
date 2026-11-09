@@ -44,6 +44,14 @@ analyze a novel. New experiments always start with the default
 `QUOTE_BALANCED` mode. Never claim a grammar regression solely because the
 original historical text lacks context that the quote-transfer system provides.
 
+Prose segmentation v2 conservatively retains dependent semicolon continuations.
+`split_prose_analysis_units` uses that improvement by default, but
+`gutenberg_novels.analysis_units` and `extract` default to the **original v1
+segmentation** to protect the SHA-pinned 500-case cohort. Use
+`extract(..., segmentation_version=2)` for a separately measured prospective
+corpus; see `docs/SEGMENTATION_V2_DEPENDENT_CLAUSES.md`. Do not conflate
+better segmentation with evidence of a correctly attached grammar tree.
+
 The `superparser/tests/test_novel_parse_diagnostics.py` CI tests enforce
 the gateway, provenance, and the absence of direct parser calls in the
 500-case diagnostic. Modify these tests and this contract together when

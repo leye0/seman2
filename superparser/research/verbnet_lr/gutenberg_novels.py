@@ -97,14 +97,22 @@ def strip_gutenberg(text: str):
     return core
 
 
-def analysis_units(core: str, *, balance_sentence_quotes: bool = False):
+def analysis_units(
+    core: str, *, balance_sentence_quotes: bool = False,
+    segmentation_version: int = 1,
+):
     """Yield source-stable units with recorded quote transfer.
 
     DEFAULT FALSE IS HISTORICAL EXTRACTION COMPATIBILITY ONLY. For parsing,
     call corpus_pipeline.parse_corpus_case (default QUOTE_BALANCED) rather
     than invoking Parser directly on these strings. The SHA-pinned 500-case
-    selection depends on these historical source spans.
+    selection depends on these historical source spans. Version 2 is the
+    prospective, dependency-aware semicolon segmentation. It may produce
+    different ordinals/cases and must NOT replace the frozen 500-case cohort.
     """
+    if segmentation_version not in (1, 2):
+        raise ValueError("segmentation_version must be 1 (frozen) or 2 (prospective)")
+    preserve_dependents = segmentation_version == 2
     for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
         if not lines or CHAPTER.match(lines[0]):
@@ -115,10 +123,14 @@ def analysis_units(core: str, *, balance_sentence_quotes: bool = False):
         ):
             continue
         if balance_sentence_quotes:
-            yield from split_prose_analysis_units(joined)
+            yield from split_prose_analysis_units(
+                joined, preserve_dependent_continuations=preserve_dependents,
+            )
         else:
             for sentence in split_prose_sentences(joined):
-                yield from split_analysis_units(sentence)
+                yield from split_analysis_units(
+                    sentence, preserve_dependent_continuations=preserve_dependents,
+                )
 
 
 def sentences(core: str):
@@ -131,14 +143,17 @@ def sentences(core: str):
         yield unit.text
 
 
-def extract(book: Book, core: str, *, length_min=4, length_max=45):
+def extract(book: Book, core: str, *, length_min=4, length_max=45,
+            segmentation_version: int = 1):
     """Return candidates plus UNFILTERED counts; skips are transparent."""
     counters = {"fragments": 0, "too_short": 0, "too_long": 0,
                 "non_ascii": 0, "non_sentence": 0, "duplicates": 0}
     eligible = []
     seen = set()
     for number, (unit, balanced) in enumerate(zip_longest(
-        analysis_units(core), analysis_units(core, balance_sentence_quotes=True),
+        analysis_units(core, segmentation_version=segmentation_version),
+        analysis_units(core, balance_sentence_quotes=True,
+                       segmentation_version=segmentation_version),
     )):
         if unit is None or balanced is None or unit.source_text != balanced.source_text:
             raise AssertionError("Balanced quote spans must preserve source segmentation")
@@ -176,6 +191,8 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                          "balanced_synthetic_suffix": balanced.synthetic_suffix,
                          "balanced_synthetic_terminal": balanced.synthetic_terminal,
                          "tokens": len(tokens)})
+        if segmentation_version == 2:
+            eligible[-1]["segmentation_version"] = 2
     counters["eligible"] = len(eligible)
     return eligible, counters
 

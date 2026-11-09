@@ -20,6 +20,43 @@ _CLOSERS = frozenset("\"'”’)]}")
 _OPENERS = frozenset("\"'“‘([{")
 _INITIAL = re.compile(r"(?<![A-Za-z.])[A-Za-z]\.$")
 
+# A semicolon is not necessarily a clause boundary. In particular, a
+# supplementary relative introduced by "which" may take the preceding event
+# as its antecedent ("He promised to return; which he did."). Subordinate
+# clauses ("; although ...") likewise lack an independent matrix clause.
+# Keep these cues narrow; questions and independent clauses must still split.
+# The legacy splitter remains explicitly available for pinned historical data.
+_SENTENTIAL_RELATIVE = re.compile(
+    r"(?i)^which\s+(?:"
+    r"(?:i|you|he|she|it|we|they|the|a|an|this|that|these|those|my|your|"
+    r"his|her|our|their|its)\b"
+    r"|(?:is|are|was|were|has|have|had|does|do|did|can|could|will|"
+    r"would|shall|should|may|might|must)\b"
+    r")"
+)
+_SUBORDINATE_START = re.compile(
+    r"(?i)^(?:because|although|though|unless|until|while|whereas|since|"
+    r"if|when|whenever|as)\b\s+"
+)
+
+
+def _is_dependent_continuation(after_semicolon: str) -> bool:
+    """Conservative cues that the next clause needs its antecedent.
+
+    Stop at the next semicolon when screening for direct questions, so a
+    later unrelated question does not change this boundary decision. A
+    fronted subordinate often already has its own matrix clause after a
+    comma ("; when she arrived, I left") and must remain a separate unit.
+    """
+    candidate = after_semicolon.split(";", 1)[0].strip()
+    return (
+        "?" not in candidate
+        and bool(
+            _SENTENTIAL_RELATIVE.match(candidate)
+            or ("," not in candidate and _SUBORDINATE_START.match(candidate))
+        )
+    )
+
 
 def _abbreviation_at(text: str, period: int, next_word: str) -> bool:
     # Inspect only the last few words of the local paragraph.
@@ -171,24 +208,31 @@ def split_analysis_units(
     sentence: str, *,
     quote_context: tuple[tuple[str, str], ...] = (),
     balance_sentence_boundary: bool = False,
+    preserve_dependent_continuations: bool = True,
 ) -> list[AnalysisUnit]:
-    """Split on every semicolon and rewrap quotations on both sides.
+    """Split at independent semicolon boundaries and rewrap quotations.
 
     No text is rewritten in the checked-in novels. The original punctuation
     and delimiters survive in source_text for error analysis and provenance.
+    Set preserve_dependent_continuations=False for frozen v1 extraction.
     """
     text = sentence.strip()
     if not text:
         return []
     if ';' not in text and not balance_sentence_boundary:
         return [AnalysisUnit(text=text, source_text=text)]
-    is_semicolon_split = ';' in text
+    boundaries = [
+        index for index, char in enumerate(text)
+        if char == ";" and not (
+            preserve_dependent_continuations
+            and _is_dependent_continuation(text[index + 1:])
+        )
+    ]
+    is_semicolon_split = bool(boundaries)
     units: list[AnalysisUnit] = []
     stack: list[tuple[str, str]] = list(quote_context)
     left = 0
-    for index in range(len(text) + 1):
-        if index < len(text) and text[index] != ';':
-            continue
+    for index in [*boundaries, len(text)]:
         raw = text[left:index]
         source = (text[left:index + 1] if index < len(text) else raw).strip()
         active_before = tuple(stack)
@@ -215,7 +259,9 @@ def split_analysis_units(
 
 
 
-def split_prose_analysis_units(paragraph: str) -> list[AnalysisUnit]:
+def split_prose_analysis_units(
+    paragraph: str, *, preserve_dependent_continuations: bool = True,
+) -> list[AnalysisUnit]:
     """Reuse the semicolon quote balancer across .!? sentence boundaries.
 
     The source spans stay verbatim; synthetic quotation marks appear only in
@@ -228,6 +274,7 @@ def split_prose_analysis_units(paragraph: str) -> list[AnalysisUnit]:
         units.extend(split_analysis_units(
             sentence, quote_context=tuple(context),
             balance_sentence_boundary=True,
+            preserve_dependent_continuations=preserve_dependent_continuations,
         ))
         _advance_quotes(sentence, context, balance_sentence_boundary=True)
     return units

@@ -112,6 +112,100 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertTrue(rows[0]["synthetic_terminal"])
         self.assertEqual(counts["eligible"], 3)
 
+    def test_sentential_relative_keeps_its_event_antecedent(self):
+        # David Copperfield, Gutenberg 766: historical case 8 used to become
+        # the orphan "which I accordingly did." after semicolon splitting.
+        source = ("I could do no less, under these circumstances, than make "
+                  "Mr. Micawber known to Uriah Heep and his mother; "
+                  "which I accordingly did.")
+        improved = split_prose_analysis_units(source)
+        historical = split_prose_analysis_units(
+            source, preserve_dependent_continuations=False)
+        self.assertEqual([u.text for u in improved], [source])
+        self.assertEqual([u.source_text for u in improved], [source])
+        self.assertFalse(improved[0].semicolon_split)
+        self.assertEqual([u.source_text for u in historical], [
+            "I could do no less, under these circumstances, than make "
+            "Mr. Micawber known to Uriah Heep and his mother;",
+            "which I accordingly did.",
+        ])
+        self.assertTrue(all(u.semicolon_split for u in historical))
+
+    def test_relative_then_independent_semicolon_preserves_source_and_quotes(self):
+        source = '“He promised to return; which he did; and we celebrated.”'
+        units = split_prose_analysis_units(source)
+        self.assertEqual([u.text for u in units], [
+            '“He promised to return; which he did.”',
+            '“and we celebrated.”',
+        ])
+        self.assertEqual([u.source_text for u in units], [
+            '“He promised to return; which he did;', 'and we celebrated.”',
+        ])
+        self.assertEqual(" ".join(u.source_text for u in units), source)
+        self.assertEqual(units[0].synthetic_suffix, "”")
+        self.assertEqual(units[1].synthetic_prefix, "“")
+        self.assertTrue(units[0].synthetic_terminal)
+
+    def test_which_question_and_independent_clause_still_split(self):
+        cases = [
+            ("She left; which one should I choose?",
+             ["She left.", "which one should I choose?"]),
+            ("She left; which did he choose?",
+             ["She left.", "which did he choose?"]),
+            ("She left; then he returned.",
+             ["She left.", "then he returned."]),
+            ("She left; who was calling?",
+             ["She left.", "who was calling?"]),
+            ("She left; when will we meet again?",
+             ["She left.", "when will we meet again?"]),
+            ("She paused; when the guests arrived, she entered.",
+             ["She paused.", "when the guests arrived, she entered."]),
+            ("She paused; if the weather improves, we will leave.",
+             ["She paused.", "if the weather improves, we will leave."]),
+        ]
+        for source, expected in cases:
+            with self.subTest(source=source):
+                units = split_prose_analysis_units(source)
+                self.assertEqual([u.text for u in units], expected)
+                self.assertEqual(" ".join(u.source_text for u in units), source)
+
+    def test_unambiguous_subordinate_clause_is_not_orphaned(self):
+        cases = [
+            "She stayed; although the storm approached.",
+            "He waited; while the others prepared.",
+            "She hurried away; because the house was burning.",
+            "He turned; as the bell began to ring.",
+        ]
+        for source in cases:
+            with self.subTest(source=source):
+                units = split_prose_analysis_units(source)
+                self.assertEqual([u.text for u in units], [source])
+                self.assertEqual([u.source_text for u in units], [source])
+                self.assertFalse(units[0].semicolon_split)
+
+    def test_versioned_extraction_rejects_rewriting_the_frozen_cohort(self):
+        from research.verbnet_lr.gutenberg_novels import analysis_units
+        source = "He returned; which I accordingly did."
+        legacy = list(analysis_units(source))
+        v2 = list(analysis_units(source, segmentation_version=2))
+        self.assertEqual([u.text for u in legacy],
+                         ["He returned.", "which I accordingly did."])
+        self.assertEqual([u.text for u in v2], [source])
+        self.assertEqual(v2[0].source_text, source)
+        self.assertFalse(v2[0].semicolon_split)
+        legacy_cases, legacy_count = extract(
+            Book(999, "Demo", "Anon", "train"), source, length_min=1)
+        v2_cases, v2_count = extract(
+            Book(999, "Demo", "Anon", "train"), source, length_min=1,
+            segmentation_version=2)
+        self.assertEqual(legacy_count["eligible"], 2)
+        self.assertEqual(v2_count["eligible"], 1)
+        self.assertEqual(v2_cases[0]["balanced_analysis_text"], source)
+        self.assertEqual(v2_cases[0]["segmentation_version"], 2)
+        self.assertNotIn("segmentation_version", legacy_cases[0])
+        with self.assertRaises(ValueError):
+            list(analysis_units(source, segmentation_version=3))
+
     def test_cross_sentence_quote_continuations_reuse_semicolon_balancer(self):
         cases = [
             ("“I came. I saw.”",
