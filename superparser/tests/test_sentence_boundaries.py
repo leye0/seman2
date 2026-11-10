@@ -183,6 +183,57 @@ class SentenceBoundaryTests(unittest.TestCase):
                 self.assertEqual([u.source_text for u in units], [source])
                 self.assertFalse(units[0].semicolon_split)
 
+    def test_attested_shared_subject_coordination_keeps_its_subject(self):
+        # David Copperfield, frozen case 94: the shared subject is "She".
+        source = ("She gently chid me for being rude; and, keeping me close "
+                  "to her shawl, turned to thank the gentleman for taking "
+                  "so much trouble as to bring her home.")
+        self.assertEqual([u.text for u in split_prose_analysis_units(source)],
+                         [source])
+        self.assertEqual([u.source_text for u in split_prose_analysis_units(source)],
+                         [source])
+        self.assertFalse(split_prose_analysis_units(source)[0].synthetic_terminal)
+        self.assertEqual(len(split_prose_analysis_units(
+            source, preserve_dependent_continuations=False)), 2)
+        independent = "She stood; and, keeping me close, she turned toward the door."
+        self.assertEqual(len(split_prose_analysis_units(independent)), 2)
+        independent_np = "She stood; and, keeping me close, the woman turned away."
+        self.assertEqual(len(split_prose_analysis_units(independent_np)), 2)
+
+    def test_attested_parallel_comparatives_keep_shared_predicate(self):
+        # Pride and Prejudice, frozen case 182: both adjectives complement
+        # the same preceding verb, "He found her ...".
+        source = ("He found her as handsome as she had been last year; "
+                  "as good natured, and as unaffected, though not quite so chatty.")
+        self.assertEqual([u.text for u in split_prose_analysis_units(source)],
+                         [source])
+        self.assertEqual([u.source_text for u in split_prose_analysis_units(source)],
+                         [source])
+        self.assertFalse(split_prose_analysis_units(source)[0].synthetic_terminal)
+        self.assertEqual(len(split_prose_analysis_units(
+            source, preserve_dependent_continuations=False)), 2)
+        separate = "He found her as happy as ever; as the rain fell, she left."
+        self.assertEqual(len(split_prose_analysis_units(separate)), 2)
+
+    def test_attested_participle_series_keeps_governing_clause(self):
+        # Pride and Prejudice, frozen case 194: this is a nonfinite sequence
+        # sharing the subject of "they paid little attention".
+        source = ("To the rest of the family they paid little attention; "
+                  "avoiding Mrs. Bennet as much as possible, saying not much "
+                  "to Elizabeth, and nothing at all to the others.")
+        self.assertEqual([u.text for u in split_prose_analysis_units(source)],
+                         [source])
+        self.assertEqual([u.source_text for u in split_prose_analysis_units(source)],
+                         [source])
+        self.assertFalse(split_prose_analysis_units(source)[0].synthetic_terminal)
+        self.assertEqual(len(split_prose_analysis_units(
+            source, preserve_dependent_continuations=False)), 2)
+        independent = "They hurried; walking home, talking softly, she left."
+        proper_name = "They hurried; walking home, talking softly, Mary left."
+        for sentence in (independent, proper_name):
+            with self.subTest(sentence=sentence):
+                self.assertEqual(len(split_prose_analysis_units(sentence)), 2)
+
     def test_versioned_extraction_rejects_rewriting_the_frozen_cohort(self):
         from research.verbnet_lr.gutenberg_novels import analysis_units
         source = "He returned; which I accordingly did."

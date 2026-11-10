@@ -17,6 +17,21 @@ The same structural issue affects explicitly subordinate continuations
 (`although`, `because`, `while`, `when`, `if`, etc.). This is an error of
 **analysis-unit selection**, not automatically a missing grammatical rule.
 
+Three further examples were verified against the *original contiguous*
+Gutenberg text (not only the already-split 500-case sample):
+
+| Frozen case | Source construction | Dependency lost by the v1 split |
+| --- | --- | --- |
+| 94, *David Copperfield* | `She gently chid me ...; and, keeping me close ..., turned to thank ...` | `chid` and `turned` share the subject `She`; the participial insertion does not introduce another subject. |
+| 182, *Pride and Prejudice* | `He found her as handsome ...; as good natured, and as unaffected ...` | The parallel comparative adjectives share the matrix predicate `found her`. |
+| 194, *Pride and Prejudice* | `They paid little attention; avoiding ..., saying ..., and nothing ...` | The nonfinite participial series modifies the preceding finite clause. |
+
+V2 now protects these three narrowly identifiable constructions too. The
+test suite includes near-matches containing an overt subject after a comma
+(`and, keeping ..., she turned`; `walking ..., Mary left`), which **must**
+remain independent. This avoids simply coalescing every clause beginning
+with a conjunction, a comparison, or an `-ing` form.
+
 ## Versioned behavior
 
 - **v1 (historical, default in corpus extraction):** split at every
@@ -27,6 +42,9 @@ The same structural issue affects explicitly subordinate continuations
   `which … ?` / `when … ?` question is not merged. Semicolons introducing
   ordinary independent clauses still split. Subordinate-fronted *complete*
   sentences such as `when she arrived, I left` also remain independent.
+  Attested shared-subject predicate coordination, comparative lists, and
+  nonfinite participial lists are additionally retained when their
+  structural cues are present.
 - **Quotation balancing:** unchanged. The same quote stack, synthetic
   prefix/suffix, synthetic terminal, and original `source_text` are used.
   A semicolon retained in the unit remains a literal source character;
