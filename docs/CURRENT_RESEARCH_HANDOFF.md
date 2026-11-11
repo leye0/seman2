@@ -5,6 +5,16 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Couche structurelle livrée — 11 novembre 2026 (référence actuelle)
+
+- La [PR #38](https://github.com/leye0/seman2/pull/38) est **fusionnée** au commit `14aba462789392e6b9b38434fc8b187b520cd3f2`. Le module `superparser/seman_parser/structural_units.py` intervient explicitement après la segmentation ponctuationnelle et avant les unités passées au parseur, et documente chaque lien par sa justification structurale. Il ne fait aucun parsing complet et n'emploie aucun lexique alternatif. Les guillemets et spans source restent dans le pipeline existant.
+- [CI Layer 1 #43046480644](https://github.com/leye0/seman2/actions/runs/43046480644) **verte** : **619 tests**, 120/120 annotations, 24/24 contrastes positifs, 9 négatifs toujours acceptés, smoke canonique/adaptatif/dialogue OK. Les anciens tests #434 et #438, dont l'index provenait du vieux corpus, ont été convertis en témoins par texte source.
+- [CI nouvelle cohorte #43046480613](https://github.com/leye0/seman2/actions/runs/43046480613) **verte** : nouveau SHA `5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b`, **416/500**, **84 résidus** : 18 `no_structural_root`, 54 `roots_without_valid_analysis`, 9 limites de forêt, 3 délais; 0 erreur. **Aucune comparaison directe de 416 avec 425 ou 475** : le rééchantillonnage a changé.
+- Comparaison par `case_id` avec la cohorte précédente : **137 unités communes, 0 changement de statut**. Les 75 anciens résidus comprenaient 27 unités issues de points-virgules; cela ne prouve pas que les 27 étaient des erreurs de découpage.
+- Audit prégrammatical sur quatre romans : **37 081 unités** (37 410 précédemment), mêmes 11 144 paragraphes, 19 raccordements avec normalisation d'espaces, aucune perte de caractère non blanc. Le rapport CI inventorie les **motifs de regroupement**; ces regroupements ne constituent pas des preuves d'arbres corrects.
+- Audit historique de la grammaire `scripts.audit_fragment_grammar_rules` : **374 règles le 11 octobre** contre **608** aujourd'hui, **266 nouveaux IDs, 32 retirés**; **45 règles candidates à l'examen** (29 introduites depuis le 11 octobre, 16 plus anciennes). **Aucune règle supprimée par simple heuristique**; le rapport source/JSON est dans l'artefact de la CI. Toute suppression devra vérifier les arbres de rang 1 et les positifs/négatifs indépendants.
+- La file courante `GRAMMAR_CASE_QUEUE.json` a été **reconstruite à partir de ce nouveau run** : 84 résidus, curseur `-1`, **prochain index 1**, `case_id=766:e0afb5059ab6d771`.
+
 ## Recherche active — couche de cohésion structurale et audit des règles
 
 La branche [`feat/structural-cohesion-layer`](https://github.com/leye0/seman2/tree/feat/structural-cohesion-layer)

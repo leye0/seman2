@@ -1,94 +1,84 @@
 {
   "schema": "seman2-grammar-case-queue-v2",
-  "cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
-  "validated_commit": "e2265953a7c78e504bed6deee3b9823ed7267c21",
-  "completed_count": 425,
+  "cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
+  "validated_commit": "14aba462789392e6b9b38434fc8b187b520cd3f2",
+  "completed_count": 416,
   "last_attempted_index": -1,
   "unresolved": [
     {
       "index": 1,
-      "status": "no_structural_root",
-      "case_id": "766:a1c0e2ac3f15027c"
+      "status": "roots_without_valid_analysis",
+      "case_id": "766:e0afb5059ab6d771"
     },
     {
-      "index": 17,
+      "index": 14,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:0d14dc13874c624f"
+      "case_id": "766:64f2694a8c3b5019"
     },
     {
       "index": 20,
       "status": "no_structural_root",
-      "case_id": "766:7e31bb9454fd62b8"
+      "case_id": "766:a1cebff310a54ebf"
     },
     {
-      "index": 31,
+      "index": 23,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:bfc3b69b23ddae57"
+      "case_id": "766:1512b32b4e15e35b"
     },
     {
       "index": 36,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:d8571911701c69d4"
+      "case_id": "766:af200f9fa2558f5e"
     },
     {
-      "index": 38,
+      "index": 46,
       "status": "no_structural_root",
-      "case_id": "766:f2ab419eee12ff51"
+      "case_id": "766:06fe357963999eae"
     },
     {
-      "index": 40,
+      "index": 59,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:2b919fe2c31a845a"
+      "case_id": "766:15dfc81c2e494195"
     },
     {
-      "index": 41,
-      "status": "no_structural_root",
-      "case_id": "766:f10c38ff6286f962"
-    },
-    {
-      "index": 69,
+      "index": 62,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:3e57ef414f489462"
+      "case_id": "766:09b7964532f52302"
     },
     {
-      "index": 70,
+      "index": 63,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:937519cca6c9d536"
+      "case_id": "766:438a1f1166e5bfb2"
     },
     {
-      "index": 71,
+      "index": 68,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:bac518a79ebbc72e"
-    },
-    {
-      "index": 72,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:9da2066996003976"
-    },
-    {
-      "index": 76,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:5fe839226c2eb42a"
-    },
-    {
-      "index": 77,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:267c2513213fcdf5"
+      "case_id": "766:73b5ab2270bfa4e3"
     },
     {
       "index": 79,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:57dba5c2e4bb4629"
+      "case_id": "766:d4b513b9ae1b101c"
     },
     {
-      "index": 82,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:c0d8f5634a75d9f9"
+      "index": 81,
+      "status": "no_structural_root",
+      "case_id": "766:f7416ea181083f1a"
     },
     {
       "index": 86,
+      "status": "no_structural_root",
+      "case_id": "766:7b362329dcd4337a"
+    },
+    {
+      "index": 87,
+      "status": "no_structural_root",
+      "case_id": "766:db8e9b5d61b55535"
+    },
+    {
+      "index": 88,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:df82ea6f27b18953"
+      "case_id": "766:1e6c8df1f7c94115"
     },
     {
       "index": 89,
@@ -96,129 +86,79 @@
       "case_id": "766:e56185b6c41c597f"
     },
     {
-      "index": 90,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:b2313b428dc52a78"
-    },
-    {
-      "index": 94,
+      "index": 98,
       "status": "no_structural_root",
-      "case_id": "766:c7fc0d61fb29d367"
-    },
-    {
-      "index": 97,
-      "status": "no_structural_root",
-      "case_id": "766:de2cb01e4db0c1d0"
+      "case_id": "766:5fd70d250d5a9fb9"
     },
     {
       "index": 99,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:0b3e3c260c4fa0b2"
-    },
-    {
-      "index": 102,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:af69a40a79beda80"
-    },
-    {
-      "index": 104,
       "status": "timeout",
-      "case_id": "766:8d498cad76020211"
+      "case_id": "766:9aad483e8a69bc88"
     },
     {
-      "index": 108,
+      "index": 100,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:5c74e019d5db9a6e"
+      "case_id": "766:f7a513686d619251"
     },
     {
-      "index": 109,
+      "index": 107,
       "status": "no_structural_root",
-      "case_id": "766:f95b1682a9dfcf0f"
+      "case_id": "766:c8ada2f9d8969589"
     },
     {
-      "index": 110,
-      "status": "timeout",
-      "case_id": "766:c31971a0a1ada1d9"
-    },
-    {
-      "index": 112,
-      "status": "no_structural_root",
-      "case_id": "766:314a42ebdd6d6674"
-    },
-    {
-      "index": 115,
+      "index": 119,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:0908ecf2c388dfa1"
+      "case_id": "766:ec7dbd6f48be6b35"
     },
     {
-      "index": 116,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:4085233d159fb5ba"
-    },
-    {
-      "index": 118,
+      "index": 120,
       "status": "forest_budget_exceeded",
-      "case_id": "766:f6de8f667589ff80"
+      "case_id": "766:0056e788f497603b"
     },
     {
-      "index": 122,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:506e03e68c884181"
-    },
-    {
-      "index": 123,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:ffa479280f2eef6e"
-    },
-    {
-      "index": 167,
-      "status": "roots_without_valid_analysis",
-      "case_id": "1342:014f849e718a07c2"
-    },
-    {
-      "index": 173,
+      "index": 124,
       "status": "no_structural_root",
-      "case_id": "1342:f7ebad0b064a71f0"
+      "case_id": "766:1f4a9c1c1a4d488a"
     },
     {
-      "index": 183,
+      "index": 131,
       "status": "roots_without_valid_analysis",
-      "case_id": "1342:3045f91177fdf9ca"
+      "case_id": "1342:a312e4a70cf3999b"
     },
     {
-      "index": 184,
-      "status": "roots_without_valid_analysis",
-      "case_id": "1342:01bc9a151f7b0fb0"
+      "index": 162,
+      "status": "no_structural_root",
+      "case_id": "1342:698a864c9b97faff"
     },
     {
-      "index": 194,
+      "index": 188,
       "status": "roots_without_valid_analysis",
-      "case_id": "1342:981516a7607cd69a"
+      "case_id": "1342:4394e43ca33ee2e0"
     },
     {
-      "index": 195,
+      "index": 197,
       "status": "roots_without_valid_analysis",
-      "case_id": "1342:0e943284167ae593"
+      "case_id": "1342:f587d484206363f3"
     },
     {
       "index": 200,
       "status": "no_structural_root",
-      "case_id": "1342:4baeb4422c466037"
+      "case_id": "1342:6760df4d427690b8"
     },
     {
-      "index": 207,
-      "status": "no_structural_root",
-      "case_id": "1342:f97b874d39d467ea"
-    },
-    {
-      "index": 209,
+      "index": 211,
       "status": "roots_without_valid_analysis",
-      "case_id": "1342:5387626b29a19d3a"
+      "case_id": "1342:0e57de3d934f95f2"
     },
     {
-      "index": 220,
-      "status": "timeout",
-      "case_id": "1342:0dcc757dd859d2d9"
+      "index": 212,
+      "status": "roots_without_valid_analysis",
+      "case_id": "1342:92db30acbd76e693"
+    },
+    {
+      "index": 218,
+      "status": "roots_without_valid_analysis",
+      "case_id": "1342:466d891f7f5d38e6"
     },
     {
       "index": 221,
@@ -226,34 +166,44 @@
       "case_id": "1342:647b737b67529ee2"
     },
     {
-      "index": 226,
-      "status": "no_structural_root",
-      "case_id": "1342:454c633a9bffa21f"
-    },
-    {
-      "index": 228,
+      "index": 224,
       "status": "roots_without_valid_analysis",
-      "case_id": "1342:008124f726e9e2ee"
+      "case_id": "1342:6df5206c64181087"
     },
     {
-      "index": 237,
+      "index": 233,
       "status": "forest_budget_exceeded",
-      "case_id": "1342:673556e50a248006"
+      "case_id": "1342:925d49bf50e4c8a2"
     },
     {
-      "index": 243,
-      "status": "no_structural_root",
-      "case_id": "1342:0fc5f974fe7f44c8"
+      "index": 242,
+      "status": "forest_budget_exceeded",
+      "case_id": "1342:c17c14d44e856808"
     },
     {
-      "index": 244,
-      "status": "no_structural_root",
-      "case_id": "1342:85ea1cf4c9922777"
-    },
-    {
-      "index": 286,
+      "index": 246,
       "status": "roots_without_valid_analysis",
-      "case_id": "84:9c15b7564c2b9945"
+      "case_id": "1342:1dc63876b9b6c134"
+    },
+    {
+      "index": 248,
+      "status": "forest_budget_exceeded",
+      "case_id": "1342:c8e5a73cafcbf41d"
+    },
+    {
+      "index": 274,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:8d88c9af2109cf83"
+    },
+    {
+      "index": 275,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:bc847291a94198f2"
+    },
+    {
+      "index": 279,
+      "status": "no_structural_root",
+      "case_id": "84:f2d623fbb9172e95"
     },
     {
       "index": 287,
@@ -261,9 +211,19 @@
       "case_id": "84:97efc3fb7e03dc7d"
     },
     {
+      "index": 290,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:8c33587cf0bd7ee3"
+    },
+    {
       "index": 307,
       "status": "roots_without_valid_analysis",
       "case_id": "84:bcdba5257d3f8a96"
+    },
+    {
+      "index": 308,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:2bbf89669422ddd1"
     },
     {
       "index": 312,
@@ -271,9 +231,24 @@
       "case_id": "84:29d5e3853f60eff2"
     },
     {
+      "index": 321,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:eabbde218e345bc6"
+    },
+    {
       "index": 322,
       "status": "roots_without_valid_analysis",
-      "case_id": "84:5565cb92bf4370f1"
+      "case_id": "84:599b4f2a8d925c27"
+    },
+    {
+      "index": 332,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:f71674ee44dbd548"
+    },
+    {
+      "index": 341,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:615f0e393339cd1e"
     },
     {
       "index": 344,
@@ -286,14 +261,44 @@
       "case_id": "84:d685d261e18beeba"
     },
     {
+      "index": 353,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:06bcb0faf473ac77"
+    },
+    {
+      "index": 356,
+      "status": "forest_budget_exceeded",
+      "case_id": "84:d0b82b8ddf2d376a"
+    },
+    {
+      "index": 358,
+      "status": "forest_budget_exceeded",
+      "case_id": "84:687e332283136b84"
+    },
+    {
+      "index": 360,
+      "status": "roots_without_valid_analysis",
+      "case_id": "84:2aafac833d1b1c15"
+    },
+    {
+      "index": 365,
+      "status": "timeout",
+      "case_id": "84:b01acf52edf67521"
+    },
+    {
       "index": 379,
       "status": "roots_without_valid_analysis",
       "case_id": "120:31ab9ac466c01ad4"
     },
     {
-      "index": 388,
-      "status": "no_structural_root",
-      "case_id": "120:acac581faab5cbf7"
+      "index": 382,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:e1c0a54126afdda0"
+    },
+    {
+      "index": 387,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:ef8d7c5eb390209a"
     },
     {
       "index": 393,
@@ -306,9 +311,34 @@
       "case_id": "120:f4d396add3114544"
     },
     {
-      "index": 433,
+      "index": 409,
       "status": "roots_without_valid_analysis",
-      "case_id": "120:9afeaaf2889bc512"
+      "case_id": "120:fa841103458ad157"
+    },
+    {
+      "index": 413,
+      "status": "no_structural_root",
+      "case_id": "120:2314d915cde45d24"
+    },
+    {
+      "index": 424,
+      "status": "no_structural_root",
+      "case_id": "120:10f799006f1427a7"
+    },
+    {
+      "index": 427,
+      "status": "no_structural_root",
+      "case_id": "120:26609c612576cc1e"
+    },
+    {
+      "index": 428,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:da35edd0f56fc7ad"
+    },
+    {
+      "index": 441,
+      "status": "no_structural_root",
+      "case_id": "120:b71fb32abbef1125"
     },
     {
       "index": 443,
@@ -316,29 +346,24 @@
       "case_id": "120:cc9c1a7ddba70df4"
     },
     {
+      "index": 444,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:33e91c1bf1f89627"
+    },
+    {
       "index": 449,
       "status": "roots_without_valid_analysis",
       "case_id": "120:2ab687ece535a56a"
     },
     {
-      "index": 451,
-      "status": "no_structural_root",
-      "case_id": "120:5bf7f73a398930cd"
+      "index": 453,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:2d9d6e577792db8e"
     },
     {
-      "index": 454,
+      "index": 461,
       "status": "roots_without_valid_analysis",
-      "case_id": "120:fd61b14f5960f2b4"
-    },
-    {
-      "index": 455,
-      "status": "roots_without_valid_analysis",
-      "case_id": "120:5c2af12f9682e118"
-    },
-    {
-      "index": 459,
-      "status": "roots_without_valid_analysis",
-      "case_id": "120:c1ef4f49bf444278"
+      "case_id": "120:dc73836cb1a1c659"
     },
     {
       "index": 464,
@@ -347,8 +372,18 @@
     },
     {
       "index": 466,
-      "status": "no_structural_root",
-      "case_id": "120:18d2aab16e315853"
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:3896c64874fc595f"
+    },
+    {
+      "index": 474,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:32c2d1980ad1e614"
+    },
+    {
+      "index": 475,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:d2a6693b7c5774f3"
     },
     {
       "index": 480,
@@ -356,9 +391,14 @@
       "case_id": "120:4414537cf6568fe7"
     },
     {
+      "index": 483,
+      "status": "forest_budget_exceeded",
+      "case_id": "120:dfe4353ab679a8ca"
+    },
+    {
       "index": 487,
-      "status": "timeout",
-      "case_id": "120:77e271d0176fbd96"
+      "status": "forest_budget_exceeded",
+      "case_id": "120:afdbd6a1f4cd33e6"
     },
     {
       "index": 490,
@@ -366,19 +406,24 @@
       "case_id": "120:df3d94c9bd1dffde"
     },
     {
-      "index": 493,
-      "status": "forest_budget_exceeded",
-      "case_id": "120:0fa4e9b9b2d48590"
+      "index": 491,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:a908cd7711647f02"
     },
     {
-      "index": 494,
-      "status": "forest_budget_exceeded",
-      "case_id": "120:002272ce015b947d"
+      "index": 492,
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:b75bbac43c3c39f8"
     },
     {
       "index": 497,
+      "status": "forest_budget_exceeded",
+      "case_id": "120:e332ea3fcffcd931"
+    },
+    {
+      "index": 498,
       "status": "roots_without_valid_analysis",
-      "case_id": "120:1d6c54a55efa9bbd"
+      "case_id": "120:160390f7a8b786c3"
     }
   ]
 }
