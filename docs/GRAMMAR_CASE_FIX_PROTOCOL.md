@@ -84,6 +84,45 @@ dernier bilan validé.
 
 ### 1. Diagnostiquer une seule phrase, puis ses constituants
 
+### 1. Pré-triage OBLIGATOIRE : vérifier le découpage avant la grammaire
+
+**Ne jamais commencer par inventer une règle grammaticale pour un fragment
+historique.** Avant la matrice lexicale, inspecter son **paragraphe source
+contigu** et ses voisins (pas uniquement `case["text"]` ou l'analyse
+équilibrée). Rechercher en priorité : points-virgules qui isolent une
+relative, une participiale ou un prédicat sans sujet; `?`/`!` à
+l'intérieur d'une citation contenant plusieurs phrases; paroles rapportées,
+guillemets imbriqués, incises de parole et explications `--for`/`—for`.
+
+Sur ce même paragraphe, comparer explicitement les **unités et les spans**
+produits par `analysis_units(..., segmentation_version=1)` et
+`analysis_units(..., segmentation_version=2)`, ainsi que leur préparation
+`QUOTE_BALANCED`. Vérifier la conservation de chaque caractère original,
+les préfixes/suffixes synthétiques, les limites de citations et les cas
+indépendants voisins. Un diagnostic `no_structural_root` provenant d'une
+unité orpheline est **un problème de segmentation présumé jusqu'à examen du
+contexte**, pas une invitation automatique à étendre le lexique/la grammaire.
+
+- Si la v2 reconstruit une unité cohérente, **classer le résidu v1 comme
+  artefact de découpage** et poursuivre, si utile, l'audit grammatical
+  uniquement sur la nouvelle unité v2.
+- Si la v2 coupe encore mal, **corriger d'abord
+  `sentence_boundaries.py`**, avec un motif structural généralisable et
+  des positifs/négatifs indépendants dans `test_sentence_boundaries.py`.
+  Ne pas déplacer la cohorte v1 SHA-épinglée : documenter le changement
+  prospectif séparément.
+- Si les deux versions isolent correctement une phrase autonome, reprendre
+  alors le diagnostic lexical, syntaxique et du rang 1 ci-dessous.
+- **Ne pas annoncer un gain sur les 500 cas** pour une correction qui ne
+  concerne que la v2; enregistrer distinctement les cas rééchantillonnés,
+  les exclusions par longueur, la provenance et les arbres vérifiés.
+
+Exemple : le cas 105 de *David Copperfield* était coupé après
+`Martha, is it you?`, avant une seconde question imbriquée suivie de
+`--for`. La priorité est de conserver le dialogue rapporté et son
+explication dans la v2, pas de créer une grammaire spéciale pour
+`Oh, Martha, can it be you?` privé de son contexte.
+
 1. Utiliser la cohorte épinglée de `scripts.diagnose_novel_parses.select_cases`
    et **uniquement** `parse_corpus_case(parser, case)` pour toute phrase
    Gutenberg : cette fonction conserve l'origine, les guillemets transférés

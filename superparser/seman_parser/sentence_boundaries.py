@@ -141,6 +141,41 @@ def _quote_continues_into_coordination(text: str, end: int) -> bool:
     return bool(re.match(r"\s*,?\s+(?:and|but|or)\b", text[closing + 1:]))
 
 
+def _quote_continues_into_causal_aside(text: str, end: int) -> bool:
+    """Keep an inner quoted sentence with a following dash-led explanation.
+
+    An internal question can be one utterance in a nested reported quote:
+    'She said, "Is it you? Can it be?"--for they had met before.'
+    Splitting at the first '?' strands the second question and the explanatory
+    aside. Only join when the next complete quoted sentence closes the same
+    quote AND a dash-led causal continuation follows that closing delimiter.
+    This is v2-only and never rewrites the frozen v1 cohort.
+    """
+    stack: list[tuple[str, str]] = []
+    _advance_quotes(text[:end], stack, balance_sentence_boundary=True)
+    if not stack:
+        return False
+    closer = stack[-1][1]
+    closing = text.find(closer, end)
+    while closing >= 0:
+        before = text[closing - 1] if closing else ""
+        after = text[closing + 1] if closing + 1 < len(text) else ""
+        if closer in {"'", "’"} and before.isalnum() and after.isalnum():
+            closing = text.find(closer, closing + 1)
+            continue
+        break
+    if closing < 0:
+        return False
+    quoted_tail = text[end:closing].rstrip()
+    if (not quoted_tail or quoted_tail[-1] not in ".!?"
+            or len(re.findall(r"[.!?]", quoted_tail)) != 1):
+        return False
+    return bool(re.match(
+        r"\s*(?:--|—|–)\s*(?:for|because)\b",
+        text[closing + 1:], flags=re.IGNORECASE,
+    ))
+
+
 def split_prose_sentences(
     paragraph: str, *, preserve_quoted_coordination: bool = False,
 ) -> list[str]:
@@ -189,7 +224,9 @@ def split_prose_sentences(
         if mark == "." and _abbreviation_at(text, i, next_word):
             i += 1
             continue
-        if preserve_quoted_coordination and _quote_continues_into_coordination(text, end):
+        if (preserve_quoted_coordination
+                and (_quote_continues_into_coordination(text, end)
+                     or _quote_continues_into_causal_aside(text, end))):
             i += 1
             continue
         spans.append(text[left:end].strip())

@@ -315,6 +315,71 @@ class SentenceBoundaryTests(unittest.TestCase):
                 self.assertEqual(" ".join(unit.source_text for unit in v2),
                                  source)
 
+    def test_v2_preserves_case_105_nested_question_and_dash_for_aside(self):
+        from research.verbnet_lr.gutenberg_novels import analysis_units
+
+        # Dickens, frozen 105: v1 orphans the second question after the
+        # internal '?' of a reported quotation. The source has ONE
+        # multi-question quotation plus an outside explanatory aside.
+        source = (
+            "‘Says Em’ly, “Martha, is it you? Oh, Martha, can it be you?”"
+            "--for they had sat at work together, many a day, at Mr. Omer’s.’"
+        )
+        legacy = list(analysis_units(source))
+        prospective = list(analysis_units(source, segmentation_version=2))
+        self.assertEqual([u.source_text for u in legacy], [
+            "‘Says Em’ly, “Martha, is it you?",
+            "Oh, Martha, can it be you?”--for they had sat at work "
+            "together, many a day, at Mr. Omer’s.’",
+        ])
+        self.assertEqual([u.source_text for u in prospective], [source])
+        self.assertEqual(prospective[0].text, source)
+        self.assertEqual([u.source_text for u in split_prose_analysis_units(
+            source)], [source])
+        self.assertEqual(" ".join(u.source_text for u in legacy), source)
+        self.assertEqual(split_prose_sentences(
+            source, preserve_quoted_coordination=True), [source])
+        self.assertEqual(split_prose_sentences(source),
+                         [u.source_text for u in legacy])
+
+        book = Book(766, "David Copperfield", "Dickens", "train")
+        v1, _ = extract(book, source, length_min=1, length_max=100)
+        v2, _ = extract(book, source, length_min=1, length_max=100,
+                        segmentation_version=2)
+        self.assertEqual(len(v1), 2)
+        self.assertEqual(len(v2), 1)
+        self.assertEqual(v2[0]["balanced_analysis_text"], source)
+        self.assertEqual(v2[0]["source_text"], source)
+        self.assertEqual(v2[0]["segmentation_version"], 2)
+
+    def test_v2_causal_quote_aside_generalizes_but_does_not_merge_independents(self):
+        positives = [
+            "‘She whispered, “Is that Jane? Has she returned?”"
+            "—for she had not expected her.’",
+            "“He asked, 'Is it you? Can you stay?'"
+            "—because he had waited so long.”",
+        ]
+        for source in positives:
+            with self.subTest(positive=source):
+                self.assertEqual([u.source_text for u in
+                                  split_prose_analysis_units(source)], [source])
+                self.assertEqual(len(split_prose_sentences(source)), 2)
+
+        negatives = [
+            "‘She whispered, “Is that Jane? Has she returned?” Then she smiled.’",
+            "‘She whispered, “Is that Jane? Has she returned?”"
+            "--fortunately, she was wrong.’",
+            "‘She whispered, “Is that Jane? Has she returned?”"
+            "--forgone chances haunted her.’",
+            "“What? Why?” Then she turned.",
+        ]
+        for source in negatives:
+            with self.subTest(negative=source):
+                units = split_prose_analysis_units(source)
+                self.assertGreater(len(units), 1)
+                self.assertEqual(" ".join(u.source_text for u in units), source)
+
+
     def test_cross_sentence_quote_continuations_reuse_semicolon_balancer(self):
         cases = [
             ("“I came. I saw.”",
