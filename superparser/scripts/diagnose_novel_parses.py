@@ -931,10 +931,17 @@ def render_markdown(summary: dict, rows: list[dict]) -> str:
     return "\n".join(output)
 
 
-def run(args: argparse.Namespace) -> dict:
+def run(
+    args: argparse.Namespace, *,
+    selected_override: list[dict] | None = None,
+    source_description: str | None = None,
+) -> dict:
     if args.max_items < 1 or args.kbest_work_limit < 1 or args.deadline_seconds <= 0:
         raise ValueError("Budgets and deadline must be positive")
-    selected, sources = select_cases(args.count)
+    if selected_override is None:
+        selected, sources = select_cases(args.count)
+    else:
+        selected, sources = selected_override, []
     if len(selected) != args.count:
         raise AssertionError("The cohort must contain exactly the requested count")
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -955,7 +962,8 @@ def run(args: argparse.Namespace) -> dict:
     cohort_digest = sha256(
         (args.out_dir / "cohort.jsonl").read_bytes()
     ).hexdigest()
-    if args.count == 500 and cohort_digest != EXPECTED_500_COHORT_SHA256:
+    if (selected_override is None and args.count == 500
+            and cohort_digest != EXPECTED_500_COHORT_SHA256):
         raise ValueError(
             "The current 500-case reference cohort changed: "
             f"expected {EXPECTED_500_COHORT_SHA256}, got {cohort_digest}. "
@@ -1074,7 +1082,9 @@ def run(args: argparse.Namespace) -> dict:
     summary = {
         "schema": "seman2-novel-parse-diagnostics-v5",
         "cohort_sha256": cohort_digest,
-        "selection": "deterministic four-book/four-band sample using current dependency-aware segmentation",
+        "selection": source_description or (
+            "deterministic four-book/four-band sample using current dependency-aware segmentation"
+        ),
         "sources": sources,
         "limits": {
             "count": args.count, "max_items": args.max_items,

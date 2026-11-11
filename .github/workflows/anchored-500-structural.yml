@@ -1,0 +1,71 @@
+name: Seman2 - 500 original passages through structural cohesion
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'superparser/scripts/compare_anchored_structural_500.py'
+      - 'superparser/scripts/diagnose_novel_parses.py'
+      - '.github/workflows/anchored-500-structural.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: anchored-500-structural-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  anchored:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Retrieve the exact pre-structural 500 passage reference
+        uses: actions/download-artifact@v4
+        with:
+          repository: leye0/seman2
+          run-id: 43029431200
+          name: novel-parse-diagnostics-500
+          github-token: ${{ github.token }}
+          path: /tmp/baseline-500
+      - name: Prepare the same WordNet 3.0 dataset
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          url='https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              raw=f.read()
+          dest=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dest.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf=Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (dest/leaf).write_bytes(z.read(item))
+          assert (dest/'index.verb').exists()
+          PY
+      - name: Parse the identical 500 source anchors with new structural units
+        run: |
+          PYTHONPATH=superparser python -u -m scripts.compare_anchored_structural_500 \
+            --baseline-dir /tmp/baseline-500 \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --max-items 50000 --kbest-work-limit 500000 \
+            --deadline-seconds 10 \
+            --out-dir /tmp/anchored-500
+      - name: Upload detailed old-versus-new passage comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-500-structural-comparison
+          path: /tmp/anchored-500/
+          retention-days: 90
+          if-no-files-found: warn
