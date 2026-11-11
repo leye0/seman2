@@ -72,6 +72,7 @@ jobs:
             superparser.tests.test_sentence_boundaries \
             superparser.tests.test_structural_units \
             superparser.tests.test_structural_preanalysis \
+            superparser.tests.test_quoted_discourse_structure \
             superparser.tests.test_discourse_triage \
             superparser.tests.test_fragment_grammar_rules \
             superparser.tests.test_complexity_routing \

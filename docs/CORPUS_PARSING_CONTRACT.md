@@ -97,3 +97,18 @@ Seules les catégories **explicitement non autonomes/documentaires** sont
 et toute référence sont dénombrées. Une capitale, une minuscule, une phrase
 sans verbe clairement reconnu ou un dialecte ne suffisent jamais à exclure
 un segment. Cette passe ne crée toujours aucun arbre syntaxique confirmé.
+
+## Structure interne du discours direct
+
+Le module `seman_parser.quoted_discourse.analyze_dialogue` fournit des
+constituants sourcés sans transformer le texte : `direct_speech`,
+`spoken_clause_candidate` (une phrase prononcée dans une citation
+multiphase), `reporting_clause` (incise d'attribution),
+`split_direct_speech_turn` (citation interrompue par l'incise),
+`embedded_quotation` et `narratorial_parenthetical`. Chaque groupe conserve
+les caractères d'origine, les offsets et une relation à un gouverneur.
+La détection d'un verbe introducteur est locale à la zone immédiatement
+adjacente aux guillemets. Aucun nom de locuteur ni rattachement sémantique
+n'est prétendu vérifié. Le moteur grammatical complet n'utilise pas encore
+ces sous-structures pour composer sa forêt d'analyses; la présente étape
+permet de distinguer ce défaut des erreurs de segmentation.
