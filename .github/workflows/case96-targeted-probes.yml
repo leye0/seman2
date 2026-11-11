@@ -1,17 +1,6 @@
 name: Seman2 - Case 96 targeted grammar fix probes
 
 on:
-  push:
-    branches: [research/case96-real-fix-20261111]
-    paths:
-      - '.github/workflows/case96-targeted-probes.yml'
-      - 'superparser/scripts/audit_case96_constructs.py'
-      - 'superparser/data/function_words.jsonl'
-      - 'superparser/data/grammar.jsonl'
-      - 'superparser/tests/test_case96_locative_relative.py'
-      - 'superparser/seman_parser/sentence_boundaries.py'
-      - 'superparser/research/verbnet_lr/gutenberg_novels.py'
-      - 'superparser/tests/test_sentence_boundaries.py'
   workflow_dispatch:
 
 permissions:
