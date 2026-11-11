@@ -38,6 +38,33 @@ En exploitation, Seman2 appelle automatiquement `gc.freeze()` **une seule fois p
 
 Ce gel reste **global au processus** et n'est pas sélectif sur les seuls objets WordNet. Voir le [benchmark de 1 000 phrases](GC_CPU_1000_SENTENCES_BENCHMARK_2026_10_18.md) pour la mesure, ses conditions de préchauffe et les limites de durée de vie / mémoire. Les outils expérimentaux ont été supprimés de `main`, mais sont disponibles dans l'historique Git de l'audit.
 
+## Couche grammatico-structurelle entre segmentation et parsing
+
+Le pipeline est explicitement : **texte → découpage typographique
+(`split_prose_sentences`) → analyse structurale légère
+(`structural_units.review_semicolon_boundaries`) → unités avec transfert de
+citations → `parse_corpus_case` → `Parser.parse`**.
+
+Cette passe intermédiaire ne construit **aucun arbre grammatical** et ne
+consomme ni WordNet ni les budgets du parseur. Pour chaque point-virgule,
+elle détermine s'il sépare deux propositions autonomes ou s'il coupe un
+constituant dépendant (relative, participiale, infinitif coordonné, prédicat
+à sujet partagé, antithèse elliptique `on one side…; on the other…`, série
+de compléments prépositionnels préposés, `for` causal). Chaque décision
+rend un motif explicite. L'absence de preuve entraîne le maintien de la
+frontière, pas la création d'une règle de grammaire artificielle.
+
+Deux instruments d'audit distincts :
+
+- `scripts.audit_corpus_segmentation` mesure les liens reconnus par motif,
+  la conservation des caractères sources et les altérations d'espacement;
+  il ne certifie pas la syntaxe des arbres.
+- `scripts.audit_fragment_grammar_rules` inspecte les **productions
+  potentiellement permissives** apparues ou maintenues depuis la référence
+  du 11 octobre 2026. Un drapeau `ellipsis` ou `CLAUSE` sans prédicat
+  apparent **n'est pas une preuve de mauvaise règle** : les impératifs et
+  certaines ellipses littéraires sont légitimes. Aucun retrait automatique.
+
 ## Découpage de romans et référence actuelle
 
 **Une seule segmentation active**, sans bascule v1/v2 : les fonctions
