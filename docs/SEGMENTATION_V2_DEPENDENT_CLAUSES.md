@@ -1,4 +1,4 @@
-# Prose segmentation v2 — dependent semicolon continuations
+# Prose segmentation v2 — dependent continuations and quoted coordination
 
 ## Why this exists
 
@@ -32,6 +32,38 @@ test suite includes near-matches containing an overt subject after a comma
 remain independent. This avoids simply coalescing every clause beginning
 with a conjunction, a comparison, or an `-ing` form.
 
+## Quoted exclamation/question before shared-subject coordination
+
+A separate case, frozen Dickens **64**, has the contiguous source:
+
+> Mr. Creakle whispered, ‘Hah! What’s this?’ and bent his eyes upon me, as if he would have burnt me up with them.
+
+The v1 sentence splitter cuts after `Hah!` while still inside the quote.
+Consequently, `and bent` is analyzed without the shared overt subject.
+Opt-in v2 now recognizes only a **narrow** continuation: after a potential
+`!` or `?` boundary **inside an open quote**, exactly one following
+quoted complete sentence must reach the closing quote, and the next
+outside-quote word must be `and`, `but`, or `or`.
+In that case it keeps the two quoted utterances and the coordinated
+predicates together.
+
+This rule is enabled via `preserve_quoted_coordination` only in the v2
+`preserve_dependent_continuations` path; default v1 extraction and
+historical boundaries remain untouched. Regression controls include another
+quoted question + shared-subject coordination, independent quoted speech
+followed by another sentence, non-coordinated quotes, and exact source
+round trips. The v2 case is reconstructed through `extract(...,
+segmentation_version=2)` and `parse_corpus_case`, **not** by feeding a
+hand-edited fragment directly to the grammar.
+
+Actions [42950058760](https://github.com/leye0/seman2/actions/runs/42950058760)
+and [42950284824](https://github.com/leye0/seman2/actions/runs/42950284824)
+confirmed the joined unit, 31 boundary/provenance tests, and 7 independent
+parser probes. A complete tree exists under original budgets, but its
+`upon me`, `as if`, and interjection attachments are wrong in the
+top-three trees. See [CASE_64_QUOTED_SHARED_SUBJECT.md](CASE_64_QUOTED_SHARED_SUBJECT.md).
+**No case64 grammar resolution or 500-case gain is claimed.**
+
 ## Versioned behavior
 
 - **v1 (historical, default in corpus extraction):** split at every
@@ -44,7 +76,9 @@ with a conjunction, a comparison, or an `-ing` form.
   sentences such as `when she arrived, I left` also remain independent.
   Attested shared-subject predicate coordination, comparative lists, and
   nonfinite participial lists are additionally retained when their
-  structural cues are present.
+  structural cues are present. In a quoted multi-sentence utterance followed
+  by external predicate coordination, v2 also retains a narrowly verified
+  internal exclamation/question boundary.
 - **Quotation balancing:** unchanged. The same quote stack, synthetic
   prefix/suffix, synthetic terminal, and original `source_text` are used.
   A semicolon retained in the unit remains a literal source character;
