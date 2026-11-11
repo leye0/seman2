@@ -7,6 +7,21 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
 
 ## Point vérifié le 11 novembre 2026
 
+- La PR [#34](https://github.com/leye0/seman2/pull/34) ajoute uniquement
+  à la **segmentation prospective v2** la conservation d'une courte citation
+  contenant deux phrases, suivie d'une coordination externe du même sujet.
+  V1 reste figé et le corpus 500 SHA-pinné inchangé. L'audit WordNet 3.0 du
+  cas 64 est reproductible : 29 tokens, forêt 758, 26 147 états partiels,
+  31 tests ciblés validés et 7 sondes indépendantes. Un arbre complet existe,
+  mais le rang 1 rattache mal `upon me`, `as if ...` et `Hah` ; **ce n'est
+  pas une correction grammaticale**. Détails dans
+  [`CASE_64_QUOTED_SHARED_SUBJECT.md`](CASE_64_QUOTED_SHARED_SUBJECT.md).
+  CI [Layer 1 #42950713364](https://github.com/leye0/seman2/actions/runs/42950713364)
+  verte (**604 tests**) et CI [500 cas #42950713423](https://github.com/leye0/seman2/actions/runs/42950713423)
+  verte, **474/500**,
+  sans régression. PR fusionnée. La PR historique #12 a été fermée sans
+  fusion, comme convenu pour les PR abandonnées.
+
 - La PR [#33](https://github.com/leye0/seman2/pull/33) a été
   fusionnée sur `main` : l'audit des voisins de la cohorte 500 utilise
   explicitement la segmentation v1, tandis que le découpage prospectif
@@ -23,20 +38,22 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
   deux unités d'un dialogue de Dickens : le sujet explicite du
   prédicat coordonné se trouve dans la phrase précédente. Voir
   [`CASE_64_QUOTED_SHARED_SUBJECT.md`](CASE_64_QUOTED_SHARED_SUBJECT.md).
-  **Non corrigé**; le curseur déterministe reste à 8 et le prochain
-  cas à traiter est toujours 64, jusqu'à une vraie vérification de
-  l'arbre choisi.
+  **Grammaire non corrigée** ; l'étude du cas 64 a été effectuée et
+  documentée, sans certification du rang 1. Le dernier index essayé est
+  désormais 64 ; le prochain index déterministe à étudier est **94**.
+  Les cas 8 et 64 restent dans la file des 26 résidus.
 - Pour les anomalies d'accord P2, les 16 alternatives marquées des
   cas #463 et #480 ne montrent chacune qu'un motif distinct de liens
   grammaticaux, sans solution stricte complète dans la recherche bornée.
   Voir [`REJECTION_TRACE_PROBE.md`](REJECTION_TRACE_PROBE.md).
   Cela ne prouve pas l'absence d'autres structures.
 
-## Mise à jour de la file (2026-11-08, après le diagnostic 8)
+## Historique de la file (2026-11-08, après le diagnostic 8)
 
-- Le prochain cas **déterministe** est maintenant **64** selon
-  [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json), qui fait autorité ;
-  `last_attempted_index=8`, `completed_count=474`.
+- À cette date le prochain cas était **64** selon
+  [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json) ; la file actualisée
+  au 11 novembre reste à **474** succès, avec `last_attempted_index=64`
+  et **94** comme prochain cas déterministe.
 - **8** : « which I accordingly did. » est une relative supplémentaire
   **séparée de son antécédent par le découpage conservé au point-virgule**.
   Sans son contexte, elle n'est pas une clause indépendante ; lorsqu'on
@@ -67,8 +84,9 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
   [487](https://github.com/leye0/seman2/actions/runs/42544413611) et
   [491](https://github.com/leye0/seman2/actions/runs/42552398902) et
   [8](https://github.com/leye0/seman2/actions/runs/42558920460) vertes.
-  Le dernier contrôle exhaustif des 500 reste celui du code `5b757eb` :
-  **474/500**.
+  Le contrôle exhaustif du code de la PR #34 confirme **474/500**,
+  avec la même cohorte historique ; les recherches prospectives v2 ne
+  modifient pas ce score.
 
 ## Ce que nous construisons
 

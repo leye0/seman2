@@ -64,3 +64,7 @@ It defines the acceptance criteria for a correct selected tree, exact
 attachments, independent positive/negative tests, no regressions, unchanged
 budgets, and efficient staged validation. A completed parse alone is not
 proof of a grammatical correction.
+
+Pull request hygiene: close stale/abandoned research PRs that are not actively
+being validated or merged. Do not leave experimental PRs open indefinitely;
+merge only changes that pass their required tests and preserve this contract.
