@@ -166,7 +166,7 @@ class QuotedSentenceComposer:
                 span_start=clause.stop, span_end=clause.stop+1,
                 surface=text[clause.stop], lemma=text[clause.stop],
                 category="SPEECH-STOP", features=FeatureStructure.empty(),
-                source="source-structural-terminal-punctuation", score=0,
+                source="dialogue-delimiter", score=0,
                 provenance={"source_stop":clause.stop},
             ))
         for where, category in ((0, "OPEN-QUOTE"), (len(text)-1, "CLOSE-QUOTE")):
@@ -174,7 +174,7 @@ class QuotedSentenceComposer:
                 span_start=where, span_end=where+1,
                 surface=text[where], lemma=text[where],
                 category=category, features=FeatureStructure.empty(),
-                source="source-structural-quotation", score=0,
+                source="dialogue-delimiter", score=0,
                 provenance={"source_delimiter":where},
             ))
         graph = LexicalLattice(
@@ -379,7 +379,7 @@ class QuotedSentenceComposer:
                 span_start=where, span_end=where+1,
                 surface=text[where], lemma=text[where],
                 category=category, features=FeatureStructure.empty(),
-                source="source-structural-punctuation", score=0,
+                source="dialogue-delimiter", score=0,
                 provenance={"source_punctuation":where},
             ))
 
@@ -536,7 +536,7 @@ class QuotedSentenceComposer:
                 span_start=pos, span_end=pos+1,
                 surface=text[pos], lemma=text[pos],
                 category=cat, features=FeatureStructure.empty(),
-                source="original-minor-utterance-punctuation",
+                source="dialogue-delimiter",
                 score=0, provenance={"source_span":[pos,pos+1]},
             ))
         graph = LexicalLattice(
