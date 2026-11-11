@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/case96-targeted-probes.yml'
       - 'superparser/data/grammar.jsonl'
+      - 'superparser/data/function_words.jsonl'
       - 'superparser/tests/test_case96_locative_relative.py'
   workflow_dispatch:
 
