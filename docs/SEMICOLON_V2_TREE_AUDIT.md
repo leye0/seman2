@@ -119,6 +119,26 @@ The function-word lexicon already supplies the token `;` with the
 `COMMA` syntactic category. The parser sees the original punctuation; this
 is not a missing-token issue.
 
+## Focused constituent audit of case 94 (2026-11-11)
+
+[Action 42952309195](https://github.com/leye0/seman2/actions/runs/42952309195)
+replayed the original contiguous v2 sentence through the mandatory corpus
+gateway with reference WordNet 3.0. It remains incomplete (1,234 forest
+nodes, 38,813 partial states, no budget saturation). Twelve independent
+probes isolate the missing composition of a semicolon-coordinated finite
+predicate around an inserted participial clause. The simple coordination
+`She gently chid me for being rude; and turned to thank the gentleman.`
+does parse, but `She chid me; and, keeping me close to her shawl, turned.`
+and independent analogues do not.
+
+Critically, apparently complete shorter probes also select incorrect
+attachments: `me close to her shawl` becomes `np_pp_mod` rather than
+an object + predicative complement; `as to bring her home` attaches to
+the entire VP instead of the degree phrase around `so much trouble`.
+No grammar change or score increase is claimed. Detailed tree findings,
+negative controls and next constraints are in
+[CASE_94_SHARED_SUBJECT_PARTICIPIAL_INCISE.md](CASE_94_SHARED_SUBJECT_PARTICIPIAL_INCISE.md).
+
 ## Required next validation
 
 1. Re-run `scripts.audit_semicolon_context` on the reference WordNet 3.0

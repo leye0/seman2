@@ -7,6 +7,21 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
 
 ## Point vérifié le 11 novembre 2026
 
+- Le cas **94** a été diagnostiqué avec WordNet 3.0 dans
+  [l'Action 42952309195](https://github.com/leye0/seman2/actions/runs/42952309195).
+  Le passage d'origine v2 est toujours **sans racine complète**
+  (1 234 nœuds, 38 813 états, budgets non dépassés). Les deux
+  prédicats séparés et la coordination simple passent, mais une
+  incise participiale après `; and,` ne se compose pas. Des
+  sondes révèlent aussi des rattachements fautifs de
+  `me close to her shawl` et `so much trouble as to bring her home`
+  même sur des phrases reconnues. Aucun changement grammatical :
+  toujours **474/500**, 26 résidus. Le curseur est à 94 ;
+  prochain cas déterministe **96**. Voir
+  [`CASE_94_SHARED_SUBJECT_PARTICIPIAL_INCISE.md`](CASE_94_SHARED_SUBJECT_PARTICIPIAL_INCISE.md).
+  Le script et son workflow manuel sont conservés pour une reprise
+  ciblée sans relancer inutilement le diagnostic complet des 500.
+
 - La PR [#34](https://github.com/leye0/seman2/pull/34) ajoute uniquement
   à la **segmentation prospective v2** la conservation d'une courte citation
   contenant deux phrases, suivie d'une coordination externe du même sujet.
@@ -39,9 +54,9 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
   prédicat coordonné se trouve dans la phrase précédente. Voir
   [`CASE_64_QUOTED_SHARED_SUBJECT.md`](CASE_64_QUOTED_SHARED_SUBJECT.md).
   **Grammaire non corrigée** ; l'étude du cas 64 a été effectuée et
-  documentée, sans certification du rang 1. Le dernier index essayé est
-  désormais 64 ; le prochain index déterministe à étudier est **94**.
-  Les cas 8 et 64 restent dans la file des 26 résidus.
+  documentée sans certification du rang 1. Depuis, le cas 94 a lui
+  aussi été étudié et demeure non résolu. La file indique maintenant
+  **96** comme prochain index ; 8, 64 et 94 restent parmi les 26 résidus.
 - Pour les anomalies d'accord P2, les 16 alternatives marquées des
   cas #463 et #480 ne montrent chacune qu'un motif distinct de liens
   grammaticaux, sans solution stricte complète dans la recherche bornée.
@@ -52,8 +67,8 @@ Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le 
 
 - À cette date le prochain cas était **64** selon
   [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json) ; la file actualisée
-  au 11 novembre reste à **474** succès, avec `last_attempted_index=64`
-  et **94** comme prochain cas déterministe.
+  au 11 novembre reste à **474** succès, avec `last_attempted_index=94`
+  et **96** comme prochain cas déterministe.
 - **8** : « which I accordingly did. » est une relative supplémentaire
   **séparée de son antécédent par le découpage conservé au point-virgule**.
   Sans son contexte, elle n'est pas une clause indépendante ; lorsqu'on
