@@ -1,6 +1,6 @@
 # Cas 64 — question citée coupée avant une coordination de prédicats
 
-**Statut : non corrigé, diagnostic de dépendance contextuelle documenté.**
+**Statut : structure contextuelle restaurée uniquement en segmentation prospective v2 ; diagnostic grammatical non résolu.**
 Ce dossier est une observation du corpus gelé, pas une nouvelle règle de
 grammaire ni une preuve que le texte complet recevrait un bon arbre.
 
@@ -30,7 +30,8 @@ La combinaison des deux morceaux montre le contexte potentiellement requis :
 
 > Mr. Creakle whispered, ‘Hah! What’s this?’ and bent his eyes upon me, as if he would have burnt me up with them.
 
-Il s'agit d'une reconstruction **de lecture contextuelle**, pas de la
+Il s'agit d'une reconstruction **de lecture contextuelle**, désormais également
+vérifiée sur une véritable unité d'extraction prospective v2. Ce n'est pas la
 nouvelle entrée canonique du benchmark. Le découpage v1 après `Hah!`
 détache `and bent his eyes` de son sujet explicite `Mr. Creakle`.
 `QUOTE_BALANCED` ajoute l'ouverture `‘` à l'analyse du deuxième
@@ -57,24 +58,60 @@ permettent de soupçonner un **sujet partagé au-delà d'une coupure dans
 une réplique citée**. Elles ne prouvent ni que cette seule coupure cause
 tous les rejets, ni qu'une règle syntaxique précise manque.
 
+## Expérience prospective v2 — 11 novembre 2026
+
+La segmentation v2 optionnelle conserve désormais la ponctuation interne de la
+citation quand **une seconde phrase entre guillemets est suivie immédiatement
+d'une coordination externe** (`and`, `but` ou `or`). Sur la source
+contiguë originale du roman, v1 donne **2 unités**, v2 **1 unité** ; le
+round-trip de la source est exact. L'extraction brute et la variante
+`QUOTE_BALANCED` gardent les mêmes caractères de provenance. Aucun
+comportement de la cohorte gelée v1 n'est changé.
+
+- [Action de validation de la source et du parseur
+  42950058760](https://github.com/leye0/seman2/actions/runs/42950058760) :
+  réussite, 31 tests de découpage / provenance validés.
+- [Action de contre-épreuves 42950284824](https://github.com/leye0/seman2/actions/runs/42950284824) :
+  réussite, 7 phrases indépendantes et 3 meilleurs arbres exportés.
+- L'unité v2 réunifiée a **29 tokens**, **758 nœuds** de forêt,
+  **26 147 états partiels**, calcul terminé sans saturation aux budgets
+  habituels ; le parseur choisit une racine `clause_comma_sub`.
+- Le sujet `Mr. Creakle`, `np_honorific_abbreviation`, est partagé par
+  les deux prédicats coordonnés (`vp_coord_finite`), `whispered` et
+  `bent`. C'est un gain **structurel** de contextualisation.
+- L'arbre de rang 1 est **incorrect** : `upon me` est rattaché dans
+  `np_pp_mod("his eyes upon me")`, au lieu du prédicat `bent`.
+  Le comparatif `as if he would have burnt ...` est décomposé en
+  `clause_comma_sub`, `clause_sub_front`, une
+  `clause_modal_ellipsis("he would")` et une clause séparée où
+  `have` est un nom (`np_bare`). L'interjection `Hah` est prise pour
+  un `np_proper`.
+- Les **trois meilleurs arbres** reproduisent les mauvaises familles de
+  rattachements. Les sondes indépendantes démontrent notamment que
+  `He bent his eyes upon me.` souffre déjà du mauvais rattachement
+  de `upon me` : ce défaut n'est pas résolu par la segmentation.
+
+**Interprétation :** présence d'un arbre complet ≠ analyse grammaticale
+certifiée. Aucun nouveau succès strict n'est revendiqué : toujours
+**474/500** et **26 résidus**, y compris le 64.
+
 ## Suite requise avant toute correction
 
 1. Reconstituer **sans perdre de caractères ni de spans** une unité
    prospective explicite contenant le sujet, la citation et le prédicat
    coordonné. Ne jamais remplacer les indices ou le SHA de la cohorte v1.
-2. Rejouer cette unité par `extract(..., segmentation_version=2)` et
-   `parse_corpus_case`, ou versionner une extension de segmentation
-   si v2 ne conserve pas encore cette continuité. Ne pas créer de
-   deuxième chemin public de parsing.
-3. Contrôler l'arbre **de rang 1** : `Mr. Creakle` sujet de
+2. Fait : rejouer l'unité produite par `extract(..., segmentation_version=2)`
+   et `parse_corpus_case` (audit reproductible `audit_case64_context.py`).
+   Toujours conserver ce seul chemin public de parsing.
+3. Restant : corriger et certifier l'arbre **de rang 1** : `Mr. Creakle` sujet de
    `whispered` **et** de `bent`, question citée rattachée à
    `whispered`, comparaison `as if ...` correctement portée.
    Relever les `rule_id`, enfants et spans source; une racine seule
    ne suffit pas.
-4. Si une règle de découpage v2 doit être élargie, exiger des positifs
-   indépendants et des négatifs où deux phrases sont réellement
-   autonomes, avec guillemets ouverts/fermés, `!` et `?`. Préserver
-   abréviations, quote-transfer et caractère non destructif du découpage.
+4. Fait pour cette extension v2 : positifs indépendants, négatifs autonomes,
+   guillemets ouverts/fermés, `!` et `?`, conservation des abréviations,
+   quote-transfer et round-trip. Toute extension ultérieure doit refaire
+   ces contrôles.
 5. Pour tout changement de grammaire, appliquer
    [GRAMMAR_CASE_FIX_PROTOCOL.md](GRAMMAR_CASE_FIX_PROTOCOL.md) :
    exemples indépendants, témoins négatifs, sensibilité du cas 359,
