@@ -196,7 +196,6 @@ def analyze_dialogue(
     # Reporting predicates in gaps between adjacent top-level quotation
     # spans are direct evidence of a split speech turn. Do not group
     # unrelated quoted sentences by their quote characters alone.
-    associations: dict[int, set[int]] = {}
     tags = []
     for x, y in zip(outer, outer[1:]):
         gap = _local_reporting_tag(source, quotation_spans[x][1],
@@ -252,7 +251,6 @@ def analyze_dialogue(
                 relation="reporting_intercalation",
                 evidence="one_overt_reporting_clause_between_two_source_quotes",
             ))
-            previous_reporter = parts[-(len(members)+1)] if False else None
             for k, value in enumerate(parts):
                 if value.id == reporter_id:
                     parts[k] = DialoguePart(
@@ -271,7 +269,7 @@ def analyze_dialogue(
                 y = hi+dash.end(1)
                 x, y = _trim(source, x, y)
                 parts.append(DialoguePart(
-                    id=f"a{tag_number}", function="narratorial_parenthetical",
+                    id=f"pa{tag_number}", function="narratorial_parenthetical",
                     start=x, end=y, governor=group_id,
                     relation="narratorial_interpolation",
                     evidence="source_double_dash_parenthesis_between_quote_parts",
