@@ -1,3 +1,8 @@
+> **ARCHIVE DE CONCEPTION** : ce document décrit l'introduction historique de
+> la segmentation dite « v2 ». Depuis la migration vers un découpeur unique,
+> elle est l'algorithme courant; il n'existe plus de mode v1 actif.
+> Voir `RUN_CURRENT_LAYER1.md` et `CURRENT_COHORT.json` pour la référence.
+
 # Prose segmentation v2 — dependent continuations and quoted coordination
 
 ## Why this exists

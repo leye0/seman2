@@ -119,17 +119,9 @@ class SentenceBoundaryTests(unittest.TestCase):
                   "Mr. Micawber known to Uriah Heep and his mother; "
                   "which I accordingly did.")
         improved = split_prose_analysis_units(source)
-        historical = split_prose_analysis_units(
-            source, preserve_dependent_continuations=False)
         self.assertEqual([u.text for u in improved], [source])
         self.assertEqual([u.source_text for u in improved], [source])
         self.assertFalse(improved[0].semicolon_split)
-        self.assertEqual([u.source_text for u in historical], [
-            "I could do no less, under these circumstances, than make "
-            "Mr. Micawber known to Uriah Heep and his mother;",
-            "which I accordingly did.",
-        ])
-        self.assertTrue(all(u.semicolon_split for u in historical))
 
     def test_relative_then_independent_semicolon_preserves_source_and_quotes(self):
         source = '“He promised to return; which he did; and we celebrated.”'
@@ -193,8 +185,6 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertEqual([u.source_text for u in split_prose_analysis_units(source)],
                          [source])
         self.assertFalse(split_prose_analysis_units(source)[0].synthetic_terminal)
-        self.assertEqual(len(split_prose_analysis_units(
-            source, preserve_dependent_continuations=False)), 2)
         independent = "She stood; and, keeping me close, she turned toward the door."
         self.assertEqual(len(split_prose_analysis_units(independent)), 2)
         independent_np = "She stood; and, keeping me close, the woman turned away."
@@ -210,8 +200,6 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertEqual([u.source_text for u in split_prose_analysis_units(source)],
                          [source])
         self.assertFalse(split_prose_analysis_units(source)[0].synthetic_terminal)
-        self.assertEqual(len(split_prose_analysis_units(
-            source, preserve_dependent_continuations=False)), 2)
         separate = "He found her as happy as ever; as the rain fell, she left."
         self.assertEqual(len(split_prose_analysis_units(separate)), 2)
 
@@ -226,69 +214,51 @@ class SentenceBoundaryTests(unittest.TestCase):
         self.assertEqual([u.source_text for u in split_prose_analysis_units(source)],
                          [source])
         self.assertFalse(split_prose_analysis_units(source)[0].synthetic_terminal)
-        self.assertEqual(len(split_prose_analysis_units(
-            source, preserve_dependent_continuations=False)), 2)
         independent = "They hurried; walking home, talking softly, she left."
         proper_name = "They hurried; walking home, talking softly, Mary left."
         for sentence in (independent, proper_name):
             with self.subTest(sentence=sentence):
                 self.assertEqual(len(split_prose_analysis_units(sentence)), 2)
 
-    def test_versioned_extraction_rejects_rewriting_the_frozen_cohort(self):
+    def test_extraction_always_uses_the_current_boundaries(self):
         from research.verbnet_lr.gutenberg_novels import analysis_units
+
         source = "He returned; which I accordingly did."
-        legacy = list(analysis_units(source))
-        v2 = list(analysis_units(source, segmentation_version=2))
-        self.assertEqual([u.text for u in legacy],
-                         ["He returned.", "which I accordingly did."])
-        self.assertEqual([u.text for u in v2], [source])
-        self.assertEqual(v2[0].source_text, source)
-        self.assertFalse(v2[0].semicolon_split)
-        legacy_cases, legacy_count = extract(
-            Book(999, "Demo", "Anon", "train"), source, length_min=1)
-        v2_cases, v2_count = extract(
-            Book(999, "Demo", "Anon", "train"), source, length_min=1,
-            segmentation_version=2)
-        self.assertEqual(legacy_count["eligible"], 2)
-        self.assertEqual(v2_count["eligible"], 1)
-        self.assertEqual(v2_cases[0]["balanced_analysis_text"], source)
-        self.assertEqual(v2_cases[0]["segmentation_version"], 2)
-        self.assertNotIn("segmentation_version", legacy_cases[0])
-        with self.assertRaises(ValueError):
-            list(analysis_units(source, segmentation_version=3))
+        units = list(analysis_units(source))
+        self.assertEqual([u.text for u in units], [source])
+        self.assertEqual(units[0].source_text, source)
+        self.assertFalse(units[0].semicolon_split)
+        cases, counts = extract(Book(999, "Demo", "Anon", "train"),
+                                source, length_min=1)
+        self.assertEqual(counts["eligible"], 1)
+        self.assertEqual(cases[0]["balanced_analysis_text"], source)
+        # There is no v1/v2 switch in the active extraction API.
+        with self.assertRaises(TypeError):
+            list(analysis_units(source, segmentation_version=1))
+        with self.assertRaises(TypeError):
+            extract(Book(999, "Demo", "Anon", "train"), source,
+                    segmentation_version=1)
 
-    def test_v2_keeps_quoted_question_with_following_shared_predicate(self):
+
+    def test_keeps_quoted_question_with_following_shared_predicate(self):
         from research.verbnet_lr.gutenberg_novels import analysis_units
 
-        # Dickens case 64: the historical split makes 'bent' lose its
-        # overt subject, Mr. Creakle. The v1 SHA-pinned units must not move.
         source = (
             "Mr. Creakle whispered, ‘Hah! What’s this?’ and bent his eyes "
             "upon me, as if he would have burnt me up with them."
         )
-        legacy = list(analysis_units(source))
-        prospective = list(analysis_units(source, segmentation_version=2))
-        self.assertEqual([unit.source_text for unit in legacy], [
-            "Mr. Creakle whispered, ‘Hah!",
-            "What’s this?’ and bent his eyes upon me, as if he would have "
-            "burnt me up with them.",
-        ])
-        self.assertEqual([unit.source_text for unit in prospective], [source])
-        self.assertEqual(prospective[0].text, source)
-        self.assertEqual(split_prose_sentences(source),
-                         [unit.source_text for unit in legacy])
-        self.assertEqual(" ".join(unit.source_text for unit in legacy), source)
-
+        units = list(analysis_units(source))
+        self.assertEqual([unit.source_text for unit in units], [source])
+        self.assertEqual(units[0].text, source)
+        self.assertEqual(split_prose_sentences(source), [source])
         book = Book(766, "David Copperfield", "Dickens", "train")
-        cases, _ = extract(
-            book, source, length_min=1, length_max=100, segmentation_version=2,
-        )
+        cases, _ = extract(book, source, length_min=1, length_max=100)
         self.assertEqual(len(cases), 1)
         self.assertEqual(cases[0]["source_text"], source)
         self.assertEqual(cases[0]["balanced_analysis_text"], source)
-        self.assertEqual(cases[0]["segmentation_version"], 2)
 
-    def test_v2_quoted_coordination_positive_and_independent_controls(self):
+
+    def test_quoted_coordination_positive_and_independent_controls(self):
         independent_positive = (
             "The captain murmured, “Ah! Is anyone there?” and turned "
             "toward the door."
@@ -306,53 +276,32 @@ class SentenceBoundaryTests(unittest.TestCase):
             "“Hello!” she cried. “Come back,” he said.",
         ):
             with self.subTest(source=source):
-                v1 = split_prose_analysis_units(
-                    source, preserve_dependent_continuations=False,
-                )
-                v2 = split_prose_analysis_units(source)
-                self.assertEqual([unit.source_text for unit in v2],
-                                 [unit.source_text for unit in v1])
-                self.assertEqual(" ".join(unit.source_text for unit in v2),
+                units = split_prose_analysis_units(source)
+                self.assertGreater(len(units), 1)
+                self.assertEqual(" ".join(unit.source_text for unit in units),
                                  source)
 
-    def test_v2_preserves_case_105_nested_question_and_dash_for_aside(self):
+    def test_keeps_case_105_nested_question_and_dash_for_aside(self):
         from research.verbnet_lr.gutenberg_novels import analysis_units
 
-        # Dickens, frozen 105: v1 orphans the second question after the
-        # internal '?' of a reported quotation. The source has ONE
-        # multi-question quotation plus an outside explanatory aside.
         source = (
             "‘Says Em’ly, “Martha, is it you? Oh, Martha, can it be you?”"
             "--for they had sat at work together, many a day, at Mr. Omer’s.’"
         )
-        legacy = list(analysis_units(source))
-        prospective = list(analysis_units(source, segmentation_version=2))
-        self.assertEqual([u.source_text for u in legacy], [
-            "‘Says Em’ly, “Martha, is it you?",
-            "Oh, Martha, can it be you?”--for they had sat at work "
-            "together, many a day, at Mr. Omer’s.’",
-        ])
-        self.assertEqual([u.source_text for u in prospective], [source])
-        self.assertEqual(prospective[0].text, source)
+        units = list(analysis_units(source))
+        self.assertEqual([u.source_text for u in units], [source])
+        self.assertEqual(units[0].text, source)
         self.assertEqual([u.source_text for u in split_prose_analysis_units(
             source)], [source])
-        self.assertEqual(" ".join(u.source_text for u in legacy), source)
-        self.assertEqual(split_prose_sentences(
-            source, preserve_quoted_coordination=True), [source])
-        self.assertEqual(split_prose_sentences(source),
-                         [u.source_text for u in legacy])
-
+        self.assertEqual(split_prose_sentences(source), [source])
         book = Book(766, "David Copperfield", "Dickens", "train")
-        v1, _ = extract(book, source, length_min=1, length_max=100)
-        v2, _ = extract(book, source, length_min=1, length_max=100,
-                        segmentation_version=2)
-        self.assertEqual(len(v1), 2)
-        self.assertEqual(len(v2), 1)
-        self.assertEqual(v2[0]["balanced_analysis_text"], source)
-        self.assertEqual(v2[0]["source_text"], source)
-        self.assertEqual(v2[0]["segmentation_version"], 2)
+        cases, counts = extract(book, source, length_min=1, length_max=100)
+        self.assertEqual(counts["eligible"], 1)
+        self.assertEqual(cases[0]["balanced_analysis_text"], source)
+        self.assertEqual(cases[0]["source_text"], source)
 
-    def test_v2_causal_quote_aside_generalizes_but_does_not_merge_independents(self):
+
+    def test_causal_quote_aside_generalizes_but_does_not_merge_independents(self):
         positives = [
             "‘She whispered, “Is that Jane? Has she returned?”"
             "—for she had not expected her.’",
@@ -363,7 +312,7 @@ class SentenceBoundaryTests(unittest.TestCase):
             with self.subTest(positive=source):
                 self.assertEqual([u.source_text for u in
                                   split_prose_analysis_units(source)], [source])
-                self.assertEqual(len(split_prose_sentences(source)), 2)
+                self.assertEqual(len(split_prose_sentences(source)), 1)
 
         negatives = [
             "‘She whispered, “Is that Jane? Has she returned?” Then she smiled.’",

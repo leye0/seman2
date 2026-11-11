@@ -37,10 +37,12 @@ La correction n'est terminée que lorsque **tous** ces points sont démontrés :
   seulement `completed`.
 - [ ] **Aucune régression établie** : autres arbres corrects, hiérarchie des
   alternatives, dialogues/guillemets, tests unitaires, qualité annotée et
-  cohorte figée préservés. Les nouveaux cas saturés sont des régressions,
+  cohorte **courante épinglée** préservés entre modifications grammaticales.
+  Les nouveaux cas saturés sont des régressions,
   même si le taux de complétion augmente.
 - [ ] **Budgets et comparabilité inchangés** : même WordNet 3.0, même
-  cohorte de 500 cas, même préparation `QUOTE_BALANCED`, même route publique,
+  cohorte de 500 cas **pour une comparaison grammaticale**, même préparation
+  `QUOTE_BALANCED`, même route publique,
   mêmes limites de recherche. Toute exception doit être explicitement
   approuvée et mesurée séparément, jamais glissée dans une correction.
 - [ ] **Rapport et CI** : diagnostic initial, cause, arbre après correction,
@@ -84,42 +86,36 @@ dernier bilan validé.
 
 ### 1. Pré-triage OBLIGATOIRE : vérifier le découpage avant la grammaire
 
-**Ne jamais commencer par inventer une règle grammaticale pour un fragment
-historique.** Avant la matrice lexicale, inspecter son **paragraphe source
-contigu** et ses voisins (pas uniquement `case["text"]` ou l'analyse
-équilibrée). Rechercher en priorité : points-virgules qui isolent une
-relative, une participiale ou un prédicat sans sujet; `?`/`!` à
-l'intérieur d'une citation contenant plusieurs phrases; paroles rapportées,
-guillemets imbriqués, incises de parole et explications `--for`/`—for`.
+**Toute correction commence par le paragraphe contigu**, ses voisins et
+ses frontières de source. Le découpeur actif est unique : il faut vérifier
+`analysis_units(paragraph)` et `split_prose_analysis_units(paragraph)`,
+puis `extract()` et les offsets de `QUOTE_BALANCED`, AVANT les lectures
+lexicales et les règles grammaticales.
 
-Sur ce même paragraphe, comparer explicitement les **unités et les spans**
-produits par `analysis_units(..., segmentation_version=1)` et
-`analysis_units(..., segmentation_version=2)`, ainsi que leur préparation
-`QUOTE_BALANCED`. Vérifier la conservation de chaque caractère original,
-les préfixes/suffixes synthétiques, les limites de citations et les cas
-indépendants voisins. Un diagnostic `no_structural_root` provenant d'une
-unité orpheline est **un problème de segmentation présumé jusqu'à examen du
-contexte**, pas une invitation automatique à étendre le lexique/la grammaire.
+Rechercher d'abord les artefacts de découpage : relative après un
+point-virgule, participiale sans principale, prédicat coordonné privé de
+son sujet, question supplémentaire à l'intérieur d'une citation imbriquée,
+fermeture de guillemets suivie de `--for` ou `—for`. Comparer l'unité
+isolée à sa construction contiguë et aux phrases indépendantes voisines;
+vérifier que **tous les caractères source** et tous les préfixes/suffixes
+synthétiques restent correctement traçables.
 
-- Si la v2 reconstruit une unité cohérente, **classer le résidu v1 comme
-  artefact de découpage** et poursuivre, si utile, l'audit grammatical
-  uniquement sur la nouvelle unité v2.
-- Si la v2 coupe encore mal, **corriger d'abord
-  `sentence_boundaries.py`**, avec un motif structural généralisable et
-  des positifs/négatifs indépendants dans `test_sentence_boundaries.py`.
-  Ne pas déplacer la cohorte v1 SHA-épinglée : documenter le changement
-  prospectif séparément.
-- Si les deux versions isolent correctement une phrase autonome, reprendre
-  alors le diagnostic lexical, syntaxique et du rang 1 ci-dessous.
-- **Ne pas annoncer un gain sur les 500 cas** pour une correction qui ne
-  concerne que la v2; enregistrer distinctement les cas rééchantillonnés,
-  les exclusions par longueur, la provenance et les arbres vérifiés.
+- **Frontière erronée** : corriger `sentence_boundaries.py` en premier
+  avec une règle de découpage générale, un positif indépendant et des
+  négatifs qui doivent rester séparés. **Ne pas ajouter de règle de
+  grammaire pour compenser une unité artificielle.**
+- **Frontière correcte** : investiguer ensuite les traits, constituants,
+  attachements et arbres de rang 1 par `parse_corpus_case`.
+- **Frontière modifiée** : recalculer la cohorte actuelle et son SHA.
+  Reconstruire sa file et sa référence de couverture, **sans comparer**
+  le nouveau total au score de l'ancienne cohorte ni conserver les anciens
+  indices. Les statistiques de segmentation et les arbres grammaticaux
+  sont des mesures distinctes.
 
-Exemple : le cas 105 de *David Copperfield* était coupé après
-`Martha, is it you?`, avant une seconde question imbriquée suivie de
-`--for`. La priorité est de conserver le dialogue rapporté et son
-explication dans la v2, pas de créer une grammaire spéciale pour
-`Oh, Martha, can it be you?` privé de son contexte.
+Le dialogue « Martha, is it you? Oh, Martha, can it be you? » illustre
+ce principe : l'ancienne référence coupait au premier `?` et isolait
+la seconde question et son `--for`. Le découpeur actuel préserve ce
+passage; cela n'affirme pas que l'arbre grammatical complet est correct.
 
 1. Utiliser la cohorte épinglée de `scripts.diagnose_novel_parses.select_cases`
    et **uniquement** `parse_corpus_case(parser, case)` pour toute phrase

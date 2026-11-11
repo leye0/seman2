@@ -5,6 +5,19 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Migration du système : un seul découpeur actif (novembre 2026)
+
+La [PR #37](https://github.com/leye0/seman2/pull/37) supprime la sélection
+v1/v2 et bascule **tous les extraits** de romans sur les frontières
+dépendantes/citations. La cohorte 500 et la file doivent être reconstruites :
+**les indices 8, 64, 94, 105, 109, etc. et le score 475/500 décrits
+ci-dessous sont des snapshots de l'ancienne cohorte**. Après migration,
+l'état de référence actuel se trouve uniquement dans
+[`CURRENT_COHORT.json`](CURRENT_COHORT.json),
+[`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json) et la dernière
+Action `novel-parse-diagnostics` verte. Ne jamais reprendre un ancien
+numéro de cas sans vérifier son identité.
+
 ## Mise à jour — cas 105, segmentation d'abord (11 novembre 2026)
 
 - La [PR #36](https://github.com/leye0/seman2/pull/36) est **fusionnée** au commit `153340896b92516ced375c4a295b17cb5cc955fd`. **Cause établie** : la v1 historique coupait à l'intérieur des deux questions d'une citation imbriquée dans *David Copperfield*, isolant `Oh, Martha, can it be you?”--for ...` de `‘Says Em’ly, “Martha, is it you?`.

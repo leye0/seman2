@@ -8,36 +8,29 @@ class SourceContextAuditTests(unittest.TestCase):
         text=("I promised to return; which I accordingly did. "
               "The weather was cold, but we waited.\n\nMary spoke. I replied.")
         rows=source_contexts(text)
-        self.assertEqual(len(rows),5)
-        self.assertEqual(rows[1]["source_text"],"which I accordingly did.")
-        self.assertEqual(rows[1]["preceding_semicolon_part"],
-                         "I promised to return;")
-        self.assertEqual(rows[1]["semicolon_part_index"],1)
-        self.assertEqual(rows[1]["semicolon_parts"],2)
-        self.assertEqual(rows[1]["next_sentence_same_paragraph"],
+        self.assertEqual(len(rows),4)
+        self.assertEqual(rows[0]["source_text"],
+                         "I promised to return; which I accordingly did.")
+        self.assertIsNone(rows[0]["preceding_semicolon_part"])
+        self.assertEqual(rows[0]["semicolon_parts"],1)
+        self.assertEqual(rows[0]["next_sentence_same_paragraph"],
                          "The weather was cold, but we waited.")
-        self.assertIsNone(rows[3]["previous_sentence_same_paragraph"])
-        self.assertEqual(rows[4]["previous_sentence_same_paragraph"],
+        self.assertIsNone(rows[2]["previous_sentence_same_paragraph"])
+        self.assertEqual(rows[3]["previous_sentence_same_paragraph"],
                          "Mary spoke.")
 
-    def test_context_ordinals_remain_frozen_v1_after_v2_introduction(self):
+    def test_context_ordinals_match_only_active_extraction(self):
         from research.verbnet_lr.gutenberg_novels import analysis_units
 
         source = "I promised to return; which I accordingly did."
-        historical = list(analysis_units(source, segmentation_version=1))
-        prospective = list(analysis_units(source, segmentation_version=2))
-        self.assertEqual(len(historical), 2)
-        self.assertEqual(len(prospective), 1)
-
+        units = list(analysis_units(source))
+        self.assertEqual(len(units), 1)
         contexts = source_contexts(source)
         self.assertEqual(
             [contexts[index]["source_text"] for index in range(len(contexts))],
-            [unit.source_text for unit in historical],
+            [unit.source_text for unit in units],
         )
-        self.assertEqual(
-            contexts[1]["preceding_semicolon_part"],
-            historical[0].source_text,
-        )
+
 
     def test_surface_signals_are_not_syntactic_labels(self):
         self.assertIn("relative_initial",

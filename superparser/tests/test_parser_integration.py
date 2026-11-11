@@ -313,7 +313,7 @@ class ResidualLiteraryCoverageTests(unittest.TestCase):
 
     def test_selected_object_control_and_perfect_in_original_literary_tree(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 
         p = make_parser()
         # The Gutenberg case carries its own synthetic closing quotation
@@ -2560,7 +2560,7 @@ class UnlessConditionalSubordinatorTests(unittest.TestCase):
                                  {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_pinned_frankenstein_317_uses_conditional_subordination(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         from scripts.audit_novel_tree_quality import display_tree
         cases, _ = select_cases(500)
@@ -2648,7 +2648,7 @@ class SpatialPrepositionsAndObjectAdjectiveTests(unittest.TestCase):
                                  {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_pinned_treasure_island_445_has_real_object_and_infinitival_supplement(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         from scripts.audit_novel_tree_quality import display_tree
         cases, _ = select_cases(500)
@@ -2710,7 +2710,7 @@ class NegatedPossessiveHavePPTests(unittest.TestCase):
             self.assertTrue(wanted <= cats, (word, cats))
 
     def test_pinned_200_has_possessive_have_and_interposed_time_pp(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertIn("I had not at that time the honour", cases[200]["text"])
@@ -2769,7 +2769,7 @@ class TemporalBeforeCompoundTests(unittest.TestCase):
                             for c in lattice.candidates))
 
     def test_pinned_239_keeps_temporal_clause_and_compound_noun(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[239]["text"].startswith("Yet time and her aunt"))
@@ -2838,7 +2838,7 @@ class PluralGenitivePassiveControlTests(unittest.TestCase):
                 self.assertFalse(forbidden & {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_pinned_232_has_genitive_adverb_and_passive_control(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[232]["text"].startswith("She not unfrequently"))
@@ -2885,7 +2885,7 @@ class ExactNominalFocusTests(unittest.TestCase):
         self.assertIsNotNone(parser.parse("He copied the instructions exactly.").result.best())
 
     def test_pinned_112_exactly_modifies_free_relative(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[112]["text"].startswith("Our instructions to Mr. Dick"))
@@ -2935,7 +2935,7 @@ class IntransitiveDepictivePurposeTests(unittest.TestCase):
                 self.assertFalse(forbidden & {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_pinned_340_coordinates_depictive_action_and_purpose(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[340]["text"].startswith("I broke from the house"))
@@ -2981,7 +2981,7 @@ class DegreeNominalAdjectiveGapTests(unittest.TestCase):
                       {n.rule_id for n in self.nodes(result.best())})
 
     def test_pinned_209_keeps_degree_antecedent_and_list_inside_of(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[209]["text"].startswith("It is really too great"))
@@ -3026,7 +3026,7 @@ class EquativeInciseBeforePPTests(unittest.TestCase):
                                  {n.rule_id for n in self.nodes(tree)}, text)
 
     def test_pinned_441_keeps_particle_comparison_and_destination(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[441]["text"].startswith("In the meantime the supervisor"))
@@ -3072,7 +3072,7 @@ class DistributivePossessionQuotedNameTests(unittest.TestCase):
                                 for n in self.nodes(best)))
 
     def test_pinned_357_preserves_distribution_object_and_quoted_name(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[357]["text"].startswith("The youth and his companion"))
@@ -3165,7 +3165,7 @@ class NominalComparisonParenthesisTests(unittest.TestCase):
             c.features.as_dict().get('vform') for c in lattice.candidates if c.category == 'V'})
 
     def test_pinned_467_preserves_perfect_passive_and_adverb_attachment(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[467]['text'].startswith('Every thought of his soul'))
@@ -3227,7 +3227,7 @@ class TitledIndependentGenitiveTests(unittest.TestCase):
         self.assertTrue(all(c.features.as_dict().get('nominal_modifier') == 'false' for c in readings if c.surface == 'in that' and c.category == 'ADV'))
 
     def test_pinned_212_preserves_incise_titled_place_and_causal_location(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[212]['text'].startswith('We were married, you know'))
@@ -3279,7 +3279,7 @@ class ExtraposedInfinitiveNominalPredicateTests(unittest.TestCase):
                 self.assertFalse(any((n.rule_id or '').startswith(rule) for n in self.nodes(tree)), text)
 
     def test_pinned_215_preserves_extraposition_incise_and_nominal_predicate(self):
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
         cases, _ = select_cases(500)
         self.assertTrue(cases[215]['text'].startswith('It would vex me, indeed,'))
@@ -3347,7 +3347,7 @@ class AttestedApostropheNameTests(unittest.TestCase):
 
     def test_pinned_99_recovers_name_without_rewriting_corpus(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         cases, _ = select_cases(500)
         self.assertTrue(cases[99]['text'].startswith('I should have gone to bed'))
         prepared, lattice, result = parse_corpus_case(
@@ -3401,7 +3401,7 @@ class TrailingDiscourseInciseAndNegativeSemimodalTests(unittest.TestCase):
 
     def test_pinned_356_preserves_incise_and_semimodal_without_punctuation_repair(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         cases, _ = select_cases(500)
         self.assertTrue(cases[356]['text'].startswith('This hovel however, joined'))
         prepared, lattice, result = parse_corpus_case(
@@ -3428,7 +3428,7 @@ class SelectedAttachmentRegressionTests(unittest.TestCase):
 
     def test_pinned_356_selected_tree_attaches_all_modifiers(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         cases, _ = select_cases(500)
         prepared, lattice, result = parse_corpus_case(
             make_parser(), cases[356], max_items=50000, kbest_work_limit=500000)
@@ -3511,7 +3511,7 @@ class ExceptiveAndInstitutionalDestinationTests(unittest.TestCase):
 
     def test_pinned_99_selected_tree_preserves_distinct_predicate_adjuncts(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         cases, _ = select_cases(500)
         prepared, lattice, result = parse_corpus_case(
             make_parser(), cases[99], max_items=50000, kbest_work_limit=500000)
@@ -3598,7 +3598,7 @@ class NumericOddsAdjunctTests(unittest.TestCase):
 
     def test_pinned_392_keeps_probability_outside_subject(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         cases, _ = select_cases(500)
         prepared, _, result = parse_corpus_case(
             make_parser(), cases[392], max_items=50000,
@@ -3652,7 +3652,7 @@ class ModifiedParticipialSupplementTests(unittest.TestCase):
 
     def test_pinned_449_preserves_negation_object_and_supplement_adjuncts(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
         cases, _ = select_cases(500)
         prepared, _, result = parse_corpus_case(
             make_parser(), cases[449], max_items=50000,
@@ -3737,7 +3737,7 @@ class InfinitivalSubjectTemporalInciseTests(unittest.TestCase):
 
     def test_pinned_202_has_complete_subject_incise_and_nominal_predicate(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 
         cases, _ = select_cases(500)
         case = cases[202]
@@ -3865,7 +3865,7 @@ class CopularContrastAndEquativeRelativeTests(unittest.TestCase):
 
     def test_pinned_354_ellipsis_equative_scope_and_full_relative_antecedent(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 
         case = select_cases(500)[0][354]
         self.assertTrue(case['text'].startswith('This valley is more wonderful'))
@@ -3990,7 +3990,7 @@ class LocativeClauseWithCoordinatedAbsolutesTests(unittest.TestCase):
 
     def test_pinned_370_has_four_correctly_attached_supplements(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 
         case = select_cases(500)[0][370]
         self.assertTrue(case['text'].startswith('She was there, lifeless'))
@@ -4114,7 +4114,7 @@ class FrontedPossessiveRelativeAndOtherComparisonTests(unittest.TestCase):
 
     def test_pinned_371_selected_tree_has_exact_antecedent_and_scopes(self):
         from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-        from scripts.diagnose_novel_parses import select_cases
+        from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 
         case = select_cases(500)[0][371]
         self.assertTrue(case['text'].startswith('But to a Genevan magistrate,'))

@@ -32,14 +32,9 @@ def selected_tree(node, source: str):
 
 def audit(wordnet_dir: str, output: Path):
     book = Book(766, "David Copperfield", "Charles Dickens", "train")
-    old, _ = extract(book, SOURCE, length_min=1, length_max=100,
-                     segmentation_version=1)
-    new, _ = extract(book, SOURCE, length_min=1, length_max=100,
-                     segmentation_version=2)
-    assert len(old) == 2
+    new, _ = extract(book, SOURCE, length_min=1, length_max=100)
     assert len(new) == 1 and new[0]["source_text"] == SOURCE
     assert new[0]["balanced_analysis_text"] == SOURCE
-    assert " ".join(c["source_text"] for c in old) == SOURCE
 
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet_dir)
     assert resources.lexicon.has_wordnet, "reference WordNet 3.0 required"
@@ -67,8 +62,7 @@ def audit(wordnet_dir: str, output: Path):
     ]
     probe_results = []
     for sentence in independent_probes:
-        sample, _ = extract(book, sentence, length_min=1, length_max=100,
-                            segmentation_version=2)
+        sample, _ = extract(book, sentence, length_min=1, length_max=100)
         if len(sample) != 1:
             raise AssertionError("Independent probe was not one source unit")
         probe_input, _probe_lattice, probe_result = parse_corpus_case(
@@ -86,12 +80,11 @@ def audit(wordnet_dir: str, output: Path):
         "research_only": True,
         "frozen_index": 64,
         "canonical_baseline_comparable": False,
-        "segmentation_version": 2,
+        "segmentation_policy": "current",
         "wordnet_loaded": resources.lexicon.has_wordnet,
         "source_text": SOURCE,
         "analysis_text": prepared.analysis_text,
-        "v1_sources": [c["source_text"] for c in old],
-        "v2_source": new[0]["source_text"],
+        "source_unit": new[0]["source_text"],
         "tokens": len(lattice.tokens),
         "completed": result.completed,
         "forest_nodes": result.stats.get("forest_nodes"),
