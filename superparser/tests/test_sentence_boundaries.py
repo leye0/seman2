@@ -99,18 +99,22 @@ class SentenceBoundaryTests(unittest.TestCase):
 
     def test_semicolon_units_reach_corpus_and_coverage(self):
         original = "“I came; I saw; I conquered.”"
-        expected = ["“I came.”", "“I saw.”", "“I conquered.”"]
-        self.assertEqual(list(sentences(original)), expected)
-        self.assertEqual(_split_sentences(original), expected)
+        # The historical typographic helper can still expose proposals.
+        self.assertEqual(_split_sentences(original),
+                         ["“I came.”", "“I saw.”", "“I conquered.”"])
+        # The active corpus extractor sends ONE complete utterance with
+        # subordinate/independent clause references to the parse gateway.
+        self.assertEqual(list(sentences(original)), [original])
         rows, counts = extract(
             Book(999, "Example", "Example", "train"),
             original, length_min=1, length_max=100,
         )
-        self.assertEqual([r["text"] for r in rows], expected)
-        self.assertEqual(rows[0]["source_text"], "“I came;")
-        self.assertTrue(rows[1]["synthetic_prefix"])
-        self.assertTrue(rows[0]["synthetic_terminal"])
-        self.assertEqual(counts["eligible"], 3)
+        self.assertEqual([r["text"] for r in rows], [original])
+        self.assertEqual(rows[0]["source_text"], original)
+        self.assertFalse(rows[0]["synthetic_prefix"])
+        self.assertFalse(rows[0]["synthetic_terminal"])
+        self.assertTrue(rows[0]["structural_constituents"])
+        self.assertEqual(counts["eligible"], 1)
 
     def test_sentential_relative_keeps_its_event_antecedent(self):
         # David Copperfield, Gutenberg 766: historical case 8 used to become
@@ -362,13 +366,13 @@ class SentenceBoundaryTests(unittest.TestCase):
         sample = "“I came. I saw.”"
         raw = list(analysis_units(sample))
         balanced = list(analysis_units(sample, balance_sentence_quotes=True))
-        self.assertEqual([u.text for u in raw], ["“I came.", "I saw.”"])
-        self.assertEqual([u.text for u in balanced],
-                         ["“I came.”", "“I saw.”"])
+        self.assertEqual([u.text for u in raw], [sample])
+        self.assertEqual([u.text for u in balanced], [sample])
         self.assertEqual([u.source_text for u in raw],
                          [u.source_text for u in balanced])
-        self.assertEqual(balanced[0].synthetic_suffix, "”")
-        self.assertEqual(balanced[1].synthetic_prefix, "“")
+        self.assertEqual(balanced[0].synthetic_suffix, "")
+        self.assertEqual(balanced[0].synthetic_prefix, "")
+        self.assertEqual(balanced[0].quotation_status, "balanced")
 
     def test_ambiguous_initial_prefers_not_to_split(self):
         text = "The witness was A. B. Carter. She knew D. E. Shaw."

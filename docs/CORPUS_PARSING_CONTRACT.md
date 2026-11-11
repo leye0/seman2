@@ -6,6 +6,21 @@ tous passer par cet appel. Les paramètres de budget
 (`max_items`, `kbest_work_limit`, `diagnostic_k`) sont des options
 du **même** moteur ; ils ne sélectionnent jamais un second chemin.
 
+Pour les textes littéraires, la chaîne active est :
+
+`paragraphe source → frontières d'énoncés respectant les citations →
+propositions et constituants annotés (offsets, gouverneurs, relations) →
+préparation sans ponctuation inventée → Parser.parse`.
+
+La couche `seman_parser.structural_preanalysis` distingue notamment proposition
+principale, coordination, subordonnée circonstancielle, relative,
+construction non finie, ellipse, discours direct et verbe introducteur.
+Les fonctions sont **des hypothèses grammaticales sourcées**, et non des arbres
+syntaxiques certifiés. Les points-virgules sont conservés dans l'énoncé et
+leurs propositions deviennent des sous-constituants typés. Les citations
+incomplètes sont exclues de l'échantillonnage avec une raison explicite,
+au lieu de recevoir des guillemets synthétiques.
+
 Pour les enregistrements littéraires, la préparation du texte est
 une responsabilité séparée, sans moteur concurrent :
 
@@ -17,16 +32,20 @@ prepared, lattice, result = parse_corpus_case(parser, case)
 # lattice est la vue lexicale du même Parser et de ses mêmes paramètres.
 ```
 
-`prepare_corpus_input` valide que le contexte des guillemets est
-transféré par `gutenberg_novels.extract()` via
-`seman_parser.sentence_boundaries`. Aucun script ne répare ou ne
-reconstruit indépendamment ces guillemets. Toute provenance absente
-provoque une erreur.
+`prepare_corpus_input` valide les positions des sous-constituants,
+leurs références gouvernantes et les caractères exacts du texte soumis
+au moteur. Il n'invente aucun guillemet ni point terminal. Les citations
+non appariées dans le paragraphe restent visibles comme unités
+`requires_source_context`, et ne sont pas présentées comme phrases
+comprises. Les anciennes vues de transfert de guillemets restent lisibles
+pour des fixtures historiques mais ne sont plus le chemin actif.
 
 Le **découpage actif est unique** : `analysis_units()` et `extract()`
 n'exposent pas de paramètre v1/v2. Tous les échantillons sont reconstruits
-avec les mêmes règles de frontières, y compris les propositions dépendantes
-et les citations imbriquées. Le benchmark courant de 500 unités porte
+par `structural_preanalysis.analyze_paragraph`, qui ne coupe jamais au
+point-virgule et n'insère pas de guillemets imaginaires. Les citations
+multipartites qui dépassent le paragraphe sont identifiées comme ayant
+besoin de contexte et ne sont pas faussement considérées comme complètes. Le benchmark courant de 500 unités porte
 la **signature figée de sa version actuelle** dans
 [`CURRENT_COHORT.json`](CURRENT_COHORT.json), et analyse exclusivement
 le texte équilibré via `Parser.parse`. Quand la segmentation change,
@@ -53,3 +72,9 @@ que le script passe par `parse_corpus_case`, que celui-ci
 appelle `Parser.parse` et qu'aucune autre entrée cachée ou autre
 préparation lexicale n'est invoquée. Les tests d'intégration
 exercent le même point d'entrée public.
+
+**Limite explicite :** la préanalyse conserve une représentation
+structurée et vérifiable, et choisit les frontières du texte transmis à
+`Parser.parse`. Elle n'intègre pas encore ses relations de constituants
+à la recherche d'arbres du moteur; les longs énoncés peuvent donc dépasser
+les budgets existants. Cette distinction fait partie du contrat.

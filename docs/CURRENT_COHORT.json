@@ -1,12 +1,13 @@
 {
   "schema": "seman2-current-cohort-v1",
-  "segmenter": "source-preserving-dependency-aware",
+  "segmenter": "paragraph-complete-utterance-structural-preanalysis",
   "sample_count": 500,
-  "cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
+  "cohort_sha256": "140097d47116afac4172bd87b32bff8f9628e53a270c6b1dcca85d74a4b0cfe4",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "New cohort after shallow structural cohesion; scores and indices are not comparable to either older cohort. Establish this version's completion rate and queue from the next validated CI run.",
+  "note": "New SHA from source-identical deterministic sampler with quote-complete discourse units and typed grammatical constituents. Previous cohort baseline retained under prior_preanalysis_baseline. No numerical coverage comparison across SHA changes.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
-  "baseline": {
+  "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
+  "prior_preanalysis_baseline": {
     "validated_merge_commit": "14aba462789392e6b9b38434fc8b187b520cd3f2",
     "layer1_ci_run": "https://github.com/leye0/seman2/actions/runs/43046480644",
     "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43046480613",
@@ -22,39 +23,5 @@
     },
     "common_cases_with_prior_cohort": 137,
     "status_changes_on_common_cases": 0
-  },
-  "segmentation_audit": {
-    "paragraphs": 11144,
-    "analysis_units": 37081,
-    "previous_analysis_units": 37410,
-    "structural_links_by_reason": {
-      "causal_coordinator_refers_back": 108,
-      "contrasting_locative_nominal_ellipsis": 1,
-      "coordinated_infinitive_without_overt_matrix": 32,
-      "coordinated_predicate_without_overt_subject": 42,
-      "nonfinite_supplement_without_matrix": 68,
-      "parallel_comparative_predicate": 1,
-      "parallel_valediction": 1,
-      "preposed_adverbial_chain_with_matrix": 77,
-      "sentential_relative_antecedent": 28,
-      "shared_subject_participle_series": 7,
-      "shared_subject_predicate": 6,
-      "unanchored_subordinate_continuation": 32
-    },
-    "whitespace_boundary_normalizations": 19,
-    "non_whitespace_source_characters_preserved": true,
-    "byte_exact_round_trip_certified": false
-  },
-  "grammar_rule_audit": {
-    "comparison_commit": "4bf3d5f500810be4d255eb90c593a557938310f5",
-    "baseline_rule_count": 374,
-    "current_rule_count": 608,
-    "new_ids": 266,
-    "removed_ids": 32,
-    "review_candidates": 45,
-    "review_candidates_new": 29,
-    "review_candidates_historical": 16,
-    "confirmed_invalid_rules": 0,
-    "report_in_novel_ci_artifact": true
   }
 }

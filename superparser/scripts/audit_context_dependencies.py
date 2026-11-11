@@ -11,55 +11,53 @@ from pathlib import Path
 from research.verbnet_lr.clean_novel_corpus import load_cleaned,read_manifest
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS,CHAPTER,analysis_units
 from scripts.diagnose_novel_parses import select_cases,EXPECTED_500_COHORT_SHA256
-from seman_parser.sentence_boundaries import (
-    split_prose_sentences,split_analysis_units,has_final_punctuation,
-)
+from seman_parser.sentence_boundaries import has_final_punctuation
+from seman_parser.structural_preanalysis import analyze_paragraph
 
 CONCLUSIVE={"no_structural_root","roots_without_valid_analysis"}
 CENSORED={"timeout","forest_budget_exceeded","kbest_budget_exceeded",
           "both_budgets_exceeded"}
 
 def source_contexts(core):
-    """Reconstruct ordinals exactly, including skipped corpus candidates."""
-    original=list(analysis_units(core))
-    result={}
-    count=0
-    paragraphs=re.split(r"\n\s*\n",core.replace("\r\n","\n"))
-    for paragraph_number,paragraph in enumerate(paragraphs):
-        lines=[line.strip() for line in paragraph.splitlines() if line.strip()]
+    """Reconstruct the same complete units used by corpus extraction."""
+    original = list(analysis_units(core))
+    result = {}
+    count = 0
+    paragraphs = re.split(r"\n\s*\n", core.replace("\r\n", "\n"))
+    for paragraph_number, paragraph in enumerate(paragraphs):
+        lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
         if not lines or CHAPTER.match(lines[0]):
             continue
-        joined=re.sub(r"\s+"," "," ".join(lines))
+        joined = re.sub(r"\s+", " ", " ".join(lines))
         if not has_final_punctuation(joined) and (
-                joined.isupper() or len(joined)<45):
+                joined.isupper() or len(joined) < 45):
             continue
-        sentences=split_prose_sentences(joined)
-        for sentence_index,sentence in enumerate(sentences):
-            # Same source boundaries as the single active corpus extractor.
-            units=split_analysis_units(sentence)
-            for part_index,unit in enumerate(units):
-                assert count<len(original),(count,len(original))
-                assert unit.source_text==original[count].source_text,count
-                assert unit.semicolon_split==original[count].semicolon_split,count
-                result[count]={
-                    "source_text":unit.source_text,
-                    "semicolon_split":unit.semicolon_split,
-                    "paragraph_index":paragraph_number,
-                    "sentence_index_in_paragraph":sentence_index,
-                    "semicolon_part_index":part_index,
-                    "semicolon_parts":len(units),
-                    "full_unsplit_sentence":sentence,
-                    "preceding_semicolon_part":units[part_index-1].source_text
-                        if part_index else None,
-                    "following_semicolon_part":units[part_index+1].source_text
-                        if part_index+1<len(units) else None,
-                    "previous_sentence_same_paragraph":sentences[sentence_index-1]
-                        if sentence_index else None,
-                    "next_sentence_same_paragraph":sentences[sentence_index+1]
-                        if sentence_index+1<len(sentences) else None,
-                }
-                count+=1
-    assert count==len(original),(count,len(original))
+        units = analyze_paragraph(joined)
+        for sentence_index, unit in enumerate(units):
+            assert count < len(original), (count, len(original))
+            assert unit.source_text == original[count].source_text, count
+            result[count] = {
+                "source_text": unit.source_text,
+                "semicolon_split": False,
+                "paragraph_index": paragraph_number,
+                "sentence_index_in_paragraph": sentence_index,
+                "semicolon_part_index": 0,
+                "semicolon_parts": 1,
+                "full_unsplit_sentence": unit.source_text,
+                "preceding_semicolon_part": None,
+                "following_semicolon_part": None,
+                "previous_sentence_same_paragraph": (
+                    units[sentence_index - 1].source_text if sentence_index else None
+                ),
+                "next_sentence_same_paragraph": (
+                    units[sentence_index + 1].source_text
+                    if sentence_index + 1 < len(units) else None
+                ),
+                "quotation_status": unit.quotation_status,
+                "structural_status": unit.structural_status,
+            }
+            count += 1
+    assert count == len(original), (count, len(original))
     return result
 
 def surface_signatures(source):

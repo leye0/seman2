@@ -49,7 +49,7 @@ jobs:
       - name: Validate diagnostic reporting
         run: |
           python -m py_compile superparser/scripts/benchmark_preflight_trie_pilot.py superparser/scripts/benchmark_integrated_preflight.py superparser/seman_parser/fast_preflight.py superparser/scripts/audit_fast_preflight.py superparser/scripts/probe_dialogue_rejections.py superparser/scripts/diagnose_novel_parses.py superparser/research/verbnet_lr/corpus_pipeline.py superparser/seman_parser/engine.py superparser/seman_parser/vector_chart.py superparser/seman_parser/sentence_boundaries.py
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics superparser.tests.test_sentence_boundaries superparser.tests.test_structural_units superparser.tests.test_fragment_grammar_rules superparser.tests.test_parser_integration superparser.tests.test_complexity_routing
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_parse_diagnostics superparser.tests.test_sentence_boundaries superparser.tests.test_structural_units superparser.tests.test_structural_preanalysis superparser.tests.test_fragment_grammar_rules superparser.tests.test_parser_integration superparser.tests.test_complexity_routing
       - name: Measure source-unit segmentation independently of grammar
         run: |
           PYTHONPATH=superparser python -m scripts.audit_corpus_segmentation \
@@ -76,6 +76,14 @@ jobs:
             --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
             --summary /tmp/novel-parse-diagnostics/summary.json \
             --out /tmp/novel-parse-diagnostics/grammar_case_queue.json
+      - name: Emit queue data for deliberate active-cohort migration
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/novel-parse-diagnostics/grammar_case_queue.json')
+          print('CURRENT_QUEUE_JSON', json.dumps(json.loads(p.read_text()), ensure_ascii=True, separators=(',', ':')), flush=True)
+          PY
       - name: Validate active cohort and report measured coverage
         run: |
           PYTHONPATH=superparser python - <<'PY'

@@ -401,20 +401,23 @@ class NovelDiagnosticsTests(unittest.TestCase):
             Book(999, "Test", "Test", "train"), paragraph,
             length_min=1, length_max=99,
         )
-        self.assertEqual([x["text"] for x in rows], ["“I came.", "I saw.”"])
+        # One source-complete quoted speech act, never two synthetic clips.
+        self.assertEqual([x["text"] for x in rows], [paragraph])
         self.assertEqual(
             [prepare_corpus_input(x).analysis_text for x in rows],
-            ["“I came.”", "“I saw.”"],
+            [paragraph],
         )
         self.assertEqual(
             [prepare_corpus_input(
                 x, mode=CorpusParseMode.HISTORICAL_REFERENCE,
             ).analysis_text for x in rows],
-            ["“I came.", "I saw.”"],
+            [paragraph],
         )
-        self.assertEqual(
-            [x["source_text"] for x in rows], ["“I came.", "I saw.”"],
-        )
+        self.assertEqual([x["source_text"] for x in rows], [paragraph])
+        self.assertEqual(rows[0]["quotation_status"], "balanced")
+        self.assertTrue(rows[0]["structural_constituents"])
+        self.assertFalse(rows[0]["balanced_synthetic_prefix"])
+        self.assertFalse(rows[0]["balanced_synthetic_suffix"])
 
     def test_diagnostic_must_not_bypass_corpus_quote_gateway(self):
         """Static architecture guard: a future raw parse fails CI."""

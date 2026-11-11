@@ -14,7 +14,8 @@ import re
 
 from research.verbnet_lr.clean_novel_corpus import load_cleaned, read_manifest
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, analysis_units, CHAPTER
-from seman_parser.sentence_boundaries import has_final_punctuation, split_prose_analysis_units, split_prose_sentences
+from seman_parser.sentence_boundaries import has_final_punctuation
+from seman_parser.structural_preanalysis import analyze_paragraph
 from seman_parser.segmentation import tokenize
 from seman_parser.structural_units import review_semicolon_boundaries
 
@@ -36,11 +37,13 @@ def measure() -> dict:
             if not has_final_punctuation(joined) and (
                     joined.isupper() or len(joined) < 45):
                 continue
-            for sentence in split_prose_sentences(joined):
+            units = analyze_paragraph(joined)
+            for unit in units:
+                sentence = unit.source_text
                 for decision in review_semicolon_boundaries(sentence):
                     if decision.merge:
                         by_structural_reason[decision.reason] += 1
-            units = split_prose_analysis_units(joined)
+            # Analyze the SAME complete units as the corpus extractor.
             reconstructed = " ".join(u.source_text for u in units)
             # AnalysisUnit.source_text is individually stripped, so joining
             # may introduce one separator at an originally adjacent boundary.
@@ -55,6 +58,17 @@ def measure() -> dict:
             totals["paragraphs"] += 1
             totals["analysis_units"] += len(units)
             for unit in units:
+                if joined[unit.source_start:unit.source_end] != unit.source_text:
+                    raise AssertionError("Structural source offsets lost")
+                ids = {c.id for c in unit.constituents}
+                if any(c.governor is not None and c.governor not in ids
+                       for c in unit.constituents):
+                    raise AssertionError("Unresolved constituent governor")
+                totals["provisional_complete_utterances"] += int(unit.eligible_for_parse)
+                totals["incomplete_source_context"] += int(not unit.eligible_for_parse)
+                totals["typed_components"] += len(unit.constituents)
+                totals["source_matched_quotes"] += sum(c.function == "direct_speech"
+                                                       for c in unit.constituents)
                 totals["semicolons_cut"] += int(unit.semicolon_split)
                 totals["transferred_open_quotes"] += len(unit.synthetic_prefix)
                 totals["transferred_close_quotes"] += len(unit.synthetic_suffix)
@@ -84,19 +98,19 @@ def measure() -> dict:
          "--for they had sat at work together, many a day, at Mr. Omer’s.’"),
     ]
     for label, source in fixtures:
-        units = split_prose_analysis_units(source)
+        units = analyze_paragraph(source)
         if len(units) != 1 or units[0].source_text != source:
             raise AssertionError(f"Current segmenter orphaned {label}")
     for source in (
-            "She left; he returned.",
+            "She left. He returned.",
             "He whispered, ‘Oh! What now?’ Then he left.",
             "“What?” “Nothing!”"):
-        units = split_prose_analysis_units(source)
+        units = analyze_paragraph(source)
         if len(units) < 2 or " ".join(u.source_text for u in units) != source:
             raise AssertionError("Current segmenter incorrectly merged independent sentences")
     return {
-        "schema": "seman2-current-segmentation-audit-v1",
-        "policy": "single-source-preserving-segmenter",
+        "schema": "seman2-paragraph-preanalysis-audit-v2",
+        "policy": "complete-utterances-with-typed-clause-constituents",
         "counts": dict(sorted(overall.items())),
         "structural_links_by_reason": dict(sorted(by_structural_reason.items())),
         "by_book": by_book,

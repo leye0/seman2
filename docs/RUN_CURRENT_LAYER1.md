@@ -40,13 +40,16 @@ Ce gel reste **global au processus** et n'est pas sélectif sur les seuls objets
 
 ## Couche grammatico-structurelle entre segmentation et parsing
 
-Le pipeline est explicitement : **texte → découpage typographique
-(`split_prose_sentences`) → analyse structurale légère
-(`structural_units.review_semicolon_boundaries`) → unités avec transfert de
-citations → `parse_corpus_case` → `Parser.parse`**.
+Le pipeline courant est explicitement : **paragraphes source → segmentation
+d'énoncés avec portée des guillemets → `structural_preanalysis` (composants,
+fonctions, relations et offsets) → `gutenberg_novels.extract` →
+`parse_corpus_case` → `Parser.parse`**. Le transfert synthétique des
+guillemets ne fait plus partie de l'extraction active.
 
-Cette passe intermédiaire ne construit **aucun arbre grammatical** et ne
-consomme ni WordNet ni les budgets du parseur. Pour chaque point-virgule,
+Cette passe intermédiaire construit un **graphe de constituants provisoires**
+(id, fonction grammaticale de haut niveau, offsets, relation, gouverneur),
+mais pas un arbre grammatical complet. Elle ne consomme ni WordNet ni les
+budgets du parseur. Pour chaque point-virgule,
 elle détermine s'il sépare deux propositions autonomes ou s'il coupe un
 constituant dépendant (relative, participiale, infinitif coordonné, prédicat
 à sujet partagé, antithèse elliptique `on one side…; on the other…`, série
