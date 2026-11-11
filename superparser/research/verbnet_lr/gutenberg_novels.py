@@ -17,10 +17,8 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from seman_parser.segmentation import tokenize
-from seman_parser.sentence_boundaries import (
-    has_final_punctuation, split_prose_sentences, split_analysis_units,
-    split_prose_analysis_units,
-)
+from seman_parser.sentence_boundaries import has_final_punctuation
+from seman_parser.structural_preanalysis import analyze_paragraph
 
 
 @dataclass(frozen=True)
@@ -100,11 +98,10 @@ def strip_gutenberg(text: str):
 def analysis_units(
     core: str, *, balance_sentence_quotes: bool = False,
 ):
-    """Yield source-stable units with recorded quote transfer.
+    """One source-based paragraph preanalysis, with no fabricated quotes.
 
-    The sole active extractor uses the source-preserving, dependency-aware
-    segmenter. Use corpus_pipeline.parse_corpus_case to parse extracted cases.
-    Reference and quote-balanced views share the same unit boundaries.
+    Both compatibility views have identical source text. The structural
+    constituents and quotation status are authored before syntax parsing.
     """
     for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
@@ -112,20 +109,9 @@ def analysis_units(
             continue
         joined = re.sub(r"\s+", " ", " ".join(lines))
         if not has_final_punctuation(joined) and (
-            joined.isupper() or len(joined) < 45
-        ):
+                joined.isupper() or len(joined) < 45):
             continue
-        if balance_sentence_quotes:
-            yield from split_prose_analysis_units(
-                joined,
-            )
-        else:
-            for sentence in split_prose_sentences(
-                joined,
-            ):
-                yield from split_analysis_units(
-                    sentence,
-                )
+        yield from analyze_paragraph(joined)
 
 
 def sentences(core: str):
@@ -141,7 +127,8 @@ def sentences(core: str):
 def extract(book: Book, core: str, *, length_min=4, length_max=45):
     """Return candidates plus UNFILTERED counts; skips are transparent."""
     counters = {"fragments": 0, "too_short": 0, "too_long": 0,
-                "non_ascii": 0, "non_sentence": 0, "duplicates": 0}
+                "non_ascii": 0, "non_sentence": 0, "duplicates": 0,
+                "requires_source_context": 0}
     eligible = []
     seen = set()
     for number, (unit, balanced) in enumerate(zip_longest(
@@ -152,6 +139,9 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
             raise AssertionError("Balanced quote spans must preserve source segmentation")
         sentence = unit.text
         counters["fragments"] += 1
+        if not unit.eligible_for_parse:
+            counters["requires_source_context"] += 1
+            continue
         # Unicode literary punctuation (including “ ” ‘ ’) is legitimate
         # text, not a reason to delete an entire dialogue sentence.
         if "\ufffd" in sentence:
@@ -183,6 +173,10 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                          "balanced_synthetic_prefix": balanced.synthetic_prefix,
                          "balanced_synthetic_suffix": balanced.synthetic_suffix,
                          "balanced_synthetic_terminal": balanced.synthetic_terminal,
+                         "structural_status": unit.structural_status,
+                         "quotation_status": unit.quotation_status,
+                         "structural_source_span": [unit.source_start, unit.source_end],
+                         "structural_constituents": [c.to_dict() for c in unit.constituents],
                          "tokens": len(tokens)})
     counters["eligible"] = len(eligible)
     return eligible, counters
