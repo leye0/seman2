@@ -72,6 +72,12 @@ class DiscourseTriageTests(unittest.TestCase):
         matrix = next(c for c in unit.constituents if c.id == "s0")
         self.assertEqual(matrix.function, "documentary_navigation_notation")
         self.assertEqual(bearing[matrix.start:matrix.end], bearing)
+        nodes = {n.id: n for n in unit.constituents}
+        self.assertEqual(nodes["d0"].function, "document_nominal_reference")
+        self.assertEqual(nodes["d1"].function, "directional_participial_supplement")
+        self.assertEqual(nodes["d1"].governor, "d0")
+        self.assertEqual(bearing[nodes["d1"].start:nodes["d1"].end],
+                         "bearing a point to the N. of N.N.E.")
         rows, counts = extract(Book(999, "Mock", "No", "train"), bearing,
                                length_min=1)
         self.assertEqual(rows, [])
@@ -84,6 +90,12 @@ class DiscourseTriageTests(unittest.TestCase):
         self.assertEqual(unit.discourse_function, "documentary_postscript")
         self.assertEqual(unit.structural_status, "nonprose_documentary")
         self.assertFalse(unit.eligible_for_parse)
+        nodes = {n.id: n for n in unit.constituents}
+        self.assertEqual(nodes["d0"].function, "document_marker")
+        self.assertEqual(nodes["d1"].function, "document_content_clause_candidate")
+        self.assertEqual(nodes["d1"].governor, "d0")
+        self.assertEqual(source[nodes["d1"].start:nodes["d1"].end],
+                         "Hawkins may stay one night with his mother.")
 
     def test_minor_sentences_are_valid_utterances_not_broken_clauses(self):
         examples = (

@@ -261,6 +261,37 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                 reason or ("initial_clause" if i == 0 else "semicolon_skeleton"),
             ))
         cursor += len(part)+1
+    # Preserve internal structure of source documents: these are not full
+    # narrative matrix clauses, yet may contain an interpretable grammatical
+    # clause or participial direction. All spans are literal source offsets.
+    frame = re.match(r"(?i)^(?:P\.\s?S\.|P\.\s?P\.\s?S\.)\s*(?:--|—|:)\s*", source)
+    if frame and frame.end() < len(source):
+        cs.extend((
+            StructuralConstituent(
+                "d0", "document_marker", 0, frame.end(), "u0",
+                "documentary_frame", "postscript_marker_source_span",
+            ),
+            StructuralConstituent(
+                "d1", "document_content_clause_candidate",
+                frame.end(), len(source), "d0",
+                "document_content", "postscript_content_source_span",
+            ),
+        ))
+    direction = re.search(r"(?i),\s*bearing\b", source)
+    if direction and classify_discourse(source).function == "documentary_navigation_notation":
+        cs.extend((
+            StructuralConstituent(
+                "d0", "document_nominal_reference", 0, direction.start(),
+                "u0", "documentary_label",
+                "map_reference_nominal_source_span",
+            ),
+            StructuralConstituent(
+                "d1", "directional_participial_supplement",
+                direction.start() + 1, len(source), "d0",
+                "directional_modifier",
+                "explicit_bearing_participle_source_span",
+            ),
+        ))
     # Source-matched quotation spans, with overt reporting verbs as edges.
     for j, (a, b) in enumerate(quotation_spans):
         if b-a <= 2:
