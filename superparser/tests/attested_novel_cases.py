@@ -44,6 +44,8 @@ ATTESTED_STARTS = {
     467: (120, "Every thought of his soul had been set full-stretch,"),
     480: (120, "'As for you, Benjamin Gunn,' says they,"),
     485: (120, "As soon as the sun had climbed above our girdle of trees,"),
+    434: (120, "Skeleton Island E.S.E. and by E. Ten feet."),
+    438: (120, "Now, Mrs. Hawkins, just you run upstairs to your husband"),
 }
 
 

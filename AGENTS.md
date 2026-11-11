@@ -30,6 +30,23 @@ and a separately reported baseline. **Never compare scores from different
 cohort SHAs or carry over old case indices.** The old 475/500 and its
 case-numbered research remain historical evidence only.
 
+**Mandatory shallow structural-cohesion stage:**
+`seman_parser.structural_units.review_semicolon_boundaries` is called by
+`sentence_boundaries.split_analysis_units` **after typographic sentence
+splitting and before quote-balanced corpus extraction/full `Parser.parse`**.
+It records a reason for each proposed semicolon boundary; it may join only
+on explicit surface dependency evidence (e.g. shared subject, PP series,
+causal conjunction, omitted matrix or parallel nominal ellipsis). It is
+**not a second parser** and does not certify grammatical completeness.
+Keep independent-clause negative controls and exact source provenance.
+
+**Grammar rule-risk audit:** `python -m scripts.audit_fragment_grammar_rules`
+compares current rule IDs against an October 11 snapshot and lists high-risk
+elliptical/root productions for review. No removal is permitted without
+selected-tree evidence, source-context justification, and successful
+independent positive/negative contrasts. Never equate a heuristic flag with
+proof of an invalid rule.
+
 **Before diagnosing any grammar failure**, read the contiguous source
 paragraph and neighboring original units. Confirm that the single active
 splitter has not isolated a dependent clause, a shared-subject predicate,

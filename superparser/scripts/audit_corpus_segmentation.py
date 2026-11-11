@@ -14,14 +14,16 @@ import re
 
 from research.verbnet_lr.clean_novel_corpus import load_cleaned, read_manifest
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, analysis_units, CHAPTER
-from seman_parser.sentence_boundaries import has_final_punctuation, split_prose_analysis_units
+from seman_parser.sentence_boundaries import has_final_punctuation, split_prose_analysis_units, split_prose_sentences
 from seman_parser.segmentation import tokenize
+from seman_parser.structural_units import review_semicolon_boundaries
 
 
 def measure() -> dict:
     books = {b.ebook_id: b for b in TRAIN_BOOKS}
     overall = Counter()
     by_book = {}
+    by_structural_reason = Counter()
     for record in read_manifest()["books"]:
         book = books[record["ebook_id"]]
         text, _ = load_cleaned(book)
@@ -34,6 +36,10 @@ def measure() -> dict:
             if not has_final_punctuation(joined) and (
                     joined.isupper() or len(joined) < 45):
                 continue
+            for sentence in split_prose_sentences(joined):
+                for decision in review_semicolon_boundaries(sentence):
+                    if decision.merge:
+                        by_structural_reason[decision.reason] += 1
             units = split_prose_analysis_units(joined)
             reconstructed = " ".join(u.source_text for u in units)
             # AnalysisUnit.source_text is individually stripped, so joining
@@ -92,6 +98,7 @@ def measure() -> dict:
         "schema": "seman2-current-segmentation-audit-v1",
         "policy": "single-source-preserving-segmenter",
         "counts": dict(sorted(overall.items())),
+        "structural_links_by_reason": dict(sorted(by_structural_reason.items())),
         "by_book": by_book,
         "non_whitespace_source_characters_preserved": True,
         "byte_exact_round_trip_not_asserted": True,

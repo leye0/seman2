@@ -5,6 +5,18 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Recherche active — couche de cohésion structurale et audit des règles
+
+La branche [`feat/structural-cohesion-layer`](https://github.com/leye0/seman2/tree/feat/structural-cohesion-layer)
+introduit un module structural **distinct** entre la segmentation
+ponctuationnelle et l'extraction grammaticale : chaque point-virgule reçoit
+une justification de jonction ou de séparation. Les tests adverses assurent
+que les propositions autonomes ne sont pas fusionnées arbitrairement.
+Un audit séparé inventorie les productions grammaticales qui pourraient
+avoir compensé des coupures artificielles; aucune n'est supprimée sans
+ablation et vérification de l'arbre sélectionné. Après changement des
+frontières, la cohorte SHA et sa file de cas doivent être régénérées.
+
 ## État confirmé après la migration — cohorte actuelle, 11 novembre 2026
 
 - **PR #37 fusionnée** au commit `e2265953a7c78e504bed6deee3b9823ed7267c21` : un seul découpeur source-conservateur et dépendance-aware pour toute extraction littéraire, **plus aucune sélection v1/v2 dans les API actives**. La grammaire reste accessible uniquement par le passage `parse_corpus_case → Parser.parse` pour les cas du corpus. Les anciens algorithmes et indices sont accessibles via l'historique Git, pas par un chemin production alternatif.

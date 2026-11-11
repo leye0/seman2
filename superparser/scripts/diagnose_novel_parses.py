@@ -18,6 +18,7 @@ from time import perf_counter
 from scripts.corpus_samples import BANDS, choose_cases, sample_spread
 from seman_parser.engine import Parser, ParserResources
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case, prepare_corpus_input
+from seman_parser.structural_units import source_unit_signals
 
 ROOT = Path(__file__).resolve().parents[1]
 # The *current* 500-case cohort is explicitly pinned after sampling with the
@@ -980,6 +981,7 @@ def run(args: argparse.Namespace) -> dict:
                     "ordinal": case["ordinal"], "band": case["band"],
                     "tokens": case["tokens"], "sentence": case["text"],
                     "source_text": source_text,
+                    "structural_surface_signals": source_unit_signals(source_text),
                     "semicolon_split": bool(case.get("semicolon_split")),
                     "synthetic_prefix": case.get("synthetic_prefix", ""),
                     "synthetic_suffix": case.get("synthetic_suffix", ""),
