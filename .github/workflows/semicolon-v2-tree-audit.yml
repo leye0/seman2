@@ -1,0 +1,77 @@
+name: Seman2 - Prospective v2 semicolon tree audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/semicolon-v2-tree-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare reference WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          import os
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent': 'Seman2-research'}), timeout=90) as response:
+              raw = response.read()
+          dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict'
+          dest.mkdir(parents=True, exist_ok=True)
+          needed = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb', 'sents.vrb', 'cntlist.rev'}
+          for part in ('noun', 'verb', 'adj', 'adv'):
+              needed.update((f'index.{part}', f'data.{part}', f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as archive:
+              for name in archive.namelist():
+                  leaf = Path(name).name
+                  if name.startswith('wordnet/') and leaf in needed:
+                      (dest / leaf).write_bytes(archive.read(name))
+          assert (dest / 'index.verb').is_file()
+          PY
+      - name: Verify the audit's structural warnings
+        run: |
+          PYTHONPATH=superparser python -m unittest -v \
+            superparser.tests.test_semicolon_attachment_audit
+      - name: Run four prospective v2 cases through the mandatory parser gateway
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            python -u -m scripts.audit_semicolon_context \
+              --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+              --max-items 50000 --kbest-work-limit 500000 \
+              --summary-only | tee /tmp/semicolon-v2-summary.jsonl
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          records = [json.loads(row) for row in Path('/tmp/semicolon-v2-summary.jsonl').read_text().splitlines()]
+          assert len(records) == 4
+          assert [r['frozen_index'] for r in records] == [8, 94, 182, 194]
+          assert all(r['wordnet_loaded'] for r in records), 'WordNet 3.0 must be loaded'
+          assert all(r['segmentation_version'] == 2 for r in records)
+          for record in records:
+              print('V2_SEMICOLON', record['frozen_index'],
+                    'complete', record['completed'],
+                    'nodes', record['forest_nodes'],
+                    'warnings', record['attachment_warnings'], flush=True)
+          PY
+      - name: Keep canonical WordNet results for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semicolon-v2-structural-audit
+          path: /tmp/semicolon-v2-summary.jsonl
+          retention-days: 30
+          if-no-files-found: warn

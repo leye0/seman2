@@ -22,6 +22,28 @@ then **exclusively** `corpus_pipeline.parse_corpus_case` at the normal
 the selected tree with exact rule IDs/spans and the parent chain of the
 literal semicolon. It never rewrites the 500-case benchmark.
 
+For a compact machine-readable table of all four cases, add
+`--summary-only`. The optional `attachment_warnings` field marks only
+**known suspicious structures** on the selected semicolon path:
+
+- `semicolon_consumed_by_nominal_apposition`: `np_appos_comma` used the
+  semicolon as if it were its literal comma.
+- `semicolon_consumed_by_comma_vp_coordination`: `vp_comma_coord` or
+  `vp_comma_list` absorbed a clause-level semicolon.
+- `no_selected_root` / `semicolon_missing_from_selected_tree`: the
+  selected result cannot provide evidence of a correct attachment.
+
+No warnings means *not yet disproven*, **not** grammatically certified.
+The positive and negative detectors have independent structural tests in
+`superparser/tests/test_semicolon_attachment_audit.py`.
+
+The focused workflow
+`.github/workflows/semicolon-v2-tree-audit.yml` downloads the **reference
+WordNet 3.0** and saves four JSONL summary records as a GitHub Actions
+artifact. It checks source preservation, real lexical loading, stable
+budgets and the diagnostics themselves; it does **not** promote a v2 parse
+count to a score for the historical cohort.
+
 ## Local diagnostic without WordNet (not canonical)
 
 The scratch environment lacks WordNet 3.0. We reconstructed the existing

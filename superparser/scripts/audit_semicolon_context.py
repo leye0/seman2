@@ -84,8 +84,31 @@ def _semicolon_ancestor_path(item, position: int):
     return [current]
 
 
+def _attachment_warnings(item, position: int):
+    """Flag suspicious punctuation scope, without certifying any good tree.
+
+    These are *necessary* contextual checks for the four source passages,
+    not a semantic evaluator. A tree with no warnings still needs expert
+    parent/child and agreement inspection.
+    """
+    if item is None:
+        return ["no_selected_root"]
+    path = _semicolon_ancestor_path(item, position)
+    if path is None:
+        return ["semicolon_missing_from_selected_tree"]
+    flags = []
+    # A semicolon joining sentence-level material must not be swallowed as
+    # an apposition inside a prepositional or nominal complement.
+    for category, rule_id, _start, _end in path[:-1]:
+        if category == "NP" and rule_id == "np_appos_comma":
+            flags.append("semicolon_consumed_by_nominal_apposition")
+        if category == "VP" and rule_id in {"vp_comma_coord", "vp_comma_list"}:
+            flags.append("semicolon_consumed_by_comma_vp_coordination")
+    return flags
+
+
 def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
-          kbest_work_limit: int = 500_000):
+          kbest_work_limit: int = 500_000, summary_only: bool = False):
     resources = ParserResources.from_dir(DATA, wordnet_dict=wordnet_dir)
     parser = Parser(resources, cache_size=0, max_items=max_items)
     has_wordnet = resources.lexicon.has_wordnet
@@ -122,6 +145,7 @@ def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
             "partial_states": result.stats.get("partial_states"),
             "budget_exceeded": result.stats.get("budget_exceeded"),
             "selected_root_rule": best.rule_id if best else None,
+            "attachment_warnings": _attachment_warnings(best, marker),
             "semicolon_selected_path": (
                 _semicolon_ancestor_path(best, marker)
                 if best is not None and marker >= 0 else None
@@ -131,6 +155,9 @@ def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
                 if best is not None else None
             ),
         }
+        if summary_only:
+            record.pop("selected_tree")
+            record.pop("semicolon_selected_path")
         print(json.dumps(record, ensure_ascii=False), flush=True)
 
 
@@ -139,9 +166,12 @@ def main():
     args.add_argument("--wordnet-dir", default=None)
     args.add_argument("--max-items", type=int, default=50_000)
     args.add_argument("--kbest-work-limit", type=int, default=500_000)
+    args.add_argument("--summary-only", action="store_true",
+                      help="one compact JSON record per case for CI logs")
     settings = args.parse_args()
     audit(wordnet_dir=settings.wordnet_dir, max_items=settings.max_items,
-          kbest_work_limit=settings.kbest_work_limit)
+          kbest_work_limit=settings.kbest_work_limit,
+          summary_only=settings.summary_only)
 
 
 if __name__ == "__main__":
