@@ -9,7 +9,7 @@ from scripts.audit_fragment_grammar_rules import analyze, classify_rule, render_
 class FragmentRuleAuditTests(unittest.TestCase):
     def test_tentative_root_without_overt_predicate_is_flagged(self):
         sample = {
-            "id": "clause_elided_contextual_predicate",
+            "id": "clause_ellipsis_contextual_predicate",
             "lhs": {"category": "CLAUSE"},
             "rhs": [{"category": "COORD"}, {"category": "NP"}],
         }
