@@ -160,7 +160,18 @@ def _dependency_cue(left: str, right: str) -> str | None:
     if _ONE_SIDE.search(left) and _OTHER_SIDE.match(right):
         return "contrasting_locative_nominal_ellipsis"
     if _CAUSAL_COORDINATION.match(right):
-        return "causal_coordinator_refers_back"
+        tail = re.sub(r"(?i)^for\s*,?\s*", "", right)
+        # 'for a little while, she waited' is a temporal PP followed by an
+        # autonomous clause, NOT the causal connector 'for I considered ...'.
+        if re.match(
+            r"(?i)^(?:a|the|this|that|my|your)\s+"
+            r"(?:little|short|long|last|whole|few|moment|hour|day|week|"
+            r"month|year|while|time)\b", tail,
+        ):
+            return None
+        if (skeleton(tail).overt_subject_candidate
+                or re.match(r"(?i)^short\s+of\b", tail)):
+            return "causal_coordinator_refers_back"
     if _FAREWELL.match(left) and _FAREWELL.match(right):
         return "parallel_valediction"
     return None
