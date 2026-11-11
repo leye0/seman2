@@ -34,6 +34,9 @@ class PreparedCorpusInput:
     structural_constituents: tuple[Mapping[str, Any], ...] = ()
     structural_status: str = "not_supplied"
     quotation_status: str = "not_supplied"
+    source_paragraph_index: int | None = None
+    source_paragraph_span: tuple[int, int] | None = None
+    cleaned_book_span: tuple[int, int] | None = None
 
     def source_component(self, component_id: str) -> str:
         """Return exact source text for a documented grammatical function."""
@@ -113,6 +116,23 @@ def prepare_corpus_input(
             raise ValueError("Unresolved quotation cannot enter complete grammar parsing")
         if case.get("structural_status") != "provisional_complete_utterance":
             raise ValueError("Only structurally coherent source utterances may be parsed")
+    paragraph_span = case.get("structural_source_span")
+    book_span = case.get("structural_core_source_span")
+    paragraph_index = case.get("structural_paragraph_index")
+    if structure:
+        if not (
+            isinstance(paragraph_index, int) and paragraph_index >= 0
+            and isinstance(paragraph_span, (list, tuple))
+            and len(paragraph_span) == 2
+            and all(isinstance(v, int) for v in paragraph_span)
+            and 0 <= paragraph_span[0] < paragraph_span[1]
+            and paragraph_span[1]-paragraph_span[0] == len(source)
+            and isinstance(book_span, (list, tuple))
+            and len(book_span) == 2
+            and all(isinstance(v, int) for v in book_span)
+            and 0 <= book_span[0] < book_span[1]
+        ):
+            raise ValueError("Source paragraph and cleaned-book offsets required")
     if mode is CorpusParseMode.HISTORICAL_REFERENCE:
         return PreparedCorpusInput(
             analysis_text=reference,
