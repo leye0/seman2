@@ -105,7 +105,7 @@ def measure() -> dict:
             "She left. He returned.",
             "He whispered, ‘Oh! What now?’ Then he left.",
             "“What?” “Nothing!”"):
-        units = split_prose_analysis_units(source)
+        units = analyze_paragraph(source)
         if len(units) < 2 or " ".join(u.source_text for u in units) != source:
             raise AssertionError("Current segmenter incorrectly merged independent sentences")
     return {
