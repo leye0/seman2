@@ -5,6 +5,15 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## État confirmé après la migration — cohorte actuelle, 11 novembre 2026
+
+- **PR #37 fusionnée** au commit `e2265953a7c78e504bed6deee3b9823ed7267c21` : un seul découpeur source-conservateur et dépendance-aware pour toute extraction littéraire, **plus aucune sélection v1/v2 dans les API actives**. La grammaire reste accessible uniquement par le passage `parse_corpus_case → Parser.parse` pour les cas du corpus. Les anciens algorithmes et indices sont accessibles via l'historique Git, pas par un chemin production alternatif.
+- **Nouvelle cohorte de 500** : SHA `851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77`, obtenu deux fois en CI. [Action Layer 1 #43029431199](https://github.com/leye0/seman2/actions/runs/43029431199) verte : **610 tests**, 120/120 annotations, 24/24 contrastes positifs, 9 négatifs acceptés comme précédemment, smoke canonique/adaptatif/dialogue OK. [Action 500 #43029431200](https://github.com/leye0/seman2/actions/runs/43029431200) verte : **425/500** reconnus, **75** résidus (20 sans racine, 46 racines invalides, 4 forêts saturées, 5 délais).
+- L'ancien **475/500** portait sur une **cohorte différente** et n'est pas comparable au 425/500 comme évolution de la grammaire. Les **242 cas communs**, appariés par identité de source, montrent **zéro changement de statut** (236 reconnus, 5 échecs structurels, 1 délai); aucune régression de statut observée sur cette intersection.
+- Audit séparé du découpage : **37 410 unités**, **11 144 paragraphes**, quatre romans nettoyés, caractères non blancs conservés, **19 variations d'espacement** au raccordement des unités; la reconstruction strictement octet-par-octet n'est **pas certifiée**. Les frontières sont vérifiées par quatre constructions dépendantes positives et trois indépendantes négatives.
+- File déterministe [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json) **régénérée à partir du rapport de la nouvelle cohorte** : 75 résidus avec leur `case_id` stable, `last_attempted_index=-1`, **prochain cas = index 1** (et non l'ancien 109). Toute nouvelle modification des frontières impose un nouveau SHA et un nouveau point de départ.
+- **Toutes les sections ci-dessous relatant les cas 8, 64, 94, 105, 109, etc. et le 475/500 sont des comptes rendus historiques**, dont les anciens indices ne peuvent être reportés sur la nouvelle cohorte.
+
 ## Migration du système : un seul découpeur actif (novembre 2026)
 
 La [PR #37](https://github.com/leye0/seman2/pull/37) supprime la sélection

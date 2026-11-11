@@ -4,5 +4,29 @@
   "sample_count": 500,
   "cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "This is a new cohort from the single active segmenter. Its scores cannot be compared with the historical cohort. Original data remain in Git history."
+  "note": "This is a new cohort from the single active segmenter. Its scores cannot be compared with the historical cohort. Original data remain in Git history.",
+  "baseline": {
+    "validated_merge_commit": "e2265953a7c78e504bed6deee3b9823ed7267c21",
+    "layer1_ci_run": "https://github.com/leye0/seman2/actions/runs/43029431199",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43029431200",
+    "completed": 425,
+    "unresolved": 75,
+    "statuses": {
+      "complete": 425,
+      "no_structural_root": 20,
+      "roots_without_valid_analysis": 46,
+      "forest_budget_exceeded": 4,
+      "timeout": 5,
+      "error": 0
+    },
+    "common_cases_with_old_cohort": 242,
+    "status_changes_on_common_cases": 0
+  },
+  "segmentation_audit": {
+    "paragraphs": 11144,
+    "analysis_units": 37410,
+    "whitespace_boundary_normalizations": 19,
+    "non_whitespace_source_characters_preserved": true,
+    "byte_exact_round_trip_certified": false
+  }
 }
