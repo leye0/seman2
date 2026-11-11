@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "Deliberate cohort migration: evidence-based triage of documentary notations and contextual supplements; minor dialogue/salutation sentences retained. New deterministic cohort SHA measured by green Layer 1 CI on PR #41. No comparison of parser coverage across different cohort SHAs.",
+  "note": "PR #41 delivered source-grounded discourse functions and contextual/documentary exclusions; minor utterances retained. Cohort reselected and pinned. 410/500 on the NEW cohort; 435 common utterances show no observed regressions (one timeout now completes). No grammar rules changed.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -70,6 +70,53 @@
       "total_rules": 608,
       "review_candidates": 45,
       "confirmed_invalid": 0
+    }
+  },
+  "baseline": {
+    "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
+    "validated_tested_head": "bf0f2d53373430f35f09b7a7ee34f0209228fe36",
+    "layer1_ci_run": "https://github.com/leye0/seman2/actions/runs/43091320052",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43091319834",
+    "anchored_source_ci_run": "https://github.com/leye0/seman2/actions/runs/43091319828",
+    "completed": 410,
+    "unresolved": 90,
+    "statuses": {
+      "complete": 410,
+      "no_structural_root": 17,
+      "roots_without_valid_analysis": 57,
+      "forest_budget_exceeded": 11,
+      "timeout": 5,
+      "error": 0
+    },
+    "source_audit": {
+      "paragraphs": 11144,
+      "analysis_units": 22125,
+      "provisional_complete_utterances": 21202,
+      "ineligible_source_units": 923,
+      "documentary_units": 3,
+      "contextual_discourse_units": 16,
+      "minor_utterances": 382,
+      "typed_source_constituents": 69385,
+      "synthetic_punctuation": 0
+    },
+    "paired_cohort_comparison": {
+      "common_texts": 435,
+      "unchanged_status": 434,
+      "one_timeout_to_complete": 1,
+      "observed_regressions": 0,
+      "original_only_texts": 65,
+      "new_only_texts": 65,
+      "caveat": "Paired by source and book; 410/500 vs 411/500 is not a comparable-coverage delta."
+    },
+    "layer1_quality": {
+      "unit_tests": 635,
+      "gold_annotations": "120/120",
+      "positive_contrasts": "24/24"
+    },
+    "confirmed_bad_grammar_rules_removed": 0,
+    "next_grammar_case": {
+      "index": 11,
+      "case_id": "766:7aeedec565c8d7f5"
     }
   }
 }

@@ -3,7 +3,16 @@
 **SOURCE DE VÉRITÉ du dépôt `leye0/seman2`, branche `main`.**
 Ce fichier prime sur les anciens comptes rendus de recherche. Il est conçu pour un développeur ou un nouvel agent ChatGPT n'ayant lu aucune conversation antérieure.
 
-## Statut actuel du corpus (11 novembre 2026)
+## Statut actuel du corpus (11 novembre 2026 — PR #41)
+
+- **`main` : [PR #41](https://github.com/leye0/seman2/pull/41) intégrée**, classification discursive fondée sur les preuves lexicales et le contexte source. Les fonctions **`minor_utterance`**, **`elliptical_supplement`**, **`reported_speech_continuation`**, **`documentary_navigation_notation`** et **`documentary_postscript`** disposent de références exactes au livre et de constituants typés.
+- Les énoncés mineurs sont grammaticalement valides et restent candidats. Seules les unités non autonomes ou documentaires ne sont pas testées comme propositions principales complètes. Aucun ajustement de grammaire n'a été introduit pour masquer les fragments; les sources et la ponctuation restent inchangées.
+- **SHA officiel :** `d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`. **410/500 complets, 90 résidus**; prochaine position **11** (`766:7aeedec565c8d7f5`). Comparaison à la précédente cohorte : **435 textes communs**, 434 statuts conservés, 1 délai devenu complet, aucune régression observée.
+- **Audits des romans :** 22 125 unités de discours, 69 385 constituants préanalysés, 382 énoncés mineurs, 16 continuations/ellipses contextuelles, 3 unités documentaires, 0 ponctuation synthétique.
+- **CI verte :** [Core #43091320052](https://github.com/leye0/seman2/actions/runs/43091320052) (635 tests, 120/120 gold, 24/24 contrastes) et [Romans #43091319834](https://github.com/leye0/seman2/actions/runs/43091319834) (410/500, 0 erreur d'exécution).
+- **Limite persistante :** la préanalyse structurelle ne pilote pas encore la recherche du parseur ni la résolution interparagraphes des citations; ses relations sont des hypothèses, pas des arbres syntaxiques certifiés.
+
+## Historique — préanalyse initiale PR #40 (11 novembre 2026)
 
 - **Intégré à `main` : PR #40**, préanalyse structurelle de paragraphes, guillemets sources, groupes complets, fonctions et relations syntaxiques provisoires avec offsets et gouverneurs vérifiables.
 - **Cohorte déterministe active :** SHA `140097d47116afac4172bd87b32bff8f9628e53a270c6b1dcca85d74a4b0cfe4`; **411/500**, **89 résidus**. File correspondante dans [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json), prochain index **16**. Anciennes cohortes 475/500, 425/500 et 416/500 = historique non directement comparable.

@@ -1,14 +1,14 @@
 {
   "schema": "seman2-grammar-case-queue-v2",
-  "cohort_sha256": "140097d47116afac4172bd87b32bff8f9628e53a270c6b1dcca85d74a4b0cfe4",
-  "validated_commit": "68fbb3d1c46e5b739c7d94cfb924dc6b85c82ec0",
-  "completed_count": 411,
+  "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+  "validated_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
+  "completed_count": 410,
   "last_attempted_index": -1,
   "unresolved": [
     {
-      "index": 16,
+      "index": 11,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:15fcebb30fe8216f"
+      "case_id": "766:7aeedec565c8d7f5"
     },
     {
       "index": 19,
@@ -21,14 +21,24 @@
       "case_id": "766:3f699ef32c5f0e6a"
     },
     {
+      "index": 41,
+      "status": "no_structural_root",
+      "case_id": "766:0889d247438b5ebb"
+    },
+    {
       "index": 52,
       "status": "roots_without_valid_analysis",
       "case_id": "766:c0f5111e4d432ce7"
     },
     {
-      "index": 64,
+      "index": 56,
+      "status": "no_structural_root",
+      "case_id": "766:daaca15c309a8606"
+    },
+    {
+      "index": 66,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:569bd57dbffdd57b"
+      "case_id": "766:64bab268f9f84142"
     },
     {
       "index": 69,
@@ -46,9 +56,14 @@
       "case_id": "766:a4b638e307998ebb"
     },
     {
-      "index": 85,
+      "index": 80,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:20762268a4cc0633"
+      "case_id": "766:57dba5c2e4bb4629"
+    },
+    {
+      "index": 84,
+      "status": "roots_without_valid_analysis",
+      "case_id": "766:895b8100ffcc44d0"
     },
     {
       "index": 87,
@@ -61,44 +76,44 @@
       "case_id": "766:16ef86f47f909d4b"
     },
     {
-      "index": 100,
-      "status": "no_structural_root",
-      "case_id": "766:96c32e7b064292ed"
-    },
-    {
-      "index": 105,
-      "status": "no_structural_root",
-      "case_id": "766:3a43354221eb06c7"
-    },
-    {
-      "index": 106,
+      "index": 96,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:6b23b9324a100cf1"
+      "case_id": "766:20c2b53ad2e4e57a"
+    },
+    {
+      "index": 99,
+      "status": "forest_budget_exceeded",
+      "case_id": "766:e32c8b16607f2eca"
+    },
+    {
+      "index": 101,
+      "status": "roots_without_valid_analysis",
+      "case_id": "766:a6f271decc4bfe72"
+    },
+    {
+      "index": 109,
+      "status": "forest_budget_exceeded",
+      "case_id": "766:4948b167f2e21291"
     },
     {
       "index": 110,
+      "status": "timeout",
+      "case_id": "766:c31971a0a1ada1d9"
+    },
+    {
+      "index": 111,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:ce6b0289168f5637"
+      "case_id": "766:a7d236f294fefa98"
     },
     {
       "index": 113,
-      "status": "no_structural_root",
-      "case_id": "766:e27be2c6dbbe93b6"
-    },
-    {
-      "index": 117,
       "status": "roots_without_valid_analysis",
-      "case_id": "766:a83544c1ca195984"
+      "case_id": "766:e4a5ae9674b49144"
     },
     {
-      "index": 118,
-      "status": "forest_budget_exceeded",
-      "case_id": "766:7e3fc42183d371c1"
-    },
-    {
-      "index": 119,
-      "status": "forest_budget_exceeded",
-      "case_id": "766:8c580fbb732eaeb2"
+      "index": 122,
+      "status": "roots_without_valid_analysis",
+      "case_id": "766:fb2158d6e71fe059"
     },
     {
       "index": 124,
@@ -179,11 +194,6 @@
       "index": 226,
       "status": "no_structural_root",
       "case_id": "1342:22ebce05b8634656"
-    },
-    {
-      "index": 227,
-      "status": "timeout",
-      "case_id": "1342:30345a009c9df297"
     },
     {
       "index": 228,
@@ -361,19 +371,14 @@
       "case_id": "120:b20b1c50bc030311"
     },
     {
-      "index": 442,
-      "status": "roots_without_valid_analysis",
-      "case_id": "120:7471de3b3b543cae"
-    },
-    {
-      "index": 443,
+      "index": 445,
       "status": "no_structural_root",
-      "case_id": "120:8e269464e19e0b21"
+      "case_id": "120:3d812d09ecccb8e0"
     },
     {
-      "index": 453,
-      "status": "timeout",
-      "case_id": "120:ec7c7c06032a4005"
+      "index": 456,
+      "status": "no_structural_root",
+      "case_id": "120:c680ad0d5761a767"
     },
     {
       "index": 462,
@@ -392,8 +397,8 @@
     },
     {
       "index": 466,
-      "status": "no_structural_root",
-      "case_id": "120:708d80da27f91e6f"
+      "status": "roots_without_valid_analysis",
+      "case_id": "120:990233ea73026451"
     },
     {
       "index": 469,
@@ -451,5 +456,5 @@
       "case_id": "120:831e1f5ff09a8b07"
     }
   ],
-  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43080700568"
+  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43091319834"
 }
