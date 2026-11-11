@@ -67,6 +67,11 @@ def measure() -> dict:
                 totals["provisional_complete_utterances"] += int(unit.eligible_for_parse)
                 totals["incomplete_source_context"] += int(not unit.eligible_for_parse)
                 totals["typed_components"] += len(unit.constituents)
+                totals["discourse_role:" + unit.discourse_function] += 1
+                totals["documentary_units"] += int(unit.structural_status == "nonprose_documentary")
+                totals["context_dependent_discourse_units"] += int(
+                    unit.discourse_function in ("elliptical_supplement", "reported_speech_continuation")
+                )
                 totals["source_matched_quotes"] += sum(c.function == "direct_speech"
                                                        for c in unit.constituents)
                 totals["semicolons_cut"] += int(unit.semicolon_split)

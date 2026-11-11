@@ -37,6 +37,11 @@ class PreparedCorpusInput:
     source_paragraph_index: int | None = None
     source_paragraph_span: tuple[int, int] | None = None
     cleaned_book_span: tuple[int, int] | None = None
+    discourse_function: str = "not_supplied"
+    discourse_relation: str = "not_supplied"
+    discourse_evidence: str = "not_supplied"
+    discourse_governor_core_span: tuple[int, int] | None = None
+    discourse_governor_paragraph_index: int | None = None
 
     def source_component(self, component_id: str) -> str:
         """Return exact source text for a documented grammatical function."""
@@ -135,6 +140,22 @@ def prepare_corpus_input(
             and 0 <= book_span[0] < book_span[1]
         ):
             raise ValueError("Source paragraph and cleaned-book offsets required")
+    discourse_governor = case.get("discourse_governor_core_span")
+    discourse_paragraph = case.get("discourse_governor_paragraph_index")
+    if discourse_governor is not None:
+        if not (isinstance(discourse_governor, (tuple, list))
+                and len(discourse_governor) == 2
+                and all(isinstance(i, int) for i in discourse_governor)
+                and 0 <= discourse_governor[0] < discourse_governor[1]
+                and book_span is not None
+                and discourse_governor[1] <= book_span[0]
+                and isinstance(discourse_paragraph, int)
+                and discourse_paragraph <= paragraph_index):
+            raise ValueError("Discourse governor must precede its exact source span")
+    if structure and case.get("discourse_function", "") in (
+            "elliptical_supplement", "reported_speech_continuation",
+            "documentary_navigation_notation", "documentary_postscript"):
+        raise ValueError("Non-prose or context-dependent text cannot enter standalone parsing")
     if mode is CorpusParseMode.HISTORICAL_REFERENCE:
         return PreparedCorpusInput(
             analysis_text=reference,
@@ -150,6 +171,16 @@ def prepare_corpus_input(
             source_paragraph_index=paragraph_index,
             source_paragraph_span=tuple(paragraph_span) if paragraph_span else None,
             cleaned_book_span=tuple(book_span) if book_span else None,
+        discourse_function=case.get("discourse_function", "not_supplied"),
+        discourse_relation=case.get("discourse_relation", "not_supplied"),
+        discourse_evidence=case.get("discourse_evidence", "not_supplied"),
+        discourse_governor_core_span=tuple(discourse_governor) if discourse_governor else None,
+        discourse_governor_paragraph_index=discourse_paragraph,
+            discourse_function=case.get("discourse_function", "not_supplied"),
+            discourse_relation=case.get("discourse_relation", "not_supplied"),
+            discourse_evidence=case.get("discourse_evidence", "not_supplied"),
+            discourse_governor_core_span=tuple(discourse_governor) if discourse_governor else None,
+            discourse_governor_paragraph_index=discourse_paragraph,
         )
     return PreparedCorpusInput(
         analysis_text=balanced,

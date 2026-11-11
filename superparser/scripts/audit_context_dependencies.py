@@ -55,6 +55,11 @@ def source_contexts(core):
                 ),
                 "quotation_status": unit.quotation_status,
                 "structural_status": unit.structural_status,
+                "discourse_function": original[count].discourse_function,
+                "discourse_relation": original[count].discourse_relation,
+                "discourse_evidence": original[count].discourse_evidence,
+                "discourse_governor_core_span": original[count].discourse_governor_core_span,
+                "discourse_governor_paragraph_index": original[count].discourse_governor_paragraph_index,
             }
             count += 1
     assert count == len(original), (count, len(original))

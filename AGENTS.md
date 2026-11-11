@@ -49,7 +49,15 @@ source spans, governor IDs and explicit descriptive relations. Its functions
 and do not assert a correct complete parse. The corpus gateway validates these
 references and exposes them as `PreparedCorpusInput.structural_constituents`.
 Quotes unmatched within the source paragraph are flagged `requires_source_context`
-and **excluded from parse sampling**. They are not made valid by synthetic
+and **excluded from parse sampling**. Conservative discourse triage also
+separates source-dependent afterthoughts (e.g. `Only upon us two.`),
+quoted in-medias-res clause continuations, documentary map bearings and
+postscript wrappers from independent matrix clauses. Formulaic replies and
+salutations are valid **minor utterances**, not automatically bad segments.
+All decisions have an explicit evidence label; dependent discourse links
+point to the prior source-book span (a candidate, not asserted syntactic
+coreference). The evidence classifier never treats lowercase starts alone
+as proof of incompleteness. They are not made valid by synthetic
 punctuation. The full engine still accepts one text input at a time; the
 source-span graph does not yet rewrite its grammar search.
 

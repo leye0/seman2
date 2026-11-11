@@ -997,6 +997,9 @@ def run(
                         p["relation"] for p in case.get("structural_constituents", ())
                     ],
                     "quotation_status": case.get("quotation_status", "not_supplied"),
+                    "discourse_function": case.get("discourse_function", "not_supplied"),
+                    "discourse_relation": case.get("discourse_relation", "not_supplied"),
+                    "discourse_evidence": case.get("discourse_evidence", "not_supplied"),
                     "semicolon_split": bool(case.get("semicolon_split")),
                     "synthetic_prefix": case.get("synthetic_prefix", ""),
                     "synthetic_suffix": case.get("synthetic_suffix", ""),

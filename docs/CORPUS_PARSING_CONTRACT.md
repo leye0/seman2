@@ -78,3 +78,22 @@ structurée et vérifiable, et choisit les frontières du texte transmis à
 `Parser.parse`. Elle n'intègre pas encore ses relations de constituants
 à la recherche d'arbres du moteur; les longs énoncés peuvent donc dépasser
 les budgets existants. Cette distinction fait partie du contrat.
+
+## Distinction entre phrase, ellipse et document
+
+La couche `seman_parser.discourse_roles.classify_discourse` attribue
+une fonction de discours **provisoire et sourcée** avant la syntaxe complète.
+`minor_utterance` distingue les répliques adverbiales et les salutations
+légitimes; celles-ci restent admissibles. `elliptical_supplement` désigne
+une reprise syntaxiquement dépendante du texte précédent; elle porte la
+référence exacte à l'unité source antérieure, sans ajout de mots.
+`reported_speech_continuation` indique un segment de citation commencé
+au milieu d'une construction. `documentary_navigation_notation` et
+`documentary_postscript` identifient des notations de cartes ou du
+paratexte plutôt que de les considérer comme des propositions grammaticales.
+
+Seules les catégories **explicitement non autonomes/documentaires** sont
+écartées de l'échantillon de propositions indépendantes. Toute exclusion
+et toute référence sont dénombrées. Une capitale, une minuscule, une phrase
+sans verbe clairement reconnu ou un dialecte ne suffisent jamais à exclure
+un segment. Cette passe ne crée toujours aucun arbre syntaxique confirmé.
