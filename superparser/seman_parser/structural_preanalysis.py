@@ -49,6 +49,9 @@ class PreanalyzedSentence:
     structural_status: str
     constituents: tuple[StructuralConstituent, ...]
     eligible_for_parse: bool
+    paragraph_index: int = -1
+    core_start: int = -1
+    core_end: int = -1
 
     @property
     def source_text(self) -> str:
