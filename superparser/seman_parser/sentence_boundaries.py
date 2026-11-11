@@ -116,8 +116,7 @@ def _abbreviation_at(text: str, period: int, next_word: str) -> bool:
 def _quote_continues_into_coordination(text: str, end: int) -> bool:
     """Keep a short multi-sentence quote with its following coordinator.
 
-    This is only a prospective source-unit heuristic, not syntax validation.
-    It does not alter the historical v1 sentence boundaries.
+    This source-unit heuristic does not independently certify syntax.
     """
     open_quotes: list[tuple[str, str]] = []
     _advance_quotes(text[:end], open_quotes, balance_sentence_boundary=True)
@@ -149,7 +148,7 @@ def _quote_continues_into_causal_aside(text: str, end: int) -> bool:
     Splitting at the first '?' strands the second question and the explanatory
     aside. Only join when the next complete quoted sentence closes the same
     quote AND a dash-led causal continuation follows that closing delimiter.
-    This is v2-only and never rewrites the frozen v1 cohort.
+    The historical implementation remains in Git history, not this path.
     """
     stack: list[tuple[str, str]] = []
     _advance_quotes(text[:end], stack, balance_sentence_boundary=True)
@@ -177,14 +176,14 @@ def _quote_continues_into_causal_aside(text: str, end: int) -> bool:
 
 
 def split_prose_sentences(
-    paragraph: str, *, preserve_quoted_coordination: bool = False,
+    paragraph: str,
 ) -> list[str]:
     """Split while preserving every non-whitespace character, including quotes.
 
     A quote after terminal punctuation belongs to the preceding sentence.
     A lower-case reporting clause remains attached to quoted speech.
-    The explicit prospective option also keeps a short quoted continuation
-    before a following coordination; legacy callers keep the old boundaries.
+    Keep source-contiguous quoted continuations with external coordination
+    or a dash-led causal explanation; this is the sole production splitter.
     """
     text = paragraph.strip()
     if not text:
@@ -224,9 +223,8 @@ def split_prose_sentences(
         if mark == "." and _abbreviation_at(text, i, next_word):
             i += 1
             continue
-        if (preserve_quoted_coordination
-                and (_quote_continues_into_coordination(text, end)
-                     or _quote_continues_into_causal_aside(text, end))):
+        if (_quote_continues_into_coordination(text, end)
+                or _quote_continues_into_causal_aside(text, end)):
             i += 1
             continue
         spans.append(text[left:end].strip())
@@ -316,13 +314,12 @@ def split_analysis_units(
     sentence: str, *,
     quote_context: tuple[tuple[str, str], ...] = (),
     balance_sentence_boundary: bool = False,
-    preserve_dependent_continuations: bool = True,
 ) -> list[AnalysisUnit]:
     """Split at independent semicolon boundaries and rewrap quotations.
 
     No text is rewritten in the checked-in novels. The original punctuation
     and delimiters survive in source_text for error analysis and provenance.
-    Set preserve_dependent_continuations=False for frozen v1 extraction.
+    The old splitting behavior is only available in Git history.
     """
     text = sentence.strip()
     if not text:
@@ -331,11 +328,8 @@ def split_analysis_units(
         return [AnalysisUnit(text=text, source_text=text)]
     boundaries = [
         index for index, char in enumerate(text)
-        if char == ";" and not (
-            preserve_dependent_continuations
-            and _is_dependent_continuation(
-                text[:index].rsplit(";", 1)[-1], text[index + 1:]
-            )
+        if char == ";" and not _is_dependent_continuation(
+            text[:index].rsplit(";", 1)[-1], text[index + 1:]
         )
     ]
     is_semicolon_split = bool(boundaries)
@@ -370,7 +364,7 @@ def split_analysis_units(
 
 
 def split_prose_analysis_units(
-    paragraph: str, *, preserve_dependent_continuations: bool = True,
+    paragraph: str,
 ) -> list[AnalysisUnit]:
     """Reuse the semicolon quote balancer across .!? sentence boundaries.
 
@@ -380,13 +374,10 @@ def split_prose_analysis_units(
     """
     context: list[tuple[str, str]] = []
     units: list[AnalysisUnit] = []
-    for sentence in split_prose_sentences(
-        paragraph, preserve_quoted_coordination=preserve_dependent_continuations,
-    ):
+    for sentence in split_prose_sentences(paragraph):
         units.extend(split_analysis_units(
             sentence, quote_context=tuple(context),
             balance_sentence_boundary=True,
-            preserve_dependent_continuations=preserve_dependent_continuations,
         ))
         _advance_quotes(sentence, context, balance_sentence_boundary=True)
     return units
