@@ -234,13 +234,20 @@ def analyze_dialogue(
             governor="u0", relation="quotative_frame",
             evidence=evidence,
         ))
-        for q in members:
+        for ordinal, q in enumerate(members):
             original = next(x for x in parts if x.id == f"q{q}")
+            # The second quote resumes the same represented speech after
+            # a reporter's interpolation. This is a discourse link, NOT
+            # proof of clausal subordination or shared syntax.
+            resumed = ordinal > 0 and len(members) > 1
             parts[parts.index(original)] = DialoguePart(
                 id=original.id, function=original.function,
                 start=original.start, end=original.end,
-                governor=reporter_id, relation="reported_content",
-                evidence="source_reporting_verb_and_quote_adjacency",
+                governor=f"q{members[ordinal-1]}" if resumed else reporter_id,
+                relation="resumption_of_split_speech" if resumed
+                         else "reported_content",
+                evidence="source_reporting_verb_between_quote_parts"
+                         if resumed else "source_reporting_verb_and_quote_adjacency",
             )
         if len(members) >= 2:
             first, last = quotation_spans[members[0]], quotation_spans[members[-1]]

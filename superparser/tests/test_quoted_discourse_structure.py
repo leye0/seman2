@@ -34,9 +34,9 @@ class QuotedDiscourseStructureTests(unittest.TestCase):
             "observed Miss Bingley in a half whisper",
         )
         self.assertEqual(parts["q0"].governor, "r0")
-        self.assertEqual(parts["q1"].governor, "r0")
+        self.assertEqual(parts["q1"].governor, "q0")
         self.assertEqual(parts["q0"].relation, "reported_content")
-        self.assertEqual(parts["q1"].relation, "reported_content")
+        self.assertEqual(parts["q1"].relation, "resumption_of_split_speech")
         self.assertEqual(
             source[parts["q1"].start:parts["q1"].end],
             '“that this adventure has rather affected your admiration of her fine eyes.”',
@@ -55,7 +55,7 @@ class QuotedDiscourseStructureTests(unittest.TestCase):
         self.assertEqual(parts["r0"].function, "reporting_clause")
         self.assertEqual(source[parts["r0"].start:parts["r0"].end], "he said")
         self.assertEqual(parts["q0"].governor, "r0")
-        self.assertEqual(parts["q1"].governor, "r0")
+        self.assertEqual(parts["q1"].governor, "q0")
         aside = next(c for c in parts.values()
                      if c.function == "narratorial_parenthetical")
         self.assertEqual(aside.governor, "t0")
