@@ -100,11 +100,13 @@ def _attachment_warnings(item, position: int):
     # A semicolon joining sentence-level material must not be swallowed as
     # an apposition inside a prepositional or nominal complement.
     for category, rule_id, _start, _end in path[:-1]:
+        if category == "NP" and rule_id is not None:
+            flags.append("semicolon_scoped_inside_nominal_constituent")
         if category == "NP" and rule_id == "np_appos_comma":
             flags.append("semicolon_consumed_by_nominal_apposition")
         if category == "VP" and rule_id in {"vp_comma_coord", "vp_comma_list"}:
             flags.append("semicolon_consumed_by_comma_vp_coordination")
-    return flags
+    return list(dict.fromkeys(flags))
 
 
 def _diagnostic_status(*, completed: bool, budget_exceeded: bool,

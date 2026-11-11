@@ -26,6 +26,8 @@ For a compact machine-readable table of all four cases, add
 `--summary-only`. The optional `attachment_warnings` field marks only
 **known suspicious structures** on the selected semicolon path:
 
+- `semicolon_scoped_inside_nominal_constituent`: a nominal constituent
+  spans the semicolon where the source requires a clause-level relation.
 - `semicolon_consumed_by_nominal_apposition`: `np_appos_comma` used the
   semicolon as if it were its literal comma.
 - `semicolon_consumed_by_comma_vp_coordination`: `vp_comma_coord` or
@@ -66,6 +68,32 @@ Thus **zero of the four source units is yet certified as structurally
 correct**. The runner's success certifies reproducibility of the audit,
 not grammatical success. A useful next diagnostic for 194 must inspect the
 full selected tree and alternatives, with resource-censoring kept explicit.
+
+## Full selected-tree paths with reference WordNet (2026-11-10)
+
+The [second focused run 42942515283](https://github.com/leye0/seman2/actions/runs/42942515283)
+saved the **full selected trees** and passed eight independent detector
+tests. Its path from the top-level root to the literal semicolon exposed
+two distinct errors:
+
+- **Case 8:** `CLAUSE clause_comma` → `CLAUSE clause_front_pp` →
+  `CLAUSE clause_front_pp_nocomma` → `CLAUSE clause_np_vp` →
+  `VP vp_pp` → `PP pp_np_coord` → **`NP np_appos_comma`** → semicolon.
+  The proposition-resuming *which I accordingly did* has been folded
+  into a nominal apposition under a PP, even though the top root exists.
+- **Case 194:** `CLAUSE clause_front_pp_nocomma` →
+  `CLAUSE clause_np_vp` → `VP vp_prep_ditransitive` →
+  **`NP np_colon_list`** → semicolon.
+  The source's `avoiding …, saying …` supplement is swallowed by an
+  ostensibly nominal list inside the ditransitive predicate. The parse
+  also exceeded its search budget, so its ranking is not certified.
+
+The detector now recognizes both nominal failure classes even when the
+wrong selected rule is *not* `vp_comma_coord`. Crucially, this is a
+**diagnosis of incorrect syntactic paths**, not a claim that changing
+punctuation alone would generate correct sentential relatives, shared
+subjects and participial attachments. No grammar or historical benchmark
+was changed in this research stage.
 
 ## Local diagnostic without WordNet (not canonical)
 

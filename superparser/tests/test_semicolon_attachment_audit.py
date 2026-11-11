@@ -38,6 +38,16 @@ class SemicolonAttachmentAuditTests(unittest.TestCase):
             _attachment_warnings(root, 9),
         )
 
+    def test_nominal_list_cannot_look_like_clause_level_semicolon(self):
+        punctuation = node("COMMA", None, 17, 18)
+        nominal_list = node("NP", "np_colon_list", 4, 32, punctuation)
+        vp = node("VP", "vp_prep_ditransitive", 0, 32, nominal_list)
+        root = node("CLAUSE", "clause_np_vp", 0, 32, vp)
+        self.assertIn(
+            "semicolon_scoped_inside_nominal_constituent",
+            _attachment_warnings(root, 17),
+        )
+
     def test_clause_level_semicolon_has_no_false_positive(self):
         punctuation = node("COMMA", None, 8, 9)
         root = node("CLAUSE", "clause_semicolon_relative", 0, 28,
