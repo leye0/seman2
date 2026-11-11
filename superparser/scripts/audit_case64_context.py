@@ -52,6 +52,36 @@ def audit(wordnet_dir: str, output: Path):
     assert prepared.reference_span(0, len(SOURCE)) == (0, len(SOURCE))
 
     best = result.best()
+    alternatives = (
+        [selected_tree(tree, SOURCE) for tree in result.alternatives(limit=3)]
+        if result.completed else []
+    )
+    independent_probes = [
+        "He bent his eyes upon me.",
+        "He looked upon me.",
+        "He would have burnt me.",
+        "He would have burnt me up.",
+        "He would have burnt me up with them.",
+        "She would have written a letter.",
+        "She looked at me, as if he would have burnt her.",
+    ]
+    probe_results = []
+    for sentence in independent_probes:
+        sample, _ = extract(book, sentence, length_min=1, length_max=100,
+                            segmentation_version=2)
+        if len(sample) != 1:
+            raise AssertionError("Independent probe was not one source unit")
+        probe_input, _probe_lattice, probe_result = parse_corpus_case(
+            parser, sample[0], max_items=50_000, kbest_work_limit=500_000,
+        )
+        root = probe_result.best()
+        probe_results.append({
+            "text": probe_input.source_text,
+            "completed": probe_result.completed,
+            "budget_exceeded": probe_result.stats.get("budget_exceeded"),
+            "selected_tree": selected_tree(root, probe_input.analysis_text)
+            if root else None,
+        })
     record = {
         "research_only": True,
         "frozen_index": 64,
@@ -74,13 +104,15 @@ def audit(wordnet_dir: str, output: Path):
             else "uncertified_complete_tree"
         ),
         "selected_tree": selected_tree(best, SOURCE) if best else None,
+        "ranked_alternatives": alternatives,
+        "independent_probes": probe_results,
     }
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n",
                       encoding="utf8")
     print("CASE64_CONTEXT_AUDIT", json.dumps({
         key: value for key, value in record.items()
-        if key != "selected_tree"
+        if key not in {"selected_tree", "ranked_alternatives", "independent_probes"}
     }, ensure_ascii=False), flush=True)
 
 
