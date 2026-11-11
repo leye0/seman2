@@ -117,6 +117,24 @@ def prepare_corpus_input(
                 raise ValueError("Structural governor cannot point outside this source unit")
             if not part.get("function") or not part.get("relation"):
                 raise ValueError("Structural functions and relations are required")
+        # Every provisional constituent, including split speech resumption,
+        # must have one acyclic path to the actual source utterance root.
+        # Governor edges are discourse dependencies, NOT necessarily spatial
+        # containment (two non-overlapping speech parts may share a turn).
+        by_id = {part["id"]: part for part in structure}
+        if by_id["u0"].get("governor") is not None:
+            raise ValueError("The source utterance root cannot have a governor")
+        for identifier in identifiers:
+            seen = set()
+            parent = identifier
+            while parent != "u0":
+                if parent in seen:
+                    raise ValueError("Cycle in structural governor references")
+                seen.add(parent)
+                governor = by_id[parent].get("governor")
+                if governor is None:
+                    raise ValueError("Unrooted structural governor chain")
+                parent = governor
         if reference != source or balanced != source or prefix or suffix:
             raise ValueError("A structured unit cannot include synthetic text")
         if case.get("quotation_status") != "balanced":

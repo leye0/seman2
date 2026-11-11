@@ -136,6 +136,19 @@ class QuotedDiscourseStructureTests(unittest.TestCase):
             ["Good evening, Mr. Darcy.", "I am here."],
         )
 
+    def test_gateway_rejects_cycle_in_quote_dependency_graph(self):
+        from copy import deepcopy
+        source = '“I am afraid,” said Mary, “I will leave now.”'
+        cases, _ = extract(Book(999, "Evidence", "Evidence", "train"),
+                           source, length_min=1, length_max=80)
+        case = deepcopy(cases[0])
+        parts = {p["id"]: p for p in case["structural_constituents"]}
+        self.assertEqual(parts["q1"]["governor"], "q0")
+        self.assertEqual(parts["q0"]["governor"], "r0")
+        parts["q0"]["governor"] = "q1"  # intentional cycle
+        with self.assertRaisesRegex(ValueError, "Cycle"):
+            prepare_corpus_input(case)
+
     def test_book_corpus_keeps_exact_text_and_parse_gateway_component_links(self):
         text = (
             '“I am afraid,” said Mary, “I will leave now.”\n\n'
