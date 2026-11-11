@@ -130,7 +130,6 @@ def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
         book = Book(passage.ebook_id, passage.title, "Seman2 fixture", "train")
         rows, _ = extract(
             book, passage.source, length_min=1, length_max=100,
-            segmentation_version=2,
         )
         if len(rows) != 1 or rows[0]["source_text"] != passage.source:
             raise AssertionError(
@@ -146,7 +145,7 @@ def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
         marker = prepared.analysis_text.find(";")
         record = {
             "frozen_index": passage.frozen_index,
-            "segmentation_version": 2,
+            "segmentation_policy": "current",
             "wordnet_loaded": has_wordnet,
             "canonical_baseline_comparable": False,
             "parse_mode": prepared.mode.value,

@@ -68,9 +68,8 @@ def audit(wordnet_dir: str, output: Path):
     assert resources.lexicon.has_wordnet, "WordNet 3.0 is required"
     parser = Parser(resources, cache_size=0, max_items=50_000)
     book = Book(766, "David Copperfield", "Charles Dickens", "train")
-    v1, _ = extract(book, SOURCE, length_min=1, length_max=100, segmentation_version=1)
-    v2, _ = extract(book, SOURCE, length_min=1, length_max=100, segmentation_version=2)
-    assert len(v1) == 2 and len(v2) == 1, "historical split vs prospective reunification"
+    v2, _ = extract(book, SOURCE, length_min=1, length_max=100)
+    assert len(v2) == 1, "source should remain one grammatical analysis unit"
     assert v2[0]["source_text"] == SOURCE
     prepared, lattice, result = parse_corpus_case(
         parser, v2[0], max_items=50_000, kbest_work_limit=500_000,
@@ -89,7 +88,6 @@ def audit(wordnet_dir: str, output: Path):
         "frozen_baseline": "no_structural_root",
         "research_only": True,
         "source_preserved": True,
-        "v1_units": [x["source_text"] for x in v1],
         "v2_source": v2[0]["source_text"],
         "probes": rows,
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
