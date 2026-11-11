@@ -76,6 +76,14 @@ jobs:
             --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
             --summary /tmp/novel-parse-diagnostics/summary.json \
             --out /tmp/novel-parse-diagnostics/grammar_case_queue.json
+      - name: Emit queue data for deliberate active-cohort migration
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('/tmp/novel-parse-diagnostics/grammar_case_queue.json')
+          print('CURRENT_QUEUE_JSON', json.dumps(json.loads(p.read_text()), ensure_ascii=True, separators=(',', ':')), flush=True)
+          PY
       - name: Validate active cohort and report measured coverage
         run: |
           PYTHONPATH=superparser python - <<'PY'
