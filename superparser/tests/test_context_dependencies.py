@@ -20,6 +20,25 @@ class SourceContextAuditTests(unittest.TestCase):
         self.assertEqual(rows[4]["previous_sentence_same_paragraph"],
                          "Mary spoke.")
 
+    def test_context_ordinals_remain_frozen_v1_after_v2_introduction(self):
+        from research.verbnet_lr.gutenberg_novels import analysis_units
+
+        source = "I promised to return; which I accordingly did."
+        historical = list(analysis_units(source, segmentation_version=1))
+        prospective = list(analysis_units(source, segmentation_version=2))
+        self.assertEqual(len(historical), 2)
+        self.assertEqual(len(prospective), 1)
+
+        contexts = source_contexts(source)
+        self.assertEqual(
+            [contexts[index]["source_text"] for index in range(len(contexts))],
+            [unit.source_text for unit in historical],
+        )
+        self.assertEqual(
+            contexts[1]["preceding_semicolon_part"],
+            historical[0].source_text,
+        )
+
     def test_surface_signals_are_not_syntactic_labels(self):
         self.assertIn("relative_initial",
                       surface_signatures("which I accordingly did."))
