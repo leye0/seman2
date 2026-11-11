@@ -107,6 +107,18 @@ def _attachment_warnings(item, position: int):
     return flags
 
 
+def _diagnostic_status(*, completed: bool, budget_exceeded: bool,
+                       attachment_warnings: list[str]) -> str:
+    """Never mistake coverage, a provisional tree or an empty flag list for quality."""
+    if not completed:
+        return "no_complete_tree"
+    if budget_exceeded:
+        return "resource_censored_tree"
+    if attachment_warnings:
+        return "structurally_suspect_tree"
+    return "uncertified_complete_tree"
+
+
 def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
           kbest_work_limit: int = 500_000, summary_only: bool = False):
     resources = ParserResources.from_dir(DATA, wordnet_dict=wordnet_dir)
@@ -155,6 +167,11 @@ def audit(*, wordnet_dir: str | None = None, max_items: int = 50_000,
                 if best is not None else None
             ),
         }
+        record["diagnostic_status"] = _diagnostic_status(
+            completed=result.completed,
+            budget_exceeded=bool(result.stats.get("budget_exceeded")),
+            attachment_warnings=record["attachment_warnings"],
+        )
         if summary_only:
             record.pop("selected_tree")
             record.pop("semicolon_selected_path")

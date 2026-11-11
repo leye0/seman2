@@ -3,7 +3,10 @@
 import unittest
 from types import SimpleNamespace
 
-from superparser.scripts.audit_semicolon_context import _attachment_warnings
+from superparser.scripts.audit_semicolon_context import (
+    _attachment_warnings,
+    _diagnostic_status,
+)
 
 
 def node(category, rule_id, start, end, *children):
@@ -46,6 +49,31 @@ class SemicolonAttachmentAuditTests(unittest.TestCase):
         self.assertEqual(
             _attachment_warnings(root, 7),
             ["semicolon_missing_from_selected_tree"],
+        )
+
+    def test_recognition_with_bad_attachment_is_not_success(self):
+        self.assertEqual(
+            _diagnostic_status(
+                completed=True, budget_exceeded=False,
+                attachment_warnings=["semicolon_consumed_by_nominal_apposition"],
+            ),
+            "structurally_suspect_tree",
+        )
+
+    def test_resource_censored_complete_root_is_not_success(self):
+        self.assertEqual(
+            _diagnostic_status(
+                completed=True, budget_exceeded=True, attachment_warnings=[],
+            ),
+            "resource_censored_tree",
+        )
+
+    def test_no_warning_is_still_not_certified(self):
+        self.assertEqual(
+            _diagnostic_status(
+                completed=True, budget_exceeded=False, attachment_warnings=[],
+            ),
+            "uncertified_complete_tree",
         )
 
 
