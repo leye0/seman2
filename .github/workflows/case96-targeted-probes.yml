@@ -8,6 +8,7 @@ on:
       - 'superparser/scripts/audit_case96_constructs.py'
       - 'superparser/data/function_words.jsonl'
       - 'superparser/data/grammar.jsonl'
+      - 'superparser/tests/test_case96_locative_relative.py'
       - 'superparser/seman_parser/sentence_boundaries.py'
       - 'superparser/research/verbnet_lr/gutenberg_novels.py'
       - 'superparser/tests/test_sentence_boundaries.py'
@@ -54,7 +55,11 @@ jobs:
                       (dest / leaf).write_bytes(archive.read(name))
           assert (dest / 'index.verb').is_file()
           PY
-      - name: Audit the original case94 source and isolated constituents
+      - name: Validate case96 exact rank-one tree and negative controls
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            python -m unittest -v superparser.tests.test_case96_locative_relative
+      - name: Audit the original case96 source and isolated constituents
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
             python -u -m scripts.audit_case96_constructs \
