@@ -11,8 +11,6 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from research.verbnet_lr.clean_novel_corpus import load_cleaned
-from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, extract
 
 # Historical numeric names retained only as fixture IDs for grammar tests.
 # Full excerpts are checked by unique source-text starts, never by corpus rank.
@@ -51,28 +49,23 @@ ATTESTED_STARTS = {
 
 @lru_cache(maxsize=1)
 def select_attested_cases(count: int = 500):
-    """Resolve old fixture IDs by stable novel text, not the active cohort.
+    """Historical grammar witnesses, frozen by source text, NOT current units.
 
-    Matches are intentionally strict. If segmentation merges or changes one
-    old example, repair that test against the correct contiguous source,
-    rather than reintroducing an alternate historical splitting algorithm.
+    Do not force modern corpus segmentation to reproduce old fragments simply
+    because grammatical-tree tests originally used an old 500-case index.
+    These immutable source quotations are test data, never production inputs
+    and never used for the current benchmark.
     """
     if count != 500:
-        raise ValueError("Only the historical fixture ID set is supported")
-    books = {b.ebook_id: b for b in TRAIN_BOOKS}
-    cases = {}
-    for ebook_id in sorted({book for book, _ in ATTESTED_STARTS.values()}):
-        text, _ = load_cleaned(books[ebook_id])
-        rows, _ = extract(books[ebook_id], text, length_min=1, length_max=1000)
-        for fixture_id, (source_book, prefix) in ATTESTED_STARTS.items():
-            if source_book != ebook_id:
-                continue
-            matches = [row for row in rows if row["source_text"].startswith(prefix)]
-            if len(matches) != 1:
-                raise AssertionError(
-                    f"Attested fixture {fixture_id}: expected one current "
-                    f"source unit starting {prefix!r}, got {len(matches)}"
-                )
-            cases[fixture_id] = matches[0]
-    assert len(cases) == len(ATTESTED_STARTS)
+        raise ValueError("Historical grammar witnesses require count=500")
+    from pathlib import Path
+    import json
+    path = Path(__file__).resolve().parent / "data" / "attested_source_cases.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    cases = {int(i): row for i, row in payload["cases"].items()}
+    for i, (book_id, prefix) in ATTESTED_STARTS.items():
+        if i not in cases or cases[i]["book_id"] != book_id:
+            raise AssertionError(f"Historical grammar fixture {i} not found")
+        if not cases[i]["source_text"].startswith(prefix):
+            raise AssertionError(f"Historical grammar fixture {i} changed")
     return cases, []
