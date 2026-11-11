@@ -287,7 +287,7 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             ),
             StructuralConstituent(
                 "d1", "directional_participial_supplement",
-                direction.start() + 1, len(source), "d0",
+                direction.end() - len("bearing"), len(source), "d0",
                 "directional_modifier",
                 "explicit_bearing_participle_source_span",
             ),
