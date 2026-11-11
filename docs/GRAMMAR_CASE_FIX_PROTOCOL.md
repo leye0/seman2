@@ -82,8 +82,6 @@ dernier bilan validé.
 3. Garder un bilan initial *par index*, pas seulement `467/500` ou un total
    global. Consigner le statut de la cible et les autres échecs connus.
 
-### 1. Diagnostiquer une seule phrase, puis ses constituants
-
 ### 1. Pré-triage OBLIGATOIRE : vérifier le découpage avant la grammaire
 
 **Ne jamais commencer par inventer une règle grammaticale pour un fragment

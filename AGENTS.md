@@ -58,6 +58,8 @@ the gateway, provenance, and the absence of direct parser calls in the
 changing the architecture. The existing cohort checksum remains immutable
 unless the benchmark itself is deliberately versioned.
 
+**Mandatory first triage for failed corpus cases:** inspect the contiguous original paragraph, neighboring source units, and v1/v2 segmentation before investigating grammar. If the extractor orphaned a dependent clause or nested quote, repair the prospective segmentation and its provenance tests first; do not invent grammar to parse an artificially split unit or change the frozen v1 corpus.
+
 **For every individual grammar/corpus sentence fix**, first read and follow
 [`docs/GRAMMAR_CASE_FIX_PROTOCOL.md`](docs/GRAMMAR_CASE_FIX_PROTOCOL.md).
 It defines the acceptance criteria for a correct selected tree, exact

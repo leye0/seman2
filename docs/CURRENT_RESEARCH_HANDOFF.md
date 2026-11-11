@@ -5,6 +5,14 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Mise à jour — cas 105, segmentation d'abord (11 novembre 2026)
+
+- La [PR #36](https://github.com/leye0/seman2/pull/36) est **fusionnée** au commit `153340896b92516ced375c4a295b17cb5cc955fd`. **Cause établie** : la v1 historique coupait à l'intérieur des deux questions d'une citation imbriquée dans *David Copperfield*, isolant `Oh, Martha, can it be you?”--for ...` de `‘Says Em’ly, “Martha, is it you?`.
+- **Correction** dans `sentence_boundaries.py` : la segmentation **prospective v2**, lorsqu'une citation ouverte contient une dernière phrase complète puis une fermeture suivie d'une explication causale `--for`/`—for` ou `because`, conserve la construction contiguë. Deux positifs indépendants et des négatifs démontrent le comportement; aucun changement de grammaire, budgets, WordNet, cohorte v1 ou moteur.
+- CI [Layer 1 #42962215639](https://github.com/leye0/seman2/actions/runs/42962215639) **verte** : **610 tests**, smoke, 120/120 annotations, 24/24 positifs, 9/24 négatifs acceptés connus. CI [500 #42962215919](https://github.com/leye0/seman2/actions/runs/42962215919) **verte** : **475/500**, 25 résidus; même SHA de cohorte `cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a`.
+- La **file v1** garde le cas 105 parmi les échecs (il n'est pas grammaticalement reconnu dans l'échantillon historique); une annotation distincte indique le découpage v2 réparé. `last_attempted_index=105`; **prochain index déterministe : 109**. On ne revendique ni 476/500 ni un arbre grammatical complet pour la version v2.
+- Le [protocole](GRAMMAR_CASE_FIX_PROTOCOL.md) impose désormais **avant toute modification grammaticale** la lecture du paragraphe original, de ses voisins et des frontières v1/v2 afin de détecter systématiquement ces faux résidus.
+
 ## Intégration confirmée le 11 novembre 2026 — cas 96
 
 - La PR [#35](https://github.com/leye0/seman2/pull/35) a été **fusionnée** sur `main` au commit `551395dbf874698d5c145bdf24631b388cde279f` après validation de son arbre **de rang 1** et des attaches exactes. Elle ajoute une lecture locative nominalisée de `wherever` sans supprimer les lectures antérieures, et une composition typée `DASH + WH-NOM + CLAUSE` dans le dialogue. Voir [le dossier du cas 96](CASE_96_DASH_LOCATIVE_FREE_RELATIVE.md).

@@ -1,9 +1,9 @@
 {
   "schema": "seman2-grammar-case-queue-v1",
   "cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "validated_commit": "551395dbf874698d5c145bdf24631b388cde279f",
+  "validated_commit": "153340896b92516ced375c4a295b17cb5cc955fd",
   "completed_count": 475,
-  "last_attempted_index": 96,
+  "last_attempted_index": 105,
   "unresolved": [
     {
       "index": 8,
@@ -19,7 +19,9 @@
     },
     {
       "index": 105,
-      "status": "no_structural_root"
+      "status": "no_structural_root",
+      "segmentation_v2": "corrected_in_pr_36",
+      "note": "Frozen v1 remains no_structural_root; its second quoted question was orphaned by an internal ? boundary. Prospective v2 now preserves the reported quote plus dash-led causal aside; no rank-1 grammar claim."
     },
     {
       "index": 109,
