@@ -127,7 +127,9 @@ def analysis_units(
                 joined, preserve_dependent_continuations=preserve_dependents,
             )
         else:
-            for sentence in split_prose_sentences(joined):
+            for sentence in split_prose_sentences(
+                joined, preserve_quoted_coordination=preserve_dependents,
+            ):
                 yield from split_analysis_units(
                     sentence, preserve_dependent_continuations=preserve_dependents,
                 )

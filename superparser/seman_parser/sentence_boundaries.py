@@ -113,11 +113,43 @@ def _abbreviation_at(text: str, period: int, next_word: str) -> bool:
     return False
 
 
-def split_prose_sentences(paragraph: str) -> list[str]:
+def _quote_continues_into_coordination(text: str, end: int) -> bool:
+    """Keep a short multi-sentence quote with its following coordinator.
+
+    This is only a prospective source-unit heuristic, not syntax validation.
+    It does not alter the historical v1 sentence boundaries.
+    """
+    open_quotes: list[tuple[str, str]] = []
+    _advance_quotes(text[:end], open_quotes, balance_sentence_boundary=True)
+    if len(open_quotes) != 1:
+        return False
+    closing_quote = open_quotes[0][1]
+    closing = text.find(closing_quote, end)
+    while closing >= 0:
+        before = text[closing - 1] if closing else ""
+        after = text[closing + 1] if closing + 1 < len(text) else ""
+        if closing_quote in {"'", "’"} and before.isalnum() and after.isalnum():
+            closing = text.find(closing_quote, closing + 1)
+            continue
+        break
+    if closing < 0 or closing == end:
+        return False
+    # Only join a single, immediately following complete quoted sentence.
+    quoted_tail = text[end:closing]
+    if len(re.findall(r"[.!?]", quoted_tail)) != 1 or quoted_tail[-1] not in ".!?":
+        return False
+    return bool(re.match(r"\s*,?\s+(?:and|but|or)\b", text[closing + 1:]))
+
+
+def split_prose_sentences(
+    paragraph: str, *, preserve_quoted_coordination: bool = False,
+) -> list[str]:
     """Split while preserving every non-whitespace character, including quotes.
 
     A quote after terminal punctuation belongs to the preceding sentence.
     A lower-case reporting clause remains attached to quoted speech.
+    The explicit prospective option also keeps a short quoted continuation
+    before a following coordination; legacy callers keep the old boundaries.
     """
     text = paragraph.strip()
     if not text:
@@ -155,6 +187,9 @@ def split_prose_sentences(paragraph: str) -> list[str]:
             continue
         next_word = text[scan:scan + 20].split(maxsplit=1)[0]
         if mark == "." and _abbreviation_at(text, i, next_word):
+            i += 1
+            continue
+        if preserve_quoted_coordination and _quote_continues_into_coordination(text, end):
             i += 1
             continue
         spans.append(text[left:end].strip())
@@ -308,7 +343,9 @@ def split_prose_analysis_units(
     """
     context: list[tuple[str, str]] = []
     units: list[AnalysisUnit] = []
-    for sentence in split_prose_sentences(paragraph):
+    for sentence in split_prose_sentences(
+        paragraph, preserve_quoted_coordination=preserve_dependent_continuations,
+    ):
         units.extend(split_analysis_units(
             sentence, quote_context=tuple(context),
             balance_sentence_boundary=True,
@@ -316,3 +353,4 @@ def split_prose_analysis_units(
         ))
         _advance_quotes(sentence, context, balance_sentence_boundary=True)
     return units
+
