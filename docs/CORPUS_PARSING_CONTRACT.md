@@ -143,8 +143,14 @@ et guillemets de la source. La composition et les budgets cumulés sont
 traçables dans les statistiques du parseur. Si un élément échoue, le
 parseur retombe sur le traitement ordinaire sans déclarer de réussite.
 
-Cette première composition ne couvre pas encore les propos interrompus par
-une incise, les subordonnées transphrastiques ni les ellipses contextuelles :
-leurs graphes sources sont disponibles, mais un schéma grammatical de
-composition validé reste nécessaire. Une amélioration du nombre d'arbres
+La composition prend aussi en charge un **sous-ensemble strict des propos interrompus** :
+une première proposition finie, une incise de citation dont la grammaire
+reconnaît indépendamment une catégorie `SPEECH-TAG`, puis une seconde
+proposition finie. Les deux guillemets et les deux virgules doivent provenir
+du texte source; l'assemblage est assuré par
+`dialogue_structural_intercalated_two_finite_clauses`. **Une incise séparant
+un sujet et son prédicat, ou interrompant une subordonnée, n'est pas
+promue abusivement en deux propositions complètes.** Ces constructions,
+les citations interparagraphes et les ellipses contextuelles requièrent
+encore des schémas de composition validés. Une amélioration du nombre d'arbres
 retenus n'est revendiquée que si la cohorte courante et les tests le prouvent.

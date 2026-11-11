@@ -89,11 +89,54 @@ class QuotedStructuralCompositionTests(unittest.TestCase):
                          "A sentence fragment may not be promoted to a finite clause")
         self.assertEqual(result.text, source)
 
-    def test_interrupted_dialogue_is_not_mistaken_for_paratactic_sentences(self):
+    def test_split_dialogue_composes_real_clauses_and_reporting_tag(self):
         source = '"John walks," said Mary, "Jane walks."'
+        prepared, _, result = self._parse_case(source)
+        self.assertTrue(result.completed, result.stats)
+        self.assertTrue(result.stats.get("structural_composition"), result.stats)
+        self.assertEqual(result.best().rule_id,
+                         "dialogue_structural_intercalated_two_finite_clauses")
+        self.assertEqual(result.text, source)
+        self.assertEqual(result.stats["structural_composition_kind"],
+                         "intercalated_reporting_clause")
+        self.assertEqual(result.stats["structural_clause_count"], 2)
+        self.assertEqual(prepared.source_component("r0"), "said Mary")
+        self.assertEqual(
+            [source[a:b] for a, b in result.stats["structural_segment_spans"]],
+            ["John walks", "said Mary", "Jane walks"],
+        )
+        self.assertEqual(len(result.best().children), 10)
+        self.assertEqual(
+            [node.category for node in result.best().children],
+            ["OPEN-QUOTE", "CLAUSE", "COMMA", "CLOSE-QUOTE",
+             "SPEECH-TAG", "COMMA", "OPEN-QUOTE",
+             "CLAUSE", "SPEECH-STOP", "CLOSE-QUOTE"],
+        )
+        self.assertEqual(
+            [node.rule_id for node in result.best().children
+             if node.category in ("CLAUSE", "SPEECH-TAG")],
+            ["segment_interface"] * 3,
+        )
+        self.assertTrue(result.stats["structural_segment_rule_ids"][2]
+                        .startswith("dialogue_speech_tag_"))
+
+    def test_split_subject_and_predicate_cannot_fake_two_finite_clauses(self):
+        source = '"John," said Mary, "walks."'
         _, _, result = self._parse_case(source)
         self.assertFalse(result.stats.get("structural_composition", False))
         self.assertEqual(result.text, source)
+
+    def test_unattributed_adjacent_quotes_are_two_independent_utterances(self):
+        source = '"John walks." "Mary walks."'
+        units = analyze_paragraph(source)
+        self.assertEqual([u.text for u in units],
+                         ['"John walks."', '"Mary walks."'])
+        self.assertTrue(all(u.eligible_for_parse for u in units))
+        self.assertTrue(all(
+            not any(p.function == "split_direct_speech_turn"
+                    for p in u.constituents)
+            for u in units
+        ))
 
     def test_direct_parse_without_source_graph_retains_original_route(self):
         source = '"John walks. Mary walks."'
