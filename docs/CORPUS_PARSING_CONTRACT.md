@@ -23,10 +23,17 @@ transféré par `gutenberg_novels.extract()` via
 reconstruit indépendamment ces guillemets. Toute provenance absente
 provoque une erreur.
 
-La cohorte déterministe de 500 entrées reste immuable (SHA-256), mais
-**le score officiel concerne ses textes d'analyse équilibrés**, à
-travers `Parser.parse` exclusivement. Aucun résultat historique brut
-n'est agrégé ou substitué par un essai secondaire.
+Le **découpage actif est unique** : `analysis_units()` et `extract()`
+n'exposent pas de paramètre v1/v2. Tous les échantillons sont reconstruits
+avec les mêmes règles de frontières, y compris les propositions dépendantes
+et les citations imbriquées. Le benchmark courant de 500 unités porte
+la **signature figée de sa version actuelle** dans
+[`CURRENT_COHORT.json`](CURRENT_COHORT.json), et analyse exclusivement
+le texte équilibré via `Parser.parse`. Quand la segmentation change,
+on crée une **nouvelle référence** : nouveau SHA, nouveau score, nouveaux
+indices de file. On ne revendique aucune progression en comparant les
+totaux de cohortes différentes. Les anciennes cohortes appartiennent à
+l'historique Git, pas au chemin d'exécution.
 
 Pour une recherche de compatibilité historique seulement :
 

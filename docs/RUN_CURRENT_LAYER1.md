@@ -38,6 +38,32 @@ En exploitation, Seman2 appelle automatiquement `gc.freeze()` **une seule fois p
 
 Ce gel reste **global au processus** et n'est pas sélectif sur les seuls objets WordNet. Voir le [benchmark de 1 000 phrases](GC_CPU_1000_SENTENCES_BENCHMARK_2026_10_18.md) pour la mesure, ses conditions de préchauffe et les limites de durée de vie / mémoire. Les outils expérimentaux ont été supprimés de `main`, mais sont disponibles dans l'historique Git de l'audit.
 
+## Découpage de romans et référence actuelle
+
+**Une seule segmentation active**, sans bascule v1/v2 : les fonctions
+`split_prose_sentences`, `split_analysis_units`,
+`split_prose_analysis_units`, `gutenberg_novels.analysis_units` et
+`extract` utilisent le découpage conservateur qui garde les relatives
+supplémentaires, les prédicats partageant leur sujet, les listes participiales
+et certaines citations imbriquées. Les deux représentations (texte source et
+texte d'analyse à guillemets équilibrés) ont les **mêmes frontières**.
+`parse_corpus_case` est obligatoire pour les études grammaticales.
+
+- Benchmark **courant** : `scripts.diagnose_novel_parses` sélectionne
+  500 unités du corpus nettoyé avec cet algorithme.
+- Son SHA est versionné dans `docs/CURRENT_COHORT.json` : toute modification
+  des frontières exige une nouvelle signature, une nouvelle file de cas et
+  un **nouveau point de départ**, pas une prétendue amélioration de l'ancien score.
+- `scripts.rebuild_grammar_case_queue` régénère les indices résiduels depuis
+  les 500 résultats actuels. `next_grammar_case` les lit, jamais les
+  numéros gelés des anciens diagnostics.
+- Le test d'intégrité du corpus valide les guillemets, la conservation des
+  caractères source et les cas adverses de segmentation. L'exactitude des
+  **arbres grammaticaux** se mesure séparément.
+- Les anciens diagnostics `475/500`, `cf58d1...` et leurs indices de
+  phrases sont des **archives historiques**, conservées dans Git. Aucun
+  mode de découpage historique n'existe dans la production.
+
 ## 3. Exécution depuis la RACINE du dépôt
 
 **Pré-requis** : Python 3.12+ et un répertoire **WordNet 3.0 `dict/`** incluant `index.verb`, `data.verb`, `index.noun` etc. Ce répertoire externe n'est pas versionné. Voir la CI `.github/workflows/core-seman2-validation.yml` pour la procédure déterministe de téléchargement depuis l'archive WordNet de NLTK.

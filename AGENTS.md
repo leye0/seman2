@@ -1,72 +1,51 @@
-# Seman2 repository instructions — mandatory corpus parsing contract
+# Seman2 — mandatory source-first corpus and parsing contract
 
-**CRITICAL:** This project already has an intentional, tested algorithm for
-transferring quotation marks when novel text is split at semicolons and between
-sentences: `seman_parser.sentence_boundaries.split_prose_analysis_units`.
-It preserves the source spans and records synthetic prefixes/suffixes. It is
-**not** a repair heuristic or a defect. Do not reimplement this algorithm or
-discard/ignore its provenance.
+**One active prose segmentation algorithm:** `seman_parser.sentence_boundaries`
+and `research.verbnet_lr.gutenberg_novels.analysis_units/extract` always
+preserve dependent semicolon clauses, nested reported speech and source
+quotation context. There is **no v1/v2 extraction switch or historical
+segmentation fallback** in current code. Historical commits and diagnostics
+are retained in Git, not as a second production path.
 
-There is only ONE public syntactic parsing entry point:
-`seman_parser.engine.Parser.parse(text, ...)`. Do not introduce another
-public recognizer or route a benchmark directly into an internal forest.
-Options for search budgets belong on that same entry point.
-
-When parsing Gutenberg/novel case records from `gutenberg_novels.extract()`,
-**ALWAYS** call:
+**One public syntactic parsing entry point:** `seman_parser.engine.Parser.parse`.
+For every Gutenberg case, ALWAYS use:
 
 ```python
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-
 prepared, lattice, result = parse_corpus_case(parser, case)
-# The DEFAULT parse uses case["balanced_analysis_text"].
-# prepared.source_text remains exactly the original passage.
 ```
 
-The canonical 500-case score uses the **balanced analysis text** through
-`Parser.parse` directly; the historical raw control must NEVER be the
-headline score or an implicit alternate engine.
+The extractor supplies the *same source-unit boundaries* for raw and
+quote-balanced views, together with precise provenance
+(`source_text`, synthetic prefixes/suffixes, and source spans). Do not
+manually repair quotation marks, drop alternatives, invent a second parser
+or bypass `parse_corpus_case` to inspect novel examples.
 
-The frozen historical **500-case** corpus is special. Its original
-`case["text"]` and `cohort.jsonl` are SHA-256-pinned for longitudinal
-comparisons. To explicitly reproduce the historical *unbalanced* control,
-and only for that purpose:
+**Current benchmark:** `scripts.diagnose_novel_parses.select_cases(500)`
+samples the cleaned novels with the current single segmenter. Its SHA-256
+is pinned in `docs/CURRENT_COHORT.json`. The pinned corpus must not change
+during a normal grammar fix. A deliberate segmentation change requires
+re-sampling, a newly validated SHA, a newly generated grammar-case queue,
+and a separately reported baseline. **Never compare scores from different
+cohort SHAs or carry over old case indices.** The old 475/500 and its
+case-numbered research remain historical evidence only.
 
-```python
-from research.verbnet_lr.corpus_pipeline import CorpusParseMode
-prepared, lattice, result = parse_corpus_case(
-    parser, case, mode=CorpusParseMode.HISTORICAL_REFERENCE
-)
-```
+**Before diagnosing any grammar failure**, read the contiguous source
+paragraph and neighboring original units. Confirm that the single active
+splitter has not isolated a dependent clause, a shared-subject predicate,
+a multi-sentence nested quote or a causal narrative aside. If the split is
+wrong, repair `sentence_boundaries.py` and its general positive/negative
+regression tests FIRST; do not invent a grammar rule to parse an orphan.
+Verify lossless round-trips, transferred quote provenance, independent
+sentence controls, and changes in sampled case identity.
 
-The legacy corpus result is a **control**, not the new recommended way to
-analyze a novel. New experiments always start with the default
-`QUOTE_BALANCED` mode. Never claim a grammar regression solely because the
-original historical text lacks context that the quote-transfer system provides.
+The `docs/GRAMMAR_CASE_FIX_PROTOCOL.md` specifies all further
+requirements: correct selected rank-one tree and exact attachments,
+WordNet 3.0, unchanged parse budgets, positive/negative controls,
+full-cohort comparison on an identical SHA, and green CI. A parsed
+root alone is not a successful grammatical correction.
 
-Prose segmentation v2 conservatively retains dependent semicolon continuations.
-`split_prose_analysis_units` uses that improvement by default, but
-`gutenberg_novels.analysis_units` and `extract` default to the **original v1
-segmentation** to protect the SHA-pinned 500-case cohort. Use
-`extract(..., segmentation_version=2)` for a separately measured prospective
-corpus; see `docs/SEGMENTATION_V2_DEPENDENT_CLAUSES.md`. Do not conflate
-better segmentation with evidence of a correctly attached grammar tree.
-
-The `superparser/tests/test_novel_parse_diagnostics.py` CI tests enforce
-the gateway, provenance, and the absence of direct parser calls in the
-500-case diagnostic. Modify these tests and this contract together when
-changing the architecture. The existing cohort checksum remains immutable
-unless the benchmark itself is deliberately versioned.
-
-**Mandatory first triage for failed corpus cases:** inspect the contiguous original paragraph, neighboring source units, and v1/v2 segmentation before investigating grammar. If the extractor orphaned a dependent clause or nested quote, repair the prospective segmentation and its provenance tests first; do not invent grammar to parse an artificially split unit or change the frozen v1 corpus.
-
-**For every individual grammar/corpus sentence fix**, first read and follow
-[`docs/GRAMMAR_CASE_FIX_PROTOCOL.md`](docs/GRAMMAR_CASE_FIX_PROTOCOL.md).
-It defines the acceptance criteria for a correct selected tree, exact
-attachments, independent positive/negative tests, no regressions, unchanged
-budgets, and efficient staged validation. A completed parse alone is not
-proof of a grammatical correction.
-
-Pull request hygiene: close stale/abandoned research PRs that are not actively
-being validated or merged. Do not leave experimental PRs open indefinitely;
-merge only changes that pass their required tests and preserve this contract.
+**CI hygiene:** use the active Layer 1 and current 500-case workflows.
+Old case-index-specific research or 26-residual studies may be consulted
+historically but MUST NOT enter the current cohort gate. Merge only
+validated changes; close abandoned research PRs.
