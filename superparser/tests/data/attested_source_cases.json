@@ -436,6 +436,22 @@
       "balanced_synthetic_suffix": "",
       "balanced_synthetic_terminal": true
     },
+    "473": {
+      "book_id": 120,
+      "ordinal": 547,
+      "band": "25-32",
+      "tokens": 27,
+      "text": "the rest were revenue officers, whom he had met by the way, and with whom he had had the intelligence to return at once.",
+      "source_text": "the rest were revenue officers, whom he had met by the way, and with whom he had had the intelligence to return at once.",
+      "semicolon_split": true,
+      "synthetic_prefix": "",
+      "synthetic_suffix": "",
+      "synthetic_terminal": false,
+      "balanced_analysis_text": "the rest were revenue officers, whom he had met by the way, and with whom he had had the intelligence to return at once.",
+      "balanced_synthetic_prefix": "",
+      "balanced_synthetic_suffix": "",
+      "balanced_synthetic_terminal": false
+    },
     "480": {
       "book_id": 120,
       "ordinal": 1809,
