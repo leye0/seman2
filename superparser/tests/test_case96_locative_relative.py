@@ -82,12 +82,11 @@ class Case96LocativeRelativeTests(unittest.TestCase):
         pp = candidates[0]
         self.assertEqual(surface(pp, SOURCE), "to--wherever it is")
         self.assertEqual([child.category for child in pp.children],
-                         ["PREP", "DASH", "WH-CLAUSE"])
+                         ["PREP", "DASH", "WH-NOM", "CLAUSE"])
         self.assertEqual([surface(child, SOURCE) for child in pp.children],
-                         ["to", "--", "wherever it is"])
-        self.assertEqual(pp.children[2].rule_id, "wh_clause_free_locative_ever")
-        self.assertEqual([child.category for child in pp.children[2].children],
-                         ["WH-NOM", "CLAUSE"])
+                         ["to", "--", "wherever", "it is"])
+        self.assertEqual(pp.children[2].category, "WH-NOM")
+        self.assertEqual(pp.children[3].rule_id, "clause_np_vp")
         self.assertEqual(prepared.reference_span(pp.start, pp.end),
                          (pp.start, pp.end))
 

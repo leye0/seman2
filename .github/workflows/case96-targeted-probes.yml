@@ -1,6 +1,12 @@
 name: Seman2 - Case 96 targeted grammar fix probes
 
 on:
+  push:
+    branches: [research/case96-collapsed-rule-20261111]
+    paths:
+      - '.github/workflows/case96-targeted-probes.yml'
+      - 'superparser/data/grammar.jsonl'
+      - 'superparser/tests/test_case96_locative_relative.py'
   workflow_dispatch:
 
 permissions:
@@ -54,6 +60,27 @@ jobs:
             python -u -m scripts.audit_case96_constructs \
               --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
               --out /tmp/seman2-case96-probes.json
+      - name: Verify frozen case 96 and sensitive witness 359
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser \
+            python -m scripts.audit_novel_tree_quality \
+              --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 96,359 \
+              --alternatives 1 > /tmp/case96-witness359.jsonl
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          rows = [json.loads(line.removeprefix('NOVEL_TREE_AUDIT '))
+                  for line in Path('/tmp/case96-witness359.jsonl').read_text().splitlines()
+                  if line.startswith('NOVEL_TREE_AUDIT ')]
+          assert {row['index'] for row in rows} == {96, 359}, rows
+          for row in rows:
+              print('CASE96_GLOBAL_WITNESS', row['index'],
+                    'complete', row['completed'],
+                    'budget', row['budget_exceeded'],
+                    'nodes', row['forest_nodes'],
+                    flush=True)
+              assert row['completed'] and not row['budget_exceeded']
+          PY
       - name: Preserve all probe trees and source spans
         if: always()
         uses: actions/upload-artifact@v4
