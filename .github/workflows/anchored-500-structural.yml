@@ -53,13 +53,13 @@ jobs:
                       (dest/leaf).write_bytes(z.read(item))
           assert (dest/'index.verb').exists()
           PY
-      - name: Parse the identical 500 source anchors with new structural units
+      - name: Map the original 500 source anchors to complete typed utterances
         run: |
           PYTHONPATH=superparser python -u -m scripts.compare_anchored_structural_500 \
             --baseline-dir /tmp/baseline-500 \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --max-items 50000 --kbest-work-limit 500000 \
-            --deadline-seconds 10 \
+            --deadline-seconds 10 --mapping-only \
             --out-dir /tmp/anchored-500
       - name: Upload detailed old-versus-new passage comparison
         if: always()
