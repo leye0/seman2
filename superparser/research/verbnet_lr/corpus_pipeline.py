@@ -156,6 +156,20 @@ def prepare_corpus_input(
             "elliptical_supplement", "reported_speech_continuation",
             "documentary_navigation_notation", "documentary_postscript"):
         raise ValueError("Non-prose or context-dependent text cannot enter standalone parsing")
+    common = {
+        "structural_constituents": structure,
+        "structural_status": case.get("structural_status", "not_supplied"),
+        "quotation_status": case.get("quotation_status", "not_supplied"),
+        "source_paragraph_index": paragraph_index,
+        "source_paragraph_span": tuple(paragraph_span) if paragraph_span else None,
+        "cleaned_book_span": tuple(book_span) if book_span else None,
+        "discourse_function": case.get("discourse_function", "not_supplied"),
+        "discourse_relation": case.get("discourse_relation", "not_supplied"),
+        "discourse_evidence": case.get("discourse_evidence", "not_supplied"),
+        "discourse_governor_core_span": tuple(discourse_governor)
+                                      if discourse_governor else None,
+        "discourse_governor_paragraph_index": discourse_paragraph,
+    }
     if mode is CorpusParseMode.HISTORICAL_REFERENCE:
         return PreparedCorpusInput(
             analysis_text=reference,
@@ -165,22 +179,7 @@ def prepare_corpus_input(
             synthetic_suffix=case.get("synthetic_suffix", ""),
             synthetic_terminal=bool(case.get("synthetic_terminal", False)),
             mode=mode,
-            structural_constituents=structure,
-            structural_status=case.get("structural_status", "not_supplied"),
-            quotation_status=case.get("quotation_status", "not_supplied"),
-            source_paragraph_index=paragraph_index,
-            source_paragraph_span=tuple(paragraph_span) if paragraph_span else None,
-            cleaned_book_span=tuple(book_span) if book_span else None,
-        discourse_function=case.get("discourse_function", "not_supplied"),
-        discourse_relation=case.get("discourse_relation", "not_supplied"),
-        discourse_evidence=case.get("discourse_evidence", "not_supplied"),
-        discourse_governor_core_span=tuple(discourse_governor) if discourse_governor else None,
-        discourse_governor_paragraph_index=discourse_paragraph,
-            discourse_function=case.get("discourse_function", "not_supplied"),
-            discourse_relation=case.get("discourse_relation", "not_supplied"),
-            discourse_evidence=case.get("discourse_evidence", "not_supplied"),
-            discourse_governor_core_span=tuple(discourse_governor) if discourse_governor else None,
-            discourse_governor_paragraph_index=discourse_paragraph,
+            **common,
         )
     return PreparedCorpusInput(
         analysis_text=balanced,
@@ -190,14 +189,8 @@ def prepare_corpus_input(
         synthetic_suffix=suffix,
         synthetic_terminal=bool(case["balanced_synthetic_terminal"]),
         mode=mode,
-        structural_constituents=structure,
-        structural_status=case.get("structural_status", "not_supplied"),
-        quotation_status=case.get("quotation_status", "not_supplied"),
-        source_paragraph_index=paragraph_index,
-        source_paragraph_span=tuple(paragraph_span) if paragraph_span else None,
-        cleaned_book_span=tuple(book_span) if book_span else None,
+        **common,
     )
-
 
 def parse_corpus_case(
     parser: Any,
