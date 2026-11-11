@@ -1,0 +1,55 @@
+name: Freeze historical grammar witnesses into static test data
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/freeze-attested-source.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          repository: leye0/seman2
+          run-id: 42962215919
+          name: novel-parse-diagnostics-500
+          github-token: ${{ github.token }}
+          path: /tmp/original-500
+      - name: Print immutable original source and quote-balanced grammar witnesses
+        run: |
+          PYTHONPATH=superparser python - <<'PY'
+          from pathlib import Path
+          from superparser.tests.attested_novel_cases import ATTESTED_STARTS
+          import json
+          root=Path("/tmp/original-500")
+          read=lambda p:[json.loads(x) for x in (root/p).read_text().splitlines() if x.strip()]
+          cohort=read("cohort.jsonl")
+          analyses=read("per_sentence.jsonl")
+          assert len(cohort)==len(analyses)==500
+          ids=sorted(set(ATTESTED_STARTS)|{434,438})
+          frozen={}
+          for i in ids:
+              c=cohort[i]
+              a=analyses[i]
+              if i in ATTESTED_STARTS:
+                  book,prefix=ATTESTED_STARTS[i]
+                  assert c["book_id"]==book and c["source_text"].startswith(prefix),(i,book,prefix,c["source_text"][:100])
+              frozen[str(i)]={
+                  "book_id":c["book_id"],"ordinal":c["ordinal"],"band":c["band"],
+                  "tokens":c["tokens"],"text":c["sentence"],"source_text":c["source_text"],
+                  "semicolon_split":c["semicolon_split"],
+                  "synthetic_prefix":c.get("synthetic_prefix",""),
+                  "synthetic_suffix":c.get("synthetic_suffix",""),
+                  "synthetic_terminal":c.get("synthetic_terminal",False),
+                  "balanced_analysis_text":a["canonical_analysis_text"],
+                  "balanced_synthetic_prefix":a["canonical_synthetic_prefix"],
+                  "balanced_synthetic_suffix":a["canonical_synthetic_suffix"],
+                  "balanced_synthetic_terminal":c.get("synthetic_terminal",False)
+              }
+          print("FROZEN_WITNESSES_JSON="+json.dumps(frozen,ensure_ascii=True,separators=(',',':')))
+          PY
