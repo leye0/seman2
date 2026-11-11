@@ -12,7 +12,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: novel-parse-diagnostics-main
+  group: novel-parse-diagnostics-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   diagnose:
