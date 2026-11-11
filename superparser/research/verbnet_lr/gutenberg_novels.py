@@ -125,6 +125,7 @@ def analysis_units(
     # Retain delimiter lengths while enumerating paragraph ordinals.
     parts = re.split(r"(\n\s*\n)", source)
     cursor = 0
+    last_unit = None
     for paragraph_number, i in enumerate(range(0, len(parts), 2)):
         paragraph = parts[i]
         raw_start = cursor
@@ -142,12 +143,30 @@ def analysis_units(
         if normalized != joined:
             raise AssertionError("Paragraph normalization drifted from original source")
         for unit in analyze_paragraph(joined):
-            yield replace(
+            governor = None
+            if unit.discourse_antecedent_policy == "preceding_utterance":
+                # An afterthought is tied to an immediately preceding unit
+                # in this SAME paragraph, not arbitrarily to other prose.
+                if last_unit and last_unit.paragraph_index == paragraph_number:
+                    governor = last_unit
+            elif unit.discourse_antecedent_policy == "preceding_source_unit":
+                # Candidate interparagraph antecedent, never synthetic quote
+                # reconstruction nor an asserted grammatical attachment.
+                governor = last_unit
+            enriched = replace(
                 unit,
                 paragraph_index=paragraph_number,
                 core_start=raw_start + offsets[unit.source_start],
                 core_end=raw_start + offsets[unit.source_end-1] + 1,
+                discourse_governor_core_span=(
+                    (governor.core_start, governor.core_end) if governor else None
+                ),
+                discourse_governor_paragraph_index=(
+                    governor.paragraph_index if governor else None
+                ),
             )
+            yield enriched
+            last_unit = enriched
 
 
 def sentences(core: str):
@@ -164,7 +183,9 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
     """Return candidates plus UNFILTERED counts; skips are transparent."""
     counters = {"fragments": 0, "too_short": 0, "too_long": 0,
                 "non_ascii": 0, "non_sentence": 0, "duplicates": 0,
-                "requires_source_context": 0}
+                "requires_source_context": 0,
+                "nonprose_documentary": 0,
+                "contextual_discourse_supplements": 0}
     eligible = []
     seen = set()
     for number, (unit, balanced) in enumerate(zip_longest(
@@ -176,7 +197,14 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
         sentence = unit.text
         counters["fragments"] += 1
         if not unit.eligible_for_parse:
-            counters["requires_source_context"] += 1
+            if unit.structural_status == "nonprose_documentary":
+                counters["nonprose_documentary"] += 1
+            else:
+                counters["requires_source_context"] += 1
+                if unit.discourse_function in (
+                    "elliptical_supplement", "reported_speech_continuation"
+                ):
+                    counters["contextual_discourse_supplements"] += 1
             continue
         # Unicode literary punctuation (including “ ” ‘ ’) is legitimate
         # text, not a reason to delete an entire dialogue sentence.
@@ -214,6 +242,16 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                          "structural_source_span": [unit.source_start, unit.source_end],
                          "structural_paragraph_index": unit.paragraph_index,
                          "structural_core_source_span": [unit.core_start, unit.core_end],
+                         "discourse_function": unit.discourse_function,
+                         "discourse_relation": unit.discourse_relation,
+                         "discourse_evidence": unit.discourse_evidence,
+                         "discourse_governor_core_span": (
+                             list(unit.discourse_governor_core_span)
+                             if unit.discourse_governor_core_span else None
+                         ),
+                         "discourse_governor_paragraph_index": (
+                             unit.discourse_governor_paragraph_index
+                         ),
                          "structural_constituents": [c.to_dict() for c in unit.constituents],
                          "tokens": len(tokens)})
     counters["eligible"] = len(eligible)

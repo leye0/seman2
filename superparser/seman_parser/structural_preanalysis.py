@@ -12,6 +12,7 @@ import re
 
 from seman_parser.sentence_boundaries import _abbreviation_at
 from seman_parser.structural_units import review_semicolon_boundaries, skeleton
+from seman_parser.discourse_roles import classify_discourse
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -52,6 +53,14 @@ class PreanalyzedSentence:
     paragraph_index: int = -1
     core_start: int = -1
     core_end: int = -1
+    discourse_function: str = "clausal_utterance_candidate"
+    discourse_relation: str = "independent_or_complex_clause"
+    discourse_evidence: str = "no_conclusive_fragment_or_documentary_evidence"
+    discourse_antecedent_policy: str = "none"
+    # The actual preceding-source anchor is assigned by the book streamer,
+    # NEVER synthesized as missing text inside this sentence.
+    discourse_governor_core_span: tuple[int, int] | None = None
+    discourse_governor_paragraph_index: int | None = None
 
     @property
     def source_text(self) -> str:
@@ -252,6 +261,37 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                 reason or ("initial_clause" if i == 0 else "semicolon_skeleton"),
             ))
         cursor += len(part)+1
+    # Preserve internal structure of source documents: these are not full
+    # narrative matrix clauses, yet may contain an interpretable grammatical
+    # clause or participial direction. All spans are literal source offsets.
+    frame = re.match(r"(?i)^(?:P\.\s?S\.|P\.\s?P\.\s?S\.)\s*(?:--|—|:)\s*", source)
+    if frame and frame.end() < len(source):
+        cs.extend((
+            StructuralConstituent(
+                "d0", "document_marker", 0, frame.end(), "u0",
+                "documentary_frame", "postscript_marker_source_span",
+            ),
+            StructuralConstituent(
+                "d1", "document_content_clause_candidate",
+                frame.end(), len(source), "d0",
+                "document_content", "postscript_content_source_span",
+            ),
+        ))
+    direction = re.search(r"(?i),\s*bearing\b", source)
+    if direction and classify_discourse(source).function == "documentary_navigation_notation":
+        cs.extend((
+            StructuralConstituent(
+                "d0", "document_nominal_reference", 0, direction.start(),
+                "u0", "documentary_label",
+                "map_reference_nominal_source_span",
+            ),
+            StructuralConstituent(
+                "d1", "directional_participial_supplement",
+                direction.end() - len("bearing"), len(source), "d0",
+                "directional_modifier",
+                "explicit_bearing_participle_source_span",
+            ),
+        ))
     # Source-matched quotation spans, with overt reporting verbs as edges.
     for j, (a, b) in enumerate(quotation_spans):
         if b-a <= 2:
@@ -308,13 +348,38 @@ def analyze_paragraph(paragraph: str) -> tuple[PreanalyzedSentence, ...]:
         quote_status = ("balanced" if not faults
                         else "unresolved_source_quotation")
         terminal = bool(re.search(r"""[.!?]["'”’)\]}]*$""", text))
-        viable = terminal and not faults
+        prior_text = result[-1].text if result else None
+        role = classify_discourse(text, previous_utterance=prior_text)
+        viable = terminal and not faults and role.parse_as_standalone_clause
+        if role.function.startswith("documentary_"):
+            structural_status = "nonprose_documentary"
+        elif not viable:
+            structural_status = "requires_source_context"
+        else:
+            structural_status = "provisional_complete_utterance"
+        cs = list(constituency(text, quotes))
+        if role.function != "clausal_utterance_candidate":
+            # A formulaic reply or a compass-bearing document line must NOT
+            # be falsely described as a full matrix clause.
+            from dataclasses import replace
+            for i, node in enumerate(cs):
+                if node.id == "s0" and node.function == "matrix_clause":
+                    cs[i] = replace(
+                        node,
+                        function=role.function,
+                        relation=role.relation,
+                        evidence=role.evidence,
+                    )
+                    break
         result.append(PreanalyzedSentence(
             text=text, source_start=a, source_end=b,
             quotation_status=quote_status,
-            structural_status=("provisional_complete_utterance" if viable
-                               else "requires_source_context"),
-            constituents=constituency(text, quotes),
+            structural_status=structural_status,
+            constituents=tuple(cs),
             eligible_for_parse=viable,
+            discourse_function=role.function,
+            discourse_relation=role.relation,
+            discourse_evidence=role.evidence,
+            discourse_antecedent_policy=role.antecedent_policy,
         ))
     return tuple(result)
