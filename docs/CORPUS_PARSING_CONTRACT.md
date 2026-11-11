@@ -112,3 +112,18 @@ adjacente aux guillemets. Aucun nom de locuteur ni rattachement sémantique
 n'est prétendu vérifié. Le moteur grammatical complet n'utilise pas encore
 ces sous-structures pour composer sa forêt d'analyses; la présente étape
 permet de distinguer ce défaut des erreurs de segmentation.
+
+## Audit des dialogues et contrôle des faux positifs
+
+`PYTHONPATH=superparser python -m scripts.audit_dialogue_failures --diagnostics
+/tmp/novel-parse-diagnostics/per_sentence.jsonl --out
+/tmp/novel-parse-diagnostics/dialogue_residual_audit.json` classe les échecs
+par statut et fonction de discours. Le critère « discours direct » est une
+**citation réellement appariée dans le graphe**, et non la présence d'un
+caractère apostrophe dans `don't`, `o'clock` ou `John's`. Les rapports
+distinguent citation à plusieurs phrases, parole interrompue par une incise,
+citation imbriquée, attribution simple et citation sans attribution. Les
+catégories et les résultats du parseur demeurent séparés : une citation
+ayant plusieurs sous-clauses annotées ne constitue pas pour autant un arbre
+syntaxique complet et correct. L'audit ne modifie ni les échantillons, ni
+les budgets de parsing, ni les grammaires.
