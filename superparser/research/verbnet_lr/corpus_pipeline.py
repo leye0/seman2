@@ -97,6 +97,8 @@ def prepare_corpus_input(
         raise ValueError("Quote-transfer prefix/suffix do not match analysis text")
     structure = tuple(case.get("structural_constituents", ()))
     if structure:
+        if any(not isinstance(part, Mapping) for part in structure):
+            raise ValueError("Malformed structural constituent")
         identifiers = [part.get("id") for part in structure]
         if len(set(identifiers)) != len(identifiers) or "u0" not in identifiers:
             raise ValueError("Structural constituent IDs must be unique and rooted")
@@ -145,6 +147,9 @@ def prepare_corpus_input(
             structural_constituents=structure,
             structural_status=case.get("structural_status", "not_supplied"),
             quotation_status=case.get("quotation_status", "not_supplied"),
+            source_paragraph_index=paragraph_index,
+            source_paragraph_span=tuple(paragraph_span) if paragraph_span else None,
+            cleaned_book_span=tuple(book_span) if book_span else None,
         )
     return PreparedCorpusInput(
         analysis_text=balanced,
@@ -157,6 +162,9 @@ def prepare_corpus_input(
         structural_constituents=structure,
         structural_status=case.get("structural_status", "not_supplied"),
         quotation_status=case.get("quotation_status", "not_supplied"),
+        source_paragraph_index=paragraph_index,
+        source_paragraph_span=tuple(paragraph_span) if paragraph_span else None,
+        cleaned_book_span=tuple(book_span) if book_span else None,
     )
 
 
