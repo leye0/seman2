@@ -1,11 +1,19 @@
 # Seman2 — mandatory source-first corpus and parsing contract
 
-**One active prose segmentation algorithm:** `seman_parser.sentence_boundaries`
-and `research.verbnet_lr.gutenberg_novels.analysis_units/extract` always
-preserve dependent semicolon clauses, nested reported speech and source
-quotation context. There is **no v1/v2 extraction switch or historical
-segmentation fallback** in current code. Historical commits and diagnostics
-are retained in Git, not as a second production path.
+**One active corpus-extraction path:** normalized Gutenberg paragraphs →
+seman_parser.structural_preanalysis.analyze_paragraph → typed complete
+utterance + source-core spans → research.verbnet_lr.gutenberg_novels.extract →
+research.verbnet_lr.corpus_pipeline.parse_corpus_case → Parser.parse.
+Semicolons are NEVER independent extraction boundaries. They are preserved as
+intra-utterance typed source constituents with governor references. Short,
+multi-sentence quotation blocks stay intact. Unmatched speech quotation marks
+are NOT synthetically closed. Such source units are documented as requiring
+context and excluded from the active parse benchmark, not falsely "completed".
+
+The older sentence_boundaries module remains a lower-level typographic
+heuristic/test utility; its split_analysis_units is NOT the production
+Gutenberg corpus extractor. Historical rule fixtures are frozen as test data,
+not resurrected as a second production segmentation mode.
 
 **One public syntactic parsing entry point:** `seman_parser.engine.Parser.parse`.
 For every Gutenberg case, ALWAYS use:
@@ -15,11 +23,12 @@ from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 prepared, lattice, result = parse_corpus_case(parser, case)
 ```
 
-The extractor supplies the *same source-unit boundaries* for raw and
-quote-balanced views, together with precise provenance
-(`source_text`, synthetic prefixes/suffixes, and source spans). Do not
-manually repair quotation marks, drop alternatives, invent a second parser
-or bypass `parse_corpus_case` to inspect novel examples.
+The extractor supplies exactly the same *source-complete* utterance for
+both compatibility views. Each corpus case includes source paragraph index,
+paragraph-relative offsets, original cleaned-book offsets, provisional typed
+constituents, governor references, and quotation status. New corpus cases
+carry NO synthetic quote or terminal punctuation. Never drop alternatives,
+invent a second grammar engine or bypass `parse_corpus_case`.
 
 **Current benchmark:** `scripts.diagnose_novel_parses.select_cases(500)`
 samples the cleaned novels with the current single segmenter. Its SHA-256
@@ -62,12 +71,14 @@ selected-tree evidence, source-context justification, and successful
 independent positive/negative contrasts. Never equate a heuristic flag with
 proof of an invalid rule.
 
-**Before diagnosing any grammar failure**, read the contiguous source
-paragraph and neighboring original units. Confirm that the single active
-splitter has not isolated a dependent clause, a shared-subject predicate,
-a multi-sentence nested quote or a causal narrative aside. If the split is
-wrong, repair `sentence_boundaries.py` and its general positive/negative
-regression tests FIRST; do not invent a grammar rule to parse an orphan.
+**Before diagnosing any grammar failure**, inspect the typed constituents,
+source quote context and the original contiguous paragraph. If the unit is
+incomplete or a governor reference is unsupported, fix
+`structural_preanalysis.py` and its general positive/negative controls
+BEFORE touching grammar.jsonl. Do not invent a grammar rule to parse an orphan.
+The graph records provisional functions but the full parser still receives
+an entire text unit; no claim is made that the full grammar already uses
+these constituent edges to prune its search.
 Verify lossless round-trips, transferred quote provenance, independent
 sentence controls, and changes in sampled case identity.
 

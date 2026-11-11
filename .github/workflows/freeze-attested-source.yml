@@ -1,9 +1,6 @@
 name: Freeze historical grammar witnesses into static test data
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - '.github/workflows/freeze-attested-source.yml'
+  workflow_dispatch:
 permissions:
   contents: read
   actions: read

@@ -42,8 +42,10 @@ pour des fixtures historiques mais ne sont plus le chemin actif.
 
 Le **découpage actif est unique** : `analysis_units()` et `extract()`
 n'exposent pas de paramètre v1/v2. Tous les échantillons sont reconstruits
-avec les mêmes règles de frontières, y compris les propositions dépendantes
-et les citations imbriquées. Le benchmark courant de 500 unités porte
+par `structural_preanalysis.analyze_paragraph`, qui ne coupe jamais au
+point-virgule et n'insère pas de guillemets imaginaires. Les citations
+multipartites qui dépassent le paragraphe sont identifiées comme ayant
+besoin de contexte et ne sont pas faussement considérées comme complètes. Le benchmark courant de 500 unités porte
 la **signature figée de sa version actuelle** dans
 [`CURRENT_COHORT.json`](CURRENT_COHORT.json), et analyse exclusivement
 le texte équilibré via `Parser.parse`. Quand la segmentation change,
@@ -70,3 +72,9 @@ que le script passe par `parse_corpus_case`, que celui-ci
 appelle `Parser.parse` et qu'aucune autre entrée cachée ou autre
 préparation lexicale n'est invoquée. Les tests d'intégration
 exercent le même point d'entrée public.
+
+**Limite explicite :** la préanalyse conserve une représentation
+structurée et vérifiable, et choisit les frontières du texte transmis à
+`Parser.parse`. Elle n'intègre pas encore ses relations de constituants
+à la recherche d'arbres du moteur; les longs énoncés peuvent donc dépasser
+les budgets existants. Cette distinction fait partie du contrat.
