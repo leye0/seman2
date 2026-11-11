@@ -42,8 +42,9 @@ The positive and negative detectors have independent structural tests in
 
 The focused workflow
 `.github/workflows/semicolon-v2-tree-audit.yml` downloads the **reference
-WordNet 3.0** and saves four JSONL summary records as a GitHub Actions
-artifact. It checks source preservation, real lexical loading, stable
+WordNet 3.0** and saves both the four compact JSONL summaries and their
+**full selected trees with source spans** as a GitHub Actions artifact.
+It checks source preservation, real lexical loading, stable
 budgets and the diagnostics themselves; it does **not** promote a v2 parse
 count to a score for the historical cohort.
 
