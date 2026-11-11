@@ -35,8 +35,17 @@ def measure() -> dict:
                     joined.isupper() or len(joined) < 45):
                 continue
             units = split_prose_analysis_units(joined)
-            if not units or " ".join(u.source_text for u in units) != joined:
-                raise AssertionError(f"Loss of original text at paragraph {book.ebook_id}")
+            reconstructed = " ".join(u.source_text for u in units)
+            # AnalysisUnit.source_text is individually stripped, so joining
+            # may introduce one separator at an originally adjacent boundary.
+            # Assert *character* conservation, and measure whitespace drift
+            # separately instead of asserting fictional byte-exact recovery.
+            if not units or re.sub(r"\\s+", "", reconstructed) != re.sub(r"\\s+", "", joined):
+                raise AssertionError(
+                    f"Loss of non-whitespace source characters in {book.ebook_id}: "
+                    f"original={joined[:160]!r}; reconstructed={reconstructed[:160]!r}"
+                )
+            totals["boundary_whitespace_normalizations"] += int(reconstructed != joined)
             totals["paragraphs"] += 1
             totals["analysis_units"] += len(units)
             for unit in units:
@@ -84,7 +93,8 @@ def measure() -> dict:
         "policy": "single-source-preserving-segmenter",
         "counts": dict(sorted(overall.items())),
         "by_book": by_book,
-        "source_round_trips_pass": True,
+        "non_whitespace_source_characters_preserved": True,
+        "byte_exact_round_trip_not_asserted": True,
         "positive_context_examples": [name for name, _ in fixtures],
         "negative_independent_examples": 3,
         "grammatical_tree_quality_certified": False,

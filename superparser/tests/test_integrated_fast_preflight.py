@@ -6,7 +6,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-from scripts.diagnose_novel_parses import select_cases
+from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 from seman_parser.engine import Parser, ParserResources
 
 
