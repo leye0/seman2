@@ -35,7 +35,12 @@ def source_contexts(core):
             continue
         sentences=split_prose_sentences(joined)
         for sentence_index,sentence in enumerate(sentences):
-            units=split_analysis_units(sentence)
+            # The frozen 500-case ordinals use v1 semicolon boundaries.
+            # Direct prose segmentation defaults to v2; pin the matching
+            # historical behavior instead of silently shifting provenance.
+            units=split_analysis_units(
+                sentence, preserve_dependent_continuations=False,
+            )
             for part_index,unit in enumerate(units):
                 assert count<len(original),(count,len(original))
                 assert unit.source_text==original[count].source_text,count
