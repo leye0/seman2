@@ -257,6 +257,64 @@ class SentenceBoundaryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             list(analysis_units(source, segmentation_version=3))
 
+    def test_v2_keeps_quoted_question_with_following_shared_predicate(self):
+        from research.verbnet_lr.gutenberg_novels import analysis_units
+
+        # Dickens case 64: the historical split makes 'bent' lose its
+        # overt subject, Mr. Creakle. The v1 SHA-pinned units must not move.
+        source = (
+            "Mr. Creakle whispered, ‘Hah! What’s this?’ and bent his eyes "
+            "upon me, as if he would have burnt me up with them."
+        )
+        legacy = list(analysis_units(source))
+        prospective = list(analysis_units(source, segmentation_version=2))
+        self.assertEqual([unit.source_text for unit in legacy], [
+            "Mr. Creakle whispered, ‘Hah!",
+            "What’s this?’ and bent his eyes upon me, as if he would have "
+            "burnt me up with them.",
+        ])
+        self.assertEqual([unit.source_text for unit in prospective], [source])
+        self.assertEqual(prospective[0].text, source)
+        self.assertEqual(split_prose_sentences(source),
+                         [unit.source_text for unit in legacy])
+        self.assertEqual(" ".join(unit.source_text for unit in legacy), source)
+
+        book = Book(766, "David Copperfield", "Dickens", "train")
+        cases, _ = extract(
+            book, source, length_min=1, length_max=100, segmentation_version=2,
+        )
+        self.assertEqual(len(cases), 1)
+        self.assertEqual(cases[0]["source_text"], source)
+        self.assertEqual(cases[0]["balanced_analysis_text"], source)
+        self.assertEqual(cases[0]["segmentation_version"], 2)
+
+    def test_v2_quoted_coordination_positive_and_independent_controls(self):
+        independent_positive = (
+            "The captain murmured, “Ah! Is anyone there?” and turned "
+            "toward the door."
+        )
+        self.assertEqual(
+            [unit.source_text for unit in split_prose_analysis_units(
+                independent_positive)],
+            [independent_positive],
+        )
+        for source in (
+            "He whispered, ‘Oh! What now?’ Then he left.",
+            "‘What? Why?’ She turned.",
+            "“I came. I saw.”",
+            "“What?” “Nothing!”",
+            "“Hello!” she cried. “Come back,” he said.",
+        ):
+            with self.subTest(source=source):
+                v1 = split_prose_analysis_units(
+                    source, preserve_dependent_continuations=False,
+                )
+                v2 = split_prose_analysis_units(source)
+                self.assertEqual([unit.source_text for unit in v2],
+                                 [unit.source_text for unit in v1])
+                self.assertEqual(" ".join(unit.source_text for unit in v2),
+                                 source)
+
     def test_cross_sentence_quote_continuations_reuse_semicolon_balancer(self):
         cases = [
             ("“I came. I saw.”",
