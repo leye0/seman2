@@ -5,6 +5,33 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Point vérifié le 11 novembre 2026
+
+- La PR [#33](https://github.com/leye0/seman2/pull/33) a été
+  fusionnée sur `main` : l'audit des voisins de la cohorte 500 utilise
+  explicitement la segmentation v1, tandis que le découpage prospectif
+  v2 demeure opt-in dans le corpus. Les deux CI sur la PR étaient vertes,
+  avec **602 tests Layer 1** et un diagnostic des **500 cas** terminé.
+  Aucun changement de grammaire, de budget ou de couverture n'est revendiqué.
+- Le travail v2 le plus récent est dans
+  [`SEMICOLON_V2_TREE_AUDIT.md`](SEMICOLON_V2_TREE_AUDIT.md) :
+  sur les quatre passages #8/#94/#182/#194, **aucun arbre de rang 1
+  n'est encore certifié grammaticalement**. #8 et #194 ont une
+  structure nominale fautive; #94 et #182 n'ont pas de racine complète.
+  #194 est de plus censuré par le budget.
+- Une étude supplémentaire du cas **64** a établi sa provenance entre
+  deux unités d'un dialogue de Dickens : le sujet explicite du
+  prédicat coordonné se trouve dans la phrase précédente. Voir
+  [`CASE_64_QUOTED_SHARED_SUBJECT.md`](CASE_64_QUOTED_SHARED_SUBJECT.md).
+  **Non corrigé**; le curseur déterministe reste à 8 et le prochain
+  cas à traiter est toujours 64, jusqu'à une vraie vérification de
+  l'arbre choisi.
+- Pour les anomalies d'accord P2, les 16 alternatives marquées des
+  cas #463 et #480 ne montrent chacune qu'un motif distinct de liens
+  grammaticaux, sans solution stricte complète dans la recherche bornée.
+  Voir [`REJECTION_TRACE_PROBE.md`](REJECTION_TRACE_PROBE.md).
+  Cela ne prouve pas l'absence d'autres structures.
+
 ## Mise à jour de la file (2026-11-08, après le diagnostic 8)
 
 - Le prochain cas **déterministe** est maintenant **64** selon
