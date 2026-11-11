@@ -154,3 +154,12 @@ promue abusivement en deux propositions complètes.** Ces constructions,
 les citations interparagraphes et les ellipses contextuelles requièrent
 encore des schémas de composition validés. Une amélioration du nombre d'arbres
 retenus n'est revendiquée que si la cohorte courante et les tests le prouvent.
+
+**Énoncés mineurs du dialogue.** Pour les réponses adverbiales suivies d'un
+vocatif effectivement attesté par les constituants sources, le moteur peut
+composer `ADV + COMMA + NP` et les délimiteurs réels d'une citation avec
+`dialogue_structural_minor_adv_vocative`. Les deux constituants doivent avoir
+leurs propres preuves lexicales et grammaticales; aucun verbe fini n'est
+inventé. Cette voie vise notamment l'échec littéraire `‘Perfectly, sir.’`.
+Les règles et les actions sémantiques des constructions finies composées
+sont explicites et auditées dans les fichiers JSONL du moteur.

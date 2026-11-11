@@ -106,7 +106,14 @@ class QuotedSentenceComposer:
     ) -> ParseResult | None:
         plan = self._plan(text, components)
         if plan is None:
-            return self._compose_intercalated(
+            intercalated = self._compose_intercalated(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if intercalated is not None:
+                return intercalated
+            return self._compose_minor_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
@@ -437,3 +444,139 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+
+    def _compose_minor_response(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Adverbial answer + vocative: independently attest ADV and NP.
+
+        This is a *minor conversational utterance* (not a finite matrix
+        clause). The answer and addressee have separate grammatical roles;
+        no silent copula or finite verb is supplied.
+        """
+        parts = {p.get("id"): p for p in components}
+        root = parts.get("s0")
+        quote = parts.get("q0")
+        if not root or not quote:
+            return None
+        if not (
+            root.get("function") == "minor_utterance"
+            and root.get("relation") == "dialogue_response"
+            and quote.get("function") == "direct_speech"
+            and (quote["start"], quote["end"]) == (0, len(text))
+            and len([p for p in components
+                     if p.get("function") in ("direct_speech",
+                                            "embedded_quotation")]) == 1
+        ):
+            return None
+        marks = quotation_boundaries(text)
+        if len(marks) != 2 or (
+            marks[0].start, marks[0].end, marks[0].side,
+            marks[1].start, marks[1].end, marks[1].side,
+        ) != (0, 1, "open", len(text)-1, len(text), "close"):
+            return None
+        # Anchor exactly one independent source ADV and the overt vocative
+        # nominal after the source comma, not a guessed missing predicate.
+        match = re.fullmatch(
+            r"(?i)([a-z]+)\s*,\s*([a-z][a-z'-]*)[.!?]",
+            text[1:-1],
+        )
+        if match is None:
+            return None
+        a1, b1 = 1+match.start(1), 1+match.end(1)
+        a2, b2 = 1+match.start(2), 1+match.end(2)
+        comma = text.find(",", b1, a2)
+        if comma < b1 or text[b2] not in ".!?":
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or work < 1000:
+            return None
+        piece_items, piece_work = total_items//3, work//3
+        proved = []
+        candidates: list[LexicalCandidate] = []
+        for cat, a, b in (("ADV", a1, b1), ("NP", a2, b2)):
+            lattice = parser._lattice_for_text(text[a:b])
+            parsed = parser._vector_grammar.parse_lattice(
+                lattice,
+                goal_category=cat,
+                beam=parser.beam if beam is None else beam,
+                max_items=piece_items,
+                kbest_work_limit=piece_work,
+                diagnostic_k=diagnostic_k,
+            )
+            if not parsed.completed or parsed.best() is None:
+                return None
+            selected = parsed.best()
+            if selected.category != cat:
+                return None
+            proved.append(parsed)
+            interface = SegmentInterface(parsed, a, a, b)
+            candidates.append(LexicalCandidate(
+                span_start=a, span_end=b,
+                surface=text[a:b], lemma=f"<verified-{cat.lower()}>",
+                category=cat, features=selected.features,
+                source="source-structural-minor-utterance-proof",
+                score=selected.score,
+                provenance={"source_span":[a,b],
+                            "grammar_proof": selected.rule_id},
+                interface=interface,
+            ))
+        for pos, cat in (
+            (0, "OPEN-QUOTE"), (comma, "COMMA"),
+            (b2, "SPEECH-STOP"), (len(text)-1, "CLOSE-QUOTE"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=pos, span_end=pos+1,
+                surface=text[pos], lemma=text[pos],
+                category=cat, features=FeatureStructure.empty(),
+                source="original-minor-utterance-punctuation",
+                score=0, provenance={"source_span":[pos,pos+1]},
+            ))
+        graph = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        combined = self._vector.parse_lattice(
+            graph, goal_category="CLAUSE",
+            max_items=total_items-2*piece_items,
+            kbest_work_limit=work-2*piece_work,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not combined.completed or combined.best() is None:
+            return None
+        if isinstance(combined.stats, dict):
+            combined.stats.update({
+                "engine": "vector-structurally-composed-minor-utterance",
+                "structural_composition": True,
+                "structural_composition_kind": "adverbial_answer_with_vocative",
+                "structural_clause_count": 0,
+                "structural_segment_count": 2,
+                "structural_segment_spans": [[a1,b1],[a2,b2]],
+                "structural_segment_rule_ids": [
+                    p.best().rule_id for p in proved
+                ],
+                "structural_segment_stats": [dict(p.stats) for p in proved],
+                "dialogue_scoped": True,
+                "source_text_unchanged": True,
+                "composition_linguistic_proof": (
+                    "adverb_and_vocative_nominal_independently_parsed_"
+                    "with_no_finite_predicate_invented"
+                ),
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": work,
+            })
+        combined.shared_forest = {
+            "assembly": combined.shared_forest,
+            "segments": tuple(p.shared_forest for p in proved),
+            "interfaces": tuple(c.interface for c in candidates
+                                if c.interface is not None),
+        }
+        return combined

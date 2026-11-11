@@ -138,6 +138,40 @@ class QuotedStructuralCompositionTests(unittest.TestCase):
             for u in units
         ))
 
+    def test_attested_minor_dialogue_answer_is_composed_without_a_verb(self):
+        source = '‘Perfectly, sir.’'
+        prepared, _, result = self._parse_case(source)
+        self.assertTrue(result.completed, result.stats)
+        self.assertTrue(result.stats.get("structural_composition"), result.stats)
+        self.assertEqual(result.best().rule_id,
+                         "dialogue_structural_minor_adv_vocative")
+        self.assertEqual(result.best().features.as_dict()["minor_utterance"],
+                         "true")
+        self.assertEqual(result.stats["structural_clause_count"], 0)
+        self.assertEqual(result.stats["structural_composition_kind"],
+                         "adverbial_answer_with_vocative")
+        self.assertEqual(
+            [source[a:b] for a, b in result.stats["structural_segment_spans"]],
+            ["Perfectly", "sir"],
+        )
+        self.assertEqual(
+            [node.category for node in result.best().children],
+            ["OPEN-QUOTE", "ADV", "COMMA", "NP", "SPEECH-STOP", "CLOSE-QUOTE"],
+        )
+        self.assertEqual(prepared.source_text, source)
+        self.assertEqual(result.text, source)
+        self.assertTrue(all(
+            n.category not in ("V", "VP", "COPULA")
+            for n in result.best().children
+        ), "Verbless minor utterance must not fabricate a predicate")
+
+    def test_minor_dialogue_must_be_classified_and_parse_both_components(self):
+        for source in ('‘Perfectly, very.’', '‘Slowly, perhaps.’'):
+            with self.subTest(source=source):
+                prepared, _, result = self._parse_case(source)
+                self.assertFalse(result.stats.get("structural_composition", False))
+                self.assertEqual(prepared.source_text, source)
+
     def test_direct_parse_without_source_graph_retains_original_route(self):
         source = '"John walks. Mary walks."'
         raw = self.parser.parse(

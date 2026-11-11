@@ -12,3 +12,6 @@
 {"id":"dialogue_speech_tag_inverted_pp","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
 {"id":"dialogue_speech_tag_post_adverb","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
 {"id":"dialogue_speech_tag_inverted_adverb","semantic":[{"link":{"relation":"AGENT","source":"report","target":"speaker"}}]}
+{"id":"dialogue_structural_two_finite_clauses","semantic":[{"compose":{"links":[{"relation":"CONTINUED_SPEECH","source":"speech_1","target":"speech_2"}]}}]}
+{"id":"dialogue_structural_three_finite_clauses","semantic":[{"compose":{"links":[{"relation":"CONTINUED_SPEECH","source":"speech_1","target":"speech_2"},{"relation":"CONTINUED_SPEECH","source":"speech_2","target":"speech_3"}]}}]}
+{"id":"dialogue_structural_intercalated_two_finite_clauses","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"speech_1"},{"relation":"CONTINUED_SPEECH","source":"speech_1","target":"speech_2"}]}}]}
