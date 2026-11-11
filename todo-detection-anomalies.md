@@ -379,6 +379,43 @@ phrase. Actions **42520753139** (474/500) et **42520753146**
 (589 tests) vertes. Étape suivante : discriminer les analyses
 alternatives possibles avant toute décision de faute globale.
 
+
+**Vérification des analyses concurrentes (Actions 42527736728 et
+42527736672, 8 novembre) :** un rejeu indépendant des cas #463 et #480,
+en grammaire stricte puis marquée avec au plus **16 arbres complets**, a
+conservé le contrat public `parse_corpus_case` et les budgets. Le strict
+ne fournit aucun arbre complet pour ces cas dans ces limites; les
+**16/16** arbres marqués de #463 portent un écart de nombre et ceux de
+#480 en portent deux. Chaque groupe de 16 manifeste **un seul motif
+distinct de liens grammaticaux** observé. Il serait incorrect de compter
+16 classements lexicaux comme 16 preuves syntaxiques indépendantes ou
+d'inférer l'absence universelle d'une solution stricte. La cohorte
+reste **474/500**. Détail et garde-fous :
+[`docs/REJECTION_TRACE_PROBE.md`](docs/REJECTION_TRACE_PROBE.md).
+
+**Frontière de contexte supplémentaire (#64, audit 42665231444) :**
+le relevé de provenance montre que `What’s this?’ and bent his eyes ...`
+suit `Mr. Creakle whispered, ‘Hah!` dans le même paragraphe. Le
+découpage historique sépare le sujet de `bent`; le rééquilibrage des
+guillemets ne le restaure pas. L'essai dialogue possède une racine
+structurelle, mais aucune analyse finale valide, sans saturation ni
+mot lexical absent. Ce constat est une **hypothèse structurale vérifiable**,
+pas une correction ni une faute de langue démontrée :
+[`docs/CASE_64_QUOTED_SHARED_SUBJECT.md`](docs/CASE_64_QUOTED_SHARED_SUBJECT.md).
+Le cas reste dans les **26 résidus**; sa reconstitution v2 et la
+validation de l'arbre de rang 1 restent ouvertes.
+
+**Robustesse de l'audit de provenance :** après l'introduction du
+découpage prospectif v2, le calcul des voisins de la cohorte fixe utilise
+explicitement les frontières v1. Le correctif
+[PR #33](https://github.com/leye0/seman2/pull/33) rétablit le contrôle
+500 cas qui échouait au rapprochement des unités historiques, sans
+changer la grammaire, la préparation `QUOTE_BALANCED`, ni la segmentation
+v2. Les deux Actions de la PR sont vertes (**602 tests Layer 1** et
+diagnostic exhaustif des **500 unités**). Cela valide l'infrastructure
+de contrôle, pas de nouveaux rattachements grammaticaux.
+
+
 - [ ] Étudier une présentation prudente des **constituants localement prouvés** et des conflits qu'ils exposent, même sans arbre global complet.
 - [ ] Distinguer clairement **conflit établi**, hypothèse de conflit et impossibilité opérationnelle (forêt saturée, k-best, délai, couverture insuffisante).
 - [ ] Ne pas fabriquer un arbre complet, une relation syntaxique ou une correction textuelle pour « expliquer » artificiellement l'échec.
