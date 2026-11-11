@@ -9,6 +9,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from seman_parser.structural_units import review_semicolon_boundaries
+
 # Abbreviations normally followed by names, locations or identifiers.
 _NONTERMINAL = frozenset({
     "mr.", "mrs.", "ms.", "dr.", "prof.", "rev.", "capt.", "col.",
@@ -19,80 +21,6 @@ _NONTERMINAL = frozenset({
 _CLOSERS = frozenset("\"'”’)]}")
 _OPENERS = frozenset("\"'“‘([{")
 _INITIAL = re.compile(r"(?<![A-Za-z.])[A-Za-z]\.$")
-
-# A semicolon is not necessarily a clause boundary. In particular, a
-# supplementary relative introduced by "which" may take the preceding event
-# as its antecedent ("He promised to return; which he did."). Subordinate
-# clauses ("; although ...") likewise lack an independent matrix clause.
-# Keep these cues narrow; questions and independent clauses must still split.
-# The legacy splitter remains explicitly available for pinned historical data.
-_SENTENTIAL_RELATIVE = re.compile(
-    r"(?i)^which\s+(?:"
-    r"(?:i|you|he|she|it|we|they|the|a|an|this|that|these|those|my|your|"
-    r"his|her|our|their|its)\b"
-    r"|(?:is|are|was|were|has|have|had|does|do|did|can|could|will|"
-    r"would|shall|should|may|might|must)\b"
-    r")"
-)
-_SUBORDINATE_START = re.compile(
-    r"(?i)^(?:because|although|though|unless|until|while|whereas|since|"
-    r"if|when|whenever|as)\b\s+"
-)
-# Semicolon-separated supplement types attested in Dickens and Austen:
-#   "she chid me; and, keeping me close, turned to thank him"
-#   "he found her as handsome as before; as good natured, and as unaffected"
-#   "they paid little attention; avoiding X, saying nothing to Y"
-_COORDINATED_SHARED_SUBJECT = re.compile(
-    r"(?i)^(?:and|but|or)\s*,\s*[a-z-]+ing\b[^;]*?,\s*([a-z-]+)\b"
-)
-_COMMON_IRREGULAR_PAST = frozenset({
-    "went", "came", "took", "made", "said", "gave", "found", "left",
-    "sat", "stood", "brought", "wrote", "spoke", "thought", "saw",
-})
-_COMPARATIVE_MATRIX = re.compile(r"(?i)\bas\s+(?:[a-z-]+\s+){1,3}as\b")
-_COMPARATIVE_CONTINUATION = re.compile(
-    r"(?i)^as\s+(?:[a-z-]+\s+){0,3}[a-z-]+,\s+and\s+as\b"
-)
-_PARTICIPLE_SERIES = re.compile(
-    r"(?i)^[a-z-]+ing\b[^;]*?,\s+[a-z-]+ing\b"
-)
-_MATRIX_SUBJECT_AFTER_COMMA = re.compile(
-    r"(?i),\s*(?:(?:and|but)\s+)?(?:i|you|he|she|it|we|they|the|a|an|"
-    r"this|that|these|those|my|your|his|her|our|their|its)\b"
-)
-_PROPER_NAME_AFTER_COMMA = re.compile(r",\s*[A-Z][a-z]+\b")
-
-
-def _is_dependent_continuation(before_semicolon: str, after_semicolon: str) -> bool:
-    """Conservative cues that the next clause needs its antecedent.
-
-    Stop at the next semicolon when screening for direct questions, so a
-    later unrelated question does not change this boundary decision. A
-    fronted subordinate often already has its own matrix clause after a
-    comma ("; when she arrived, I left") and must remain a separate unit.
-    """
-    candidate = after_semicolon.split(";", 1)[0].strip()
-    if "?" in candidate:
-        return False
-    if _SENTENTIAL_RELATIVE.match(candidate):
-        return True
-    if "," not in candidate and _SUBORDINATE_START.match(candidate):
-        return True
-    shared = _COORDINATED_SHARED_SUBJECT.match(candidate)
-    if shared:
-        head = shared.group(1).casefold()
-        if head.endswith("ed") or head in _COMMON_IRREGULAR_PAST:
-            return True
-    if (_COMPARATIVE_MATRIX.search(before_semicolon)
-            and _COMPARATIVE_CONTINUATION.match(candidate)
-            and not _MATRIX_SUBJECT_AFTER_COMMA.search(candidate)):
-        return True
-    if (_PARTICIPLE_SERIES.match(candidate)
-            and not _MATRIX_SUBJECT_AFTER_COMMA.search(candidate)
-            and not _PROPER_NAME_AFTER_COMMA.search(candidate)):
-        return True
-    return False
-
 
 def _abbreviation_at(text: str, period: int, next_word: str) -> bool:
     # Inspect only the last few words of the local paragraph.
@@ -264,10 +192,8 @@ def _advance_quotes(
 ) -> None:
     """Track quotation state across semicolons and, optionally, sentences.
 
-    The default keeps the already pinned source cohort exactly reproducible.
-    Stricter orphan-quote protection is used only by the prepared analysis
-    alternative, whose changes are explicitly recorded rather than silently
-    replacing reference data.
+    Unbalanced and quote-balanced views use the same structural boundaries.
+    Synthetic marks are recorded separately, not inserted into source_text.
     """
     for index, char in enumerate(text):
         if char not in _QUOTE_PAIRS and char not in {'”', '’'}:
@@ -326,11 +252,11 @@ def split_analysis_units(
         return []
     if ';' not in text and not balance_sentence_boundary:
         return [AnalysisUnit(text=text, source_text=text)]
+    # Typographic semicolons are proposals. The structural layer keeps
+    # dependent constructions with their source context before quote transfer.
     boundaries = [
-        index for index, char in enumerate(text)
-        if char == ";" and not _is_dependent_continuation(
-            text[:index].rsplit(";", 1)[-1], text[index + 1:]
-        )
+        decision.offset for decision in review_semicolon_boundaries(text)
+        if not decision.merge
     ]
     is_semicolon_split = bool(boundaries)
     units: list[AnalysisUnit] = []
