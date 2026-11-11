@@ -38,16 +38,17 @@ _QUOTED_DASH_CONTINUATION = re.compile(
 )
 _POSTSCRIPT = re.compile(r"(?i)^(?:P\.\s?S\.|P\.\s?P\.\s?S\.)\s*(?:--|—|:)")
 _BEARING = re.compile(
-    r"(?i)\b(?:bearing\s+(?:a\s+point\s+)?to\s+the\s+"
-    r"(?:N|S|E|W)\.|Spy-glass\s+shoulder\b)"
+    r"(?i)\bbearing\s+(?:(?:a|one)\s+)?(?:point\s+)?to\s+"
+    r"(?:the\s+)?[NSEW]\."
 )
 _COMPASS = re.compile(
     r"(?i)(?:N\.N\.E\.|N\.N\.W\.|S\.S\.E\.|S\.S\.W\.|"
     r"E\.S\.E\.|E\.N\.E\.|W\.S\.W\.|W\.N\.W\.)"
 )
-_NOMINAL_BEARING = re.compile(
-    r"(?i)^(?:Tall\s+tree|Skeleton\s+Island|"
-    r"(?:[A-Z][a-z-]*\s+){1,3}(?:shoulder|island|rock))\b"
+_FINITE_INDICATOR = re.compile(
+    r"(?i)\b(?:am|is|are|was|were|be|been|has|have|had|"
+    r"will|would|shall|should|can|could|may|might|must|"
+    r"did|does|do|[a-z-]+ed)\b"
 )
 _SALUTATION = re.compile(
     r"(?i)^(?:good\s+(?:night|morning|evening|day|bye)|"
@@ -76,9 +77,8 @@ def classify_discourse(
             "documentary_postscript", "paratext_with_embedded_clause",
             "source_postscript_marker", False,
         )
-    if _BEARING.search(text) and (
-        _COMPASS.search(text) or _NOMINAL_BEARING.match(text)
-    ):
+    if (_BEARING.search(text) and _COMPASS.search(text)
+            and not _FINITE_INDICATOR.search(text)):
         return DiscourseRole(
             "documentary_navigation_notation", "documentary_annotation",
             "compass_bearing_without_matrix_predication", False,
