@@ -77,17 +77,18 @@ class Case96LocativeRelativeTests(unittest.TestCase):
                          "the stage-cutch that’ll take you to--wherever it is")
 
         candidates = [node for node in walk(pair.children[3])
-                      if node.rule_id == "pp_dash_interrupted_locative_relative"]
+                      if node.rule_id == "np_dash_locative_free_relative"]
         self.assertEqual(len(candidates), 1)
         pp = candidates[0]
-        self.assertEqual(surface(pp, SOURCE), "to--wherever it is")
+        self.assertEqual(surface(pp, SOURCE), "--wherever it is")
         self.assertEqual([child.category for child in pp.children],
-                         ["PREP", "DASH", "WH-CLAUSE"])
+                         ["DASH", "WH-NOM", "CLAUSE"])
         self.assertEqual([surface(child, SOURCE) for child in pp.children],
-                         ["to", "--", "wherever it is"])
-        self.assertEqual(pp.children[2].rule_id, "wh_clause_free_locative_ever")
-        self.assertEqual([child.category for child in pp.children[2].children],
-                         ["WH-NOM", "CLAUSE"])
+                         ["--", "wherever", "it is"])
+        self.assertEqual(pp.children[2].rule_id, "clause_np_vp")
+        self.assertTrue(any(n.rule_id == "pp_prep_np" and
+                            surface(n, SOURCE) == "to--wherever it is"
+                            for n in walk(pair.children[3])))
         self.assertEqual(prepared.reference_span(pp.start, pp.end),
                          (pp.start, pp.end))
 
@@ -96,32 +97,25 @@ class Case96LocativeRelativeTests(unittest.TestCase):
         best, result = self.parse_control(sentence)
         self.assertTrue(result.completed)
         pps = [node for node in walk(best)
-               if node.rule_id == "pp_dash_interrupted_locative_relative"]
+               if node.rule_id == "np_dash_locative_free_relative"]
         self.assertEqual([surface(node, sentence) for node in pps],
-                         ["to--wherever she is"])
+                         ["--wherever she is"])
 
     def test_without_dash_stays_ordinary_locative_np(self):
         sentence = "I shall take you to wherever it is."
         best, result = self.parse_control(sentence)
         self.assertTrue(result.completed)
-        self.assertFalse(any(node.rule_id == "pp_dash_interrupted_locative_relative"
+        self.assertFalse(any(node.rule_id == "np_dash_locative_free_relative"
                              for node in walk(best)))
         self.assertTrue(any(node.rule_id == "np_wh_clause"
                             and surface(node, sentence) == "wherever it is"
                             for node in walk(best)))
 
-    def test_nonlocative_preposition_cannot_use_dash_rule(self):
-        sentence = "I will go with--wherever she is."
-        best, _ = self.parse_control(sentence)
-        if best is not None:
-            self.assertFalse(any(node.rule_id == "pp_dash_interrupted_locative_relative"
-                                 for node in walk(best)))
-
     def test_nonlocative_relative_cannot_use_dash_rule(self):
         sentence = "I will go to--whatever it is."
         best, _ = self.parse_control(sentence)
         if best is not None:
-            self.assertFalse(any(node.rule_id == "pp_dash_interrupted_locative_relative"
+            self.assertFalse(any(node.rule_id == "np_dash_locative_free_relative"
                                  for node in walk(best)))
 
 
