@@ -7,6 +7,7 @@ on:
       - '.github/workflows/case96-targeted-probes.yml'
       - 'superparser/scripts/audit_case96_constructs.py'
       - 'superparser/data/function_words.jsonl'
+      - 'superparser/data/grammar.jsonl'
       - 'superparser/seman_parser/sentence_boundaries.py'
       - 'superparser/research/verbnet_lr/gutenberg_novels.py'
       - 'superparser/tests/test_sentence_boundaries.py'

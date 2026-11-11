@@ -39,6 +39,13 @@ PROBES = (
     ("full_synthetic_no_dash", "And there I shall take you to the coach, and the coach that'll take you to wherever it is.", "CLAUSE"),
     ("full_synthetic_town", "And there I shall take you to the coach, and the coach that'll take you to the town.", "CLAUSE"),
     ("full_synthetic_longdash", "And there I shall take you to the coach, and the coach that'll take you to—wherever it is.", "CLAUSE"),
+    ("independent_dash_destination", "I will take her to--wherever she is.", "CLAUSE"),
+    ("independent_dash_past", "We walked to--wherever they were.", "CLAUSE"),
+    ("negative_dash_nonlocative", "I will go to--whatever it is.", "CLAUSE"),
+    ("negative_dash_with", "I will go with--wherever she is.", "CLAUSE"),
+    ("quoted_town_full", "‘And there I shall take you to the coach, and the coach that'll take you to the town.’", "CLAUSE"),
+    ("quoted_no_dash_full", "‘And there I shall take you to the coach, and the coach that'll take you to wherever it is.’", "CLAUSE"),
+    ("quoted_simple", "‘And there I shall take you to the coach.’", "CLAUSE"),
 )
 
 def selected_tree(item, text):
