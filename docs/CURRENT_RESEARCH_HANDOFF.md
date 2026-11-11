@@ -5,6 +5,14 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
+## Intégration confirmée le 11 novembre 2026 — cas 96
+
+- La PR [#35](https://github.com/leye0/seman2/pull/35) a été **fusionnée** sur `main` au commit `551395dbf874698d5c145bdf24631b388cde279f` après validation de son arbre **de rang 1** et des attaches exactes. Elle ajoute une lecture locative nominalisée de `wherever` sans supprimer les lectures antérieures, et une composition typée `DASH + WH-NOM + CLAUSE` dans le dialogue. Voir [le dossier du cas 96](CASE_96_DASH_LOCATIVE_FREE_RELATIVE.md).
+- La CI [Layer 1 #42957398567](https://github.com/leye0/seman2/actions/runs/42957398567) est verte : **608 tests**, smoke canonique/adaptatif/dialogue, **120/120** annotations structurelles, **24/24** contrastes positifs; **9** négatifs restent acceptés, à la limite autorisée.
+- La CI [500 cas #42957398525](https://github.com/leye0/seman2/actions/runs/42957398525) est verte : **475/500** contre **474/500** sur la base; comparaison des artefacts `per_sentence.jsonl` ligne à ligne, même cohorte et même `case_id`/SHA : **seul l'index 96** passe de `roots_without_valid_analysis` à `complete`. Aucun autre statut, drapeau de dépassement de forêt ou de k-best, ni `root_rule` ne change. Les budgets restent **50 000 / 500 000 / 10 s**.
+- La file déterministe est mise à jour à **475** succès, `last_attempted_index=96`, **25** résidus; le **prochain cas est 105**. Les anciens diagnostics 8/64/94 demeurent non certifiés malgré les améliorations de découpage; il faut continuer à exiger les attaches correctes de rang 1.
+- Vérification des PR : **32 fusionnées, 3 fermées sans fusion** (#3, #10, #12, recherches abandonnées), **aucune ouverte** après intégration de #35.
+
 ## Point vérifié le 11 novembre 2026
 
 - Le cas **94** a été diagnostiqué avec WordNet 3.0 dans

@@ -6,6 +6,8 @@ ou un arbre change sans saturation. Aucun gain n'est extrapolé
 à toute la population des phrases.
 
 # TODO — Détection et qualification des anomalies grammaticales
+**État de la qualité du Layer 1 (11 novembre 2026) :** la PR [#35](https://github.com/leye0/seman2/pull/35) a corrigé le rang 1 du cas 96, avec témoins et attaches vérifiés. La cohorte stricte passe à **475/500** (seul index changé : 96 ; aucun drapeau de budget modifié), la CI Layer 1 valide **608 tests**, **120/120** annotations et **24/24** contrastes; **9 négatifs** restent faussement acceptés. La file de travail indique **105** comme prochain cas. Ce progrès de couverture **ne clôt pas** P1/P2/P3 ni ne prouve un détecteur générique d'anomalies.
+
 
 > Projet **Seman2**, **Layer 1** (anglais). Document de conception et de travail, pas une fonctionnalité annoncée comme terminée.
 >

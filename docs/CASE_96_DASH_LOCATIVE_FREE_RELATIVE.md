@@ -1,9 +1,7 @@
 # Cas 96 — destination locative après tiret dans un dialogue
 
-**Statut : correction candidate de la grammaire, validation globale en attente.**
-Le cas est une construction compositionnelle, non une substitution de texte.
-Le succès n'est revendiqué pour le corpus gelé qu'après comparaison complète
-de la CI des 500 cas.
+**Statut : correction validée et fusionnée dans `main`, PR [#35](https://github.com/leye0/seman2/pull/35), commit `551395dbf874698d5c145bdf24631b388cde279f`.**
+Le cas est une construction compositionnelle, non une substitution de texte. L'arbre de rang 1 et ses attaches ont été vérifiés; la comparaison stricte de la cohorte de 500 cas est terminée.
 
 ## Référence immuable
 
@@ -44,7 +42,7 @@ Deux lacunes étaient nécessaires à expliquer le rejet :
    interrompait le lien entre `to` et la proposition locative. Aucune
    composition prépositionnelle typée n'acceptait cette pause explicite.
 
-## Implémentation candidate
+## Implémentation intégrée
 
 - `superparser/data/function_words.jsonl` : seule lecture
   additionnelle de `wherever` en
@@ -111,6 +109,9 @@ La nouvelle lecture et la nouvelle règle sont généralisables à la
 construction locative avec interruption, mais ne garantissent pas
 la correction de toutes les relatives du corpus. Le témoin sensible
 **359** est maintenant restauré au nombre exact de nœuds et d'états.
-La qualité **120/120**, les contrastes **24/24**, les négatifs acceptés
-et la comparaison stricte des **500 statuts** restent les portes
-de validation de l'intégration.
+## Validation finale et comparaison de référence
+
+- [CI Layer 1 #42957398567](https://github.com/leye0/seman2/actions/runs/42957398567) : **608 tests** réussis, smoke canonique/adaptatif/dialogue, **120/120** annotations structurelles, **24/24** contrastes positifs, **9** acceptations négatives connues (seuil actuel : 9).
+- [CI 500 cas #42957398525](https://github.com/leye0/seman2/actions/runs/42957398525) : **475/500** en mode strict `QUOTE_BALANCED` contre **474/500** sur l'[ancienne référence validée #42950713423](https://github.com/leye0/seman2/actions/runs/42950713423).
+- Comparaison directe des deux artefacts `per_sentence.jsonl` : les **500 identités et empreintes des cas concordent**; **seul l'index 96** change de statut (`roots_without_valid_analysis` → `complete`, racine `dialogue_unattributed`). Les **499 autres statuts**, tous les drapeaux de dépassement de budget et les catégories de racines sont inchangés. Aucun plafond augmenté (forêt 50 000, k-best 500 000, délai 10 s).
+- File de progression : **25 résidus**, dernier cas tenté **96**, prochain index **105**. Les **9 négatifs acceptés** constituent toujours une limite du parseur; la réussite de cette cible ne certifie pas toute la grammaire du corpus.
