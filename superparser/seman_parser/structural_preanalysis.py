@@ -50,6 +50,27 @@ class PreanalyzedSentence:
     constituents: tuple[StructuralConstituent, ...]
     eligible_for_parse: bool
 
+    @property
+    def source_text(self) -> str:
+        return self.text
+
+    @property
+    def semicolon_split(self) -> bool:
+        # Semicolons express clausal relations INSIDE a complete utterance.
+        return False
+
+    @property
+    def synthetic_prefix(self) -> str:
+        return ""
+
+    @property
+    def synthetic_suffix(self) -> str:
+        return ""
+
+    @property
+    def synthetic_terminal(self) -> bool:
+        return False
+
 
 def quote_scan(text: str) -> tuple[list[int], list[tuple[int, int]], int]:
     """Paired actual source quotes, nested; never fabricate a missing mark.
