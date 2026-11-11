@@ -40,7 +40,7 @@ def measure() -> dict:
             # may introduce one separator at an originally adjacent boundary.
             # Assert *character* conservation, and measure whitespace drift
             # separately instead of asserting fictional byte-exact recovery.
-            if not units or re.sub(r"\\s+", "", reconstructed) != re.sub(r"\\s+", "", joined):
+            if not units or re.sub(r"\s+", "", reconstructed) != re.sub(r"\s+", "", joined):
                 raise AssertionError(
                     f"Loss of non-whitespace source characters in {book.ebook_id}: "
                     f"original={joined[:160]!r}; reconstructed={reconstructed[:160]!r}"
