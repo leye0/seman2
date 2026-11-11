@@ -9,7 +9,7 @@ than imply it supplies gold sentence boundaries or syntactic annotations.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from hashlib import sha256
 from itertools import zip_longest
 import re
@@ -95,15 +95,42 @@ def strip_gutenberg(text: str):
     return core
 
 
+def _normalized_paragraph_with_offsets(paragraph: str) -> tuple[str, list[int]]:
+    """Whitespace-normalized source and its exact original char offsets."""
+    chars: list[str] = []
+    offsets: list[int] = []
+    matches = list(re.finditer(r"\s+|\S+", paragraph))
+    for i, match in enumerate(matches):
+        value = match.group()
+        if value.isspace():
+            if chars and i+1 < len(matches):
+                chars.append(" ")
+                offsets.append(match.start())
+        else:
+            chars.extend(value)
+            offsets.extend(range(match.start(), match.end()))
+    return "".join(chars), offsets
+
+
 def analysis_units(
     core: str, *, balance_sentence_quotes: bool = False,
 ):
-    """One source-based paragraph preanalysis, with no fabricated quotes.
+    """Complete utterances, typed spans and exact cleaned-book provenance.
 
-    Both compatibility views have identical source text. The structural
-    constituents and quotation status are authored before syntax parsing.
+    The quote flag remains for caller compatibility, but both views share
+    source-exact text and punctuation. Every constituent span is relative to
+    its unit; paragraph/core spans additionally reference the original book.
     """
-    for paragraph in re.split(r"\n\s*\n", core.replace("\r\n", "\n")):
+    source = core.replace("\r\n", "\n")
+    # Retain delimiter lengths while enumerating paragraph ordinals.
+    parts = re.split(r"(\n\s*\n)", source)
+    cursor = 0
+    for paragraph_number, i in enumerate(range(0, len(parts), 2)):
+        paragraph = parts[i]
+        raw_start = cursor
+        cursor += len(paragraph)
+        if i+1 < len(parts):
+            cursor += len(parts[i+1])
         lines = [line.strip() for line in paragraph.splitlines() if line.strip()]
         if not lines or CHAPTER.match(lines[0]):
             continue
@@ -111,7 +138,16 @@ def analysis_units(
         if not has_final_punctuation(joined) and (
                 joined.isupper() or len(joined) < 45):
             continue
-        yield from analyze_paragraph(joined)
+        normalized, offsets = _normalized_paragraph_with_offsets(paragraph)
+        if normalized != joined:
+            raise AssertionError("Paragraph normalization drifted from original source")
+        for unit in analyze_paragraph(joined):
+            yield replace(
+                unit,
+                paragraph_index=paragraph_number,
+                core_start=raw_start + offsets[unit.source_start],
+                core_end=raw_start + offsets[unit.source_end-1] + 1,
+            )
 
 
 def sentences(core: str):
@@ -176,6 +212,8 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
                          "structural_status": unit.structural_status,
                          "quotation_status": unit.quotation_status,
                          "structural_source_span": [unit.source_start, unit.source_end],
+                         "structural_paragraph_index": unit.paragraph_index,
+                         "structural_core_source_span": [unit.core_start, unit.core_end],
                          "structural_constituents": [c.to_dict() for c in unit.constituents],
                          "tokens": len(tokens)})
     counters["eligible"] = len(eligible)
