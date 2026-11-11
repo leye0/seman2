@@ -49,9 +49,10 @@ _PP_HEAD = re.compile(
 _SUBJECT = re.compile(
     r"(?i)^(?:(?:and|but|or)\s+)?(?:i|you|he|she|it|we|they|"
     r"there|this|that|these|those|"
-    r"(?:the|a|an|my|your|his|her|our|their)\s+[a-z-]+|"
-    r"[A-Z][a-z]+)\b"
+    r"(?:the|a|an|my|your|his|her|our|their)\s+[a-z-]+)\b"
 )
+_PROPER_SUBJECT = re.compile(r"^[A-Z][a-z]+\b")
+
 _FINITE = re.compile(
     r"(?i)\b(?:am|is|are|was|were|has|have|had|do|does|did|"
     r"can|could|will|would|shall|should|may|might|must|"
@@ -92,7 +93,9 @@ _FAREWELL = re.compile(r"(?i)^(?:good-?bye|farewell)\s+to\b")
 def skeleton(source: str) -> ClauseSkeleton:
     """Expose lexical surface hypotheses without running the grammar engine."""
     text = source.strip().lstrip("“‘\"'([{ ").strip()
-    subj = bool(_SUBJECT.match(text))
+    subj = bool(_SUBJECT.match(text) or (
+        not _PP_HEAD.match(text) and _PROPER_SUBJECT.match(text)
+    ))
     # The finite cue must appear in the same unit. A relative clause may also
     # contain one: this field is not a claim about the matrix predicate.
     return ClauseSkeleton(
@@ -108,7 +111,9 @@ def skeleton(source: str) -> ClauseSkeleton:
 def _has_matrix_candidate(fragment: str) -> bool:
     """Narrow signal for a trailing clause after a preposed adjunct chain."""
     candidate = fragment.strip().lstrip("“‘\"'([{ ").strip()
-    if not _SUBJECT.match(candidate):
+    if _PP_HEAD.match(candidate):
+        return False
+    if not (_SUBJECT.match(candidate) or _PROPER_SUBJECT.match(candidate)):
         return False
     # Only inspect the first few words; later relative verbs do not license
     # an earlier prepositional phrase on their own.
