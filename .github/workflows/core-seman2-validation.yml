@@ -71,6 +71,7 @@ jobs:
             superparser.tests.test_vector_chart \
             superparser.tests.test_sentence_boundaries \
             superparser.tests.test_structural_units \
+            superparser.tests.test_structural_preanalysis \
             superparser.tests.test_fragment_grammar_rules \
             superparser.tests.test_complexity_routing \
             superparser.tests.test_shared_trie_forest \

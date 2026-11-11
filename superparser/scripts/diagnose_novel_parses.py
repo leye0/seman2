@@ -990,6 +990,13 @@ def run(
                     "tokens": case["tokens"], "sentence": case["text"],
                     "source_text": source_text,
                     "structural_surface_signals": source_unit_signals(source_text),
+                    "structural_functions": [
+                        p["function"] for p in case.get("structural_constituents", ())
+                    ],
+                    "structural_relations": [
+                        p["relation"] for p in case.get("structural_constituents", ())
+                    ],
+                    "quotation_status": case.get("quotation_status", "not_supplied"),
                     "semicolon_split": bool(case.get("semicolon_split")),
                     "synthetic_prefix": case.get("synthetic_prefix", ""),
                     "synthetic_suffix": case.get("synthetic_suffix", ""),
@@ -1083,7 +1090,7 @@ def run(
         "schema": "seman2-novel-parse-diagnostics-v5",
         "cohort_sha256": cohort_digest,
         "selection": source_description or (
-            "deterministic four-book/four-band sample using current dependency-aware segmentation"
+            "deterministic four-book/four-band complete-utterance sampling with structural roles"
         ),
         "sources": sources,
         "limits": {

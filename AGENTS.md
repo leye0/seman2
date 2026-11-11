@@ -30,10 +30,25 @@ and a separately reported baseline. **Never compare scores from different
 cohort SHAs or carry over old case indices.** The old 475/500 and its
 case-numbered research remain historical evidence only.
 
-**Mandatory shallow structural-cohesion stage:**
-`seman_parser.structural_units.review_semicolon_boundaries` is called by
-`sentence_boundaries.split_analysis_units` **after typographic sentence
-splitting and before quote-balanced corpus extraction/full `Parser.parse`**.
+**Active paragraph-level grammatical preanalysis:**
+`seman_parser.structural_preanalysis.analyze_paragraph` produces full utterance
+boundaries from contiguous paragraphs (no semicolon splitting or fabricated
+quotation marks), original paragraph offsets and typed constituents with
+source spans, governor IDs and explicit descriptive relations. Its functions
+(`matrix_clause`, `coordinate_clause`, `nonfinite_clause`, `direct_speech`,
+`reporting_clause`, `adverbial_subordinate_clause`, etc.) are **provisional**
+and do not assert a correct complete parse. The corpus gateway validates these
+references and exposes them as `PreparedCorpusInput.structural_constituents`.
+Quotes unmatched within the source paragraph are flagged `requires_source_context`
+and **excluded from parse sampling**. They are not made valid by synthetic
+punctuation. The full engine still accepts one text input at a time; the
+source-span graph does not yet rewrite its grammar search.
+
+**Semicolon cohesion heuristic (supporting component evidence, not
+independent production slicing):**
+`seman_parser.structural_units.review_semicolon_boundaries` is consulted
+by `structural_preanalysis.constituency` to type intra-utterance edges
+**before full `Parser.parse`**.
 It records a reason for each proposed semicolon boundary; it may join only
 on explicit surface dependency evidence (e.g. shared subject, PP series,
 causal conjunction, omitted matrix or parallel nominal ellipsis). It is
