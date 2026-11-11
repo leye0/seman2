@@ -3,6 +3,14 @@
 **SOURCE DE VÉRITÉ du dépôt `leye0/seman2`, branche `main`.**
 Ce fichier prime sur les anciens comptes rendus de recherche. Il est conçu pour un développeur ou un nouvel agent ChatGPT n'ayant lu aucune conversation antérieure.
 
+## Statut actuel du corpus (11 novembre 2026)
+
+- **Intégré à `main` : PR #40**, préanalyse structurelle de paragraphes, guillemets sources, groupes complets, fonctions et relations syntaxiques provisoires avec offsets et gouverneurs vérifiables.
+- **Cohorte déterministe active :** SHA `140097d47116afac4172bd87b32bff8f9628e53a270c6b1dcca85d74a4b0cfe4`; **411/500**, **89 résidus**. File correspondante dans [`GRAMMAR_CASE_QUEUE.json`](GRAMMAR_CASE_QUEUE.json), prochain index **16**. Anciennes cohortes 475/500, 425/500 et 416/500 = historique non directement comparable.
+- **Mesures source :** 22 125 unités, 69 379 constituants provisoires; 906 unités réclament encore du contexte source. Les 500 positions précédentes ont été remappées : 326 étendues modifiées, 451 provisoirement complètes. Les catégories provisoires ne garantissent pas la justesse de l'arbre choisi.
+- **Limite :** `Parser.parse` reçoit encore du texte et ne consomme pas le graphe de relations pour limiter ou composer les arbres. Ne pas prétendre que cette phase est déjà implémentée.
+- **Vérifications fusionnées :** [Layer 1 #43080700620](https://github.com/leye0/seman2/actions/runs/43080700620) (627 tests, 120/120 gold, 24/24 contrastes) et [500 romans #43080700568](https://github.com/leye0/seman2/actions/runs/43080700568) (411/500, sans erreurs d'exécution).
+
 ## 1. Une seule architecture prise en charge
 
 Seman2 est actuellement un **parseur grammatical symbolique anglais (Layer 1)** qui conserve le texte original, les spans et mots, les candidats lexicaux et leurs sous-catégories/traits, et restitue, quand elles existent, des analyses syntaxiques alternatives. Des recettes de relations sémantiques peuvent interpréter ces arbres; **le Layer 2 d'identités, mémorisation et apprentissage n'est PAS implémenté**.

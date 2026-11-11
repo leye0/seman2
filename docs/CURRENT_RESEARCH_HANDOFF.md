@@ -5,7 +5,19 @@
 **PROTOCOLE OBLIGATOIRE DE CORRECTION D'UNE PHRASE : [`GRAMMAR_CASE_FIX_PROTOCOL.md`](GRAMMAR_CASE_FIX_PROTOCOL.md).**
 Ce document est un aide-mémoire humain; si un ancien compte rendu contredit le code actuel ou RUN_CURRENT_LAYER1, vérifier `main` et suivre ce dernier.
 
-## Couche structurelle livrée — 11 novembre 2026 (référence actuelle)
+## ÉTAT COURANT — préanalyse des énoncés complets intégrée à main (11 novembre 2026)
+
+- **PR #40 fusionnée** au commit `68fbb3d1c46e5b739c7d94cfb924dc6b85c82ec0`, arbre de code identique à la branche testée `ae494bc7df12a983554974de4975b0250e158681`. Le chemin de production est maintenant `gutenberg_novels.analysis_units → structural_preanalysis.analyze_paragraph → extract → parse_corpus_case → Parser.parse`.
+- **Changement de niveau architectural :** les frontières des unités respectent les citations multipartites; les points-virgules ne découpent plus les phrases du corpus. Les constituants ont `function`, `relation`, `governor`, `evidence` et offsets sources originaux. Citations non closes dans le paragraphe = `requires_source_context`, pas de ponctuation inventée, pas de réussite prétendue.
+- **Couche structurelle provisoire, PAS analyse finale :** les attributs et références sont audités et exposés à `PreparedCorpusInput`, mais `Parser.parse` ne consomme pas encore le graphe pour construire ou limiter sa forêt syntaxique. Les phrases longues et les discours d'un paragraphe à l'autre restent une priorité.
+- **CI Layer 1 [#43080700620](https://github.com/leye0/seman2/actions/runs/43080700620) verte : 627 tests, 120/120 gold, 24/24 contrastes positifs.** Les 29 témoins grammaticaux historiques sont figés en fixtures source, sans imposer leurs vieux indices au découpeur courant.
+- **CI romans [#43080700568](https://github.com/leye0/seman2/actions/runs/43080700568) verte : cohorte SHA `140097d47116afac4172bd87b32bff8f9628e53a270c6b1dcca85d74a4b0cfe4`, **411/500**, **89 résidus** (18 sans racine, 54 racines sans analyse valide, 11 limites de forêt, 6 délais, 0 erreur). Échantillon différent : 411 n'est PAS une régression mesurée contre 416 ou 425.
+- **Audit complet :** 11 144 paragraphes et 22 125 unités de discours, dont 21 219 admissibles et 906 nécessitant du contexte; 69 379 constituants typés, 10 875 citations appariées; **0 ponctuation synthétique et 0 découpage de point-virgule**.
+- **Sur les 500 anciennes positions sources [#43080700618](https://github.com/leye0/seman2/actions/runs/43080700618) :** 326 changent d'étendue, 174 inchangées, 451 provisoirement complètes, 49 encore contextualisées, 487 unités distinctes. Ce n'est PAS une évaluation de succès grammatical sur le même jeu.
+- **Nouvelle file active** : `docs/GRAMMAR_CASE_QUEUE.json`, 89 résidus, prochain index `16`, `case_id=766:15fcebb30fe8216f`. Références précédentes dans les sections ci-dessous = historiques.
+- **Prochaine étape de recherche :** transformer les rapports de discours `requires_source_context` en véritables unités complètes interparagraphes, puis utiliser les dépendances source de haut niveau pour produire une analyse compositionnelle correcte, sans multiplication de règles de grammaire destinées à réparer des fragments.
+
+## Historique — première couche de cohésion (PR #38, remplacée dans le chemin de production)
 
 - La [PR #38](https://github.com/leye0/seman2/pull/38) est **fusionnée** au commit `14aba462789392e6b9b38434fc8b187b520cd3f2`. Le module `superparser/seman_parser/structural_units.py` intervient explicitement après la segmentation ponctuationnelle et avant les unités passées au parseur, et documente chaque lien par sa justification structurale. Il ne fait aucun parsing complet et n'emploie aucun lexique alternatif. Les guillemets et spans source restent dans le pipeline existant.
 - [CI Layer 1 #43046480644](https://github.com/leye0/seman2/actions/runs/43046480644) **verte** : **619 tests**, 120/120 annotations, 24/24 contrastes positifs, 9 négatifs toujours acceptés, smoke canonique/adaptatif/dialogue OK. Les anciens tests #434 et #438, dont l'index provenait du vieux corpus, ont été convertis en témoins par texte source.

@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "140097d47116afac4172bd87b32bff8f9628e53a270c6b1dcca85d74a4b0cfe4",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "New SHA from source-identical deterministic sampler with quote-complete discourse units and typed grammatical constituents. Previous cohort baseline retained under prior_preanalysis_baseline. No numerical coverage comparison across SHA changes.",
+  "note": "Main contains paragraph-level source-faithful grammatical preanalysis and typed governors (PR #40). 411/500 new corpus parse baseline; never compare against older cohorts with different SHA. 451/500 original anchors are currently provisionally source-complete, not guaranteed grammatical parses.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -23,5 +23,52 @@
     },
     "common_cases_with_prior_cohort": 137,
     "status_changes_on_common_cases": 0
+  },
+  "baseline": {
+    "validated_merge_commit": "68fbb3d1c46e5b739c7d94cfb924dc6b85c82ec0",
+    "tested_pr_head_sha": "ae494bc7df12a983554974de4975b0250e158681",
+    "validated_tree_sha": "571e4ec2c1a3f9d8a41b45d2ef5d7bf1529fea70",
+    "layer1_ci_run": "https://github.com/leye0/seman2/actions/runs/43080700620",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43080700568",
+    "anchored_source_audit_ci_run": "https://github.com/leye0/seman2/actions/runs/43080700618",
+    "completed": 411,
+    "unresolved": 89,
+    "statuses": {
+      "complete": 411,
+      "no_structural_root": 18,
+      "roots_without_valid_analysis": 54,
+      "forest_budget_exceeded": 11,
+      "timeout": 6,
+      "error": 0
+    },
+    "current_source_segmentation": {
+      "paragraphs": 11144,
+      "analysis_units": 22125,
+      "eligible_for_parse": 21219,
+      "requires_source_context": 906,
+      "typed_constituents": 69379,
+      "source_matched_quotes": 10875,
+      "synthetic_quote_or_terminal_marks": 0,
+      "over_32_tokens": 8239
+    },
+    "anchored_prior_500": {
+      "original_anchors": 500,
+      "unchanged_source_extent": 174,
+      "changed_source_extent": 326,
+      "distinct_new_units": 487,
+      "currently_provisional_complete": 451,
+      "requires_source_context": 49,
+      "notes": "Source/structure comparison only; not same grammar recognition cohort."
+    },
+    "layer1_quality": {
+      "unittest_passed": 627,
+      "gold_annotations": "120/120",
+      "positive_contrasts": "24/24"
+    },
+    "grammar_rule_review": {
+      "total_rules": 608,
+      "review_candidates": 45,
+      "confirmed_invalid": 0
+    }
   }
 }
