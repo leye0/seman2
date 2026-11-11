@@ -31,6 +31,16 @@ class PreparedCorpusInput:
     synthetic_suffix: str
     synthetic_terminal: bool
     mode: CorpusParseMode
+    structural_constituents: tuple[Mapping[str, Any], ...] = ()
+    structural_status: str = "not_supplied"
+    quotation_status: str = "not_supplied"
+
+    def source_component(self, component_id: str) -> str:
+        """Return exact source text for a documented grammatical function."""
+        for part in self.structural_constituents:
+            if part["id"] == component_id:
+                return self.source_text[part["start"]:part["end"]]
+        raise KeyError(component_id)
 
     def reference_span(self, analysis_start: int, analysis_end: int) -> tuple[int, int] | None:
         """Map a non-synthetic analysis span to the frozen reference exactly.
@@ -82,6 +92,27 @@ def prepare_corpus_input(
         raise ValueError("Quote-transfer fields must be strings")
     if not balanced.startswith(prefix) or not balanced.endswith(suffix):
         raise ValueError("Quote-transfer prefix/suffix do not match analysis text")
+    structure = tuple(case.get("structural_constituents", ()))
+    if structure:
+        identifiers = [part.get("id") for part in structure]
+        if len(set(identifiers)) != len(identifiers) or "u0" not in identifiers:
+            raise ValueError("Structural constituent IDs must be unique and rooted")
+        for part in structure:
+            if not isinstance(part, Mapping):
+                raise ValueError("Malformed structural constituent")
+            a, b = part.get("start"), part.get("end")
+            if not isinstance(a, int) or not isinstance(b, int) or not (0 <= a < b <= len(source)):
+                raise ValueError("Structural source span lies outside the actual text")
+            if part.get("governor") is not None and part["governor"] not in identifiers:
+                raise ValueError("Structural governor cannot point outside this source unit")
+            if not part.get("function") or not part.get("relation"):
+                raise ValueError("Structural functions and relations are required")
+        if reference != source or balanced != source or prefix or suffix:
+            raise ValueError("A structured unit cannot include synthetic text")
+        if case.get("quotation_status") != "balanced":
+            raise ValueError("Unresolved quotation cannot enter complete grammar parsing")
+        if case.get("structural_status") != "provisional_complete_utterance":
+            raise ValueError("Only structurally coherent source utterances may be parsed")
     if mode is CorpusParseMode.HISTORICAL_REFERENCE:
         return PreparedCorpusInput(
             analysis_text=reference,
@@ -91,6 +122,9 @@ def prepare_corpus_input(
             synthetic_suffix=case.get("synthetic_suffix", ""),
             synthetic_terminal=bool(case.get("synthetic_terminal", False)),
             mode=mode,
+            structural_constituents=structure,
+            structural_status=case.get("structural_status", "not_supplied"),
+            quotation_status=case.get("quotation_status", "not_supplied"),
         )
     return PreparedCorpusInput(
         analysis_text=balanced,
@@ -100,6 +134,9 @@ def prepare_corpus_input(
         synthetic_suffix=suffix,
         synthetic_terminal=bool(case["balanced_synthetic_terminal"]),
         mode=mode,
+        structural_constituents=structure,
+        structural_status=case.get("structural_status", "not_supplied"),
+        quotation_status=case.get("quotation_status", "not_supplied"),
     )
 
 
