@@ -21,6 +21,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Print deterministic current 500-case cohort SHA before parsing
+        run: |
+          PYTHONPATH=superparser python - <<'PY'
+          from scripts.diagnose_novel_parses import select_cases
+          from scripts.audit_context_dependencies import fingerprint
+          cases, _ = select_cases(500)
+          print("CURRENT_COHORT_SHA256", fingerprint(cases), flush=True)
+          PY
       - name: Fetch WordNet
         run: |
           python - <<'PY'
@@ -97,9 +105,6 @@ jobs:
       - name: Report unlisted attested hyphenated compounds
         run: |
           PYTHONPATH=superparser python -m scripts.audit_literary_lexicon --top 30
-      - name: Inspect actual best trees on three recovered novel cases
-        run: |
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.audit_novel_tree_quality --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --indices 8,44,86,87,94,107,124,178,212,213,215,218,226,232,236,250,308,313,316,321,328,331,338,343,349,357,359,361,365,368,399,403,405,412,413,423,427,435,438,439,458,459,473,480,486,487 --alternatives 1 --lexical-audit
       - name: Verify documented canonical, adaptive and dialogue execution
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m scripts.smoke_layer1

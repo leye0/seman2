@@ -1,0 +1,7 @@
+{
+  "schema": "seman2-current-cohort-v1",
+  "segmenter": "source-preserving-dependency-aware",
+  "sample_count": 500,
+  "cohort_sha256": "UNPINNED_AFTER_SEGMENTATION_MIGRATION",
+  "notes": "Temporary migration pin; must be replaced with printed CI digest before merge. Former cohort cf58d1c... lives in Git history."
+}
