@@ -89,7 +89,7 @@ class ParagraphPreanalysisTests(unittest.TestCase):
         reporter = next(c for c in unit.constituents
                         if c.function == "reporting_clause")
         self.assertEqual(unit.text[speech.start:speech.end], "“I have arrived,”")
-        self.assertEqual(unit.text[reporter.start:reporter.end], "said")
+        self.assertEqual(unit.text[reporter.start:reporter.end], "said Mary")
         self.assertEqual(speech.governor, reporter.id)
         self.assertEqual(speech.relation, "reported_content")
 

@@ -260,10 +260,26 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
         match = _REPORT.search(masked)
         governor, relation = "u0", "direct_speech"
         if match:
+            # The reporting CLAUSE includes its overt speaker NP where one is
+            # present; do not mislabel the verb alone as an entire clause.
+            before = masked[:match.start()]
+            boundary = max(
+                before.rfind(","), before.rfind("."), before.rfind("!"),
+                before.rfind("?"), before.rfind(";"),
+            )
+            first = boundary + 1
+            while first < match.start() and masked[first].isspace():
+                first += 1
+            after = masked[match.end():]
+            following = re.search(r"[,;.!?]", after)
+            last = match.end() + (following.start() if following else len(after))
+            while last > match.end() and masked[last-1].isspace():
+                last -= 1
             governor, relation = f"r{j}", "reported_content"
             cs.append(StructuralConstituent(
-                governor, "reporting_clause", match.start(), match.end(),
-                "u0", "reporting_predicate", "overt_communication_verb",
+                governor, "reporting_clause", first, last,
+                "u0", "reporting_predicate",
+                "overt_reporting_verb_and_clause_span",
             ))
         cs.append(StructuralConstituent(
             f"q{j}", "direct_speech", a, b, governor, relation,
