@@ -64,6 +64,35 @@ parser probes. A complete tree exists under original budgets, but its
 top-three trees. See [CASE_64_QUOTED_SHARED_SUBJECT.md](CASE_64_QUOTED_SHARED_SUBJECT.md).
 **No case64 grammar resolution or 500-case gain is claimed.**
 
+## Nested quotation followed by a causal aside (frozen case 105)
+
+In *David Copperfield* the source is a **single reported-speech construction**:
+
+> ‘Says Em’ly, “Martha, is it you? Oh, Martha, can it be you?”--for they had sat at work together, many a day, at Mr. Omer’s.’
+
+Historical v1 splits **after the first internal question**. The resulting
+second unit, `Oh, Martha, can it be you?”--for ...`, has lost the opening
+reported-speech clause and is a poor target for autonomous grammatical
+analysis. The previous v2 quoted-continuation rule recognized coordination
+(`and/but/or`) after a quote, not a dash-led causal explanation.
+
+V2 now also keeps the whole construction when an open quote contains **exactly
+one following complete quoted sentence**, which reaches that quote's closing
+delimiter and is immediately followed by `--for`, `—for`, `–for` or a
+corresponding `because` explanation. This requires both **quote-stack
+evidence** and **source punctuation**; it is not a word-specific exception
+for *Martha* or *Dickens*. Distinct narrative sentences without this
+continuation still split normally; `--fortunately` and `--forgone` are not
+causal markers.
+
+The test for case 105 compares the **exact v1 two-unit source split** with
+the **v2 one-unit source** and the full `extract(...,
+segmentation_version=2)` quote-balanced provenance, plus two independent
+positives and adverse contrasts. The 500-case SHA, ordinals and reference
+scores **are unchanged**. This addresses the extraction defect; it
+does **not** by itself prove the larger v2 sentence has a grammatical
+rank-1 parse.
+
 ## Versioned behavior
 
 - **v1 (historical, default in corpus extraction):** split at every
