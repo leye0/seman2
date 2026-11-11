@@ -230,6 +230,11 @@ def parse_corpus_case(
     """
     prepared = prepare_corpus_input(case, mode=mode)
     options = {"max_items": max_items, "kbest_work_limit": kbest_work_limit}
+    # This is the canonical bridge from source-level grammatical constituents
+    # to the actual public parser. The parser may compose ONLY fully proven
+    # clause interfaces; a provisional source label never counts as a tree.
+    if prepared.structural_constituents:
+        options["structural_constituents"] = prepared.structural_constituents
     if diagnostic_k is not None:
         if not 1 <= diagnostic_k <= 64:
             raise ValueError("diagnostic_k must be 1..64 in corpus research")

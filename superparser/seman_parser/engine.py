@@ -111,6 +111,7 @@ class ParserResources:
                 "source": str(directory),
                 "semantic_rules": str(semantic_path),
                 "dialogue_rules": str(directory / "dialogue_grammar.jsonl"),
+                "dialogue_structural_rules": str(directory / "dialogue_structural_grammar.jsonl"),
                 "marked_usage_rules": str(directory / "marked_usage_grammar.jsonl"),
                 "dialogue_semantic_rules": str(directory / "dialogue_semantic_rules.jsonl"),
             },
@@ -271,6 +272,31 @@ class Parser:
                             lexical_left_corner_pruning=lexical_left_corner_pruning,
                             local_attachment_tiebreak=local_attachment_tiebreak,
                         )
+        # Grammatically certified composition of multiple independent speech
+        # clauses from the source preanalysis. Compile the tiny declarative
+        # assembly grammar once; never add its general productions to the
+        # unrestricted ordinary/full-dialogue forest.
+        self._quoted_sentence_composer = None
+        self._quoted_sentence_resources: ParserResources | None = None
+        dialogue_structural_path = resources.metadata.get("dialogue_structural_rules")
+        if (self.goal_category == "CLAUSE" and dialogue_structural_path
+                and Path(dialogue_structural_path).is_file()):
+            from .structural_composition import QuotedSentenceComposer
+            source_rules = tuple(load_grammar(dialogue_structural_path))
+            if source_rules:
+                self._quoted_sentence_composer = QuotedSentenceComposer(
+                    dialogue_structural_path
+                )
+                self._quoted_sentence_resources = ParserResources(
+                    grammar=Grammar((
+                        *syntax_rules,
+                        *(tuple(load_grammar(dialogue_path)) if dialogue_path
+                          and Path(dialogue_path).is_file() else ()),
+                        *source_rules,
+                    )),
+                    lexicon=resources.lexicon, types=resources.types,
+                    metadata=resources.metadata,
+                )
         # Derived solely from the static function-word inventory.  Looking
         # for an early boundary must never wake WordNet up.
         self._coord_surfaces = frozenset(
@@ -369,6 +395,7 @@ class Parser:
         allow_marked_deviations: bool = False,
         rejection_trace_limit: int = 0,
         preflight_diagnostics: bool = False,
+        structural_constituents: Sequence[Mapping[str, Any]] | None = None,
     ) -> ParseReport:
         """SINGLE public parsing entry point, including corpus diagnostics.
 
@@ -379,7 +406,8 @@ class Parser:
         if not 0 <= rejection_trace_limit <= 100:
             raise ValueError("rejection_trace_limit must be in 0..100")
         original = text.strip()
-        use_cache = (not preflight_diagnostics and not allow_marked_deviations
+        use_cache = (not structural_constituents and not preflight_diagnostics
+                     and not allow_marked_deviations
                      and rejection_trace_limit == 0
                      and all(value is None for value in (
             max_items, kbest_work_limit, diagnostic_k, beam,
@@ -402,6 +430,28 @@ class Parser:
                     self._capture_fast_preflight(original_lattice)
                     if preflight_diagnostics else None
                 )
+                # The structural preanalysis is no longer passive metadata.
+                # When it supplies two/three complete internal speech clauses,
+                # independently prove each finite NP-VP tree and compose the
+                # interfaces with real quote/stops via a declarative grammar.
+                # If any proof fails, preserve ordinary full-dialogue parsing.
+                if (structural_constituents
+                        and self._quoted_sentence_composer is not None):
+                    composed = self._quoted_sentence_composer.compose(
+                        self, original, original_lattice,
+                        structural_constituents,
+                        max_items=max_items,
+                        kbest_work_limit=kbest_work_limit,
+                        diagnostic_k=diagnostic_k, beam=beam,
+                    )
+                    if composed is not None:
+                        return self._attach_fast_preflight(ParseReport(
+                            result=composed,
+                            resources=(
+                                self._quoted_sentence_resources or self.resources
+                            ),
+                            lattice=original_lattice,
+                        ), preflight)
                 # One recognizer call: it tries scoped dialogue then the
                 # ordinary grammar. NEVER discard quote marks and retry.
                 spoken = self._parse_lattice(

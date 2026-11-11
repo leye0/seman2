@@ -127,3 +127,24 @@ catégories et les résultats du parseur demeurent séparés : une citation
 ayant plusieurs sous-clauses annotées ne constitue pas pour autant un arbre
 syntaxique complet et correct. L'audit ne modifie ni les échantillons, ni
 les budgets de parsing, ni les grammaires.
+
+## Composition effective des propositions de discours direct
+
+`parse_corpus_case` transmet désormais le graphe annoté au **même**
+`Parser.parse`, qui peut l'employer pour un cas étroitement attesté :
+une citation complète contenant deux ou trois propositions finies
+sujet–prédicat indépendantes. Le `QuotedSentenceComposer` passe chaque
+plage source au moteur d'unification existant, exige pour chacune un
+arbre complet et choisi de type `clause_np_vp`, puis vérifie la construction
+d'ensemble avec les productions déclaratives de
+`data/dialogue_structural_grammar.jsonl`. La racine renvoyée contient les
+sous-arbres grammaticaux réels, via `SegmentInterface`, et les ponctuations
+et guillemets de la source. La composition et les budgets cumulés sont
+traçables dans les statistiques du parseur. Si un élément échoue, le
+parseur retombe sur le traitement ordinaire sans déclarer de réussite.
+
+Cette première composition ne couvre pas encore les propos interrompus par
+une incise, les subordonnées transphrastiques ni les ellipses contextuelles :
+leurs graphes sources sont disponibles, mais un schéma grammatical de
+composition validé reste nécessaire. Une amélioration du nombre d'arbres
+retenus n'est revendiquée que si la cohorte courante et les tests le prouvent.
