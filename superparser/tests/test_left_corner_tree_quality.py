@@ -11,7 +11,7 @@ from pathlib import Path
 
 from seman_parser import Parser
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
-from scripts.diagnose_novel_parses import select_cases
+from superparser.tests.attested_novel_cases import select_attested_cases as select_cases
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 

@@ -2,6 +2,7 @@
   "schema": "seman2-current-cohort-v1",
   "segmenter": "source-preserving-dependency-aware",
   "sample_count": 500,
-  "cohort_sha256": "UNPINNED_AFTER_SEGMENTATION_MIGRATION",
-  "notes": "Temporary migration pin; must be replaced with printed CI digest before merge. Former cohort cf58d1c... lives in Git history."
+  "cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
+  "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
+  "note": "This is a new cohort from the single active segmenter. Its scores cannot be compared with the historical cohort. Original data remain in Git history."
 }
