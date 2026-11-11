@@ -81,6 +81,28 @@ class QuotedStructuralCompositionTests(unittest.TestCase):
         self.assertEqual(len(result.best().children), 8)
         self.assertEqual(prepared.source_component("qc0_2"), "Jane walks.")
 
+    def test_composed_dialogue_preserves_reported_content_and_speech_links(self):
+        source = '"John walks," said Mary, "Jane walks."'
+        rows, _ = extract(
+            Book(999, "Grammar", "Test", "train"),
+            source, length_min=1, length_max=120,
+        )
+        self.assertEqual(len(rows), 1)
+        report = self.parser.parse(
+            source,
+            structural_constituents=rows[0]["structural_constituents"],
+            max_items=50_000,
+            kbest_work_limit=500_000,
+        )
+        self.assertTrue(report.result.completed, report.result.stats)
+        self.assertEqual(report.result.best().rule_id,
+                         "dialogue_structural_intercalated_two_finite_clauses")
+        relations = [r.as_dict()["relation"]
+                     for r in report.interpret().graph.relations]
+        self.assertIn("AGENT", relations)
+        self.assertIn("REPORTED_CONTENT", relations)
+        self.assertIn("CONTINUED_SPEECH", relations)
+
     def test_no_composition_when_one_part_is_not_a_finite_clause(self):
         source = '"John walks. Very quickly."'
         prepared, _, result = self._parse_case(source)
