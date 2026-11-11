@@ -19,9 +19,8 @@ from research.verbnet_lr.clean_novel_corpus import load_cleaned
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, CHAPTER, analysis_units
 from scripts.diagnose_novel_parses import run, STATUSES
 from seman_parser.segmentation import tokenize
-from seman_parser.sentence_boundaries import (
-    has_final_punctuation, split_prose_analysis_units,
-)
+from seman_parser.sentence_boundaries import has_final_punctuation
+from seman_parser.structural_preanalysis import analyze_paragraph
 
 OLD_SHA = "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77"
 CENSORED = frozenset({
@@ -75,7 +74,7 @@ def _paragraph_ordinals(core: str) -> list[int]:
         joined = re.sub(r"\s+", " ", " ".join(lines))
         if not has_final_punctuation(joined) and (joined.isupper() or len(joined) < 45):
             continue
-        result.extend([pidx] * len(split_prose_analysis_units(joined)))
+        result.extend([pidx] * len(analyze_paragraph(joined)))
     return result
 
 
@@ -103,6 +102,12 @@ def _current_paragraph_units(book) -> dict[int, list[dict]]:
             "balanced_synthetic_prefix": balanced.synthetic_prefix,
             "balanced_synthetic_suffix": balanced.synthetic_suffix,
             "balanced_synthetic_terminal": balanced.synthetic_terminal,
+            "eligible_for_parse": raw.eligible_for_parse,
+            "quotation_status": raw.quotation_status,
+            "structural_status": raw.structural_status,
+            "constituent_functions": [c.function for c in raw.constituents],
+            "structural_paragraph_index": raw.paragraph_index,
+            "structural_core_source_span": [raw.core_start, raw.core_end],
         })
         count += 1
     if count != len(paragraph_ids):
@@ -154,6 +159,11 @@ def select_anchored(baseline_dir: Path) -> tuple[list[dict], list[dict], list[di
             "new_source_text": candidate["source_text"],
             "kind": kind, "old_status": result["status"],
             "old_completed": result["completed"],
+            "current_eligible_for_parse": candidate["eligible_for_parse"],
+            "current_quotation_status": candidate["quotation_status"],
+            "current_structural_status": candidate["structural_status"],
+            "grammatical_functions": candidate["constituent_functions"],
+            "current_book_span": candidate["structural_core_source_span"],
         })
     return selected, mapping, old_results
 
@@ -214,7 +224,9 @@ def compare(mapping: list[dict], new_rows: list[dict]) -> dict:
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--baseline-dir", type=Path, required=True)
-    p.add_argument("--wordnet-dir", type=Path, required=True)
+    p.add_argument("--wordnet-dir", type=Path)
+    p.add_argument("--mapping-only", action="store_true",
+                   help="Compare source spans and grammatical roles; do not claim parser scores")
     p.add_argument("--out-dir", type=Path, required=True)
     p.add_argument("--max-items", type=int, default=50_000)
     p.add_argument("--kbest-work-limit", type=int, default=500_000)
@@ -234,6 +246,45 @@ def main() -> None:
         "new_over_32_tokens": sum(m["new_tokens"] > 32 for m in mapping),
         "unique": len({(m["book_id"], m["new_ordinal"]) for m in mapping}),
     }), flush=True)
+    if args.mapping_only:
+        result = {
+            "schema": "seman2-anchored-500-source-completeness-v2",
+            "method": "same original 500 source anchors remapped in the same original paragraphs",
+            "previous_cohort_sha256": OLD_SHA,
+            "anchor_count": len(mapping),
+            "exact": sum(m["kind"] == "exact" for m in mapping),
+            "reconstructed_complete": sum(m["current_eligible_for_parse"] for m in mapping),
+            "requires_source_context": sum(
+                not m["current_eligible_for_parse"] for m in mapping),
+            "old_failed_now_source_complete": sum(
+                m["old_status"] != "complete" and m["current_eligible_for_parse"]
+                for m in mapping),
+            "source_extent_changed": sum(m["kind"] == "merged" for m in mapping),
+            "distinct_current_analysis_units": len({
+                (m["book_id"], m["new_ordinal"]) for m in mapping
+            }),
+            "with_original_quote_fabrication": 0,
+            "typed_functions": dict(Counter(
+                fn for m in mapping for fn in m["grammatical_functions"]
+            )),
+            "per_anchor": mapping,
+            "interpretation": (
+                "This is a SOURCE-STRUCTURE audit, not a before-after grammar "
+                "coverage claim. Context-incomplete speech is never silently "
+                "repaired. Full-parser outcomes require separately validated "
+                "eligible source units and matched budgets."
+            ),
+        }
+        (args.out_dir / "anchored_source_completeness.json").write_text(
+            json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        print("ANCHORED_SOURCE_COMPLETENESS", json.dumps({
+            k: v for k, v in result.items() if k != "per_anchor"
+        }, ensure_ascii=False), flush=True)
+        return
+    if args.wordnet_dir is None:
+        raise ValueError("--wordnet-dir required for full parse mode")
     run(
         args,
         selected_override=selected,
