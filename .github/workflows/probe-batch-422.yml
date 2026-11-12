@@ -32,3 +32,7 @@ jobs:
       - name: Probe source-grounded candidate constituents
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_batch_422_roots
+      - name: Confirm current four families with exact selected-tree controls
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/wordnet" PYTHONPATH=superparser python -m unittest -q superparser.tests.test_batch_422_grammar
+
