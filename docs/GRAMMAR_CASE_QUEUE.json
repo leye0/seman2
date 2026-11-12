@@ -1,15 +1,10 @@
 {
   "schema": "seman2-grammar-case-queue-v2",
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-  "validated_commit": "4d59744e4d5ced2439af3a4ab3f2d1417334f318",
-  "completed_count": 422,
+  "validated_commit": "de4accce7b0909229024d5aedc10d92495c8dc95",
+  "completed_count": 426,
   "last_attempted_index": -1,
   "unresolved": [
-    {
-      "index": 41,
-      "status": "no_structural_root",
-      "case_id": "766:0889d247438b5ebb"
-    },
     {
       "index": 56,
       "status": "no_structural_root",
@@ -77,7 +72,7 @@
     },
     {
       "index": 110,
-      "status": "timeout",
+      "status": "kbest_budget_exceeded",
       "case_id": "766:c31971a0a1ada1d9"
     },
     {
@@ -111,11 +106,6 @@
       "case_id": "1342:fea088254f0ae7bd"
     },
     {
-      "index": 175,
-      "status": "roots_without_valid_analysis",
-      "case_id": "1342:0fc6dca10b6b48b7"
-    },
-    {
       "index": 189,
       "status": "roots_without_valid_analysis",
       "case_id": "1342:41e23438a4717cff"
@@ -127,7 +117,7 @@
     },
     {
       "index": 206,
-      "status": "timeout",
+      "status": "kbest_budget_exceeded",
       "case_id": "1342:fe7102c065aebf90"
     },
     {
@@ -226,11 +216,6 @@
       "case_id": "84:d656e31fd97d4e08"
     },
     {
-      "index": 315,
-      "status": "roots_without_valid_analysis",
-      "case_id": "84:883d6bdcb8a579b8"
-    },
-    {
       "index": 319,
       "status": "roots_without_valid_analysis",
       "case_id": "84:7ee87a8a9ac10b1f"
@@ -294,11 +279,6 @@
       "index": 373,
       "status": "roots_without_valid_analysis",
       "case_id": "84:df685628548f2648"
-    },
-    {
-      "index": 384,
-      "status": "roots_without_valid_analysis",
-      "case_id": "120:a7e247552ca805e8"
     },
     {
       "index": 408,
@@ -396,5 +376,5 @@
       "case_id": "120:831e1f5ff09a8b07"
     }
   ],
-  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43265877144"
+  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43276149953"
 }
