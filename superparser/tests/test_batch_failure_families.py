@@ -105,7 +105,7 @@ class BatchGrammarFamilyTests(unittest.TestCase):
             ("The room was already empty.",
              ("vp_copula_predicative_scope_adjective",)),
             ("That she hired.",
-             ("clause_object_topicalization_finite_demonstrative",)),
+             ("structural_topical_finite_demonstrative",)),
             ("Good evening, my friend.",
              ("clause_time_of_day_valediction_vocative",)),
             ("The product was deemed safe and effective.",
@@ -128,7 +128,7 @@ class BatchGrammarFamilyTests(unittest.TestCase):
     def test_negative_licensing_and_agreement_controls(self):
         pairs = (
             ("That she vanished.",
-             "clause_object_topicalization_finite_demonstrative"),
+             "structural_topical_finite_demonstrative"),
             ("Good table, my sister.",
              "clause_time_of_day_valediction_vocative"),
             ("The product was read safe and effective.",
