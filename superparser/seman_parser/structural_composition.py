@@ -222,6 +222,478 @@ class QuotedSentenceComposer:
         }
         return assembled
 
+    def _compose_verified_dialogue_pattern(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        specs: Sequence[tuple[str, int, int, str, Mapping[str, str]]],
+        expected_rule: str, *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Shared exact-source phrase proof and grammar assembly.
+
+        A spec is (category, absolute start, absolute end, source kind,
+        required features). It NEVER fabricates a lexical edge, parser
+        interface, word or punctuation. Source structure proposes only the
+        boundaries; independently selected ranked subtree proves each phrase.
+        """
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1600 or total_work < 1600:
+            return None
+        phrase_n = sum(kind == "phrase" for _, _, _, kind, _ in specs)
+        piece_items = total_items // (phrase_n + 1)
+        piece_work = total_work // (phrase_n + 1)
+        candidates: list[LexicalCandidate] = []
+        proofs: list[ParseResult] = []
+        punctuation_spans: list[list[int]] = []
+        typed_spans: list[list[Any]] = []
+        original_terms = {
+            "OPEN-QUOTE": set('"“‘'),
+            "CLOSE-QUOTE": set('"”’'),
+            "COMMA": {","},
+            "QMARK": {"?"},
+            "EXCL": {"!"},
+            "SPEECH-STOP": set(".!?"),
+            "DASH": {"--", "—"},
+        }
+        for category, a, b, kind, required in specs:
+            if (not isinstance(a, int) or not isinstance(b, int)
+                    or not 0 <= a < b <= len(text)):
+                return None
+            surface = text[a:b]
+            if kind == "source-punctuation":
+                if category not in original_terms or surface not in original_terms[category]:
+                    return None
+                punctuation_spans.append([a, b])
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=surface,
+                    category=category, features=FeatureStructure.empty(),
+                    source="overt-original-dialogue-punctuation", score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "lexical":
+                matching = [
+                    c for c in original_lattice.candidates
+                    if c.category == category
+                    and (c.span_start, c.span_end) == (a, b)
+                    and all(c.features.as_dict().get(k) == v
+                            for k, v in required.items())
+                ]
+                if not matching:
+                    return None
+                candidates.append(max(matching, key=lambda c: c.score))
+            elif kind == "phrase":
+                grammar = (
+                    parser._dialogue_vector_grammar
+                    if category == "SPEECH-TAG"
+                    else parser._vector_grammar
+                )
+                if grammar is None:
+                    return None
+                lattice = parser._lattice_for_text(surface)
+                if category == "CLAUSE":
+                    proof = parser._parse_vector_text(
+                        surface, max_items=piece_items,
+                        kbest_work_limit=piece_work,
+                        diagnostic_k=diagnostic_k, beam=beam,
+                    )
+                else:
+                    proof = grammar.parse_lattice(
+                        lattice, goal_category=category,
+                        max_items=piece_items,
+                        kbest_work_limit=piece_work,
+                        diagnostic_k=diagnostic_k,
+                        beam=parser.beam if beam is None else beam,
+                    )
+                selected = proof.best()
+                if (not proof.completed or selected is None
+                        or selected.category != category
+                        or any(selected.features.as_dict().get(k) != v
+                               for k, v in required.items())):
+                    return None
+                if (category == "SPEECH-TAG"
+                        and not (selected.rule_id or "").startswith(
+                            "dialogue_speech_tag_")):
+                    return None
+                if category == "CLAUSE" and (
+                    selected.rule_id in ("clause_np_relative", "np_relative_obj")
+                    or any(s in surface for s in ['"', '“', '”', '‘', '’'])
+                ):
+                    return None
+                # A conditional question is a conditional CLAUSE whose
+                # main-clause child, not its root, carries stype=question.
+                # Explicitly inspect that selected ranked subordinate tree.
+                if (category == "CLAUSE"
+                        and expected_rule ==
+                        "dialogue_structural_split_polite_conditional_vocative_question"
+                        and (selected.rule_id != "clause_cond"
+                             or not selected.children
+                             or selected.children[-1].category != "CLAUSE"
+                             or selected.children[-1].features.as_dict().get(
+                                 "stype") != "question")):
+                    return None
+                proofs.append(proof)
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface,
+                    lemma=f"<verified-{category.lower()}>",
+                    category=category, features=selected.features,
+                    score=selected.score,
+                    source="source-scoped-selected-grammar-proof",
+                    provenance={"original_source_span": [a, b],
+                                "selected_rule_id": selected.rule_id},
+                    interface=SegmentInterface(proof, a, a, b),
+                ))
+            else:
+                raise ValueError("Unknown source proof kind")
+            typed_spans.append([category, a, b, kind])
+        graph = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        assembled = self._vector.parse_lattice(
+            graph, goal_category="CLAUSE",
+            max_items=total_items - phrase_n * piece_items,
+            kbest_work_limit=total_work - phrase_n * piece_work,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        selected = assembled.best()
+        if (not assembled.completed or selected is None
+                or selected.rule_id != expected_rule):
+            return None
+        if isinstance(assembled.stats, dict):
+            assembled.stats.update({
+                "engine": "vector-verified-source-dialogue-bulk",
+                "structural_composition": True,
+                "dialogue_scoped": True,
+                "source_text_unchanged": True,
+                "structural_composition_kind": expected_rule,
+                "structural_segment_count": phrase_n,
+                # Count independently licensed spoken finite clauses;
+                # reporting tags and reduced clauses are not extra
+                # autonomous spoken sentences.
+                "structural_clause_count": (
+                    sum(1 for category, _, _, _, _ in specs
+                        if category == "CLAUSE")
+                    + int(expected_rule in {
+                        "dialogue_structural_postposed_comparative_vocative_report",
+                        "dialogue_structural_split_vocative_copula_domain",
+                    })
+                ),
+                "structural_segment_spans": [
+                    [p[1], p[2]] for p in specs if p[3] == "phrase"
+                ],
+                "structural_segment_rule_ids": [
+                    p.best().rule_id for p in proofs
+                ],
+                "structural_segment_stats": [dict(p.stats) for p in proofs],
+                "source_punctuation_spans": punctuation_spans,
+                "source_grammatical_parts": typed_spans,
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+                "composition_linguistic_proof": (
+                    "every_original_source_lexical_frame_phrase_and"
+                    "_literal_punctuation_independently_verified_then"
+                    "_assembled_by_a_restricted_declarative_rule"
+                ),
+            })
+        assembled.shared_forest = {
+            "assembly": assembled.shared_forest,
+            "segments": tuple(p.shared_forest for p in proofs),
+            "interfaces": tuple(
+                c.interface for c in candidates if c.interface is not None
+            ),
+        }
+        return assembled
+
+    def _compose_bulk_dialogue_families(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Source-layout-based dispatch for four productive quote structures.
+
+        Every construction is proposed from actual paired delimiters,
+        relative punctuation and the structural utterance relation. Actual
+        proof uses the common bounded selected-tree assembler above.
+        """
+        by_id = {p.get("id"): p for p in components}
+        q0, r0, q1 = (by_id.get(k) for k in ("q0", "r0", "q1"))
+        if not q0 or q0.get("function") != "direct_speech":
+            return None
+        if any(p.get("function") in (
+            "embedded_quotation", "narratorial_parenthetical",
+        ) for p in components):
+            return None
+        quotes = quotation_boundaries(text)
+        if len(quotes) not in (2, 4):
+            return None
+        if any((x.end-x.start) != 1 for x in quotes):
+            return None
+        if [x.side for x in quotes] not in (
+            ["open", "close"], ["open", "close", "open", "close"],
+        ):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]] = []
+        def put(category: str, a: int, b: int, kind="lexical",
+                **required: str) -> None:
+            specs.append((category, a, b, kind, required))
+        def punct(category: str, a: int, b: int | None = None) -> None:
+            put(category, a, a+1 if b is None else b, "source-punctuation")
+        def match_groups(
+            match: re.Match[str], base: int,
+            categories: Sequence[str],
+            kinds: Mapping[int,str] | None = None,
+            requirements: Mapping[int,Mapping[str,str]] | None = None,
+        ) -> None:
+            kinds = kinds or {}
+            requirements = requirements or {}
+            for i, category in enumerate(categories, 1):
+                a,b = match.span(i)
+                put(category, base+a, base+b, kinds.get(i,"lexical"),
+                    **requirements.get(i,{}))
+        rule: str | None = None
+        a0,b0 = q0.get("start"), q0.get("end")
+        if not (a0 == 0 and isinstance(b0,int)
+                and len(text) > b0 + 3
+                and [quotes[0].start,quotes[1].end] == [0,b0]):
+            return None
+        # A single initial quote followed by a postposed report.
+        if (len(quotes) == 2 and q1 is None and r0 is not None
+                and r0.get("function") == "reporting_clause"):
+            ta,tb = r0.get("start"),r0.get("end")
+            if not (isinstance(ta,int) and isinstance(tb,int)
+                    and b0 < ta < tb == len(text)-1
+                    and text[b0:ta].isspace() and text[tb] == "."):
+                return None
+            quote_surface = text[1:b0-1]
+            reporter = text[ta:tb]
+            mp = re.fullmatch(r"(.+?)(--|—)([A-Za-z]+)(\?)",
+                              quote_surface)
+            mr = re.fullmatch(
+                r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+"
+                r"([A-Za-z]+)\s+([A-Za-z]+)\s+(.+)",
+                reporter,
+            )
+            if mp and mr:
+                rule = (
+                    "dialogue_structural_pp_dash_adverb_question_"
+                    "participial_reporter"
+                )
+                punct("OPEN-QUOTE",0)
+                match_groups(mp,1,
+                    ("PP","DASH","ADV","QMARK"),
+                    {1:"phrase",2:"source-punctuation",
+                     4:"source-punctuation"})
+                punct("CLOSE-QUOTE",b0-1)
+                match_groups(mr,ta,
+                    ("V","NP","COMMA","V","ADV","PP"),
+                    {2:"phrase",3:"source-punctuation",6:"phrase"},
+                    {1:{"vform":"finite"},
+                     4:{"vform":"ing","subcat":"prepositional"}})
+                punct("SPEECH-STOP",tb)
+            else:
+                mq = re.fullmatch(
+                    r"([A-Za-z]+)(,)\s+([A-Za-z]+)(,)\s+"
+                    r"([A-Za-z]+)(!)",quote_surface,
+                )
+                mt = re.fullmatch(
+                    r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+"
+                    r"([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                    r"([A-Za-z]+)\s+(.+)",
+                    reporter,
+                )
+                if mq and mt:
+                    if (mq.group(1).casefold()!=mq.group(3).casefold()
+                            or mq.group(1).casefold()!=mq.group(5).casefold()):
+                        return None
+                    rule = (
+                        "dialogue_structural_repeated_directional_"
+                        "exclamation_coordinated_report"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(mq,1,
+                        ("ADV","COMMA","ADV","COMMA","ADV","EXCL"),
+                        {2:"source-punctuation",
+                         4:"source-punctuation",6:"source-punctuation"})
+                    punct("CLOSE-QUOTE",b0-1)
+                    match_groups(mt,ta,
+                        ("NP","V","COMMA","COORD","V","NP","PP"),
+                        {1:"phrase",3:"source-punctuation",
+                         6:"phrase",7:"phrase"},
+                        {2:{"vform":"finite","subcat":"intransitive"},
+                         5:{"vform":"finite","subcat":"transitive"}})
+                    punct("SPEECH-STOP",tb)
+            if rule is None:
+                # Spoken finite comparison with a vocative and an
+                # independently attributed reporting tag. The comparative
+                # target is a possessive pronoun, not a spurious bare noun.
+                comparative = re.fullmatch(
+                    r"(.+?)\s+(am|are|is|was|were)\s+(more|less)\s+"
+                    r"(.+?)\s+(than)\s+([A-Za-z]+)(,)\s+(.+?)(,)",
+                    quote_surface,
+                )
+                if (comparative is not None
+                        and comparative.group(5).casefold() == "than"
+                        and comparative.group(3).casefold() in
+                           ("more", "less")):
+                    rule = (
+                        "dialogue_structural_postposed_comparative_"
+                        "vocative_report"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(comparative,1,
+                        ("NP","COPULA","DEGREE","PP","CONJ",
+                         "POSS-PRONOUN","COMMA","NP","COMMA"),
+                        {1:"phrase",4:"phrase",7:"source-punctuation",
+                         8:"phrase",9:"source-punctuation"},
+                        {2:{"vform":"finite"},
+                         6:{"independent_possessive":"true"}})
+                    punct("CLOSE-QUOTE",b0-1)
+                    put("SPEECH-TAG",ta,tb,"phrase")
+                    punct("SPEECH-STOP",tb)
+            if rule is None:
+                # Reduced temporal adjunct attaches to the reporter; the
+                # finite quote and its addressee are separately proved.
+                spoken_vocative = re.fullmatch(
+                    r"(.+?)(,)\s+(.+?)(,)",quote_surface,
+                )
+                temporal = re.fullmatch(
+                    r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+"
+                    r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                    r"([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                    r"([A-Za-z]+)\s+(.+)",
+                    reporter,
+                )
+                if (spoken_vocative is not None and temporal is not None
+                        and temporal.group(4).casefold() == "when"):
+                    rule = (
+                        "dialogue_structural_postposed_temporal_"
+                        "reduced_reporter"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(spoken_vocative,1,
+                        ("CLAUSE","COMMA","NP","COMMA"),
+                        {1:"phrase",2:"source-punctuation",
+                         3:"phrase",4:"source-punctuation"})
+                    punct("CLOSE-QUOTE",b0-1)
+                    match_groups(temporal,ta,
+                        ("V","NP","COMMA","CONJ","NEG-DEGREE","ADV",
+                         "ADJ","TO","V","NP"),
+                        {2:"phrase",3:"source-punctuation",10:"phrase"},
+                        {1:{"vform":"finite"},
+                         5:{"temporal_negation":"true"},
+                         7:{"infinitival_complement":"true"},
+                         9:{"vform":"base","subcat":"transitive"}})
+                    punct("SPEECH-STOP",tb)
+            if rule is None:
+                # Copular predicate coordination interrupted by an actual
+                # parenthetical finite speech-comment and followed by the
+                # normal postposed reporting clause.
+                parenthetical = re.fullmatch(
+                    r"(.+?)(,)\s+([A-Za-z]+)(,)\s+"
+                    r"(.+?)(,)\s+(.+?)(,)",
+                    quote_surface,
+                )
+                if parenthetical is not None:
+                    rule = (
+                        "dialogue_structural_postposed_predicative_"
+                        "coord_parenthetical_report"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(parenthetical,1,
+                        ("CLAUSE","COMMA","COORD","COMMA",
+                         "CLAUSE","COMMA","ADJP","COMMA"),
+                        {1:"phrase",2:"source-punctuation",
+                         4:"source-punctuation",5:"phrase",
+                         6:"source-punctuation",7:"phrase",
+                         8:"source-punctuation"})
+                    punct("CLOSE-QUOTE",b0-1)
+                    put("SPEECH-TAG",ta,tb,"phrase")
+                    punct("SPEECH-STOP",tb)
+        # Two quoted fragments separated by an actual reporting tag.
+        elif (len(quotes) == 4 and q1 is not None and r0 is not None
+              and q1.get("function") == "direct_speech"
+              and r0.get("function") == "reporting_clause"
+              and any(c.get("function") == "split_direct_speech_turn"
+                      for c in components)):
+            a1,b1 = q1.get("start"),q1.get("end")
+            ta,tb = r0.get("start"),r0.get("end")
+            if not (isinstance(a1,int) and isinstance(b1,int)
+                    and isinstance(ta,int) and isinstance(tb,int)
+                    and b1 == len(text)
+                    and 0 < b0 < ta < tb < a1 < b1
+                    and [q.start for q in quotes]==[0,b0-1,a1,b1-1]
+                    and text[b0:ta].isspace()
+                    and re.fullmatch(r"\s*,\s*",text[tb:a1])):
+                return None
+            first = text[1:b0-1]
+            second = text[a1+1:b1-1]
+            vocative = re.fullmatch(
+                r"([A-Za-z]+)(,)\s+([A-Za-z][A-Za-z.'-]*)(,)",
+                first,
+            )
+            copular = re.fullmatch(
+                r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+(.+?)(,)\s+"
+                r"(.+?)([.!?])",
+                second,
+            )
+            polite = re.fullmatch(
+                r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)"
+                r"(,)\s+([A-Za-z]+)(,)",
+                first,
+            )
+            if vocative and copular:
+                rule = "dialogue_structural_split_vocative_copula_domain"
+                punct("OPEN-QUOTE",0)
+                match_groups(vocative,1,
+                    ("ADV","COMMA","NP","COMMA"),
+                    {2:"source-punctuation",3:"phrase",
+                     4:"source-punctuation"})
+                punct("CLOSE-QUOTE",b0-1)
+                put("SPEECH-TAG",ta,tb,"phrase")
+                punct("COMMA",text.find(",",tb,a1))
+                punct("OPEN-QUOTE",a1)
+                match_groups(copular,a1+1,
+                    ("DET","ADJ","ADJ","N","COPULA",
+                     "COMMA","PP","COMMA","NP","SPEECH-STOP"),
+                    {6:"source-punctuation",7:"phrase",
+                     8:"source-punctuation",9:"phrase",
+                     10:"source-punctuation"},
+                    {5:{"vform":"finite"}})
+                punct("CLOSE-QUOTE",b1-1)
+            elif polite and second.endswith("?"):
+                rule=(
+                    "dialogue_structural_split_polite_conditional_"
+                    "vocative_question"
+                )
+                punct("OPEN-QUOTE",0)
+                match_groups(polite,1,
+                    ("CONJ","NP","V","COMMA","NP","COMMA"),
+                    {2:"phrase",4:"source-punctuation",
+                     5:"phrase",6:"source-punctuation"},
+                    {3:{"vform":"finite","polite_formula":"true"}})
+                punct("CLOSE-QUOTE",b0-1)
+                put("SPEECH-TAG",ta,tb,"phrase")
+                punct("COMMA",text.find(",",tb,a1))
+                punct("OPEN-QUOTE",a1)
+                put("CLAUSE",a1+1,b1-1,"phrase",
+                    mood="conditional")
+                punct("CLOSE-QUOTE",b1-1)
+        if rule is None:
+            return None
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,rule,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+
     def compose_unquoted_emphatic_subject(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
         components: Sequence[Mapping[str, Any]], *,
@@ -591,6 +1063,13 @@ class QuotedSentenceComposer:
     ) -> ParseResult | None:
         plan = self._plan(text, components)
         if plan is None:
+            bulk = self._compose_bulk_dialogue_families(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if bulk is not None:
+                return bulk
             intercalated = self._compose_intercalated(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
