@@ -24,5 +24,7 @@ jobs:
           PY
       - name: Probe attested grammatical interfaces across dialogue families
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_dialogue_families
+      - name: Probe additional dialogue constituent interfaces
+        run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_dialogue_more_families
       - name: Test four original source dialogue repairs with rank-one trees
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -m unittest -q superparser.tests.test_dialogue_bulk_24
