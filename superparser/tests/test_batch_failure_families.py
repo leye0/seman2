@@ -111,7 +111,7 @@ class BatchGrammarFamilyTests(unittest.TestCase):
             ("The letter itself was already open.",
              ("np_emphatic_reflexive_agreement",
               "vp_copula_predicative_scope_adjective")),
-            ("The work she finished.",
+            ("That she finished.",
              ("clause_object_topicalization_finite",)),
             ("Good evening, my friend.",
              ("clause_time_of_day_valediction_vocative",)),
@@ -131,7 +131,7 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         pairs = (
             ("The envelopes itself were already open.",
              "np_emphatic_reflexive_agreement"),
-            ("The mountain she vanished.",
+            ("That she vanished.",
              "clause_object_topicalization_finite"),
             ("Good table, my sister.",
              "clause_time_of_day_valediction_vocative"),
