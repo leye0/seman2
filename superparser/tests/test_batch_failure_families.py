@@ -55,9 +55,9 @@ class BatchGrammarFamilyTests(unittest.TestCase):
     def test_141_emphatic_reflexive_with_predicative_adverb(self):
         source = "The envelope itself was likewise full."
         result = self._attested(141, source)
-        np = self._rule(result, "np_emphatic_reflexive_agreement", "The envelope itself")
+        np = self._rule(result, "np_det_n_emphatic_reflexive_agreement", "The envelope itself")
         self.assertEqual([result.text[ch.start:ch.end] for ch in np.children],
-                         ["The envelope", "itself"])
+                         ["The", "envelope", "itself"])
         vp = self._rule(result, "vp_copula_predicative_scope_adjective",
                         "was likewise full")
         self.assertEqual([x.category for x in vp.children],
@@ -107,7 +107,7 @@ class BatchGrammarFamilyTests(unittest.TestCase):
     def test_positive_independent_construction_families(self):
         cases = (
             ("The letter itself was already open.",
-             ("np_emphatic_reflexive_agreement",
+             ("np_det_n_emphatic_reflexive_agreement",
               "vp_copula_predicative_scope_adjective")),
             ("Good evening, my friend.",
              ("clause_time_of_day_valediction_vocative",)),
@@ -126,7 +126,7 @@ class BatchGrammarFamilyTests(unittest.TestCase):
     def test_negative_licensing_and_agreement_controls(self):
         pairs = (
             ("The envelopes itself were already open.",
-             "np_emphatic_reflexive_agreement"),
+             "np_det_n_emphatic_reflexive_agreement"),
             ("Good table, my sister.",
              "clause_time_of_day_valediction_vocative"),
             ("The product was read safe and effective.",
