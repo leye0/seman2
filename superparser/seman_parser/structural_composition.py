@@ -322,6 +322,18 @@ class QuotedSentenceComposer:
                     or any(s in surface for s in ['"', '“', '”', '‘', '’'])
                 ):
                     return None
+                # A conditional question is a conditional CLAUSE whose
+                # main-clause child, not its root, carries stype=question.
+                # Explicitly inspect that selected ranked subordinate tree.
+                if (category == "CLAUSE"
+                        and expected_rule ==
+                        "dialogue_structural_split_polite_conditional_vocative_question"
+                        and (selected.rule_id != "clause_cond"
+                             or not selected.children
+                             or selected.children[-1].category != "CLAUSE"
+                             or selected.children[-1].features.as_dict().get(
+                                 "stype") != "question")):
+                    return None
                 proofs.append(proof)
                 candidates.append(LexicalCandidate(
                     span_start=a, span_end=b, surface=surface,
@@ -574,7 +586,7 @@ class QuotedSentenceComposer:
                 punct("COMMA",text.find(",",tb,a1))
                 punct("OPEN-QUOTE",a1)
                 put("CLAUSE",a1+1,b1-1,"phrase",
-                    stype="question")
+                    mood="conditional")
                 punct("CLOSE-QUOTE",b1-1)
         if rule is None:
             return None
