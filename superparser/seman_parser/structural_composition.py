@@ -953,6 +953,13 @@ class QuotedSentenceComposer:
     ) -> ParseResult | None:
         plan = self._plan(text, components)
         if plan is None:
+            bulk = self._compose_bulk_dialogue_families(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if bulk is not None:
+                return bulk
             intercalated = self._compose_intercalated(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
