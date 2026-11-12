@@ -3,7 +3,14 @@
 **SOURCE DE VÉRITÉ du dépôt `leye0/seman2`, branche `main`.**
 Ce fichier prime sur les anciens comptes rendus de recherche. Il est conçu pour un développeur ou un nouvel agent ChatGPT n'ayant lu aucune conversation antérieure.
 
-## Statut actuel du corpus (11 novembre 2026 — PR #41)
+## Statut actuel du corpus (11 novembre 2026 — PR #42)
+
+- **`main` intègre [PR #42](https://github.com/leye0/seman2/pull/42)** : la préanalyse structurelle guide maintenant réellement la composition syntaxique pour les constructions de dialogue attestées. Pipeline unique `extract → prepare_corpus_input → parse_corpus_case → Parser.parse(structural_constituents=...)`. Sous-clauses analysées par l'unification existante, interfaces grammaticales assemblées par `dialogue_structural_grammar.jsonl` et liens sémantiques `REPORTED_CONTENT / CONTINUED_SPEECH` vérifiés.
+- **SHA de cohorte inchangé :** `d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`. **411/500 complets, 89 échecs**; index de départ **11** (`766:7aeedec565c8d7f5`). Comparaison exactes des **mêmes 500 textes** : un gain certifié `#19 ‘Perfectly, sir.’`, **aucune régression de réussite** et deux reclassements d'échecs par budget. Aucun ajustement général de règles grammaticales pour contourner des fragments.
+- **Vérifications :** [Layer 1 #43102702013](https://github.com/leye0/seman2/actions/runs/43102702013) : 657 tests, 120/120 gold, 24/24 contrastes; [Romans #43102702010](https://github.com/leye0/seman2/actions/runs/43102702010) : 411/500, 0 erreur. Les 500 textes sont identiques à l'état antérieur.
+- **Périmètre :** composition prouvée pour 2–3 propositions finies dans une citation, 2 propositions finies séparées par `SPEECH-TAG` et énoncé mineur `ADV + vocatif`. Les subordonnées interrompues, le discours continué entre paragraphes, les autres ellipses et tous les rattachements généraux exigent une extension de la composition, pas une fiction de couverture.
+
+## HISTORIQUE — état avant composition (PR #41)
 
 - **`main` : [PR #41](https://github.com/leye0/seman2/pull/41) intégrée**, classification discursive fondée sur les preuves lexicales et le contexte source. Les fonctions **`minor_utterance`**, **`elliptical_supplement`**, **`reported_speech_continuation`**, **`documentary_navigation_notation`** et **`documentary_postscript`** disposent de références exactes au livre et de constituants typés.
 - Les énoncés mineurs sont grammaticalement valides et restent candidats. Seules les unités non autonomes ou documentaires ne sont pas testées comme propositions principales complètes. Aucun ajustement de grammaire n'a été introduit pour masquer les fragments; les sources et la ponctuation restent inchangées.

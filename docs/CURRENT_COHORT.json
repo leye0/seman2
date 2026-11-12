@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #41 delivered source-grounded discourse functions and contextual/documentary exclusions; minor utterances retained. Cohort reselected and pinned. 410/500 on the NEW cohort; 435 common utterances show no observed regressions (one timeout now completes). No grammar rules changed.",
+  "note": "PR #42 merged into main: actual source-verified compositional parsing of multi-sentence quotes, independent speech clauses interrupted by an overt reporting tag, and minor adv+vocative responses. Same 500 source texts compared: 410->411 complete; case 19 ‘Perfectly, sir.’ genuinely gained a selected grammatical tree; 0 complete-tree regressions. Semantics and source ranges validated. Subordinate/interparagraph discourse remains future work.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,6 +73,79 @@
     }
   },
   "baseline": {
+    "validated_merge_commit": "3e225f6e7cada310df7debec12164beb839b3bb0",
+    "validated_tested_head": "25f3b483f192affcfca46da8abecbe45add43a60",
+    "layer1_ci_run": "https://github.com/leye0/seman2/actions/runs/43102702013",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43102702010",
+    "completed": 411,
+    "unresolved": 89,
+    "statuses": {
+      "complete": 411,
+      "roots_without_valid_analysis": 57,
+      "no_structural_root": 16,
+      "forest_budget_exceeded": 11,
+      "kbest_budget_exceeded": 2,
+      "timeout": 3,
+      "error": 0
+    },
+    "same_cohort_comparison": {
+      "source_texts_identical": 500,
+      "old_complete": 410,
+      "new_complete": 411,
+      "unchanged_successes": 410,
+      "new_successes": [
+        {
+          "index": 19,
+          "case_id": "766:ae0257cb42e079c3",
+          "text": "‘Perfectly, sir.’",
+          "old_status": "no_structural_root",
+          "new_status": "complete",
+          "construction": "dialogue_structural_minor_adv_vocative"
+        }
+      ],
+      "regressions": 0,
+      "remaining_failure_category_changes": [
+        {
+          "index": 110,
+          "from": "timeout",
+          "to": "kbest_budget_exceeded"
+        },
+        {
+          "index": 206,
+          "from": "timeout",
+          "to": "kbest_budget_exceeded"
+        }
+      ],
+      "caveat": "This same-cohort comparison proves one grammatical parse gain; the two unresolved status changes remain failures."
+    },
+    "source_audit": {
+      "paragraphs": 11144,
+      "analysis_units": 22125,
+      "provisional_complete_utterances": 21202,
+      "unresolved_source_context": 923,
+      "documentary_units": 3,
+      "contextual_discourse_units": 16,
+      "minor_utterances": 382,
+      "typed_source_constituents": 87083,
+      "synthetic_punctuation": 0
+    },
+    "speech_error_audit": {
+      "direct_speech_total": 157,
+      "direct_speech_remaining_failures": 30,
+      "other_total": 343,
+      "other_remaining_failures": 59
+    },
+    "layer1_quality": {
+      "unit_tests": 657,
+      "gold_annotations": "120/120",
+      "positive_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 11,
+      "case_id": "766:7aeedec565c8d7f5"
+    }
+  },
+  "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
     "validated_tested_head": "bf0f2d53373430f35f09b7a7ee34f0209228fe36",
     "layer1_ci_run": "https://github.com/leye0/seman2/actions/runs/43091320052",
