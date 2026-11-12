@@ -935,7 +935,7 @@ class QuotedSentenceComposer:
         # we must not use that parse as a negative-determiner subject.
         for i in (1,3,5):
             a,b=match.span(i)
-            pair=re.fullmatch(r"([A-Za-z]+)\\s+([A-Za-z][A-Za-z-]*)",
+            pair=re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z][A-Za-z-]*)",
                               text[a:b])
             if pair is None:
                 return None
