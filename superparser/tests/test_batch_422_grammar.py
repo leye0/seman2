@@ -102,12 +102,39 @@ class Batch422GrammarTests(unittest.TestCase):
                          "pp_classifier_by_nominal")
         self.assertEqual(vp.children[2].rule_id, "np_det_n")
 
+    def test_384_contracted_modal_licenses_overt_zero_finite_complement(self):
+        source = "\"You'll find I do my duty.\""
+        result = self.actual(384, source)
+        root = self.selected(
+            result, "dialogue_structural_quoted_modal_zero_clausal_complement",
+            source,
+        )
+        self.assertEqual([n.category for n in root.children],
+                         ["OPEN-QUOTE", "NP", "MODAL", "V", "CLAUSE",
+                          "SPEECH-STOP", "CLOSE-QUOTE"])
+        self.assertEqual(
+            [source[n.start:n.end] for n in root.children],
+            ['"', "You", "'ll", "find", "I do my duty", ".", '"'],
+        )
+        self.assertEqual(root.children[1].children[0].rule_id,
+                         "np_indef_pron")
+        self.assertEqual(root.children[3].features.as_dict().get("vform"),
+                         "base")
+        self.assertEqual(root.children[3].features.as_dict().get("subcat"),
+                         "clausal")
+        self.assertEqual(root.children[4].children[0].category, "CLAUSE")
+        self.assertTrue(result.stats["structural_composition"])
+        self.assertTrue(result.stats["dialogue_scoped"])
+        self.assertEqual(result.stats["structural_segment_count"], 2)
+
     def test_independent_positives(self):
         scenarios = (
             ("Ain't she what?", "clause_copular_echo_predicate_wh_question"),
             ("He is by trade a carpenter.", "vp_cop_classifier_pp_nominal"),
             ("Mary hesitated, wondered, doubted, and smiled.",
              "vp_intransitive"),
+            ("\"She'll believe the train left.\"",
+             "dialogue_structural_quoted_modal_zero_clausal_complement"),
         )
         for source, rule in scenarios:
             with self.subTest(source=source):
@@ -132,6 +159,8 @@ class Batch422GrammarTests(unittest.TestCase):
             ("Ain't I certain?", "clause_copular_echo_predicate_wh_question"),
             ("He is by chance a carpenter.", "vp_cop_classifier_pp_nominal"),
             ("Mary hesitated, wondered, doubted, and slowly.", "clause_np_vp"),
+            ("\"She'll vanish the train left.\"",
+             "dialogue_structural_quoted_modal_zero_clausal_complement"),
         )
         for source, rule in scenarios:
             with self.subTest(source=source):
