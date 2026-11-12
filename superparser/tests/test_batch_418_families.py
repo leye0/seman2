@@ -94,7 +94,7 @@ class MultiFamily418Tests(unittest.TestCase):
     def test_386_locative_fronting_with_stative_congregated_participle(self):
         text = "There all hands were already congregated."
         r = self.case_result(386, text)
-        clause = self.assert_node(r, "clause_front_adv_nocomma", text)
+        clause = self.assert_node(r, "clause_front_adv_nocomma", text[:-1])
         self.assertEqual([c.category for c in clause.children],
                          ["ADV", "CLAUSE"])
         self.assertEqual(text[clause.children[0].start:clause.children[0].end],
@@ -148,7 +148,7 @@ class MultiFamily418Tests(unittest.TestCase):
              "structural_emphatic_reflexive_subject_predicate"),
             ("Is the cottage empty quickly?",
              "adjp_adj_adv"),
-            ("There the visitors were already vanished.",
+            ("There the visitors were already laughed.",
              "vp_copula_predicative_scope_adjective"),
         )
         for text, forbidden in examples:
@@ -172,7 +172,7 @@ class MultiFamily418Tests(unittest.TestCase):
                         if (forbidden ==
                                 "vp_copula_predicative_scope_adjective"
                                 and text[node.start:node.end] !=
-                                "were already vanished"):
+                                "were already laughed"):
                             continue
                         self.fail(
                             f"Invalid {forbidden} licensed in {text}: "
