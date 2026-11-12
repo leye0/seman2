@@ -114,6 +114,13 @@ class QuotedSentenceComposer:
             )
             if intercalated is not None:
                 return intercalated
+            complement = self._compose_intercalated_that_complement(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if complement is not None:
+                return complement
             minor = self._compose_minor_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
@@ -467,6 +474,207 @@ class QuotedSentenceComposer:
         }
         return assembled
 
+
+
+    @staticmethod
+    def _intercalated_that_complement_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int, int], ...] | None:
+        """Propose overt quoted head/vocative, attribution and resumed that-clause.
+
+        This is a source plan, NOT a grammatical proof. The ordinary
+        recognizer must independently prove the matrix predicate, vocative,
+        reporter, complementizer and finite subordinate clause. In
+        particular a quoted subordinate is never an independent second
+        speech act.
+        """
+        base = QuotedSentenceComposer._intercalation_plan(text, components)
+        if base is None:
+            return None
+        first, second, reporter, tag_comma = base
+        # This construction requires an explicitly printed subordinate
+        # complementizer, not a missing verb or a hypothesized "that".
+        that_start = second.start
+        that_end = that_start + 4
+        if (text[that_start:that_end].casefold() != "that"
+                or that_end >= second.end
+                or not text[that_end].isspace()):
+            return None
+        complement_start = that_end
+        while complement_start < second.end and text[complement_start].isspace():
+            complement_start += 1
+        if complement_start >= second.end:
+            return None
+        internal_comma = text.rfind(",", first.start, first.end)
+        if internal_comma <= first.start:
+            return None
+        head = (first.start, internal_comma)
+        voc_start = internal_comma + 1
+        while voc_start < first.end and text[voc_start].isspace():
+            voc_start += 1
+        vocative = (voc_start, first.end)
+        subordinate = (complement_start, second.end)
+        if (not all(a < b for a, b in (head, vocative, subordinate))
+                or len(text[slice(*head)].split()) > 18
+                or len(text[slice(*vocative)].split()) > 5
+                or len(text[slice(*subordinate)].split()) > 22
+                or text[slice(*head)] != text[slice(*head)].strip()
+                or text[slice(*vocative)] != text[slice(*vocative)].strip()
+                or text[slice(*subordinate)] != text[slice(*subordinate)].strip()):
+            return None
+        return (head, vocative, reporter, (that_start, that_end),
+                subordinate, (internal_comma, first.stop, first.stop+1,
+                              tag_comma, second.start-1, second.stop,
+                              len(text)-1))
+
+    def _compose_intercalated_that_complement(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Compose a lexical-licensed copular that-complement across a tag."""
+        plan = self._intercalated_that_complement_plan(text, components)
+        if plan is None:
+            return None
+        head, vocative, reporter, comp, subordinate, punctuation = plan
+        dialogue_grammar = getattr(parser, "_dialogue_vector_grammar", None)
+        if dialogue_grammar is None:
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1200 or total_work < 1200:
+            return None
+        piece_items, piece_work = total_items // 6, total_work // 6
+        candidates: list[LexicalCandidate] = []
+        proofs: list[ParseResult] = []
+        for category, (a, b), grammar in (
+            ("CLAUSE", head, parser._vector_grammar),
+            ("NP", vocative, parser._vector_grammar),
+            ("SPEECH-TAG", reporter, dialogue_grammar),
+            ("COMP-THAT", comp, parser._vector_grammar),
+            ("CLAUSE", subordinate, parser._vector_grammar),
+        ):
+            fragment = text[a:b]
+            if category == "CLAUSE":
+                proof = parser._parse_vector_text(
+                    fragment, max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+            else:
+                proof = grammar.parse_lattice(
+                    parser._lattice_for_text(fragment),
+                    goal_category=category,
+                    max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k,
+                    beam=parser.beam if beam is None else beam,
+                )
+            if not proof.completed or proof.best() is None:
+                return None
+            selected = proof.best()
+            if selected.category != category:
+                return None
+            if category == "CLAUSE" and selected.rule_id != "clause_np_vp":
+                return None
+            if (category == "SPEECH-TAG"
+                    and not (selected.rule_id or "").startswith(
+                        "dialogue_speech_tag_")):
+                return None
+            if category == "CLAUSE" and (a, b) == head:
+                # Only adjective predicates whose selected lexical reading
+                # explicitly selects a finite that-complement may resume.
+                # It is NOT enough for the matrix head merely to be a clause.
+                if len(selected.children) != 2:
+                    return None
+                vp = selected.children[1]
+                if (vp.rule_id != "vp_copula_adj"
+                        or len(vp.children) != 2
+                        or vp.children[1].category != "ADJ"
+                        or vp.children[1].features.as_dict().get(
+                            "that_clausal_complement") != "true"):
+                    return None
+            proofs.append(proof)
+            candidates.append(LexicalCandidate(
+                span_start=a, span_end=b, surface=fragment,
+                lemma=f"<verified-{category.lower()}>",
+                category=category, features=selected.features,
+                source="source-structural-grammar-proof",
+                score=selected.score,
+                provenance={
+                    "source_span": [a, b], "proof_rule_id": selected.rule_id,
+                },
+                interface=SegmentInterface(proof, a, a, b),
+            ))
+        for pos, category in zip(
+            punctuation,
+            ("COMMA", "COMMA", "CLOSE-QUOTE", "COMMA",
+             "OPEN-QUOTE", "SPEECH-STOP", "CLOSE-QUOTE"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=pos, span_end=pos+1,
+                surface=text[pos], lemma=text[pos],
+                category=category, features=FeatureStructure.empty(),
+                source="dialogue-delimiter", score=0,
+                provenance={"source_punctuation":pos},
+            ))
+        candidates.append(LexicalCandidate(
+            span_start=0, span_end=1, surface=text[0], lemma=text[0],
+            category="OPEN-QUOTE", features=FeatureStructure.empty(),
+            source="dialogue-delimiter", score=0,
+            provenance={"source_punctuation":0},
+        ))
+        graph = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        assembled = self._vector.parse_lattice(
+            graph, goal_category="CLAUSE",
+            max_items=total_items-5*piece_items,
+            kbest_work_limit=total_work-5*piece_work,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not assembled.completed or assembled.best() is None:
+            return None
+        if isinstance(assembled.stats, dict):
+            assembled.stats.update({
+                "engine": "vector-structural-intercalated-that-complement",
+                "structural_composition": True,
+                "dialogue_scoped": True,
+                "source_text_unchanged": True,
+                "structural_composition_kind": "intercalated_that_complement",
+                "structural_clause_count": 2,
+                "structural_segment_count": 5,
+                "structural_segment_spans": [
+                    list(span) for span in (head, vocative, reporter, comp,
+                                            subordinate)
+                ],
+                "structural_segment_rule_ids": [
+                    p.best().rule_id for p in proofs
+                ],
+                "structural_segment_stats": [dict(p.stats) for p in proofs],
+                "source_punctuation_spans": [
+                    [i, i+1] for i in (0, *punctuation)
+                ],
+                "composition_linguistic_proof": (
+                    "selected_copular_adjective_lexically_selects_that_clause"
+                    "_plus_verified_subject_predicate_complement_and_speech_tag"
+                ),
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+            })
+        assembled.shared_forest = {
+            "assembly": assembled.shared_forest,
+            "segments": tuple(p.shared_forest for p in proofs),
+            "interfaces": tuple(
+                c.interface for c in candidates if c.interface is not None
+            ),
+        }
+        return assembled
 
     def _compose_minor_response(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
