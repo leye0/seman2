@@ -238,6 +238,71 @@ class ActualDialogueCompositions(unittest.TestCase):
             # Not seeing an accepted subclause is a real blocker. The
             # candidate source graph alone never fabricates an analysis.
 
+
+    def test_actual_austen_222_interrupted_that_complement_is_source_exact(self):
+        case = select_cases(500)[0][222]
+        source = (
+            "“I am afraid, Mr. Darcy,” observed Miss Bingley in a half whisper, "
+            "“that this adventure has rather affected your admiration of her fine eyes.”"
+        )
+        self.assertEqual(case["source_text"], source)
+        plan = QuotedSentenceComposer._intercalated_that_complement_plan(
+            source, case["structural_constituents"],
+        )
+        self.assertIsNotNone(plan)
+        self.assertEqual(
+            [source[a:b] for a, b in plan[:5]],
+            ["I am afraid", "Mr. Darcy",
+             "observed Miss Bingley in a half whisper", "that",
+             "this adventure has rather affected your admiration of her fine eyes"],
+        )
+        prepared, _, result = parse_corpus_case(
+            self.parser, case, max_items=50_000, kbest_work_limit=500_000,
+        )
+        self.assertEqual(result.text, source)
+        self.assertEqual(prepared.source_text, source)
+        if result.completed:
+            self.assertTrue(result.stats.get("structural_composition"), result.stats)
+            self.assertEqual(
+                result.best().rule_id,
+                "dialogue_structural_intercalated_that_complement_vocative",
+            )
+            self.assertEqual(
+                [child.category for child in result.best().children],
+                ["OPEN-QUOTE", "CLAUSE", "COMMA", "NP", "COMMA",
+                 "CLOSE-QUOTE", "SPEECH-TAG", "COMMA", "OPEN-QUOTE",
+                 "COMP-THAT", "CLAUSE", "SPEECH-STOP", "CLOSE-QUOTE"],
+            )
+            self.assertEqual(result.stats["structural_clause_count"], 2)
+
+    def test_intercalated_that_complement_needs_overt_lexical_selection(self):
+        for source, expected in (
+            ('"I am afraid, Mary," said John, "that Jane walks."', True),
+            ('"I am tall, Mary," said John, "that Jane walks."', False),
+            ('"I am afraid, Mary," said John, "if Jane walks."', False),
+        ):
+            with self.subTest(source=source):
+                rows, _ = extract(
+                    Book(999, "Mock", "Test", "train"),
+                    source, length_min=1, length_max=60,
+                )
+                self.assertEqual(len(rows), 1)
+                prepared, _, result = parse_corpus_case(
+                    self.parser, rows[0],
+                    max_items=50_000, kbest_work_limit=500_000,
+                )
+                self.assertEqual(prepared.source_text, source)
+                self.assertEqual(result.text, source)
+                self.assertEqual(
+                    bool(result.stats.get("structural_composition")), expected,
+                    result.stats,
+                )
+                if expected:
+                    self.assertEqual(
+                        result.best().rule_id,
+                        "dialogue_structural_intercalated_that_complement_vocative",
+                    )
+
     def test_syntax_generalizes_but_requires_grammar_proofs(self):
         positive = '"Very likely, sir," said Mary.'
         negative = '"Very likely, perhaps," said Mary.'
