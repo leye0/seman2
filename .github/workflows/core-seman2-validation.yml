@@ -75,6 +75,8 @@ jobs:
             superparser.tests.test_quoted_discourse_structure \
             superparser.tests.test_structural_dialogue_composition \
             superparser.tests.test_dialogue_residual_audit \
+            superparser.tests.test_anchored_dialogue_30 \
+            superparser.tests.test_real_dialogue_30_composition \
             superparser.tests.test_discourse_triage \
             superparser.tests.test_fragment_grammar_rules \
             superparser.tests.test_complexity_routing \

@@ -24,6 +24,7 @@ from .features import FeatureStructure
 from .grammar import load_grammar
 from .segmentation import LexicalCandidate, LexicalLattice
 from .vector_chart import SegmentInterface, VectorGrammar
+from .structural_units import skeleton
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,7 +114,28 @@ class QuotedSentenceComposer:
             )
             if intercalated is not None:
                 return intercalated
-            return self._compose_minor_response(
+            minor = self._compose_minor_response(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if minor is not None:
+                return minor
+            postposed = self._compose_postposed_minor_reply(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if postposed is not None:
+                return postposed
+            nominal = self._compose_nested_nominal_title(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if nominal is not None:
+                return nominal
+            return self._compose_modal_ellipsis_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
@@ -580,3 +602,532 @@ class QuotedSentenceComposer:
                                 if c.interface is not None),
         }
         return combined
+
+
+    @staticmethod
+    def _postposed_minor_reply_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int],
+               tuple[int, ...]] | None:
+        """Source-exact quoted head + vocative + postposed reporting clause.
+
+        The initial head can be a fully proven finite CLAUSE or a verbless
+        ADVP. Both are real grammatical constructs, with an overt vocative NP
+        and a genuine reporting tag; no lexical word or verb is invented.
+        This only proposes the source span boundaries; the unification parser
+        MUST still independently prove every source-derived component.
+        """
+        by_id = {p.get("id"): p for p in components}
+        quote, reporter = by_id.get("q0"), by_id.get("r0")
+        if not quote or not reporter:
+            return None
+        if quote.get("function") != "direct_speech":
+            return None
+        if reporter.get("function") != "reporting_clause":
+            return None
+        if reporter.get("evidence") != "postposed_reporting_clause":
+            return None
+        if quote.get("governor") != "r0":
+            return None
+        if any(p.get("function") in (
+            "embedded_quotation", "split_direct_speech_turn",
+            "narratorial_parenthetical",
+        ) for p in components):
+            return None
+        a, b = quote.get("start"), quote.get("end")
+        ta, tb = reporter.get("start"), reporter.get("end")
+        if not (
+            a == 0 and isinstance(b, int)
+            and isinstance(ta, int) and isinstance(tb, int)
+            and 4 < b <= ta < tb < len(text)
+            and text[b:ta].isspace()
+            and text[tb:] == "."
+        ):
+            return None
+        boundary = quotation_boundaries(text)
+        if len(boundary) != 2 or [
+            (x.start, x.end, x.side) for x in boundary
+        ] != [(0, 1, "open"), (b - 1, b, "close")]:
+            return None
+        # The final source comma before a vocative separates the independent
+        # spoken head from a nominal form of direct address. A finite clause
+        # may itself contain earlier commas; only this final vocative boundary
+        # is used to plan the source grammar.
+        if text[b-2] != ",":
+            return None
+        first_comma = text.rfind(",", 1, b-2)
+        if first_comma <= 1:
+            return None
+        adv_a, adv_b = 1, first_comma
+        np_a, np_b = first_comma+1, b-2
+        while np_a < np_b and text[np_a].isspace():
+            np_a += 1
+        while np_b > np_a and text[np_b-1].isspace():
+            np_b -= 1
+        if np_a >= np_b:
+            return None
+        if (text[adv_a:adv_b] != text[adv_a:adv_b].strip()
+                or any(c in text[adv_a:adv_b]+text[np_a:np_b]
+                       for c in "\"'“”‘’;!?")
+                or len(text[adv_a:adv_b].split()) > 24
+                or len(text[np_a:np_b].split()) > 5):
+            return None
+        return (adv_a, adv_b), (np_a, np_b), (ta, tb), (
+            0, first_comma, b-2, b-1, len(text)-1,
+        )
+
+    def _compose_postposed_minor_reply(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        plan = self._postposed_minor_reply_plan(text, components)
+        if plan is None:
+            return None
+        adverbial, vocative, reporter, punctuation = plan
+        dialogue_grammar = getattr(parser, "_dialogue_vector_grammar", None)
+        if dialogue_grammar is None:
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or total_work < 1000:
+            return None
+        piece_items, piece_work = total_items // 4, total_work // 4
+        candidates: list[LexicalCandidate] = []
+        proofs: list[ParseResult] = []
+        # Structural cues select which grammar category to attempt, never
+        # prove it. The selected complete ranked tree is the sole authority.
+        head_text = text[adverbial[0]:adverbial[1]]
+        head_category = ("CLAUSE" if skeleton(head_text).finite_predicate_candidate
+                         else "ADVP")
+        for category, (a, b), grammar in (
+            (head_category, adverbial, parser._vector_grammar),
+            ("NP", vocative, parser._vector_grammar),
+            ("SPEECH-TAG", reporter, dialogue_grammar),
+        ):
+            surface = text[a:b]
+            if category == "CLAUSE":
+                proof = parser._parse_vector_text(
+                    surface, max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+            else:
+                lattice = parser._lattice_for_text(surface)
+                proof = grammar.parse_lattice(
+                    lattice, goal_category=category,
+                    max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k,
+                    beam=parser.beam if beam is None else beam,
+                )
+            if not proof.completed or proof.best() is None:
+                return None
+            selected = proof.best()
+            if selected.category != category:
+                return None
+            if category == "CLAUSE" and selected.rule_id != "clause_np_vp":
+                return None
+            if (category == "SPEECH-TAG"
+                    and not (selected.rule_id or "").startswith(
+                        "dialogue_speech_tag_")):
+                return None
+            proofs.append(proof)
+            candidates.append(LexicalCandidate(
+                span_start=a, span_end=b, surface=surface,
+                lemma=f"<verified-{category.lower()}>",
+                category=category, features=selected.features,
+                source="source-structural-grammar-proof",
+                score=selected.score,
+                provenance={
+                    "source_span": [a, b],
+                    "proof_rule": selected.rule_id,
+                },
+                interface=SegmentInterface(proof, a, a, b),
+            ))
+        quote_start, internal_comma, final_comma, close_quote, period = punctuation
+        # Distinct terminals are necessary to preserve the two grammatical
+        # commas (answer/vocative and quote/reporter) in the actual tree.
+        for where, category in (
+            (quote_start, "OPEN-QUOTE"),
+            (internal_comma, "COMMA"),
+            (final_comma, "COMMA"),
+            (close_quote, "CLOSE-QUOTE"),
+            (period, "SPEECH-STOP"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=where, span_end=where+1,
+                surface=text[where], lemma=text[where],
+                category=category, features=FeatureStructure.empty(),
+                source="dialogue-delimiter", score=0,
+                provenance={"original_source_span":[where,where+1]},
+            ))
+        graph = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        combined = self._vector.parse_lattice(
+            graph, goal_category="CLAUSE",
+            max_items=total_items - 3 * piece_items,
+            kbest_work_limit=total_work - 3 * piece_work,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not combined.completed or combined.best() is None:
+            return None
+        if isinstance(combined.stats, dict):
+            combined.stats.update({
+                "engine": "vector-structural-vocative-with-postposed-reporter",
+                "structural_composition": True,
+                "structural_composition_kind": (
+                    "finite_clause_vocative_with_postposed_reporting_clause"
+                    if head_category == "CLAUSE" else
+                    "adverbial_answer_vocative_with_postposed_reporting_clause"
+                ),
+                "source_text_unchanged": True,
+                "dialogue_scoped": True,
+                "structural_clause_count": int(head_category == "CLAUSE"),
+                "structural_segment_count": 3,
+                "structural_segment_spans": [
+                    list(adverbial), list(vocative), list(reporter)
+                ],
+                "structural_segment_rule_ids": [
+                    x.best().rule_id for x in proofs
+                ],
+                "structural_segment_stats": [
+                    dict(x.stats) for x in proofs
+                ],
+                "source_punctuation_spans": [
+                    [i, i+1] for i in punctuation
+                ],
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+                "composition_linguistic_proof": (
+                    "source_finite_np_vp_clause_and_vocative_and_reporting_tag"
+                    if head_category == "CLAUSE" else
+                    "source_adverbial_and_vocative_and_reporting_tag"
+                ) + "_each_independently_licensed_by_grammar",
+            })
+        combined.shared_forest = {
+            "assembly": combined.shared_forest,
+            "segments": tuple(x.shared_forest for x in proofs),
+            "interfaces": tuple(
+                x.interface for x in candidates if x.interface is not None
+            ),
+        }
+        return combined
+
+
+    @staticmethod
+    def _nested_nominal_title_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, ...]] | None:
+        """Nominal/title utterance with an embedded source-quoted name.
+
+        The exact original structure is:
+          outer quotation [determiner [inner quotation nominal title]] stop.
+        Both the determiner and embedded nominal must produce independent
+        successful unification trees. This does not invent a finite clause,
+        quotation closure, or a normalized replacement name.
+        """
+        by_id = {p.get("id"): p for p in components}
+        outer, inner = by_id.get("q0"), by_id.get("q1")
+        if not outer or not inner:
+            return None
+        if not (
+            outer.get("function") == "direct_speech"
+            and inner.get("function") == "embedded_quotation"
+            and inner.get("governor") == "q0"
+            and outer.get("start") == 0
+            and outer.get("end") == len(text)
+        ):
+            return None
+        if sum(p.get("function") == "embedded_quotation"
+               for p in components) != 1:
+            return None
+        if any(p.get("function") in (
+                "reporting_clause", "split_direct_speech_turn",
+                "narratorial_parenthetical"
+        ) for p in components):
+            return None
+        marks = quotation_boundaries(text)
+        if len(marks) != 4 or [
+            (p.start, p.end, p.side) for p in marks
+        ] != [
+            (0, 1, "open"),
+            (inner["start"], inner["start"]+1, "open"),
+            (inner["end"]-1, inner["end"], "close"),
+            (len(text)-1, len(text), "close"),
+        ]:
+            return None
+        # A single original terminal mark after the embedded title.
+        stop = inner["end"]
+        if stop != len(text)-2 or text[stop] not in ".!?":
+            return None
+        a, b = 1, inner["start"]
+        while a < b and text[a].isspace():
+            a += 1
+        while b > a and text[b-1].isspace():
+            b -= 1
+        # A single lexical determiner and one inner NP title. This is a
+        # syntactic construction, not a lexical exception for "Em'ly".
+        if (not a < b or len(text[a:b].split()) != 1
+                or text[1:a].strip() or text[b:inner["start"]].strip()):
+            return None
+        title_start, title_end = inner["start"]+1, inner["end"]-1
+        if (not title_start < title_end
+                or len(text[title_start:title_end].split()) > 7
+                or text[title_start:title_end] !=
+                   text[title_start:title_end].strip()):
+            return None
+        return ((a,b), (title_start,title_end),
+                (0,inner["start"],inner["end"]-1,stop,len(text)-1))
+
+    def _compose_nested_nominal_title(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        plan = self._nested_nominal_title_plan(text,components)
+        if plan is None:
+            return None
+        determiner, name, punct = plan
+        total_items = parser.max_items if max_items is None else max_items
+        work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or work < 1000:
+            return None
+        items, work_piece = total_items//3, work//3
+        candidates: list[LexicalCandidate] = []
+        proofs: list[ParseResult] = []
+        for category,(start,end) in (("DET",determiner),("NP",name)):
+            lattice=parser._lattice_for_text(text[start:end])
+            parsed=parser._vector_grammar.parse_lattice(
+                lattice,goal_category=category,
+                max_items=items,kbest_work_limit=work_piece,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            if not parsed.completed or parsed.best() is None:
+                return None
+            best=parsed.best()
+            if best.category != category:
+                return None
+            proofs.append(parsed)
+            candidates.append(LexicalCandidate(
+                span_start=start,span_end=end,
+                surface=text[start:end],
+                lemma=f"<verified-{category.lower()}>",
+                category=category,features=best.features,
+                source="source-structural-grammar-proof",
+                score=best.score,
+                provenance={"source_span":[start,end],
+                            "proof_rule_id":best.rule_id},
+                interface=SegmentInterface(parsed,start,start,end),
+            ))
+        # The exact punctuation is consumed in its source order.
+        for idx,cat in zip(punct,(
+            "OPEN-QUOTE","OPEN-QUOTE","CLOSE-QUOTE",
+            "SPEECH-STOP","CLOSE-QUOTE"
+        )):
+            candidates.append(LexicalCandidate(
+                span_start=idx,span_end=idx+1,surface=text[idx],
+                lemma=text[idx],category=cat,
+                features=FeatureStructure.empty(),
+                source="dialogue-delimiter",score=0,
+                provenance={"source_position":idx},
+            ))
+        graph=LexicalLattice(
+            text=text,tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        combined=self._vector.parse_lattice(
+            graph,goal_category="CLAUSE",
+            max_items=total_items-2*items,
+            kbest_work_limit=work-2*work_piece,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not combined.completed or combined.best() is None:
+            return None
+        if isinstance(combined.stats,dict):
+            combined.stats.update({
+                "engine":"vector-composed-nested-quoted-nominal-title",
+                "structural_composition":True,
+                "structural_composition_kind":"nominal_title_with_embedded_quote",
+                "source_text_unchanged":True,
+                "dialogue_scoped":True,
+                "structural_clause_count":0,
+                "structural_segment_count":2,
+                "structural_segment_spans":[list(determiner),list(name)],
+                "structural_segment_rule_ids":[p.best().rule_id for p in proofs],
+                "source_punctuation_spans":[[i,i+1] for i in punct],
+                "source_anaphoric_predicate_inserted":False,
+                "max_items_total_across_segments":total_items,
+                "kbest_work_limit_total_across_segments":work,
+                "composition_linguistic_proof":
+                    "source_determiner_plus_independently_verified"
+                    "_embedded_nominal_title_in_balanced_nested_quotes",
+            })
+        combined.shared_forest={
+            "assembly":combined.shared_forest,
+            "segments":tuple(p.shared_forest for p in proofs),
+            "interfaces":tuple(
+                c.interface for c in candidates if c.interface is not None
+            ),
+        }
+        return combined
+
+
+    @staticmethod
+    def _modal_ellipsis_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int,int], ...] | None:
+        """Four overt tokens: topical demonstrative, subject, adverb, modal.
+
+        A modal can license VP ellipsis when the missing lexical predicate is
+        recoverable from prior discourse. The grammatical surface is analyzed
+        without reconstructing or guessing that predicate. Reference to its
+        antecedent remains explicitly unresolved.
+        """
+        by_id={c.get("id"):c for c in components}
+        q=by_id.get("q0")
+        if not q or q.get("function")!="direct_speech":
+            return None
+        if (q.get("start"),q.get("end"))!=(0,len(text)):
+            return None
+        if any(p.get("function") in (
+            "reporting_clause","embedded_quotation",
+            "split_direct_speech_turn","narratorial_parenthetical",
+        ) for p in components):
+            return None
+        marks=quotation_boundaries(text)
+        if len(marks)!=2 or [
+            (m.start,m.end,m.side) for m in marks
+        ]!=[(0,1,"open"),(len(text)-1,len(text),"close")]:
+            return None
+        if len(text)<9 or text[-2] not in ".!?":
+            return None
+        inside=text[1:-2]
+        match=re.fullmatch(
+            r"\s*([^\s,.;!?]+)\s+([^\s,.;!?]+)\s+"
+            r"([^\s,.;!?]+)\s+([^\s,.;!?]+)\s*",
+            inside,
+        )
+        if not match:
+            return None
+        words=[inside[match.start(k):match.end(k)] for k in (1,2,3,4)]
+        # English demonstratives are a productive lexical class, not one
+        # hardcoded literary expression. The grammar must still prove NP.
+        if words[0].casefold() not in ("that","this","these","those"):
+            return None
+        return tuple((1+match.start(k),1+match.end(k))
+                     for k in (1,2,3,4))
+
+    def _compose_modal_ellipsis_response(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        spans=self._modal_ellipsis_plan(text,components)
+        if spans is None:
+            return None
+        total_items=parser.max_items if max_items is None else max_items
+        work=500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items<1000 or work<1000:
+            return None
+        budget_items,budget_work=total_items//5,work//5
+        proofs: list[ParseResult]=[]
+        candidates: list[LexicalCandidate]=[]
+        for category,(a,b) in zip(("NP","NP","ADV","MODAL"),spans):
+            source=text[a:b]
+            lexical=parser._lattice_for_text(source)
+            parsed=parser._vector_grammar.parse_lattice(
+                lexical,goal_category=category,
+                max_items=budget_items,kbest_work_limit=budget_work,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            if not parsed.completed or parsed.best() is None:
+                return None
+            best=parsed.best()
+            if best.category!=category:
+                return None
+            proofs.append(parsed)
+            candidates.append(LexicalCandidate(
+                span_start=a,span_end=b,surface=source,
+                lemma=f"<verified-{category.lower()}>",
+                category=category,features=best.features,
+                source="source-structural-grammar-proof",
+                score=best.score,
+                provenance={
+                    "source_span":[a,b],
+                    "grammar_proof_rule":best.rule_id,
+                    "ellipsis_reference":"unresolved_source_antecedent"
+                    if category=="MODAL" else None,
+                },
+                interface=SegmentInterface(parsed,a,a,b),
+            ))
+        stop=len(text)-2
+        for pos,category in (
+            (0,"OPEN-QUOTE"),(stop,"SPEECH-STOP"),
+            (len(text)-1,"CLOSE-QUOTE"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=pos,span_end=pos+1,surface=text[pos],
+                lemma=text[pos],category=category,
+                features=FeatureStructure.empty(),score=0,
+                source="dialogue-delimiter",
+                provenance={"original_source_position":pos},
+            ))
+        graph=LexicalLattice(
+            text=text,tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        assembled=self._vector.parse_lattice(
+            graph,goal_category="CLAUSE",
+            max_items=total_items-budget_items*4,
+            kbest_work_limit=work-budget_work*4,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not assembled.completed or assembled.best() is None:
+            return None
+        if isinstance(assembled.stats,dict):
+            assembled.stats.update({
+                "engine":"vector-structural-modal-vp-ellipsis",
+                "structural_composition":True,
+                "structural_composition_kind":"topical_modal_vp_ellipsis",
+                "source_text_unchanged":True,
+                "dialogue_scoped":True,
+                "structural_clause_count":1,
+                "structural_segment_count":4,
+                "structural_segment_spans":[list(s) for s in spans],
+                "structural_segment_rule_ids":[p.best().rule_id for p in proofs],
+                "source_punctuation_spans":[[0,1],[stop,stop+1],
+                                            [len(text)-1,len(text)]],
+                "elided_vp_lexical_content_inserted":False,
+                "discourse_antecedent_resolved":False,
+                "discourse_antecedent_policy":
+                    "needs_prior_discourse_for_modal_vp_ellipsis",
+                "max_items_total_across_segments":total_items,
+                "kbest_work_limit_total_across_segments":work,
+                "composition_linguistic_proof":
+                    "grammatically_verified_topical_np_subject_np_"
+                    "adverb_and_finite_modal_with_unresolved_vp_ellipsis",
+            })
+        assembled.shared_forest={
+            "assembly":assembled.shared_forest,
+            "segments":tuple(p.shared_forest for p in proofs),
+            "interfaces":tuple(c.interface for c in candidates
+                               if c.interface is not None),
+        }
+        return assembled

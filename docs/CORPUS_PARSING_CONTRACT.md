@@ -163,3 +163,58 @@ leurs propres preuves lexicales et grammaticales; aucun verbe fini n'est
 inventé. Cette voie vise notamment l'échec littéraire `‘Perfectly, sir.’`.
 Les règles et les actions sémantiques des constructions finies composées
 sont explicites et auditées dans les fichiers JSONL du moteur.
+
+## Évaluation permanente des 30 dialogues littéraires problématiques
+
+`superparser/scripts/audit_anchored_dialogue_30.py` fixe par empreintes SHA,
+indices et catégories les **30 énoncés de discours direct réellement échoués**
+dans la cohorte officielle de 500 (`d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`).
+Chaque exécution de l'audit principal analyse de nouveau exactement les
+mêmes 500 textes avec les mêmes budgets puis écrit `anchored_dialogue_30.json`
+(ancien statut, nouveau statut, catégorie, texte original, arbre racine).
+Aucune phrase ne peut disparaître silencieusement. La réussite du parseur
+doit ensuite être confirmée par la vérification de son arbre et de ses
+rattachements, pas seulement par un compteur.
+
+Le sous-système `QuotedSentenceComposer` reconnaît maintenant un **énoncé
+mineur adverbial suivi d'un vocatif et d'une incise postposée**, lorsque les
+catégories `ADVP`, `NP` et `SPEECH-TAG` sont chacune attestées par de vrais
+arbres grammaticaux indépendants, par exemple dans le cas source #413
+`"Very likely, sir," replied Captain Smollett.`. Les virgules, guillemets
+et le point restent de vrais caractères source; le texte n'est jamais
+réécrit et aucun prédicat fini n'est inventé. Cette construction est une
+extension générique de la grammaire compositionnelle, pas une règle liée
+aux mots d'un roman.
+
+**Décomposition diagnostique de la totalité des 30 cas :** le rapport
+`anchored_dialogue_30.json` joint aux statuts source les constituants
+`direct_speech`, `spoken_clause_candidate`, `reporting_clause` et
+leurs relations de gouvernance, y compris les plages textuelles exactes.
+Il identifie les **plans de composition proposés** par les trois
+constructions actives (citations multiphrases, incise entre deux propositions,
+propos avec vocatif et incise postposée). Un plan proposé N'EST PAS une
+analyse grammaticale complète; seul le résultat de la grammaire et sa
+vérification syntaxique peuvent transformer un échec en réussite. Ainsi,
+les dialogues comparatifs ou les subordonnées non analysables en propositions
+isolées restent explicitement en échec, plutôt que de recevoir des arbres
+fabriqués.
+
+**Titres nominaux avec citation imbriquée.** Une unité nominale peut
+renfermer une seconde citation source (ex. `‘The “Little Em’ly”.’`).
+La composition exige les deux paires de guillemets originelles, le
+`DET` extérieur, l'arbre `NP` du nom propre intérieur et le point
+source, tous vérifiés séparément. La structure finale est un **énoncé
+mineur nominal**, jamais une proposition finie inventée. Aucun mot n'est
+retiré ni normalisé pour faire réussir la parse et les liens de
+constituants `q0 → q1` restent ancrés sur leurs offsets source.
+
+**Réponses modales elliptiques et anaphores non résolues.** Un énoncé
+comme `“That you certainly shall.”` comporte un objet thématisé,
+un sujet, un adverbe et un auxiliaire modal fini. Le syntagme verbal
+omis est une **ellipse anaphorique** : la grammaire peut construire la
+syntaxe de surface `NP(topic) + NP(subject) + ADV + MODAL` avec les
+preuves indépendantes du lexique et de l'unification, mais **ne
+reconstitue pas** le prédicat effacé. Le graphe indique
+`discourse_antecedent_resolved=false` et un lien de contexte à rechercher,
+non une référence prouvée. Les noms de personnages et les mots d'une
+phrase de roman ne figurent dans aucune règle spéciale.
