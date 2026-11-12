@@ -207,3 +207,14 @@ source, tous vérifiés séparément. La structure finale est un **énoncé
 mineur nominal**, jamais une proposition finie inventée. Aucun mot n'est
 retiré ni normalisé pour faire réussir la parse et les liens de
 constituants `q0 → q1` restent ancrés sur leurs offsets source.
+
+**Réponses modales elliptiques et anaphores non résolues.** Un énoncé
+comme `“That you certainly shall.”` comporte un objet thématisé,
+un sujet, un adverbe et un auxiliaire modal fini. Le syntagme verbal
+omis est une **ellipse anaphorique** : la grammaire peut construire la
+syntaxe de surface `NP(topic) + NP(subject) + ADV + MODAL` avec les
+preuves indépendantes du lexique et de l'unification, mais **ne
+reconstitue pas** le prédicat effacé. Le graphe indique
+`discourse_antecedent_resolved=false` et un lien de contexte à rechercher,
+non une référence prouvée. Les noms de personnages et les mots d'une
+phrase de roman ne figurent dans aucune règle spéciale.

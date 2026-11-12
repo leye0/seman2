@@ -137,6 +137,69 @@ class ActualDialogueCompositions(unittest.TestCase):
         self.assertFalse(result.stats.get("structural_composition",False))
         self.assertEqual(prepared.source_text,source)
 
+    def test_actual_austen_137_topicalized_modal_ellipsis(self):
+        """This is real grammatical ellipsis, not a synthetic finite verb."""
+        case=select_cases(500)[0][137]
+        witness=next(w for w in WITNESSES if w.index==137)
+        source="“That you certainly shall.”"
+        self.assertEqual(case["source_text"],source)
+        self.assertEqual(witness.baseline_status,
+                         "roots_without_valid_analysis")
+        self.assertEqual(
+            f'{case["book_id"]}:'+
+            sha256(source.encode()).hexdigest()[:16],
+            witness.case_id,
+        )
+        plan=QuotedSentenceComposer._modal_ellipsis_plan(
+            source,case["structural_constituents"]
+        )
+        self.assertIsNotNone(plan)
+        self.assertEqual([source[a:b] for a,b in plan],
+                         ["That","you","certainly","shall"])
+        prepared,_,result=parse_corpus_case(
+            self.parser,case,max_items=50_000,kbest_work_limit=500_000,
+        )
+        self.assertTrue(result.completed,result.stats)
+        self.assertTrue(result.stats.get("structural_composition"))
+        self.assertEqual(
+            result.best().rule_id,
+            "dialogue_structural_topical_modal_vp_ellipsis",
+        )
+        self.assertEqual(result.stats["structural_composition_kind"],
+                         "topical_modal_vp_ellipsis")
+        self.assertEqual(
+            [node.category for node in result.best().children],
+            ["OPEN-QUOTE","NP","NP","ADV","MODAL",
+             "SPEECH-STOP","CLOSE-QUOTE"],
+        )
+        self.assertTrue(result.stats["source_text_unchanged"])
+        self.assertFalse(result.stats["discourse_antecedent_resolved"])
+        self.assertFalse(result.stats["elided_vp_lexical_content_inserted"])
+        self.assertEqual(prepared.source_text,result.text)
+        self.assertFalse(prepared.synthetic_prefix)
+        self.assertFalse(prepared.synthetic_suffix)
+
+    def test_modal_ellipsis_requires_real_modal_and_demonstrative_topic(self):
+        samples=(
+            "“He you certainly shall.”",
+            "“That you certainly dance.”",
+        )
+        for source in samples:
+            with self.subTest(source=source):
+                rows,_=extract(
+                    Book(999,"Mock","Test","train"),
+                    source,length_min=1,length_max=40,
+                )
+                self.assertEqual(len(rows),1)
+                _,_,result=parse_corpus_case(
+                    self.parser,rows[0],
+                    max_items=50_000,kbest_work_limit=500_000,
+                )
+                self.assertFalse(
+                    result.stats.get("structural_composition",False),
+                    "An omitted verb cannot be inferred from an unsupported shape",
+                )
+
     def test_actual_austen_157_exposes_comparative_head_without_fake_success(self):
         """Real #157 is a planned clause+vocative+tag, but needs proof.
 

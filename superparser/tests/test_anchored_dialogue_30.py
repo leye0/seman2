@@ -91,6 +91,8 @@ class AnchoredDialogue30Tests(unittest.TestCase):
             ))
         self.assertIn("nested_nominal_title",
                       anchored[11]["source_composition_plans_not_proofs"])
+        self.assertIn("topical_modal_vp_ellipsis",
+                      anchored[137]["source_composition_plans_not_proofs"])
         self.assertGreater(result["not_currently_planned"], 0)
         self.assertEqual(result["cases"][0]["index"], WITNESSES[0].index)
         with self.assertRaisesRegex(ValueError, "cannot migrate"):

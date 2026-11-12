@@ -128,7 +128,14 @@ class QuotedSentenceComposer:
             )
             if postposed is not None:
                 return postposed
-            return self._compose_nested_nominal_title(
+            nominal = self._compose_nested_nominal_title(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if nominal is not None:
+                return nominal
+            return self._compose_modal_ellipsis_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
@@ -975,3 +982,152 @@ class QuotedSentenceComposer:
             ),
         }
         return combined
+
+
+    @staticmethod
+    def _modal_ellipsis_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int,int], ...] | None:
+        """Four overt tokens: topical demonstrative, subject, adverb, modal.
+
+        A modal can license VP ellipsis when the missing lexical predicate is
+        recoverable from prior discourse. The grammatical surface is analyzed
+        without reconstructing or guessing that predicate. Reference to its
+        antecedent remains explicitly unresolved.
+        """
+        by_id={c.get("id"):c for c in components}
+        q=by_id.get("q0")
+        if not q or q.get("function")!="direct_speech":
+            return None
+        if (q.get("start"),q.get("end"))!=(0,len(text)):
+            return None
+        if any(p.get("function") in (
+            "reporting_clause","embedded_quotation",
+            "split_direct_speech_turn","narratorial_parenthetical",
+        ) for p in components):
+            return None
+        marks=quotation_boundaries(text)
+        if len(marks)!=2 or [
+            (m.start,m.end,m.side) for m in marks
+        ]!=[(0,1,"open"),(len(text)-1,len(text),"close")]:
+            return None
+        if len(text)<9 or text[-2] not in ".!?":
+            return None
+        inside=text[1:-2]
+        match=re.fullmatch(
+            r"\s*([^\s,.;!?]+)\s+([^\s,.;!?]+)\s+"
+            r"([^\s,.;!?]+)\s+([^\s,.;!?]+)\s*",
+            inside,
+        )
+        if not match:
+            return None
+        words=[inside[match.start(k):match.end(k)] for k in (1,2,3,4)]
+        # English demonstratives are a productive lexical class, not one
+        # hardcoded literary expression. The grammar must still prove NP.
+        if words[0].casefold() not in ("that","this","these","those"):
+            return None
+        return tuple((1+match.start(k),1+match.end(k))
+                     for k in (1,2,3,4))
+
+    def _compose_modal_ellipsis_response(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        spans=self._modal_ellipsis_plan(text,components)
+        if spans is None:
+            return None
+        total_items=parser.max_items if max_items is None else max_items
+        work=500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items<1000 or work<1000:
+            return None
+        budget_items,budget_work=total_items//5,work//5
+        proofs: list[ParseResult]=[]
+        candidates: list[LexicalCandidate]=[]
+        for category,(a,b) in zip(("NP","NP","ADV","MODAL"),spans):
+            source=text[a:b]
+            lexical=parser._lattice_for_text(source)
+            parsed=parser._vector_grammar.parse_lattice(
+                lexical,goal_category=category,
+                max_items=budget_items,kbest_work_limit=budget_work,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            if not parsed.completed or parsed.best() is None:
+                return None
+            best=parsed.best()
+            if best.category!=category:
+                return None
+            proofs.append(parsed)
+            candidates.append(LexicalCandidate(
+                span_start=a,span_end=b,surface=source,
+                lemma=f"<verified-{category.lower()}>",
+                category=category,features=best.features,
+                source="source-structural-grammar-proof",
+                score=best.score,
+                provenance={
+                    "source_span":[a,b],
+                    "grammar_proof_rule":best.rule_id,
+                    "ellipsis_reference":"unresolved_source_antecedent"
+                    if category=="MODAL" else None,
+                },
+                interface=SegmentInterface(parsed,a,a,b),
+            ))
+        stop=len(text)-2
+        for pos,category in (
+            (0,"OPEN-QUOTE"),(stop,"SPEECH-STOP"),
+            (len(text)-1,"CLOSE-QUOTE"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=pos,span_end=pos+1,surface=text[pos],
+                lemma=text[pos],category=category,
+                features=FeatureStructure.empty(),score=0,
+                source="dialogue-delimiter",
+                provenance={"original_source_position":pos},
+            ))
+        graph=LexicalLattice(
+            text=text,tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        assembled=self._vector.parse_lattice(
+            graph,goal_category="CLAUSE",
+            max_items=total_items-budget_items*4,
+            kbest_work_limit=work-budget_work*4,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not assembled.completed or assembled.best() is None:
+            return None
+        if isinstance(assembled.stats,dict):
+            assembled.stats.update({
+                "engine":"vector-structural-modal-vp-ellipsis",
+                "structural_composition":True,
+                "structural_composition_kind":"topical_modal_vp_ellipsis",
+                "source_text_unchanged":True,
+                "dialogue_scoped":True,
+                "structural_clause_count":1,
+                "structural_segment_count":4,
+                "structural_segment_spans":[list(s) for s in spans],
+                "structural_segment_rule_ids":[p.best().rule_id for p in proofs],
+                "source_punctuation_spans":[[0,1],[stop,stop+1],
+                                            [len(text)-1,len(text)]],
+                "elided_vp_lexical_content_inserted":False,
+                "discourse_antecedent_resolved":False,
+                "discourse_antecedent_policy":
+                    "needs_prior_discourse_for_modal_vp_ellipsis",
+                "max_items_total_across_segments":total_items,
+                "kbest_work_limit_total_across_segments":work,
+                "composition_linguistic_proof":
+                    "grammatically_verified_topical_np_subject_np_"
+                    "adverb_and_finite_modal_with_unresolved_vp_ellipsis",
+            })
+        assembled.shared_forest={
+            "assembly":assembled.shared_forest,
+            "segments":tuple(p.shared_forest for p in proofs),
+            "interfaces":tuple(c.interface for c in candidates
+                               if c.interface is not None),
+        }
+        return assembled
