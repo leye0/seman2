@@ -518,6 +518,93 @@ class QuotedSentenceComposer:
                         {2:{"vform":"finite","subcat":"intransitive"},
                          5:{"vform":"finite","subcat":"transitive"}})
                     punct("SPEECH-STOP",tb)
+            if rule is None:
+                # Spoken finite comparison with a vocative and an
+                # independently attributed reporting tag. The comparative
+                # target is a possessive pronoun, not a spurious bare noun.
+                comparative = re.fullmatch(
+                    r"(.+?)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                    r"(.+?)\s+([A-Za-z]+)\s+(.+?)(,)\s+(.+?)(,)",
+                    quote_surface,
+                )
+                if (comparative is not None
+                        and comparative.group(5).casefold() == "than"
+                        and comparative.group(3).casefold() in
+                           ("more", "less")):
+                    rule = (
+                        "dialogue_structural_postposed_comparative_"
+                        "vocative_report"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(comparative,1,
+                        ("NP","COPULA","DEGREE","PP","CONJ",
+                         "POSS-PRONOUN","COMMA","NP","COMMA"),
+                        {1:"phrase",4:"phrase",7:"source-punctuation",
+                         8:"phrase",9:"source-punctuation"},
+                        {2:{"vform":"finite"},
+                         6:{"independent_possessive":"true"}})
+                    punct("CLOSE-QUOTE",b0-1)
+                    put("SPEECH-TAG",ta,tb,"phrase")
+                    punct("SPEECH-STOP",tb)
+            if rule is None:
+                # Reduced temporal adjunct attaches to the reporter; the
+                # finite quote and its addressee are separately proved.
+                spoken_vocative = re.fullmatch(
+                    r"(.+?)(,)\s+(.+?)(,)",quote_surface,
+                )
+                temporal = re.fullmatch(
+                    r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+"
+                    r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                    r"([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                    r"([A-Za-z]+)\s+(.+)",
+                    reporter,
+                )
+                if (spoken_vocative is not None and temporal is not None
+                        and temporal.group(4).casefold() == "when"):
+                    rule = (
+                        "dialogue_structural_postposed_temporal_"
+                        "reduced_reporter"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(spoken_vocative,1,
+                        ("CLAUSE","COMMA","NP","COMMA"),
+                        {1:"phrase",2:"source-punctuation",
+                         3:"phrase",4:"source-punctuation"})
+                    punct("CLOSE-QUOTE",b0-1)
+                    match_groups(temporal,ta,
+                        ("V","NP","COMMA","CONJ","NEG-DEGREE","ADV",
+                         "ADJ","TO","V","NP"),
+                        {2:"phrase",3:"source-punctuation",10:"phrase"},
+                        {1:{"vform":"finite"},
+                         5:{"temporal_negation":"true"},
+                         7:{"infinitival_complement":"true"},
+                         9:{"vform":"base","subcat":"transitive"}})
+                    punct("SPEECH-STOP",tb)
+            if rule is None:
+                # Copular predicate coordination interrupted by an actual
+                # parenthetical finite speech-comment and followed by the
+                # normal postposed reporting clause.
+                parenthetical = re.fullmatch(
+                    r"(.+?)(,)\s+([A-Za-z]+)(,)\s+"
+                    r"(.+?)(,)\s+(.+?)(,)",
+                    quote_surface,
+                )
+                if parenthetical is not None:
+                    rule = (
+                        "dialogue_structural_postposed_predicative_"
+                        "coord_parenthetical_report"
+                    )
+                    punct("OPEN-QUOTE",0)
+                    match_groups(parenthetical,1,
+                        ("CLAUSE","COMMA","COORD","COMMA",
+                         "CLAUSE","COMMA","ADJP","COMMA"),
+                        {1:"phrase",2:"source-punctuation",
+                         4:"source-punctuation",5:"phrase",
+                         6:"source-punctuation",7:"phrase",
+                         8:"source-punctuation"})
+                    punct("CLOSE-QUOTE",b0-1)
+                    put("SPEECH-TAG",ta,tb,"phrase")
+                    punct("SPEECH-STOP",tb)
         # Two quoted fragments separated by an actual reporting tag.
         elif (len(quotes) == 4 and q1 is not None and r0 is not None
               and q1.get("function") == "direct_speech"
