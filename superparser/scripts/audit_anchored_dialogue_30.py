@@ -124,6 +124,8 @@ def audit(rows: list[dict], *, cohort_sha: str) -> dict:
              QuotedSentenceComposer._postposed_minor_reply_plan),
             ("nested_nominal_title",
              QuotedSentenceComposer._nested_nominal_title_plan),
+            ("intercalated_that_complement",
+             QuotedSentenceComposer._intercalated_that_complement_plan),
             ("topical_modal_vp_ellipsis",
              QuotedSentenceComposer._modal_ellipsis_plan),
         )
