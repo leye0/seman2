@@ -523,8 +523,8 @@ class QuotedSentenceComposer:
                 # independently attributed reporting tag. The comparative
                 # target is a possessive pronoun, not a spurious bare noun.
                 comparative = re.fullmatch(
-                    r"(.+?)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
-                    r"(.+?)\s+([A-Za-z]+)\s+(.+?)(,)\s+(.+?)(,)",
+                    r"(.+?)\s+(am|are|is|was|were)\s+(more|less)\s+"
+                    r"(.+?)\s+(than)\s+([A-Za-z]+)(,)\s+(.+?)(,)",
                     quote_surface,
                 )
                 if (comparative is not None
