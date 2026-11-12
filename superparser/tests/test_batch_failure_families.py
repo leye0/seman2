@@ -9,6 +9,7 @@ from pathlib import Path
 import unittest
 
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+from research.verbnet_lr.gutenberg_novels import Book, extract
 from seman_parser.engine import Parser
 from scripts.diagnose_novel_parses import select_cases
 
@@ -56,19 +57,22 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         source = "This I hired."
         result = self._attested(270, source)
         root = self._rule(
-            result, "clause_object_topicalization_finite_demonstrative",
+            result, "structural_topical_finite_demonstrative",
         )
         self.assertEqual(root.category, "CLAUSE")
         self.assertEqual(
             [result.text[ch.start:ch.end] for ch in root.children],
-            ["This", "I", "hired"],
+            ["This", "I", "hired", "."],
         )
         self.assertEqual(
             [child.category for child in root.children],
-            ["TOPICAL-NP", "NP", "V"],
+            ["NP", "NP", "V", "SPEECH-STOP"],
         )
-        self.assertEqual(root.children[0].rule_id,
-                         "np_topical_demonstrative_pronoun")
+        self.assertEqual(root.children[0].rule_id, "segment_interface")
+        self.assertEqual(root.children[0].children[0].rule_id,
+                         "np_demonstrative")
+        self.assertEqual(result.stats["structural_segment_count"], 3)
+        self.assertTrue(result.stats["structural_composition"])
         self.assertEqual(root.features.as_dict().get("licensed_transitive"),
                          "true")
 
@@ -109,10 +113,15 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         )
         for text, expected in cases:
             with self.subTest(text=text):
-                result = self.parser.parse(
-                    text, max_items=50_000,
+                rows, _ = extract(
+                    Book(999, "Grammar", "Test", "train"),
+                    text, length_min=1, length_max=60,
+                )
+                self.assertEqual(len(rows), 1, text)
+                _, _, result = parse_corpus_case(
+                    self.parser, rows[0], max_items=50_000,
                     kbest_work_limit=500_000,
-                ).result
+                )
                 for rule_id in expected:
                     self._rule(result, rule_id)
 
@@ -129,10 +138,15 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         )
         for text, forbidden in pairs:
             with self.subTest(text=text):
-                result = self.parser.parse(
-                    text, max_items=50_000,
+                rows, _ = extract(
+                    Book(999, "Grammar", "Test", "train"),
+                    text, length_min=1, length_max=60,
+                )
+                self.assertEqual(len(rows), 1, text)
+                _, _, result = parse_corpus_case(
+                    self.parser, rows[0], max_items=50_000,
                     kbest_work_limit=500_000,
-                ).result
+                )
                 for candidate in result.alternatives(limit=8):
                     self.assertFalse(
                         any(node.rule_id == forbidden for node in walk(candidate)),
