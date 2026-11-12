@@ -18,7 +18,7 @@ TARGETS = [
     "superparser.tests.test_parser_integration.FrontedPossessiveRelativeAndOtherComparisonTests.test_pinned_371_selected_tree_has_exact_antecedent_and_scopes",
 ]
 FAMILIES = {
-    "reflexive": {"np_emphatic_reflexive_agreement"},
+    "reflexive": {"np_det_n_emphatic_reflexive_agreement"},
     "copular_adv": {"vp_copula_predicative_scope_adjective"},
     "greeting": {"clause_time_of_day_valediction_vocative"},
     "passive": {"vp_passive_resultative_predicative_adjp"},
