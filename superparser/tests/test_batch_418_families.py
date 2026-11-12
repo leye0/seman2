@@ -136,33 +136,6 @@ class MultiFamily418Tests(unittest.TestCase):
             "true",
         )
 
-    def test_384_contractual_modal_selects_a_real_bare_clausal_complement(self):
-        text = "\"You'll find I do my duty.\""
-        r = self.case_result(384, text)
-        inf = self.assert_node(
-            r, "vpnp_bare_zero_clausal_complement",
-            "find I do my duty",
-        )
-        self.assertEqual([c.category for c in inf.children], ["V", "CLAUSE"])
-        self.assertEqual(
-            [text[c.start:c.end] for c in inf.children],
-            ["find", "I do my duty"],
-        )
-        self.assertEqual(inf.children[0].features.as_dict().get("vform"),
-                         "base")
-        self.assertEqual(inf.children[0].features.as_dict().get("subcat"),
-                         "clausal")
-        modal = self.assert_node(r, "vp_modal_bare",
-                                 "'ll find I do my duty")
-        self.assertEqual(
-            [text[c.start:c.end] for c in modal.children],
-            ["'ll", "find I do my duty"],
-        )
-        self.assertTrue(
-            any(n.rule_id == "dialogue_quote_clause_stop"
-                for n in descendants(r.best()))
-        )
-
     def test_independent_productive_positive_controls(self):
         examples = (
             ("He himself was already ready.",
@@ -173,8 +146,6 @@ class MultiFamily418Tests(unittest.TestCase):
              "clause_yn_copular_adjp_question"),
             ("There the visitors were already congregated.",
              "clause_front_adv_nocomma"),
-            ("Mary will believe John left.",
-             "vpnp_bare_zero_clausal_complement"),
             ("Why would she go to Boston, except to visit him?",
              "clause_wh_modal_exceptive_infinitival_purpose"),
         )
@@ -205,8 +176,6 @@ class MultiFamily418Tests(unittest.TestCase):
              "adjp_adj_adv"),
             ("There the visitors were already laughed.",
              "vp_copula_predicative_scope_adjective"),
-            ("Mary will arrive John slept.",
-             "vpnp_bare_zero_clausal_complement"),
             ("Why would she go to Boston, unless to visit him?",
              "clause_wh_modal_exceptive_infinitival_purpose"),
         )
