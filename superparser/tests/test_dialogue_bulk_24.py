@@ -128,6 +128,66 @@ class DialogueBulk24Tests(unittest.TestCase):
         self.assertEqual(inner.children[-1].features.as_dict().get("stype"),
                          "question")
 
+    def test_157_true_comparative_target_vocative_and_reporter(self):
+        source=("“My overhearings were more to the purpose than yours, "
+                "Eliza,” said Charlotte.")
+        r=self.actual(157,source)
+        n=self.root(r,"dialogue_structural_postposed_comparative_vocative_report")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),("NP","My overhearings"),("COPULA","were"),
+            ("DEGREE","more"),("PP","to the purpose"),("CONJ","than"),
+            ("POSS-PRONOUN","yours"),("COMMA",","),("NP","Eliza"),
+            ("COMMA",","),("CLOSE-QUOTE","”"),
+            ("SPEECH-TAG","said Charlotte"),("SPEECH-STOP","."),
+        ])
+        self.assertEqual(n.children[1].children[0].rule_id,"np_poss")
+        self.assertEqual(n.children[6].features.as_dict().get(
+            "independent_possessive"),"true")
+        self.assertEqual(n.children[8].children[0].rule_id,"np_proper")
+        self.assertEqual(n.children[11].children[0].rule_id,
+                         "dialogue_speech_tag_inverted")
+
+    def test_200_reduced_temporal_reporter_clausal_vocative(self):
+        source=("“We are speaking of music, madam,” said he, "
+                "when no longer able to avoid a reply.")
+        r=self.actual(200,source)
+        n=self.root(r,"dialogue_structural_postposed_temporal_reduced_reporter")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),("CLAUSE","We are speaking of music"),
+            ("COMMA",","),("NP","madam"),("COMMA",","),
+            ("CLOSE-QUOTE","”"),("V","said"),("NP","he"),
+            ("COMMA",","),("CONJ","when"),("NEG-DEGREE","no"),
+            ("ADV","longer"),("ADJ","able"),("TO","to"),
+            ("V","avoid"),("NP","a reply"),("SPEECH-STOP","."),
+        ])
+        self.assertEqual(n.children[1].children[0].rule_id,"clause_np_vp")
+        self.assertEqual(n.children[7].children[0].rule_id,"np_indef_pron")
+        self.assertEqual(n.children[10].features.as_dict().get(
+            "temporal_negation"),"true")
+        self.assertEqual(n.children[12].features.as_dict().get(
+            "infinitival_complement"),"true")
+        self.assertEqual(n.children[14].features.as_dict().get("subcat"),
+                         "transitive")
+        self.assertEqual(n.children[15].children[0].rule_id,"np_det_n")
+
+    def test_445_copular_predicate_coordination_with_overt_parenthetical(self):
+        source='"That is all clear, and, I dare say, true enough," replied Dr. Livesey.'
+        r=self.actual(445,source)
+        n=self.root(r,
+            "dialogue_structural_postposed_predicative_coord_parenthetical_report")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),("CLAUSE","That is all clear"),
+            ("COMMA",","),("COORD","and"),("COMMA",","),
+            ("CLAUSE","I dare say"),("COMMA",","),
+            ("ADJP","true enough"),("COMMA",","),("CLOSE-QUOTE",'"'),
+            ("SPEECH-TAG","replied Dr. Livesey"),("SPEECH-STOP","."),
+        ])
+        self.assertEqual(n.children[1].children[0].rule_id,"clause_np_vp")
+        self.assertEqual(n.children[5].children[0].rule_id,"clause_np_vp")
+        self.assertEqual(n.children[7].children[0].rule_id,"adjp_adj_adv")
+        self.assertEqual(n.children[10].children[0].rule_id,
+                         "dialogue_speech_tag_inverted")
+
     def test_original_quote_and_syntax_gate_negative_controls(self):
         original=[
             ('"In, in, out!" he shouted, and cursed them for their delay.',
