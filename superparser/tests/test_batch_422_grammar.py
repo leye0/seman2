@@ -64,11 +64,19 @@ class Batch422GrammarTests(unittest.TestCase):
         )
         self.assertEqual(question.children[0].features.as_dict()
                          .get("negation"), "true")
-        self.assertTrue(any(
-            n.category == "SPEECH-TAG" and
-            source[n.start:n.end] == "said the gentleman behind"
-            for n in walk(result.best())
-        ))
+        tags = [
+            n for n in walk(result.best())
+            if n.category == "SPEECH-TAG"
+            and source[n.start:n.end] == "said the gentleman behind"
+        ]
+        self.assertTrue(tags)
+        self.assertEqual(tags[0].rule_id, "dialogue_speech_tag_inverted")
+        self.assertEqual(tags[0].children[1].rule_id, "np_det_n_adv")
+        self.assertEqual(
+            [source[n.start:n.end]
+             for n in tags[0].children[1].children],
+            ["the", "gentleman", "behind"],
+        )
 
     def test_175_absolute_intransitive_doubt_in_shared_subject_coordination(self):
         source = ("Elizabeth listened, wondered, doubted, "
