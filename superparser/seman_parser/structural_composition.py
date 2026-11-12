@@ -78,7 +78,7 @@ class QuotedSentenceComposer:
         # Group 2 is the actual apostrophe+ll with its original source span.
         match = re.fullmatch(
             r"([A-Za-z]+)(['’]ll)\s+([A-Za-z]+)\s+"
-            r"([A-Za-z][^'’\\\\"“”‘’!?]*?)([.!?])",
+            r'''([A-Za-z][^'’"“”‘’!?]*?)([.!?])''',
             text[1:-1],
         )
         if match is None:
