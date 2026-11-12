@@ -97,7 +97,7 @@ class MultiFamily418Tests(unittest.TestCase):
             "No aunt, some officers, no news could be sought after--"
             "the very shoe-roses for Netherfield were got by proxy.",
             "No aunt, no officers, no news could be sought after--"
-            "the very shoe-roses for Netherfield were taken away.",
+            "the very shoe-roses for Netherfield shine.",
             "No aunt, no officers, no news could be sought after;"
             "the very shoe-roses for Netherfield were got by proxy.",
         )
