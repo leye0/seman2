@@ -327,6 +327,11 @@ class QuotedSentenceComposer:
                     or any(s in surface for s in ['"', '“', '”', '‘', '’'])
                 ):
                     return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
+                        "dialogue_structural_temporal_vocative_minor_reprise"
+                        and selected.rule_id != "clause_np_vp"):
+                    return None
                 # A conditional question is a conditional CLAUSE whose
                 # main-clause child, not its root, carries stype=question.
                 # Explicitly inspect that selected ranked subordinate tree.
@@ -413,6 +418,89 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_temporal_vocative_minor_reprise(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Source-exact multi-sentence speech with a temporal minor reprise.
+
+        Keep the as-long-as subordinate finite clause, vocative, main finite
+        clause and later *verbless* temporal repetition as four distinct
+        functions.  In particular, the second speech act is never retyped as
+        a finite subject-predicate sentence or forced into nominal apposition.
+        """
+        by_id = {c.get("id"): c for c in components}
+        q0 = by_id.get("q0")
+        if (not q0 or q0.get("function") != "direct_speech"
+                or (q0.get("start"), q0.get("end")) != (0, len(text))
+                or any(c.get("function") in {
+                    "reporting_clause", "split_direct_speech_turn",
+                    "embedded_quotation", "narratorial_parenthetical",
+                } for c in components)):
+            return None
+        quotes = quotation_boundaries(text)
+        if (len(quotes) != 2 or
+                [(x.start,x.end,x.side) for x in quotes] != [
+                    (0,1,"open"),(len(text)-1,len(text),"close")
+                ]):
+            return None
+        parts = sorted(
+            (c for c in components if
+             c.get("function") == "spoken_clause_candidate"
+             and c.get("governor") == "q0"),
+            key=lambda c: c["start"],
+        )
+        if len(parts) != 2:
+            return None
+        p1,p2=parts
+        if (p1["start"] != 1 or p2["end"] != len(text)-1
+                or text[p1["end"]:p2["start"]].strip()):
+            return None
+        first = re.fullmatch(
+            r"([Aa]s)\s+(long)\s+(as)\s+(.+?)(,)\s+"
+            r"(.+?)(,)\s+(.+?)(\.)",
+            text[p1["start"]:p1["end"]],
+        )
+        second = re.fullmatch(
+            r"(.+?)(,)\s+(.+?)(!)",
+            text[p2["start"]:p2["end"]],
+        )
+        if not first or not second:
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]] = []
+        def group(match: re.Match[str],base:int,n:int,cat:str,
+                  kind="lexical",**required:str) -> None:
+            a,b=match.span(n)
+            specs.append((cat,base+a,base+b,kind,required))
+        def punct(cat:str,a:int)->None:
+            specs.append((cat,a,a+1,"source-punctuation",{}))
+        punct("OPEN-QUOTE",0)
+        base=p1["start"]
+        for n,cat in ((1,"CONJ"),(2,"ADJ"),(3,"CONJ")):
+            group(first,base,n,cat)
+        group(first,base,4,"CLAUSE","phrase")
+        group(first,base,5,"COMMA","source-punctuation")
+        group(first,base,6,"NP","phrase")
+        group(first,base,7,"COMMA","source-punctuation")
+        group(first,base,8,"CLAUSE","phrase")
+        group(first,base,9,"SPEECH-STOP","source-punctuation")
+        base=p2["start"]
+        group(second,base,1,"NP","phrase")
+        group(second,base,2,"COMMA","source-punctuation")
+        group(second,base,3,"NP","phrase")
+        group(second,base,4,"EXCL","source-punctuation")
+        punct("CLOSE-QUOTE",len(text)-1)
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_temporal_vocative_minor_reprise",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_split_modal_coord_with_gerund(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1162,6 +1250,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        temporal = self._compose_temporal_vocative_minor_reprise(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if temporal is not None:
+            return temporal
         plan = self._plan(text, components)
         if plan is None:
             bulk = self._compose_bulk_dialogue_families(

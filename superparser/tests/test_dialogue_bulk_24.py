@@ -189,6 +189,67 @@ class DialogueBulk24Tests(unittest.TestCase):
                          "dialogue_speech_tag_inverted")
 
 
+
+    def test_99_source_temporal_protasis_and_verbless_frequency_reprise(self):
+        source=(
+            "‘As long as you are here, my pet, I shall come over "
+            "every week of my life to see you. One day, every week of my life!’"
+        )
+        r=self.actual(99,source)
+        n=self.root(r,"dialogue_structural_temporal_vocative_minor_reprise")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","‘"),("TEMPORAL-CLAUSE","As long as you are here"),
+            ("COMMA",","),("NP","my pet"),("COMMA",","),
+            ("CLAUSE","I shall come over every week of my life to see you"),
+            ("SPEECH-STOP","."),("MINOR-UTTERANCE",
+                "One day, every week of my life!"),("CLOSE-QUOTE","’"),
+        ])
+        antecedent=n.children[1]
+        self.assertEqual(antecedent.rule_id,
+                         "dialogue_structural_temporal_finite_subordinate")
+        self.assertEqual(antecedent.children[0].rule_id,
+                         "dialogue_structural_temporal_as_long_as")
+        self.assertEqual(
+            [(k.category,source[k.start:k.end])
+             for k in antecedent.children[0].children],
+            [("CONJ","As"),("ADJ","long"),("CONJ","as")],
+        )
+        self.assertEqual(antecedent.children[1].children[0].rule_id,
+                         "clause_np_vp")
+        self.assertEqual(n.children[5].children[0].rule_id,"clause_np_vp")
+        minor=n.children[7]
+        self.assertEqual(minor.rule_id,
+                         "dialogue_structural_nominal_temporal_reprise")
+        self.assertEqual(
+            [(k.category,source[k.start:k.end]) for k in minor.children],
+            [("NP","One day"),("COMMA",","),
+             ("NP","every week of my life"),("EXCL","!")],
+        )
+        self.assertEqual(minor.features.as_dict().get("verbless"),"true")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_99_does_not_promote_unproved_reprises_or_broken_temporal_markers(self):
+        examples=(
+            "‘As long as you are here, my pet, I shall come over "
+            "every week of my life to see you. Quickly, every week of my life!’",
+            "‘As soon as you are here, my pet, I shall come over "
+            "every week of my life to see you. One day, every week of my life!’",
+        )
+        for source in examples:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(
+                    self.parser,cases[0],max_items=50_000,
+                    kbest_work_limit=500_000,
+                )
+                self.assertNotEqual(
+                    r.stats.get("structural_composition_kind"),
+                    "dialogue_structural_temporal_vocative_minor_reprise",
+                )
+                self.assertEqual(prepared.source_text,source)
+
     def test_237_split_preface_shared_modal_and_possessive_gerund(self):
         source=(
             "“But surely,” said she, “I may enter his county with impunity, "
