@@ -43,6 +43,185 @@ class QuotedSentenceComposer:
             preserve_quote_delimiters=True,
         )
 
+    def _compose_quoted_modal_zero_clausal_complement(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Source-scoped quoted finite modal selecting an overt finite clause.
+
+        The unrestricted V[base,clausal]+CLAUSE production was explicitly
+        rejected: it saturated unrelated already-correct literary quotes.
+        This pathway instead requires the *actual* printed contraction,
+        lexical modal and valency edges, and independently ranked NP and
+        subordinate CLAUSE parses before composing declarative interfaces.
+        """
+        if (not components
+                or not any(c.get("function") == "direct_speech"
+                           and (c.get("start"), c.get("end")) ==
+                           (0, len(text)) for c in components)
+                or any(c.get("function") in (
+                    "embedded_quotation", "reporting_clause",
+                    "split_direct_speech_turn",
+                ) for c in components)):
+            return None
+        marks = quotation_boundaries(text)
+        if len(marks) != 2 or (
+            marks[0].start, marks[0].end, marks[0].side,
+            marks[1].start, marks[1].end, marks[1].side,
+        ) != (0, 1, "open", len(text)-1, len(text), "close"):
+            return None
+        # A productive spelling-level gate, NOT an attested-book string.
+        # Group 2 is the actual apostrophe+ll with its original source span.
+        match = re.fullmatch(
+            r"([A-Za-z]+)(['’]ll)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z][^'’\\\\"“”‘’!?]*?)([.!?])",
+            text[1:-1],
+        )
+        if match is None:
+            return None
+        subject = tuple(1+v for v in match.span(1))
+        modal = tuple(1+v for v in match.span(2))
+        verb = tuple(1+v for v in match.span(3))
+        complement = tuple(1+v for v in match.span(4))
+        stop = 1+match.start(5)
+        if (not all(text[a:b] and text[a:b] == text[a:b].strip()
+                    for a, b in (subject, modal, verb, complement))
+                or stop != len(text)-2
+                or not skeleton(text[slice(*complement)]).finite_predicate_candidate):
+            return None
+        def lexical(category: str, span: tuple[int, int],
+                    needed: Mapping[str, str]) -> LexicalCandidate | None:
+            for candidate in original_lattice.candidates:
+                if (candidate.category == category
+                        and (candidate.span_start, candidate.span_end) == span
+                        and all(candidate.features.as_dict().get(k) == v
+                                for k, v in needed.items())):
+                    return candidate
+            return None
+        modal_edge = lexical("MODAL", modal, {"vform": "finite"})
+        verb_edge = lexical("V", verb, {
+            "vform": "base", "subcat": "clausal",
+        })
+        if modal_edge is None or verb_edge is None:
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1200 or total_work < 1200:
+            return None
+        piece_items, piece_work = total_items // 3, total_work // 3
+        proofs: list[ParseResult] = []
+        candidates: list[LexicalCandidate] = [modal_edge, verb_edge]
+        for category, (a, b) in (("NP", subject), ("CLAUSE", complement)):
+            fragment = text[a:b]
+            if category == "CLAUSE":
+                proof = parser._parse_vector_text(
+                    fragment, max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+            else:
+                proof = parser._vector_grammar.parse_lattice(
+                    parser._lattice_for_text(fragment),
+                    goal_category=category,
+                    max_items=piece_items, kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k,
+                    beam=parser.beam if beam is None else beam,
+                )
+            selected = proof.best()
+            if not proof.completed or selected is None:
+                return None
+            if category == "NP":
+                if (selected.category != "NP"
+                        or selected.features.as_dict().get("pronominal")
+                           != "true"
+                        or selected.rule_id != "np_indef_pron"):
+                    return None
+            else:
+                if (selected.category != "CLAUSE" or len(selected.children) < 2
+                        or selected.children[0].category != "NP"
+                        or selected.children[1].category not in
+                           {"VP", "VP-NP"}):
+                    return None
+            proofs.append(proof)
+            candidates.append(LexicalCandidate(
+                span_start=a, span_end=b, surface=fragment,
+                lemma=f"<proved-{category.lower()}>",
+                category=category, features=selected.features,
+                score=selected.score, source="source-scoped-clausal-proof",
+                provenance={"original_source_span":[a,b],
+                            "selected_rule_id":selected.rule_id},
+                interface=SegmentInterface(proof, a, a, b),
+            ))
+        for where, category in (
+            (0, "OPEN-QUOTE"), (stop, "SPEECH-STOP"),
+            (len(text)-1, "CLOSE-QUOTE"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=where, span_end=where+1,
+                surface=text[where], lemma=text[where],
+                category=category, features=FeatureStructure.empty(),
+                source="overt-source-punctuation", score=0,
+                provenance={"original_source_span":[where,where+1]},
+            ))
+        graph = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        assembled = self._vector.parse_lattice(
+            graph, goal_category="CLAUSE",
+            max_items=total_items - 2*piece_items,
+            kbest_work_limit=total_work - 2*piece_work,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        selected = assembled.best()
+        if (not assembled.completed or selected is None
+                or selected.rule_id !=
+                   "dialogue_structural_quoted_modal_zero_clausal_complement"):
+            return None
+        if isinstance(assembled.stats, dict):
+            assembled.stats.update({
+                "engine": "vector-source-scoped-modal-clausal-quotation",
+                "structural_composition": True,
+                "structural_composition_kind": "quoted_finite_modal_zero_clausal",
+                "dialogue_scoped": True,
+                "source_text_unchanged": True,
+                "structural_clause_count": 2,
+                "structural_segment_count": 2,
+                "structural_segment_spans": [
+                    list(subject), list(complement),
+                ],
+                "structural_segment_rule_ids": [
+                    p.best().rule_id for p in proofs
+                ],
+                "structural_segment_stats": [
+                    dict(p.stats) for p in proofs
+                ],
+                "source_modal_span": list(modal),
+                "source_verb_span": list(verb),
+                "source_punctuation_spans": [
+                    [0,1], [stop,stop+1], [len(text)-1,len(text)],
+                ],
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+                "composition_linguistic_proof": (
+                    "overt_pronominal_subject_finite_modal_lexically"
+                    "_clausal_base_verb_and_independently_parsed_finite"
+                    "_complement_without_invented_that"
+                ),
+            })
+        assembled.shared_forest = {
+            "assembly": assembled.shared_forest,
+            "segments": tuple(p.shared_forest for p in proofs),
+            "interfaces": tuple(c.interface for c in candidates
+                                if c.interface is not None),
+        }
+        return assembled
+
     def compose_unquoted_emphatic_subject(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
         components: Sequence[Mapping[str, Any]], *,
