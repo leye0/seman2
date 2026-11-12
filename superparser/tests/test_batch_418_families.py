@@ -112,6 +112,30 @@ class MultiFamily418Tests(unittest.TestCase):
         self.assertEqual(pred.children[2].features.as_dict()
                          .get("stative_resultative"), "true")
 
+    def test_52_exceptive_purpose_attaches_to_the_modal_wh_question(self):
+        text = "Why should he go to India, except to harass me?"
+        r = self.case_result(52, text)
+        clause = self.assert_node(
+            r, "clause_wh_modal_exceptive_infinitival_purpose", text,
+        )
+        self.assertEqual(
+            [node.category for node in clause.children],
+            ["WH-NOM", "MODAL", "NP", "VP-NP", "COMMA",
+             "EXCEPTIVE", "TO", "VP-NP", "QMARK"],
+        )
+        self.assertEqual(
+            [text[node.start:node.end] for node in clause.children],
+            ["Why", "should", "he", "go to India", ",",
+             "except", "to", "harass me", "?"],
+        )
+        self.assertEqual(clause.children[3].rule_id,
+                         "vpnp_bare_prepositional_pp")
+        self.assertEqual(clause.children[7].rule_id, "vp_bare_trans")
+        self.assertEqual(
+            clause.children[5].features.as_dict().get("exceptive_purpose"),
+            "true",
+        )
+
     def test_384_contractual_modal_selects_a_real_bare_clausal_complement(self):
         text = "\"You'll find I do my duty.\""
         r = self.case_result(384, text)
@@ -151,6 +175,8 @@ class MultiFamily418Tests(unittest.TestCase):
              "clause_front_adv_nocomma"),
             ("Mary will believe John left.",
              "vpnp_bare_zero_clausal_complement"),
+            ("Why would she go to Boston, except to visit him?",
+             "clause_wh_modal_exceptive_infinitival_purpose"),
         )
         for text, rule in examples:
             with self.subTest(text=text):
@@ -181,6 +207,8 @@ class MultiFamily418Tests(unittest.TestCase):
              "vp_copula_predicative_scope_adjective"),
             ("Mary will arrive John slept.",
              "vpnp_bare_zero_clausal_complement"),
+            ("Why would she go to Boston, unless to visit him?",
+             "clause_wh_modal_exceptive_infinitival_purpose"),
         )
         for text, forbidden in examples:
             with self.subTest(text=text):
