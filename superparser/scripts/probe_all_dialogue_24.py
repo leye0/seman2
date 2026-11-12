@@ -72,7 +72,7 @@ def main():
                     grammar=(parser._dialogue_vector_grammar
                              if goal=="SPEECH-TAG" else parser._vector_grammar)
                     parsed=grammar.parse_lattice(lattice,goal_category=goal,
-                        max_items=12000,kbest_work_limit=100000)
+                        max_items=12000,kbest_work_limit=100000,beam=parser.beam)
                     best=parsed.best()
                     out["results"][goal]={
                         "ok":bool(parsed.completed and best),
