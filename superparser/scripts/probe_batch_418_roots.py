@@ -92,11 +92,11 @@ def run():
             parser = parsers[goal]
             lattice = parser._lattice_for_text(fragment)
             lexical = {
-                token.surface: list(sorted({
+                token.text: list(sorted({
                     c.category+":" + str(c.features.as_dict().get("vform", ""))
                     +":" + str(c.features.as_dict().get("subcat", ""))
                     for c in lattice.candidates
-                    if c.surface == token.surface
+                    if c.surface == token.text
                 }))[:12]
                 for token in lattice.tokens
             }
