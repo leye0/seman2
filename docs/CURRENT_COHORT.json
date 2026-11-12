@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #43 merged into main. All 30 original real-dialogue failures are pinned and audited against unchanged 500-source cohort. Three more previously failing dialogue passages (#11, #137, #413) now have complete parsing results; 411 -> 414/500 and 89 -> 86 failed, with no previously completed sentences regressing. These include nested nominal title, modal VP ellipsis without invented antecedent, and postposed vocative reporting tag. Rank-one syntax/semantic review remains required before treating every completion as fully correct.",
+  "note": "PR #44 merged into main. Source-exact interrupted that-complement grammar proved on real Austen #222. On the identical 500-case cohort: 414 -> 415 completed, 86 -> 85 unresolved, with newly-complete #222 and zero previously complete regressions. Four of the original 30 anchored real-dialogue failures are now complete; 26 remain. #206 changed from kbest_budget_exceeded to timeout but was unresolved in both runs. Rank-one tree and attachment quality remain required for any future grammar repairs.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,35 +73,40 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "8e0acda7d9748a4ea916497ae58eb8c0977998f9",
-    "validated_pr_head": "52d4a3e962a328ade661601238dc510cb54e2dbc",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43154183122",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43154183121",
-    "completed": 414,
-    "unresolved": 86,
+    "validated_merge_commit": "fa24929196fdb3a01ccfa3052ce31587b8e84ca4",
+    "validated_pr_head": "4da76a1e6872fda7443c9d919552373bd0a4f1e0",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43238270687",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43238270252",
+    "completed": 415,
+    "unresolved": 85,
     "statuses": {
-      "complete": 414,
+      "complete": 415,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 11,
-      "kbest_budget_exceeded": 1,
+      "kbest_budget_exceeded": 0,
       "no_structural_root": 15,
-      "roots_without_valid_analysis": 55,
-      "timeout": 4,
+      "roots_without_valid_analysis": 54,
+      "timeout": 5,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 411,
-      "current_complete": 414,
+      "previous_complete": 414,
+      "current_complete": 415,
       "newly_complete_indexes": [
-        11,
-        137,
-        413
+        222
       ],
       "regressed_completed_indexes": [],
-      "verified_dialogue_failures_fixed": 3,
+      "verified_dialogue_failures_fixed": 4,
       "initial_dialogue_failures": 30,
-      "remaining_dialogue_failures": 27
+      "remaining_dialogue_failures": 26,
+      "previous_unresolved_changed_failure_type": [
+        {
+          "index": 206,
+          "from": "kbest_budget_exceeded",
+          "to": "timeout"
+        }
+      ]
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -122,8 +127,8 @@
         },
         "split_speech_with_intercalated_reporting_clause": {
           "baseline_failed": 7,
-          "still_failed": 7,
-          "now_complete": 0
+          "still_failed": 6,
+          "now_complete": 1
         },
         "unattributed_single_quotation": {
           "baseline_failed": 7,
@@ -136,12 +141,13 @@
         "intercalated_two_finite_clauses": 6,
         "multi_clause_quote": 6,
         "topical_modal_vp_ellipsis": 1,
-        "postposed_vocative_with_reporter": 4
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
       },
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 667,
+      "unit_tests": 669,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
@@ -268,6 +274,84 @@
     "next_grammar_case": {
       "index": 11,
       "case_id": "766:7aeedec565c8d7f5"
+    }
+  },
+  "pre_pr44_dialogue_complement_baseline": {
+    "validated_merge_commit": "8e0acda7d9748a4ea916497ae58eb8c0977998f9",
+    "validated_pr_head": "52d4a3e962a328ade661601238dc510cb54e2dbc",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43154183122",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43154183121",
+    "completed": 414,
+    "unresolved": 86,
+    "statuses": {
+      "complete": 414,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 11,
+      "kbest_budget_exceeded": 1,
+      "no_structural_root": 15,
+      "roots_without_valid_analysis": 55,
+      "timeout": 4,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 411,
+      "current_complete": 414,
+      "newly_complete_indexes": [
+        11,
+        137,
+        413
+      ],
+      "regressed_completed_indexes": [],
+      "verified_dialogue_failures_fixed": 3,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 27
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 6,
+          "now_complete": 0
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 7,
+          "now_complete": 1
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 7,
+          "now_complete": 0
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 6,
+          "now_complete": 1
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 667,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 22,
+      "case_id": "766:3f699ef32c5f0e6a"
     }
   }
 }
