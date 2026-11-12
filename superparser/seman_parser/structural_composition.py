@@ -278,8 +278,13 @@ class QuotedSentenceComposer:
                     c for c in original_lattice.candidates
                     if c.category == category
                     and (c.span_start, c.span_end) == (a, b)
-                    and all(c.features.as_dict().get(k) == v
-                            for k, v in required.items())
+                    and all(
+                        (v in (c.features.as_dict().get("subcat", ())
+                               if isinstance(c.features.as_dict().get("subcat"), (list, tuple))
+                               else (c.features.as_dict().get("subcat"),)))
+                        if k == "subcat_member"
+                        else c.features.as_dict().get(k) == v
+                        for k, v in required.items())
                 ]
                 if not matching:
                     return None
@@ -380,6 +385,7 @@ class QuotedSentenceComposer:
                     + int(expected_rule in {
                         "dialogue_structural_postposed_comparative_vocative_report",
                         "dialogue_structural_split_vocative_copula_domain",
+                        "dialogue_structural_split_shared_modal_coord_gerund",
                     })
                 ),
                 "structural_segment_spans": [
@@ -407,6 +413,101 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_split_modal_coord_with_gerund(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Prove a split speech preface and shared-modal coordinated predicates.
+
+        The source-scoped grammar keeps each verb's object separate from its
+        own PPs; the possessive subject of the final gerund is overt and its
+        PP is a modifier of the SECOND predicate, never of the object NP.
+        No finite predicate is supplied to the preface.
+        """
+        by_id = {p.get("id"): p for p in components}
+        q0, q1, tag = (by_id.get(k) for k in ("q0", "q1", "r0"))
+        if not all((q0, q1, tag)):
+            return None
+        if (q0.get("function") != "direct_speech"
+                or q1.get("function") != "direct_speech"
+                or tag.get("function") != "reporting_clause"
+                or not any(p.get("function") == "split_direct_speech_turn"
+                           for p in components)
+                or any(p.get("function") in ("embedded_quotation",
+                         "narratorial_parenthetical") for p in components)):
+            return None
+        a0, b0 = q0["start"], q0["end"]
+        a1, b1 = q1["start"], q1["end"]
+        ta, tb = tag["start"], tag["end"]
+        quotes = quotation_boundaries(text)
+        if (a0 != 0 or b1 != len(text) or
+                not (0 < b0 < ta < tb < a1 < b1) or
+                len(quotes) != 4 or
+                [q.side for q in quotes] !=
+                ["open", "close", "open", "close"] or
+                [q.start for q in quotes] != [0, b0-1, a1, b1-1] or
+                not text[b0:ta].isspace() or
+                re.fullmatch(r"\s*,\s*", text[tb:a1]) is None):
+            return None
+        first = re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)(,)",
+                             text[1:b0-1])
+        # The PP containing a possessive gerund follows a selected PP
+        # complement of the second transitive verb, after an overt comma
+        # + coordinator. Every word must have an original lexical edge.
+        second = re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+\s+[A-Za-z]+)\s+"
+            r"(with\s+[A-Za-z]+)(,)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"(of\s+.+?)\s+(without)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)([.!?])",
+            text[a1+1:b1-1],
+        )
+        if first is None or second is None:
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]] = []
+        def group(match: re.Match[str], base: int, i: int, cat: str,
+                  kind="lexical", **required: str) -> None:
+            a, b = match.span(i)
+            specs.append((cat, base+a, base+b, kind, required))
+        def punct(cat: str, a: int) -> None:
+            specs.append((cat, a, a+1, "source-punctuation", {}))
+        punct("OPEN-QUOTE", 0)
+        group(first, 1, 1, "COORD")
+        group(first, 1, 2, "ADV")
+        group(first, 1, 3, "COMMA", "source-punctuation")
+        punct("CLOSE-QUOTE", b0-1)
+        specs.append(("SPEECH-TAG", ta, tb, "phrase", {}))
+        punct("COMMA", text.index(",", tb, a1))
+        punct("OPEN-QUOTE", a1)
+        s = a1+1
+        group(second,s,1,"NP","phrase",pronominal="true")
+        group(second,s,2,"MODAL","lexical",vform="finite")
+        group(second,s,3,"V","lexical",vform="base",subcat_member="transitive")
+        group(second,s,4,"NP","phrase")
+        group(second,s,5,"PP","phrase")
+        group(second,s,6,"COMMA","source-punctuation")
+        group(second,s,7,"COORD")
+        group(second,s,8,"V","lexical",vform="base",subcat_member="transitive")
+        group(second,s,9,"NP","phrase",pronominal="true")
+        group(second,s,10,"PP","phrase")
+        group(second,s,11,"PREP")
+        group(second,s,12,"POSS")
+        group(second,s,13,"V","lexical",vform="ing",subcat_member="transitive")
+        group(second,s,14,"NP","phrase",pronominal="true")
+        group(second,s,15,"SPEECH-STOP","source-punctuation")
+        punct("CLOSE-QUOTE", b1-1)
+        return self._compose_verified_dialogue_pattern(
+            parser, text, original_lattice, specs,
+            "dialogue_structural_split_shared_modal_coord_gerund",
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
 
     def _compose_bulk_dialogue_families(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1070,6 +1171,13 @@ class QuotedSentenceComposer:
             )
             if bulk is not None:
                 return bulk
+            scoped_modal = self._compose_split_modal_coord_with_gerund(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if scoped_modal is not None:
+                return scoped_modal
             intercalated = self._compose_intercalated(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,

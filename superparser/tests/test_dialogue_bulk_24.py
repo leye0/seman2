@@ -188,6 +188,68 @@ class DialogueBulk24Tests(unittest.TestCase):
         self.assertEqual(n.children[10].children[0].rule_id,
                          "dialogue_speech_tag_inverted")
 
+
+    def test_237_split_preface_shared_modal_and_possessive_gerund(self):
+        source=(
+            "“But surely,” said she, “I may enter his county with impunity, "
+            "and rob it of a few petrified spars without his perceiving me.”"
+        )
+        r=self.actual(237,source)
+        n=self.root(r,"dialogue_structural_split_shared_modal_coord_gerund")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),("COORD","But"),("ADV","surely"),
+            ("COMMA",","),("CLOSE-QUOTE","”"),
+            ("SPEECH-TAG","said she"),("COMMA",","),
+            ("OPEN-QUOTE","“"),("NP","I"),("MODAL","may"),
+            ("VP","enter his county with impunity"),("COMMA",","),
+            ("COORD","and"),
+            ("VP","rob it of a few petrified spars without his perceiving me"),
+            ("SPEECH-STOP","."),("CLOSE-QUOTE","”"),
+        ])
+        self.assertEqual(n.children[5].children[0].rule_id,
+                         "dialogue_speech_tag_inverted")
+        first,second=n.children[10],n.children[13]
+        self.assertEqual(first.rule_id,"dialogue_structural_source_transitive_pp_vp")
+        self.assertEqual(second.rule_id,
+                         "dialogue_structural_source_transitive_two_pp_vp")
+        self.assertEqual(
+            [(x.category,source[x.start:x.end]) for x in second.children],
+            [("V","rob"),("NP","it"),("PP","of a few petrified spars"),
+             ("PP","without his perceiving me")],
+        )
+        gerund=second.children[-1]
+        self.assertEqual(gerund.rule_id,"dialogue_structural_possessive_gerund_pp")
+        self.assertEqual(
+            [(x.category,source[x.start:x.end]) for x in gerund.children],
+            [("PREP","without"),("POSS","his"),
+             ("V","perceiving"),("NP","me")],
+        )
+        self.assertEqual(gerund.children[2].features.as_dict()["vform"],"ing")
+        self.assertEqual(r.stats["structural_clause_count"],1)
+        self.assertEqual(r.text,source)
+
+    def test_237_needs_real_possessive_gerund_and_object(self):
+        examples=(
+            "“But surely,” said she, “I may enter his county with impunity, "
+            "and rob it of a few petrified spars without his perceive me.”",
+            "“But surely,” said she, “I may enter his county with impunity, "
+            "and rob it of a few petrified spars without his perceiving.”",
+        )
+        for source in examples:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(
+                    self.parser,cases[0],max_items=50_000,
+                    kbest_work_limit=500_000,
+                )
+                self.assertFalse(
+                    r.stats.get("structural_composition_kind") ==
+                    "dialogue_structural_split_shared_modal_coord_gerund"
+                )
+                self.assertEqual(prepared.source_text,source)
+
     def test_original_quote_and_syntax_gate_negative_controls(self):
         original=[
             ('"In, in, out!" he shouted, and cursed them for their delay.',

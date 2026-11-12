@@ -85,4 +85,30 @@ probe.PROBES.update({
 ),
 })
 
+# More multi-sentence witnesses: subspan proofs only, never aggregate wins.
+probe.PROBES.update({
+99: (
+    ("As long as you are here", "CLAUSE"),
+    ("my pet", "NP"),
+    ("I shall come over every week of my life to see you", "CLAUSE"),
+    ("I shall come over", "CLAUSE"),
+    ("every week of my life", "NP"),
+    ("to see you", "VP"),
+    ("One day, every week of my life", "NP"),
+),
+223: (
+    ("There has been many a one", "CLAUSE"),
+    ("I fancy", "CLAUSE"),
+    ("overcome in the same way", "VP"),
+    ("many a one", "NP"), ("in the same way", "PP"),
+    ("I wonder who first discovered the efficacy of poetry in driving away love", "CLAUSE"),
+),
+464: (
+    ("There", "INTERJ"), ("Wot did I say", "CLAUSE"),
+    ("did I say", "CLAUSE"), ("No good'll come o' that", "CLAUSE"),
+    ("No good", "NP"), ("'ll", "MODAL"),
+    ("come", "V"), ("o' that", "PP"), ("I said", "CLAUSE"),
+),
+})
+
 if __name__=="__main__":probe.run()
