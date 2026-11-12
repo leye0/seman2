@@ -491,6 +491,28 @@ class Parser:
             self._capture_fast_preflight(preflight_lattice)
             if preflight_lattice is not None else None
         )
+        # Source-scoped topicalization is checked *before* unrestricted
+        # recognition, never by adding NP+NP+V or extra demonstrative senses
+        # to every sentence's global chart. Missing proofs fall through to
+        # the exact unchanged normal parser route.
+        if (structural_constituents
+                and self._quoted_sentence_composer is not None):
+            source_lattice = (
+                preflight_lattice if preflight_lattice is not None
+                else self._lattice_for_text(normalized)
+            )
+            scoped = self._quoted_sentence_composer.compose_unquoted_topical(
+                self, normalized, source_lattice, structural_constituents,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if scoped is not None:
+                return self._attach_fast_preflight(ParseReport(
+                    result=scoped,
+                    resources=(self._quoted_sentence_resources
+                               or self.resources),
+                    lattice=source_lattice,
+                ), preflight)
         light_tokens = tokenize(normalized)
         plan = self._clause_plan(normalized, light_tokens)
         if plan is None:
