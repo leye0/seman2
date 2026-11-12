@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #49 seven original dialogue failures repaired in one bulk shared source-scoped grammatical composition: #56 #66 #157 #200 #408 #445 #456. Anchored historical direct speech 6→13 of 30 and Novel-500 same source SHA 426→433 complete, 74→67 remaining. Original previously complete 426 all preserved; no newly failing case. Previously unresolved #110 #206 changed from kbest_budget_exceeded to timeout and remain unresolved, not counted as fixes. Original 85 immutable witnesses unchanged. Rank-one source-exact tests for 7 dialogue families, lexical valency, comparative nominal agreement, true reporting relationships and punctuation. 696 Core tests green, Novel 500 and source-scoped probes green; old parse budgets and source unchanged.",
+  "note": "PR #50 two independently verified historical dialogue repairs: #99 temporal finite protasis, vocative, full main clause and a separate verbless frequency reprise; #237 split quotation with genuine reporting tag, shared modal, separately licensed transitive predicates and possessive-gerund adverbial. Restabilized previously complete #227: three negative nominal subjects and overt modal passive followed by a separately proven passive clause across source dash (9.90 s previous to 0.14 s now), without increasing budgets. Same 500 source SHA, completed 433→435, unresolved 67→65; historical dialogues 13→15/30. Paired all 500 indexes: only #99 and #237 status changed to complete, zero previously complete regressed. Core 702 tests green; full 500 diagnostics and source-scoped probes green.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,17 +73,17 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "9cdd804d0750b7bba2d4edde934b4ef645554945",
-    "validated_pr_head": "76953089839500c721e548e3d17e75fc8e8995c5",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43290170511",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43290170452",
-    "completed": 433,
-    "unresolved": 67,
+    "validated_merge_commit": "f5233b29c3496bb4c65712cc0cbc0d1d1adaa414",
+    "validated_pr_head": "184423c3641bf7287a87f295d9858bcecd8bcfa6",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43316712749",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43316712726",
+    "completed": 435,
+    "unresolved": 65,
     "statuses": {
-      "complete": 433,
-      "forest_budget_exceeded": 10,
+      "complete": 435,
+      "forest_budget_exceeded": 9,
       "kbest_budget_exceeded": 0,
-      "no_structural_root": 11,
+      "no_structural_root": 10,
       "roots_without_valid_analysis": 41,
       "timeout": 5,
       "error": 0,
@@ -91,40 +91,24 @@
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 426,
-      "current_complete": 433,
+      "previous_complete": 433,
+      "current_complete": 435,
       "newly_complete_indexes": [
-        56,
-        66,
-        157,
-        200,
-        408,
-        445,
-        456
+        99,
+        237
       ],
       "regressed_completed_indexes": [],
-      "previous_unresolved_changed_failure_type": [
-        {
-          "index": 110,
-          "from": "kbest_budget_exceeded",
-          "to": "timeout"
-        },
-        {
-          "index": 206,
-          "from": "kbest_budget_exceeded",
-          "to": "timeout"
-        }
-      ],
-      "verified_dialogue_failures_fixed": 13,
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 15,
       "initial_dialogue_failures": 30,
-      "remaining_dialogue_failures": 17
+      "remaining_dialogue_failures": 15
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
         "multisentence_quotation": {
           "baseline_failed": 6,
-          "still_failed": 6,
-          "now_complete": 0
+          "still_failed": 5,
+          "now_complete": 1
         },
         "nested_quotation": {
           "baseline_failed": 2,
@@ -138,8 +122,8 @@
         },
         "split_speech_with_intercalated_reporting_clause": {
           "baseline_failed": 7,
-          "still_failed": 4,
-          "now_complete": 3
+          "still_failed": 3,
+          "now_complete": 4
         },
         "unattributed_single_quotation": {
           "baseline_failed": 7,
@@ -158,7 +142,7 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 696,
+      "unit_tests": 702,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
@@ -188,17 +172,19 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 67,
+      "active_remaining": 65,
       "now_repaired_original_indexes": [
         22,
         41,
         52,
         56,
         66,
+        99,
         141,
         157,
         175,
         200,
+        237,
         270,
         280,
         301,
@@ -211,7 +197,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43290170273"
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43316712733",
+    "grammatical_attachment_note": "PR #50 source-exact positive and negative controls: #99 separates finite temporal subordinate clause, vocative and genuine verbless reprise; #237 has validated two transitive predicate arguments and possessive gerund adverbial; #227 negative NP coordination and true modal passive parataxis. Selected rank-1 trees inspected, original source unchanged, 50k/500k/10s unchanged."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -849,5 +836,146 @@
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43276150644"
+  },
+  "pre_pr50_baseline": {
+    "validated_merge_commit": "9cdd804d0750b7bba2d4edde934b4ef645554945",
+    "validated_pr_head": "76953089839500c721e548e3d17e75fc8e8995c5",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43290170511",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43290170452",
+    "completed": 433,
+    "unresolved": 67,
+    "statuses": {
+      "complete": 433,
+      "forest_budget_exceeded": 10,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 11,
+      "roots_without_valid_analysis": 41,
+      "timeout": 5,
+      "error": 0,
+      "both_budgets_exceeded": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 426,
+      "current_complete": 433,
+      "newly_complete_indexes": [
+        56,
+        66,
+        157,
+        200,
+        408,
+        445,
+        456
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [
+        {
+          "index": 110,
+          "from": "kbest_budget_exceeded",
+          "to": "timeout"
+        },
+        {
+          "index": 206,
+          "from": "kbest_budget_exceeded",
+          "to": "timeout"
+        }
+      ],
+      "verified_dialogue_failures_fixed": 13,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 17
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 6,
+          "now_complete": 0
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 1,
+          "now_complete": 7
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 4,
+          "now_complete": 3
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 5,
+          "now_complete": 2
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 696,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 69,
+      "case_id": "766:48fb528a88ac0b67"
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 67,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        141,
+        157,
+        175,
+        200,
+        270,
+        280,
+        301,
+        315,
+        384,
+        386,
+        408,
+        445,
+        456
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43290170273"
   }
 }
