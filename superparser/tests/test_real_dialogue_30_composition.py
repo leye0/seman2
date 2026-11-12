@@ -50,7 +50,7 @@ class ActualDialogueCompositions(unittest.TestCase):
                          "A verbless answer is not a finite matrix clause")
         self.assertEqual(
             result.stats["structural_segment_rule_ids"][0],
-            "advp_adv_adv",
+            "advp_degree_adv",
         )
         self.assertTrue(
             result.stats["structural_segment_rule_ids"][2].startswith(
