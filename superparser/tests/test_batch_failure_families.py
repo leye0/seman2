@@ -70,7 +70,12 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         self.assertEqual(root.category, "CLAUSE")
         self.assertEqual(
             [result.text[ch.start:ch.end] for ch in root.children],
-            ["This", "I", "hired"],
+            ["This", "I hired"],
+        )
+        self.assertEqual(root.children[-1].category, "TOPICAL-FINITE-COMMENT")
+        self.assertEqual(
+            [result.text[ch.start:ch.end] for ch in root.children[-1].children],
+            ["I", "hired"],
         )
         self.assertEqual(root.children[-1].features.as_dict().get("gap"), "object")
         self.assertEqual(
