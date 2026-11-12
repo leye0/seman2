@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #45 batch inventory and grammar families merged into main. All original 85 source failures inventoried without resampling; same cohort SHA. Three prior failures #22 #270 #280 have verified selected rank-one trees and became complete: 415 to 418 of 500, 85 to 82 unresolved. Zero previously completed cases regressed. #229 moved from forest_budget_exceeded to no_structural_root, remains unresolved. Core CI 674 tests green; 120 gold and 24 contrasts retained. A broad NP+reflexive trial was rejected by reproducible ablation: historical parse budgets would have been exceeded. Lexical-gated topicalization was isolated into source-scoped independent grammatical proofs instead of global chart rules. Original 30 dialogue set: four complete, 26 unresolved.",
+  "note": "PR #47 multiple source-grounded grammar families merged into main, same 500-source cohort and identical parse budgets. Complete 418→422 (+4), remaining failures 82→78; newly completed original failed indexes [52, 141, 301, 386]. Zero previously complete cases regressed and zero other unresolved status changes. Four ranked selected parse-tree repairs: exceptive-purpose wh-modal question #52, source-scoped grammatical intensifying reflexive #141, lexical temporal postadjectival predicative #301, stative congregated participle and locative fronting #386. 682 Core tests green; Novel-500 same pinned SHA green. A broad base V+clausal-complement grammar attempt for #384 was rejected and removed because it regressed previously complete case #359 under fixed forest budgets; #384 remains unresolved. Full immutable original 85-case inventory retained; active queue now has 78. Anchored direct-speech 30: 4 complete, 26 unresolved.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,39 +73,34 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "f445e1061e73fd8f0f1ca7a8b3c8d91b2ad349aa",
-    "validated_pr_head": "b265fc3d61d5b351763e6284ba52aa5796609a40",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43255106455",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
-    "completed": 418,
-    "unresolved": 82,
+    "validated_merge_commit": "4d59744e4d5ced2439af3a4ab3f2d1417334f318",
+    "validated_pr_head": "b1a05b235f114e4a3b5596ae52de74d407f219ca",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43265877041",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43265877144",
+    "completed": 422,
+    "unresolved": 78,
     "statuses": {
-      "complete": 418,
-      "both_budgets_exceeded": 0,
+      "complete": 422,
       "forest_budget_exceeded": 10,
-      "kbest_budget_exceeded": 0,
       "no_structural_root": 15,
-      "roots_without_valid_analysis": 52,
+      "roots_without_valid_analysis": 48,
       "timeout": 5,
-      "error": 0
+      "error": 0,
+      "kbest_budget_exceeded": 0,
+      "both_budgets_exceeded": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 415,
-      "current_complete": 418,
+      "previous_complete": 418,
+      "current_complete": 422,
       "newly_complete_indexes": [
-        22,
-        270,
-        280
+        52,
+        141,
+        301,
+        386
       ],
       "regressed_completed_indexes": [],
-      "previous_unresolved_changed_failure_type": [
-        {
-          "index": 229,
-          "from": "forest_budget_exceeded",
-          "to": "no_structural_root"
-        }
-      ],
+      "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 4,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 26
@@ -149,7 +144,7 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 674,
+      "unit_tests": 682,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
@@ -178,7 +173,18 @@
         "resource_censored": 16
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
-      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned."
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 78,
+      "now_repaired_original_indexes": [
+        22,
+        52,
+        141,
+        270,
+        280,
+        301,
+        386
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
     }
   },
   "pre_compositional_baseline": {
@@ -461,6 +467,115 @@
     "next_grammar_case": {
       "index": 22,
       "case_id": "766:3f699ef32c5f0e6a"
+    }
+  },
+  "pre_pr47_multi_family_baseline": {
+    "validated_merge_commit": "f445e1061e73fd8f0f1ca7a8b3c8d91b2ad349aa",
+    "validated_pr_head": "b265fc3d61d5b351763e6284ba52aa5796609a40",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43255106455",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+    "completed": 418,
+    "unresolved": 82,
+    "statuses": {
+      "complete": 418,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 10,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 15,
+      "roots_without_valid_analysis": 52,
+      "timeout": 5,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 415,
+      "current_complete": 418,
+      "newly_complete_indexes": [
+        22,
+        270,
+        280
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [
+        {
+          "index": 229,
+          "from": "forest_budget_exceeded",
+          "to": "no_structural_root"
+        }
+      ],
+      "verified_dialogue_failures_fixed": 4,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 26
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 6,
+          "now_complete": 0
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 7,
+          "now_complete": 1
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 6,
+          "now_complete": 1
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 6,
+          "now_complete": 1
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 674,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 41,
+      "case_id": "766:0889d247438b5ebb"
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned."
     }
   }
 }
