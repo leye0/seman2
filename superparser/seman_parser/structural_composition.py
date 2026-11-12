@@ -113,7 +113,14 @@ class QuotedSentenceComposer:
             )
             if intercalated is not None:
                 return intercalated
-            return self._compose_minor_response(
+            minor = self._compose_minor_response(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if minor is not None:
+                return minor
+            return self._compose_postposed_minor_reply(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
@@ -578,5 +585,203 @@ class QuotedSentenceComposer:
             "segments": tuple(p.shared_forest for p in proved),
             "interfaces": tuple(c.interface for c in candidates
                                 if c.interface is not None),
+        }
+        return combined
+
+
+    @staticmethod
+    def _postposed_minor_reply_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int],
+               tuple[int, ...]] | None:
+        """Source-exact ADVP + vocative + overt postposed speech tag.
+
+        A spoken fragment does NOT become an ordinary finite CLAUSE. It may
+        be a grammatical *minor utterance* if independently proven as ADVP
+        (answer) and NP (vocative), and associated with a genuine overt
+        reporting clause. No word-level pattern like "very likely" or "sir"
+        is hardcoded: categories are proved by the existing unification
+        grammar, with every punctuation mark taken from the original text.
+        """
+        by_id = {p.get("id"): p for p in components}
+        quote, reporter = by_id.get("q0"), by_id.get("r0")
+        if not quote or not reporter:
+            return None
+        if quote.get("function") != "direct_speech":
+            return None
+        if reporter.get("function") != "reporting_clause":
+            return None
+        if reporter.get("evidence") != "postposed_reporting_clause":
+            return None
+        if quote.get("governor") != "r0":
+            return None
+        if any(p.get("function") in (
+            "embedded_quotation", "split_direct_speech_turn",
+            "narratorial_parenthetical",
+        ) for p in components):
+            return None
+        a, b = quote.get("start"), quote.get("end")
+        ta, tb = reporter.get("start"), reporter.get("end")
+        if not (
+            a == 0 and isinstance(b, int)
+            and isinstance(ta, int) and isinstance(tb, int)
+            and 4 < b <= ta < tb < len(text)
+            and text[b:ta].isspace()
+            and text[tb:] == "."
+        ):
+            return None
+        boundary = quotation_boundaries(text)
+        if len(boundary) != 2 or [
+            (x.start, x.end, x.side) for x in boundary
+        ] != [(0, 1, "open"), (b - 1, b, "close")]:
+            return None
+        # The quoted answer is an adverbial phrase followed by an overt
+        # vocative NP. Both commas and the outside period are real source
+        # characters and must be included in the full-spanning derivation.
+        if text[b-2] != ",":
+            return None
+        first_comma = text.find(",", 1, b-2)
+        if first_comma <= 1 or text.find(",", first_comma+1, b-2) >= 0:
+            return None
+        adv_a, adv_b = 1, first_comma
+        np_a, np_b = first_comma+1, b-2
+        while np_a < np_b and text[np_a].isspace():
+            np_a += 1
+        while np_b > np_a and text[np_b-1].isspace():
+            np_b -= 1
+        if np_a >= np_b:
+            return None
+        if (text[adv_a:adv_b] != text[adv_a:adv_b].strip()
+                or any(c in text[adv_a:adv_b]+text[np_a:np_b]
+                       for c in "\"'“”‘’;,!?")
+                or len(text[adv_a:adv_b].split()) > 7
+                or len(text[np_a:np_b].split()) > 5):
+            return None
+        return (adv_a, adv_b), (np_a, np_b), (ta, tb), (
+            0, first_comma, b-2, b-1, len(text)-1,
+        )
+
+    def _compose_postposed_minor_reply(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        plan = self._postposed_minor_reply_plan(text, components)
+        if plan is None:
+            return None
+        adverbial, vocative, reporter, punctuation = plan
+        dialogue_grammar = getattr(parser, "_dialogue_vector_grammar", None)
+        if dialogue_grammar is None:
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or total_work < 1000:
+            return None
+        piece_items, piece_work = total_items // 4, total_work // 4
+        candidates: list[LexicalCandidate] = []
+        proofs: list[ParseResult] = []
+        for category, (a, b), grammar in (
+            ("ADVP", adverbial, parser._vector_grammar),
+            ("NP", vocative, parser._vector_grammar),
+            ("SPEECH-TAG", reporter, dialogue_grammar),
+        ):
+            surface = text[a:b]
+            lattice = parser._lattice_for_text(surface)
+            proof = grammar.parse_lattice(
+                lattice, goal_category=category,
+                max_items=piece_items,
+                kbest_work_limit=piece_work,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            if not proof.completed or proof.best() is None:
+                return None
+            selected = proof.best()
+            if selected.category != category:
+                return None
+            if (category == "SPEECH-TAG"
+                    and not (selected.rule_id or "").startswith(
+                        "dialogue_speech_tag_")):
+                return None
+            proofs.append(proof)
+            candidates.append(LexicalCandidate(
+                span_start=a, span_end=b, surface=surface,
+                lemma=f"<verified-{category.lower()}>",
+                category=category, features=selected.features,
+                source="source-structural-grammar-proof",
+                score=selected.score,
+                provenance={
+                    "source_span": [a, b],
+                    "proof_rule": selected.rule_id,
+                },
+                interface=SegmentInterface(proof, a, a, b),
+            ))
+        quote_start, internal_comma, final_comma, close_quote, period = punctuation
+        # Distinct terminals are necessary to preserve the two grammatical
+        # commas (answer/vocative and quote/reporter) in the actual tree.
+        for where, category in (
+            (quote_start, "OPEN-QUOTE"),
+            (internal_comma, "COMMA"),
+            (final_comma, "COMMA"),
+            (close_quote, "CLOSE-QUOTE"),
+            (period, "SPEECH-STOP"),
+        ):
+            candidates.append(LexicalCandidate(
+                span_start=where, span_end=where+1,
+                surface=text[where], lemma=text[where],
+                category=category, features=FeatureStructure.empty(),
+                source="dialogue-delimiter", score=0,
+                provenance={"original_source_span":[where,where+1]},
+            ))
+        graph = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        combined = self._vector.parse_lattice(
+            graph, goal_category="CLAUSE",
+            max_items=total_items - 3 * piece_items,
+            kbest_work_limit=total_work - 3 * piece_work,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not combined.completed or combined.best() is None:
+            return None
+        if isinstance(combined.stats, dict):
+            combined.stats.update({
+                "engine": "vector-structural-minor-with-postposed-reporter",
+                "structural_composition": True,
+                "structural_composition_kind":
+                    "adverbial_answer_vocative_with_postposed_reporting_clause",
+                "source_text_unchanged": True,
+                "dialogue_scoped": True,
+                "structural_clause_count": 0,
+                "structural_segment_count": 3,
+                "structural_segment_spans": [
+                    list(adverbial), list(vocative), list(reporter)
+                ],
+                "structural_segment_rule_ids": [
+                    x.best().rule_id for x in proofs
+                ],
+                "structural_segment_stats": [
+                    dict(x.stats) for x in proofs
+                ],
+                "source_punctuation_spans": [
+                    [i, i+1] for i in punctuation
+                ],
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+                "composition_linguistic_proof":
+                    "source_adverbial_and_vocative_and_postposed_reporting_tag"
+                    "_each_independently_licensed_by_grammar",
+            })
+        combined.shared_forest = {
+            "assembly": combined.shared_forest,
+            "segments": tuple(x.shared_forest for x in proofs),
+            "interfaces": tuple(
+                x.interface for x in candidates if x.interface is not None
+            ),
         }
         return combined

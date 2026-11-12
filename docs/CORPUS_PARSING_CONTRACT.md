@@ -163,3 +163,25 @@ leurs propres preuves lexicales et grammaticales; aucun verbe fini n'est
 inventé. Cette voie vise notamment l'échec littéraire `‘Perfectly, sir.’`.
 Les règles et les actions sémantiques des constructions finies composées
 sont explicites et auditées dans les fichiers JSONL du moteur.
+
+## Évaluation permanente des 30 dialogues littéraires problématiques
+
+`superparser/scripts/audit_anchored_dialogue_30.py` fixe par empreintes SHA,
+indices et catégories les **30 énoncés de discours direct réellement échoués**
+dans la cohorte officielle de 500 (`d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`).
+Chaque exécution de l'audit principal analyse de nouveau exactement les
+mêmes 500 textes avec les mêmes budgets puis écrit `anchored_dialogue_30.json`
+(ancien statut, nouveau statut, catégorie, texte original, arbre racine).
+Aucune phrase ne peut disparaître silencieusement. La réussite du parseur
+doit ensuite être confirmée par la vérification de son arbre et de ses
+rattachements, pas seulement par un compteur.
+
+Le sous-système `QuotedSentenceComposer` reconnaît maintenant un **énoncé
+mineur adverbial suivi d'un vocatif et d'une incise postposée**, lorsque les
+catégories `ADVP`, `NP` et `SPEECH-TAG` sont chacune attestées par de vrais
+arbres grammaticaux indépendants, par exemple dans le cas source #413
+`"Very likely, sir," replied Captain Smollett.`. Les virgules, guillemets
+et le point restent de vrais caractères source; le texte n'est jamais
+réécrit et aucun prédicat fini n'est inventé. Cette construction est une
+extension générique de la grammaire compositionnelle, pas une règle liée
+aux mots d'un roman.
