@@ -50,6 +50,77 @@ class MultiFamily418Tests(unittest.TestCase):
         self.assertIn(span, [result.text[n.start:n.end] for n in nodes])
         return next(n for n in nodes if result.text[n.start:n.end] == span)
 
+
+    def test_227_negative_list_and_two_real_passives_have_bounded_source_tree(self):
+        text=(
+            "No aunt, no officers, no news could be sought after--"
+            "the very shoe-roses for Netherfield were got by proxy."
+        )
+        r=self.case_result(227,text)
+        root=self.assert_node(r,
+            "structural_source_asyndetic_modal_passive_dash",text)
+        self.assertEqual(
+            [(n.category,text[n.start:n.end]) for n in root.children],
+            [("CLAUSE","No aunt, no officers, no news could be sought after"),
+             ("DASH","--"),
+             ("CLAUSE","the very shoe-roses for Netherfield were got by proxy"),
+             ("SPEECH-STOP",".")],
+        )
+        self.assertEqual(root.children[2].children[0].rule_id,"clause_passive")
+        self.assertEqual(root.children[0].rule_id,
+                         "structural_source_negative_series_modal_passive")
+        first=root.children[0]
+        self.assertEqual(first.children[0].rule_id,
+                         "structural_source_three_negative_np_series")
+        self.assertEqual(
+            [(n.category,text[n.start:n.end]) for n in first.children[0].children],
+            [("NP","No aunt"),("COMMA",","),
+             ("NP","no officers"),("COMMA",","),("NP","no news")],
+        )
+        self.assertTrue(all(
+            n.children[0].rule_id=="np_det_n"
+            for n in first.children[0].children if n.category=="NP"))
+        self.assertEqual(first.children[1].rule_id,
+                         "structural_source_modal_stranded_prep_passive")
+        self.assertEqual(
+            [(n.category,text[n.start:n.end]) for n in first.children[1].children],
+            [("MODAL","could"),("V","be"),
+             ("V","sought"),("PREP","after")],
+        )
+        self.assertEqual(first.children[1].features.as_dict().get("voice"),
+                         "passive")
+        self.assertFalse(r.stats["dialogue_scoped"])
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_dashed_negative_series_requires_true_negative_determiners_and_passives(self):
+        cases=(
+            "No aunt, some officers, no news could be sought after--"
+            "the very shoe-roses for Netherfield were got by proxy.",
+            "No aunt, no officers, no news could be sought after--"
+            "the very shoe-roses for Netherfield were taken away.",
+            "No aunt, no officers, no news could be sought after;"
+            "the very shoe-roses for Netherfield were got by proxy.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                rows,_=extract(
+                    Book(999,"Grammar","Test","train"),
+                    text,length_min=1,length_max=120,
+                )
+                if len(rows)!=1:
+                    # Semicolon is never an independent source sentence in
+                    # the active extractor; no manufactured repair allowed.
+                    continue
+                prepared,_,result=parse_corpus_case(
+                    self.parser,rows[0],max_items=50_000,
+                    kbest_work_limit=500_000,
+                )
+                self.assertEqual(prepared.source_text,text)
+                self.assertNotEqual(
+                    result.stats.get("structural_composition_kind"),
+                    "structural_source_asyndetic_modal_passive_dash",
+                )
+
     def test_141_reflexive_agrees_with_subject_and_finite_predicate(self):
         text = "The envelope itself was likewise full."
         r = self.case_result(141, text)

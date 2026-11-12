@@ -332,6 +332,13 @@ class QuotedSentenceComposer:
                         "dialogue_structural_temporal_vocative_minor_reprise"
                         and selected.rule_id != "clause_np_vp"):
                     return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
+                        "structural_source_asyndetic_modal_passive_dash"
+                        and (selected.rule_id != "clause_passive"
+                             or selected.features.as_dict().get("voice")
+                                != "passive")):
+                    return None
                 # A conditional question is a conditional CLAUSE whose
                 # main-clause child, not its root, carries stype=question.
                 # Explicitly inspect that selected ranked subordinate tree.
@@ -377,7 +384,9 @@ class QuotedSentenceComposer:
             assembled.stats.update({
                 "engine": "vector-verified-source-dialogue-bulk",
                 "structural_composition": True,
-                "dialogue_scoped": True,
+                "dialogue_scoped": any(
+                    x[0] == "OPEN-QUOTE" for x in specs
+                ),
                 "source_text_unchanged": True,
                 "structural_composition_kind": expected_rule,
                 "structural_segment_count": phrase_n,
@@ -391,6 +400,7 @@ class QuotedSentenceComposer:
                         "dialogue_structural_postposed_comparative_vocative_report",
                         "dialogue_structural_split_vocative_copula_domain",
                         "dialogue_structural_split_shared_modal_coord_gerund",
+                        "structural_source_asyndetic_modal_passive_dash",
                     })
                 ),
                 "structural_segment_spans": [
@@ -879,6 +889,65 @@ class QuotedSentenceComposer:
             return None
         return self._compose_verified_dialogue_pattern(
             parser,text,original_lattice,specs,rule,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def compose_unquoted_asyndetic_modal_passive_dash(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Prove three asyndetically listed negative subjects and two passives.
+
+        A stranded preposition belongs to the first passive participle;
+        the original double dash links *two* distinct finite clauses.  This
+        never turns comma-delimited nominal subjects into extra finite clauses
+        or uses a globablly permissive NP + VP chart production.
+        """
+        if (not components
+                or not any(c.get("function") == "matrix_clause"
+                           for c in components)
+                or any(c.get("function") in (
+                    "direct_speech", "embedded_quotation",
+                    "reporting_clause", "requires_source_context",
+                ) for c in components)
+                or quotation_boundaries(text)):
+            return None
+        match = re.fullmatch(
+            r"(.+?)(,)\s+(.+?)(,)\s+(.+?)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)"
+            r"(--|—)(.+?)([.!?])",
+            text,
+        )
+        if match is None:
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]] = []
+        def group(i: int, cat: str, kind="lexical", **required: str) -> None:
+            a,b = match.span(i)
+            specs.append((cat,a,b,kind,required))
+        for i in (1,3,5):
+            group(i,"NP","phrase",definiteness="negative")
+        # Ordered pair commas are real source delimiters, never inferred.
+        specs.sort(key=lambda x:x[1])
+        for i in (2,4):
+            group(i,"COMMA","source-punctuation")
+        group(6,"MODAL","lexical",vform="finite")
+        group(7,"V","lexical",vform="base",subcat_member="linking")
+        group(8,"V","lexical",vform="ed",subcat_member="prepositional")
+        group(9,"PREP")
+        group(10,"DASH","source-punctuation")
+        group(11,"CLAUSE","phrase",voice="passive")
+        group(12,"SPEECH-STOP","source-punctuation")
+        specs.sort(key=lambda x:x[1])
+        # The second clause must be independently selected as a real
+        # passive rank-one tree, rather than an adjunct or nominal reading.
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "structural_source_asyndetic_modal_passive_dash",
             max_items=max_items,kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,beam=beam,
         )
