@@ -1,0 +1,26 @@
+name: Dialogue families grammar interface probes
+on:
+  pull_request:
+    branches: [main]
+    paths: ['superparser/scripts/probe_dialogue_families.py', '.github/workflows/probe-dialogue-families.yml']
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: WordNet 3.0
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip -o "$RUNNER_TEMP/wordnet.zip"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile(Path(os.environ['RUNNER_TEMP'])/'wordnet.zip') as z: z.extractall(Path(os.environ['RUNNER_TEMP'])/'wn')
+          PY
+      - name: Probe attested grammatical interfaces across dialogue families
+        run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_dialogue_families
