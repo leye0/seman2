@@ -293,6 +293,36 @@ class ActualDialogueCompositions(unittest.TestCase):
                 )
                 self.assertEqual(prepared.source_text, source)
                 self.assertEqual(result.text, source)
+                if expected and not result.stats.get("structural_composition"):
+                    plan = QuotedSentenceComposer._intercalated_that_complement_plan(
+                        source, rows[0]["structural_constituents"],
+                    )
+                    print("THAT_COMPOSITION_PLAN", plan, flush=True)
+                    if plan:
+                        for category, (a, b), grammar in (
+                            ("CLAUSE", plan[0], self.parser._vector_grammar),
+                            ("NP", plan[1], self.parser._vector_grammar),
+                            ("SPEECH-TAG", plan[2], self.parser._dialogue_vector_grammar),
+                            ("COMP-THAT", plan[3], self.parser._vector_grammar),
+                            ("CLAUSE", plan[4], self.parser._vector_grammar),
+                        ):
+                            if category == "CLAUSE":
+                                proof = self.parser._parse_vector_text(
+                                    source[a:b], max_items=8333,
+                                    kbest_work_limit=83333,
+                                )
+                            else:
+                                proof = grammar.parse_lattice(
+                                    self.parser._lattice_for_text(source[a:b]),
+                                    goal_category=category, max_items=8333,
+                                    kbest_work_limit=83333,
+                                )
+                            best = proof.best()
+                            print("THAT_COMPOSITION_PIECE", category, repr(source[a:b]),
+                                  proof.completed, best.rule_id if best else None,
+                                  [(ch.category, ch.rule_id, ch.features.as_dict(),
+                                    [(n.category, n.rule_id, n.features.as_dict()) for n in ch.children])
+                                   for ch in best.children] if best else None, flush=True)
                 self.assertEqual(
                     bool(result.stats.get("structural_composition")), expected,
                     result.stats,
