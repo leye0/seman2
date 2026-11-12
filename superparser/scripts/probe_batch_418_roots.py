@@ -13,6 +13,18 @@ from scripts.diagnose_novel_parses import select_cases
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 PROBES = {
+  227: (
+    ("No aunt, no officers, no news could be sought after", "CLAUSE"),
+    ("No aunt, no officers, no news", "NP"),
+    ("no news", "NP"),
+    ("could be sought after", "VP"),
+    ("the very shoe-roses for Netherfield were got by proxy", "CLAUSE"),
+    ("the very shoe-roses for Netherfield", "NP"),
+    ("the very shoe-roses", "NP"),
+    ("for Netherfield", "PP"),
+    ("were got by proxy", "VP"),
+    ("by proxy", "PP"),
+  ),
   386: (
     ("all hands", "NP"),
     ("were already congregated", "VP"),
