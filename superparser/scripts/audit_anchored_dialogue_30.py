@@ -20,6 +20,9 @@ import argparse
 import json
 from pathlib import Path
 
+from seman_parser.structural_preanalysis import analyze_paragraph
+from seman_parser.structural_composition import QuotedSentenceComposer
+
 EXPECTED_COHORT_SHA = "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f"
 BASELINE_RUN = "https://github.com/leye0/seman2/actions/runs/43102702010"
 
@@ -95,6 +98,36 @@ def audit(rows: list[dict], *, cohort_sha: str) -> dict:
         if "direct_speech" not in row.get("structural_functions", ()):
             raise AssertionError("A source quotation disappeared from the structural graph")
         success = row["status"] == "complete"
+        source = row["source_text"]
+        units = analyze_paragraph(source)
+        if len(units) != 1 or units[0].text != source:
+            raise AssertionError(
+                "Source discourse boundary drifted for anchored dialogue "
+                f"{witness.index}"
+            )
+        source_parts = [c.to_dict() for c in units[0].constituents]
+        all_nodes = {p["id"]: p for p in source_parts}
+        for part in source_parts:
+            if source[part["start"]:part["end"]].strip() == "":
+                raise AssertionError("Empty quotation or grammatical source span")
+            if (part["governor"] is not None
+                    and part["governor"] not in all_nodes):
+                raise AssertionError("Unresolved grammatical source governor")
+        # These are source-span *plans*, never independently proven grammar
+        # trees. Actual parse success still comes only from the normal
+        # full parser status in the canonical 500-case diagnostic.
+        plan_specs = (
+            ("multi_clause_quote", QuotedSentenceComposer._plan),
+            ("intercalated_two_finite_clauses",
+             QuotedSentenceComposer._intercalation_plan),
+            ("postposed_vocative_with_reporter",
+             QuotedSentenceComposer._postposed_minor_reply_plan),
+        )
+        proposals = []
+        for label, fn in plan_specs:
+            plan = fn(source, source_parts)
+            if plan is not None:
+                proposals.append(label)
         results.append({
             "index": witness.index,
             "case_id": witness.case_id,
@@ -110,6 +143,25 @@ def audit(rows: list[dict], *, cohort_sha: str) -> dict:
             "engine": row.get("engine"),
             "wall_ms": row.get("wall_ms"),
             "full_grammar_tree_review_required": success,
+            "source_composition_plans_not_proofs": proposals,
+            "all_quote_and_reporting_constituents": [
+                {
+                    "id": p["id"],
+                    "function": p["function"],
+                    "relation": p["relation"],
+                    "governor": p["governor"],
+                    "evidence": p["evidence"],
+                    "span": [p["start"], p["end"]],
+                    "exact_source_text": source[p["start"]:p["end"]],
+                }
+                for p in source_parts
+                if p["function"] in (
+                    "direct_speech", "embedded_quotation",
+                    "spoken_clause_candidate", "reporting_clause",
+                    "split_direct_speech_turn", "narratorial_parenthetical"
+                )
+            ],
+
         })
     by_subtype = {}
     for kind in sorted({w.subtype for w in WITNESSES}):
@@ -119,8 +171,12 @@ def audit(rows: list[dict], *, cohort_sha: str) -> dict:
             "still_failed": sum(not x["new_complete"] for x in subset),
             "now_complete": sum(x["new_complete"] for x in subset),
         }
+    plan_counts = Counter(
+        plan for case in results
+        for plan in case["source_composition_plans_not_proofs"]
+    )
     return {
-        "schema": "seman2-anchored-real-dialogue-30-v1",
+        "schema": "seman2-anchored-real-dialogue-30-v2",
         "cohort_sha256": cohort_sha,
         "baseline_run": BASELINE_RUN,
         "total": len(results),
@@ -128,9 +184,13 @@ def audit(rows: list[dict], *, cohort_sha: str) -> dict:
         "now_complete": sum(x["new_complete"] for x in results),
         "still_failed": sum(not x["new_complete"] for x in results),
         "by_subtype": by_subtype,
+        "source_composition_candidate_plans": dict(plan_counts),
+        "not_currently_planned": sum(
+            not x["source_composition_plans_not_proofs"] for x in results
+        ),
         "cases": results,
         "method": "exact 30 original source passages, normal corpus parse route and identical budgets",
-        "caveat": "Completion is necessary but insufficient; each new rank-1 syntactic and semantic attachment must be reviewed.",
+        "caveat": "Source plans are ONLY structural proposals. Completion plus manual rank-1 syntax/semantic attachment review is required for verified grammatical repairs.",
     }
 
 

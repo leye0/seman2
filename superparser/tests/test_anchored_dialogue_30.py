@@ -80,6 +80,17 @@ class AnchoredDialogue30Tests(unittest.TestCase):
         self.assertEqual(result["now_complete"], 1)
         self.assertEqual(result["still_failed"], 29)
         self.assertEqual(len(result["cases"]), 30)
+        self.assertEqual(result["schema"], "seman2-anchored-real-dialogue-30-v2")
+        anchored = {c["index"]: c for c in result["cases"]}
+        for i in (413, 157):
+            self.assertIn("postposed_vocative_with_reporter",
+                          anchored[i]["source_composition_plans_not_proofs"])
+            self.assertTrue(any(
+                c["function"] == "reporting_clause"
+                for c in anchored[i]["all_quote_and_reporting_constituents"]
+            ))
+        self.assertFalse(anchored[11]["source_composition_plans_not_proofs"])
+        self.assertGreater(result["not_currently_planned"], 0)
         self.assertEqual(result["cases"][0]["index"], WITNESSES[0].index)
         with self.assertRaisesRegex(ValueError, "cannot migrate"):
             audit(rows, cohort_sha="different_cohort")

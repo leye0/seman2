@@ -185,3 +185,16 @@ et le point restent de vrais caractères source; le texte n'est jamais
 réécrit et aucun prédicat fini n'est inventé. Cette construction est une
 extension générique de la grammaire compositionnelle, pas une règle liée
 aux mots d'un roman.
+
+**Décomposition diagnostique de la totalité des 30 cas :** le rapport
+`anchored_dialogue_30.json` joint aux statuts source les constituants
+`direct_speech`, `spoken_clause_candidate`, `reporting_clause` et
+leurs relations de gouvernance, y compris les plages textuelles exactes.
+Il identifie les **plans de composition proposés** par les trois
+constructions actives (citations multiphrases, incise entre deux propositions,
+propos avec vocatif et incise postposée). Un plan proposé N'EST PAS une
+analyse grammaticale complète; seul le résultat de la grammaire et sa
+vérification syntaxique peuvent transformer un échec en réussite. Ainsi,
+les dialogues comparatifs ou les subordonnées non analysables en propositions
+isolées restent explicitement en échec, plutôt que de recevoir des arbres
+fabriqués.
