@@ -282,6 +282,18 @@ def build_lattice(
     # Keep tokenize() unchanged for stable corpus offsets and cohort SHA.
     for match in re.finditer(r"[A-Za-z]+\u2019[A-Za-z]+", text):
         normalized = match.group(0).replace("\u2019", "'")
+        # Full-spelling lexical readings (e.g. dialectal "ain't") must
+        # survive curly apostrophes just as clitic splits do. Only an
+        # independently attested dictionary sense can license one; never
+        # promote orthographic shape or fabricate a missing inflection.
+        for entry, sense, lemma in lexicon.lookup_morphology(normalized):
+            if not _surface_matches_morphology(normalized, entry, sense, lemma):
+                continue
+            candidates.append(_candidate_from_sense(
+                span_start=match.start(), span_end=match.end(),
+                surface=match.group(0), lemma=lemma, sense=sense,
+                source="typographic-full-lexicon",
+            ))
         for candidate in _contraction_candidates(
             match.start(), match.end(), normalized, lexicon,
         ):

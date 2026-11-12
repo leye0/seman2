@@ -79,6 +79,7 @@ jobs:
             superparser.tests.test_real_dialogue_30_composition \
             superparser.tests.test_batch_failure_families \
             superparser.tests.test_batch_418_families \
+            superparser.tests.test_batch_422_grammar \
             superparser.tests.test_anchored_failure_85 \
             superparser.tests.test_discourse_triage \
             superparser.tests.test_fragment_grammar_rules \
