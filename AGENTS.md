@@ -30,6 +30,19 @@ constituents, governor references, and quotation status. New corpus cases
 carry NO synthetic quote or terminal punctuation. Never drop alternatives,
 invent a second grammar engine or bypass `parse_corpus_case`.
 
+**Mandatory 30-case real-dialogue regression set:**
+`superparser/scripts/audit_anchored_dialogue_30.py` pins ALL 30 dialogue
+failures in the current 500-case cohort by case IDs, source SHA, original
+status and descriptive-grammar construction. Regenerate source text from
+`select_cases(500)`, not synthetic examples; always evaluate all 30 through
+the canonical `parse_corpus_case` path with the SAME 50k/500k/10s limits.
+The GitHub novels workflow emits `anchored_dialogue_30.json`: it reports
+before/after status and source text for every case, no hidden exclusions.
+Do not call improved segmentation/annotation a grammar correction unless
+`ParseResult.completed` and the selected rank-1 syntax/semantic attachments
+can be inspected. Any source/cohort drift is a hard error. New grammar
+compositions must include positive, negative, and source-attachment tests.
+
 **Current benchmark:** `scripts.diagnose_novel_parses.select_cases(500)`
 samples the cleaned novels with the current single segmenter. Its SHA-256
 is pinned in `docs/CURRENT_COHORT.json`. The pinned corpus must not change
