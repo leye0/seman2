@@ -230,8 +230,25 @@ class ActualDialogueCompositions(unittest.TestCase):
         self.assertEqual(prepared.source_text, case["source_text"])
         if result.completed:
             self.assertTrue(result.stats.get("structural_composition"), result.stats)
-            self.assertEqual(result.best().rule_id,
-                             "dialogue_structural_postposed_finite_clause_vocative")
+            # The independently proven comparative predicate is now
+            # composed from NP + finite copula + overt comparative domain
+            # + true independent possessive target, not a fabricated
+            # ordinary clause head.
+            self.assertEqual(
+                result.best().rule_id,
+                "dialogue_structural_postposed_comparative_vocative_report",
+            )
+            parts = result.best().children
+            self.assertEqual(
+                [result.text[n.start:n.end] for n in parts],
+                ["“", "My overhearings", "were", "more",
+                 "to the purpose", "than", "yours", ",", "Eliza", ",",
+                 "”", "said Charlotte", "."],
+            )
+            self.assertEqual(
+                parts[6].features.as_dict().get("independent_possessive"),
+                "true",
+            )
             self.assertEqual(result.stats["structural_clause_count"], 1)
         else:
             self.assertFalse(result.stats.get("structural_composition", False))
