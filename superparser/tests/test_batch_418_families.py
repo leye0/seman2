@@ -78,7 +78,7 @@ class MultiFamily418Tests(unittest.TestCase):
              ("NP","no officers"),("COMMA",","),("NP","no news")],
         )
         self.assertTrue(all(
-            n.children[0].rule_id=="np_det_n"
+            n.rule_id=="structural_source_negative_det_n"
             for n in first.children[0].children if n.category=="NP"))
         self.assertEqual(first.children[1].rule_id,
                          "structural_source_modal_stranded_prep_passive")

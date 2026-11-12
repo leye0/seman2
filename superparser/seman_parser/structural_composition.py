@@ -929,10 +929,23 @@ class QuotedSentenceComposer:
         def group(i: int, cat: str, kind="lexical", **required: str) -> None:
             a,b = match.span(i)
             specs.append((cat,a,b,kind,required))
+        # Each of the three negative subjects must have its own
+        # overt lexical DET + N proof.  Local unrestricted NP ranking can
+        # incorrectly select a bare-N homograph for "no officers";
+        # we must not use that parse as a negative-determiner subject.
         for i in (1,3,5):
-            group(i,"NP","phrase",definiteness="negative")
+            a,b=match.span(i)
+            pair=re.fullmatch(r"([A-Za-z]+)\\s+([A-Za-z][A-Za-z-]*)",
+                              text[a:b])
+            if pair is None:
+                return None
+            for n,category,features in (
+                (1,"DET",{"definiteness":"negative"}),
+                (2,"N",{}),
+            ):
+                sa,sb=pair.span(n)
+                specs.append((category,a+sa,a+sb,"lexical",features))
         # Ordered pair commas are real source delimiters, never inferred.
-        specs.sort(key=lambda x:x[1])
         for i in (2,4):
             group(i,"COMMA","source-punctuation")
         group(6,"MODAL","lexical",vform="finite")
