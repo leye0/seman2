@@ -1,20 +1,10 @@
 {
   "schema": "seman2-grammar-case-queue-v2",
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-  "validated_commit": "de4accce7b0909229024d5aedc10d92495c8dc95",
-  "completed_count": 426,
+  "validated_commit": "9cdd804d0750b7bba2d4edde934b4ef645554945",
+  "completed_count": 433,
   "last_attempted_index": -1,
   "unresolved": [
-    {
-      "index": 56,
-      "status": "no_structural_root",
-      "case_id": "766:daaca15c309a8606"
-    },
-    {
-      "index": 66,
-      "status": "roots_without_valid_analysis",
-      "case_id": "766:64bab268f9f84142"
-    },
     {
       "index": 69,
       "status": "timeout",
@@ -72,7 +62,7 @@
     },
     {
       "index": 110,
-      "status": "kbest_budget_exceeded",
+      "status": "timeout",
       "case_id": "766:c31971a0a1ada1d9"
     },
     {
@@ -96,11 +86,6 @@
       "case_id": "766:e5f30c6dd18d4da6"
     },
     {
-      "index": 157,
-      "status": "roots_without_valid_analysis",
-      "case_id": "1342:d6918ea88c026ca8"
-    },
-    {
       "index": 166,
       "status": "roots_without_valid_analysis",
       "case_id": "1342:fea088254f0ae7bd"
@@ -111,13 +96,8 @@
       "case_id": "1342:41e23438a4717cff"
     },
     {
-      "index": 200,
-      "status": "roots_without_valid_analysis",
-      "case_id": "1342:d5153e50bf9baae7"
-    },
-    {
       "index": 206,
-      "status": "kbest_budget_exceeded",
+      "status": "timeout",
       "case_id": "1342:fe7102c065aebf90"
     },
     {
@@ -281,24 +261,9 @@
       "case_id": "84:df685628548f2648"
     },
     {
-      "index": 408,
-      "status": "roots_without_valid_analysis",
-      "case_id": "120:1b5dc896fe97ebd3"
-    },
-    {
       "index": 441,
       "status": "roots_without_valid_analysis",
       "case_id": "120:b20b1c50bc030311"
-    },
-    {
-      "index": 445,
-      "status": "no_structural_root",
-      "case_id": "120:3d812d09ecccb8e0"
-    },
-    {
-      "index": 456,
-      "status": "no_structural_root",
-      "case_id": "120:c680ad0d5761a767"
     },
     {
       "index": 462,
@@ -376,5 +341,5 @@
       "case_id": "120:831e1f5ff09a8b07"
     }
   ],
-  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43276149953"
+  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43290170452"
 }
