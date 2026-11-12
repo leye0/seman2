@@ -371,6 +371,17 @@ class QuotedSentenceComposer:
                 "source_text_unchanged": True,
                 "structural_composition_kind": expected_rule,
                 "structural_segment_count": phrase_n,
+                # Count independently licensed spoken finite clauses;
+                # reporting tags and reduced clauses are not extra
+                # autonomous spoken sentences.
+                "structural_clause_count": (
+                    sum(1 for category, _, _, _, _ in specs
+                        if category == "CLAUSE")
+                    + int(expected_rule in {
+                        "dialogue_structural_postposed_comparative_vocative_report",
+                        "dialogue_structural_split_vocative_copula_domain",
+                    })
+                ),
                 "structural_segment_spans": [
                     [p[1], p[2]] for p in specs if p[3] == "phrase"
                 ],
