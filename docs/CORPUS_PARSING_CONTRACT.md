@@ -198,3 +198,12 @@ vérification syntaxique peuvent transformer un échec en réussite. Ainsi,
 les dialogues comparatifs ou les subordonnées non analysables en propositions
 isolées restent explicitement en échec, plutôt que de recevoir des arbres
 fabriqués.
+
+**Titres nominaux avec citation imbriquée.** Une unité nominale peut
+renfermer une seconde citation source (ex. `‘The “Little Em’ly”.’`).
+La composition exige les deux paires de guillemets originelles, le
+`DET` extérieur, l'arbre `NP` du nom propre intérieur et le point
+source, tous vérifiés séparément. La structure finale est un **énoncé
+mineur nominal**, jamais une proposition finie inventée. Aucun mot n'est
+retiré ni normalisé pour faire réussir la parse et les liens de
+constituants `q0 → q1` restent ancrés sur leurs offsets source.

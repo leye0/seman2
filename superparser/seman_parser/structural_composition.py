@@ -121,7 +121,14 @@ class QuotedSentenceComposer:
             )
             if minor is not None:
                 return minor
-            return self._compose_postposed_minor_reply(
+            postposed = self._compose_postposed_minor_reply(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if postposed is not None:
+                return postposed
+            return self._compose_nested_nominal_title(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
                 diagnostic_k=diagnostic_k, beam=beam,
@@ -802,6 +809,169 @@ class QuotedSentenceComposer:
             "segments": tuple(x.shared_forest for x in proofs),
             "interfaces": tuple(
                 x.interface for x in candidates if x.interface is not None
+            ),
+        }
+        return combined
+
+
+    @staticmethod
+    def _nested_nominal_title_plan(
+        text: str, components: Sequence[Mapping[str, Any]],
+    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, ...]] | None:
+        """Nominal/title utterance with an embedded source-quoted name.
+
+        The exact original structure is:
+          outer quotation [determiner [inner quotation nominal title]] stop.
+        Both the determiner and embedded nominal must produce independent
+        successful unification trees. This does not invent a finite clause,
+        quotation closure, or a normalized replacement name.
+        """
+        by_id = {p.get("id"): p for p in components}
+        outer, inner = by_id.get("q0"), by_id.get("q1")
+        if not outer or not inner:
+            return None
+        if not (
+            outer.get("function") == "direct_speech"
+            and inner.get("function") == "embedded_quotation"
+            and inner.get("governor") == "q0"
+            and outer.get("start") == 0
+            and outer.get("end") == len(text)
+        ):
+            return None
+        if sum(p.get("function") == "embedded_quotation"
+               for p in components) != 1:
+            return None
+        if any(p.get("function") in (
+                "reporting_clause", "split_direct_speech_turn",
+                "narratorial_parenthetical"
+        ) for p in components):
+            return None
+        marks = quotation_boundaries(text)
+        if len(marks) != 4 or [
+            (p.start, p.end, p.side) for p in marks
+        ] != [
+            (0, 1, "open"),
+            (inner["start"], inner["start"]+1, "open"),
+            (inner["end"]-1, inner["end"], "close"),
+            (len(text)-1, len(text), "close"),
+        ]:
+            return None
+        # A single original terminal mark after the embedded title.
+        stop = inner["end"]
+        if stop != len(text)-2 or text[stop] not in ".!?":
+            return None
+        a, b = 1, inner["start"]
+        while a < b and text[a].isspace():
+            a += 1
+        while b > a and text[b-1].isspace():
+            b -= 1
+        # A single lexical determiner and one inner NP title. This is a
+        # syntactic construction, not a lexical exception for "Em'ly".
+        if (not a < b or len(text[a:b].split()) != 1
+                or text[1:a].strip() or text[b:inner["start"]].strip()):
+            return None
+        title_start, title_end = inner["start"]+1, inner["end"]-1
+        if (not title_start < title_end
+                or len(text[title_start:title_end].split()) > 7
+                or text[title_start:title_end] !=
+                   text[title_start:title_end].strip()):
+            return None
+        return ((a,b), (title_start,title_end),
+                (0,inner["start"],inner["end"]-1,stop,len(text)-1))
+
+    def _compose_nested_nominal_title(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        plan = self._nested_nominal_title_plan(text,components)
+        if plan is None:
+            return None
+        determiner, name, punct = plan
+        total_items = parser.max_items if max_items is None else max_items
+        work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or work < 1000:
+            return None
+        items, work_piece = total_items//3, work//3
+        candidates: list[LexicalCandidate] = []
+        proofs: list[ParseResult] = []
+        for category,(start,end) in (("DET",determiner),("NP",name)):
+            lattice=parser._lattice_for_text(text[start:end])
+            parsed=parser._vector_grammar.parse_lattice(
+                lattice,goal_category=category,
+                max_items=items,kbest_work_limit=work_piece,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            if not parsed.completed or parsed.best() is None:
+                return None
+            best=parsed.best()
+            if best.category != category:
+                return None
+            proofs.append(parsed)
+            candidates.append(LexicalCandidate(
+                span_start=start,span_end=end,
+                surface=text[start:end],
+                lemma=f"<verified-{category.lower()}>",
+                category=category,features=best.features,
+                source="source-structural-grammar-proof",
+                score=best.score,
+                provenance={"source_span":[start,end],
+                            "proof_rule_id":best.rule_id},
+                interface=SegmentInterface(parsed,start,start,end),
+            ))
+        # The exact punctuation is consumed in its source order.
+        for idx,cat in zip(punct,(
+            "OPEN-QUOTE","OPEN-QUOTE","CLOSE-QUOTE",
+            "SPEECH-STOP","CLOSE-QUOTE"
+        )):
+            candidates.append(LexicalCandidate(
+                span_start=idx,span_end=idx+1,surface=text[idx],
+                lemma=text[idx],category=cat,
+                features=FeatureStructure.empty(),
+                source="dialogue-delimiter",score=0,
+                provenance={"source_position":idx},
+            ))
+        graph=LexicalLattice(
+            text=text,tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        combined=self._vector.parse_lattice(
+            graph,goal_category="CLAUSE",
+            max_items=total_items-2*items,
+            kbest_work_limit=work-2*work_piece,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if not combined.completed or combined.best() is None:
+            return None
+        if isinstance(combined.stats,dict):
+            combined.stats.update({
+                "engine":"vector-composed-nested-quoted-nominal-title",
+                "structural_composition":True,
+                "structural_composition_kind":"nominal_title_with_embedded_quote",
+                "source_text_unchanged":True,
+                "dialogue_scoped":True,
+                "structural_clause_count":0,
+                "structural_segment_count":2,
+                "structural_segment_spans":[list(determiner),list(name)],
+                "structural_segment_rule_ids":[p.best().rule_id for p in proofs],
+                "source_punctuation_spans":[[i,i+1] for i in punct],
+                "source_anaphoric_predicate_inserted":False,
+                "max_items_total_across_segments":total_items,
+                "kbest_work_limit_total_across_segments":work,
+                "composition_linguistic_proof":
+                    "source_determiner_plus_independently_verified"
+                    "_embedded_nominal_title_in_balanced_nested_quotes",
+            })
+        combined.shared_forest={
+            "assembly":combined.shared_forest,
+            "segments":tuple(p.shared_forest for p in proofs),
+            "interfaces":tuple(
+                c.interface for c in candidates if c.interface is not None
             ),
         }
         return combined

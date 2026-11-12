@@ -89,7 +89,8 @@ class AnchoredDialogue30Tests(unittest.TestCase):
                 c["function"] == "reporting_clause"
                 for c in anchored[i]["all_quote_and_reporting_constituents"]
             ))
-        self.assertFalse(anchored[11]["source_composition_plans_not_proofs"])
+        self.assertIn("nested_nominal_title",
+                      anchored[11]["source_composition_plans_not_proofs"])
         self.assertGreater(result["not_currently_planned"], 0)
         self.assertEqual(result["cases"][0]["index"], WITNESSES[0].index)
         with self.assertRaisesRegex(ValueError, "cannot migrate"):

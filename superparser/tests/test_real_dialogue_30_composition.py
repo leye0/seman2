@@ -76,6 +76,67 @@ class ActualDialogueCompositions(unittest.TestCase):
         self.assertEqual(prepared.source_component("r0"),
                          "replied Captain Smollett")
 
+    def test_actual_dickens_11_nested_quoted_nominal_title(self):
+        """Real corpus failure #11: title utterance, not a finite clause."""
+        case=select_cases(500)[0][11]
+        witness=next(w for w in WITNESSES if w.index==11)
+        source="‘The “Little Em’ly”.’"
+        self.assertEqual(case["source_text"],source)
+        self.assertEqual(witness.baseline_status,"roots_without_valid_analysis")
+        self.assertEqual(
+            f'{case["book_id"]}:'+
+            sha256(source.encode()).hexdigest()[:16],
+            witness.case_id
+        )
+        plan=QuotedSentenceComposer._nested_nominal_title_plan(
+            source,case["structural_constituents"]
+        )
+        self.assertIsNotNone(plan)
+        article,name,punctuation=plan
+        self.assertEqual(source[slice(*article)],"The")
+        self.assertEqual(source[slice(*name)],"Little Em’ly")
+        self.assertEqual(len(punctuation),5)
+        prepared,lattice,result=parse_corpus_case(
+            self.parser,case,max_items=50_000,kbest_work_limit=500_000,
+        )
+        self.assertTrue(result.completed,result.stats)
+        self.assertEqual(result.best().rule_id,
+                         "dialogue_structural_nested_nominal_title")
+        self.assertEqual(result.stats["structural_clause_count"],0)
+        self.assertEqual(result.stats["structural_composition_kind"],
+                         "nominal_title_with_embedded_quote")
+        self.assertEqual(
+            [source[a:b] for a,b in result.stats["structural_segment_spans"]],
+            ["The","Little Em’ly"]
+        )
+        self.assertEqual(result.stats["structural_segment_rule_ids"][1],
+                         "np_adj_proper")
+        self.assertEqual(
+            [node.category for node in result.best().children],
+            ["OPEN-QUOTE","DET","OPEN-QUOTE","NP",
+             "CLOSE-QUOTE","SPEECH-STOP","CLOSE-QUOTE"]
+        )
+        self.assertEqual(
+            [node.rule_id for node in result.best().children
+             if node.category in ("DET","NP")],
+            ["segment_interface","segment_interface"]
+        )
+        self.assertEqual(prepared.source_component("q1"),"“Little Em’ly”")
+        self.assertEqual(prepared.source_text,result.text)
+        self.assertFalse(prepared.synthetic_prefix)
+        self.assertFalse(prepared.synthetic_suffix)
+
+    def test_nested_quoted_adverb_not_promoted_to_nominal_title(self):
+        source="‘The “very quickly”.’"
+        rows,_=extract(Book(999,"Mock","Test","train"),source,
+                       length_min=1,length_max=40)
+        self.assertEqual(len(rows),1)
+        prepared,_,result=parse_corpus_case(
+            self.parser,rows[0],max_items=50_000,kbest_work_limit=500_000
+        )
+        self.assertFalse(result.stats.get("structural_composition",False))
+        self.assertEqual(prepared.source_text,source)
+
     def test_actual_austen_157_exposes_comparative_head_without_fake_success(self):
         """Real #157 is a planned clause+vocative+tag, but needs proof.
 

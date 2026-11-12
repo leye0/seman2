@@ -122,6 +122,8 @@ def audit(rows: list[dict], *, cohort_sha: str) -> dict:
              QuotedSentenceComposer._intercalation_plan),
             ("postposed_vocative_with_reporter",
              QuotedSentenceComposer._postposed_minor_reply_plan),
+            ("nested_nominal_title",
+             QuotedSentenceComposer._nested_nominal_title_plan),
         )
         proposals = []
         for label, fn in plan_specs:
