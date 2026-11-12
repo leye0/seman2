@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'superparser/scripts/probe_batch_418_roots.py'
+      - 'superparser/scripts/trace_source_227.py'
       - '.github/workflows/probe-batch-418.yml'
   workflow_dispatch:
 permissions:
@@ -32,3 +33,6 @@ jobs:
       - name: Probe source-grounded candidate constituents
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_batch_418_roots
+
+      - name: Trace source-level passive parataxis proof
+        run: WORDNET_DICT="$RUNNER_TEMP/wordnet3/wordnet" PYTHONPATH=superparser python -u -m scripts.trace_source_227
