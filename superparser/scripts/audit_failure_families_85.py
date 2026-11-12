@@ -1,4 +1,4 @@
-"""Inventory every unresolved pinned corpus case before batch grammar work.
+"""Inventory the immutable 85 failures from the pre-PR45 pinned corpus.
 
 Run: PYTHONPATH=superparser python -m scripts.audit_failure_families_85
 No reparsing, changed sampling, reslicing, or inferred grammatical success.
@@ -17,19 +17,42 @@ from scripts.diagnose_novel_parses import select_cases
 ROOT = Path(__file__).resolve().parents[2]
 COHORT = ROOT / "docs" / "CURRENT_COHORT.json"
 QUEUE = ROOT / "docs" / "GRAMMAR_CASE_QUEUE.json"
+ORIGINAL_85 = ROOT / "superparser" / "research" / "pinned_original_failure_85.json"
 
 
 def inventory() -> dict:
     queue = json.loads(QUEUE.read_text())
+    pinned = json.loads(ORIGINAL_85.read_text())
     baseline = json.loads(COHORT.read_text())
     cases, _ = select_cases(500)
     actual_sha = fingerprint(cases)
     expected_sha = baseline["cohort_sha256"]
-    if actual_sha != expected_sha or queue["cohort_sha256"] != expected_sha:
+    if (actual_sha != expected_sha
+            or queue["cohort_sha256"] != expected_sha
+            or pinned["cohort_sha256"] != expected_sha):
         raise AssertionError("Refusing an inventory on a different cohort")
-    failed = queue["unresolved"]
+    if (pinned.get("schema") != "seman2-pinned-original-unresolved-85-v1"
+            or pinned.get("baseline_completed") != 415
+            or pinned.get("baseline_unresolved") != 85):
+        raise AssertionError("Original 85-failure manifest is not pinned")
+    failed = pinned["witnesses"]
     if len(failed) != 85 or len({x["index"] for x in failed}) != 85:
-        raise AssertionError("Expected exactly 85 distinct unresolved cases")
+        raise AssertionError("Expected exactly 85 distinct original witnesses")
+    # The active queue shrinks as grammar repairs land. Its contents must
+    # remain within the ORIGINAL witness set. A newly failing previously
+    # completed case is a regression and cannot be silently inventoried away.
+    original_by_index = {r["index"]: r["case_id"] for r in failed}
+    active = queue["unresolved"]
+    if (len(active) != len({r["index"] for r in active})
+            or len(active) + queue["completed_count"] != 500
+            or queue["completed_count"] < pinned["baseline_completed"]):
+        raise AssertionError("Active 500-case queue is internally inconsistent")
+    for current in active:
+        if original_by_index.get(current["index"]) != current["case_id"]:
+            raise AssertionError(
+                "New unresolved source or case identity drift at "
+                + str(current["index"])
+            )
     records = []
     for row in failed:
         index = row["index"]
@@ -81,7 +104,13 @@ def inventory() -> dict:
     return {
         "schema": "seman2-all-85-unresolved-failure-inventory-v1",
         "cohort_sha256": actual_sha,
-        "baseline_completed": queue["completed_count"],
+        "baseline_completed": pinned["baseline_completed"],
+        "original_unresolved": len(records),
+        "active_completed": queue["completed_count"],
+        "active_unresolved": len(active),
+        "repaired_original_indexes": sorted(
+            set(original_by_index) - {r["index"] for r in active}
+        ),
         "total_unresolved": len(records),
         "exclusive_status_counts": dict(sorted(statuses.items())),
         "nonexclusive_observed_signal_counts": dict(sorted(signals.items())),
@@ -92,21 +121,25 @@ def inventory() -> dict:
 
 def markdown(data: dict) -> str:
     lines = [
-        "# Complete unresolved grammar inventory (same 500-source cohort)",
-        "", "All **85/85** baseline failures listed below. No case is silently",
-        "dropped; source texts are never regenerated with new punctuation.",
+        "# Immutable inventory of the 85 original grammar failures",
+        "", "All **85/85 original baseline failures** are listed below.",
+        "The active unresolved queue can shrink as cases are repaired.",
+        "Source texts are never regenerated with new punctuation.",
         "Observational labels are hypotheses, not established grammatical diagnoses.",
         "",
         f"**Cohort SHA:** `{data['cohort_sha256']}`",
-        f"**Coverage before repairs:** {data['baseline_completed']}/500",
-        "", "## Exclusive parser outcomes", "",
+        f"**Original baseline coverage:** {data['baseline_completed']}/500",
+        f"**Current active coverage:** {data['active_completed']}/500",
+        f"**Current active failures:** {data['active_unresolved']}",
+        f"**Original cases now repaired:** {', '.join(map(str, data['repaired_original_indexes'])) or 'none'}",
+        "", "## Original exclusive parser outcomes", "",
     ]
     for key, count in data["exclusive_status_counts"].items():
         lines.append(f"- `{key}`: {count}")
     lines += ["", "## Overlapping observational signals", ""]
     for key, count in data["nonexclusive_observed_signal_counts"].items():
         lines.append(f"- `{key}`: {count}")
-    lines += ["", "## Exact 85 source cases", "",
+    lines += ["", "## Exact 85 original source cases", "",
               "| # | Book | Status | Signals (not proofs) | Original source |",
               "|---:|---:|---|---|---|"]
     for row in data["cases"]:
