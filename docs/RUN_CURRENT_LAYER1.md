@@ -3,7 +3,15 @@
 **SOURCE DE VÉRITÉ du dépôt `leye0/seman2`, branche `main`.**
 Ce fichier prime sur les anciens comptes rendus de recherche. Il est conçu pour un développeur ou un nouvel agent ChatGPT n'ayant lu aucune conversation antérieure.
 
-## Statut actuel du corpus (11 novembre 2026 — PR #42)
+## Statut actuel du corpus (12 novembre 2026 — PR #43)
+
+- [**PR #43**](https://github.com/leye0/seman2/pull/43) fusionnée dans `main`. Les **30 vrais dialogues en échec** sont un ensemble permanent, strictement ancré aux mêmes 500 textes, sans déplacement de frontières ni changement de budgets; le rapport CI `anchored_dialogue_30.json` présente les résultats individuels et les sous-structures de chacun.
+- **SHA inchangé** : `d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`. Diagnostic officiel [#43154183121](https://github.com/leye0/seman2/actions/runs/43154183121) : **414/500 complets, 86 échecs**, contre 411/500 et 89 sur la même cohorte avant PR #43. Trois gains réels #11 (citation imbriquée nominale), #137 (ellipse modale indiquée comme non résolue) et #413 (réponse adverbiale, vocatif, incise); **aucune réussite perdue**.
+- **Sous-groupe des 30 dialogues** : 3 passages complets, 27 encore en échec. Les **12 cas sans plan de composition** sont prioritaires pour étendre les fonctions grammaticales de haut niveau; les plans existants doivent encore être justifiés par des arbres de rang 1 et des contre-exemples.
+- **[Core CI #43154183122](https://github.com/leye0/seman2/actions/runs/43154183122)** : 667 tests, 120/120 annotations de référence, 24/24 contrastes. La file `docs/GRAMMAR_CASE_QUEUE.json` indique maintenant 86 échecs, prochain index **22** (`766:3f699ef32c5f0e6a`).
+- **Limite actuelle :** réussir un parse n'est pas équivalent à prouver tous ses rattachements. Continuer les expansions sur les vrais 27 cas, sans fabrication de sujet, verbe, citation ou antécédent.
+
+## HISTORIQUE — PR #42, avant les 30 témoins réels
 
 - **`main` intègre [PR #42](https://github.com/leye0/seman2/pull/42)** : la préanalyse structurelle guide maintenant réellement la composition syntaxique pour les constructions de dialogue attestées. Pipeline unique `extract → prepare_corpus_input → parse_corpus_case → Parser.parse(structural_constituents=...)`. Sous-clauses analysées par l'unification existante, interfaces grammaticales assemblées par `dialogue_structural_grammar.jsonl` et liens sémantiques `REPORTED_CONTENT / CONTINUED_SPEECH` vérifiés.
 - **SHA de cohorte inchangé :** `d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`. **411/500 complets, 89 échecs**; index de départ **11** (`766:7aeedec565c8d7f5`). Comparaison exactes des **mêmes 500 textes** : un gain certifié `#19 ‘Perfectly, sir.’`, **aucune régression de réussite** et deux reclassements d'échecs par budget. Aucun ajustement général de règles grammaticales pour contourner des fragments.
