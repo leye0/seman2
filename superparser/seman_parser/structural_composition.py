@@ -626,6 +626,13 @@ class QuotedSentenceComposer:
             )
             if nominal is not None:
                 return nominal
+            finite_modal = self._compose_quoted_modal_zero_clausal_complement(
+                parser, text, original_lattice, components,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if finite_modal is not None:
+                return finite_modal
             return self._compose_modal_ellipsis_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
