@@ -2,7 +2,7 @@ name: Dialogue families grammar interface probes
 on:
   pull_request:
     branches: [main]
-    paths: ['superparser/scripts/probe_dialogue_families.py', 'superparser/tests/test_dialogue_bulk_24.py', 'superparser/seman_parser/structural_composition.py', 'superparser/data/dialogue_structural_grammar.jsonl', 'superparser/data/syntax_lexicon.jsonl', '.github/workflows/probe-dialogue-families.yml']
+    paths: ['superparser/scripts/probe_dialogue_families.py', 'superparser/scripts/probe_dialogue_more_families.py', 'superparser/tests/test_dialogue_bulk_24.py', 'superparser/seman_parser/structural_composition.py', 'superparser/data/dialogue_structural_grammar.jsonl', 'superparser/data/syntax_lexicon.jsonl', '.github/workflows/probe-dialogue-families.yml']
   workflow_dispatch:
 permissions: {contents: read}
 jobs:
