@@ -43,6 +43,168 @@ class QuotedSentenceComposer:
             preserve_quote_delimiters=True,
         )
 
+    def compose_unquoted_topical(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Bounded finite object fronting from actual source spans and proofs.
+
+        The broad NP+NP+V production is intentionally NOT part of the global
+        grammar: its partial states exhaust existing long literary parses.
+        This source-scoped path works only when the original source has a
+        complete, unquoted matrix utterance with overt demonstrative object,
+        pronominal subject and a finite transitive lexical predicate.
+        """
+        if (not components
+                or not any(p.get("function") == "matrix_clause"
+                           for p in components)
+                or any(p.get("function") in (
+                    "direct_speech", "embedded_quotation",
+                    "reporting_clause", "split_direct_speech_turn",
+                ) for p in components)):
+            return None
+        match = re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\.", text
+        )
+        if match is None or match.group(1).casefold() not in (
+                "this", "that", "these", "those"):
+            return None
+        if not (all(text[match.start(i):match.end(i)] ==
+                    text[match.start(i):match.end(i)].strip()
+                    for i in (1, 2, 3))
+                and match.end(3) == len(text)-1):
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or total_work < 1000:
+            return None
+        piece_items = total_items // 4
+        piece_work = total_work // 4
+        pieces = []
+        candidates: list[LexicalCandidate] = []
+        for position, goal in ((1, "NP"), (2, "NP"), (3, "V")):
+            a, b = match.span(position)
+            fragment = text[a:b]
+            original = parser._lattice_for_text(fragment)
+            if position == 1:
+                # Only the lexically proven demonstrative determiner can be
+                # projected by existing np_demonstrative; do not assume that
+                # every superficially similar word is an object NP.
+                chosen = tuple(c for c in original.candidates
+                    if c.category == "DET"
+                    and c.features.as_dict().get("definiteness")
+                    == "demonstrative")
+            elif position == 3:
+                # Constrain by independently supplied verb valency and
+                # inflection, never by a fabricated omitted object.
+                chosen = tuple(c for c in original.candidates
+                    if c.category == "V"
+                    and c.features.as_dict().get("vform") == "finite"
+                    and c.features.as_dict().get("subcat") == "transitive")
+            else:
+                chosen = original.candidates
+            if not chosen:
+                return None
+            scoped_lattice = LexicalLattice(
+                text=fragment, tokens=original.tokens, candidates=chosen,
+            )
+            proof = parser._vector_grammar.parse_lattice(
+                scoped_lattice, goal_category=goal,
+                max_items=piece_items, kbest_work_limit=piece_work,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            if not proof.completed or proof.best() is None:
+                return None
+            selected = proof.best()
+            features = selected.features.as_dict()
+            if selected.category != goal:
+                return None
+            if position == 1 and (
+                    selected.rule_id != "np_demonstrative"
+                    or features.get("definiteness") != "demonstrative"):
+                return None
+            if position == 2 and (
+                    selected.rule_id != "np_indef_pron"
+                    or features.get("pronominal") != "true"):
+                return None
+            if position == 3 and (
+                    features.get("vform") != "finite"
+                    or features.get("subcat") != "transitive"):
+                return None
+            pieces.append(proof)
+            candidates.append(LexicalCandidate(
+                span_start=a, span_end=b, surface=fragment,
+                lemma=f"<verified-{goal.lower()}>",
+                category=goal, features=selected.features,
+                score=selected.score, source="scoped-source-grammar-proof",
+                provenance={"source_span":[a,b],
+                            "proof_rule_id":selected.rule_id},
+                interface=SegmentInterface(proof, a, a, b),
+            ))
+        # Exact final punctuation belongs to the source, not to a synthetic
+        # sentence repair or unbalanced quotation workaround.
+        stop = len(text)-1
+        candidates.append(LexicalCandidate(
+            span_start=stop, span_end=stop+1, surface=text[stop],
+            lemma=text[stop], category="SPEECH-STOP",
+            features=FeatureStructure.empty(), score=0,
+            source="original-sentence-delimiter",
+            provenance={"source_span":[stop,stop+1]},
+        ))
+        assembly = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(candidates),
+        )
+        result = self._vector.parse_lattice(
+            assembly, goal_category="CLAUSE",
+            max_items=total_items-piece_items*3,
+            kbest_work_limit=total_work-piece_work*3,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        if (not result.completed or result.best() is None
+                or result.best().rule_id !=
+                   "structural_topical_finite_demonstrative"):
+            return None
+        if isinstance(result.stats, dict):
+            result.stats.update({
+                "engine": "vector-source-scoped-finite-topicalization",
+                "structural_composition": True,
+                "source_text_unchanged": True,
+                "structural_composition_kind": "demonstrative_object_fronting",
+                "structural_clause_count": 1,
+                "structural_segment_count": 3,
+                "structural_segment_spans": [
+                    list(match.span(i)) for i in (1, 2, 3)
+                ],
+                "structural_segment_rule_ids": [
+                    p.best().rule_id for p in pieces
+                ],
+                "structural_segment_stats": [
+                    dict(p.stats) for p in pieces
+                ],
+                "source_punctuation_spans": [[stop,stop+1]],
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+                "composition_linguistic_proof": (
+                    "demonstrative_nominal_and_pronominal_subject"
+                    "_and_finite_transitive_lexical_valency_all_independently"
+                    "_proven_under_a_source_exact_declarative_rule"
+                ),
+            })
+        result.shared_forest = {
+            "assembly": result.shared_forest,
+            "segments": tuple(p.shared_forest for p in pieces),
+            "interfaces": tuple(c.interface for c in candidates
+                                if c.interface is not None),
+        }
+        return result
+
     @staticmethod
     def _plan(
         text: str, components: Sequence[Mapping[str, Any]],
