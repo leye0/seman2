@@ -63,24 +63,22 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         self.assertEqual([x.category for x in vp.children],
                          ["COPULA", "ADV", "ADJ"])
 
-    def test_270_overt_finite_object_topicalization(self):
+    def test_270_source_left_unresolved_for_bounded_composition_research(self):
+        # No broad NP+NP+V grammar fallback may be introduced just to
+        # complete this case: it was proved to cause parser saturation.
         source = "This I hired."
-        result = self._attested(270, source)
-        root = self._rule(result, "clause_object_topicalization_finite")
-        self.assertEqual(root.category, "CLAUSE")
-        self.assertEqual(
-            [result.text[ch.start:ch.end] for ch in root.children],
-            ["This", "I hired"],
+        case = self.cases[270]
+        self.assertEqual(case["source_text"], source)
+        prepared, _, result = parse_corpus_case(
+            self.parser, case, max_items=50_000,
+            kbest_work_limit=500_000,
         )
-        self.assertEqual(root.children[-1].category, "TOPICAL-FINITE-COMMENT")
-        self.assertEqual(
-            [result.text[ch.start:ch.end] for ch in root.children[-1].children],
-            ["I", "hired"],
-        )
-        self.assertEqual(root.children[-1].features.as_dict().get("gap"), "object")
-        self.assertEqual(
-            root.children[-1].features.as_dict().get("licensed_transitive"), "true",
-        )
+        self.assertEqual(prepared.source_text, result.text)
+        if result.best() is not None:
+            self.assertFalse(any(
+                node.rule_id == "clause_object_topicalization_finite"
+                for node in walk(result.best())
+            ))
 
     def test_280_conventional_valediction_not_invented_finite_clause(self):
         source = "Good night, my sister."
@@ -111,8 +109,6 @@ class BatchGrammarFamilyTests(unittest.TestCase):
             ("The letter itself was already open.",
              ("np_emphatic_reflexive_agreement",
               "vp_copula_predicative_scope_adjective")),
-            ("That she finished.",
-             ("clause_object_topicalization_finite",)),
             ("Good evening, my friend.",
              ("clause_time_of_day_valediction_vocative",)),
             ("The product was deemed safe and effective.",
@@ -131,8 +127,6 @@ class BatchGrammarFamilyTests(unittest.TestCase):
         pairs = (
             ("The envelopes itself were already open.",
              "np_emphatic_reflexive_agreement"),
-            ("That she vanished.",
-             "clause_object_topicalization_finite"),
             ("Good table, my sister.",
              "clause_time_of_day_valediction_vocative"),
             ("The product was read safe and effective.",
