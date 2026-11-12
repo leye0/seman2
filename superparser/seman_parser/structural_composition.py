@@ -43,6 +43,149 @@ class QuotedSentenceComposer:
             preserve_quote_delimiters=True,
         )
 
+    def compose_unquoted_emphatic_subject(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Source-gated number/person-unifying intensifier; NO NP-first chart rule.
+
+        The old broad NP+REFLEXIVE grammar experiment demonstrably exhausted
+        unrelated long literary parses. Here, *existing lexical evidence* for
+        one overt reflexive, exact character bounds and independently proven
+        nominal and finite predicative subtrees license one assembly only.
+        """
+        if (not components
+                or not any(c.get("function") == "matrix_clause"
+                           for c in components)
+                or any(c.get("function") in (
+                    "direct_speech", "embedded_quotation",
+                    "reporting_clause", "split_direct_speech_turn",
+                ) for c in components)
+                or not text.endswith(".")
+                or any(ch in text for ch in "\"“”‘’")):
+            return None
+        reflexives = [
+            c for c in original_lattice.candidates
+            if c.category == "EMPHATIC-REFLEXIVE"
+            and c.features.as_dict().get("reflexive") == "true"
+        ]
+        if len(reflexives) != 1:
+            return None
+        intensifier = reflexives[0]
+        x, y = intensifier.span_start, intensifier.span_end
+        stop = len(text) - 1
+        # Exact source-separated NP / intensifier / finite VP, with no
+        # deleted quote, comma, incise, added word or fabricated punctuation.
+        if (x < 2 or y >= stop - 2
+                or text[x:y] != intensifier.surface
+                or text[x - 1] != " " or text[y] != " "):
+            return None
+        np_text = text[:x].rstrip()
+        vp_start = y
+        while vp_start < stop and text[vp_start] == " ":
+            vp_start += 1
+        vp_text = text[vp_start:stop]
+        if (not np_text or not vp_text or np_text != np_text.strip()
+                or vp_text != vp_text.strip()
+                or any(ch in np_text + vp_text for ch in ",;:!?()")):
+            return None
+        total_items = parser.max_items if max_items is None else max_items
+        total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
+        if total_items < 1000 or total_work < 1000:
+            return None
+        slice_items = total_items // 3
+        slice_work = total_work // 3
+        components_proved: list[ParseResult] = []
+        assembly_candidates: list[LexicalCandidate] = []
+        for category, fragment, a, b in (
+            ("NP", np_text, 0, len(np_text)),
+            ("VP", vp_text, vp_start, stop),
+        ):
+            lattice = parser._lattice_for_text(fragment)
+            proof = parser._vector_grammar.parse_lattice(
+                lattice, goal_category=category,
+                max_items=slice_items, kbest_work_limit=slice_work,
+                diagnostic_k=diagnostic_k,
+                beam=parser.beam if beam is None else beam,
+            )
+            selected = proof.best()
+            if (not proof.completed or selected is None
+                    or selected.category != category):
+                return None
+            if (category == "VP" and
+                    selected.features.as_dict().get("vform") != "finite"):
+                return None
+            components_proved.append(proof)
+            assembly_candidates.append(LexicalCandidate(
+                span_start=a, span_end=b, surface=fragment,
+                lemma=f"<proved-{category.casefold()}>",
+                category=category, features=selected.features,
+                score=selected.score, source="scoped-source-grammar-proof",
+                provenance={"source_span": [a, b],
+                            "proof_rule_id": selected.rule_id},
+                interface=SegmentInterface(proof, a, a, b),
+            ))
+        assembly_candidates.insert(1, intensifier)
+        assembly_candidates.append(LexicalCandidate(
+            span_start=stop, span_end=stop + 1, surface=text[stop],
+            lemma=text[stop], category="SPEECH-STOP",
+            features=FeatureStructure.empty(), score=0.0,
+            source="original-sentence-delimiter",
+            provenance={"source_span": [stop, stop + 1]},
+        ))
+        scoped_lattice = LexicalLattice(
+            text=text, tokens=original_lattice.tokens,
+            candidates=tuple(assembly_candidates),
+        )
+        result = self._vector.parse_lattice(
+            scoped_lattice, goal_category="CLAUSE",
+            max_items=total_items - slice_items * 2,
+            kbest_work_limit=total_work - slice_work * 2,
+            diagnostic_k=diagnostic_k,
+            beam=parser.beam if beam is None else beam,
+        )
+        selected = result.best()
+        if (not result.completed or selected is None
+                or selected.rule_id !=
+                   "structural_emphatic_reflexive_subject_predicate"):
+            return None
+        if isinstance(result.stats, dict):
+            result.stats.update({
+                "engine": "vector-source-scoped-emphatic-subject",
+                "structural_composition": True,
+                "source_text_unchanged": True,
+                "structural_composition_kind": "coreferential_emphatic_subject",
+                "structural_segment_count": 2,
+                "structural_segment_spans": [
+                    [0, len(np_text)], [vp_start, stop],
+                ],
+                "structural_segment_rule_ids": [
+                    p.best().rule_id for p in components_proved
+                ],
+                "structural_segment_stats": [
+                    dict(p.stats) for p in components_proved
+                ],
+                "source_reflexive_span": [x, y],
+                "source_punctuation_spans": [[stop, stop + 1]],
+                "max_items_total_across_segments": total_items,
+                "kbest_work_limit_total_across_segments": total_work,
+                "composition_linguistic_proof": (
+                    "source_exact_subject_nominal_and_finite_predicate"
+                    "_plus_overt_reflexive_with_unified_number_and_person"
+                ),
+            })
+        result.shared_forest = {
+            "assembly": result.shared_forest,
+            "segments": tuple(p.shared_forest for p in components_proved),
+            "interfaces": tuple(c.interface for c in assembly_candidates
+                                if c.interface is not None),
+        }
+        return result
+
     def compose_unquoted_topical(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
         components: Sequence[Mapping[str, Any]], *,
