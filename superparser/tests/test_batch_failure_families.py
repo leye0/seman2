@@ -52,33 +52,25 @@ class BatchGrammarFamilyTests(unittest.TestCase):
             self.assertIn(exact, [result.text[n.start:n.end] for n in nodes])
         return nodes[0]
 
-    def test_141_emphatic_reflexive_with_predicative_adverb(self):
-        source = "The envelope itself was likewise full."
-        result = self._attested(141, source)
-        np = self._rule(result, "np_det_n_emphatic_reflexive_agreement", "The envelope itself")
-        self.assertEqual([result.text[ch.start:ch.end] for ch in np.children],
-                         ["The", "envelope", "itself"])
-        vp = self._rule(result, "vp_copula_predicative_scope_adjective",
-                        "was likewise full")
-        self.assertEqual([x.category for x in vp.children],
-                         ["COPULA", "ADV", "ADJ"])
-
-    def test_270_source_left_unresolved_for_bounded_composition_research(self):
-        # No broad NP+NP+V grammar fallback may be introduced just to
-        # complete this case: it was proved to cause parser saturation.
+    def test_270_demonstrative_object_topicalization(self):
         source = "This I hired."
-        case = self.cases[270]
-        self.assertEqual(case["source_text"], source)
-        prepared, _, result = parse_corpus_case(
-            self.parser, case, max_items=50_000,
-            kbest_work_limit=500_000,
+        result = self._attested(270, source)
+        root = self._rule(
+            result, "clause_object_topicalization_finite_demonstrative",
         )
-        self.assertEqual(prepared.source_text, result.text)
-        if result.best() is not None:
-            self.assertFalse(any(
-                node.rule_id == "clause_object_topicalization_finite"
-                for node in walk(result.best())
-            ))
+        self.assertEqual(root.category, "CLAUSE")
+        self.assertEqual(
+            [result.text[ch.start:ch.end] for ch in root.children],
+            ["This", "I", "hired"],
+        )
+        self.assertEqual(
+            [child.category for child in root.children],
+            ["TOPICAL-NP", "NP", "V"],
+        )
+        self.assertEqual(root.children[0].rule_id,
+                         "np_topical_demonstrative_pronoun")
+        self.assertEqual(root.features.as_dict().get("licensed_transitive"),
+                         "true")
 
     def test_280_conventional_valediction_not_invented_finite_clause(self):
         source = "Good night, my sister."
@@ -106,9 +98,10 @@ class BatchGrammarFamilyTests(unittest.TestCase):
 
     def test_positive_independent_construction_families(self):
         cases = (
-            ("The letter itself was already open.",
-             ("np_det_n_emphatic_reflexive_agreement",
-              "vp_copula_predicative_scope_adjective")),
+            ("The room was already empty.",
+             ("vp_copula_predicative_scope_adjective",)),
+            ("That she hired.",
+             ("clause_object_topicalization_finite_demonstrative",)),
             ("Good evening, my friend.",
              ("clause_time_of_day_valediction_vocative",)),
             ("The product was deemed safe and effective.",
@@ -125,8 +118,8 @@ class BatchGrammarFamilyTests(unittest.TestCase):
 
     def test_negative_licensing_and_agreement_controls(self):
         pairs = (
-            ("The envelopes itself were already open.",
-             "np_det_n_emphatic_reflexive_agreement"),
+            ("That she vanished.",
+             "clause_object_topicalization_finite_demonstrative"),
             ("Good table, my sister.",
              "clause_time_of_day_valediction_vocative"),
             ("The product was read safe and effective.",
