@@ -316,6 +316,7 @@ class ActualDialogueCompositions(unittest.TestCase):
                                     self.parser._lattice_for_text(source[a:b]),
                                     goal_category=category, max_items=8333,
                                     kbest_work_limit=83333,
+                                    beam=self.parser.beam,
                                 )
                             best = proof.best()
                             print("THAT_COMPOSITION_PIECE", category, repr(source[a:b]),
