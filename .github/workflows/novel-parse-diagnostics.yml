@@ -75,6 +75,11 @@ jobs:
             --diagnostics /tmp/novel-parse-diagnostics/per_sentence.jsonl \
             --summary /tmp/novel-parse-diagnostics/summary.json \
             --out /tmp/novel-parse-diagnostics/anchored_dialogue_30.json
+      - name: Probe lexical and syntactic blockers in the real dialogue-30 set
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -u -m scripts.probe_structural_dialogue_30 \
+            --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
+            --out /tmp/novel-parse-diagnostics/dialogue_30_subexpression_probes.json
       - name: Audit original paragraph and sentence neighbors
         run: |
           PYTHONPATH=superparser python -m unittest -v superparser.tests.test_context_dependencies
