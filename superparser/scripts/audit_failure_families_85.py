@@ -97,21 +97,21 @@ def markdown(data: dict) -> str:
         "dropped; source texts are never regenerated with new punctuation.",
         "Observational labels are hypotheses, not established grammatical diagnoses.",
         "",
-        f"**Cohort SHA:** \`{data['cohort_sha256']}\`",
+        f"**Cohort SHA:** `{data['cohort_sha256']}`",
         f"**Coverage before repairs:** {data['baseline_completed']}/500",
         "", "## Exclusive parser outcomes", "",
     ]
     for key, count in data["exclusive_status_counts"].items():
-        lines.append(f"- \`{key}\`: {count}")
+        lines.append(f"- `{key}`: {count}")
     lines += ["", "## Overlapping observational signals", ""]
     for key, count in data["nonexclusive_observed_signal_counts"].items():
-        lines.append(f"- \`{key}\`: {count}")
+        lines.append(f"- `{key}`: {count}")
     lines += ["", "## Exact 85 source cases", "",
               "| # | Book | Status | Signals (not proofs) | Original source |",
               "|---:|---:|---|---|---|"]
     for row in data["cases"]:
-        source = row["source_text"].replace("|", "\\|").replace("\\n", " ")
-        lines.append("| {index} | {source_book} | \`{status}\` | {signals} | {source} |".format(
+        source = row["source_text"].replace("|", "&#124;").replace("\n", " ")
+        lines.append("| {index} | {source_book} | `{status}` | {signals} | {source} |".format(
             **row,
             signals=", ".join(row["observed_signals_not_causes"]) or "unclassified",
             source=source,
