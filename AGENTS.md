@@ -61,6 +61,35 @@ as proof of incompleteness. They are not made valid by synthetic
 punctuation. The full engine still accepts one text input at a time; the
 source-span graph does not yet rewrite its grammar search.
 
+**Actual grammar-driven composition (bounded initial scope):**
+The public `Parser.parse(..., structural_constituents=...)` is invoked by the
+canonical `parse_corpus_case` gateway on corpus sources. For one complete
+source quotation containing exactly two or three overt, independent finite
+subject-predicate clauses, `QuotedSentenceComposer` uses the exact
+`spoken_clause_candidate` offsets, independently parses EACH subclause
+through the SAME engine's internal lexical/unification recognizer, requires
+its selected `clause_np_vp` tree and composes those proven `CLAUSE` interfaces
+through `data/dialogue_structural_grammar.jsonl` with literal quote and
+punctuation tokens. A complete composition returns a full-span derivation with
+children, source spans, and cumulative work caps; otherwise the conventional
+`Parser.parse` route remains in effect. No finite clause, quote mark or
+source character is fabricated. Dialogue with reporting tags, ellipsis,
+embedded quotes, or other complex clauses is NOT yet admitted by this
+narrow route and remains subject to normal dialogue grammar.
+
+**Source-faithful dialogue composition:**
+`seman_parser.quoted_discourse.analyze_dialogue` adds speech-internal
+`spoken_clause_candidate` spans (without inventing quote marks),
+`reporting_clause` attribution, and `split_direct_speech_turn` for
+intercalated speaker tags between two real quotations. Nested quotations
+stay embedded, and narratorial double-dash asides stay separate from speech.
+Every graph edge must reference an actual constituent ID and exact source
+span; no attribution is inferred merely because a speech verb occurs
+somewhere else in the same paragraph. The graph is **provisional** and does
+not itself certify a tree nor mark a case grammatical success. Full quotes
+with several inner sentences remain one source utterance, but their internal
+speech-sentence spans are now available for future compositional parsing.
+
 **Semicolon cohesion heuristic (supporting component evidence, not
 independent production slicing):**
 `seman_parser.structural_units.review_semicolon_boundaries` is consulted

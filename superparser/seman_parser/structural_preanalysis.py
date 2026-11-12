@@ -13,6 +13,7 @@ import re
 from seman_parser.sentence_boundaries import _abbreviation_at
 from seman_parser.structural_units import review_semicolon_boundaries, skeleton
 from seman_parser.discourse_roles import classify_discourse
+from seman_parser.quoted_discourse import analyze_dialogue
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -292,38 +293,14 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                 "explicit_bearing_participle_source_span",
             ),
         ))
-    # Source-matched quotation spans, with overt reporting verbs as edges.
-    for j, (a, b) in enumerate(quotation_spans):
-        if b-a <= 2:
-            continue
-        masked = source[:a] + " "*(b-a) + source[b:]
-        match = _REPORT.search(masked)
-        governor, relation = "u0", "direct_speech"
-        if match:
-            # The reporting CLAUSE includes its overt speaker NP where one is
-            # present; do not mislabel the verb alone as an entire clause.
-            before = masked[:match.start()]
-            boundary = max(
-                before.rfind(","), before.rfind("."), before.rfind("!"),
-                before.rfind("?"), before.rfind(";"),
-            )
-            first = boundary + 1
-            while first < match.start() and masked[first].isspace():
-                first += 1
-            after = masked[match.end():]
-            following = re.search(r"[,;.!?]", after)
-            last = match.end() + (following.start() if following else len(after))
-            while last > match.end() and masked[last-1].isspace():
-                last -= 1
-            governor, relation = f"r{j}", "reported_content"
-            cs.append(StructuralConstituent(
-                governor, "reporting_clause", first, last,
-                "u0", "reporting_predicate",
-                "overt_reporting_verb_and_clause_span",
-            ))
+    # Quote spans are speech contents, not automatically separate sentences
+    # and not automatically attributed to any reporting verb in the paragraph.
+    # This graph explicitly records interrupted speech turns, intercalated
+    # speech tags, clause-level material inside quotes, and embedded speech.
+    for part in analyze_dialogue(source, quotation_spans):
         cs.append(StructuralConstituent(
-            f"q{j}", "direct_speech", a, b, governor, relation,
-            "matched_original_quotation_marks",
+            part.id, part.function, part.start, part.end,
+            part.governor, part.relation, part.evidence,
         ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.

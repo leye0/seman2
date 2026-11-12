@@ -97,3 +97,69 @@ Seules les catégories **explicitement non autonomes/documentaires** sont
 et toute référence sont dénombrées. Une capitale, une minuscule, une phrase
 sans verbe clairement reconnu ou un dialecte ne suffisent jamais à exclure
 un segment. Cette passe ne crée toujours aucun arbre syntaxique confirmé.
+
+## Structure interne du discours direct
+
+Le module `seman_parser.quoted_discourse.analyze_dialogue` fournit des
+constituants sourcés sans transformer le texte : `direct_speech`,
+`spoken_clause_candidate` (une phrase prononcée dans une citation
+multiphase), `reporting_clause` (incise d'attribution),
+`split_direct_speech_turn` (citation interrompue par l'incise),
+`embedded_quotation` et `narratorial_parenthetical`. Chaque groupe conserve
+les caractères d'origine, les offsets et une relation à un gouverneur.
+La détection d'un verbe introducteur est locale à la zone immédiatement
+adjacente aux guillemets. Aucun nom de locuteur ni rattachement sémantique
+n'est prétendu vérifié. Le moteur grammatical complet n'utilise pas encore
+ces sous-structures pour composer sa forêt d'analyses; la présente étape
+permet de distinguer ce défaut des erreurs de segmentation.
+
+## Audit des dialogues et contrôle des faux positifs
+
+`PYTHONPATH=superparser python -m scripts.audit_dialogue_failures --diagnostics
+/tmp/novel-parse-diagnostics/per_sentence.jsonl --out
+/tmp/novel-parse-diagnostics/dialogue_residual_audit.json` classe les échecs
+par statut et fonction de discours. Le critère « discours direct » est une
+**citation réellement appariée dans le graphe**, et non la présence d'un
+caractère apostrophe dans `don't`, `o'clock` ou `John's`. Les rapports
+distinguent citation à plusieurs phrases, parole interrompue par une incise,
+citation imbriquée, attribution simple et citation sans attribution. Les
+catégories et les résultats du parseur demeurent séparés : une citation
+ayant plusieurs sous-clauses annotées ne constitue pas pour autant un arbre
+syntaxique complet et correct. L'audit ne modifie ni les échantillons, ni
+les budgets de parsing, ni les grammaires.
+
+## Composition effective des propositions de discours direct
+
+`parse_corpus_case` transmet désormais le graphe annoté au **même**
+`Parser.parse`, qui peut l'employer pour un cas étroitement attesté :
+une citation complète contenant deux ou trois propositions finies
+sujet–prédicat indépendantes. Le `QuotedSentenceComposer` passe chaque
+plage source au moteur d'unification existant, exige pour chacune un
+arbre complet et choisi de type `clause_np_vp`, puis vérifie la construction
+d'ensemble avec les productions déclaratives de
+`data/dialogue_structural_grammar.jsonl`. La racine renvoyée contient les
+sous-arbres grammaticaux réels, via `SegmentInterface`, et les ponctuations
+et guillemets de la source. La composition et les budgets cumulés sont
+traçables dans les statistiques du parseur. Si un élément échoue, le
+parseur retombe sur le traitement ordinaire sans déclarer de réussite.
+
+La composition prend aussi en charge un **sous-ensemble strict des propos interrompus** :
+une première proposition finie, une incise de citation dont la grammaire
+reconnaît indépendamment une catégorie `SPEECH-TAG`, puis une seconde
+proposition finie. Les deux guillemets et les deux virgules doivent provenir
+du texte source; l'assemblage est assuré par
+`dialogue_structural_intercalated_two_finite_clauses`. **Une incise séparant
+un sujet et son prédicat, ou interrompant une subordonnée, n'est pas
+promue abusivement en deux propositions complètes.** Ces constructions,
+les citations interparagraphes et les ellipses contextuelles requièrent
+encore des schémas de composition validés. Une amélioration du nombre d'arbres
+retenus n'est revendiquée que si la cohorte courante et les tests le prouvent.
+
+**Énoncés mineurs du dialogue.** Pour les réponses adverbiales suivies d'un
+vocatif effectivement attesté par les constituants sources, le moteur peut
+composer `ADV + COMMA + NP` et les délimiteurs réels d'une citation avec
+`dialogue_structural_minor_adv_vocative`. Les deux constituants doivent avoir
+leurs propres preuves lexicales et grammaticales; aucun verbe fini n'est
+inventé. Cette voie vise notamment l'échec littéraire `‘Perfectly, sir.’`.
+Les règles et les actions sémantiques des constructions finies composées
+sont explicites et auditées dans les fichiers JSONL du moteur.
