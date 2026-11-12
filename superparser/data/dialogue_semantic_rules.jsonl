@@ -16,3 +16,4 @@
 {"id":"dialogue_structural_three_finite_clauses","semantic":[{"compose":{"links":[{"relation":"CONTINUED_SPEECH","source":"speech_1","target":"speech_2"},{"relation":"CONTINUED_SPEECH","source":"speech_2","target":"speech_3"}]}}]}
 {"id":"dialogue_structural_intercalated_two_finite_clauses","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"speech_1"},{"relation":"CONTINUED_SPEECH","source":"speech_1","target":"speech_2"}]}}]}
 {"id":"dialogue_structural_postposed_minor_adverbial_vocative","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"answer"},{"relation":"ADDRESSEE","source":"report","target":"addressee"}]}}]}
+{"id":"dialogue_structural_postposed_finite_clause_vocative","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"speech"},{"relation":"ADDRESSEE","source":"report","target":"addressee"}]}}]}

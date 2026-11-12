@@ -75,6 +75,41 @@ class ActualDialogueCompositions(unittest.TestCase):
         self.assertEqual(prepared.source_component("r0"),
                          "replied Captain Smollett")
 
+    def test_actual_austen_postposed_vocative_dialogue_157(self):
+        case = select_cases(500)[0][157]
+        witness = next(w for w in WITNESSES if w.index == 157)
+        self.assertEqual(
+            case["source_text"],
+            "“My overhearings were more to the purpose than yours, Eliza,” said Charlotte.",
+        )
+        self.assertEqual(witness.baseline_status, "roots_without_valid_analysis")
+        prepared, _, result = parse_corpus_case(
+            self.parser, case, max_items=50_000, kbest_work_limit=500_000,
+        )
+        self.assertEqual(prepared.source_text, case["source_text"])
+        self.assertTrue(result.completed, result.stats)
+        self.assertTrue(result.stats.get("structural_composition"), result.stats)
+        self.assertEqual(
+            result.best().rule_id,
+            "dialogue_structural_postposed_finite_clause_vocative",
+        )
+        self.assertEqual(result.stats["structural_clause_count"], 1)
+        self.assertEqual(
+            [case["source_text"][a:b]
+             for a,b in result.stats["structural_segment_spans"]],
+            ["My overhearings were more to the purpose than yours",
+             "Eliza", "said Charlotte"],
+        )
+        self.assertEqual(
+            [x.category for x in result.best().children],
+            ["OPEN-QUOTE","CLAUSE","COMMA","NP","COMMA",
+             "CLOSE-QUOTE","SPEECH-TAG","SPEECH-STOP"],
+        )
+        self.assertEqual(result.stats["structural_segment_rule_ids"][0],
+                         "clause_np_vp")
+        self.assertTrue(result.stats["structural_segment_rule_ids"][2]
+                        .startswith("dialogue_speech_tag_"))
+
     def test_syntax_generalizes_but_requires_grammar_proofs(self):
         positive = '"Very likely, sir," said Mary.'
         negative = '"Very likely, perhaps," said Mary.'

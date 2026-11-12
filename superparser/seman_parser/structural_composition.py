@@ -24,6 +24,7 @@ from .features import FeatureStructure
 from .grammar import load_grammar
 from .segmentation import LexicalCandidate, LexicalLattice
 from .vector_chart import SegmentInterface, VectorGrammar
+from .structural_units import skeleton
 
 
 @dataclass(frozen=True, slots=True)
@@ -594,14 +595,13 @@ class QuotedSentenceComposer:
         text: str, components: Sequence[Mapping[str, Any]],
     ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int],
                tuple[int, ...]] | None:
-        """Source-exact ADVP + vocative + overt postposed speech tag.
+        """Source-exact quoted head + vocative + postposed reporting clause.
 
-        A spoken fragment does NOT become an ordinary finite CLAUSE. It may
-        be a grammatical *minor utterance* if independently proven as ADVP
-        (answer) and NP (vocative), and associated with a genuine overt
-        reporting clause. No word-level pattern like "very likely" or "sir"
-        is hardcoded: categories are proved by the existing unification
-        grammar, with every punctuation mark taken from the original text.
+        The initial head can be a fully proven finite CLAUSE or a verbless
+        ADVP. Both are real grammatical constructs, with an overt vocative NP
+        and a genuine reporting tag; no lexical word or verb is invented.
+        This only proposes the source span boundaries; the unification parser
+        MUST still independently prove every source-derived component.
         """
         by_id = {p.get("id"): p for p in components}
         quote, reporter = by_id.get("q0"), by_id.get("r0")
@@ -635,13 +635,14 @@ class QuotedSentenceComposer:
             (x.start, x.end, x.side) for x in boundary
         ] != [(0, 1, "open"), (b - 1, b, "close")]:
             return None
-        # The quoted answer is an adverbial phrase followed by an overt
-        # vocative NP. Both commas and the outside period are real source
-        # characters and must be included in the full-spanning derivation.
+        # The final source comma before a vocative separates the independent
+        # spoken head from a nominal form of direct address. A finite clause
+        # may itself contain earlier commas; only this final vocative boundary
+        # is used to plan the source grammar.
         if text[b-2] != ",":
             return None
-        first_comma = text.find(",", 1, b-2)
-        if first_comma <= 1 or text.find(",", first_comma+1, b-2) >= 0:
+        first_comma = text.rfind(",", 1, b-2)
+        if first_comma <= 1:
             return None
         adv_a, adv_b = 1, first_comma
         np_a, np_b = first_comma+1, b-2
@@ -653,8 +654,8 @@ class QuotedSentenceComposer:
             return None
         if (text[adv_a:adv_b] != text[adv_a:adv_b].strip()
                 or any(c in text[adv_a:adv_b]+text[np_a:np_b]
-                       for c in "\"'“”‘’;,!?")
-                or len(text[adv_a:adv_b].split()) > 7
+                       for c in "\"'“”‘’;!?")
+                or len(text[adv_a:adv_b].split()) > 24
                 or len(text[np_a:np_b].split()) > 5):
             return None
         return (adv_a, adv_b), (np_a, np_b), (ta, tb), (
@@ -683,24 +684,38 @@ class QuotedSentenceComposer:
         piece_items, piece_work = total_items // 4, total_work // 4
         candidates: list[LexicalCandidate] = []
         proofs: list[ParseResult] = []
+        # Structural cues select which grammar category to attempt, never
+        # prove it. The selected complete ranked tree is the sole authority.
+        head_text = text[adverbial[0]:adverbial[1]]
+        head_category = ("CLAUSE" if skeleton(head_text).finite_predicate_candidate
+                         else "ADVP")
         for category, (a, b), grammar in (
-            ("ADVP", adverbial, parser._vector_grammar),
+            (head_category, adverbial, parser._vector_grammar),
             ("NP", vocative, parser._vector_grammar),
             ("SPEECH-TAG", reporter, dialogue_grammar),
         ):
             surface = text[a:b]
-            lattice = parser._lattice_for_text(surface)
-            proof = grammar.parse_lattice(
-                lattice, goal_category=category,
-                max_items=piece_items,
-                kbest_work_limit=piece_work,
-                diagnostic_k=diagnostic_k,
-                beam=parser.beam if beam is None else beam,
-            )
+            if category == "CLAUSE":
+                proof = parser._parse_vector_text(
+                    surface, max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+            else:
+                lattice = parser._lattice_for_text(surface)
+                proof = grammar.parse_lattice(
+                    lattice, goal_category=category,
+                    max_items=piece_items,
+                    kbest_work_limit=piece_work,
+                    diagnostic_k=diagnostic_k,
+                    beam=parser.beam if beam is None else beam,
+                )
             if not proof.completed or proof.best() is None:
                 return None
             selected = proof.best()
             if selected.category != category:
+                return None
+            if category == "CLAUSE" and selected.rule_id != "clause_np_vp":
                 return None
             if (category == "SPEECH-TAG"
                     and not (selected.rule_id or "").startswith(
@@ -751,13 +766,16 @@ class QuotedSentenceComposer:
             return None
         if isinstance(combined.stats, dict):
             combined.stats.update({
-                "engine": "vector-structural-minor-with-postposed-reporter",
+                "engine": "vector-structural-vocative-with-postposed-reporter",
                 "structural_composition": True,
-                "structural_composition_kind":
-                    "adverbial_answer_vocative_with_postposed_reporting_clause",
+                "structural_composition_kind": (
+                    "finite_clause_vocative_with_postposed_reporting_clause"
+                    if head_category == "CLAUSE" else
+                    "adverbial_answer_vocative_with_postposed_reporting_clause"
+                ),
                 "source_text_unchanged": True,
                 "dialogue_scoped": True,
-                "structural_clause_count": 0,
+                "structural_clause_count": int(head_category == "CLAUSE"),
                 "structural_segment_count": 3,
                 "structural_segment_spans": [
                     list(adverbial), list(vocative), list(reporter)
@@ -773,9 +791,11 @@ class QuotedSentenceComposer:
                 ],
                 "max_items_total_across_segments": total_items,
                 "kbest_work_limit_total_across_segments": total_work,
-                "composition_linguistic_proof":
-                    "source_adverbial_and_vocative_and_postposed_reporting_tag"
-                    "_each_independently_licensed_by_grammar",
+                "composition_linguistic_proof": (
+                    "source_finite_np_vp_clause_and_vocative_and_reporting_tag"
+                    if head_category == "CLAUSE" else
+                    "source_adverbial_and_vocative_and_reporting_tag"
+                ) + "_each_independently_licensed_by_grammar",
             })
         combined.shared_forest = {
             "assembly": combined.shared_forest,
