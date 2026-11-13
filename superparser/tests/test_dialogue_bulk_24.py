@@ -191,6 +191,85 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+
+    def test_475_minor_evaluation_comparative_aux_and_negative_object_tag(self):
+        source=(
+            '"So far so good. But now I find that every man before the mast '
+            'knows more than I do. I don\'t call that fair, now, do you?"'
+        )
+        r=self.actual(475,source)
+        n=self.root(r,"dialogue_structural_comparative_negative_tag_sequence")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),("MINOR-UTTERANCE","So far so good"),
+            ("SPEECH-STOP","."),
+            ("CLAUSE","But now I find that every man before the mast "
+                      "knows more than I do"),
+            ("SPEECH-STOP","."),
+            ("SPEECH-ACT","I don't call that fair, now, do you?"),
+            ("CLOSE-QUOTE",'"'),
+        ])
+        minor=n.children[1]
+        self.assertEqual(minor.rule_id,
+                         "dialogue_structural_equative_minor_formula")
+        self.assert_kids(r,minor,[
+            ("DEGREE","So"),("ADV","far"),("DEGREE","so"),("ADJ","good"),
+        ])
+        self.assertEqual(minor.features.as_dict()["verbless"],"true")
+        claim=n.children[3]
+        self.assertEqual(claim.rule_id,
+                         "dialogue_structural_cognitive_that_comparative_claim")
+        comparative=claim.children[-1]
+        self.assertEqual(comparative.rule_id,
+                         "dialogue_structural_comparative_aux_substitution")
+        self.assert_kids(r,comparative,[
+            ("NP","every man before the mast"),("V","knows"),
+            ("DEGREE","more"),("CONJ","than"),("CLAUSE","I do"),
+        ])
+        self.assertEqual(comparative.children[0].children[0].rule_id,
+                         "np_pp_mod")
+        self.assertEqual(comparative.children[-1].children[0].rule_id,
+                         "clause_aux_ellipsis")
+        statement=n.children[5]
+        self.assertEqual(statement.rule_id,
+                         "dialogue_structural_negative_predicative_with_tag")
+        self.assert_kids(r,statement,[
+            ("CLAUSE","I don't call that fair"),("COMMA",","),
+            ("ADV","now"),("COMMA",","),("TAG-QUESTION","do you?"),
+        ])
+        negative=statement.children[0]
+        self.assertEqual(negative.rule_id,
+                         "dialogue_structural_negative_object_predicative")
+        self.assert_kids(r,negative,[
+            ("NP","I"),("AUX","do"),("NEG","n't"),("V","call"),
+            ("PRONOUN","that"),("ADJ","fair"),
+        ])
+        self.assertEqual(negative.children[2].features.as_dict()["negation"],"true")
+        self.assertEqual(statement.children[-1].rule_id,
+                         "dialogue_structural_positive_aux_question_tag")
+        self.assert_kids(r,statement.children[-1],[
+            ("AUX","do"),("NP","you"),("QMARK","?"),
+        ])
+        self.assertEqual(r.stats["structural_clause_count"],3)
+
+    def test_475_requires_source_negation_and_auxiliary_ellipsis_tag(self):
+        negatives=(
+            '"So far so good. But now I find that every man before the mast '
+            'knows more than I do. I call that fair, now, do you?"',
+            '"So far so good. But now I find that every man before the mast '
+            'knows more than I do. I don\'t call that fair, now, are you?"',
+            '"So far so good. But now I find that every man before the mast '
+            'knows more than I do. I don\'t call that fair, now, do you."',
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                _,_,r=parse_corpus_case(self.parser,cases[0],
+                               max_items=50_000,kbest_work_limit=500_000)
+                self.assertNotEqual(r.stats.get("structural_composition_kind"),
+                         "dialogue_structural_comparative_negative_tag_sequence")
+
     def test_498_numeric_and_relative_copula_with_two_true_tags(self):
         source=(
             '"That\'s your seven hundred thousand pounds, is it? '

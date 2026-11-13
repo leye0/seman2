@@ -345,6 +345,22 @@ class QuotedSentenceComposer:
                     return None
                 if (category == "CLAUSE"
                         and expected_rule ==
+                        "dialogue_structural_comparative_negative_tag_sequence"
+                        and (selected.rule_id!="clause_aux_ellipsis"
+                             or len(selected.children)!=2
+                             or selected.children[0].rule_id!="np_indef_pron"
+                             or selected.children[1].category!="AUX")):
+                    return None
+                if (category == "NP"
+                        and expected_rule ==
+                        "dialogue_structural_comparative_negative_tag_sequence"
+                        and surface.startswith("every man before")
+                        and (selected.rule_id!="np_pp_mod"
+                             or len(selected.children)!=2
+                             or selected.children[1].rule_id!="pp_prep_np")):
+                    return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
                         "dialogue_structural_three_confirmatory_tags_vocative"):
                     # Existing full finite clause has the right subject
                     # and genuine copular NP predicate, not an NP homograph.
@@ -451,6 +467,8 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     3 if expected_rule ==
+                    "dialogue_structural_comparative_negative_tag_sequence" else
+                    3 if expected_rule ==
                     "dialogue_structural_three_confirmatory_tags_vocative" else
                     3 if expected_rule ==
                     "dialogue_structural_split_intent_causal_request" else
@@ -492,6 +510,118 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_comparative_negative_predicative_tag(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Quoted minor formula, finite comparative, negative predicative tag.
+
+        In "knows more than I do", the subject of an overt auxiliary-
+        substitution clause is still licensed by a genuine selected grammar
+        tree.  In "don't call that fair", the contracted auxiliary, NEG,
+        transitive verb, demonstrative object and separate predicative ADJ
+        are all original lexical edges (not a nominal "I do" homograph).
+        The final "do you?" is an overt inverted positive tag, never an
+        imperative or a fabricated finite clause.
+        """
+        by_id={c.get("id"):c for c in components}
+        q=by_id.get("q0")
+        if (not q or q.get("function")!="direct_speech"
+                or (q.get("start"),q.get("end"))!=(0,len(text))
+                or any(c.get("function") in (
+                    "embedded_quotation","reporting_clause",
+                    "split_direct_speech_turn","narratorial_parenthetical"
+                ) for c in components)):
+            return None
+        marks=quotation_boundaries(text)
+        if (len(marks)!=2 or
+                [(x.start,x.end,x.side) for x in marks]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")
+                ]):
+            return None
+        acts=sorted((c for c in components
+                    if c.get("function")=="spoken_clause_candidate"
+                    and c.get("governor")=="q0"),
+                    key=lambda x:x["start"])
+        if (len(acts)!=3 or acts[0]["start"]!=1
+                or acts[-1]["end"]!=len(text)-1
+                or any(text[a["end"]:b["start"]].strip()
+                       for a,b in zip(acts,acts[1:]))):
+            return None
+        one=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)(\.)",
+            text[acts[0]["start"]:acts[0]["end"]],
+        )
+        two=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+(that)\s+(.+?)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+(than)\s+(.+?)(\.)",
+            text[acts[1]["start"]:acts[1]["end"]],
+        )
+        three=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)(n't)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+([A-Za-z]+)(,)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)(\?)",
+            text[acts[2]["start"]:acts[2]["end"]],
+        )
+        if not all((one,two,three)):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def g(m:re.Match[str],base:int,i:int,cat:str,
+              kind="lexical",**required:str)->None:
+            a,b=m.span(i)
+            specs.append((cat,base+a,base+b,kind,required))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        b=acts[0]["start"]
+        g(one,b,1,"DEGREE","lexical",equative_so="true")
+        g(one,b,2,"ADV","lexical",comparative_modifier="true")
+        g(one,b,3,"DEGREE","lexical",equative_so="true")
+        g(one,b,4,"ADJ")
+        g(one,b,5,"SPEECH-STOP","source-punctuation")
+        b=acts[1]["start"]
+        g(two,b,1,"COORD","lexical",nominal_coordination="true")
+        g(two,b,2,"ADV")
+        g(two,b,3,"NP","phrase",
+          person="1",number="singular",pronominal="true")
+        g(two,b,4,"V","lexical",vform="finite",subcat_member="clausal")
+        g(two,b,5,"COMP-THAT")
+        g(two,b,6,"NP","phrase",number="singular",person="3")
+        g(two,b,7,"V","lexical",
+          vform="finite",number="singular",person="3",
+          subcat_member="intransitive")
+        g(two,b,8,"DEGREE","lexical",comparative="true")
+        g(two,b,9,"CONJ")
+        g(two,b,10,"CLAUSE","phrase")
+        g(two,b,11,"SPEECH-STOP","source-punctuation")
+        b=acts[2]["start"]
+        g(three,b,1,"NP","phrase",
+          person="1",number="singular",pronominal="true")
+        g(three,b,2,"AUX","lexical",vform="finite")
+        g(three,b,3,"NEG","lexical",negation="true")
+        g(three,b,4,"V","lexical",vform="base",
+          subcat_member="complex_transitive")
+        g(three,b,5,"PRONOUN","lexical",
+          number="singular",person="3",definiteness="demonstrative")
+        g(three,b,6,"ADJ")
+        g(three,b,7,"COMMA","source-punctuation")
+        g(three,b,8,"ADV")
+        g(three,b,9,"COMMA","source-punctuation")
+        g(three,b,10,"AUX","lexical",vform="finite")
+        g(three,b,11,"NP","phrase",person="2",pronominal="true")
+        g(three,b,12,"QMARK","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_comparative_negative_tag_sequence",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_three_confirmatory_tags_and_vocative(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1924,6 +2054,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        comparative = self._compose_comparative_negative_predicative_tag(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if comparative is not None:
+            return comparative
         confirmatory = self._compose_three_confirmatory_tags_and_vocative(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
