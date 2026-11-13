@@ -284,6 +284,12 @@ class QuotedSentenceComposer:
                     # must not manufacture a new reciprocal surface.
                     and (category != "RECIPROCAL-PRONOUN"
                          or c.surface.casefold() == c.lemma.casefold())
+                    # Explicit person-marked bare-control finite forms in
+                    # a speaker incise must use their attested surface.
+                    # WordNet may otherwise project the same 1SG feature
+                    # onto a productively inflected 3SG spelling.
+                    and (required.get("first_person_bare_complement")!="true"
+                         or c.surface.casefold() == c.lemma.casefold())
                     and all(
                         (v in (c.features.as_dict().get("subcat", ())
                                if isinstance(c.features.as_dict().get("subcat"), (list, tuple))
@@ -676,7 +682,10 @@ class QuotedSentenceComposer:
         add("vocative","NP","phrase")
         add("comma2","COMMA","source-punctuation")
         add("inc_subj","PRONOUN",person="1",number="singular")
-        add("inc_finite","V",vform="finite",subcat_member="bare_complement")
+        add("inc_finite","V",vform="finite",
+            number="singular",person="1",
+            first_person_bare_complement="true",
+            subcat_member="bare_complement")
         add("inc_bare","V",vform="base",subcat_member="clausal")
         add("semicolon","SEMICOLON","source-punctuation")
         add("coord","COORD")
