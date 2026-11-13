@@ -318,6 +318,18 @@ class QuotedSentenceComposer:
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items())):
                     return None
+                if (expected_rule ==
+                        "dialogue_structural_temporal_doubt_dislocated_gerund_question"
+                        and category=="NP"
+                        and selected.rule_id!="np_title_name"):
+                    return None
+                if (expected_rule ==
+                        "dialogue_structural_temporal_reason_dislocated_inf_question"
+                        and category=="PP"
+                        and (selected.rule_id!="pp_prep_np"
+                             or len(selected.children)!=2
+                             or selected.children[1].rule_id!="np_proper")):
+                    return None
                 if (category == "PP"
                         and expected_rule ==
                         "dialogue_structural_existential_and_embedded_wh"
@@ -511,6 +523,10 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     2 if expected_rule in (
+                        "dialogue_structural_temporal_doubt_dislocated_gerund_question",
+                        "dialogue_structural_temporal_reason_dislocated_inf_question",
+                    ) else
+                    2 if expected_rule in (
                         "dialogue_structural_dialect_three_act_self_report",
                         "dialogue_structural_vocative_praise_stars_reporter",
                     ) else
@@ -558,6 +574,178 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_epistemic_doubt_gerund_question(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Temporal clause, negative partitive subject and discontinuous
+        nominal gerund complement interrupted by a finite speaker incise.
+
+        The source-preserved 'I suppose' is finite and clausal, not an
+        incorrectly accepted bare VP or a silent main-question verb.
+        """
+        q0=next((c for c in components if c.get("id")=="q0"),None)
+        spoken=[c for c in components if
+                c.get("function")=="spoken_clause_candidate"
+                and c.get("governor")=="q0"]
+        marks=quotation_boundaries(text)
+        if (q0 is None or q0.get("function")!="direct_speech"
+                or (q0.get("start"),q0.get("end"))!=(0,len(text))
+                or len(spoken)!=1
+                or (spoken[0]["start"],spoken[0]["end"])!=(1,len(text)-1)
+                or len(marks)!=2
+                or [(m.start,m.end,m.side) for m in marks]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")]
+                or any(c.get("function") in (
+                    "reporting_clause","split_direct_speech_turn",
+                    "embedded_quotation","narratorial_parenthetical")
+                    for c in components)):
+            return None
+        m=re.fullmatch(
+            r"(?P<coord>[A-Za-z]+)\s+(?P<conj>[A-Za-z]+)\s+"
+            r"(?P<temporal_subj>[A-Za-z]+\s+[A-Za-z]+)\s+"
+            r"(?P<temporal_verb>[A-Za-z]+)\s+(?P<emphatic>[A-Za-z]+)"
+            r"(?P<comma_temporal>,)\s+(?P<neg>[A-Za-z]+)\s+"
+            r"(?P<quant>[A-Za-z]+)\s+(?P<partitive>[A-Za-z]+)\s+"
+            r"(?P<partitive_group>[A-Za-z]+)\s+"
+            r"(?P<matrix_verb>[A-Za-z]+)\s+(?P<article>[A-Za-z]+)\s+"
+            r"(?P<noun>[A-Za-z]+)(?P<comma_before>,)\s+"
+            r"(?P<incise_subject>[A-Za-z]+)\s+"
+            r"(?P<incise_verb>[A-Za-z]+)(?P<comma_after>,)\s+"
+            r"(?P<prep>[A-Za-z]+)\s+(?P<gerund_subject>[A-Za-z]+)\s+"
+            r"(?P<copula>[A-Za-z]+)\s+(?P<degree_adv>[A-Za-z]+)\s+"
+            r"(?P<adjective>[A-Za-z]+)(?P<q>\?)",
+            text[1:-1],
+        )
+        if m is None:
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def add(n:str,cat:str,kind="lexical",**features:str)->None:
+            a,b=m.span(n)
+            specs.append((cat,1+a,1+b,kind,features))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        add("coord","COORD")
+        add("conj","CONJ",temporal_subordinator="true")
+        add("temporal_subj","NP","phrase")
+        add("temporal_verb","V",vform="finite",subcat_member="intransitive")
+        add("emphatic","EMPHATIC-REFLEXIVE",person="3",
+            number="singular",reflexive="true")
+        add("comma_temporal","COMMA","source-punctuation")
+        add("neg","NEG",negation="true")
+        add("quant","NUM")
+        add("partitive","PARTITIVE-OF")
+        add("partitive_group","PRONOUN",person="2")
+        add("matrix_verb","V",vform="finite",subcat_member="transitive")
+        add("article","DET",number="singular",definiteness="indefinite")
+        add("noun","N",number="singular",of_gerund_content="true")
+        add("comma_before","COMMA","source-punctuation")
+        add("incise_subject","PRONOUN",person="1",number="singular")
+        add("incise_verb","V",vform="finite",subcat_member="clausal")
+        add("comma_after","COMMA","source-punctuation")
+        add("prep","PREP",nominal_complement="of")
+        add("gerund_subject","POSS",person="3",number="plural")
+        add("copula","COPULA",vform="ing")
+        add("degree_adv","ADV")
+        add("adjective","ADJ")
+        add("q","QMARK","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_temporal_doubt_dislocated_gerund_question",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def _compose_epistemic_reason_infinitive_question(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Temporal distributive subject and reason-selecting infinitive.
+
+        'They all' has a postposed universal quantifier, not an ADV modifying
+        'removed'. 'Them' is the object of 'believe'; the PP 'of each other'
+        complements the adjective 'fond', not the belief event or its object.
+        """
+        q0=next((c for c in components if c.get("id")=="q0"),None)
+        spoken=[c for c in components if
+                c.get("function")=="spoken_clause_candidate"
+                and c.get("governor")=="q0"]
+        marks=quotation_boundaries(text)
+        if (q0 is None or q0.get("function")!="direct_speech"
+                or (q0.get("start"),q0.get("end"))!=(0,len(text))
+                or len(spoken)!=1
+                or (spoken[0]["start"],spoken[0]["end"])!=(1,len(text)-1)
+                or len(marks)!=2
+                or [(m.start,m.end,m.side) for m in marks]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")]
+                or any(c.get("function") in (
+                    "reporting_clause","split_direct_speech_turn",
+                    "embedded_quotation","narratorial_parenthetical")
+                    for c in components)):
+            return None
+        m=re.fullmatch(
+            r"(?P<conj>[A-Za-z]+)\s+(?P<subj>[A-Za-z]+)\s+"
+            r"(?P<quant>[A-Za-z]+)\s+(?P<verb_temporal>[A-Za-z]+)\s+"
+            r"(?P<pp>[A-Za-z]+\s+[A-Za-z]+)(?P<comma0>,)\s+"
+            r"(?P<adv>[A-Za-z]+)(?P<comma1>,)\s+"
+            r"(?P<m_subject>[A-Za-z]+)\s+(?P<m_verb>[A-Za-z]+)\s+"
+            r"(?P<det>[A-Za-z]+)\s+(?P<noun>[A-Za-z]+)"
+            r"(?P<comma2>,)\s+(?P<inc_subject>[A-Za-z]+)\s+"
+            r"(?P<inc_verb>[A-Za-z]+)(?P<comma3>,)\s+"
+            r"(?P<to>[A-Za-z]+)\s+(?P<v>[A-Za-z]+)\s+"
+            r"(?P<obj>[A-Za-z]+)\s+(?P<adj>[A-Za-z]+)\s+"
+            r"(?P<prep>[A-Za-z]+)\s+(?P<recip>[A-Za-z]+\s+[A-Za-z]+)"
+            r"(?P<q>\?)",
+            text[1:-1],
+        )
+        if m is None:
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def add(n:str,cat:str,kind="lexical",**features:str)->None:
+            a,b=m.span(n)
+            specs.append((cat,1+a,1+b,kind,features))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        add("conj","CONJ",temporal_incise="true")
+        add("subj","PRONOUN",person="3",number="plural")
+        add("quant","DET",number="plural",definiteness="universal")
+        add("verb_temporal","V",vform="finite",subcat_member="intransitive")
+        add("pp","PP","phrase")
+        add("comma0","COMMA","source-punctuation")
+        add("adv","ADV")
+        add("comma1","COMMA","source-punctuation")
+        add("m_subject","PRONOUN",person="2")
+        add("m_verb","V",vform="finite",subcat_member="transitive")
+        add("det","DET",number="singular",definiteness="negative")
+        add("noun","N",number="singular",to_infinitive_content="true")
+        add("comma2","COMMA","source-punctuation")
+        add("inc_subject","PRONOUN",person="1",number="singular")
+        add("inc_verb","V",vform="finite",subcat_member="clausal")
+        add("comma3","COMMA","source-punctuation")
+        add("to","TO")
+        add("v","V",vform="base",subcat_member="complex_transitive")
+        add("obj","PRONOUN",person="3",number="plural")
+        add("adj","ADJ",of_reciprocal_complement="true")
+        add("prep","PREP",nominal_complement="of")
+        add("recip","RECIPROCAL-PRONOUN",number="plural",reciprocal="true")
+        add("q","QMARK","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_temporal_reason_dislocated_inf_question",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_dialectal_three_act_self_report(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -2273,6 +2461,20 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        epistemic_doubt = self._compose_epistemic_doubt_gerund_question(
+            parser,text,original_lattice,components,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+        if epistemic_doubt is not None:
+            return epistemic_doubt
+        epistemic_reason = self._compose_epistemic_reason_infinitive_question(
+            parser,text,original_lattice,components,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+        if epistemic_reason is not None:
+            return epistemic_reason
         dialect = self._compose_dialectal_three_act_self_report(
             parser,text,original_lattice,components,
             max_items=max_items,kbest_work_limit=kbest_work_limit,
