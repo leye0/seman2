@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #60](https://github.com/leye0/seman2/pull/60)** — 458/500, 42 phrases restantes. Le lot « sujet interrompu puis prédicat repris » est résolu. Les statuts historiques ci-dessous restent ceux du relevé de départ.
+
 Les textes sont intégraux. Le classement distingue des structures observées à examiner, pas des causes déjà établies. Un délai ou une saturation ne prouve pas que la grammaire manque.
 
 Priorité aux parenthèses explicites, puis aux incises et suppléments. Vérifier le paragraphe source et les frontières avant de modifier la grammaire, puis inspecter le premier arbre et comparer les 500 mêmes phrases.
@@ -22,17 +24,17 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #73 | Délai | I thought, as they came towards us, that they were well matched even in that particular. | Temporelle entre thought et le complément en that. |
 | #87 | Racines sans analyse valide | We judged it expedient, now, to tell her all we knew; which I recounted at length. | Incise now dans it…to, puis relative après le point-virgule. |
 | #95 | Forêt saturée | Accordingly, when Mr. Peggotty came home about nine o’clock, this unfortunate Mrs. Gummidge was knitting in her corner, in a very wretched and miserable condition. | Temporelle intercalée après Accordingly, puis ajout descriptif final. |
-| #101 | Racines sans analyse valide | My face, neck, and hands, from unaccustomed exposure to the air and sun, were burnt to a berry-brown. | Groupe prépositionnel causal entre le sujet coordonné et le passif. |
+| #101 | Racines sans analyse valide | My face, neck, and hands, from unaccustomed exposure to the air and sun, were burnt to a berry-brown. | Groupe prépositionnel causal entre le sujet coordonné et le passif. — Corrigé par la PR #60. |
 | #189 | Racines sans analyse valide | Miss Bennet had slept ill, and though up, was very feverish, and not well enough to leave her room. | Concessive réduite though up au milieu de prédicats coordonnés. |
-| #220 | Aucune racine | He was at the same time haughty, reserved, and fastidious, and his manners, though well-bred, were not inviting. | Concessive réduite though well-bred entre sujet et prédicat. |
+| #220 | Aucune racine | He was at the same time haughty, reserved, and fastidious, and his manners, though well-bred, were not inviting. | Concessive réduite though well-bred entre sujet et prédicat. — Corrigé par la PR #60. |
 | #226 | Aucune racine | He inquired how far Netherfield was from Meryton; and, after receiving her answer, asked in a hesitating manner how long Mr. Darcy had been staying there. | Gérondif after receiving her answer intercalé entre deux interrogatives indirectes. |
-| #239 | Forêt saturée | Elizabeth immediately recognizing the livery, guessed what it meant, and imparted no small degree of her surprise to her relations by acquainting them with the honour which she expected. | Participiale entre le sujet et guessed, puis gérondif de moyen. |
+| #239 | Forêt saturée | Elizabeth immediately recognizing the livery, guessed what it meant, and imparted no small degree of her surprise to her relations by acquainting them with the honour which she expected. | Participiale entre le sujet et guessed, puis gérondif de moyen. — Corrigé par la PR #60. |
 | #246 | Aucune racine | Anxious and uneasy, the period which passed in the drawing-room, before the gentlemen came, was wearisome and dull to a degree that almost made her uncivil. | Supplément adjectival détaché, puis temporelle intercalée dans le sujet. |
 | #319 | Racines sans analyse valide | Now my desires were complied with, and it would, indeed, have been folly to repent. | Incise indeed entre modal et infinitif parfait. |
-| #463 | Racines sans analyse valide | He himself, I thought, looked somewhat paler and more stern than I was used to. | Incise de pensée entre le sujet emphatique et le prédicat comparatif. |
+| #463 | Racines sans analyse valide | He himself, I thought, looked somewhat paler and more stern than I was used to. | Incise de pensée entre le sujet emphatique et le prédicat comparatif. — Corrigé par la PR #60. |
 | #480 | Racines sans analyse valide | The squire was sitting down, as white as a sheet, thinking of the harm he had led us to, the good soul! | Équative détachée, participiale et reprise nominale finale. |
-| #485 | Racines sans analyse valide | I snatched a cutlass from the pile, and someone, at the same time snatching another, gave me a cut across the knuckles which I hardly felt. | Participiale incidente entre sujet et gave. |
-| #486 | Aucune racine | These biscuits, should anything befall me, would keep me, at least, from starving till far on in the next day. | Conditionnelle inversée sans if entre sujet et modal, puis at least. |
+| #485 | Racines sans analyse valide | I snatched a cutlass from the pile, and someone, at the same time snatching another, gave me a cut across the knuckles which I hardly felt. | Participiale incidente entre sujet et gave. — Corrigé par la PR #60. |
+| #486 | Aucune racine | These biscuits, should anything befall me, would keep me, at least, from starving till far on in the next day. | Conditionnelle inversée sans if entre sujet et modal, puis at least. — Corrigé par la PR #60. |
 | #496 | Racines sans analyse valide | The air, besides, was fresh and stirring, and this, under the sheer sunbeams, was a wonderful refreshment to our senses. | Incises distinctes dans deux propositions coordonnées. |
 | #499 | Forêt saturée | Two of the bars, slung in a rope's end, made a good load for a grown man--one that he was glad to walk slowly with. | Participiale passive dans le sujet, puis reprise en one après un tiret non apparié. |
 
@@ -46,7 +48,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. |
 | #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… |
 | #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. |
-| #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. |
+| #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. — Corrigé par la PR #60. |
 | #294 | Racines sans analyse valide | Who could arrest a creature capable of scaling the overhanging sides of Mont Saleve? | Interrogative à sujet who et adjectif capable suivi d’un gérondif. |
 | #328 | Racines sans analyse valide | These sublime and magnificent scenes afforded me the greatest consolation that I was capable of receiving. | Relative à complément de préposition non exprimé après receiving. |
 | #363 | Racines sans analyse valide | Sometimes I sat with my eyes fixed on the ground, fearing to raise them lest they should encounter the object which I so much dreaded to behold. | Supplément participial, subordonnée en lest et relative à complément infinitival. |
