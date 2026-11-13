@@ -32,10 +32,20 @@ PATTERNS = (
         rf"(?P<and>and)\s+(?P<second>{WORD})\s+(?P<with>with\s+{SPAN})\s+"
         rf"(?P<theme>(?:the|a|an|their|his|her|our)\s+{SPAN})", re.I,
     )),
+    ("semicolon_supplement", re.compile(
+        rf"(?P<frame>here|there|then|now)\s+(?P<subject>{WORD})\s+(?P<first>{WORD})(?P<semi>;)"
+        rf"\s+(?P<and>and)\s+(?P<part1>{WORD}ing\s+{SPAN})(?P<join>,)\s+"
+        rf"(?P<part_and>and)\s+(?P<part2>{WORD}ing\s+{SPAN})(?P<aside>,)\s+"
+        rf"(?P<link>{WORD})\s+(?P<as>as)\s+(?P<if>if)\s+"
+        rf"(?P<inner_subject>{WORD})\s+(?P<modal1>{WORD})\s+"
+        rf"(?P<be1>be)\s+(?P<passive1>{WORD})(?P<contrast>,)\s+"
+        rf"(?P<but>but)\s+(?P<modal2>{WORD})\s+(?P<negative>{WORD})\s+"
+        rf"(?P<be2>be)\s+(?P<passive2>{WORD})", re.I,
+    )),
 )
 
 
-def plan_shared_subject_coordination(text):
+def plan_shared_subject_coordination(text, components=()):
     if not text.endswith(".") or "," not in text or quotation_boundaries(text):
         return None
     for family, pattern in PATTERNS:
@@ -59,7 +69,7 @@ def plan_shared_subject_coordination(text):
     def subject(group, **features):
         piece(group, "NP", "subject-phrase", **features)
 
-    for comma in ("join", "aside", "attrs"):
+    for comma in ("join", "aside", "attrs", "contrast"):
         if comma in match.groupdict():
             piece(comma, "COMMA", "source-punctuation")
     lexical("and", "COORD", nominal_coordination="true")
@@ -88,7 +98,7 @@ def plan_shared_subject_coordination(text):
         lexical("to", "TO")
         verb("action", "base", "transitive")
         piece("object", "NP")
-    else:
+    elif family == "temporal":
         subject("subject")
         verb("first", "finite", "intransitive", nonbase_surface="true")
         piece("cause", "PP", proof_rule="pp_prep_np")
@@ -100,5 +110,38 @@ def plan_shared_subject_coordination(text):
         verb("second", "finite", "transitive", nonbase_surface="true")
         piece("with", "PP", proof_rule="pp_prep_np")
         piece("theme", "NP")
+    else:
+        initial, resumed = match.start("semi"), match.start("and")
+        if not any(
+            right.get("function") == "coordinate_clause"
+            and right.get("relation") == "coordination"
+            and (right.get("start"), right.get("end")) == (resumed, len(text))
+            and any(
+                left.get("id") == right.get("governor")
+                and left.get("function") == "matrix_clause"
+                and (left.get("start"), left.get("end")) == (0, initial)
+                for left in components
+            )
+            for right in components
+        ):
+            return None
+        piece("semi", "SEMICOLON", "source-punctuation")
+        lexical("frame", "ADV")
+        subject("subject", pronominal="true")
+        verb("first", "finite", "intransitive", nonbase_surface="true")
+        piece("part1", "TRANSITIVE-PARTICIPIAL")
+        lexical("part_and", "COORD", nominal_coordination="true")
+        piece("part2", "TRANSITIVE-PARTICIPIAL")
+        verb("link", "finite", "linking", nonbase_surface="true",
+             lemma_in="appear|feel|look|seem|smell|sound|taste")
+        lexical("as", "CONJ", degree="true")
+        lexical("if", "CONJ", complementizer="conditional")
+        subject("inner_subject", pronominal="true")
+        for n in ("1", "2"):
+            lexical("modal" + n, "MODAL", vform="finite")
+            verb("be" + n, "base", "linking", lemma_in="be")
+            verb("passive" + n, "ed", "transitive")
+        lexical("but", "COORD", nominal_coordination="true")
+        lexical("negative", "DEGREE", negation="true")
     mark("SPEECH-STOP", len(text) - 1, len(text))
     return sorted(specs, key=lambda spec: spec[1])

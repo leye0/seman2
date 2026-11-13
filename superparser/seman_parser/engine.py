@@ -292,8 +292,9 @@ class Parser:
                         *syntax_rules,
                         *(tuple(load_grammar(dialogue_path)) if dialogue_path
                           and Path(dialogue_path).is_file() else ()),
-                        *(rule for rule in source_rules
-                          if not rule.provenance.get("source_plan")),
+                        # ParseReport uses this grammar for interpretation,
+                        # not recognition. The composer still gates scoped rules.
+                        *source_rules,
                     )),
                     lexicon=resources.lexicon, types=resources.types,
                     metadata=resources.metadata,

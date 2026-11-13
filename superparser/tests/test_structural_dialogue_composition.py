@@ -11,7 +11,7 @@ from hashlib import sha256
 from pathlib import Path
 import unittest
 
-from research.verbnet_lr.corpus_pipeline import parse_corpus_case
+from research.verbnet_lr.corpus_pipeline import parse_corpus_case, prepare_corpus_input
 from research.verbnet_lr.gutenberg_novels import Book, extract
 from scripts.diagnose_novel_parses import select_cases
 from seman_parser.dialogue_clause_plans import PARENTHETICAL_MODAL
@@ -575,6 +575,109 @@ class SharedSubjectCoordinationTests(unittest.TestCase):
         self.assertTrue(any(c.category == "V" and
                             c.features.as_dict().get("vform") == "finite"
                             for c in self.parser._lattice_for_text("went").candidates))
+
+    def test_semicolon_resumes_matrix_subject_without_crossing_comparison(self):
+        cases, _ = select_cases(500)
+        text, frame = self.case_tree(113, cases[113], "e4a5ae9674b49144")
+        self.assertEqual(frame.rule_id, "structural_framed_shared_subject_coordination")
+        self.assertEqual(self.parts(frame, text)[0], ("ADV", "Here"))
+        subject, pair = frame.children[-1].children
+        self.assertEqual(text[subject.start:subject.end], "she")
+        self.assertEqual(pair.rule_id, "structural_semicolon_shared_predicates_with_supplement")
+        self.assert_agreement(subject, pair, "singular")
+        self.assertEqual(self.parts(pair, text)[:3], [
+            ("V", "ceased"), ("SEMICOLON", ";"), ("COORD", "and"),
+        ])
+        supplement, comma, appearance = pair.children[-1].children
+        self.assertEqual(comma.category, "COMMA")
+        self.assertEqual(self.parts(supplement, text), [
+            ("TRANSITIVE-PARTICIPIAL", "snapping her reticule again"),
+            ("COMMA", ","), ("COORD", "and"),
+            ("TRANSITIVE-PARTICIPIAL", "shutting her mouth"),
+        ])
+        first_part = supplement.children[0].children[0]
+        self.assertEqual(self.parts(first_part, text), [
+            ("TRANSITIVE-PARTICIPIAL", "snapping her reticule"), ("ADV", "again"),
+        ])
+        self.assertEqual(self.parts(appearance, text)[0], ("V", "looked"))
+        comparison = appearance.children[-1]
+        self.assertEqual(self.parts(comparison, text)[:3], [
+            ("CONJ", "as"), ("CONJ", "if"), ("NP", "she"),
+        ])
+        self.assertGreater(comparison.children[2].start, subject.end)
+        contrast = comparison.children[-1]
+        self.assertEqual(self.parts(contrast, text), [
+            ("VP", "might be broken"), ("COMMA", ","), ("COORD", "but"),
+            ("VP", "could never be bent"),
+        ])
+        first_passive, second_passive = contrast.children[0], contrast.children[-1]
+        for passive, verb in ((first_passive, "break"), (second_passive, "bend")):
+            self.assertEqual(passive.features.as_dict()["voice"], "passive")
+            self.assertEqual(passive.children[-1].lexical_candidate.lemma, verb)
+            self.assertEqual(passive.children[-1].features.as_dict()["vform"], "ed")
+            self.assertEqual(passive.children[-2].features.as_dict()["vform"], "base")
+        self.assertNotEqual(first_passive.features.as_dict().get("negation"), "true")
+        self.assertEqual(second_passive.features.as_dict()["negation"], "true")
+        self.assertEqual(text[second_passive.children[1].start:
+                              second_passive.children[1].end], "never")
+
+        prepared = prepare_corpus_input(cases[113])
+        report = self.parser.parse(text, structural_constituents=prepared.structural_constituents,
+                                   max_items=50_000, kbest_work_limit=500_000)
+        graph = report.interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].surface,
+                  graph.nodes[r.target].surface, graph.nodes[r.target].span)
+                 for r in graph.relations}
+        matrix_span = (subject.start, subject.end)
+        inner_span = (comparison.children[2].start, comparison.children[2].end)
+        for predicate in ("ceased", "looked", "snapping", "shutting"):
+            self.assertIn(("AGENT", predicate, "she", matrix_span), edges)
+        for predicate in ("broken", "bent"):
+            self.assertIn(("THEME", predicate, "she", inner_span), edges)
+            self.assertNotIn(("THEME", predicate, "she", matrix_span), edges)
+        surfaces = {edge[:3] for edge in edges}
+        for edge in (
+            ("CONJUNCT", "ceased", "looked"),
+            ("ADJUNCT", "looked", "snapping"), ("ADJUNCT", "looked", "shutting"),
+            ("COMPARISON", "looked", "broken"), ("CONJUNCT", "broken", "bent"),
+            ("MODALITY", "broken", "might"), ("MODALITY", "bent", "could"),
+            ("NEGATION", "bent", "never"),
+        ):
+            self.assertIn(edge, surfaces)
+        self.assertNotIn(("NEGATION", "broken", "never"), surfaces)
+
+    def test_nested_coordination_accepts_a_different_embedded_subject(self):
+        for source, embedded in (
+            ("Then he paused; and folding his letter slowly, and closing his eyes, "
+             "seemed as if he would be persuaded, but could never be deceived.", "he"),
+            ("Now she stopped; and clutching her shawl tightly, and covering her face, "
+             "appeared as if they might be startled, but would never be fooled.", "they"),
+        ):
+            with self.subTest(source=source):
+                best = self.control(source).best()
+                self.assertIsNotNone(best)
+                self.assertEqual(best.rule_id, self.ROOT)
+                matrix = best.children[0].children[-1]
+                comparison = matrix.children[-1].children[-1].children[-1].children[-1]
+                self.assertEqual(comparison.rule_id, "structural_as_if_shared_subject_comparison")
+                inner = comparison.children[2]
+                self.assertEqual(source[inner.start:inner.end], embedded)
+
+    def test_nested_coordination_does_not_promote_unproved_conjuncts(self):
+        source = ("Then he paused; and folding his letter slowly, and closing his eyes, "
+                  "seemed as if he would be persuaded, but could never be deceived.")
+        for before, after in (
+            ("and folding", "and they folding"),
+            ("could never", "they could never"),
+            ("seemed as if", "worked as if"),
+            ("he paused", "he pause"),
+            ("be persuaded", "be slept"),
+            ("be deceived", "be deceive"),
+            ("never be", "often be"),
+        ):
+            with self.subTest(replacement=after):
+                best = self.control(source.replace(before, after)).best()
+                self.assertTrue(best is None or best.rule_id != self.ROOT)
 
     def test_different_vocabulary_and_same_coordination(self):
         for source in self.CONTROLS:
