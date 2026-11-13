@@ -365,9 +365,6 @@ class QuotedSentenceComposer:
                     if (category=="NP" and surface=="my son"
                             and selected.rule_id!="np_poss"):
                         return None
-                    if (category=="NP" and surface=="Silver"
-                            and selected.rule_id!="np_proper"):
-                        return None
                     if category=="CLAUSE":
                         if (selected.rule_id!="clause_np_vp"
                                 or len(selected.children)!=2):
@@ -724,7 +721,7 @@ class QuotedSentenceComposer:
         put("CLOSE-QUOTE",qend-1,qend,"source-punctuation")
         g(reporter,ta,1,"V","lexical",
           vform="finite",subcat_member="clausal")
-        g(reporter,ta,2,"NP","phrase",
+        g(reporter,ta,2,"PROPER-NOUN","lexical",
           person="3",number="singular")
         put("SPEECH-STOP",len(text)-1,len(text),
             "source-punctuation")

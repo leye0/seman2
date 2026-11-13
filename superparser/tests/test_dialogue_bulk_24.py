@@ -240,7 +240,7 @@ class DialogueBulk24Tests(unittest.TestCase):
             ("CLAUSE","you praise your stars"),
             ("CLAUSE","he's dead"),("COMMA",","),
             ("CLOSE-QUOTE",'"'),("V","said"),
-            ("NP","Silver"),("SPEECH-STOP","."),
+            ("PROPER-NOUN","Silver"),("SPEECH-STOP","."),
         ])
         self.assertEqual(n.children[5].children[0].rule_id,"np_poss")
         main=n.children[7].children[0]
@@ -250,7 +250,8 @@ class DialogueBulk24Tests(unittest.TestCase):
         content=n.children[8].children[0]
         self.assertEqual(content.rule_id,"clause_np_vp")
         self.assertEqual(content.children[1].rule_id,"vp_copula_adj")
-        self.assertEqual(n.children[12].children[0].rule_id,"np_proper")
+        self.assertEqual(n.children[12].category,"PROPER-NOUN")
+        self.assertEqual(n.children[12].features.as_dict().get("person"),"3")
         self.assertEqual(r.stats["structural_clause_count"],2)
 
     def test_464_466_no_dialect_homographs_or_fabricated_complements(self):
