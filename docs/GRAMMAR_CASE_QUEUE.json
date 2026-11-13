@@ -260,5 +260,6 @@
       "status": "forest_budget_exceeded",
       "case_id": "120:831e1f5ff09a8b07"
     }
-  ]
+  ],
+  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43424648892"
 }
