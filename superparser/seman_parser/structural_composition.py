@@ -329,6 +329,16 @@ class QuotedSentenceComposer:
                     return None
                 if (category == "CLAUSE"
                         and expected_rule ==
+                        "dialogue_structural_inclusive_let_imperative_sequence"
+                        and (selected.rule_id not in
+                             ("clause_imp_neg", "clause_np_vp")
+                             or (required.get("stype") == "imperative"
+                                 and selected.rule_id != "clause_imp_neg")
+                             or (required.get("stype") != "imperative"
+                                 and selected.rule_id != "clause_np_vp"))):
+                    return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
                         "dialogue_structural_temporal_vocative_minor_reprise"
                         and selected.rule_id != "clause_np_vp"):
                     return None
@@ -401,6 +411,7 @@ class QuotedSentenceComposer:
                         "dialogue_structural_split_vocative_copula_domain",
                         "dialogue_structural_split_shared_modal_coord_gerund",
                         "structural_source_asyndetic_modal_passive_dash",
+                        "dialogue_structural_inclusive_let_imperative_sequence",
                     })
                 ),
                 "structural_segment_spans": [
@@ -428,6 +439,113 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_inclusive_let_imperative_sequence(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Three source speech acts: negative command and two inclusive lets.
+
+        The overt "let + us + bare VP" imperatives are NOT finite declarative
+        clauses.  The third matrix verb independently selects a reflexive
+        object AND overt "that" content clause, proved by lexical valency.
+        This avoids the false full-source interpretation of "Let us hope
+        for" as a nominal subject.
+        """
+        by_id = {c.get("id"): c for c in components}
+        quote = by_id.get("q0")
+        if (not quote or quote.get("function") != "direct_speech"
+                or (quote.get("start"), quote.get("end")) !=
+                    (0, len(text))
+                or any(c.get("function") in (
+                    "embedded_quotation", "reporting_clause",
+                    "split_direct_speech_turn", "narratorial_parenthetical",
+                ) for c in components)):
+            return None
+        marks = quotation_boundaries(text)
+        if (len(marks) != 2 or
+                [(q.start, q.end, q.side) for q in marks] != [
+                    (0, 1, "open"), (len(text)-1, len(text), "close"),
+                ]):
+            return None
+        acts = sorted(
+            (c for c in components
+             if c.get("function") == "spoken_clause_candidate"
+             and c.get("governor") == "q0"),
+            key=lambda c: c["start"],
+        )
+        if len(acts) != 3:
+            return None
+        if (acts[0]["start"] != 1 or acts[-1]["end"] != len(text)-1
+                or any(text[a["end"]:b["start"]].strip()
+                       for a,b in zip(acts,acts[1:]))):
+            return None
+        one = re.fullmatch(
+            r"(.+?)(,)\s+(.+?)(\.)",
+            text[acts[0]["start"]:acts[0]["end"]],
+        )
+        two = re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+(.+?)(\.)",
+            text[acts[1]["start"]:acts[1]["end"]],
+        )
+        three = re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+(that)\s+(.+?)(\.)",
+            text[acts[2]["start"]:acts[2]["end"]],
+        )
+        if not one or not two or not three:
+            return None
+        # "Let" is an overt operator, not a guessed constituent.  Two
+        # occurrences are required to license inclusive directives.
+        if (two.group(1).casefold() != "let"
+                or three.group(1).casefold() != "let"
+                or two.group(2).casefold() != "us"
+                or three.group(2).casefold() != "us"):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]] = []
+        def put(cat: str, a: int, b: int, kind="lexical",
+                **required: str) -> None:
+            specs.append((cat,a,b,kind,required))
+        def groups(m: re.Match[str], offset: int,
+                   mapping: Sequence[tuple[str,str,Mapping[str,str]]]) -> None:
+            for i,(cat,kind,need) in enumerate(mapping,1):
+                a,b = m.span(i)
+                put(cat,offset+a,offset+b,kind,**need)
+        put("OPEN-QUOTE",0,1,"source-punctuation")
+        groups(one,acts[0]["start"], (
+            ("NP","phrase",{}),
+            ("COMMA","source-punctuation",{}),
+            ("CLAUSE","phrase",{"stype":"imperative","negation":"true"}),
+            ("SPEECH-STOP","source-punctuation",{}),
+        ))
+        # Shared first-person plural argument and base verb valencies.
+        groups(two,acts[1]["start"], (
+            ("V","lexical",{"vform":"base","subcat_member":"bare_control"}),
+            ("NP","phrase",{"person":"1","number":"plural","pronominal":"true"}),
+            ("V","lexical",{"vform":"base","subcat_member":"prepositional"}),
+            ("PP","phrase",{}),
+            ("SPEECH-STOP","source-punctuation",{}),
+        ))
+        groups(three,acts[2]["start"], (
+            ("V","lexical",{"vform":"base","subcat_member":"bare_control"}),
+            ("NP","phrase",{"person":"1","number":"plural","pronominal":"true"}),
+            ("V","lexical",{"vform":"base","reflexive_that_complement":"true"}),
+            ("EMPHATIC-REFLEXIVE","lexical",{}),
+            ("COMP-THAT","lexical",{}),
+            ("CLAUSE","phrase",{}),
+            ("SPEECH-STOP","source-punctuation",{}),
+        ))
+        put("CLOSE-QUOTE",len(text)-1,len(text),"source-punctuation")
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_inclusive_let_imperative_sequence",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_temporal_vocative_minor_reprise(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1332,6 +1450,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        inclusive = self._compose_inclusive_let_imperative_sequence(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if inclusive is not None:
+            return inclusive
         temporal = self._compose_temporal_vocative_minor_reprise(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
