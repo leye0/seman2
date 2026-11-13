@@ -212,14 +212,15 @@ class DialogueBulk24Tests(unittest.TestCase):
             ("VOCATIVE","you wooden-headed lubber"),
             ("EXCL","!"),("CLOSE-QUOTE",'"'),
         ])
-        self.assertEqual(n.children[1].children[1].children[1].rule_id,
+        self.assertEqual(n.children[1].children[0].rule_id,"clause_np_vp")
+        self.assertEqual(n.children[1].children[0].children[1].rule_id,
                          "vp_cop_np")
         self.assertEqual(
-            n.children[1].children[1].children[1].children[1].rule_id,
+            n.children[1].children[0].children[1].children[1].rule_id,
             "np_poss_num_n")
-        self.assertEqual(n.children[4].children[1].children[1].children[1].rule_id,
+        self.assertEqual(n.children[4].children[0].children[1].children[1].rule_id,
                          "np_pp_mod")
-        third=n.children[7].children[1].children[1].children[1]
+        third=n.children[7].children[0].children[1].children[1]
         self.assertEqual(third.rule_id,"np_relative_subj")
         self.assertEqual(third.children[1].rule_id,"wh_subj_clause")
         pos=n.children[3]
