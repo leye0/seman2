@@ -26,7 +26,7 @@ NOMINAL = re.compile(
     rf"(?P<det>the)\s+(?P<names>{WORD})\s+(?P<of>of)\s+"
     rf"(?P<name1>{NAME})\s+(?P<name_and>and)\s+(?P<name2>{NAME})(?P<comma>,)\s+"
     rf"(?P<but>but)\s+(?P<without>without)\s+(?P<antecedent>{SPAN})\s+(?P<that>that)\s+"
-    rf"(?:(?P<title>Mr|Mrs|Ms|Dr|M)(?P<abbrev>\.)\s+)?"
+    rf"(?:(?P<title>[A-Z][a-z]*)(?P<abbrev>\.)\s+)?"
     rf"(?P<rel_subject>{WORD})\s+(?P<rel_vp>had\s+{WORD})",
     re.I,
 )
@@ -110,10 +110,7 @@ def manner_coordination_plan(text, components):
         piece("antecedent", "NP", proof_rule="np_det_n")
         lex("that", "COMP-THAT")
         if m["title"]:
-            if m["title"] == "M":
-                piece("title", "TITLE", "source-title")
-            else:
-                lex("title", "TITLE", honorific="true")
+            piece("title", "TITLE", "source-title")
             piece("abbrev", "ABBREVIATION-STOP", "source-punctuation")
         piece("rel_subject", "NP", "proper-phrase" if m["title"] else "subject-phrase")
         piece("rel_vp", "VP-GAP", gap="object", proof_rule="vp_gap_perfect_transitive")

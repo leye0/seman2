@@ -53,6 +53,10 @@ class QuotedSentenceComposer:
         self._shared_subject_vector = VectorGrammar(
             Grammar(shared), preserve_quote_delimiters=True,
         )
+        self._source_honorifics = {
+            spelling: lemma for rule in shared
+            for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
+        }
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if rule.provenance.get("source_plan") != SHARED_SUBJECT_ROOT),
@@ -295,16 +299,22 @@ class QuotedSentenceComposer:
                     provenance={"original_source_span": [a, b]},
                 ))
             elif kind == "source-title":
-                # French M. (= Monsieur) is absent from the lexical lattice.
-                # Admit it only as an overt abbreviation before a proved name.
-                if category != "TITLE" or surface != "M" or text[b:b+1] != ".":
+                if category != "TITLE" or text[b:b+1] != ".":
                     return None
-                candidates.append(LexicalCandidate(
-                    span_start=a, span_end=b, surface=surface, lemma=surface.casefold(),
-                    category=category, features=FeatureStructure.build({"honorific": "true"}),
-                    source="source-attested-honorific", score=0,
-                    provenance={"original_source_span": [a, b]},
-                ))
+                titles = [c for c in original_lattice.candidates
+                          if c.span == (a, b) and c.category == category
+                          and c.features.as_dict().get("honorific") == "true"]
+                if not titles:
+                    title_lemma = self._source_honorifics.get(surface)
+                    if title_lemma is None:
+                        return None
+                    titles.append(LexicalCandidate(
+                        span_start=a, span_end=b, surface=surface, lemma=title_lemma,
+                        category=category, features=FeatureStructure.build({"honorific": "true"}),
+                        source="source-attested-honorific", score=0,
+                        provenance={"original_source_span": [a, b]},
+                    ))
+                candidates.extend(titles)
             elif kind in ("lexical", "lexical-alternatives", "nominal-lexical"):
                 matching = [
                     c for c in original_lattice.candidates
