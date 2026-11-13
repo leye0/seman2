@@ -544,6 +544,129 @@ class InterruptedComparativeAndCleftTests(unittest.TestCase):
                 self.assertNotEqual(result.stats.get("structural_composition_kind"),
                                     self.CLEFT_RULE)
 
+class NestedTemporalComparativeTests(unittest.TestCase):
+    RULE = "dialogue_structural_nested_temporal_comparative"
+    CONTROL = (
+        '“‘When you, who treat him so much worse than he has ever deserved, '
+        'even when he was young, read the letter, we will be very tired.’”'
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(
+            Path(__file__).resolve().parents[1] / "data", cache_size=0,
+        )
+
+    def parse(self, case):
+        return parse_corpus_case(
+            self.parser, case, max_items=50_000, kbest_work_limit=500_000,
+        )
+
+    def control(self, text):
+        rows, _ = extract(Book(999, "Synthetic", "Test", "train"), text,
+                          length_min=1, length_max=100)
+        self.assertEqual([row["source_text"] for row in rows], [text])
+        return self.parse(rows[0])[2]
+
+    def children(self, node, text, expected):
+        self.assertEqual(
+            [(child.category, text[child.start:child.end]) for child in node.children],
+            expected,
+        )
+
+    def test_actual_109_preserves_nested_quotes_and_selected_attachments(self):
+        case = select_cases(500)[0][109]
+        text = case["source_text"]
+        witness = next(w for w in WITNESSES if w.index == 109)
+        self.assertEqual(
+            f'{case["book_id"]}:' + sha256(text.encode()).hexdigest()[:16],
+            witness.case_id,
+        )
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual(prepared.analysis_text, text)
+        self.assertEqual(lattice.text, text)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get("budget_exceeded"))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+        best = result.best()
+        self.assertEqual(best.rule_id, self.RULE)
+        self.assertEqual((best.start, best.end), (0, len(text)))
+        outer_open, inner, outer_close = best.children
+        self.assertEqual((text[outer_open.start], text[outer_close.start]), ("‘", "’"))
+        self.assertEqual(text[inner.start:inner.end], prepared.source_component("q1"))
+        self.assertEqual([node.category for node in inner.children],
+                         ["OPEN-QUOTE", "TEMPORAL-CLAUSE", "COMMA", "CLAUSE",
+                          "SPEECH-STOP", "CLOSE-QUOTE"])
+        temporal, matrix = inner.children[1], inner.children[3]
+        self.assertEqual(text[matrix.start:matrix.end], "I shall be far away")
+        self.assertEqual(matrix.children[0].rule_id, "clause_np_vp")
+        self.assertEqual(matrix.children[0].children[1].rule_id, "vp_modal_bare")
+        self.children(temporal, text, [
+            ("CONJ", "When"),
+            ("NP", "you, who love me so much better than I ever have deserved, "
+                   "even when my mind was innocent,"),
+            ("V", "see"), ("NP", "this"),
+        ])
+        subject, see, demonstrative = temporal.children[1:]
+        self.assertEqual(see.features.as_dict()["person"], "2")
+        self.assertEqual(demonstrative.children[0].rule_id, "np_demonstrative")
+        self.assertEqual([node.category for node in subject.children],
+                         ["NP", "COMMA", "REL-CLAUSE-SUBJ", "COMMA"])
+        relative = subject.children[2]
+        self.children(relative, text, [
+            ("WH-PRONOUN", "who"), ("V", "love"), ("PRONOUN", "me"),
+            ("ADVP", "so much better than I ever have deserved, "
+                     "even when my mind was innocent"),
+        ])
+        self.assertEqual(relative.children[1].features.as_dict()["person"], "2")
+        comparison = relative.children[3]
+        self.assertEqual([node.category for node in comparison.children],
+                         ["DEGREE", "ADV", "ADV", "COMPARATIVE-STANDARD"])
+        standard = comparison.children[-1]
+        self.children(standard, text, [
+            ("PREP", "than"), ("CLAUSE", "I ever have deserved"), ("COMMA", ","),
+            ("TEMPORAL-CLAUSE", "even when my mind was innocent"),
+        ])
+        gap = standard.children[1].children[1]
+        self.assertEqual(gap.features.as_dict()["comparative_gap"], "object")
+        self.assertEqual(gap.features.as_dict()["aspect"], "perfect")
+        self.children(gap, text, [("ADV", "ever"), ("HAVE", "have"), ("V", "deserved")])
+        self.assertEqual(gap.children[1].features.as_dict()["person"], "1")
+        self.assertEqual(gap.children[-1].features.as_dict()["vform"], "ed")
+        self.children(standard.children[3], text, [
+            ("ADV", "even"), ("TEMPORAL-CLAUSE", "when my mind was innocent"),
+        ])
+
+    def test_independent_comparison_accepts_both_source_adverb_orders(self):
+        for text, order in (
+            (self.CONTROL, ["HAVE", "ADV", "V"]),
+            (self.CONTROL.replace("he has ever deserved", "we ever have earned"),
+             ["ADV", "HAVE", "V"]),
+        ):
+            with self.subTest(text=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, self.RULE)
+                relative = result.best().children[1].children[1].children[1].children[2]
+                standard = relative.children[-1].children[-1].children[1]
+                self.assertEqual([n.category for n in standard.children[1].children], order)
+
+    def test_relative_and_temporal_predicates_agree_with_the_address(self):
+        for old, new in (("who treat", "who treats"), ("read the letter", "reads the letter"),
+                         ("who treat", "whom treat")):
+            with self.subTest(new=new):
+                result = self.control(self.CONTROL.replace(old, new))
+                self.assertNotEqual(result.stats.get("structural_composition_kind"), self.RULE)
+
+    def test_standard_requires_agreeing_have_transitive_participle_and_commas(self):
+        for old, new in (
+            ("he has", "he have"), ("has ever deserved", "has ever deserve"),
+            ("has ever deserved", "has ever existed"), ("young, read", "young read"),
+        ):
+            with self.subTest(new=new):
+                result = self.control(self.CONTROL.replace(old, new))
+                self.assertNotEqual(result.stats.get("structural_composition_kind"), self.RULE)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,4 +1,4 @@
-"""Bounded source plans for interrupted turns and coordinated cleft dialogue.
+"""Bounded source plans for complex dialogue and nested quotations.
 
 These plans propose spans only. The existing lexical lattice, ranked phrase
 proofs and declarative dialogue grammar decide whether each span is licensed.
@@ -11,6 +11,7 @@ from .dialogue import quotation_boundaries
 
 NARRATIVE_TURN = "dialogue_structural_split_narrative_comparative"
 CLEFT_TURN = "dialogue_structural_semicolon_cleft_conditional"
+NESTED_TEMPORAL_TURN = "dialogue_structural_nested_temporal_comparative"
 
 
 def _parts(components, *functions):
@@ -184,4 +185,78 @@ def cleft_conditional_plan(text, components):
     add("MODAL", split + coordinated.end(5) - len(coordinated[5].lstrip()),
         split + coordinated.end(5), vform="finite")
     mark("CLOSE-QUOTE", len(text) - 1, len(text))
+    return sorted(specs, key=lambda spec: spec[1])
+
+
+def nested_temporal_comparative_plan(text, components):
+    """Propose a direct-address when-clause with a supplementary relative.
+
+    All commas and both quote pairs are printed. In particular the comma
+    following the comparative does not end the initial when-clause.
+    """
+    quotes = _parts(components, "direct_speech")
+    embedded = _parts(components, "embedded_quotation")
+    n = len(text)
+    if (len(quotes) != 1 or len(embedded) != 1
+            or _parts(components, "reporting_clause", "split_direct_speech_turn",
+                      "narratorial_parenthetical")
+            or (quotes[0]["start"], quotes[0]["end"]) != (0, n)
+            or embedded[0].get("governor") != quotes[0]["id"]
+            or (embedded[0]["start"], embedded[0]["end"]) != (1, n - 1)
+            or [(q.start, q.end, q.side) for q in quotation_boundaries(text)] != [
+                (0, 1, "open"), (1, 2, "open"), (n - 2, n - 1, "close"),
+                (n - 1, n, "close"),
+            ]):
+        return None
+    # A source template proposes spans, not analyses. The lexical and
+    # syntactic proofs below can reject any proposed split.
+    match = re.fullmatch(
+        r"(?P<when>when)\s+(?P<anchor>[A-Za-z]+)(?P<c1>,)\s+"
+        r"(?P<relative>who)\s+(?P<relverb>[A-Za-z]+)\s+(?P<relobj>[A-Za-z]+)\s+"
+        r"(?P<degree>so)\s+(?P<diff>[A-Za-z]+)\s+(?P<cmp>[A-Za-z]+)\s+"
+        r"(?P<than>than)\s+(?P<standard>[A-Za-z]+)\s+"
+        r"(?:(?P<pretime>ever)\s+(?P<latehave>[A-Za-z]+)|"
+        r"(?P<earlyhave>[A-Za-z]+)\s+(?P<posttime>ever))\s+"
+        r"(?P<participle>[A-Za-z]+)"
+        r"(?P<c2>,)\s+(?P<focus>even)\s+(?P<innerwhen>when)\s+"
+        r"(?P<concessive>[^,;.!?]+)(?P<c3>,)\s+"
+        r"(?P<timeverb>[A-Za-z]+)\s+(?P<timeobj>[^,;.!?]+)(?P<c4>,)\s+"
+        r"(?P<matrix>[^,;.!?]+)(?P<stop>\.)",
+        text[2:-2], re.I,
+    )
+    if not match:
+        return None
+    specs, _, mark, use = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    mark("OPEN-QUOTE", 1, 2)
+    use(match, 2, (
+        ("when", "CONJ", "lexical", {"temporal_incise": "true"}),
+        ("anchor", "NP", "phrase", {"pronominal": "true", "person": "2"}),
+        ("c1", "COMMA", "source-punctuation", {}),
+        ("relative", "WH-PRONOUN", "lexical", {"supplementary_subject_marker": "true"}),
+        ("relverb", "V", "lexical-alternatives", {"vform": "finite", "subcat_member": "transitive"}),
+        ("relobj", "PRONOUN", "lexical", {"case": "accusative"}),
+        ("degree", "DEGREE", "lexical", {"scalar_degree": "true"}),
+        ("diff", "ADV", "lexical", {"comparative_modifier": "true"}),
+        ("cmp", "ADV", "lexical", {"manner_comparative": "true"}),
+        ("than", "PREP", "lexical", {"comparative": "true"}),
+        ("standard", "NP", "phrase", {"pronominal": "true"}),
+        ("pretime" if match["pretime"] else "posttime",
+         "ADV", "lexical", {"indefinite_time": "true"}),
+        ("latehave" if match["latehave"] else "earlyhave",
+         "HAVE", "lexical-alternatives", {"vform": "finite"}),
+        ("participle", "V", "lexical", {"vform": "ed", "subcat_member": "transitive"}),
+        ("c2", "COMMA", "source-punctuation", {}),
+        ("focus", "ADV", "lexical", {"scalar_focus": "true"}),
+        ("innerwhen", "CONJ", "lexical", {"temporal_incise": "true"}),
+        ("concessive", "CLAUSE", "phrase", {}),
+        ("c3", "COMMA", "source-punctuation", {}),
+        ("timeverb", "V", "lexical-alternatives", {"vform": "finite", "subcat_member": "transitive"}),
+        ("timeobj", "NP", "phrase", {}),
+        ("c4", "COMMA", "source-punctuation", {}),
+        ("matrix", "CLAUSE", "phrase", {}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    mark("CLOSE-QUOTE", n - 2, n - 1)
+    mark("CLOSE-QUOTE", n - 1, n)
     return sorted(specs, key=lambda spec: spec[1])
