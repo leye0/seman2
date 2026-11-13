@@ -278,6 +278,11 @@ class QuotedSentenceComposer:
                     c for c in original_lattice.candidates
                     if c.category == category
                     and (c.span_start, c.span_end) == (a, b)
+                    # Reciprocal pronouns are fixed multiword pronominal
+                    # forms: ordinary productive noun plural morphology
+                    # must not manufacture a new reciprocal surface.
+                    and (category != "RECIPROCAL-PRONOUN"
+                         or c.surface.casefold() == c.lemma.casefold())
                     and all(
                         (v in (c.features.as_dict().get("subcat", ())
                                if isinstance(c.features.as_dict().get("subcat"), (list, tuple))
