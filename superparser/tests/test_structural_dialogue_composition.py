@@ -547,7 +547,7 @@ class SharedSubjectCoordinationTests(unittest.TestCase):
             ("TO", "to"), ("V", "leave"), ("NP", "her room"),
         ])
 
-        text, clause = self.case_tree(372, cases[372], "c99a901b6a78b64e0")
+        text, clause = self.case_tree(372, cases[372], "c99a901b6a78b64e")
         subject, pair = clause.children
         self.assertEqual(self.parts(clause, text)[0], ("NP", "The Greeks"))
         self.assert_agreement(subject, pair, "plural")
