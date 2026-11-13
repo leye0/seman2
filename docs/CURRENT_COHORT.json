@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #57: #96 preserves the spoken address, independently proven reporter, and dash-delimited narrator aside outside both source quotes. The temporal as-clause modifies the narrator observation. The resumed modal copular predicate separates the adjectival comparative, the deictic time adjunct and the reduced than-usual standard. #495 selects an objective-case focus in an it-cleft with a subject gap and an overt when-clause. The source semicolon joins two finite assertions. Till then and the conditional if-clause attach only to the second assertion, and with brandy modifies the subject-controlled infinitival action. The dictionary-attested gammon and ile are verbal supplements, with all original lattice alternatives retained. Source text, punctuation, WordNet 3.0, cohort SHA and 50k/500k/10s budgets are unchanged. Only #96 and #495 changed status, from roots_without_valid_analysis to complete. All 447 prior completions are preserved. Novel-500 improved to 449/500, and historical dialogues to 29/30. #109 is the only historical dialogue still unresolved.",
+  "note": "PR #58 closes the 30-case historical dialogue set. #109 retains both exact quote pairs. The initial when-clause extends through see this. Its second-person subject you controls agreement in both see and the supplementary subject relative who love me. So much better is a manner comparative on the relative predicate. Its than-clause has finite agreeing HAVE, an indefinite-time adjunct, and a transitive past participle with a comparative object gap. Even when my mind was innocent qualifies that comparative standard, not see or the matrix clause. The independently ranked matrix is I shall be far away. No source text, segmentation, WordNet 3.0 or 50k/500k/10s budgets changed. Only #109 changed status, from forest_budget_exceeded to complete. All 449 previous successes and root rules are preserved. Novel-500 is 450/500 and historical dialogues are 30/30.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,16 +73,16 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "f4aedfeb6c8208b10ca57bf2c64dff93918bac01",
-    "validated_pr_head": "1efcc250130a613f6bcdb495ec0bc283dbbaa466",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43424648693",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43424648892",
-    "completed": 449,
-    "unresolved": 51,
+    "validated_merge_commit": "e237705d640b4308d5b8397feb42d3fceb9b3282",
+    "validated_pr_head": "8bd615a112afaae131a460c5b29fe93d8c8fe9a0",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43432600792",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43432601124",
+    "completed": 450,
+    "unresolved": 50,
     "statuses": {
-      "complete": 449,
+      "complete": 450,
       "both_budgets_exceeded": 0,
-      "forest_budget_exceeded": 6,
+      "forest_budget_exceeded": 5,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 7,
       "roots_without_valid_analysis": 33,
@@ -91,19 +91,18 @@
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 447,
-      "current_complete": 449,
+      "previous_complete": 449,
+      "current_complete": 450,
       "newly_complete_indexes": [
-        96,
-        495
+        109
       ],
       "regressed_completed_indexes": [],
       "previous_unresolved_changed_failure_type": [],
-      "verified_dialogue_failures_fixed": 29,
+      "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
-      "remaining_dialogue_failures": 1,
-      "baseline_artifact_id": 14010138959,
-      "candidate_artifact_id": 14037745644
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14037745644,
+      "candidate_artifact_id": 14040119480
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -114,8 +113,8 @@
         },
         "nested_quotation": {
           "baseline_failed": 2,
-          "still_failed": 1,
-          "now_complete": 1
+          "still_failed": 0,
+          "now_complete": 2
         },
         "single_quote_with_reporting_clause": {
           "baseline_failed": 8,
@@ -144,13 +143,13 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 729,
+      "unit_tests": 733,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 496,
-      "case_id": "120:238d6ed29a444f6d"
+      "index": 110,
+      "case_id": "766:c31971a0a1ada1d9"
     },
     "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
     "original_85_source_failure_inventory": {
@@ -174,7 +173,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 51,
+      "active_remaining": 50,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -183,6 +182,7 @@
         66,
         96,
         99,
+        109,
         141,
         157,
         175,
@@ -213,8 +213,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43424648951",
-    "grammatical_attachment_note": "PR #57: #96 preserves the spoken address, independently proven reporter, and dash-delimited narrator aside outside both source quotes. The temporal as-clause modifies the narrator observation. The resumed modal copular predicate separates the adjectival comparative, the deictic time adjunct and the reduced than-usual standard. #495 selects an objective-case focus in an it-cleft with a subject gap and an overt when-clause. The source semicolon joins two finite assertions. Till then and the conditional if-clause attach only to the second assertion, and with brandy modifies the subject-controlled infinitival action. The dictionary-attested gammon and ile are verbal supplements, with all original lattice alternatives retained. Source text, punctuation, WordNet 3.0, cohort SHA and 50k/500k/10s budgets are unchanged. Only #96 and #495 changed status, from roots_without_valid_analysis to complete. All 447 prior completions are preserved. Novel-500 improved to 449/500, and historical dialogues to 29/30. #109 is the only historical dialogue still unresolved."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43432600787",
+    "grammatical_attachment_note": "PR #58 closes the 30-case historical dialogue set. #109 retains both exact quote pairs. The initial when-clause extends through see this. Its second-person subject you controls agreement in both see and the supplementary subject relative who love me. So much better is a manner comparative on the relative predicate. Its than-clause has finite agreeing HAVE, an indefinite-time adjunct, and a transitive past participle with a comparative object gap. Even when my mind was innocent qualifies that comparative standard, not see or the matrix clause. The independently ranked matrix is I shall be far away. No source text, segmentation, WordNet 3.0 or 50k/500k/10s budgets changed. Only #109 changed status, from forest_budget_exceeded to complete. All 449 previous successes and root rules are preserved. Novel-500 is 450/500 and historical dialogues are 30/30."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -1931,5 +1931,149 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43365349570",
     "grammatical_attachment_note": "PR #56 247 complete source: selected clause_np_vp+vp_cop_np with np_pp_mod and inner np_of comparison of Rosings, np_poss vocative, finite 1SG bare-control dare say incise (source form only), overt SEMICOLON retained intra-utterance, finite clausal assure to overt you and independently selected clause_np_vp+vp_cop_adjp+adjp_adv_adj with than plus titled 3SG proper-name genitive Sir William Lucas's, no fabricated possessed head or copular 'is'. 359: source family np_det_n shared across transitive extinguished NP lights np_poss and intransitive retired; after HAVE[ing] been AUX-BE[ed] occupied V[ed] passive with PP duration, as+I+finite conjectured incise, TO + base intransitive rest purpose of retired only. Original source punctuation and cohort unchanged. All 500 paired statuses changed only 247/359, zero previously completed regressions. Same standard budgets."
+  },
+  "pre_pr58_baseline": {
+    "validated_merge_commit": "f4aedfeb6c8208b10ca57bf2c64dff93918bac01",
+    "validated_pr_head": "1efcc250130a613f6bcdb495ec0bc283dbbaa466",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43424648693",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43424648892",
+    "completed": 449,
+    "unresolved": 51,
+    "statuses": {
+      "complete": 449,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 6,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 7,
+      "roots_without_valid_analysis": 33,
+      "timeout": 5,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 447,
+      "current_complete": 449,
+      "newly_complete_indexes": [
+        96,
+        495
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 29,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 1,
+      "baseline_artifact_id": 14010138959,
+      "candidate_artifact_id": 14037745644
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 729,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 496,
+      "case_id": "120:238d6ed29a444f6d"
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 51,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        96,
+        99,
+        141,
+        157,
+        175,
+        200,
+        209,
+        223,
+        229,
+        235,
+        237,
+        241,
+        247,
+        270,
+        280,
+        301,
+        315,
+        359,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        464,
+        466,
+        475,
+        495,
+        498
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43424648951",
+    "grammatical_attachment_note": "PR #57: #96 preserves the spoken address, independently proven reporter, and dash-delimited narrator aside outside both source quotes. The temporal as-clause modifies the narrator observation. The resumed modal copular predicate separates the adjectival comparative, the deictic time adjunct and the reduced than-usual standard. #495 selects an objective-case focus in an it-cleft with a subject gap and an overt when-clause. The source semicolon joins two finite assertions. Till then and the conditional if-clause attach only to the second assertion, and with brandy modifies the subject-controlled infinitival action. The dictionary-attested gammon and ile are verbal supplements, with all original lattice alternatives retained. Source text, punctuation, WordNet 3.0, cohort SHA and 50k/500k/10s budgets are unchanged. Only #96 and #495 changed status, from roots_without_valid_analysis to complete. All 447 prior completions are preserved. Novel-500 improved to 449/500, and historical dialogues to 29/30. #109 is the only historical dialogue still unresolved."
   }
 }

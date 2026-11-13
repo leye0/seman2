@@ -1,9 +1,9 @@
 {
   "schema": "seman2-grammar-case-queue-v2",
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-  "validated_commit": "f4aedfeb6c8208b10ca57bf2c64dff93918bac01",
-  "completed_count": 449,
-  "last_attempted_index": 495,
+  "validated_commit": "e237705d640b4308d5b8397feb42d3fceb9b3282",
+  "completed_count": 450,
+  "last_attempted_index": 109,
   "unresolved": [
     {
       "index": 69,
@@ -44,11 +44,6 @@
       "index": 101,
       "status": "roots_without_valid_analysis",
       "case_id": "766:a6f271decc4bfe72"
-    },
-    {
-      "index": 109,
-      "status": "forest_budget_exceeded",
-      "case_id": "766:4948b167f2e21291"
     },
     {
       "index": 110,
@@ -261,5 +256,5 @@
       "case_id": "120:831e1f5ff09a8b07"
     }
   ],
-  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43424648892"
+  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43432601124"
 }
