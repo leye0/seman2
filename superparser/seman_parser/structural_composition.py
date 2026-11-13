@@ -346,7 +346,7 @@ class QuotedSentenceComposer:
                 if (expected_rule ==
                         "dialogue_structural_dialect_three_act_self_report"
                         and category == "NP"
-                        and surface == "No good"
+                        and required.get("definiteness")=="negative"
                         and (selected.rule_id!="np_det_n"
                              or selected.features.as_dict().get(
                                  "definiteness")!="negative")):
@@ -362,7 +362,7 @@ class QuotedSentenceComposer:
                     return None
                 if (expected_rule ==
                         "dialogue_structural_vocative_praise_stars_reporter"):
-                    if (category=="NP" and surface=="my son"
+                    if (category=="NP"
                             and selected.rule_id!="np_poss"):
                         return None
                     if category=="CLAUSE":
@@ -370,15 +370,13 @@ class QuotedSentenceComposer:
                                 or len(selected.children)!=2):
                             return None
                         vp=selected.children[1]
-                        if surface.startswith("you praise"):
-                            if (vp.rule_id!="vp_transitive"
-                                    or len(vp.children)!=2
+                        if vp.rule_id=="vp_transitive":
+                            if (len(vp.children)!=2
                                     or vp.children[0].category!="V"
                                     or vp.children[1].rule_id!="np_poss"):
                                 return None
-                        elif surface.startswith("he's"):
-                            if (vp.rule_id!="vp_copula_adj"
-                                    or len(vp.children)!=2
+                        elif vp.rule_id=="vp_copula_adj":
+                            if (len(vp.children)!=2
                                     or vp.children[0].category!="COPULA"
                                     or vp.children[1].category!="ADJ"):
                                 return None
