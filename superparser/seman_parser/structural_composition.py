@@ -316,6 +316,8 @@ class QuotedSentenceComposer:
                         else (c.surface.casefold() != c.lemma.casefold()
                               or c.features.as_dict().get("tense") == "past")
                         if k == "nonbase_surface"
+                        else c.lemma.casefold() in v.split("|")
+                        if k == "lemma_in"
                         else c.features.as_dict().get("gender") == {
                             "he": "masculine", "she": "feminine", "it": "neuter",
                         }.get(v, c.features.as_dict().get("gender"))
@@ -2346,7 +2348,7 @@ class QuotedSentenceComposer:
             return None
         plan = plan_subject_resumption(text)
         if plan is None:
-            specs = plan_shared_subject_coordination(text)
+            specs = plan_shared_subject_coordination(text, components)
             if specs is None:
                 return None
             rule = SHARED_SUBJECT_ROOT
