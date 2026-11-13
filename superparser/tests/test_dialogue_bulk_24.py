@@ -190,6 +190,114 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+    def test_235_intent_reporter_ditransitive_and_causal_possessive(self):
+        source=(
+            "“And we mean to treat you all,” added Lydia, "
+            "“but you must lend us the money, for we have just spent ours "
+            "at the shop out there.”"
+        )
+        r=self.actual(235,source)
+        n=self.root(r,"dialogue_structural_split_intent_causal_request")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),("COORD","And"),
+            ("CLAUSE","we mean to treat you all"),
+            ("COMMA",","),("CLOSE-QUOTE","”"),
+            ("SPEECH-TAG","added Lydia"),
+            ("COMMA",","),("OPEN-QUOTE","“"),("COORD","but"),
+            ("CAUSAL-CLAUSE", "you must lend us the money, "
+                                "for we have just spent ours at the shop out there"),
+            ("SPEECH-STOP","."),("CLOSE-QUOTE","”"),
+        ])
+        intent=n.children[2]
+        self.assertEqual(intent.rule_id,
+            "dialogue_structural_finite_intent_transitive_infinitive")
+        self.assert_kids(r,intent,[
+            ("NP","we"),("V","mean"),("TO","to"),
+            ("V","treat"),("NP","you all"),
+        ])
+        obj=intent.children[-1]
+        self.assertEqual(obj.rule_id,
+            "dialogue_structural_postposed_universal_pronoun")
+        self.assert_kids(r,obj,[("NP","you"),("DET","all")])
+        reporter=n.children[5]
+        self.assertEqual(reporter.rule_id,
+            "dialogue_structural_inverted_past_clausal_report")
+        self.assert_kids(r,reporter,[("V","added"),("NP","Lydia")])
+        self.assertEqual(reporter.children[1].children[0].rule_id,"np_proper")
+        causal=n.children[9]
+        self.assertEqual(causal.rule_id,
+            "dialogue_structural_causal_explanatory_coordination")
+        self.assert_kids(r,causal,[
+            ("CLAUSE","you must lend us the money"),("COMMA",","),
+            ("COORD","for"),
+            ("CLAUSE","we have just spent ours at the shop out there"),
+        ])
+        request=causal.children[0]
+        self.assertEqual(request.rule_id,
+            "dialogue_structural_modal_double_object_request")
+        self.assert_kids(r,request,[
+            ("NP","you"),("MODAL","must"),("V","lend"),
+            ("NP","us"),("NP","the money"),
+        ])
+        self.assertEqual(request.children[3].children[0].rule_id,"np_indef_pron")
+        self.assertEqual(request.children[4].children[0].rule_id,"np_det_n")
+        self.assertEqual(causal.children[2].features.as_dict().get(
+            "causal_coordination"),"true")
+        explanation=causal.children[3]
+        self.assertEqual(explanation.rule_id,
+            "dialogue_structural_recent_perfect_independent_possessive")
+        self.assert_kids(r,explanation,[
+            ("NP","we"),("HAVE","have"),("ADV","just"),
+            ("V","spent"),("POSS-PRONOUN","ours"),
+            ("PP","at the shop out there"),
+        ])
+        self.assertEqual(explanation.children[4].features.as_dict().get(
+            "independent_possessive"),"true")
+        self.assertEqual(explanation.children[5].children[0].rule_id,
+                         "pp_pp_advp")
+        self.assertEqual(r.stats["structural_clause_count"],3)
+        self.assertEqual(r.text,source)
+
+    def test_235_causal_coordination_needs_real_lexical_evidence(self):
+        good=(
+            "“And we mean to treat you all,” added Mary, "
+            "“but you must lend us the money, for we have just spent ours "
+            "at the shop out there.”"
+        )
+        cases,_=extract(Book(999,"Grammar","Test","train"),
+                        good,length_min=1,length_max=100)
+        self.assertEqual(len(cases),1)
+        _,_,r=parse_corpus_case(self.parser,cases[0],
+                   max_items=50_000,kbest_work_limit=500_000)
+        self.assertTrue(r.completed,r.stats)
+        self.assertEqual(r.best().rule_id,
+                         "dialogue_structural_split_intent_causal_request")
+        negatives=(
+            # And is not a causal 'for' subordinate/coordinator.
+            "“And we mean to treat you all,” added Lydia, "
+            "“but you must lend us the money, and we have just spent ours "
+            "at the shop out there.”",
+            # No source-licensed independent possessive 'ourselves'.
+            "“And we mean to treat you all,” added Lydia, "
+            "“but you must lend us the money, for we have just spent ourselves "
+            "at the shop out there.”",
+            # A preposition is not a postposed universal quantifier.
+            "“And we mean to treat you with,” added Lydia, "
+            "“but you must lend us the money, for we have just spent ours "
+            "at the shop out there.”",
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(
+                    self.parser,cases[0],
+                    max_items=50_000,kbest_work_limit=500_000)
+                self.assertEqual(prepared.source_text,source)
+                self.assertNotEqual(r.stats.get("structural_composition_kind"),
+                     "dialogue_structural_split_intent_causal_request")
+
     def test_441_true_perfect_contraction_and_marine_locative_adverbials(self):
         source=(
             '"Pew," he cried, "they\'ve been before us. '

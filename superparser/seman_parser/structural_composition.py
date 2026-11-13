@@ -318,6 +318,11 @@ class QuotedSentenceComposer:
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items())):
                     return None
+                if (category == "PP"
+                        and expected_rule ==
+                        "dialogue_structural_split_intent_causal_request"
+                        and selected.rule_id != "pp_pp_advp"):
+                    return None
                 if (category == "SPEECH-TAG"
                         and not (selected.rule_id or "").startswith(
                             "dialogue_speech_tag_")):
@@ -409,6 +414,8 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
+                    3 if expected_rule ==
+                    "dialogue_structural_split_intent_causal_request" else
                     sum(1 for category, _, _, _, _ in specs
                         if category == "CLAUSE")
                     + int(expected_rule in {
@@ -445,6 +452,136 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_split_intent_causal_ditransitive(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """An interrupted speech turn with independent causal justification.
+
+        The initial infinitival intention governs a genuinely quantified
+        pronominal object. The interrupted continuation is a modal
+        ditransitive command, whose *two separate* overt NP arguments are
+        followed by a causal coordination of a perfect tense explanation.
+        The possessive "ours" is independent, never an adjective modifying
+        a silently supplied noun. The reporting verb has its own speaker.
+        """
+        by_id={c.get("id"):c for c in components}
+        q0,q1,tag=(by_id.get(k) for k in ("q0","q1","r0"))
+        if (not all((q0,q1,tag)) or
+                q0.get("function")!="direct_speech" or
+                q1.get("function")!="direct_speech" or
+                tag.get("function")!="reporting_clause" or
+                not any(c.get("function")=="split_direct_speech_turn"
+                        for c in components) or
+                any(c.get("function") in ("embedded_quotation",
+                      "narratorial_parenthetical") for c in components)):
+            return None
+        a0,b0=q0["start"],q0["end"]
+        a1,b1=q1["start"],q1["end"]
+        ta,tb=tag["start"],tag["end"]
+        quotes=quotation_boundaries(text)
+        if (a0!=0 or b1!=len(text) or
+                not (0<b0<ta<tb<a1<b1) or len(quotes)!=4 or
+                [(x.start,x.end,x.side) for x in quotes]!=[
+                    (0,1,"open"),(b0-1,b0,"close"),
+                    (a1,a1+1,"open"),(b1-1,b1,"close")
+                ] or not text[b0:ta].isspace() or
+                re.fullmatch(r"\s*,\s*",text[tb:a1]) is None):
+            return None
+        first=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"(to)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)(,)",
+            text[1:b0-1],
+        )
+        reporter=re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)",text[ta:tb])
+        second=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+\s+[A-Za-z]+)(,)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+(.+?)(\.)",
+            text[a1+1:b1-1],
+        )
+        if not first or not second or not reporter:
+            return None
+        # Typed quote-source edges prove the speaker turn boundaries;
+        # the regexes only locate original consecutive token spans.
+        parts0=[c for c in components if
+                c.get("function")=="spoken_clause_candidate"
+                and c.get("governor")=="q0"]
+        parts1=[c for c in components if
+                c.get("function")=="spoken_clause_candidate"
+                and c.get("governor")=="q1"]
+        if (len(parts0)!=1 or len(parts1)!=1 or
+                (parts0[0]["start"],parts0[0]["end"])!=(1,b0-1) or
+                (parts1[0]["start"],parts1[0]["end"])!=(a1+1,b1-1)):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def put(category: str,a:int,b:int,kind="lexical",
+                **required:str)->None:
+            specs.append((category,a,b,kind,required))
+        def group(m:re.Match[str],base:int,i:int,category:str,
+                  kind="lexical",**required:str)->None:
+            a,b=m.span(i)
+            put(category,base+a,base+b,kind,**required)
+        def punct(cat:str,a:int)->None:
+            put(cat,a,a+1,"source-punctuation")
+        punct("OPEN-QUOTE",0)
+        base=1
+        group(first,base,1,"COORD",nominal_coordination="true")
+        group(first,base,2,"NP","phrase",
+              person="1",number="plural",pronominal="true")
+        group(first,base,3,"V","lexical",
+              vform="finite",subcat_member="subject_control")
+        group(first,base,4,"TO")
+        group(first,base,5,"V","lexical",
+              vform="base",subcat_member="transitive")
+        group(first,base,6,"NP","phrase",person="2",pronominal="true")
+        group(first,base,7,"DET","lexical",
+              number="plural",definiteness="universal")
+        group(first,base,8,"COMMA","source-punctuation")
+        punct("CLOSE-QUOTE",b0-1)
+        group(reporter,ta,1,"V","lexical",
+              vform="finite",past_reporting="true")
+        group(reporter,ta,2,"NP","phrase",
+              number="singular",person="3")
+        punct("COMMA",text.index(",",tb,a1))
+        punct("OPEN-QUOTE",a1)
+        base=a1+1
+        group(second,base,1,"COORD",nominal_coordination="true")
+        group(second,base,2,"NP","phrase",
+              person="2",pronominal="true")
+        group(second,base,3,"MODAL","lexical",vform="finite")
+        group(second,base,4,"V","lexical",
+              vform="base",subcat_member="ditransitive")
+        group(second,base,5,"NP","phrase",
+              person="1",number="plural",pronominal="true")
+        group(second,base,6,"NP","phrase")
+        group(second,base,7,"COMMA","source-punctuation")
+        group(second,base,8,"COORD","lexical",causal_coordination="true")
+        group(second,base,9,"NP","phrase",
+              person="1",number="plural",pronominal="true")
+        group(second,base,10,"HAVE","lexical",
+              vform="finite",number="plural")
+        group(second,base,11,"ADV","lexical",recent_temporal="true")
+        group(second,base,12,"V","lexical",
+              vform="ed",subcat_member="transitive")
+        group(second,base,13,"POSS-PRONOUN","lexical",
+              independent_possessive="true",person="1",number="plural")
+        group(second,base,14,"PP","phrase")
+        group(second,base,15,"SPEECH-STOP","source-punctuation")
+        punct("CLOSE-QUOTE",b1-1)
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_split_intent_causal_request",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_split_vocative_two_perfect_sentences(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1559,6 +1696,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        causal = self._compose_split_intent_causal_ditransitive(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if causal is not None:
+            return causal
         vocative_perfect = self._compose_split_vocative_two_perfect_sentences(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
