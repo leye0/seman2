@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #61](https://github.com/leye0/seman2/pull/61)** — 461/500, 39 phrases restantes. Premier lot à sujet partagé (#69, #189 et #372) résolu. Prochain témoin de cette famille : #113 et ses coordinations imbriquées.
+
 **Suivi après la [PR #60](https://github.com/leye0/seman2/pull/60)** — 458/500, 42 phrases restantes. Le lot « sujet interrompu puis prédicat repris » est résolu. Les statuts historiques ci-dessous restent ceux du relevé de départ.
 
 Les textes sont intégraux. Le classement distingue des structures observées à examiner, pas des causes déjà établies. Un délai ou une saturation ne prouve pas que la grammaire manque.
@@ -25,7 +27,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #87 | Racines sans analyse valide | We judged it expedient, now, to tell her all we knew; which I recounted at length. | Incise now dans it…to, puis relative après le point-virgule. |
 | #95 | Forêt saturée | Accordingly, when Mr. Peggotty came home about nine o’clock, this unfortunate Mrs. Gummidge was knitting in her corner, in a very wretched and miserable condition. | Temporelle intercalée après Accordingly, puis ajout descriptif final. |
 | #101 | Racines sans analyse valide | My face, neck, and hands, from unaccustomed exposure to the air and sun, were burnt to a berry-brown. | Groupe prépositionnel causal entre le sujet coordonné et le passif. — Corrigé par la PR #60. |
-| #189 | Racines sans analyse valide | Miss Bennet had slept ill, and though up, was very feverish, and not well enough to leave her room. | Concessive réduite though up au milieu de prédicats coordonnés. |
+| #189 | Racines sans analyse valide | Miss Bennet had slept ill, and though up, was very feverish, and not well enough to leave her room. | Concessive réduite though up au milieu de prédicats coordonnés. — Corrigé par la PR #61. |
 | #220 | Aucune racine | He was at the same time haughty, reserved, and fastidious, and his manners, though well-bred, were not inviting. | Concessive réduite though well-bred entre sujet et prédicat. — Corrigé par la PR #60. |
 | #226 | Aucune racine | He inquired how far Netherfield was from Meryton; and, after receiving her answer, asked in a hesitating manner how long Mr. Darcy had been staying there. | Gérondif after receiving her answer intercalé entre deux interrogatives indirectes. |
 | #239 | Forêt saturée | Elizabeth immediately recognizing the livery, guessed what it meant, and imparted no small degree of her surprise to her relations by acquainting them with the honour which she expected. | Participiale entre le sujet et guessed, puis gérondif de moyen. — Corrigé par la PR #60. |
@@ -58,7 +60,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
-| #69 | Délai | I informed her that he sent his compliments, and was getting on very well indeed. | Complément en that avec deux prédicats partageant he. |
+| #69 | Délai | I informed her that he sent his compliments, and was getting on very well indeed. | Complément en that avec deux prédicats partageant he. — Corrigé par la PR #61. |
 | #113 | Racines sans analyse valide | Here she ceased; and snapping her reticule again, and shutting her mouth, looked as if she might be broken, but could never be bent. | Point-virgule, sujet implicite et participiales coordonnées. |
 | #122 | Racines sans analyse valide | Mr. Micawber considered it necessary to prepare either my aunt or his wife, by degrees, and said, sooner than he had expected yesterday. | Coordination de considered et said, contenu implicite de said, comparatif temporel détaché. |
 | #124 | Racines sans analyse valide | If that were so, my sacrifice was nothing; my plainest obligation to her unfulfilled; and every poor action I had shrunk from, I was hourly doing. | Parallélisme au point-virgule, copule élidée et objet antéposé. |
@@ -71,7 +73,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #350 | Forêt saturée | He heard with attention the little narration concerning my studies and smiled at the names of Cornelius Agrippa and Paracelsus, but without the contempt that M. Krempe had exhibited. | Prédicats coordonnés, contraste en but without et relative. |
 | #362 | Racines sans analyse valide | I enjoyed this scene, and yet my enjoyment was embittered both by the memory of the past and the anticipation of the future. | Coordination de propositions, puis both…and sous la même préposition. |
 | #371 | Délai | It rang on my ears long and heavily; the mountains re-echoed it, and I felt as if all hell surrounded me with mockery and laughter. | Point-virgule, coordination et comparaison hypothétique as if. |
-| #372 | Racines sans analyse valide | The Greeks wept for joy when they beheld the Mediterranean from the hills of Asia, and hailed with rapture the boundary of their toils. | Prédicats coordonnés, avec une subordonnée temporelle dans le premier. |
+| #372 | Racines sans analyse valide | The Greeks wept for joy when they beheld the Mediterranean from the hills of Asia, and hailed with rapture the boundary of their toils. | Prédicats coordonnés, avec une subordonnée temporelle dans le premier. — Corrigé par la PR #61. |
 | #373 | Racines sans analyse valide | I wish to soothe him, yet can I counsel one so infinitely miserable, so destitute of every hope of consolation, to live? | Coordination adversative avec inversion interrogative et suppléments adjectivaux. |
 | #462 | Racines sans analyse valide | At least, and at last, I was off the sea, nor had I returned thence empty-handed. | Adverbiaux initiaux coordonnés, puis inversion en nor. |
 | #477 | Racines sans analyse valide | The HISPANIOLA was laid a couple of points nearer the wind and now sailed a course that would just clear the island on the east. | Prédicats coordonnés à sujet partagé, comparatif nautique et relative. |
