@@ -343,6 +343,50 @@ class QuotedSentenceComposer:
                     or any(s in surface for s in ['"', '“', '”', '‘', '’'])
                 ):
                     return None
+                if (expected_rule ==
+                        "dialogue_structural_dialect_three_act_self_report"
+                        and category == "NP"
+                        and surface == "No good"
+                        and (selected.rule_id!="np_det_n"
+                             or selected.features.as_dict().get(
+                                 "definiteness")!="negative")):
+                    return None
+                if (expected_rule ==
+                        "dialogue_structural_dialect_three_act_self_report"
+                        and category == "PP"
+                        and (selected.rule_id!="pp_prep_np"
+                             or not selected.children
+                             or selected.children[0].category!="PREP"
+                             or selected.children[0].features.as_dict().get(
+                                 "dialectal_elided_of")!="true")):
+                    return None
+                if (expected_rule ==
+                        "dialogue_structural_vocative_praise_stars_reporter"):
+                    if (category=="NP" and surface=="my son"
+                            and selected.rule_id!="np_poss"):
+                        return None
+                    if (category=="NP" and surface=="Silver"
+                            and selected.rule_id!="np_proper"):
+                        return None
+                    if category=="CLAUSE":
+                        if (selected.rule_id!="clause_np_vp"
+                                or len(selected.children)!=2):
+                            return None
+                        vp=selected.children[1]
+                        if surface.startswith("you praise"):
+                            if (vp.rule_id!="vp_transitive"
+                                    or len(vp.children)!=2
+                                    or vp.children[0].category!="V"
+                                    or vp.children[1].rule_id!="np_poss"):
+                                return None
+                        elif surface.startswith("he's"):
+                            if (vp.rule_id!="vp_copula_adj"
+                                    or len(vp.children)!=2
+                                    or vp.children[0].category!="COPULA"
+                                    or vp.children[1].category!="ADJ"):
+                                return None
+                        else:
+                            return None
                 if (category == "CLAUSE"
                         and expected_rule ==
                         "dialogue_structural_comparative_negative_tag_sequence"
@@ -471,6 +515,10 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
+                    2 if expected_rule in (
+                        "dialogue_structural_dialect_three_act_self_report",
+                        "dialogue_structural_vocative_praise_stars_reporter",
+                    ) else
                     3 if expected_rule ==
                     "dialogue_structural_comparative_negative_tag_sequence" else
                     3 if expected_rule ==
@@ -515,6 +563,177 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_dialectal_three_act_self_report(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Deictic exclamation, dialectal object question, modal and echo.
+
+        The original "Wot" is an overt dialectal interrogative *object*.
+        Original "o'" is a sourced elided preposition, never a made-up "of".
+        The last "I said" is a parenthetical report of the preceding
+        proposition, not a new object-less transitive root.
+        """
+        by_id={c.get("id"):c for c in components}
+        q0=by_id.get("q0")
+        if (not q0 or q0.get("function")!="direct_speech"
+                or (q0.get("start"),q0.get("end"))!=(0,len(text))
+                or any(c.get("function") in (
+                    "reporting_clause","split_direct_speech_turn",
+                    "embedded_quotation","narratorial_parenthetical",
+                ) for c in components)):
+            return None
+        quotes=quotation_boundaries(text)
+        if (len(quotes)!=2 or
+                [(x.start,x.end,x.side) for x in quotes]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")]):
+            return None
+        acts=sorted((c for c in components
+                if c.get("function")=="spoken_clause_candidate"
+                and c.get("governor")=="q0"),
+                key=lambda x:x["start"])
+        if (len(acts)!=3 or acts[0]["start"]!=1
+                or acts[-1]["end"]!=len(text)-1
+                or any(text[a["end"]:b["start"]].strip()
+                       for a,b in zip(acts,acts[1:]))):
+            return None
+        a=re.fullmatch(r"([A-Za-z]+)(!)",
+                       text[acts[0]["start"]:acts[0]["end"]])
+        b=re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)\s+"
+                       r"([A-Za-z]+)\s+([A-Za-z]+)(\?)",
+                       text[acts[1]["start"]:acts[1]["end"]])
+        c=re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)('ll)\s+"
+                       r"([A-Za-z]+)\s+([A-Za-z]+')\s+([A-Za-z]+)(,)\s+"
+                       r"([A-Za-z]+)\s+([A-Za-z]+)(\.)",
+                       text[acts[2]["start"]:acts[2]["end"]])
+        if not all((a,b,c)):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def put(cat:str,start:int,end:int,kind="lexical",**required:str):
+            specs.append((cat,start,end,kind,required))
+        def g(m:re.Match[str],base:int,i:int,cat:str,
+              kind="lexical",**required:str):
+            x,y=m.span(i)
+            put(cat,base+x,base+y,kind,**required)
+        put("OPEN-QUOTE",0,1,"source-punctuation")
+        g(a,acts[0]["start"],1,"INTERJ","lexical",
+          deictic_discourse="true")
+        g(a,acts[0]["start"],2,"EXCL","source-punctuation")
+        p=acts[1]["start"]
+        g(b,p,1,"WH-PRONOUN","lexical",
+          dialectal_wh_object="true")
+        g(b,p,2,"AUX","lexical",vform="finite")
+        g(b,p,3,"NP","phrase",
+          person="1",number="singular",pronominal="true")
+        g(b,p,4,"V","lexical",
+          vform="base",subcat_member="transitive")
+        g(b,p,5,"QMARK","source-punctuation")
+        p=acts[2]["start"]
+        put("NP",p+c.start(1),p+c.end(2),"phrase",
+            definiteness="negative")
+        g(c,p,3,"MODAL","lexical",vform="finite")
+        g(c,p,4,"V","lexical",
+          vform="base",subcat_member="prepositional")
+        put("PP",p+c.start(5),p+c.end(6),"phrase")
+        g(c,p,7,"COMMA","source-punctuation")
+        g(c,p,8,"NP","phrase",
+          person="1",number="singular",pronominal="true")
+        g(c,p,9,"V","lexical",
+          vform="finite",subcat_member="clausal")
+        g(c,p,10,"SPEECH-STOP","source-punctuation")
+        put("CLOSE-QUOTE",len(text)-1,len(text),"source-punctuation")
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_dialect_three_act_self_report",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def _compose_vocative_praise_stars_reporter(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Vocative, overt praise-one's-stars idiom, finite content, speaker.
+
+        A missing orthographic "that" is NOT added to the source. The idiom
+        takes a source-proven finite content CLAUSE as the cause for praise.
+        The postposed reporter has its real finite V and proper-name speaker.
+        """
+        by_id={c.get("id"):c for c in components}
+        quote,tag=by_id.get("q0"),by_id.get("r0")
+        if (not quote or not tag
+                or quote.get("function")!="direct_speech"
+                or tag.get("function")!="reporting_clause"
+                or quote.get("start")!=0
+                or tag.get("end")!=len(text)-1
+                or any(c.get("function") in (
+                    "embedded_quotation","split_direct_speech_turn",
+                    "narratorial_parenthetical",
+                ) for c in components)):
+            return None
+        qend=quote["end"]
+        ta,tb=tag["start"],tag["end"]
+        quotes=quotation_boundaries(text)
+        if (len(quotes)!=2 or
+                [(x.start,x.end,x.side) for x in quotes]!=[
+                    (0,1,"open"),(qend-1,qend,"close")]
+                or not text[qend:ta].isspace()
+                or text[tb:]!="."):
+            return None
+        spoken=[c for c in components
+                if c.get("function")=="spoken_clause_candidate"
+                and c.get("governor")=="q0"]
+        if (len(spoken)!=1 or
+                (spoken[0]["start"],spoken[0]["end"])!=(1,qend-1)):
+            return None
+        m=re.fullmatch(
+            r"([A-Za-z]+)(,)\s+([A-Za-z]+)(,)\s+"
+            r"([A-Za-z]+\s+[A-Za-z]+)(,)\s+"
+            r"(you\s+praise\s+your\s+stars)\s+"
+            r"(he's\s+[A-Za-z]+)(,)",
+            text[1:qend-1],
+        )
+        reporter=re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)",text[ta:tb])
+        if not m or not reporter:return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def put(cat:str,start:int,end:int,kind="lexical",**required:str):
+            specs.append((cat,start,end,kind,required))
+        def g(m:re.Match[str],base:int,i:int,cat:str,
+              kind="lexical",**required:str):
+            a,b=m.span(i)
+            put(cat,base+a,base+b,kind,**required)
+        put("OPEN-QUOTE",0,1,"source-punctuation")
+        g(m,1,1,"INTERJ","lexical",discourse_exclamation="true")
+        g(m,1,2,"COMMA","source-punctuation")
+        g(m,1,3,"ADV")
+        g(m,1,4,"COMMA","source-punctuation")
+        g(m,1,5,"NP","phrase")
+        g(m,1,6,"COMMA","source-punctuation")
+        g(m,1,7,"CLAUSE","phrase")
+        g(m,1,8,"CLAUSE","phrase")
+        g(m,1,9,"COMMA","source-punctuation")
+        put("CLOSE-QUOTE",qend-1,qend,"source-punctuation")
+        g(reporter,ta,1,"V","lexical",
+          vform="finite",subcat_member="clausal")
+        g(reporter,ta,2,"NP","phrase",
+          person="3",number="singular")
+        put("SPEECH-STOP",len(text)-1,len(text),
+            "source-punctuation")
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_vocative_praise_stars_reporter",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_comparative_negative_predicative_tag(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -2059,6 +2278,20 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        dialect = self._compose_dialectal_three_act_self_report(
+            parser,text,original_lattice,components,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+        if dialect is not None:
+            return dialect
+        praise = self._compose_vocative_praise_stars_reporter(
+            parser,text,original_lattice,components,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+        if praise is not None:
+            return praise
         comparative = self._compose_comparative_negative_predicative_tag(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
