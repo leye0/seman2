@@ -329,6 +329,21 @@ class QuotedSentenceComposer:
                     return None
                 if (category == "CLAUSE"
                         and expected_rule ==
+                        "dialogue_structural_intercalated_vocative_two_perfect"
+                        and selected.rule_id != "clause_np_vp"):
+                    return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
+                        "dialogue_structural_inclusive_let_imperative_sequence"
+                        and (selected.rule_id not in
+                             ("clause_imp_neg", "clause_np_vp")
+                             or (required.get("stype") == "imperative"
+                                 and selected.rule_id != "clause_imp_neg")
+                             or (required.get("stype") != "imperative"
+                                 and selected.rule_id != "clause_np_vp"))):
+                    return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
                         "dialogue_structural_temporal_vocative_minor_reprise"
                         and selected.rule_id != "clause_np_vp"):
                     return None
@@ -401,6 +416,8 @@ class QuotedSentenceComposer:
                         "dialogue_structural_split_vocative_copula_domain",
                         "dialogue_structural_split_shared_modal_coord_gerund",
                         "structural_source_asyndetic_modal_passive_dash",
+                        "dialogue_structural_inclusive_let_imperative_sequence",
+                        "dialogue_structural_intercalated_vocative_two_perfect",
                     })
                 ),
                 "structural_segment_spans": [
@@ -428,6 +445,216 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_split_vocative_two_perfect_sentences(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Intercalated reporting + two overt finite speech acts.
+
+        In the second sentence, the source apostrophe-s is independently
+        licensed as HAVE, never COPULA or a genitive; the lexical participle
+        governs a *separate* direct object and particle. The two historical
+        marine adverbs modify the resulting event, not the object noun.
+        """
+        by_id = {c.get("id"): c for c in components}
+        q0,q1,tag=(by_id.get(k) for k in ("q0","q1","r0"))
+        if (not all((q0,q1,tag))
+                or any(c.get("function") in ("embedded_quotation",
+                           "narratorial_parenthetical") for c in components)
+                or q0.get("function")!="direct_speech"
+                or q1.get("function")!="direct_speech"
+                or tag.get("function")!="reporting_clause"
+                or not any(c.get("function")=="split_direct_speech_turn"
+                           for c in components)):
+            return None
+        a0,b0=q0["start"],q0["end"]
+        a1,b1=q1["start"],q1["end"]
+        ta,tb=tag["start"],tag["end"]
+        marks=quotation_boundaries(text)
+        if (a0!=0 or b1!=len(text) or
+                not (0<b0<ta<tb<a1<b1) or
+                len(marks)!=4 or
+                [(q.start,q.end,q.side) for q in marks]!=[
+                    (0,1,"open"),(b0-1,b0,"close"),
+                    (a1,a1+1,"open"),(b1-1,b1,"close")
+                ] or not text[b0:ta].isspace()
+                or re.fullmatch(r"\s*,\s*",text[tb:a1]) is None):
+            return None
+        spoken=sorted(
+            (c for c in components
+             if c.get("function")=="spoken_clause_candidate"
+             and c.get("governor")=="q1"),
+            key=lambda c:c["start"],
+        )
+        if (len(spoken)!=2 or spoken[0]["start"]!=a1+1
+                or spoken[-1]["end"]!=b1-1 or
+                text[spoken[0]["end"]:spoken[1]["start"]].strip()):
+            return None
+        first=re.fullmatch(r"(.+?)(,)",text[1:b0-1])
+        second=re.fullmatch(
+            r"(.+?)(\.)\s+([A-Za-z]+)('s)\s+([A-Za-z]+)\s+"
+            r"(.+?)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)(\.)",
+            text[a1+1:b1-1],
+        )
+        if not first or not second:
+            return None
+        s=a1+1
+        if ((s+second.start(1),s+second.end(2))!=
+                (spoken[0]["start"],spoken[0]["end"])
+                or s+second.start(3)!=spoken[1]["start"]):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def put(cat:str,a:int,b:int,kind="lexical",
+                **required:str)->None:
+            specs.append((cat,a,b,kind,required))
+        def group(m:re.Match[str],base:int,i:int,cat:str,
+                  kind="lexical",**required:str)->None:
+            a,b=m.span(i)
+            put(cat,base+a,base+b,kind,**required)
+        def punct(cat:str,a:int)->None:
+            put(cat,a,a+1,"source-punctuation")
+        punct("OPEN-QUOTE",0)
+        group(first,1,1,"NP","phrase")
+        group(first,1,2,"COMMA","source-punctuation")
+        punct("CLOSE-QUOTE",b0-1)
+        put("SPEECH-TAG",ta,tb,"phrase")
+        punct("COMMA",text.index(",",tb,a1))
+        punct("OPEN-QUOTE",a1)
+        group(second,s,1,"CLAUSE","phrase")
+        group(second,s,2,"SPEECH-STOP","source-punctuation")
+        group(second,s,3,"NP","phrase",
+              number="singular",person="3",pronominal="true")
+        group(second,s,4,"HAVE","lexical",vform="finite")
+        group(second,s,5,"V","lexical",
+              vform="ed",subcat_member="transitive")
+        group(second,s,6,"NP","phrase")
+        group(second,s,7,"PARTICLE")
+        group(second,s,8,"ADV","lexical",
+              maritime_vertical_position="lower")
+        group(second,s,9,"COORD")
+        group(second,s,10,"ADV","lexical",
+              maritime_vertical_position="upper")
+        group(second,s,11,"SPEECH-STOP","source-punctuation")
+        punct("CLOSE-QUOTE",b1-1)
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_intercalated_vocative_two_perfect",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def _compose_inclusive_let_imperative_sequence(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Three source speech acts: negative command and two inclusive lets.
+
+        The overt "let + us + bare VP" imperatives are NOT finite declarative
+        clauses.  The third matrix verb independently selects a reflexive
+        object AND overt "that" content clause, proved by lexical valency.
+        This avoids the false full-source interpretation of "Let us hope
+        for" as a nominal subject.
+        """
+        by_id = {c.get("id"): c for c in components}
+        quote = by_id.get("q0")
+        if (not quote or quote.get("function") != "direct_speech"
+                or (quote.get("start"), quote.get("end")) !=
+                    (0, len(text))
+                or any(c.get("function") in (
+                    "embedded_quotation", "reporting_clause",
+                    "split_direct_speech_turn", "narratorial_parenthetical",
+                ) for c in components)):
+            return None
+        marks = quotation_boundaries(text)
+        if (len(marks) != 2 or
+                [(q.start, q.end, q.side) for q in marks] != [
+                    (0, 1, "open"), (len(text)-1, len(text), "close"),
+                ]):
+            return None
+        acts = sorted(
+            (c for c in components
+             if c.get("function") == "spoken_clause_candidate"
+             and c.get("governor") == "q0"),
+            key=lambda c: c["start"],
+        )
+        if len(acts) != 3:
+            return None
+        if (acts[0]["start"] != 1 or acts[-1]["end"] != len(text)-1
+                or any(text[a["end"]:b["start"]].strip()
+                       for a,b in zip(acts,acts[1:]))):
+            return None
+        one = re.fullmatch(
+            r"(.+?)(,)\s+(.+?)(\.)",
+            text[acts[0]["start"]:acts[0]["end"]],
+        )
+        two = re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+(.+?)(\.)",
+            text[acts[1]["start"]:acts[1]["end"]],
+        )
+        three = re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+(that)\s+(.+?)(\.)",
+            text[acts[2]["start"]:acts[2]["end"]],
+        )
+        if not one or not two or not three:
+            return None
+        # "Let" is an overt operator, not a guessed constituent.  Two
+        # occurrences are required to license inclusive directives.
+        if (two.group(1).casefold() != "let"
+                or three.group(1).casefold() != "let"
+                or two.group(2).casefold() != "us"
+                or three.group(2).casefold() != "us"):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]] = []
+        def put(cat: str, a: int, b: int, kind="lexical",
+                **required: str) -> None:
+            specs.append((cat,a,b,kind,required))
+        def groups(m: re.Match[str], offset: int,
+                   mapping: Sequence[tuple[str,str,Mapping[str,str]]]) -> None:
+            for i,(cat,kind,need) in enumerate(mapping,1):
+                a,b = m.span(i)
+                put(cat,offset+a,offset+b,kind,**need)
+        put("OPEN-QUOTE",0,1,"source-punctuation")
+        groups(one,acts[0]["start"], (
+            ("NP","phrase",{}),
+            ("COMMA","source-punctuation",{}),
+            ("CLAUSE","phrase",{"stype":"imperative","negation":"true"}),
+            ("SPEECH-STOP","source-punctuation",{}),
+        ))
+        # Shared first-person plural argument and base verb valencies.
+        groups(two,acts[1]["start"], (
+            ("V","lexical",{"vform":"base","subcat_member":"bare_control"}),
+            ("NP","phrase",{"person":"1","number":"plural","pronominal":"true"}),
+            ("V","lexical",{"vform":"base","subcat_member":"prepositional"}),
+            ("PP","phrase",{}),
+            ("SPEECH-STOP","source-punctuation",{}),
+        ))
+        groups(three,acts[2]["start"], (
+            ("V","lexical",{"vform":"base","subcat_member":"bare_control"}),
+            ("NP","phrase",{"person":"1","number":"plural","pronominal":"true"}),
+            ("V","lexical",{"vform":"base","reflexive_that_complement":"true"}),
+            ("EMPHATIC-REFLEXIVE","lexical",{}),
+            ("COMP-THAT","lexical",{}),
+            ("CLAUSE","phrase",{}),
+            ("SPEECH-STOP","source-punctuation",{}),
+        ))
+        put("CLOSE-QUOTE",len(text)-1,len(text),"source-punctuation")
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_inclusive_let_imperative_sequence",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_temporal_vocative_minor_reprise(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1332,6 +1559,20 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        vocative_perfect = self._compose_split_vocative_two_perfect_sentences(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if vocative_perfect is not None:
+            return vocative_perfect
+        inclusive = self._compose_inclusive_let_imperative_sequence(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if inclusive is not None:
+            return inclusive
         temporal = self._compose_temporal_vocative_minor_reprise(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
