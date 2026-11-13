@@ -6,6 +6,7 @@ import re
 
 from .dialogue import quotation_boundaries
 from .dialogue_clause_plans import _specs
+from .manner_coordination import manner_coordination_plan, semicolon_coordination
 
 ROOT = "structural_shared_subject_source_sentence"
 WORD = r"[A-Za-z][A-Za-z’'\-]*"
@@ -53,7 +54,7 @@ def plan_shared_subject_coordination(text, components=()):
         if match:
             break
     else:
-        return None
+        return manner_coordination_plan(text, components)
     specs, add, mark, _ = _specs()
 
     def piece(group, category, kind="phrase", **features):
@@ -111,19 +112,8 @@ def plan_shared_subject_coordination(text, components=()):
         piece("with", "PP", proof_rule="pp_prep_np")
         piece("theme", "NP")
     else:
-        initial, resumed = match.start("semi"), match.start("and")
-        if not any(
-            right.get("function") == "coordinate_clause"
-            and right.get("relation") == "coordination"
-            and (right.get("start"), right.get("end")) == (resumed, len(text))
-            and any(
-                left.get("id") == right.get("governor")
-                and left.get("function") == "matrix_clause"
-                and (left.get("start"), left.get("end")) == (0, initial)
-                for left in components
-            )
-            for right in components
-        ):
+        if not semicolon_coordination(components, match.start("semi"),
+                                      match.start("and"), len(text)):
             return None
         piece("semi", "SEMICOLON", "source-punctuation")
         lexical("frame", "ADV")

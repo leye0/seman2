@@ -679,6 +679,108 @@ class SharedSubjectCoordinationTests(unittest.TestCase):
                 best = self.control(source.replace(before, after)).best()
                 self.assertTrue(best is None or best.rule_id != self.ROOT)
 
+    MANNER_CONTROLS = (
+        "She asked how far the house was from the river; and, after reading his letter, "
+        "wondered in a measured voice how long John had been working there.",
+        "They heard with great surprise the account concerning the voyage and laughed "
+        "at the descriptions of Alice Brown and Mary Smith, but without the bitterness "
+        "that John had displayed.",
+    )
+
+    def test_interposed_manner_preserves_the_two_types_of_selected_complement(self):
+        cases, _ = select_cases(500)
+        text, clause = self.case_tree(226, cases[226], "22ebce05b8634656")
+        subject, pair = clause.children
+        self.assert_agreement(subject, pair, "singular")
+        first, semicolon, _, _, temporal, _, second = pair.children
+        self.assertEqual(semicolon.category, "SEMICOLON")
+        self.assertEqual(self.parts(first, text), [
+            ("V", "inquired"), ("WH-CLAUSE", "how far Netherfield was from Meryton"),
+        ])
+        self.assertEqual(self.parts(temporal, text), [
+            ("PREP", "after"), ("TRANSITIVE-PARTICIPIAL", "receiving her answer"),
+        ])
+        self.assertEqual(self.parts(second, text), [
+            ("V", "asked"), ("PP", "in a hesitating manner"),
+            ("WH-CLAUSE", "how long Mr. Darcy had been staying there"),
+        ])
+        self.assertEqual(self.parts(second.children[-1], text), [
+            ("WH-NOM", "how"), ("ADV", "long"), ("NP", "Mr. Darcy"),
+            ("VP", "had been staying there"),
+        ])
+        self.assertEqual(second.children[-1].children[-1].features.as_dict()["aspect"],
+                         "perfect-progressive")
+
+        text, clause = self.case_tree(350, cases[350], "c2b96fbdff6cbd00")
+        subject, pair = clause.children
+        self.assert_agreement(subject, pair, "singular")
+        first, _, second = pair.children
+        self.assertEqual(self.parts(first, text), [
+            ("V", "heard"), ("PP", "with attention"),
+            ("NP", "the little narration concerning my studies"),
+        ])
+        smile, _, _, contrast = second.children
+        self.assertEqual(self.parts(smile, text), [
+            ("V", "smiled"), ("PREP", "at"),
+            ("NAMED-LIST", "the names of Cornelius Agrippa and Paracelsus"),
+        ])
+        names = smile.children[-1].children[-1]
+        self.assertEqual(self.parts(names, text), [
+            ("NP", "Cornelius Agrippa"), ("COORD", "and"), ("NP", "Paracelsus"),
+        ])
+        relative = contrast.children[-1].children[-1]
+        self.assertEqual(self.parts(relative, text), [
+            ("COMP-THAT", "that"), ("NP", "M. Krempe"), ("VP-GAP", "had exhibited"),
+        ])
+        self.assertEqual(relative.children[-1].features.as_dict()["gap"], "object")
+
+        for index, required_edges in (
+            (226, {("MANNER", "asked", "in"), ("COMPLEMENT", "asked", "staying"),
+                   ("TEMPORAL", "asked", "receiving"), ("AGENT", "staying", "Darcy")}),
+            (350, {("MANNER", "heard", "with"), ("AFFECTED", "heard", "narration"),
+                   ("CONTRAST", "smiled", "contempt"), ("AFFECTED", "exhibited", "contempt"),
+                   ("CONJUNCT", "Cornelius", "Paracelsus")}),
+        ):
+            prepared = prepare_corpus_input(cases[index])
+            report = self.parser.parse(
+                prepared.analysis_text, structural_constituents=prepared.structural_constituents,
+                max_items=50_000, kbest_work_limit=500_000,
+            )
+            graph = report.interpret().graph
+            edges = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                     for r in graph.relations}
+            self.assertTrue(required_edges <= edges, required_edges - edges)
+
+    def test_interposed_manner_accepts_varied_sources_but_requires_its_own_span(self):
+        for text, rule, mode, complement in (
+            (self.MANNER_CONTROLS[0], "structural_measure_interrogative_with_interposed_manner",
+             "in a measured voice", "how long John had been working there"),
+            (self.MANNER_CONTROLS[1], "structural_transitive_with_interposed_manner",
+             "with great surprise", "the account concerning the voyage"),
+        ):
+            with self.subTest(text=text):
+                root = self.control(text).best()
+                self.assertEqual(root.rule_id, self.ROOT)
+                node, = [n for n in SubjectResumptionTests.walk(root) if n.rule_id == rule]
+                self.assertEqual(self.parts(node, text)[1:], [
+                    ("PP", mode), ("WH-CLAUSE" if text.startswith("She") else "NP", complement),
+                ])
+
+    def test_interposed_manner_rejects_wrong_valency_and_clause_scope(self):
+        for i, before, after in (
+            (0, "wondered in", "slept in"),
+            (0, "wondered in", "they wondered in"),
+            (0, "in a measured voice", "in a rented house"),
+            (0, "had been working", "have been working"),
+            (1, "heard with", "slept with"),
+            (1, "laughed at", "they laughed at"),
+            (1, "with great surprise", "with John"),
+            (1, "had displayed", "had slept"),
+        ):
+            with self.subTest(after=after):
+                best = self.control(self.MANNER_CONTROLS[i].replace(before, after)).best()
+                self.assertTrue(best is None or best.rule_id != self.ROOT)
+
     def test_different_vocabulary_and_same_coordination(self):
         for source in self.CONTROLS:
             with self.subTest(source=source):

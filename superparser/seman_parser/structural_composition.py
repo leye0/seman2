@@ -53,6 +53,10 @@ class QuotedSentenceComposer:
         self._shared_subject_vector = VectorGrammar(
             Grammar(shared), preserve_quote_delimiters=True,
         )
+        self._source_honorifics = {
+            spelling: lemma for rule in shared
+            for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
+        }
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if rule.provenance.get("source_plan") != SHARED_SUBJECT_ROOT),
@@ -250,15 +254,16 @@ class QuotedSentenceComposer:
         """Shared exact-source phrase proof and grammar assembly.
 
         A spec is (category, absolute start, absolute end, source kind,
-        required features). It NEVER fabricates a lexical edge, parser
-        interface, word or punctuation. Source structure proposes only the
-        boundaries; independently selected ranked subtree proves each phrase.
+        required features). All interfaces and punctuation are source-backed.
+        A contextual title entry can attest an overt conventional abbreviation.
+        Independently selected ranked subtrees prove the other phrase spans.
         """
         total_items = parser.max_items if max_items is None else max_items
         total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
         if total_items < 1600 or total_work < 1600:
             return None
-        phrase_n = sum(kind in ("phrase", "subject-phrase", "resumed-finite-phrase") for _, _, _, kind, _ in specs)
+        phrase_kinds = ("phrase", "subject-phrase", "resumed-finite-phrase", "proper-phrase")
+        phrase_n = sum(kind in phrase_kinds for _, _, _, kind, _ in specs)
         piece_items = total_items // (phrase_n + 1)
         piece_work = total_work // (phrase_n + 1)
         candidates: list[LexicalCandidate] = []
@@ -273,6 +278,7 @@ class QuotedSentenceComposer:
             "QMARK": {"?"},
             "EXCL": {"!"},
             "SPEECH-STOP": set(".!?"),
+            "ABBREVIATION-STOP": {"."},
             "DASH": {"--", "—"},
             "OPEN-PAREN": {"("},
             "CLOSE-PAREN": {")"},
@@ -292,6 +298,23 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
+            elif kind == "source-title":
+                if category != "TITLE" or text[b:b+1] != ".":
+                    return None
+                titles = [c for c in original_lattice.candidates
+                          if c.span == (a, b) and c.category == category
+                          and c.features.as_dict().get("honorific") == "true"]
+                if not titles:
+                    title_lemma = self._source_honorifics.get(surface)
+                    if title_lemma is None:
+                        return None
+                    titles.append(LexicalCandidate(
+                        span_start=a, span_end=b, surface=surface, lemma=title_lemma,
+                        category=category, features=FeatureStructure.build({"honorific": "true"}),
+                        source="source-attested-honorific", score=0,
+                        provenance={"original_source_span": [a, b]},
+                    ))
+                candidates.extend(titles)
             elif kind in ("lexical", "lexical-alternatives", "nominal-lexical"):
                 matching = [
                     c for c in original_lattice.candidates
@@ -338,7 +361,7 @@ class QuotedSentenceComposer:
                     )))
                 else:
                     candidates.append(max(matching, key=lambda c: c.score))
-            elif kind in ("phrase", "subject-phrase", "resumed-finite-phrase"):
+            elif kind in phrase_kinds:
                 grammar = (
                     parser._dialogue_vector_grammar
                     if category == "SPEECH-TAG"
@@ -384,6 +407,10 @@ class QuotedSentenceComposer:
                             and finite.surface.casefold() == finite.lemma.casefold()
                             and finite.features.as_dict().get("tense") != "past"):
                         return None
+                if kind == "proper-phrase" and selected.rule_id not in (
+                    "np_proper", "np_proper_name", "np_name_seq2",
+                ):
+                    return None
                 if kind == "subject-phrase":
                     if selected.rule_id not in (
                         "np_bare", "np_det_n", "np_indef_pron", "np_poss",
