@@ -357,6 +357,11 @@ class QuotedSentenceComposer:
                         and surface.startswith("every man before")
                         and (selected.rule_id!="np_pp_mod"
                              or len(selected.children)!=2
+                             or selected.children[0].rule_id!="np_det_n"
+                             or selected.children[0].features.as_dict().get(
+                                 "number")!="singular"
+                             or selected.children[0].features.as_dict().get(
+                                 "person")!="3"
                              or selected.children[1].rule_id!="pp_prep_np")):
                     return None
                 if (category == "CLAUSE"
@@ -590,7 +595,7 @@ class QuotedSentenceComposer:
           person="1",number="singular",pronominal="true")
         g(two,b,4,"V","lexical",vform="finite",subcat_member="clausal")
         g(two,b,5,"COMP-THAT")
-        g(two,b,6,"NP","phrase",number="singular",person="3")
+        g(two,b,6,"NP","phrase")
         g(two,b,7,"V","lexical",
           vform="finite",number="singular",person="3",
           subcat_member="intransitive")
