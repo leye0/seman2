@@ -31,6 +31,7 @@ from .segmentation import LexicalCandidate, LexicalLattice
 from .vector_chart import SegmentInterface, VectorGrammar
 from .structural_units import skeleton
 from .subject_resumption import plan_subject_resumption
+from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_shared_subject_coordination
 
 
 @dataclass(frozen=True, slots=True)
@@ -375,7 +376,7 @@ class QuotedSentenceComposer:
                 if kind == "subject-phrase":
                     if selected.rule_id not in (
                         "np_bare", "np_det_n", "np_indef_pron", "np_poss",
-                        "np_proper", "np_title_name", "np_proper_name",
+                        "np_proper", "np_title_name", "np_proper_name", "np_name_seq2",
                     ):
                         return None
                     if any(
@@ -654,7 +655,7 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
-                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL) else
+                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT) else
                     2 if expected_rule in (
                         CLEFT_TURN,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
@@ -2333,8 +2334,12 @@ class QuotedSentenceComposer:
             return None
         plan = plan_subject_resumption(text)
         if plan is None:
-            return None
-        specs, rule = plan
+            specs = plan_shared_subject_coordination(text)
+            if specs is None:
+                return None
+            rule = SHARED_SUBJECT_ROOT
+        else:
+            specs, rule = plan
         return self._compose_verified_dialogue_pattern(
             parser, text, lattice, specs, rule,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
