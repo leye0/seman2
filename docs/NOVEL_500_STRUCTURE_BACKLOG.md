@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #62](https://github.com/leye0/seman2/pull/62)** — 462/500, 38 phrases restantes. Le cas #113 avec point-virgule et coordinations imbriquées est résolu. Le prochain témoin à sujet partagé est #226.
+
 **Suivi après la [PR #61](https://github.com/leye0/seman2/pull/61)** — 461/500, 39 phrases restantes. Premier lot à sujet partagé (#69, #189 et #372) résolu. Prochain témoin de cette famille : #113 et ses coordinations imbriquées.
 
 **Suivi après la [PR #60](https://github.com/leye0/seman2/pull/60)** — 458/500, 42 phrases restantes. Le lot « sujet interrompu puis prédicat repris » est résolu. Les statuts historiques ci-dessous restent ceux du relevé de départ.
@@ -61,7 +63,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
 | #69 | Délai | I informed her that he sent his compliments, and was getting on very well indeed. | Complément en that avec deux prédicats partageant he. — Corrigé par la PR #61. |
-| #113 | Racines sans analyse valide | Here she ceased; and snapping her reticule again, and shutting her mouth, looked as if she might be broken, but could never be bent. | Point-virgule, sujet implicite et participiales coordonnées. |
+| #113 | Racines sans analyse valide | Here she ceased; and snapping her reticule again, and shutting her mouth, looked as if she might be broken, but could never be bent. | Point-virgule, sujet implicite et participiales coordonnées. — Corrigé par la PR #62. |
 | #122 | Racines sans analyse valide | Mr. Micawber considered it necessary to prepare either my aunt or his wife, by degrees, and said, sooner than he had expected yesterday. | Coordination de considered et said, contenu implicite de said, comparatif temporel détaché. |
 | #124 | Racines sans analyse valide | If that were so, my sacrifice was nothing; my plainest obligation to her unfulfilled; and every poor action I had shrunk from, I was hourly doing. | Parallélisme au point-virgule, copule élidée et objet antéposé. |
 | #221 | Forêt saturée | Mrs. Bennet was prevented replying by the entrance of the footman with a note for Miss Bennet; it came from Netherfield, and the servant waited for an answer. | Passif avec gérondif, puis propositions distinctes au point-virgule. |
