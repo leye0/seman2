@@ -462,6 +462,142 @@ class SubjectResumptionTests(unittest.TestCase):
                 self.assertTrue(best is None or
                                 best.features.as_dict().get("resumed_subject") != "true")
 
+class SharedSubjectCoordinationTests(unittest.TestCase):
+    ROOT = "structural_shared_subject_source_sentence"
+    CONTROLS = (
+        "We notified them that she sent the note, and was getting on quite well.",
+        "Miss Smith had worked hard, and though awake, was very weary, "
+        "and not strong enough to carry the box.",
+        "The children laughed for pleasure when they watched the parade from the bridge, "
+        "and greeted with delight the returning sailors.",
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(DATA, cache_size=0)
+
+    def parse(self, case):
+        return parse_corpus_case(self.parser, case, max_items=50_000,
+                                 kbest_work_limit=500_000)
+
+    def control(self, source):
+        rows, _ = extract(Book(999, "Synthetic", "Test", "train"), source,
+                          length_min=1, length_max=120)
+        self.assertEqual([r["source_text"] for r in rows], [source])
+        return self.parse(rows[0])[2]
+
+    @staticmethod
+    def parts(node, text):
+        return [(c.category, text[c.start:c.end]) for c in node.children]
+
+    def case_tree(self, index, case, expected_sha):
+        source = case["source_text"]
+        self.assertEqual(sha256(source.encode()).hexdigest()[:16], expected_sha, index)
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual(prepared.analysis_text, source)
+        self.assertEqual(lattice.text, source)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get("budget_exceeded"))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+        tree = result.best()
+        self.assertEqual(tree.rule_id, self.ROOT)
+        self.assertEqual((tree.start, tree.end), (0, len(source)))
+        self.assertEqual(tree.children[-1].category, "SPEECH-STOP")
+        return source, tree.children[0]
+
+    def assert_agreement(self, subject, pair, number):
+        for n in (subject, pair, pair.children[0], pair.children[-1]):
+            self.assertEqual(n.features.as_dict()["number"], number)
+            self.assertEqual(n.features.as_dict()["person"], "3")
+
+    def test_original_three_preserve_the_selected_subject_and_attachment(self):
+        cases, _ = select_cases(500)
+        text, report = self.case_tree(69, cases[69], "48fb528a88ac0b67")
+        self.assertEqual(self.parts(report, text)[:-1], [
+            ("NP", "I"), ("V", "informed"), ("NP", "her"), ("COMP-THAT", "that"),
+        ])
+        embedded = report.children[-1]
+        subject, pair = embedded.children
+        self.assertEqual(self.parts(embedded, text)[0], ("NP", "he"))
+        self.assert_agreement(subject, pair, "singular")
+        self.assertEqual(self.parts(pair, text), [
+            ("VP", "sent his compliments"), ("COMMA", ","), ("COORD", "and"),
+            ("VP", "was getting on very well indeed"),
+        ])
+        self.assertEqual(self.parts(pair.children[-1], text), [
+            ("AUX-BE", "was"), ("V", "getting"), ("PARTICLE", "on"),
+            ("ADVP", "very well indeed"),
+        ])
+
+        text, clause = self.case_tree(189, cases[189], "41e23438a4717cff")
+        subject, pair = clause.children
+        self.assertEqual(self.parts(clause, text)[0], ("NP", "Miss Bennet"))
+        self.assert_agreement(subject, pair, "singular")
+        self.assertEqual(self.parts(pair, text), [
+            ("VP", "had slept ill"), ("COMMA", ","), ("COORD", "and"),
+            ("CONCESSIVE", "though up"), ("COMMA", ","),
+            ("VP", "was very feverish, and not well enough to leave her room"),
+        ])
+        self.assertEqual(self.parts(pair.children[-1], text), [
+            ("COPULA", "was"), ("ADJP", "very feverish"), ("COMMA", ","),
+            ("COORD", "and"), ("ADJP", "not well enough to leave her room"),
+        ])
+        self.assertEqual(self.parts(pair.children[-1].children[-1], text), [
+            ("NEG", "not"), ("ADJ", "well"), ("DEGREE", "enough"),
+            ("TO", "to"), ("V", "leave"), ("NP", "her room"),
+        ])
+
+        text, clause = self.case_tree(372, cases[372], "c99a901b6a78b64e")
+        subject, pair = clause.children
+        self.assertEqual(self.parts(clause, text)[0], ("NP", "The Greeks"))
+        self.assert_agreement(subject, pair, "plural")
+        first, _, _, second = pair.children
+        self.assertEqual(self.parts(first, text), [
+            ("V", "wept"), ("PP", "for joy"),
+            ("TEMPORAL-CLAUSE", "when they beheld the Mediterranean from the hills of Asia"),
+        ])
+        self.assertEqual(self.parts(first.children[-1], text), [
+            ("CONJ", "when"), ("NP", "they"), ("V", "beheld"),
+            ("NP", "the Mediterranean"), ("PP", "from the hills of Asia"),
+        ])
+        self.assertEqual(self.parts(second, text), [
+            ("V", "hailed"), ("PP", "with rapture"), ("NP", "the boundary of their toils"),
+        ])
+
+    def test_construction_lexemes_are_confined_to_their_attested_surfaces(self):
+        for form in ("went", "got", "gone", "gets", "informing"):
+            with self.subTest(form=form):
+                self.assertFalse(any(
+                    c.features.as_dict().get("progress_particle_on") == "true"
+                    or c.features.as_dict().get("selects_report_addressee") == "true"
+                    for c in self.parser._lattice_for_text(form).candidates
+                ))
+        self.assertTrue(any(c.category == "V" and
+                            c.features.as_dict().get("vform") == "finite"
+                            for c in self.parser._lattice_for_text("went").candidates))
+
+    def test_different_vocabulary_and_same_coordination(self):
+        for source in self.CONTROLS:
+            with self.subTest(source=source):
+                result = self.control(source)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, self.ROOT)
+
+    def test_invalid_agreement_and_different_scopes_do_not_use_this_assembly(self):
+        for i, before, after in (
+            (0, "was getting", "were getting"),
+            (0, "and was", "and she was"),
+            (0, "notified them", "watched them"),
+            (1, "was very", "were very"),
+            (1, "though awake,", "though awake"),
+            (2, "and greeted", "and greets"),
+            (2, "and greeted", "and they greeted"),
+        ):
+            with self.subTest(i=i, replacement=after):
+                result = self.control(self.CONTROLS[i].replace(before, after))
+                tree = result.best()
+                self.assertTrue(tree is None or tree.rule_id != self.ROOT)
+
 
 if __name__ == "__main__":
     unittest.main()
