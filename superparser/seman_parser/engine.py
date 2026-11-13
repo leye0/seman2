@@ -528,6 +528,12 @@ class Parser:
                         diagnostic_k=diagnostic_k, beam=beam,
                     )
                 )
+            if scoped is None:
+                scoped = self._quoted_sentence_composer.compose_unquoted_parenthetical_modal(
+                    self, normalized, source_lattice, structural_constituents,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
             if scoped is not None:
                 return self._attach_fast_preflight(ParseReport(
                     result=scoped,

@@ -9,6 +9,7 @@ import re
 
 from .dialogue import quotation_boundaries
 
+PARENTHETICAL_MODAL = "structural_source_modal_coordination_with_parenthetical"
 NARRATIVE_TURN = "dialogue_structural_split_narrative_comparative"
 CLEFT_TURN = "dialogue_structural_semicolon_cleft_conditional"
 NESTED_TEMPORAL_TURN = "dialogue_structural_nested_temporal_comparative"
@@ -260,3 +261,54 @@ def nested_temporal_comparative_plan(text, components):
     mark("CLOSE-QUOTE", n - 2, n - 1)
     mark("CLOSE-QUOTE", n - 1, n)
     return sorted(specs, key=lambda spec: spec[1])
+
+
+def modal_parenthetical_plan(text, components):
+    """A cognition comment between coordinated bare predicates of one modal."""
+    asides = _parts(components, "parenthetical_candidate")
+    if len(asides) != 1 or _parts(components, "direct_speech", "embedded_quotation"):
+        return None
+    a, b = asides[0]["start"], asides[0]["end"]
+    if not (0 < a < b < len(text) and text[a] == "(" and text[b - 1] == ")"):
+        return None
+    left = re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)\s+([^(),;.!?]+?)\s*", text[:a])
+    aside = re.fullmatch(r"([A-Za-z]+)\s+([A-Za-z]+)\s+(with\s+[^(),;.!?]+)", text[a + 1:b - 1], re.I)
+    right = re.fullmatch(
+        r"\s*(and)\s+([^(),;.!?]+?)\s+(when)\s+([^(),;.!?]+?)(\.)",
+        text[b:], re.I,
+    )
+    if not (left and aside and right):
+        return None
+    specs, add, mark, use = _specs()
+    use(left, 0, (
+        (1, "NP", "phrase", {"pronominal": "true"}),
+        (2, "MODAL", "lexical", {"vform": "finite"}),
+        (3, "VP-NP", "phrase", {}),
+    ))
+    mark("OPEN-PAREN", a, a + 1)
+    use(aside, a + 1, (
+        (1, "NP", "phrase", {"pronominal": "true"}),
+        (2, "V", "lexical-alternatives", {"vform": "finite", "subcat_member": "clausal"}),
+        (3, "PP", "phrase", {}),
+    ))
+    mark("CLOSE-PAREN", b - 1, b)
+    use(right, b, (
+        (1, "COORD", "lexical", {"nominal_coordination": "true"}),
+        (2, "VP-NP", "phrase", {}),
+        (3, "CONJ", "lexical", {"temporal_incise": "true"}),
+    ))
+    start, end = (b + x for x in right.span(4))
+    # A time-denoting final PP is a distinct adjunct of the embedded event.
+    # Do not let the ordinary phrase parser prefer a false ditransitive.
+    pp = re.search(
+        r"\s+((?:in|at|on)\s+(?:the\s+)?"
+        r"(?:morning|afternoon|evening|night|dawn|dusk|noon|midnight))$",
+        text[start:end], re.I,
+    )
+    if pp:
+        add("CLAUSE", start, start + pp.start(), "phrase")
+        add("PP", start + pp.start(1), end, "phrase")
+    else:
+        add("CLAUSE", start, end, "phrase")
+    mark("SPEECH-STOP", len(text) - 1, len(text))
+    return specs
