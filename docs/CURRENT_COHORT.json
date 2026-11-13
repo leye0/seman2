@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #62 repairs #113 with one matrix subject across a semicolon and a coordinated participial supplement on the resumed predicate. The as-if complement keeps its own subject, two modal passives and local negation. All 461 former completions and all 30 historical dialogues are preserved on the same corpus and parser limits.",
+  "note": "PR #63 repairs #226 and #350 by proving an interposed manner PP separately from the selected interrogative or nominal complement. Both source trees retain the shared subject and local attachments. All 462 prior completions and all 30 historical dialogues are preserved on the same corpus and parser limits.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,36 +73,37 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "f6032aa55a5ae163c1d0feae731af93108ea3600",
-    "validated_pr_head": "61441dd1fae4e4fb8591f1852eddb5939206fa6b",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43480867913",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43480867850",
-    "completed": 462,
-    "unresolved": 38,
+    "validated_merge_commit": "3e63326f778251a0751f4a660dae3f7c1ba60404",
+    "validated_pr_head": "f19210204c530814d5d398358dad9b6e51879a7e",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43487850365",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43487850338",
+    "completed": 464,
+    "unresolved": 36,
     "statuses": {
-      "complete": 462,
+      "complete": 464,
       "both_budgets_exceeded": 0,
-      "forest_budget_exceeded": 4,
+      "forest_budget_exceeded": 3,
       "kbest_budget_exceeded": 0,
-      "no_structural_root": 4,
+      "no_structural_root": 3,
       "roots_without_valid_analysis": 26,
       "timeout": 4,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 461,
-      "current_complete": 462,
+      "previous_complete": 462,
+      "current_complete": 464,
       "newly_complete_indexes": [
-        113
+        226,
+        350
       ],
       "regressed_completed_indexes": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14062129219,
-      "candidate_artifact_id": 14065158663
+      "baseline_artifact_id": 14065158663,
+      "candidate_artifact_id": 14067948435
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -143,13 +144,13 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 747,
+      "unit_tests": 750,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 122,
-      "case_id": "766:fb2158d6e71fe059"
+      "index": 358,
+      "case_id": "84:6ba22d6151fcb22c"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
@@ -160,15 +161,17 @@
         113,
         189,
         220,
+        226,
         239,
         291,
+        350,
         372,
         463,
         485,
         486,
         493
       ],
-      "shared_subject_next_index": 226
+      "shared_subject_next_index": 228
     },
     "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
     "original_85_source_failure_inventory": {
@@ -192,7 +195,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 38,
+      "active_remaining": 36,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -213,6 +216,7 @@
         209,
         220,
         223,
+        226,
         229,
         235,
         237,
@@ -224,6 +228,7 @@
         291,
         301,
         315,
+        350,
         359,
         372,
         384,
@@ -244,8 +249,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43480868123",
-    "grammatical_attachment_note": "PR #62 repairs #113 with one matrix subject across a semicolon and a coordinated participial supplement on the resumed predicate. The as-if complement keeps its own subject, two modal passives and local negation. All 461 former completions and all 30 historical dialogues are preserved on the same corpus and parser limits."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43487850318",
+    "grammatical_attachment_note": "PR #63 repairs #226 and #350 by proving an interposed manner PP separately from the selected interrogative or nominal complement. Both source trees retain the shared subject and local attachments. All 462 prior completions and all 30 historical dialogues are preserved on the same corpus and parser limits."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -2758,5 +2763,180 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43475328107",
     "grammatical_attachment_note": "PR #61 repairs #69, #189 and #372 using one subject agreement across finite predicate coordination. The reported content, reduced concessive and temporal clause keep their original attachment domains. Only these three cases newly complete, with all 458 former completions and all 30 historical dialogues preserved. Source texts, segmentation and parser limits are unchanged."
+  },
+  "pre_pr63_baseline": {
+    "validated_merge_commit": "f6032aa55a5ae163c1d0feae731af93108ea3600",
+    "validated_pr_head": "61441dd1fae4e4fb8591f1852eddb5939206fa6b",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43480867913",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43480867850",
+    "completed": 462,
+    "unresolved": 38,
+    "statuses": {
+      "complete": 462,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 4,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 4,
+      "roots_without_valid_analysis": 26,
+      "timeout": 4,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 461,
+      "current_complete": 462,
+      "newly_complete_indexes": [
+        113
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14062129219,
+      "candidate_artifact_id": 14065158663
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 747,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 122,
+      "case_id": "766:fb2158d6e71fe059"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 360,
+      "resolved_indexes": [
+        69,
+        101,
+        113,
+        189,
+        220,
+        239,
+        291,
+        372,
+        463,
+        485,
+        486,
+        493
+      ],
+      "shared_subject_next_index": 226
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 38,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        96,
+        99,
+        101,
+        109,
+        113,
+        141,
+        157,
+        175,
+        189,
+        200,
+        209,
+        220,
+        223,
+        229,
+        235,
+        237,
+        239,
+        241,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        359,
+        372,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        463,
+        464,
+        466,
+        475,
+        485,
+        486,
+        493,
+        495,
+        498
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43480868123",
+    "grammatical_attachment_note": "PR #62 repairs #113 with one matrix subject across a semicolon and a coordinated participial supplement on the resumed predicate. The as-if complement keeps its own subject, two modal passives and local negation. All 461 former completions and all 30 historical dialogues are preserved on the same corpus and parser limits."
   }
 }
