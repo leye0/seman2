@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #51 verified two genuinely grammatical source-complete repairs: #229 inclusive let + 1PL object-controller imperative and reflexive-that lexical valency across three original speech acts; #441 actual postposed reporter and two overt spoken clauses, second a finite perfect with true HAVE clitic, transitive participle, separate NP object, particle and maritime locative ADVP. Same 500 source cohort SHA, original WordNet 3.0 and budgets: 435→437 complete, 65→63 unresolved, historical dialogue failures repaired 15→17/30. Only #229/#441 statuses improved in individual 500/500 comparison; no prior complete case lost. Core 706 tests, novel 500 and scoped dialogue tests green; source span/rank-one child proof controls and malformed contrasts verified.",
+  "note": "PR #52: two verified source-complete grammatical repairs: #223 true singular existential perfect with many-a-one nominal pivot, overt epistemic parenthetical, reduced passive of existent, plus finite matrix wonder with independently proven embedded interrogative wh-subject (no relative-that misattachment); #235 genuinely inverted reporting and split source quotes, finite intent subject-control infinitive with postposed universal object, second modal double-object request with overt causal for, followed by recent perfect with independent possessive object and separate locative PP. Paired original 500/500 source identities and SHA unchanged: 437→439 complete; 63→61 unresolved; original 30 real historical dialogues 17→19 repaired; zero previously complete cases regressed. Initial who relative gold regression caught and fixed before merge: 710 Core tests green, 120/120 grammar gold annotations, 24/24 contrasts, 20 dialogue scope tests, Novel-500 and source-30 audits all green. Original WordNet, 50k/500k/10s budgets and source text unchanged.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,42 +73,42 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "4a29824a52bd4e3cd2306df47756778023970d2d",
-    "validated_pr_head": "b184a452d5ed08991495fa05bde73911749a97f9",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43343555662",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43343555774",
-    "completed": 437,
-    "unresolved": 63,
+    "validated_merge_commit": "923be2ab2397540be6460b8873aacbbd05032fa9",
+    "validated_pr_head": "6aa9b71d19fe756173153d80f21fc01abe1b82f1",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43349176969",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43349176983",
+    "completed": 439,
+    "unresolved": 61,
     "statuses": {
-      "complete": 437,
-      "forest_budget_exceeded": 9,
+      "complete": 439,
+      "forest_budget_exceeded": 8,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 9,
-      "roots_without_valid_analysis": 40,
+      "roots_without_valid_analysis": 39,
       "timeout": 5,
       "error": 0,
       "both_budgets_exceeded": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 435,
-      "current_complete": 437,
+      "previous_complete": 437,
+      "current_complete": 439,
       "newly_complete_indexes": [
-        229,
-        441
+        223,
+        235
       ],
       "regressed_completed_indexes": [],
       "previous_unresolved_changed_failure_type": [],
-      "verified_dialogue_failures_fixed": 17,
+      "verified_dialogue_failures_fixed": 19,
       "initial_dialogue_failures": 30,
-      "remaining_dialogue_failures": 13
+      "remaining_dialogue_failures": 11
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
         "multisentence_quotation": {
           "baseline_failed": 6,
-          "still_failed": 4,
-          "now_complete": 2
+          "still_failed": 3,
+          "now_complete": 3
         },
         "nested_quotation": {
           "baseline_failed": 2,
@@ -122,8 +122,8 @@
         },
         "split_speech_with_intercalated_reporting_clause": {
           "baseline_failed": 7,
-          "still_failed": 2,
-          "now_complete": 5
+          "still_failed": 1,
+          "now_complete": 6
         },
         "unattributed_single_quotation": {
           "baseline_failed": 7,
@@ -142,7 +142,7 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 706,
+      "unit_tests": 710,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
@@ -172,7 +172,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 63,
+      "active_remaining": 61,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -184,7 +184,9 @@
         157,
         175,
         200,
+        223,
         229,
+        235,
         237,
         270,
         280,
@@ -199,8 +201,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43343555625",
-    "grammatical_attachment_note": "PR #51: Source-anchored selected rank-one #229 has three grammatical imperative speech acts, true 1PL object-controller, and bound reflexive/object finite that content. #441 has actual attribution, clitic HAVE perfect auxiliary, past participle object+particle and directional two-adverb event modifier. Source-delimiters all exact; negative controls and lexical alternatives preserved. Same 50k/500k/10s budgets."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43349177090",
+    "grammatical_attachment_note": "PR #52 rank-one grammar proofs preserve source: #223 existential pivot is true 3SG many-a-one, EXPL there + finite perfect and reduced past passive modifier; finite wonder selects interrogative WHO-subject discovery/object (relative-that negative contrast, previous gold who-relative attachment restored). #235 subject-control intent with postpositive universal object, inverted past speaker attribution, modal V ditransitive with recipient+theme, causal for, temporal perfect with independent possessive ours and separate PP. Positive/negative source-span tests green, same 50k/500k/10s budgets. Paired all-500 status differences ONLY #223/#235."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -1107,5 +1109,135 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43316712733",
     "grammatical_attachment_note": "PR #50 source-exact positive and negative controls: #99 separates finite temporal subordinate clause, vocative and genuine verbless reprise; #237 has validated two transitive predicate arguments and possessive gerund adverbial; #227 negative NP coordination and true modal passive parataxis. Selected rank-1 trees inspected, original source unchanged, 50k/500k/10s unchanged."
+  },
+  "pre_pr52_baseline": {
+    "validated_merge_commit": "4a29824a52bd4e3cd2306df47756778023970d2d",
+    "validated_pr_head": "b184a452d5ed08991495fa05bde73911749a97f9",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43343555662",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43343555774",
+    "completed": 437,
+    "unresolved": 63,
+    "statuses": {
+      "complete": 437,
+      "forest_budget_exceeded": 9,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 9,
+      "roots_without_valid_analysis": 40,
+      "timeout": 5,
+      "error": 0,
+      "both_budgets_exceeded": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 435,
+      "current_complete": 437,
+      "newly_complete_indexes": [
+        229,
+        441
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 17,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 13
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 4,
+          "now_complete": 2
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 1,
+          "now_complete": 7
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 2,
+          "now_complete": 5
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 5,
+          "now_complete": 2
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 706,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 69,
+      "case_id": "766:48fb528a88ac0b67"
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 63,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        99,
+        141,
+        157,
+        175,
+        200,
+        229,
+        237,
+        270,
+        280,
+        301,
+        315,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43343555625",
+    "grammatical_attachment_note": "PR #51: Source-anchored selected rank-one #229 has three grammatical imperative speech acts, true 1PL object-controller, and bound reflexive/object finite that content. #441 has actual attribution, clitic HAVE perfect auxiliary, past participle object+particle and directional two-adverb event modifier. Source-delimiters all exact; negative controls and lexical alternatives preserved. Same 50k/500k/10s budgets."
   }
 }
