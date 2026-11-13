@@ -301,6 +301,11 @@ class Lexicon:
         seen: set[tuple[int, str, str | None]] = set()
 
         def _add(entry: LexicalEntry, lemma: str, category: str | None = None) -> None:
+            # A construction-specific reading can attest an inflected
+            # surface without attesting the rest of its paradigm.
+            if (entry.provenance.get("exact_surface_only")
+                    and lowered not in {form.casefold() for form in entry.surfaces}):
+                return
             key = (id(entry), lemma, category)
             if key in seen:
                 return

@@ -564,6 +564,18 @@ class SharedSubjectCoordinationTests(unittest.TestCase):
             ("V", "hailed"), ("PP", "with rapture"), ("NP", "the boundary of their toils"),
         ])
 
+    def test_construction_lexemes_are_confined_to_their_attested_surfaces(self):
+        for form in ("went", "got", "gone", "gets", "informing"):
+            with self.subTest(form=form):
+                self.assertFalse(any(
+                    c.features.as_dict().get("progress_particle_on") == "true"
+                    or c.features.as_dict().get("selects_report_addressee") == "true"
+                    for c in self.parser._lattice_for_text(form).candidates
+                ))
+        self.assertTrue(any(c.category == "V" and
+                            c.features.as_dict().get("vform") == "finite"
+                            for c in self.parser._lattice_for_text("went").candidates))
+
     def test_different_vocabulary_and_same_coordination(self):
         for source in self.CONTROLS:
             with self.subTest(source=source):
