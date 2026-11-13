@@ -465,7 +465,7 @@ class SubjectResumptionTests(unittest.TestCase):
 class SharedSubjectCoordinationTests(unittest.TestCase):
     ROOT = "structural_shared_subject_source_sentence"
     CONTROLS = (
-        "We notified them that she sent the note, and was going on quite well.",
+        "We notified them that she sent the note, and was getting on quite well.",
         "Miss Smith had worked hard, and though awake, was very weary, "
         "and not strong enough to carry the box.",
         "The children laughed for pleasure when they watched the parade from the bridge, "
@@ -585,7 +585,7 @@ class SharedSubjectCoordinationTests(unittest.TestCase):
 
     def test_invalid_agreement_and_different_scopes_do_not_use_this_assembly(self):
         for i, before, after in (
-            (0, "was going", "were going"),
+            (0, "was getting", "were getting"),
             (0, "and was", "and she was"),
             (0, "notified them", "watched them"),
             (1, "was very", "were very"),

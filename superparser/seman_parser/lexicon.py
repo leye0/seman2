@@ -367,6 +367,9 @@ class Lexicon:
                     if candidate == lowered or (closed_class and candidate not in attested_stems):
                         continue
                     for entry in self.entries_for_lemma(candidate):
+                        if (entry.provenance.get("exact_surface_only")
+                                and lowered not in {form.casefold() for form in entry.surfaces}):
+                            continue
                         for sense in entry.senses:
                             if _suffix_compatible(sense, tag) and (
                                 not closed_class or sense.category == "V"

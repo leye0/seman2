@@ -26,7 +26,7 @@ from .dialogue_clause_plans import (
     cleft_conditional_plan, narrative_comparative_plan, nested_temporal_comparative_plan,
 )
 from .features import FeatureStructure
-from .grammar import load_grammar
+from .grammar import Grammar, load_grammar
 from .segmentation import LexicalCandidate, LexicalLattice
 from .vector_chart import SegmentInterface, VectorGrammar
 from .structural_units import skeleton
@@ -45,8 +45,17 @@ class QuotedSentenceComposer:
     """Compiled grammar assembly with real independently parsed children."""
 
     def __init__(self, rules_path: str | Path) -> None:
+        rules = load_grammar(rules_path)
+        # A generic finite coordination must not compete with a more
+        # specific attachment inside an already validated source plan.
+        shared = tuple(rule for rule in rules
+                       if rule.provenance.get("source_plan") == SHARED_SUBJECT_ROOT)
+        self._shared_subject_vector = VectorGrammar(
+            Grammar(shared), preserve_quote_delimiters=True,
+        )
         self._vector = VectorGrammar(
-            load_grammar(rules_path),
+            Grammar(rule for rule in rules
+                    if rule.provenance.get("source_plan") != SHARED_SUBJECT_ROOT),
             preserve_quote_delimiters=True,
         )
 
@@ -376,8 +385,9 @@ class QuotedSentenceComposer:
                 if kind == "subject-phrase":
                     if selected.rule_id not in (
                         "np_bare", "np_det_n", "np_indef_pron", "np_poss",
-                        "np_proper", "np_title_name", "np_proper_name", "np_name_seq2",
-                    ):
+                        "np_proper", "np_title_name", "np_proper_name",
+                    ) and not (expected_rule == SHARED_SUBJECT_ROOT
+                               and selected.rule_id == "np_name_seq2"):
                         return None
                     if any(
                         c.category == "PRONOUN"
@@ -630,7 +640,9 @@ class QuotedSentenceComposer:
             text=text, tokens=original_lattice.tokens,
             candidates=tuple(candidates),
         )
-        assembled = self._vector.parse_lattice(
+        assembly = (self._shared_subject_vector
+                    if expected_rule == SHARED_SUBJECT_ROOT else self._vector)
+        assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
             kbest_work_limit=total_work - phrase_n * piece_work,
