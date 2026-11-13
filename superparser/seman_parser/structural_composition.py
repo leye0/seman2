@@ -253,6 +253,7 @@ class QuotedSentenceComposer:
             "OPEN-QUOTE": set('"“‘'),
             "CLOSE-QUOTE": set('"”’'),
             "COMMA": {","},
+            "SEMICOLON": {";"},
             "QMARK": {"?"},
             "EXCL": {"!"},
             "SPEECH-STOP": set(".!?"),
@@ -323,6 +324,42 @@ class QuotedSentenceComposer:
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items())):
                     return None
+                if (expected_rule ==
+                        "dialogue_structural_semicolon_epistemic_assurance_comparative"):
+                    if category=="NP" and selected.rule_id!="np_poss":
+                        return None
+                    if category=="CLAUSE":
+                        if selected.rule_id!="clause_np_vp" or len(selected.children)!=2:
+                            return None
+                        vp=selected.children[1]
+                        if vp.rule_id=="vp_cop_np":
+                            if (len(vp.children)!=2
+                                    or vp.children[1].rule_id!="np_pp_mod"
+                                    or len(vp.children[1].children)!=2
+                                    or vp.children[1].children[1].rule_id!="pp_prep_np"
+                                    or vp.children[1].children[1].children[1].rule_id!="np_of"):
+                                return None
+                        elif vp.rule_id=="vp_cop_adjp":
+                            if (len(vp.children)!=2
+                                    or vp.children[1].rule_id!="adjp_adv_adj"):
+                                return None
+                        else:
+                            return None
+                if (expected_rule ==
+                        "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose"):
+                    if category=="NP" and selected.rule_id!="np_det_n":
+                        return None
+                    if category=="PP":
+                        if (selected.rule_id!="pp_prep_np"
+                                or len(selected.children)!=2
+                                or selected.children[1].rule_id!="np_det_n"
+                                or selected.children[1].children[1].rule_id!="n_adj_n"):
+                            return None
+                    if category=="VP":
+                        if (selected.rule_id!="vp_transitive"
+                                or len(selected.children)!=2
+                                or selected.children[1].rule_id!="np_poss"):
+                            return None
                 if (expected_rule ==
                         "dialogue_structural_temporal_doubt_dislocated_gerund_question"
                         and category=="NP"
@@ -528,6 +565,10 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     2 if expected_rule in (
+                        "dialogue_structural_semicolon_epistemic_assurance_comparative",
+                        "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
+                    ) else
+                    2 if expected_rule in (
                         "dialogue_structural_temporal_doubt_dislocated_gerund_question",
                         "dialogue_structural_temporal_reason_dislocated_inf_question",
                     ) else
@@ -579,6 +620,164 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_semicolon_assurance_comparative(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Two overt clauses across a source semicolon, never split as cases.
+
+        Independently verify the first copular clause, genuine vocative,
+        finite bare-complement dare-say incise, and a finite assurance
+        selecting overt pronominal addressee plus zero-that comparative.
+        The terminal bare genitive has a source TITLE + two proper names
+        and actual apostrophe-s, not an invented nominal head.
+        """
+        q=next((c for c in components if c.get("id")=="q0"),None)
+        acts=[c for c in components
+              if c.get("function")=="spoken_clause_candidate"
+              and c.get("governor")=="q0"]
+        marks=quotation_boundaries(text)
+        if (q is None or q.get("function")!="direct_speech"
+                or (q.get("start"),q.get("end"))!=(0,len(text))
+                or len(acts)!=1 or (acts[0]["start"],acts[0]["end"])
+                   != (1,len(text)-1)
+                or [(m.start,m.end,m.side) for m in marks]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")]
+                or any(c.get("function") in (
+                    "reporting_clause","split_direct_speech_turn",
+                    "embedded_quotation","narratorial_parenthetical")
+                    for c in components)):
+            return None
+        m=re.fullmatch(
+            r"(?P<first>.+?)(?P<comma1>,)\s+"
+            r"(?P<vocative>[A-Za-z]+\s+[A-Za-z]+)(?P<comma2>,)\s+"
+            r"(?P<inc_subj>[A-Za-z]+)\s+(?P<inc_finite>[A-Za-z]+)\s+"
+            r"(?P<inc_bare>[A-Za-z]+)(?P<semicolon>;)\s+"
+            r"(?P<coord>[A-Za-z]+)\s+(?P<ass_subj>[A-Za-z]+)\s+"
+            r"(?P<ass_verb>[A-Za-z]+)\s+(?P<ass_obj>[A-Za-z]+)\s+"
+            r"(?P<comparison_clause>.+?)\s+(?P<than>[A-Za-z]+)\s+"
+            r"(?P<title>[A-Za-z]+)\s+(?P<name1>[A-Za-z]+)\s+"
+            r"(?P<name2>[A-Za-z]+)(?P<genitive>'s)(?P<stop>\.)",
+            text[1:-1],
+        )
+        if m is None:return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def add(name:str,cat:str,kind="lexical",**features:str)->None:
+            a,b=m.span(name)
+            specs.append((cat,1+a,1+b,kind,features))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        add("first","CLAUSE","phrase")
+        add("comma1","COMMA","source-punctuation")
+        add("vocative","NP","phrase")
+        add("comma2","COMMA","source-punctuation")
+        add("inc_subj","PRONOUN",person="1",number="singular")
+        add("inc_finite","V",vform="finite",subcat_member="bare_complement")
+        add("inc_bare","V",vform="base",subcat_member="clausal")
+        add("semicolon","SEMICOLON","source-punctuation")
+        add("coord","COORD")
+        add("ass_subj","PRONOUN",person="1",number="singular")
+        add("ass_verb","V",vform="finite",subcat_member="clausal")
+        add("ass_obj","PRONOUN",person="2")
+        add("comparison_clause","CLAUSE","phrase")
+        add("than","CONJ")
+        add("title","TITLE",honorific="true")
+        add("name1","PROPER-NOUN",person="3",number="singular")
+        add("name2","PROPER-NOUN",person="3",number="singular")
+        add("genitive","POSS",genitive_clitic="true")
+        add("stop","SPEECH-STOP","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_semicolon_epistemic_assurance_comparative",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def _compose_anterior_passive_conjecture_purpose(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Overt anterior passive adjunct, shared subject, purpose of retire.
+
+        The past finite extinguished and retired share the ranked family NP.
+        'as I conjectured' is a finite speaker incise interrupting a true
+        to-infinitive purpose of retired; do not make 'to rest' a PP with
+        noun rest or attach it to the object 'their lights'.
+        """
+        q=next((c for c in components if c.get("id")=="q0"),None)
+        acts=[c for c in components
+              if c.get("function")=="spoken_clause_candidate"
+              and c.get("governor")=="q0"]
+        marks=quotation_boundaries(text)
+        if (q is None or q.get("function")!="direct_speech"
+                or (q.get("start"),q.get("end"))!=(0,len(text))
+                or len(acts)!=1 or (acts[0]["start"],acts[0]["end"])
+                   != (1,len(text)-1)
+                or [(m.start,m.end,m.side) for m in marks]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")]
+                or any(c.get("function") in (
+                    "reporting_clause","split_direct_speech_turn",
+                    "embedded_quotation","narratorial_parenthetical")
+                    for c in components)):
+            return None
+        m=re.fullmatch(
+            r"(?P<subject>[A-Za-z]+\s+[A-Za-z]+)(?P<comma1>,)\s+"
+            r"(?P<after>[A-Za-z]+)\s+(?P<having>[A-Za-z]+)\s+"
+            r"(?P<been>[A-Za-z]+)\s+(?P<degree>[A-Za-z]+)\s+"
+            r"(?P<occupied>[A-Za-z]+)\s+"
+            r"(?P<duration>[A-Za-z]+\s+[A-Za-z]+\s+[A-Za-z]+\s+[A-Za-z]+)"
+            r"(?P<comma2>,)\s+(?P<first_predicate>.+?)\s+"
+            r"(?P<coord>[A-Za-z]+)\s+(?P<retired>[A-Za-z]+)"
+            r"(?P<comma3>,)\s+(?P<as>[A-Za-z]+)\s+"
+            r"(?P<inc_subj>[A-Za-z]+)\s+(?P<inc_verb>[A-Za-z]+)"
+            r"(?P<comma4>,)\s+(?P<to>[A-Za-z]+)\s+"
+            r"(?P<rest>[A-Za-z]+)(?P<stop>\.)",
+            text[1:-1],
+        )
+        if m is None:return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def add(name:str,cat:str,kind="lexical",**features:str)->None:
+            a,b=m.span(name)
+            specs.append((cat,1+a,1+b,kind,features))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        add("subject","NP","phrase")
+        add("comma1","COMMA","source-punctuation")
+        add("after","PREP")
+        add("having","HAVE",vform="ing")
+        add("been","AUX-BE",vform="ed")
+        add("degree","ADV")
+        add("occupied","V",vform="ed",subcat_member="transitive")
+        add("duration","PP","phrase")
+        add("comma2","COMMA","source-punctuation")
+        add("first_predicate","VP","phrase")
+        add("coord","COORD",nominal_coordination="true")
+        add("retired","V",vform="finite",subcat_member="intransitive")
+        add("comma3","COMMA","source-punctuation")
+        add("as","CONJ")
+        add("inc_subj","PRONOUN",person="1",number="singular")
+        add("inc_verb","V",vform="finite",subcat_member="clausal")
+        add("comma4","COMMA","source-punctuation")
+        add("to","TO")
+        add("rest","V",vform="base",subcat_member="intransitive")
+        add("stop","SPEECH-STOP","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_epistemic_doubt_gerund_question(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -2466,6 +2665,20 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        semicolon = self._compose_semicolon_assurance_comparative(
+            parser,text,original_lattice,components,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+        if semicolon is not None:
+            return semicolon
+        anterior = self._compose_anterior_passive_conjecture_purpose(
+            parser,text,original_lattice,components,
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
+        if anterior is not None:
+            return anterior
         epistemic_doubt = self._compose_epistemic_doubt_gerund_question(
             parser,text,original_lattice,components,
             max_items=max_items,kbest_work_limit=kbest_work_limit,
