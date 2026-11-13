@@ -111,4 +111,43 @@ probe.PROBES.update({
 ),
 })
 
+# Canonical remaining Austen dialogues: fragment proofs are diagnostic only.
+probe.PROBES.update({
+235: (
+    ("And","COORD"),("we mean to treat you all","CLAUSE"),
+    ("we","NP"),("mean","V"),("to","TO"),("treat","V"),
+    ("you all","NP"),("you","NP"),("all","PRONOUN"),
+    ("to treat you all","VP-NP"),
+    ("added Lydia","SPEECH-TAG"),("Lydia","NP"),
+    ("but","COORD"),("you must lend us the money","CLAUSE"),
+    ("you","NP"),("must","MODAL"),("lend","V"),
+    ("us","NP"),("the money","NP"),
+    ("for","COORD"),
+    ("we have just spent ours at the shop out there","CLAUSE"),
+    ("have","HAVE"),("just","ADV"),("spent","V"),
+    ("ours","POSS-PRONOUN"),("ours","NP"),
+    ("at the shop","PP"),("out there","ADVP"),
+    ("at the shop out there","PP"),
+    ("the shop out there","NP"),
+    ("we have just spent ours","CLAUSE"),
+    ("spent ours at the shop out there","VP"),
+    ("we have just spent ours at the shop","CLAUSE"),
+),
+223: (
+    ("There","EXPL"),("There","ADV"),
+    ("has","HAVE"),("been","AUX-BE"),
+    ("many a one","NP"),("many","DET"),("a one","NP"),
+    ("I fancy","CLAUSE"),("overcome","V"),
+    ("overcome in the same way","VP"),("in the same way","PP"),
+    ("There has been many a one","CLAUSE"),
+    ("I wonder who first discovered the efficacy of poetry in driving away love","CLAUSE"),
+    ("I wonder","CLAUSE"),
+    ("who first discovered the efficacy of poetry in driving away love","CLAUSE"),
+    ("who","NP"),("first","ADV"),("discovered","V"),
+    ("the efficacy of poetry in driving away love","NP"),
+    ("the efficacy of poetry","NP"),("in driving away love","PP"),
+    ("driving away love","VP"),("love","NP"),
+),
+})
+
 if __name__=="__main__":probe.run()
