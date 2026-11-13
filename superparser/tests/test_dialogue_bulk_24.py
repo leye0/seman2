@@ -190,6 +190,85 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+    def test_441_true_perfect_contraction_and_marine_locative_adverbials(self):
+        source=(
+            '"Pew," he cried, "they\'ve been before us. '
+            'Someone\'s turned the chest out alow and aloft."'
+        )
+        r=self.actual(441,source)
+        n=self.root(r,
+            "dialogue_structural_intercalated_vocative_two_perfect")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),("NP","Pew"),("COMMA",","),
+            ("CLOSE-QUOTE",'"'),("SPEECH-TAG","he cried"),
+            ("COMMA",","),("OPEN-QUOTE",'"'),
+            ("CLAUSE","they've been before us"),
+            ("SPEECH-STOP","."),
+            ("CLAUSE","Someone's turned the chest out alow and aloft"),
+            ("SPEECH-STOP","."),("CLOSE-QUOTE",'"'),
+        ])
+        self.assertEqual(n.children[1].children[0].rule_id,"np_proper")
+        self.assertEqual(n.children[4].children[0].rule_id,
+                         "dialogue_speech_tag_post")
+        self.assertEqual(n.children[7].children[0].rule_id,"clause_np_vp")
+        last=n.children[9]
+        self.assertEqual(last.rule_id,
+                         "dialogue_structural_perfect_transitive_particle_adverbial")
+        self.assert_kids(r,last,[
+            ("NP","Someone"),("HAVE","'s"),("V","turned"),
+            ("NP","the chest"),("PARTICLE","out"),
+            ("ADVP","alow and aloft"),
+        ])
+        self.assertEqual(last.children[1].features.as_dict().get("vform"),
+                         "finite")
+        self.assertEqual(last.children[2].features.as_dict().get("vform"),
+                         "ed")
+        self.assertEqual(last.children[3].children[0].rule_id,"np_det_n")
+        marine=last.children[5]
+        self.assertEqual(marine.rule_id,
+                         "dialogue_structural_maritime_vertical_adverbs")
+        self.assert_kids(r,marine,[
+            ("ADV","alow"),("COORD","and"),("ADV","aloft"),
+        ])
+        self.assertEqual(last.features.as_dict().get("aspect"),"perfect")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+        self.assertEqual(r.text,source)
+
+    def test_split_vocative_perfect_has_positive_and_morphological_negatives(self):
+        positive=(
+            '"John," he cried, "they\'ve been before us. '
+            'Someone\'s turned the chest out alow and aloft."'
+        )
+        cases,_=extract(Book(999,"Grammar","Test","train"),
+                        positive,length_min=1,length_max=100)
+        self.assertEqual(len(cases),1)
+        _,_,parsed=parse_corpus_case(
+            self.parser,cases[0],max_items=50_000,kbest_work_limit=500_000)
+        self.assertTrue(parsed.completed,parsed.stats)
+        self.assertEqual(parsed.best().rule_id,
+             "dialogue_structural_intercalated_vocative_two_perfect")
+        negatives=(
+            '"Pew," he cried, "they\'ve been before us. '
+            'Someone\'s turning the chest out alow and aloft."',
+            '"Pew," he cried, "they\'ve been before us. '
+            'Someone\'s turned the chest out alow and down."',
+            '"Pew," he cried, "they\'ve been before us; '
+            'Someone\'s turned the chest out alow and aloft."',
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(
+                    self.parser,cases[0],max_items=50_000,
+                    kbest_work_limit=500_000)
+                self.assertEqual(prepared.source_text,source)
+                self.assertNotEqual(
+                    r.stats.get("structural_composition_kind"),
+                    "dialogue_structural_intercalated_vocative_two_perfect",
+                )
+
     def test_229_three_overt_imperative_speech_acts_have_correct_governors(self):
         source=(
             "“My dear, do not give way to such gloomy thoughts. "
