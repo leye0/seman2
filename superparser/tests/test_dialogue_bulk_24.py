@@ -190,6 +190,96 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+    def test_223_existential_incise_passive_and_wh_subject_question(self):
+        source=(
+            "“There has been many a one, I fancy, overcome in the same way. "
+            "I wonder who first discovered the efficacy of poetry "
+            "in driving away love!”"
+        )
+        r=self.actual(223,source)
+        n=self.root(r,"dialogue_structural_existential_and_embedded_wh")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),
+            ("CLAUSE","There has been many a one, I fancy, overcome in the same way"),
+            ("SPEECH-STOP","."),
+            ("CLAUSE","I wonder who first discovered the efficacy of poetry "
+                       "in driving away love"),
+            ("EXCL","!"),("CLOSE-QUOTE","”"),
+        ])
+        first=n.children[1]
+        self.assertEqual(first.rule_id,
+            "dialogue_structural_existential_perfect_parenthetical_reduced")
+        self.assert_kids(r,first,[
+            ("EXPL","There"),("HAVE","has"),("AUX-BE","been"),
+            ("NP","many a one"),("COMMA",","),
+            ("PARENTHETICAL","I fancy"),("COMMA",","),
+            ("REDUCED-PASSIVE","overcome in the same way"),
+        ])
+        self.assertEqual(first.children[0].features.as_dict()["expletive"],"true")
+        self.assertEqual(first.children[2].features.as_dict()["vform"],"ed")
+        pivot=first.children[3]
+        self.assertEqual(pivot.rule_id,
+            "dialogue_structural_many_a_singular_quantifier")
+        self.assert_kids(r,pivot,[
+            ("DET","many"),("DET","a"),("NUM","one"),
+        ])
+        self.assertEqual(pivot.features.as_dict()["number"],"singular")
+        self.assertEqual(first.children[5].rule_id,
+             "dialogue_structural_first_person_fancy_parenthetical")
+        passive=first.children[7]
+        self.assertEqual(passive.rule_id,
+             "dialogue_structural_past_participial_oblique_reduction")
+        self.assert_kids(r,passive,[
+            ("V","overcome"),("PP","in the same way"),
+        ])
+        self.assertEqual(passive.children[0].features.as_dict()["vform"],"ed")
+        self.assertEqual(passive.children[1].children[0].rule_id,"pp_prep_np")
+        second=n.children[3]
+        self.assertEqual(second.rule_id,
+             "dialogue_structural_finite_wonder_indirect_wh")
+        self.assert_kids(r,second,[
+            ("NP","I"),("V","wonder"),
+            ("WH-CLAUSE","who first discovered the efficacy of poetry "
+                          "in driving away love"),
+        ])
+        wh=second.children[2]
+        self.assertEqual(wh.rule_id,
+             "dialogue_structural_embedded_wh_subject_transitive_question")
+        self.assert_kids(r,wh,[
+            ("WH-PRONOUN","who"),("ADV","first"),("V","discovered"),
+            ("NP","the efficacy of poetry in driving away love"),
+        ])
+        self.assertEqual(wh.children[-1].children[0].rule_id,"np_det_n_of")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+        self.assertTrue(r.stats["source_text_unchanged"])
+
+    def test_223_requires_overt_expletive_participle_and_wh_question(self):
+        negatives=(
+            # Here is locative, not existential EXPL there.
+            "“Here has been many a one, I fancy, overcome in the same way. "
+            "I wonder who first discovered the efficacy of poetry "
+            "in driving away love!”",
+            # Participial morphology requires the original irregular reading.
+            "“There has been many a one, I fancy, overcoming in the same way. "
+            "I wonder who first discovered the efficacy of poetry "
+            "in driving away love!”",
+            # A declarative 'that' is not the interrogative subject 'who'.
+            "“There has been many a one, I fancy, overcome in the same way. "
+            "I wonder that first discovered the efficacy of poetry "
+            "in driving away love!”",
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(
+                    self.parser,cases[0],max_items=50_000,
+                    kbest_work_limit=500_000)
+                self.assertEqual(prepared.source_text,source)
+                self.assertNotEqual(r.stats.get("structural_composition_kind"),
+                     "dialogue_structural_existential_and_embedded_wh")
+
     def test_235_intent_reporter_ditransitive_and_causal_possessive(self):
         source=(
             "“And we mean to treat you all,” added Lydia, "

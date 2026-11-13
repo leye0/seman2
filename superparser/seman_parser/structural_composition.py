@@ -320,6 +320,17 @@ class QuotedSentenceComposer:
                     return None
                 if (category == "PP"
                         and expected_rule ==
+                        "dialogue_structural_existential_and_embedded_wh"
+                        and selected.rule_id != "pp_prep_np"):
+                    return None
+                if (category == "NP"
+                        and expected_rule ==
+                        "dialogue_structural_existential_and_embedded_wh"
+                        and surface.startswith("the efficacy")
+                        and selected.rule_id != "np_det_n_of"):
+                    return None
+                if (category == "PP"
+                        and expected_rule ==
                         "dialogue_structural_split_intent_causal_request"
                         and selected.rule_id != "pp_pp_advp"):
                     return None
@@ -416,6 +427,8 @@ class QuotedSentenceComposer:
                 "structural_clause_count": (
                     3 if expected_rule ==
                     "dialogue_structural_split_intent_causal_request" else
+                    2 if expected_rule ==
+                    "dialogue_structural_existential_and_embedded_wh" else
                     sum(1 for category, _, _, _, _ in specs
                         if category == "CLAUSE")
                     + int(expected_rule in {
@@ -452,6 +465,105 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_existential_parenthetical_wh_question(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """A complete existential and a separate embedded-wh question.
+
+        The expletive "there" is not an adverb or the NP subject.  The
+        singular "many a one" is a quantifier + indefinite article + numeral
+        nominal pivot; a source-delimited "I fancy" is a parenthetical,
+        while "overcome in the same way" is its reduced passive modifier.
+        In the second speech act, the overt wh-subject *who* governs
+        discovered, rather than permitting "love" to become its main verb.
+        """
+        by_id={c.get("id"):c for c in components}
+        quote=by_id.get("q0")
+        if (not quote or quote.get("function")!="direct_speech"
+                or (quote.get("start"),quote.get("end"))!=(0,len(text))
+                or any(c.get("function") in (
+                    "reporting_clause", "embedded_quotation",
+                    "split_direct_speech_turn","narratorial_parenthetical",
+                ) for c in components)):
+            return None
+        marks=quotation_boundaries(text)
+        if (len(marks)!=2 or
+                [(x.start,x.end,x.side) for x in marks]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close"),
+                ]):
+            return None
+        acts=sorted((c for c in components
+                     if c.get("function")=="spoken_clause_candidate"
+                     and c.get("governor")=="q0"),
+                    key=lambda c:c["start"])
+        if (len(acts)!=2 or acts[0]["start"]!=1 or
+                acts[-1]["end"]!=len(text)-1 or
+                text[acts[0]["end"]:acts[1]["start"]].strip()):
+            return None
+        first=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)(,)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)(,)\s+"
+            r"([A-Za-z]+)\s+(.+?)(\.)",
+            text[acts[0]["start"]:acts[0]["end"]],
+        )
+        second=re.fullmatch(
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+([A-Za-z]+)\s+"
+            r"([A-Za-z]+)\s+([A-Za-z]+)\s+(.+?)(!)",
+            text[acts[1]["start"]:acts[1]["end"]],
+        )
+        if first is None or second is None:
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def group(m:re.Match[str],base:int,i:int,category:str,
+                  kind="lexical",**required:str)->None:
+            a,b=m.span(i)
+            specs.append((category,base+a,base+b,kind,required))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        b=acts[0]["start"]
+        group(first,b,1,"EXPL","lexical",expletive="true")
+        group(first,b,2,"HAVE","lexical",
+              vform="finite",number="singular",person="3")
+        group(first,b,3,"AUX-BE","lexical",vform="ed")
+        group(first,b,4,"DET","lexical",quantifier="many")
+        group(first,b,5,"DET","lexical",number="singular",
+              definiteness="indefinite")
+        group(first,b,6,"NUM")
+        group(first,b,7,"COMMA","source-punctuation")
+        group(first,b,8,"NP","phrase",person="1",number="singular",
+              pronominal="true")
+        group(first,b,9,"V","lexical",vform="finite",
+              subcat_member="clausal")
+        group(first,b,10,"COMMA","source-punctuation")
+        group(first,b,11,"V","lexical",vform="ed",
+              subcat_member="transitive")
+        group(first,b,12,"PP","phrase")
+        group(first,b,13,"SPEECH-STOP","source-punctuation")
+        b=acts[1]["start"]
+        group(second,b,1,"NP","phrase",
+              person="1",number="singular",pronominal="true")
+        group(second,b,2,"V","lexical",vform="finite",
+              subcat_member="whether_clausal")
+        group(second,b,3,"WH-PRONOUN","lexical",wh="true")
+        group(second,b,4,"ADV")
+        group(second,b,5,"V","lexical",vform="finite",
+              subcat_member="transitive")
+        group(second,b,6,"NP","phrase")
+        group(second,b,7,"EXCL","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_existential_and_embedded_wh",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_split_intent_causal_ditransitive(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1696,6 +1808,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        existential = self._compose_existential_parenthetical_wh_question(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if existential is not None:
+            return existential
         causal = self._compose_split_intent_causal_ditransitive(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
