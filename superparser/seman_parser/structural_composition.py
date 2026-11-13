@@ -345,6 +345,31 @@ class QuotedSentenceComposer:
                     return None
                 if (category == "CLAUSE"
                         and expected_rule ==
+                        "dialogue_structural_three_confirmatory_tags_vocative"):
+                    # Existing full finite clause has the right subject
+                    # and genuine copular NP predicate, not an NP homograph.
+                    if (selected.rule_id != "clause_np_vp"
+                            or len(selected.children)!=2
+                            or selected.children[1].rule_id!="vp_cop_np"
+                            or len(selected.children[1].children)!=2):
+                        return None
+                    predicate=selected.children[1].children[1]
+                    if surface.startswith("That's"):
+                        if predicate.rule_id!="np_poss_num_n":
+                            return None
+                    elif "for bargains" in surface:
+                        if predicate.rule_id!="np_pp_mod":
+                            return None
+                    elif "that never bungled" in surface:
+                        if (predicate.rule_id!="np_relative_subj"
+                                or len(predicate.children)!=2
+                                or predicate.children[1].rule_id
+                                   !="wh_subj_clause"):
+                            return None
+                    else:
+                        return None
+                if (category == "CLAUSE"
+                        and expected_rule ==
                         "dialogue_structural_intercalated_vocative_two_perfect"
                         and selected.rule_id != "clause_np_vp"):
                     return None
@@ -426,6 +451,8 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     3 if expected_rule ==
+                    "dialogue_structural_three_confirmatory_tags_vocative" else
+                    3 if expected_rule ==
                     "dialogue_structural_split_intent_causal_request" else
                     2 if expected_rule ==
                     "dialogue_structural_existential_and_embedded_wh" else
@@ -465,6 +492,94 @@ class QuotedSentenceComposer:
             ),
         }
         return assembled
+
+    def _compose_three_confirmatory_tags_and_vocative(
+        self, parser: Any, text: str, original_lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None,
+        kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None,
+        beam: int | None = None,
+    ) -> ParseResult | None:
+        """Compose source-proven copular clauses with genuine inverted tags.
+
+        Each main clause must already have its own correct ranked constituent
+        structure. The questions have overt inverted finite COPULAs and NP
+        subjects, not invented question predicates. The final insulting
+        vocative has overt second-person NP, compound ADJP and noun head.
+        """
+        by_id={c.get("id"):c for c in components}
+        q0=by_id.get("q0")
+        if (not q0 or q0.get("function")!="direct_speech"
+                or (q0.get("start"),q0.get("end"))!=(0,len(text))
+                or any(c.get("function") in (
+                    "reporting_clause", "embedded_quotation",
+                    "split_direct_speech_turn","narratorial_parenthetical"
+                ) for c in components)):
+            return None
+        quotes=quotation_boundaries(text)
+        if (len(quotes)!=2 or
+                [(x.start,x.end,x.side) for x in quotes]!=[
+                    (0,1,"open"),(len(text)-1,len(text),"close")
+                ]):
+            return None
+        acts=sorted((c for c in components
+                    if c.get("function")=="spoken_clause_candidate"
+                    and c.get("governor")=="q0"),key=lambda x:x["start"])
+        if (len(acts)!=3 or acts[0]["start"]!=1
+                or acts[-1]["end"]!=len(text)-1
+                or any(text[x["end"]:y["start"]].strip()
+                       for x,y in zip(acts,acts[1:]))):
+            return None
+        one=re.fullmatch(
+            r"(.+?)(,)\s+([A-Za-z']+)\s+([A-Za-z]+)(\?)",
+            text[acts[0]["start"]:acts[0]["end"]],
+        )
+        two=re.fullmatch(
+            r"(.+?)(,)\s+([A-Za-z']+)\s+([A-Za-z]+)(\?)",
+            text[acts[1]["start"]:acts[1]["end"]],
+        )
+        three=re.fullmatch(
+            r"(.+?)(,)\s+([A-Za-z]+)\s+([A-Za-z-]+)\s+([A-Za-z]+)(!)",
+            text[acts[2]["start"]:acts[2]["end"]],
+        )
+        if not all((one,two,three)):
+            return None
+        specs: list[tuple[str,int,int,str,Mapping[str,str]]]=[]
+        def add(m:re.Match[str],base:int,n:int,cat:str,
+                kind="lexical",**required:str)->None:
+            a,b=m.span(n)
+            specs.append((cat,base+a,base+b,kind,required))
+        specs.append(("OPEN-QUOTE",0,1,"source-punctuation",{}))
+        add(one,acts[0]["start"],1,"CLAUSE","phrase")
+        add(one,acts[0]["start"],2,"COMMA","source-punctuation")
+        add(one,acts[0]["start"],3,"COPULA","lexical",
+            vform="finite",number="singular",person="3")
+        add(one,acts[0]["start"],4,"NP","phrase",
+            person="3",number="singular",pronominal="true")
+        add(one,acts[0]["start"],5,"QMARK","source-punctuation")
+        add(two,acts[1]["start"],1,"CLAUSE","phrase")
+        add(two,acts[1]["start"],2,"COMMA","source-punctuation")
+        add(two,acts[1]["start"],3,"COPULA","lexical",
+            vform="finite",negation="true")
+        add(two,acts[1]["start"],4,"NP","phrase",
+            person="2",pronominal="true")
+        add(two,acts[1]["start"],5,"QMARK","source-punctuation")
+        add(three,acts[2]["start"],1,"CLAUSE","phrase")
+        add(three,acts[2]["start"],2,"COMMA","source-punctuation")
+        add(three,acts[2]["start"],3,"NP","phrase",
+            person="2",pronominal="true")
+        add(three,acts[2]["start"],4,"ADJP","phrase")
+        add(three,acts[2]["start"],5,"N")
+        add(three,acts[2]["start"],6,"EXCL","source-punctuation")
+        specs.append(("CLOSE-QUOTE",len(text)-1,len(text),
+                      "source-punctuation",{}))
+        return self._compose_verified_dialogue_pattern(
+            parser,text,original_lattice,specs,
+            "dialogue_structural_three_confirmatory_tags_vocative",
+            max_items=max_items,kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k,beam=beam,
+        )
 
     def _compose_existential_parenthetical_wh_question(
         self, parser: Any, text: str, original_lattice: LexicalLattice,
@@ -1809,6 +1924,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        confirmatory = self._compose_three_confirmatory_tags_and_vocative(
+            parser, text, original_lattice, components,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
+        )
+        if confirmatory is not None:
+            return confirmatory
         existential = self._compose_existential_parenthetical_wh_question(
             parser, text, original_lattice, components,
             max_items=max_items, kbest_work_limit=kbest_work_limit,

@@ -190,6 +190,79 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+
+    def test_498_numeric_and_relative_copula_with_two_true_tags(self):
+        source=(
+            '"That\'s your seven hundred thousand pounds, is it? '
+            'You\'re the man for bargains, ain\'t you? '
+            'You\'re him that never bungled nothing, you wooden-headed lubber!"'
+        )
+        r=self.actual(498,source)
+        n=self.root(r,"dialogue_structural_three_confirmatory_tags_vocative")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),
+            ("CLAUSE","That's your seven hundred thousand pounds"),
+            ("COMMA",","),
+            ("TAG-QUESTION","is it?"),
+            ("CLAUSE","You're the man for bargains"),
+            ("COMMA",","),
+            ("TAG-QUESTION","ain't you?"),
+            ("CLAUSE","You're him that never bungled nothing"),
+            ("COMMA",","),
+            ("VOCATIVE","you wooden-headed lubber"),
+            ("EXCL","!"),("CLOSE-QUOTE",'"'),
+        ])
+        self.assertEqual(n.children[1].children[1].children[1].rule_id,
+                         "vp_cop_np")
+        self.assertEqual(
+            n.children[1].children[1].children[1].children[1].rule_id,
+            "np_poss_num_n")
+        self.assertEqual(n.children[4].children[1].children[1].children[1].rule_id,
+                         "np_pp_mod")
+        third=n.children[7].children[1].children[1].children[1]
+        self.assertEqual(third.rule_id,"np_relative_subj")
+        self.assertEqual(third.children[1].rule_id,"wh_subj_clause")
+        pos=n.children[3]
+        self.assertEqual(pos.rule_id,
+                         "dialogue_structural_confirmatory_positive_copular_tag")
+        self.assert_kids(r,pos,[("COPULA","is"),("NP","it"),("QMARK","?")])
+        neg=n.children[6]
+        self.assertEqual(neg.rule_id,
+                         "dialogue_structural_confirmatory_negative_copular_tag")
+        self.assert_kids(r,neg,[("COPULA","ain't"),("NP","you"),("QMARK","?")])
+        self.assertEqual(neg.children[0].features.as_dict()["negation"],"true")
+        vocative=n.children[9]
+        self.assertEqual(vocative.rule_id,
+                         "dialogue_structural_direct_address_compound_epithet")
+        self.assert_kids(r,vocative,[
+            ("NP","you"),("ADJP","wooden-headed"),("N","lubber"),
+        ])
+        self.assertEqual(vocative.children[1].children[0].rule_id,"adjp_adj")
+        self.assertEqual(r.stats["structural_clause_count"],3)
+
+    def test_498_tags_require_original_polarity_and_full_vocative(self):
+        negatives=(
+            '"That\'s your seven hundred thousand pounds, are you? '
+            'You\'re the man for bargains, ain\'t you? '
+            'You\'re him that never bungled nothing, you wooden-headed lubber!"',
+            '"That\'s your seven hundred thousand pounds, is it? '
+            'You\'re the man for bargains, are you? '
+            'You\'re him that never bungled nothing, you wooden-headed lubber!"',
+            '"That\'s your seven hundred thousand pounds, is it? '
+            'You\'re the man for bargains, ain\'t you? '
+            'You\'re him that never bungled nothing, you wooden-headed!"',
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                _,_,r=parse_corpus_case(
+                    self.parser,cases[0],max_items=50_000,
+                    kbest_work_limit=500_000)
+                self.assertNotEqual(r.stats.get("structural_composition_kind"),
+                    "dialogue_structural_three_confirmatory_tags_vocative")
+
     def test_223_existential_incise_passive_and_wh_subject_question(self):
         source=(
             "“There has been many a one, I fancy, overcome in the same way. "
