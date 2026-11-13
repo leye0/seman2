@@ -192,6 +192,158 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+
+    def test_209_temporal_negative_partitive_with_true_gerund_doubt_content(self):
+        source=(
+            "“And till Colonel Forster came himself, not one of you "
+            "entertained a doubt, I suppose, of their being really married?”"
+        )
+        r=self.actual(209,source)
+        n=self.root(r,"dialogue_structural_temporal_doubt_dislocated_gerund_question")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),("COORD","And"),
+            ("TEMPORAL-CLAUSE","till Colonel Forster came himself"),
+            ("COMMA",","),("NEG-PARTITIVE-NP","not one of you"),
+            ("V","entertained"),
+            ("DOUBT-CONTENT","a doubt, I suppose, of their being really married"),
+            ("QMARK","?"),("CLOSE-QUOTE","”"),
+        ])
+        temporal=n.children[2]
+        self.assertEqual(temporal.rule_id,
+                         "dialogue_structural_till_emphatic_temporal_clause")
+        self.assert_kids(r,temporal,[
+            ("CONJ","till"),("NP","Colonel Forster"),
+            ("V","came"),("EMPHATIC-REFLEXIVE","himself"),
+        ])
+        self.assertEqual(temporal.children[1].children[0].rule_id,"np_title_name")
+        subj=n.children[4]
+        self.assertEqual(subj.rule_id,
+                         "dialogue_structural_negative_number_partitive_subject")
+        self.assertEqual(subj.features.as_dict()["number"],"singular")
+        self.assertEqual(subj.features.as_dict()["person"],"3")
+        self.assert_kids(r,subj,[
+            ("NEG","not"),("NUM","one"),("PARTITIVE-OF","of"),
+            ("PRONOUN","you"),
+        ])
+        content=n.children[6]
+        self.assertEqual(content.rule_id,
+                         "dialogue_structural_doubt_content_with_epistemic_incise")
+        self.assert_kids(r,content,[
+            ("DET","a"),("N","doubt"),("COMMA",","),
+            ("EPISTEMIC-INCISE","I suppose"),("COMMA",","),
+            ("GERUND-OF-COMP","of their being really married"),
+        ])
+        self.assertEqual(content.children[1].features.as_dict()[
+                         "of_gerund_content"],"true")
+        inc=content.children[3]
+        self.assertEqual(inc.rule_id,
+                         "dialogue_structural_epistemic_first_person_incise")
+        self.assert_kids(r,inc,[("PRONOUN","I"),("V","suppose")])
+        self.assertEqual(inc.children[1].features.as_dict()["vform"],"finite")
+        ger=content.children[-1]
+        self.assertEqual(ger.rule_id,
+                         "dialogue_structural_possessive_copular_gerund_of")
+        self.assert_kids(r,ger,[
+            ("PREP","of"),("POSS","their"),("COPULA","being"),
+            ("ADV","really"),("ADJ","married"),
+        ])
+        self.assertEqual(ger.children[2].features.as_dict()["vform"],"ing")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_241_floating_subject_quantifier_with_object_predicate_reciprocal(self):
+        source=(
+            "“When they all removed to Brighton, therefore, you had no "
+            "reason, I suppose, to believe them fond of each other?”"
+        )
+        r=self.actual(241,source)
+        n=self.root(r,"dialogue_structural_temporal_reason_dislocated_inf_question")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),
+            ("TEMPORAL-CLAUSE","When they all removed to Brighton"),
+            ("COMMA",","),("ADV","therefore"),("COMMA",","),
+            ("PRONOUN","you"),("V","had"),
+            ("REASON-CONTENT","no reason, I suppose, to believe them fond of each other"),
+            ("QMARK","?"),("CLOSE-QUOTE","”"),
+        ])
+        temp=n.children[1]
+        self.assertEqual(temp.rule_id,
+                         "dialogue_structural_when_distributive_location_clause")
+        self.assert_kids(r,temp,[
+            ("CONJ","When"),("DISTRIBUTED-SUBJECT","they all"),
+            ("V","removed"),("PP","to Brighton"),
+        ])
+        self.assertEqual(temp.children[1].rule_id,
+                         "dialogue_structural_distributive_pronoun_subject")
+        self.assert_kids(r,temp.children[1],[
+            ("PRONOUN","they"),("DET","all"),
+        ])
+        self.assertEqual(temp.children[3].children[0].rule_id,"pp_prep_np")
+        self.assertEqual(temp.children[3].children[0].children[1].rule_id,
+                         "np_proper")
+        reason=n.children[7]
+        self.assertEqual(reason.rule_id,
+                         "dialogue_structural_reason_infinitive_with_epistemic_incise")
+        self.assert_kids(r,reason,[
+            ("DET","no"),("N","reason"),("COMMA",","),
+            ("EPISTEMIC-INCISE","I suppose"),("COMMA",","),
+            ("INFINITIVE-OBJECT-PRED","to believe them fond of each other"),
+        ])
+        self.assertEqual(reason.children[1].features.as_dict()[
+                         "to_infinitive_content"],"true")
+        inc=reason.children[3]
+        self.assertEqual(inc.rule_id,
+                         "dialogue_structural_epistemic_first_person_incise")
+        self.assert_kids(r,inc,[("PRONOUN","I"),("V","suppose")])
+        inf=reason.children[-1]
+        self.assertEqual(inf.rule_id,
+                         "dialogue_structural_infinitive_object_predicative")
+        self.assert_kids(r,inf,[
+            ("TO","to"),("V","believe"),("PRONOUN","them"),
+            ("PREDICATIVE-ADJP","fond of each other"),
+        ])
+        pred=inf.children[-1]
+        self.assertEqual(pred.rule_id,
+                         "dialogue_structural_fond_of_reciprocal_predicate")
+        self.assert_kids(r,pred,[
+            ("ADJ","fond"),("PREP","of"),
+            ("RECIPROCAL-PRONOUN","each other"),
+        ])
+        self.assertEqual(pred.children[-1].features.as_dict()["reciprocal"],"true")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_209_241_epistemic_incise_requires_overt_source_and_lexical_frames(self):
+        a=(
+            "“And till Colonel Forster came himself, not one of you "
+            "entertained a doubt, I suppose, of their being really married?”"
+        )
+        b=(
+            "“When they all removed to Brighton, therefore, you had no "
+            "reason, I suppose, to believe them fond of each other?”"
+        )
+        negatives=(
+            a.replace("of their being really married",
+                      "from their being really married"),
+            a.replace("of their being really married",
+                      "of them being really married"),
+            a.replace("I suppose,","I supposing,"),
+            b.replace("fond of each other","fond of each others"),
+            b.replace("fond of each other","afraid of each other"),
+            b.replace("believe them fond","believe she fond"),
+            b.replace("I suppose,","I supposing,"),
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(self.parser,cases[0],
+                    max_items=50_000,kbest_work_limit=500_000)
+                self.assertEqual(prepared.source_text,source)
+                self.assertNotIn(r.stats.get("structural_composition_kind"),{
+                    "dialogue_structural_temporal_doubt_dislocated_gerund_question",
+                    "dialogue_structural_temporal_reason_dislocated_inf_question",
+                })
+
     def test_464_dialect_wh_object_negative_modal_and_first_person_echo(self):
         source='"There! Wot did I say? No good\'ll come o\' that, I said."'
         r=self.actual(464,source)
