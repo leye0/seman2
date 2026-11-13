@@ -193,6 +193,157 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+
+    def test_247_semicolon_two_copular_claims_dare_say_and_bare_genitive(self):
+        source=(
+            "“It is nothing in comparison of Rosings, my lady, I dare say; "
+            "but I assure you it is much larger than Sir William Lucas's.”"
+        )
+        r=self.actual(247,source)
+        n=self.root(r,
+            "dialogue_structural_semicolon_epistemic_assurance_comparative")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE","“"),
+            ("CLAUSE","It is nothing in comparison of Rosings"),
+            ("COMMA",","),("NP","my lady"),("COMMA",","),
+            ("EPISTEMIC-INCISE","I dare say"),
+            ("SEMICOLON",";"),("COORD","but"),
+            ("ASSURANCE-CONTENT",
+             "I assure you it is much larger than Sir William Lucas's"),
+            ("SPEECH-STOP","."),("CLOSE-QUOTE","”"),
+        ])
+        claim=n.children[1].children[0]
+        self.assertEqual(claim.rule_id,"clause_np_vp")
+        self.assertEqual(claim.children[1].rule_id,"vp_cop_np")
+        self.assertEqual(claim.children[1].children[1].rule_id,"np_pp_mod")
+        self.assertEqual(claim.children[1].children[1].children[1].rule_id,
+                         "pp_prep_np")
+        self.assertEqual(n.children[3].children[0].rule_id,"np_poss")
+        inc=n.children[5]
+        self.assertEqual(inc.rule_id,
+                         "dialogue_structural_dare_say_epistemic_incise")
+        self.assert_kids(r,inc,[
+            ("PRONOUN","I"),("V","dare"),("V","say"),
+        ])
+        self.assertEqual(inc.children[1].features.as_dict()["vform"],"finite")
+        self.assertEqual(inc.children[2].features.as_dict()["vform"],"base")
+        assurance=n.children[8]
+        self.assertEqual(assurance.rule_id,
+                         "dialogue_structural_assurance_zero_that_content")
+        self.assert_kids(r,assurance,[
+            ("PRONOUN","I"),("V","assure"),("PRONOUN","you"),
+            ("COMPARATIVE-CONTENT",
+             "it is much larger than Sir William Lucas's"),
+        ])
+        comp=assurance.children[-1]
+        self.assertEqual(comp.rule_id,
+                         "dialogue_structural_copular_comparison_to_bare_genitive")
+        self.assert_kids(r,comp,[
+            ("CLAUSE","it is much larger"),("CONJ","than"),
+            ("GENITIVE-COMP-STANDARD","Sir William Lucas's"),
+        ])
+        cp=comp.children[0].children[0]
+        self.assertEqual(cp.rule_id,"clause_np_vp")
+        self.assertEqual(cp.children[1].rule_id,"vp_cop_adjp")
+        self.assertEqual(cp.children[1].children[1].rule_id,"adjp_adv_adj")
+        gen=comp.children[2]
+        self.assertEqual(gen.rule_id,
+                         "dialogue_structural_titled_overt_genitive_comparison_standard")
+        self.assert_kids(r,gen,[
+            ("TITLE","Sir"),("PROPER-NOUN","William"),
+            ("PROPER-NOUN","Lucas"),("POSS","'s"),
+        ])
+        self.assertEqual(gen.children[-1].features.as_dict()[
+            "genitive_clitic"],"true")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_359_anterior_passive_shared_predicates_and_true_purpose(self):
+        source=(
+            '"The family, after having been thus occupied for a short time, '
+            'extinguished their lights and retired, as I conjectured, to rest."'
+        )
+        r=self.actual(359,source)
+        n=self.root(r,
+            "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),("NP","The family"),("COMMA",","),
+            ("ANTERIOR-PASSIVE-ADJUNCT",
+             "after having been thus occupied for a short time"),
+            ("COMMA",","),
+            ("SHARED-SUBJECT-COORD-PRED",
+             "extinguished their lights and retired, as I conjectured, to rest"),
+            ("SPEECH-STOP","."),("CLOSE-QUOTE",'"'),
+        ])
+        self.assertEqual(n.children[1].children[0].rule_id,"np_det_n")
+        passive=n.children[3]
+        self.assertEqual(passive.rule_id,
+                         "dialogue_structural_after_anterior_perfect_passive")
+        self.assert_kids(r,passive,[
+            ("PREP","after"),("HAVE","having"),("AUX-BE","been"),
+            ("ADV","thus"),("V","occupied"),("PP","for a short time"),
+        ])
+        self.assertEqual(passive.children[1].features.as_dict()["vform"],"ing")
+        self.assertEqual(passive.children[2].features.as_dict()["vform"],"ed")
+        self.assertEqual(passive.children[4].features.as_dict()["vform"],"ed")
+        self.assertEqual(passive.children[5].children[0].rule_id,"pp_prep_np")
+        shared=n.children[5]
+        self.assertEqual(shared.rule_id,
+                         "dialogue_structural_transitive_then_retire_with_conjectured_purpose")
+        self.assert_kids(r,shared,[
+            ("VP","extinguished their lights"),("COORD","and"),
+            ("V","retired"),("COMMA",","),
+            ("EPISTEMIC-AS-INCISE","as I conjectured"),("COMMA",","),
+            ("PURPOSE-INFINITIVE","to rest"),
+        ])
+        self.assertEqual(shared.children[0].children[0].rule_id,"vp_transitive")
+        self.assertEqual(shared.children[0].children[0].children[1].rule_id,
+                         "np_poss")
+        inc=shared.children[4]
+        self.assertEqual(inc.rule_id,
+                         "dialogue_structural_as_finite_conjectural_incise")
+        self.assert_kids(r,inc,[
+            ("CONJ","as"),("PRONOUN","I"),("V","conjectured"),
+        ])
+        purpose=shared.children[-1]
+        self.assertEqual(purpose.rule_id,
+                         "dialogue_structural_purpose_to_base_intransitive")
+        self.assert_kids(r,purpose,[("TO","to"),("V","rest")])
+        self.assertEqual(purpose.children[1].features.as_dict()["vform"],"base")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_247_359_no_fabricated_genitive_or_false_passive_incise(self):
+        a=(
+            "“It is nothing in comparison of Rosings, my lady, I dare say; "
+            "but I assure you it is much larger than Sir William Lucas's.”"
+        )
+        b=(
+            '"The family, after having been thus occupied for a short time, '
+            'extinguished their lights and retired, as I conjectured, to rest."'
+        )
+        negatives=(
+            a.replace("I dare say;","I dares say;"),
+            a.replace("Sir William Lucas's","Sir William Lucas"),
+            a.replace("Sir William Lucas's","Sir William Lucas is"),
+            a.replace("say; but","say, but"),
+            b.replace("after having been","after had been"),
+            b.replace("retired, as I conjectured, to rest",
+                      "retired, as I conjectured, at rest"),
+            b.replace("as I conjectured","as I conjecturing"),
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                cases,_=extract(Book(999,"Grammar","Test","train"),
+                                source,length_min=1,length_max=100)
+                self.assertEqual(len(cases),1)
+                prepared,_,r=parse_corpus_case(
+                    self.parser,cases[0],max_items=50_000,
+                    kbest_work_limit=500_000)
+                self.assertEqual(prepared.source_text,source)
+                self.assertNotIn(r.stats.get("structural_composition_kind"),{
+                    "dialogue_structural_semicolon_epistemic_assurance_comparative",
+                    "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
+                })
+
     def test_209_temporal_negative_partitive_with_true_gerund_doubt_content(self):
         source=(
             "“And till Colonel Forster came himself, not one of you "
