@@ -263,6 +263,8 @@ class DialogueBulk24Tests(unittest.TestCase):
             "“There has been many a one, I fancy, overcoming in the same way. "
             "I wonder who first discovered the efficacy of poetry "
             "in driving away love!”",
+            # A relative WH pronoun must not be mislicensed as an
+            # independent interrogative WH-subject.
             # A declarative 'that' is not the interrogative subject 'who'.
             "“There has been many a one, I fancy, overcome in the same way. "
             "I wonder that first discovered the efficacy of poetry "

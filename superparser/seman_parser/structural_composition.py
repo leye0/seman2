@@ -550,7 +550,8 @@ class QuotedSentenceComposer:
               person="1",number="singular",pronominal="true")
         group(second,b,2,"V","lexical",vform="finite",
               subcat_member="whether_clausal")
-        group(second,b,3,"WH-PRONOUN","lexical",wh="true")
+        group(second,b,3,"WH-PRONOUN","lexical",wh="true",
+              interrogative_subject="true")
         group(second,b,4,"ADV")
         group(second,b,5,"V","lexical",vform="finite",
               subcat_member="transitive")
