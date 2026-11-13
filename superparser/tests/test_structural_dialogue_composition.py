@@ -306,6 +306,162 @@ class SourceParentheticalModalTests(unittest.TestCase):
             self.assertFalse(any(c.function == "parenthetical_candidate"
                                  for c in sentence.constituents))
 
+class SubjectResumptionTests(unittest.TestCase):
+    CASES = {
+        101: ("My face, neck, and hands", "structural_causal_subject_supplement",
+              "from unaccustomed exposure to the air and sun", "were burnt to a berry-brown"),
+        220: ("his manners", "structural_reduced_concessive_subject_supplement",
+              "though well-bred", "were not inviting"),
+        239: ("Elizabeth", "structural_controlled_transitive_participle",
+              "immediately recognizing the livery",
+              "guessed what it meant, and imparted no small degree of her surprise to her relations "
+              "by acquainting them with the honour which she expected"),
+        291: ("A meeting", "structural_finite_object_gap_manner",
+              "which he anticipated with such joy", "so strangely turned to bitterness"),
+        463: ("He himself", "structural_epistemic_subject_supplement",
+              "I thought", "looked somewhat paler and more stern than I was used to"),
+        485: ("someone", "structural_temporal_controlled_participle",
+              "at the same time snatching another",
+              "gave me a cut across the knuckles which I hardly felt"),
+        486: ("These biscuits", "structural_inverted_should_subject_supplement",
+              "should anything befall me",
+              "would keep me, at least, from starving till far on in the next day"),
+    }
+    CONTROLS = (
+        "Her arms, legs, and shoulders, from prolonged exposure to the heat and wind, "
+        "were burnt to a deep red.",
+        "She was at the same time kind, patient, and generous, and her friends, "
+        "though shy, were not distant.",
+        "Martha immediately recognizing the visitor, guessed what it meant, and imparted "
+        "some degree of her anxiety to her sister by acquainting her with the news which she expected.",
+        "A journey, which she awaited with great joy, unexpectedly turned to disaster.",
+        "She herself, I supposed, looked somewhat taller and more serious than I was used to.",
+        "I took a book from the shelf, and someone, at the same time taking another, "
+        "gave me a mark across the page which I hardly noticed.",
+        "These blankets, should anything befall him, would keep him, at least, "
+        "from freezing till far on in the next day.",
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(DATA, cache_size=0)
+
+    def parse(self, case):
+        return parse_corpus_case(self.parser, case, max_items=50_000,
+                                 kbest_work_limit=500_000)
+
+    @staticmethod
+    def walk(node):
+        yield node
+        for child in node.children:
+            yield from SubjectResumptionTests.walk(child)
+
+    def control(self, text):
+        rows, _ = extract(Book(999, "Synthetic", "Test", "train"), text,
+                          length_min=1, length_max=120)
+        self.assertEqual([row["source_text"] for row in rows], [text])
+        return self.parse(rows[0])[2]
+
+    def test_all_seven_source_cases_have_the_correct_resumed_subject(self):
+        cases, _ = select_cases(500)
+        for i, (subject, rule, aside, predicate) in self.CASES.items():
+            with self.subTest(index=i):
+                prepared, lattice, result = self.parse(cases[i])
+                text = cases[i]["source_text"]
+                self.assertEqual(prepared.analysis_text, text)
+                self.assertEqual(lattice.text, text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertFalse(result.stats.get("budget_exceeded"))
+                self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+                root = result.best()
+                self.assertEqual((root.start, root.end), (0, len(text)))
+                self.assertEqual(root.features.as_dict()["resumed_subject"], "true")
+                resumed, = [n for n in root.children if n.category == "RESUMED-CLAUSE"]
+                surface = lambda n: text[n.start:n.end]
+                subject_tree, vp = resumed.children[0], resumed.children[-1]
+                if i == 291:
+                    # This relative modifies the subject, not the event.
+                    self.assertEqual(surface(subject_tree.children[0]), subject)
+                    supplement, = [n for n in subject_tree.children if n.rule_id == rule]
+                else:
+                    self.assertEqual(surface(subject_tree), subject)
+                    supplement, = [n for n in resumed.children if n.rule_id == rule]
+                self.assertEqual(surface(supplement), aside)
+                self.assertEqual(surface(vp), predicate)
+                for key in ("number", "person"):
+                    self.assertEqual(subject_tree.features.as_dict()[key],
+                                     vp.features.as_dict()[key])
+                by_rule = {n.rule_id: n for n in self.walk(root) if n.rule_id}
+                if i == 101:
+                    env = by_rule["structural_binary_environment_coordination"]
+                    self.assertEqual(surface(env), "the air and sun")
+                    self.assertEqual(vp.features.as_dict()["voice"], "passive")
+                    self.assertEqual(subject_tree.children[-1].features.as_dict()["number"],
+                                     "plural")
+                elif i == 220:
+                    self.assertEqual(surface(by_rule["structural_three_adjectival_predicatives"]),
+                                     "haughty, reserved, and fastidious")
+                    self.assertEqual(vp.features.as_dict()["negation"], "true")
+                elif i == 239:
+                    coord = by_rule["structural_shared_subject_finite_predicate_coordination"]
+                    self.assertEqual(surface(coord.children[0]), "guessed what it meant")
+                    self.assertEqual(coord.children[-1].children[-1].category, "MEANS-SUPPLEMENT")
+                    self.assertEqual(surface(by_rule["structural_referent_with_object_relative"]),
+                                     "the honour which she expected")
+                elif i == 463:
+                    standard = by_rule["structural_accustomed_stranded_standard"]
+                    self.assertEqual(surface(standard), "than I was used to")
+                    self.assertEqual(standard.children[-1].category, "PREP")
+                    self.assertEqual(standard.features.as_dict()["comparative_gap"], "pp_object")
+                elif i == 485:
+                    theme = by_rule["structural_locative_object_with_relative"]
+                    self.assertEqual([surface(n) for n in theme.children],
+                                     ["a cut", "across the knuckles", "which I hardly felt"])
+                    self.assertEqual(supplement.children[-1].category, "INDEF-PRONOUN")
+                    rel = theme.children[-1]
+                    self.assertEqual(rel.children[-1].lexical_candidate.lemma, "feel")
+                elif i == 486:
+                    self.assertEqual([surface(n) for n in supplement.children],
+                                     ["should", "anything", "befall", "me"])
+                    self.assertEqual([surface(n) for n in vp.children[-2:]],
+                                     ["from starving", "till far on in the next day"])
+
+    def test_independent_controls_share_one_subject_resumption_grammar(self):
+        rules = set()
+        for text in self.CONTROLS:
+            with self.subTest(text=text):
+                r = self.control(text)
+                self.assertTrue(r.completed, r.stats)
+                tree = r.best()
+                self.assertEqual(tree.features.as_dict().get("resumed_subject"), "true")
+                resumed, = [n for n in tree.children if n.category == "RESUMED-CLAUSE"]
+                rules.add(resumed.rule_id)
+        self.assertEqual(rules, {
+            "structural_subject_resumption", "structural_subject_resumption_relative",
+            "structural_subject_resumption_participial",
+        })
+
+    def test_negative_controls_reject_agreement_and_attachment_false_positives(self):
+        for control, old, new in (
+            (0, "were burnt", "was burnt"),
+            (1, "were not", "was not"),
+            (2, "recognizing", "recognize"),
+            (3, "which she", "which her"),
+            (3, "turned to disaster", "turn to disaster"),
+            (3, "joy, unexpectedly", "joy unexpectedly"),
+            (4, "She herself", "He herself"),
+            (5, "taking", "takes"),
+            (6, "should anything", "might anything"),
+            (6, "befall him", "befalls him"),
+        ):
+            with self.subTest(control=control, replacement=new):
+                text = self.CONTROLS[control]
+                self.assertIn(old, text)
+                result = self.control(text.replace(old, new))
+                best = result.best()
+                self.assertTrue(best is None or
+                                best.features.as_dict().get("resumed_subject") != "true")
+
 
 if __name__ == "__main__":
     unittest.main()

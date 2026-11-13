@@ -30,6 +30,7 @@ from .grammar import load_grammar
 from .segmentation import LexicalCandidate, LexicalLattice
 from .vector_chart import SegmentInterface, VectorGrammar
 from .structural_units import skeleton
+from .subject_resumption import plan_subject_resumption
 
 
 @dataclass(frozen=True, slots=True)
@@ -247,7 +248,7 @@ class QuotedSentenceComposer:
         total_work = 500_000 if kbest_work_limit is None else kbest_work_limit
         if total_items < 1600 or total_work < 1600:
             return None
-        phrase_n = sum(kind == "phrase" for _, _, _, kind, _ in specs)
+        phrase_n = sum(kind in ("phrase", "subject-phrase", "resumed-finite-phrase") for _, _, _, kind, _ in specs)
         piece_items = total_items // (phrase_n + 1)
         piece_work = total_work // (phrase_n + 1)
         candidates: list[LexicalCandidate] = []
@@ -281,7 +282,7 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
-            elif kind in ("lexical", "lexical-alternatives"):
+            elif kind in ("lexical", "lexical-alternatives", "nominal-lexical"):
                 matching = [
                     c for c in original_lattice.candidates
                     if c.category == category
@@ -302,6 +303,13 @@ class QuotedSentenceComposer:
                                if isinstance(c.features.as_dict().get("subcat"), (list, tuple))
                                else (c.features.as_dict().get("subcat"),)))
                         if k == "subcat_member"
+                        else (c.surface.casefold() != c.lemma.casefold()
+                              or c.features.as_dict().get("tense") == "past")
+                        if k == "nonbase_surface"
+                        else c.features.as_dict().get("gender") == {
+                            "he": "masculine", "she": "feminine", "it": "neuter",
+                        }.get(v, c.features.as_dict().get("gender"))
+                        if k == "gender_matches"
                         else c.features.as_dict().get(k) == v
                         for k, v in required.items())
                 ]
@@ -311,9 +319,14 @@ class QuotedSentenceComposer:
                     # Agreement is decided by unification, not by selecting
                     # one equally scored inflection before seeing its subject.
                     candidates.extend(matching)
+                elif kind == "nominal-lexical":
+                    candidates.append(max(matching, key=lambda c: (
+                        c.features.as_dict().get("number") == "plural",
+                        c.score,
+                    )))
                 else:
                     candidates.append(max(matching, key=lambda c: c.score))
-            elif kind == "phrase":
+            elif kind in ("phrase", "subject-phrase", "resumed-finite-phrase"):
                 grammar = (
                     parser._dialogue_vector_grammar
                     if category == "SPEECH-TAG"
@@ -340,8 +353,38 @@ class QuotedSentenceComposer:
                 if (not proof.completed or selected is None
                         or selected.category != category
                         or any(selected.features.as_dict().get(k) != v
-                               for k, v in required.items())):
+                               for k, v in required.items() if k != "proof_rule")
+                        or ("proof_rule" in required and selected.rule_id != required["proof_rule"])):
                     return None
+                if kind == "resumed-finite-phrase":
+                    # An unmarked present base form cannot inherit 3SG
+                    # merely because the lexical feature is underspecified.
+                    head = selected
+                    while head.children and head.rule_id in ("advp_vp", "vp_adv", "vp_pp"):
+                        child = next((c for c in head.children if c.category == "VP"), None)
+                        if child is None:
+                            return None
+                        head = child
+                    if not head.children or head.children[0].lexical_candidate is None:
+                        return None
+                    finite = head.children[0].lexical_candidate
+                    if (finite.category == "V"
+                            and finite.surface.casefold() == finite.lemma.casefold()
+                            and finite.features.as_dict().get("tense") != "past"):
+                        return None
+                if kind == "subject-phrase":
+                    if selected.rule_id not in (
+                        "np_bare", "np_det_n", "np_indef_pron", "np_poss",
+                        "np_proper", "np_title_name", "np_proper_name",
+                    ):
+                        return None
+                    if any(
+                        c.category == "PRONOUN"
+                        and (c.span_start, c.span_end) == (a, b)
+                        and c.features.as_dict().get("case") == "accusative"
+                        for c in original_lattice.candidates
+                    ):
+                        return None
                 if expected_rule in (NARRATIVE_TURN, CLEFT_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL):
                     if category == "CLAUSE" and (
                         selected.rule_id != "clause_np_vp"
@@ -645,7 +688,7 @@ class QuotedSentenceComposer:
                     })
                 ),
                 "structural_segment_spans": [
-                    [p[1], p[2]] for p in specs if p[3] == "phrase"
+                    [p[1], p[2]] for p in specs if p[3] in ("phrase", "subject-phrase", "resumed-finite-phrase")
                 ],
                 "structural_segment_rule_ids": [
                     p.best().rule_id for p in proofs
@@ -2276,6 +2319,26 @@ class QuotedSentenceComposer:
             parser,text,original_lattice,specs,rule,
             max_items=max_items,kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def compose_unquoted_subject_resumption(
+        self, parser: Any, text: str, lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None, kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None, beam: int | None = None,
+    ) -> ParseResult | None:
+        if (sum(c.get("function") == "matrix_clause" for c in components) != 1
+                or any(c.get("function") in ("direct_speech", "embedded_quotation")
+                       for c in components)):
+            return None
+        plan = plan_subject_resumption(text)
+        if plan is None:
+            return None
+        specs, rule = plan
+        return self._compose_verified_dialogue_pattern(
+            parser, text, lattice, specs, rule,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
         )
 
     def compose_unquoted_parenthetical_modal(
