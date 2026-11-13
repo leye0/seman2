@@ -2,7 +2,7 @@ name: Dialogue families grammar interface probes
 on:
   pull_request:
     branches: [main]
-    paths: ['superparser/scripts/probe_dialogue_families.py', 'superparser/scripts/probe_dialogue_more_families.py', 'superparser/tests/test_dialogue_bulk_24.py', 'superparser/seman_parser/structural_composition.py', 'superparser/data/dialogue_structural_grammar.jsonl', 'superparser/data/syntax_lexicon.jsonl', '.github/workflows/probe-dialogue-families.yml']
+    paths: ['superparser/scripts/probe_dialogue_families.py', 'superparser/scripts/probe_dialogue_more_families.py', 'superparser/scripts/probe_dialogue_tags_475_498.py', 'superparser/tests/test_dialogue_bulk_24.py', 'superparser/seman_parser/structural_composition.py', 'superparser/data/dialogue_structural_grammar.jsonl', 'superparser/data/syntax_lexicon.jsonl', '.github/workflows/probe-dialogue-families.yml']
   workflow_dispatch:
 permissions: {contents: read}
 jobs:
@@ -26,6 +26,8 @@ jobs:
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_dialogue_families
       - name: Probe additional dialogue constituent interfaces
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_dialogue_more_families
+      - name: Probe source-bound tag and comparative structures
+        run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.probe_dialogue_tags_475_498
       - name: Trace exact source proof blockers on three new dialogue patterns
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.trace_dialogue_bulk
       - name: Test four original source dialogue repairs with rank-one trees
