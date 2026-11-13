@@ -20,6 +20,9 @@ from typing import Any, Mapping, Sequence
 
 from .chart import ParseResult
 from .dialogue import quotation_boundaries
+from .dialogue_clause_plans import (
+    CLEFT_TURN, NARRATIVE_TURN, cleft_conditional_plan, narrative_comparative_plan,
+)
 from .features import FeatureStructure
 from .grammar import load_grammar
 from .segmentation import LexicalCandidate, LexicalLattice
@@ -274,7 +277,7 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
-            elif kind == "lexical":
+            elif kind in ("lexical", "lexical-alternatives"):
                 matching = [
                     c for c in original_lattice.candidates
                     if c.category == category
@@ -300,7 +303,12 @@ class QuotedSentenceComposer:
                 ]
                 if not matching:
                     return None
-                candidates.append(max(matching, key=lambda c: c.score))
+                if kind == "lexical-alternatives":
+                    # Agreement is decided by unification, not by selecting
+                    # one equally scored inflection before seeing its subject.
+                    candidates.extend(matching)
+                else:
+                    candidates.append(max(matching, key=lambda c: c.score))
             elif kind == "phrase":
                 grammar = (
                     parser._dialogue_vector_grammar
@@ -330,6 +338,28 @@ class QuotedSentenceComposer:
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items())):
                     return None
+                if expected_rule in (NARRATIVE_TURN, CLEFT_TURN):
+                    if category == "CLAUSE" and (
+                        selected.rule_id != "clause_np_vp"
+                        or len(selected.children) != 2
+                        or selected.children[1].features.as_dict().get("vform") != "finite"
+                    ):
+                        return None
+                    if category == "NP" and not required and selected.rule_id not in (
+                        "np_det_n", "np_poss", "np_bare", "np_proper", "np_title_name",
+                        "np_proper_name",
+                    ):
+                        return None
+                    if (category == "NP" and required.get("pronominal") == "true"
+                            and any(
+                                c.category == "PRONOUN"
+                                and (c.span_start, c.span_end) == (a, b)
+                                and c.features.as_dict().get("case") == "accusative"
+                                for c in original_lattice.candidates
+                            )):
+                        return None
+                    if category == "PP" and selected.rule_id != "pp_prep_np":
+                        return None
                 if (expected_rule ==
                         "dialogue_structural_semicolon_epistemic_assurance_comparative"):
                     if category=="NP" and selected.rule_id!="np_poss":
@@ -570,7 +600,9 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
+                    1 if expected_rule == NARRATIVE_TURN else
                     2 if expected_rule in (
+                        CLEFT_TURN,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
                         "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
                     ) else
@@ -2674,6 +2706,19 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        for planner, rule in (
+            (narrative_comparative_plan, NARRATIVE_TURN),
+            (cleft_conditional_plan, CLEFT_TURN),
+        ):
+            specs = planner(text, components)
+            if specs is not None:
+                result = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, specs, rule,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if result is not None:
+                    return result
         semicolon = self._compose_semicolon_assurance_comparative(
             parser,text,original_lattice,components,
             max_items=max_items,kbest_work_limit=kbest_work_limit,

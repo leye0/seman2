@@ -367,6 +367,183 @@ class ActualDialogueCompositions(unittest.TestCase):
         self.assertFalse(result.stats.get("structural_composition", False))
         self.assertEqual(prepared.source_text, source)
 
+class InterruptedComparativeAndCleftTests(unittest.TestCase):
+    NARRATIVE = (
+        '“Now, Mary,” she replied—and I noticed the change as she spoke—'
+        '“we should be much more cautious tomorrow than usual.”'
+    )
+    CLEFT = (
+        '"It is him should close the gate when the storm starts; and until then '
+        'we will warn the guard, if we have to mark the door with chalk."'
+    )
+    NARRATIVE_RULE = "dialogue_structural_split_narrative_comparative"
+    CLEFT_RULE = "dialogue_structural_semicolon_cleft_conditional"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(
+            Path(__file__).resolve().parents[1] / "data", cache_size=0,
+        )
+        cls.cases = select_cases(500)[0]
+
+    def parse(self, case):
+        prepared, lattice, result = parse_corpus_case(
+            self.parser, case, max_items=50_000, kbest_work_limit=500_000,
+        )
+        self.assertEqual(prepared.analysis_text, case["source_text"])
+        self.assertEqual(lattice.text, case["source_text"])
+        return prepared, lattice, result
+
+    def source_result(self, index, rule):
+        case = self.cases[index]
+        witness = next(w for w in WITNESSES if w.index == index)
+        self.assertEqual(
+            f'{case["book_id"]}:' + sha256(case["source_text"].encode()).hexdigest()[:16],
+            witness.case_id,
+        )
+        prepared, lattice, result = self.parse(case)
+        best = self.assert_rule(result, rule)
+        self.assertEqual((best.start, best.end), (0, len(prepared.source_text)))
+        self.assertFalse(result.stats.get("budget_exceeded"))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+        return prepared, lattice, best
+
+    def control(self, source):
+        rows, _ = extract(
+            Book(999, "Synthetic", "Test", "train"), source,
+            length_min=1, length_max=100,
+        )
+        self.assertEqual([row["source_text"] for row in rows], [source])
+        return self.parse(rows[0])[2]
+
+    def assert_rule(self, result, rule):
+        self.assertTrue(result.completed, result.stats)
+        best = result.best()
+        self.assertIsNotNone(best)
+        self.assertEqual(best.rule_id, rule)
+        return best
+
+    def children(self, node, text, expected):
+        self.assertEqual(
+            [(child.category, text[child.start:child.end]) for child in node.children],
+            expected,
+        )
+
+    def test_actual_96_preserves_narrator_and_comparison_scope(self):
+        prepared, _, best = self.source_result(96, self.NARRATIVE_RULE)
+        text = prepared.source_text
+        self.children(best, text, [
+            ("OPEN-QUOTE", "‘"), ("SPOKEN-ADDRESS", "Now, David"),
+            ("COMMA", ","), ("CLOSE-QUOTE", "’"),
+            ("SPEECH-TAG", "he said"),
+            ("NARRATIVE-ASIDE", "--and I saw that cast again as he said it--"),
+            ("OPEN-QUOTE", "‘"),
+            ("CLAUSE", "you must be far more careful today than usual"),
+            ("SPEECH-STOP", "."), ("CLOSE-QUOTE", "’"),
+        ])
+        self.assertEqual(best.children[1].children[-1].children[0].rule_id, "np_proper")
+        self.assertEqual(best.children[4].children[0].rule_id, "dialogue_speech_tag_post")
+        aside = best.children[5]
+        self.children(aside, text, [
+            ("DASH", "--"), ("COORD", "and"), ("CLAUSE", "I saw that cast again"),
+            ("TEMPORAL-CLAUSE", "as he said it"), ("DASH", "--"),
+        ])
+        self.assertEqual(prepared.source_component("pa0"), text[aside.start + 2:aside.end - 2])
+        narrator = aside.children[2].children[0]
+        self.assertEqual(narrator.children[1].rule_id, "vp_adv")
+        self.assertEqual(narrator.children[1].children[0].children[1].rule_id, "np_det_n")
+        temporal = aside.children[3]
+        self.assertEqual(temporal.children[0].features.as_dict()["simultaneous"], "true")
+        self.assertEqual(temporal.children[1].children[0].children[1].rule_id, "vp_transitive")
+        self.children(best.children[7], text, [
+            ("NP", "you"), ("MODAL", "must"),
+            ("VP-NP", "be far more careful today than usual"),
+        ])
+        predicate = best.children[7].children[2]
+        self.children(predicate, text, [
+            ("COPULA", "be"), ("ADJP", "far more careful"),
+            ("ADV", "today"), ("COMPARATIVE-STANDARD", "than usual"),
+        ])
+        self.children(predicate.children[1], text, [
+            ("ADV", "far"), ("DEGREE", "more"), ("ADJ", "careful"),
+        ])
+
+    def test_actual_495_preserves_focused_subject_and_conditional_scope(self):
+        prepared, lattice, best = self.source_result(495, self.CLEFT_RULE)
+        text = prepared.source_text
+        self.assertEqual([child.category for child in best.children],
+                         ["OPEN-QUOTE", "CLAUSE", "SEMICOLON", "COORD", "CLAUSE",
+                          "SPEECH-STOP", "CLOSE-QUOTE"])
+        first, second = best.children[1], best.children[4]
+        self.children(first, text, [
+            ("PRONOUN", "It"), ("COPULA", "'s"), ("PRONOUN", "us"),
+            ("VP", "must break the treaty when the time comes"),
+        ])
+        self.assertEqual(first.children[2].features.as_dict()["case"], "accusative")
+        self.children(first.children[3], text, [
+            ("MODAL", "must"), ("V", "break"), ("NP", "the treaty"),
+            ("TEMPORAL-CLAUSE", "when the time comes"),
+        ])
+        self.children(second, text, [
+            ("PP", "till then"), ("NP", "I"), ("MODAL", "'ll"), ("V", "gammon"),
+            ("NP", "that doctor"), ("COMMA", ","),
+            ("CONDITIONAL-CLAUSE", "if I have to ile his boots with brandy"),
+        ])
+        condition = second.children[-1]
+        self.children(condition, text, [
+            ("CONJ", "if"), ("NP", "I"), ("HAVE", "have"),
+            ("TO-VP", "to ile his boots with brandy"),
+        ])
+        self.assertEqual(condition.children[2].features.as_dict()["person"], "1")
+        self.children(condition.children[-1], text, [
+            ("TO", "to"), ("V", "ile"), ("NP", "his boots"), ("PP", "with brandy"),
+        ])
+        self.assertEqual(condition.children[-1].children[2].children[0].rule_id, "np_poss")
+        self.assertEqual(condition.children[-1].children[3].children[0].rule_id, "pp_prep_np")
+        self.assertTrue({"N", "V"} <= {
+            c.category for c in lattice.candidates if c.surface == "gammon"
+        })
+
+    def test_independent_interrupted_quote_with_em_dashes(self):
+        tree = self.assert_rule(self.control(self.NARRATIVE), self.NARRATIVE_RULE)
+        self.assertEqual(tree.children[5].category, "NARRATIVE-ASIDE")
+        comparative = tree.children[7].children[2]
+        self.children(comparative, self.NARRATIVE, [
+            ("COPULA", "be"), ("ADJP", "much more cautious"),
+            ("ADV", "tomorrow"), ("COMPARATIVE-STANDARD", "than usual"),
+        ])
+
+    def test_independent_cleft_with_plural_and_singular_have_to(self):
+        for text in (self.CLEFT, self.CLEFT.replace(
+            "we will warn the guard, if we have", "he will warn the guard, if he has",
+        )):
+            with self.subTest(source=text):
+                tree = self.assert_rule(self.control(text), self.CLEFT_RULE)
+                self.assertEqual(tree.children[4].children[-1].category, "CONDITIONAL-CLAUSE")
+
+    def test_comparative_requires_degree_and_paired_source_dashes(self):
+        for text in (
+            self.NARRATIVE.replace("much more", "much very"),
+            self.NARRATIVE.replace("spoke—", "spoke--"),
+        ):
+            with self.subTest(source=text):
+                result = self.control(text)
+                self.assertNotEqual(result.stats.get("structural_composition_kind"),
+                                    self.NARRATIVE_RULE)
+
+    def test_cleft_conditional_keeps_case_agreement_and_material_valency(self):
+        for text in (
+            self.CLEFT.replace("we will warn the guard, if we have",
+                               "he will warn the guard, if he have"),
+            self.CLEFT.replace("if we have", "if us have"),
+            self.CLEFT.replace("mark the door", "discuss the door"),
+            self.CLEFT.replace("him should", "him who should"),
+        ):
+            with self.subTest(source=text):
+                result = self.control(text)
+                self.assertNotEqual(result.stats.get("structural_composition_kind"),
+                                    self.CLEFT_RULE)
+
 
 if __name__ == "__main__":
     unittest.main()
