@@ -2,7 +2,7 @@ name: Dialogue families grammar interface probes
 on:
   pull_request:
     branches: [main]
-    paths: ['superparser/scripts/probe_dialogue_families.py', 'superparser/scripts/probe_dialogue_more_families.py', 'superparser/scripts/probe_dialogue_tags_475_498.py', 'superparser/scripts/trace_dialogue_475.py', 'superparser/tests/test_dialogue_bulk_24.py', 'superparser/seman_parser/structural_composition.py', 'superparser/data/dialogue_structural_grammar.jsonl', 'superparser/data/syntax_lexicon.jsonl', '.github/workflows/probe-dialogue-families.yml']
+    paths: ['superparser/scripts/probe_dialogue_families.py', 'superparser/scripts/probe_dialogue_more_families.py', 'superparser/scripts/probe_dialogue_tags_475_498.py', 'superparser/scripts/trace_dialogue_475.py', 'superparser/scripts/trace_dialogue_466.py', 'superparser/tests/test_dialogue_bulk_24.py', 'superparser/seman_parser/structural_composition.py', 'superparser/data/dialogue_structural_grammar.jsonl', 'superparser/data/syntax_lexicon.jsonl', '.github/workflows/probe-dialogue-families.yml']
   workflow_dispatch:
 permissions: {contents: read}
 jobs:
@@ -32,5 +32,7 @@ jobs:
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.trace_dialogue_bulk
       - name: Trace bounded original source #475 proof
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.trace_dialogue_475
+      - name: Trace exact original dialogue 466 selected proof
+        run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -u -m scripts.trace_dialogue_466
       - name: Test four original source dialogue repairs with rank-one trees
         run: WORDNET_DICT="$RUNNER_TEMP/wn/wordnet" PYTHONPATH=superparser python -m unittest -q superparser.tests.test_dialogue_bulk_24

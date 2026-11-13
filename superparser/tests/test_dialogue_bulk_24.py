@@ -192,6 +192,91 @@ class DialogueBulk24Tests(unittest.TestCase):
 
 
 
+    def test_464_dialect_wh_object_negative_modal_and_first_person_echo(self):
+        source='"There! Wot did I say? No good\'ll come o\' that, I said."'
+        r=self.actual(464,source)
+        n=self.root(r,"dialogue_structural_dialect_three_act_self_report")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),("INTERJ","There"),("EXCL","!"),
+            ("WH-CLAUSE","Wot did I say"),("QMARK","?"),
+            ("CLAUSE","No good'll come o' that"),("COMMA",","),
+            ("PARENTHETICAL","I said"),("SPEECH-STOP","."),
+            ("CLOSE-QUOTE",'"'),
+        ])
+        wh=n.children[3]
+        self.assertEqual(wh.rule_id,"dialogue_structural_dialect_object_wh_question")
+        self.assert_kids(r,wh,[
+            ("WH-PRONOUN","Wot"),("AUX","did"),
+            ("NP","I"),("V","say"),
+        ])
+        self.assertEqual(wh.children[0].features.as_dict().get(
+                         "dialectal_wh_object"),"true")
+        modal=n.children[5]
+        self.assertEqual(modal.rule_id,
+                         "dialogue_structural_dialect_negative_modal_origin")
+        self.assert_kids(r,modal,[
+            ("NP","No good"),("MODAL","'ll"),
+            ("V","come"),("PP","o' that"),
+        ])
+        self.assertEqual(modal.children[0].children[0].rule_id,"np_det_n")
+        self.assertEqual(modal.children[3].children[0].rule_id,"pp_prep_np")
+        self.assertEqual(
+            modal.children[3].children[0].children[0].features.as_dict()
+            ["dialectal_elided_of"],"true")
+        echo=n.children[7]
+        self.assertEqual(echo.rule_id,
+                         "dialogue_structural_first_person_quotative_echo")
+        self.assert_kids(r,echo,[("NP","I"),("V","said")])
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_466_overt_vocative_finite_content_and_postposed_real_speaker(self):
+        source='"Ah, well, my son, you praise your stars he\'s dead," said Silver.'
+        r=self.actual(466,source)
+        n=self.root(r,"dialogue_structural_vocative_praise_stars_reporter")
+        self.assert_kids(r,n,[
+            ("OPEN-QUOTE",'"'),("INTERJ","Ah"),("COMMA",","),
+            ("ADV","well"),("COMMA",","),
+            ("NP","my son"),("COMMA",","),
+            ("CLAUSE","you praise your stars"),
+            ("CLAUSE","he's dead"),("COMMA",","),
+            ("CLOSE-QUOTE",'"'),("V","said"),
+            ("PROPER-NOUN","Silver"),("SPEECH-STOP","."),
+        ])
+        self.assertEqual(n.children[5].children[0].rule_id,"np_poss")
+        main=n.children[7].children[0]
+        self.assertEqual(main.rule_id,"clause_np_vp")
+        self.assertEqual(main.children[1].rule_id,"vp_transitive")
+        self.assertEqual(main.children[1].children[1].rule_id,"np_poss")
+        content=n.children[8].children[0]
+        self.assertEqual(content.rule_id,"clause_np_vp")
+        self.assertEqual(content.children[1].rule_id,"vp_copula_adj")
+        self.assertEqual(n.children[12].category,"PROPER-NOUN")
+        self.assertEqual(n.children[12].features.as_dict().get("person"),"3")
+        self.assertEqual(r.stats["structural_clause_count"],2)
+
+    def test_464_466_no_dialect_homographs_or_fabricated_complements(self):
+        negatives=(
+            '"There! That did I say? No good\'ll come o\' that, I said."',
+            '"There! Wot did I say? No good\'ll come o that, I said."',
+            '"There! Wot did I say? No good\'ll come o\' that I said."',
+            '"Ah, well, my son, you praise your stars he\'s dead," said.',
+            '"Ah, well, my son, you praise your stars he\'s dead," Silver said.',
+            '"Ah, well, my son, you praise your stars he\'s dead," said Silver',
+        )
+        for source in negatives:
+            with self.subTest(source=source):
+                rows,_=extract(Book(999,"Grammar","Test","train"),
+                               source,length_min=1,length_max=100)
+                if len(rows)!=1: continue
+                prepared,_,res=parse_corpus_case(
+                    self.parser,rows[0],max_items=50_000,
+                    kbest_work_limit=500_000)
+                self.assertEqual(prepared.source_text,source)
+                self.assertNotIn(res.stats.get("structural_composition_kind"),(
+                    "dialogue_structural_dialect_three_act_self_report",
+                    "dialogue_structural_vocative_praise_stars_reporter",
+                ))
+
     def test_475_minor_evaluation_comparative_aux_and_negative_object_tag(self):
         source=(
             '"So far so good. But now I find that every man before the mast '
