@@ -7,11 +7,14 @@ by itself never provides a successful grammatical analysis.
 """
 from __future__ import annotations
 
+from hashlib import sha256
 from pathlib import Path
 import unittest
 
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from research.verbnet_lr.gutenberg_novels import Book, extract
+from scripts.diagnose_novel_parses import select_cases
+from seman_parser.dialogue_clause_plans import PARENTHETICAL_MODAL
 from seman_parser.engine import Parser
 from seman_parser.structural_preanalysis import analyze_paragraph
 
@@ -212,6 +215,96 @@ class QuotedStructuralCompositionTests(unittest.TestCase):
         )
         self.assertEqual(rows, [])
         self.assertEqual(counts["requires_source_context"], 1)
+
+
+class SourceParentheticalModalTests(unittest.TestCase):
+    CONTROL = (
+        "We could stay in the room (she knew with a smile) "
+        "and watch the door when we met them at dawn."
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(
+            Path(__file__).resolve().parents[1] / "data", cache_size=0,
+        )
+
+    def parse(self, case):
+        return parse_corpus_case(self.parser, case, max_items=50_000,
+                                 kbest_work_limit=500_000)
+
+    def control(self, text):
+        rows, _ = extract(Book(999, "Synthetic", "Test", "train"), text,
+                          length_min=1, length_max=100)
+        self.assertEqual([row["source_text"] for row in rows], [text])
+        return self.parse(rows[0])[2]
+
+    def spans(self, nodes, text):
+        return [(n.category, text[n.start:n.end]) for n in nodes]
+
+    def test_case_493_preserves_shared_modal_and_nested_attachment(self):
+        case = select_cases(500)[0][493]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "f02fcc4a918d02fc")
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual(prepared.analysis_text, text)
+        self.assertEqual(lattice.text, text)
+        self.assertTrue(result.completed, result.stats)
+        best = result.best()
+        self.assertEqual(best.rule_id, PARENTHETICAL_MODAL)
+        self.assertEqual((best.start, best.end), (0, len(text)))
+        self.assertEqual(self.spans(best.children, text), [
+            ("NP", "I"), ("MODAL", "should"), ("VP-NP", "lie down in my own place"),
+            ("PARENTHETICAL", "(I thought with a silent chuckle)"), ("COORD", "and"),
+            ("VP-NP", "enjoy their faces when they found me in the morning"),
+            ("SPEECH-STOP", "."),
+        ])
+        _, _, first, aside, _, second, _ = best.children
+        self.assertEqual(first.children[0].rule_id, "vpnp_bare_prepositional_pp")
+        self.assertEqual(self.spans(aside.children, text), [
+            ("OPEN-PAREN", "("), ("NP", "I"), ("V", "thought"),
+            ("PP", "with a silent chuckle"), ("CLOSE-PAREN", ")"),
+        ])
+        self.assertEqual(prepared.source_component(f"p{aside.start}"),
+                         "(I thought with a silent chuckle)")
+        action, temporal = second.children
+        self.assertEqual(action.children[0].rule_id, "vp_bare_trans")
+        self.assertEqual(self.spans(temporal.children, text), [
+            ("CONJ", "when"), ("CLAUSE", "they found me"), ("PP", "in the morning"),
+        ])
+        self.assertEqual(temporal.children[1].children[0].children[1].rule_id,
+                         "vp_transitive")
+        self.assertFalse(result.stats.get("budget_exceeded"))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+
+    def test_independent_parenthetical_with_optional_temporal_pp(self):
+        for text in (self.CONTROL, self.CONTROL.replace(" at dawn", "")):
+            with self.subTest(text=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, PARENTHETICAL_MODAL)
+                self.assertEqual(result.best().children[3].category, "PARENTHETICAL")
+                self.assertEqual(result.best().children[5].rule_id,
+                                 "structural_source_bare_predicate_with_when")
+
+    def test_does_not_admit_nonclausal_incise_or_finite_second_predicate(self):
+        for old, new in (("she knew", "she laughed"), ("and watch", "and watches"),
+                         ("(she knew with a smile)", "with a smile")):
+            with self.subTest(new=new):
+                result = self.control(self.CONTROL.replace(old, new))
+                self.assertNotEqual(result.stats.get("structural_composition_kind"),
+                                    PARENTHETICAL_MODAL)
+
+    def test_preanalysis_records_parentheses_not_quoted_or_unmatched_marks(self):
+        source = 'He stayed (she knew) and waited. He said "I stayed (she knew)."'
+        first, quoted = analyze_paragraph(source)
+        candidates = [c for c in first.constituents if c.function == "parenthetical_candidate"]
+        self.assertEqual([(first.text[c.start:c.end], c.governor) for c in candidates],
+                         [("(she knew)", "s0")])
+        self.assertFalse(any(c.function == "parenthetical_candidate" for c in quoted.constituents))
+        for sentence in analyze_paragraph("He stayed (she knew and waited."):
+            self.assertFalse(any(c.function == "parenthetical_candidate"
+                                 for c in sentence.constituents))
 
 
 if __name__ == "__main__":

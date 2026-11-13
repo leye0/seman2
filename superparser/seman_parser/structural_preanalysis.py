@@ -302,6 +302,31 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             part.id, part.function, part.start, part.end,
             part.governor, part.relation, part.evidence,
         ))
+    # Literal outermost parentheses outside speech are source constituents,
+    # not sentence boundaries or proof that their contents are finite.
+    quote_index = 0
+    stack: list[int] = []
+    for offset, char in enumerate(source):
+        while (quote_index < len(quotation_spans)
+               and quotation_spans[quote_index][1] <= offset):
+            quote_index += 1
+        if (quote_index < len(quotation_spans)
+                and quotation_spans[quote_index][0] <= offset < quotation_spans[quote_index][1]):
+            continue
+        if char == "(":
+            stack.append(offset)
+        elif char == ")" and stack:
+            start = stack.pop()
+            if stack or not source[start + 1:offset].strip():
+                continue
+            end = offset + 1
+            host = next((node for node in cs if node.id.startswith("s")
+                         and node.start <= start < end <= node.end), None)
+            if host is not None:
+                cs.append(StructuralConstituent(
+                    f"p{start}", "parenthetical_candidate", start, end, host.id,
+                    "parenthetical_supplement", "balanced_literal_parentheses",
+                ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.
     head = source.lstrip("\"'“‘ ")

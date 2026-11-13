@@ -21,7 +21,8 @@ from typing import Any, Mapping, Sequence
 from .chart import ParseResult
 from .dialogue import quotation_boundaries
 from .dialogue_clause_plans import (
-    CLEFT_TURN, NARRATIVE_TURN, NESTED_TEMPORAL_TURN,
+    CLEFT_TURN, NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL,
+    modal_parenthetical_plan,
     cleft_conditional_plan, narrative_comparative_plan, nested_temporal_comparative_plan,
 )
 from .features import FeatureStructure
@@ -262,6 +263,8 @@ class QuotedSentenceComposer:
             "EXCL": {"!"},
             "SPEECH-STOP": set(".!?"),
             "DASH": {"--", "—"},
+            "OPEN-PAREN": {"("},
+            "CLOSE-PAREN": {")"},
         }
         for category, a, b, kind, required in specs:
             if (not isinstance(a, int) or not isinstance(b, int)
@@ -339,7 +342,7 @@ class QuotedSentenceComposer:
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items())):
                     return None
-                if expected_rule in (NARRATIVE_TURN, CLEFT_TURN, NESTED_TEMPORAL_TURN):
+                if expected_rule in (NARRATIVE_TURN, CLEFT_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL):
                     if category == "CLAUSE" and (
                         selected.rule_id != "clause_np_vp"
                         or len(selected.children) != 2
@@ -361,6 +364,13 @@ class QuotedSentenceComposer:
                         return None
                     if category == "PP" and selected.rule_id != "pp_prep_np":
                         return None
+                if expected_rule == PARENTHETICAL_MODAL and category == "VP-NP" and (
+                    selected.rule_id not in ("vpnp_bare_prepositional_pp", "vp_bare_trans",
+                                             "vpnp_bare_intransitive_pp")
+                    or not selected.children
+                    or selected.children[0].features.as_dict().get("vform") != "base"
+                ):
+                    return None
                 if (expected_rule ==
                         "dialogue_structural_semicolon_epistemic_assurance_comparative"):
                     if category=="NP" and selected.rule_id!="np_poss":
@@ -601,7 +611,7 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
-                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN) else
+                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL) else
                     2 if expected_rule in (
                         CLEFT_TURN,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
@@ -2266,6 +2276,21 @@ class QuotedSentenceComposer:
             parser,text,original_lattice,specs,rule,
             max_items=max_items,kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k,beam=beam,
+        )
+
+    def compose_unquoted_parenthetical_modal(
+        self, parser: Any, text: str, lattice: LexicalLattice,
+        components: Sequence[Mapping[str, Any]], *,
+        max_items: int | None = None, kbest_work_limit: int | None = None,
+        diagnostic_k: int | None = None, beam: int | None = None,
+    ) -> ParseResult | None:
+        specs = modal_parenthetical_plan(text, components)
+        if specs is None:
+            return None
+        return self._compose_verified_dialogue_pattern(
+            parser, text, lattice, specs, PARENTHETICAL_MODAL,
+            max_items=max_items, kbest_work_limit=kbest_work_limit,
+            diagnostic_k=diagnostic_k, beam=beam,
         )
 
     def compose_unquoted_asyndetic_modal_passive_dash(
