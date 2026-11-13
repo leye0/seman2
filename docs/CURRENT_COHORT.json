@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #53 verified two source-complete grammar repairs without lexical changes: #475 a true non-finite evaluative minor utterance, an overt 'more than I do' finite comparison with independently verified auxiliary substitution and 3SG agreeing NP head under original PP modifier, plus a genuine negative do-support complex-transitive object-predicative call and an inverted positive auxiliary question tag. #498 three independently proven finite copular propositions (numeric possessive NP, PP-modified NP, genuine relative NP with its own finite predicate), two actual positive/negative confirmation tags, and an overt second-person vocative with hyphenated adjectival modifier. Fixed original Novel-500 SHA, WordNet and parse budgets: 439→441 completed, 61→59 unresolved, historical dialogues 19→21/30; paired original 500/500 source identities unchanged and only #475/#498 newly complete, zero previous successful cases lost. Core 714 tests and 120/120 direct grammar gold annotations, 24 grammatical contrasts, dialogue scope 24 tests and full 500 source audits all green.",
+  "note": "PR #54 verified two source-complete grammatical repairs: #464 dialectal deictic There exclamation, Wot as true WH-object question with overt did inversion, No good'll come o' that as negative-determiner subject + source modal + base verb + attested apostrophe elision PP, comma-anchored first-person quotative I said; #466 overt Ah/well/my son interjection/vocative, real finite transitive praise your stars clause, independently selected copular he's dead finite content with zero synthetic that, and source reporter said plus actual PROPER-NOUN Silver rather than homographic metal NP. Generic grammar rule check forbids surface-word dispatch; repaired guard relies on typed categories and features. Exactly original 500 source identities and SHA unchanged: 441→443 complete, 59→57 unresolved, anchored historical dialogue failures fixed 21→23/30; only #464/#466 statuses changed in paired full 500 comparison, zero prior complete cases regressed. Core 717 tests green, 120/120 gold, 24/24 contrasts and negative acceptance preserved, 27 scoped source-rank-one dialogue tests green, Novel-500 and 30 audit green. Original WordNet, source text and 50k/500k/10s budgets unchanged.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,42 +73,42 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "bf0b54ca8678de1081b96eb172c31c14319a2ea4",
-    "validated_pr_head": "0890968ab654567d97e2344e5dcf325e5204159b",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43353307989",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43353308005",
-    "completed": 441,
-    "unresolved": 59,
+    "validated_merge_commit": "4854a98c886655d1d6d7857b010a56485409ead9",
+    "validated_pr_head": "60ce807d20d35aa7387b111b5c4447ad8818a3be",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43357878694",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43357878629",
+    "completed": 443,
+    "unresolved": 57,
     "statuses": {
-      "complete": 441,
+      "complete": 443,
       "forest_budget_exceeded": 6,
       "kbest_budget_exceeded": 0,
-      "no_structural_root": 9,
-      "roots_without_valid_analysis": 39,
+      "no_structural_root": 8,
+      "roots_without_valid_analysis": 38,
       "timeout": 5,
       "error": 0,
       "both_budgets_exceeded": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 439,
-      "current_complete": 441,
+      "previous_complete": 441,
+      "current_complete": 443,
       "newly_complete_indexes": [
-        475,
-        498
+        464,
+        466
       ],
       "regressed_completed_indexes": [],
       "previous_unresolved_changed_failure_type": [],
-      "verified_dialogue_failures_fixed": 21,
+      "verified_dialogue_failures_fixed": 23,
       "initial_dialogue_failures": 30,
-      "remaining_dialogue_failures": 9
+      "remaining_dialogue_failures": 7
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
         "multisentence_quotation": {
           "baseline_failed": 6,
-          "still_failed": 1,
-          "now_complete": 5
+          "still_failed": 0,
+          "now_complete": 6
         },
         "nested_quotation": {
           "baseline_failed": 2,
@@ -117,8 +117,8 @@
         },
         "single_quote_with_reporting_clause": {
           "baseline_failed": 8,
-          "still_failed": 1,
-          "now_complete": 7
+          "still_failed": 0,
+          "now_complete": 8
         },
         "split_speech_with_intercalated_reporting_clause": {
           "baseline_failed": 7,
@@ -142,7 +142,7 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 714,
+      "unit_tests": 717,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
@@ -172,7 +172,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 59,
+      "active_remaining": 57,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -198,13 +198,15 @@
         441,
         445,
         456,
+        464,
+        466,
         475,
         498
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43353307953",
-    "grammatical_attachment_note": "PR #53: #475 ranked source selected: So far so good formulaic minor predicate with no artificial finite V; 3SG head of PP-modified comparative subject and actual clause_aux_ellipsis I do; finite find THAT clausal; genuine AUX do+NEG n't+base complex-transitive call and distinct demonstrative object/ADJ fair; positive do you? inversion not imperative. #498: three independently proven clause_np_vp+vp_cop_np trees with numeric NP, PP-modified NP and relative who/that-subject NP; true inverted positive is it? negative ain't you? and second-person hyphenated epithet vocative. Source unchanged, zero old complete lost, no WordNet/budget changes."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43357878697",
+    "grammatical_attachment_note": "PR #54 ranked-source proof: #464 'There!' deictic minor; literal Wot object-WH + inverted finite did and source base say, No good negative NP + 'll modal + come base + source-elided o' PP and separate quotative I said; #466 literal Ah and discourse ADV well and NP vocative my son, independently selected clause_np_vp transitive praise + possessed stars NP and clause_np_vp copular he's dead as zero-that causal content, postposed said V + Silver PROPER-NOUN, not homographic metal nominal. Source-bound regex locates spans but proof checker dispatches only on grammatical category/rule/features, no engine lemma branch. Targeted negatives, same corpus, unchanged WordNet/budgets; 500-paired changes only #464/#466, no regressions."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -1373,5 +1375,139 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43349177090",
     "grammatical_attachment_note": "PR #52 rank-one grammar proofs preserve source: #223 existential pivot is true 3SG many-a-one, EXPL there + finite perfect and reduced past passive modifier; finite wonder selects interrogative WHO-subject discovery/object (relative-that negative contrast, previous gold who-relative attachment restored). #235 subject-control intent with postpositive universal object, inverted past speaker attribution, modal V ditransitive with recipient+theme, causal for, temporal perfect with independent possessive ours and separate PP. Positive/negative source-span tests green, same 50k/500k/10s budgets. Paired all-500 status differences ONLY #223/#235."
+  },
+  "pre_pr54_baseline": {
+    "validated_merge_commit": "bf0b54ca8678de1081b96eb172c31c14319a2ea4",
+    "validated_pr_head": "0890968ab654567d97e2344e5dcf325e5204159b",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43353307989",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43353308005",
+    "completed": 441,
+    "unresolved": 59,
+    "statuses": {
+      "complete": 441,
+      "forest_budget_exceeded": 6,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 9,
+      "roots_without_valid_analysis": 39,
+      "timeout": 5,
+      "error": 0,
+      "both_budgets_exceeded": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 439,
+      "current_complete": 441,
+      "newly_complete_indexes": [
+        475,
+        498
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 21,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 9
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 1,
+          "now_complete": 5
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 1,
+          "now_complete": 7
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 1,
+          "now_complete": 6
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 5,
+          "now_complete": 2
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 714,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 69,
+      "case_id": "766:48fb528a88ac0b67"
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 59,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        99,
+        141,
+        157,
+        175,
+        200,
+        223,
+        229,
+        235,
+        237,
+        270,
+        280,
+        301,
+        315,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        475,
+        498
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43353307953",
+    "grammatical_attachment_note": "PR #53: #475 ranked source selected: So far so good formulaic minor predicate with no artificial finite V; 3SG head of PP-modified comparative subject and actual clause_aux_ellipsis I do; finite find THAT clausal; genuine AUX do+NEG n't+base complex-transitive call and distinct demonstrative object/ADJ fair; positive do you? inversion not imperative. #498: three independently proven clause_np_vp+vp_cop_np trees with numeric NP, PP-modified NP and relative who/that-subject NP; true inverted positive is it? negative ain't you? and second-person hyphenated epithet vocative. Source unchanged, zero old complete lost, no WordNet/budget changes."
   }
 }
