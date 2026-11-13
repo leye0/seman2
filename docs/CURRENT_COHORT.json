@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #55: two source-proven grammatical historical Austen repairs with shared genuine finite first-person epistemic incise I suppose (never false bare VP). #209 original additive till-temporal with Colonel Forster title+name NP, finite intransitive came and singular emphatic himself; 3SG negative numeral partitive subject not one of you; transitive entertained + noun doubt licensing postposed of + overt possessive THEIR + nonfinite copular being[ing] predicative really married, preserving source commas across parenthetical. #241 When-temporal with they all as 3PL quantified subject (not ADV modifying removed), intransitive movement and independently proven proper-place PP to Brighton; matrix you had no reason, finite I suppose, noun reason selecting TO + base complex-transitive believe with them as 3PL object and fond of each other as actual predicative adjective with plural reciprocal. Negative test each others was initially mislicensed by productive morphology; final source reciprocal lexical proof requires an exact uninflected attested multiword form. Same original 500 source/cohort SHA and WordNet/budgets, paired only #209/#241 change to complete, zero prior successes regress: 443→445/500, 57→55 unresolved, historical real dialogue 23→25/30. Core 720 tests green, 120/120 grammar gold, 24/24 contrasts unchanged, 30 scoped dialogue tests and Novel-500 green.",
+  "note": "PR #56: two source-exact grammatical repairs. #247 an independently selected finite copular first claim 'It is nothing in comparison of Rosings' (true pp_prep_np inside np_pp_mod), genuine NP vocative 'my lady', finite 1SG dare selecting base clausal say (reject 3SG dares), literal source-internal SEMICOLON not a segmentation boundary, contrastive but, 1SG finite clausal assure with overt 2nd-person addressee and an independently proven comparative finite claim. 'Sir William Lucas\\'s' is overt TITLE+two PROPER-NOUN tokens+POSS[genitive_clitic], not inferred noun nor false copular is. #359 singular definite family subject with nonfinite anterior perfect passive adjunct PREP after+HAVE[ing] having+AUX-BE[ed] been+ADV thus+V[ed] occupied and source duration PP, then finite transitive extinguished with independently selected possessive-object NP lights, second finite intransitive retired with same source subject; overt finite 'as I conjectured' epistemic incise and to+V[base] rest as purpose attached only to retired, not to lights. Source original quotation, comma, semicolon, periods unchanged; WordNet and original 50k/500k/10s budgets unchanged. All original 500 identities, texts and SHA unchanged; 445→447 complete, 55→53 remaining, original 30 historical dialogue 25→27 complete, 0 previous completions lost and no other status changes. 723 Core tests, 120/120 direct grammar annotations, 24/24 contrasts, 33 scoped grammar/negative tests and Novel-500 audits green.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,35 +73,35 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "782f6319dea4169351a0e19fce3a71fa083dfa75",
-    "validated_pr_head": "e8158f8f311330e5268e5c79494a085379d6a51b",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43361704597",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43361704568",
-    "completed": 445,
-    "unresolved": 55,
+    "validated_merge_commit": "d5dfd1485aeea7a8411af08b2d74a1626d5d7afa",
+    "validated_pr_head": "bef73077c1f2c2fa33b882a1c3cd3fc5fc36cc24",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43365349484",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43365349478",
+    "completed": 447,
+    "unresolved": 53,
     "statuses": {
-      "complete": 445,
+      "complete": 447,
       "forest_budget_exceeded": 6,
       "kbest_budget_exceeded": 0,
-      "no_structural_root": 8,
-      "roots_without_valid_analysis": 36,
+      "no_structural_root": 7,
+      "roots_without_valid_analysis": 35,
       "timeout": 5,
       "error": 0,
       "both_budgets_exceeded": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 443,
-      "current_complete": 445,
+      "previous_complete": 445,
+      "current_complete": 447,
       "newly_complete_indexes": [
-        209,
-        241
+        247,
+        359
       ],
       "regressed_completed_indexes": [],
       "previous_unresolved_changed_failure_type": [],
-      "verified_dialogue_failures_fixed": 25,
+      "verified_dialogue_failures_fixed": 27,
       "initial_dialogue_failures": 30,
-      "remaining_dialogue_failures": 5
+      "remaining_dialogue_failures": 3
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -127,8 +127,8 @@
         },
         "unattributed_single_quotation": {
           "baseline_failed": 7,
-          "still_failed": 3,
-          "now_complete": 4
+          "still_failed": 1,
+          "now_complete": 6
         }
       },
       "source_composition_candidate_plans": {
@@ -142,7 +142,7 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 720,
+      "unit_tests": 723,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
@@ -172,7 +172,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 55,
+      "active_remaining": 53,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -190,10 +190,12 @@
         235,
         237,
         241,
+        247,
         270,
         280,
         301,
         315,
+        359,
         384,
         386,
         408,
@@ -207,8 +209,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43361704542",
-    "grammatical_attachment_note": "PR #55 shared finite first-person clausal epistemic incise I suppose, not incorrectly ranked VP-NP base. #209 3SG negated partitive 'not one of you' with titled proper temporal subject, bound emphatic, actual N doubt selecting of+possessive plural nominalized gerund with COPULA[ing], ADV and ADJ; parenthetical intervenes without changing nominal selection. #241 floating universal all bound to plural pronoun subject, independent locative PP to proper Brighton, no reason selects infinitival base believe[complex_transitive], 3PL them is object and fond of each other is adjective-selected reciprocal (not VP-PP or each+other DET+ADJ); uninflected reciprocal surface exactly source lexical lemma. All punctuation and full balanced original quotes retained; same 50k/500k/10s budgets, paired all-500 only #209/#241 changed and 0 regressions."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43365349570",
+    "grammatical_attachment_note": "PR #56 247 complete source: selected clause_np_vp+vp_cop_np with np_pp_mod and inner np_of comparison of Rosings, np_poss vocative, finite 1SG bare-control dare say incise (source form only), overt SEMICOLON retained intra-utterance, finite clausal assure to overt you and independently selected clause_np_vp+vp_cop_adjp+adjp_adv_adj with than plus titled 3SG proper-name genitive Sir William Lucas's, no fabricated possessed head or copular 'is'. 359: source family np_det_n shared across transitive extinguished NP lights np_poss and intransitive retired; after HAVE[ing] been AUX-BE[ed] occupied V[ed] passive with PP duration, as+I+finite conjectured incise, TO + base intransitive rest purpose of retired only. Original source punctuation and cohort unchanged. All 500 paired statuses changed only 247/359, zero previously completed regressions. Same standard budgets."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -1647,5 +1649,143 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43357878697",
     "grammatical_attachment_note": "PR #54 ranked-source proof: #464 'There!' deictic minor; literal Wot object-WH + inverted finite did and source base say, No good negative NP + 'll modal + come base + source-elided o' PP and separate quotative I said; #466 literal Ah and discourse ADV well and NP vocative my son, independently selected clause_np_vp transitive praise + possessed stars NP and clause_np_vp copular he's dead as zero-that causal content, postposed said V + Silver PROPER-NOUN, not homographic metal nominal. Source-bound regex locates spans but proof checker dispatches only on grammatical category/rule/features, no engine lemma branch. Targeted negatives, same corpus, unchanged WordNet/budgets; 500-paired changes only #464/#466, no regressions."
+  },
+  "pre_pr56_baseline": {
+    "validated_merge_commit": "782f6319dea4169351a0e19fce3a71fa083dfa75",
+    "validated_pr_head": "e8158f8f311330e5268e5c79494a085379d6a51b",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43361704597",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43361704568",
+    "completed": 445,
+    "unresolved": 55,
+    "statuses": {
+      "complete": 445,
+      "forest_budget_exceeded": 6,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 8,
+      "roots_without_valid_analysis": 36,
+      "timeout": 5,
+      "error": 0,
+      "both_budgets_exceeded": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 443,
+      "current_complete": 445,
+      "newly_complete_indexes": [
+        209,
+        241
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 25,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 5
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 1,
+          "now_complete": 1
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 1,
+          "now_complete": 6
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 3,
+          "now_complete": 4
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 720,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 69,
+      "case_id": "766:48fb528a88ac0b67"
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 55,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        99,
+        141,
+        157,
+        175,
+        200,
+        209,
+        223,
+        229,
+        235,
+        237,
+        241,
+        270,
+        280,
+        301,
+        315,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        464,
+        466,
+        475,
+        498
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43361704542",
+    "grammatical_attachment_note": "PR #55 shared finite first-person clausal epistemic incise I suppose, not incorrectly ranked VP-NP base. #209 3SG negated partitive 'not one of you' with titled proper temporal subject, bound emphatic, actual N doubt selecting of+possessive plural nominalized gerund with COPULA[ing], ADV and ADJ; parenthetical intervenes without changing nominal selection. #241 floating universal all bound to plural pronoun subject, independent locative PP to proper Brighton, no reason selects infinitival base believe[complex_transitive], 3PL them is object and fond of each other is adjective-selected reciprocal (not VP-PP or each+other DET+ADJ); uninflected reciprocal surface exactly source lexical lemma. All punctuation and full balanced original quotes retained; same 50k/500k/10s budgets, paired all-500 only #209/#241 changed and 0 regressions."
   }
 }
