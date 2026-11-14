@@ -1056,6 +1056,107 @@ class EmbeddedRelativeScopeTests(unittest.TestCase):
                          for r in graph.relations}
                 self.assertTrue(expected <= edges, expected - edges)
 
+    NESTED_CONTROLS = (
+        "Often she sat with her hands folded on the table, fearing to move them lest they should touch the instrument which she so much dreaded to handle.",
+        "The captain was kneeling down, as pale as a ghost, thinking of the place she had brought us to, the kind man!",
+    )
+
+    def test_control_relative_in_preventive_clause(self):
+        text, matrix = self.original(select_cases(500)[0][363], "043d459b0ca079d5")
+        parts = SharedSubjectCoordinationTests.parts
+        self.assertEqual([c.category for c in matrix.children], [
+            "ADV", "NP", "V", "WITH-ABSOLUTE", "COMMA", "CONTROL-SUPPLEMENT",
+        ])
+        absolute, supplement = matrix.children[3], matrix.children[-1]
+        self.assertEqual(parts(absolute, text), [
+            ("PREP", "with"), ("ABSOLUTE-SUBJECT", "my eyes"),
+            ("V", "fixed"), ("PP", "on the ground"),
+        ])
+        self.assertEqual(absolute.children[1].features.as_dict()["number"], "plural")
+        action = supplement.children[-1]
+        self.assertEqual(parts(action, text)[:2], [("V", "raise"), ("NP", "them")])
+        preventive = action.children[-1]
+        self.assertEqual(parts(preventive, text)[:4], [
+            ("PREVENTIVE-CONJ", "lest"), ("NP", "they"), ("MODAL", "should"), ("V", "encounter"),
+        ])
+        head, relative = preventive.children[-1].children
+        self.assertEqual(text[head.start:head.end], "the object")
+        self.assertEqual(parts(relative, text)[:2], [("WH-REL-OBL", "which"), ("NP", "I")])
+        control = relative.children[-1]
+        self.assertEqual(parts(control, text), [
+            ("ADVP", "so much"), ("V", "dreaded"), ("TO", "to"), ("GAPPED-NONFINITE", "behold"),
+        ])
+        self.assertEqual(parts(control.children[-1], text), [("V", "behold")])
+
+    def test_stranded_direction_and_matrix_apposition(self):
+        text, matrix = self.original(select_cases(500)[0][480], "d72d4dec205d9250")
+        parts = SharedSubjectCoordinationTests.parts
+        self.assertEqual(parts(matrix, text), [
+            ("NP", "The squire"), ("PARTICLE-PROGRESSIVE", "was sitting down"), ("COMMA", ","),
+            ("ADJP", "as white as a sheet"), ("COMMA", ","),
+            ("RELATIVE-TOPIC-SUPPLEMENT", "thinking of the harm he had led us to"),
+            ("COMMA", ","), ("NP", "the good soul"),
+        ])
+        self.assertEqual(parts(matrix.children[1], text), [
+            ("AUX-BE", "was"), ("V", "sitting"), ("PARTICLE", "down"),
+        ])
+        topic = matrix.children[5]
+        self.assertEqual(parts(topic, text)[:2], [("V", "thinking"), ("PREP", "of")])
+        head, relative = topic.children[-1].children
+        self.assertEqual(text[head.start:head.end], "the harm")
+        self.assertEqual(relative.features.as_dict()["gap"], "directional_pp_object")
+        self.assertEqual(parts(relative, text), [
+            ("NP", "he"), ("HAVE", "had"), ("V", "led"), ("NP", "us"), ("PREP", "to"),
+        ])
+
+    def test_nested_relative_controls_and_counterexamples(self):
+        for text in self.NESTED_CONTROLS:
+            with self.subTest(positive=text):
+                self.assertEqual(self.control(text).best().rule_id, EMBEDDED_RELATIVE_ROOT)
+        for index, old, new in (
+            (0, "to handle.", "to handle it."),
+            (0, "to handle.", "to arrive."),
+            (0, "so much dreaded", "so much watched"),
+            (0, "should touch", "should sleep"),
+            (1, "us to,", "us to it,"),
+            (1, "brought us", "slept us"),
+            (1, "captain was", "captain were"),
+            (1, "us to, the kind", "us to the kind"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.NESTED_CONTROLS[index].replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != EMBEDDED_RELATIVE_ROOT)
+
+    def test_nested_relative_semantics_respect_exact_governors(self):
+        cases = select_cases(500)[0]
+        for index, expected, forbidden in (
+            (363, {("THEME", "fixed", "eyes"), ("ADJUNCT", "fixed", "on"),
+                   ("AGENT", "fearing", "I"), ("AGENT", "raise", "I"),
+                   ("AFFECTED", "raise", "them"), ("PREVENTIVE_CONSEQUENCE", "raise", "encounter"),
+                   ("AGENT", "encounter", "they"), ("AFFECTED", "encounter", "object"),
+                   ("DEGREE", "dreaded", "much"), ("COMPLEMENT", "dreaded", "behold"),
+                   ("AGENT", "behold", "I"), ("AFFECTED", "behold", "object")},
+                  {("AFFECTED", "dreaded", "object"), ("PREVENTIVE_CONSEQUENCE", "fearing", "encounter"),
+                   ("AGENT", "fixed", "I")}),
+            (480, {("ASPECT", "sitting", "was"), ("PARTICLE", "sitting", "down"),
+                   ("DEPICTIVE", "squire", "white"), ("AGENT", "thinking", "squire"),
+                   ("COMPLEMENT", "of", "harm"), ("AGENT", "led", "he"),
+                   ("AFFECTED", "led", "us"), ("COMPLEMENT", "to", "harm"),
+                   ("APPOSITION", "squire", "soul")},
+                  {("AFFECTED", "led", "harm"), ("COMPLEMENT", "to", "soul"),
+                   ("APPOSITION", "harm", "soul")}),
+        ):
+            with self.subTest(index=index):
+                p = prepare_corpus_input(cases[index])
+                report = self.parser.parse(p.analysis_text, structural_constituents=p.structural_constituents,
+                                           max_items=50_000, kbest_work_limit=500_000)
+                graph = report.interpret().graph
+                label = lambda n: n.surface or n.type_name
+                edges = {(r.relation, label(graph.nodes[r.source]), label(graph.nodes[r.target]))
+                         for r in graph.relations}
+                self.assertTrue(expected <= edges, expected - edges)
+                self.assertFalse(forbidden & edges, forbidden & edges)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -72,6 +72,10 @@ class QuotedSentenceComposer:
             frame: frozenset(lemmas) for rule in relative
             for frame, lemmas in rule.provenance.get("relative_frames", {}).items()
         }
+        self._source_subordinators = {
+            spelling: lemma for rule in relative
+            for spelling, lemma in rule.provenance.get("source_subordinators", {}).items()
+        }
         self._source_honorifics = {
             spelling: lemma for rule in shared
             for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
@@ -334,6 +338,18 @@ class QuotedSentenceComposer:
                         provenance={"original_source_span": [a, b]},
                     ))
                 candidates.extend(titles)
+            elif kind == "source-preventive-conjunction":
+                if expected_rule != EMBEDDED_RELATIVE_ROOT or category != "PREVENTIVE-CONJ":
+                    return None
+                subordinator = self._source_subordinators.get(surface.casefold())
+                if subordinator is None:
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=subordinator,
+                    category=category, features=FeatureStructure.build({"preventive": "true"}),
+                    source="source-attested-preventive-conjunction", score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
             elif kind == "adjective-infinitive-valency":
                 if expected_rule != ADJECTIVE_INFINITIVE_ROOT or category != "ADJ":
                     return None
