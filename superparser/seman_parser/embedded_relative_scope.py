@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from .dialogue_clause_plans import _specs
+from .nominal_relative_supplement import plan_nominal_relative_supplement
 
 ROOT = "structural_embedded_relative_sentence"
 WORD = r"[A-Za-z][A-Za-z’'\-]*"
@@ -61,7 +62,7 @@ def plan_embedded_relative_scope(text):
     if m is None:
         m = STRANDED_SUPPLEMENT.fullmatch(text[:-1])
     if m is None:
-        return None
+        return plan_nominal_relative_supplement(text)
     specs, add, punct, _ = _specs()
 
     def piece(group, cat, kind="phrase", **features):

@@ -1157,6 +1157,107 @@ class EmbeddedRelativeScopeTests(unittest.TestCase):
                 self.assertTrue(expected <= edges, expected - edges)
                 self.assertFalse(forbidden & edges, forbidden & edges)
 
+    INTERNAL_NOMINAL_CONTROLS = (
+        "He had never learned of her having owned any cousins, except a brother and sister, both of whom had been sick many weeks.",
+        "She remembered the colour of her dress, which she mended herself upstairs in her room, and which, before the party, was nothing but rags.",
+    )
+
+    def test_partitive_relative_modifies_the_two_exceptions(self):
+        text, matrix = self.original(select_cases(500)[0][242], "921895028f592bb3")
+        parts = SharedSubjectCoordinationTests.parts
+        gerund = matrix.children[-1]
+        self.assertEqual(parts(matrix, text)[:5], [
+            ("NP", "She"), ("HAVE", "had"), ("DEGREE", "never"), ("V", "heard"), ("PREP", "of"),
+        ])
+        self.assertEqual(parts(gerund, text)[:3], [("POSS", "his"), ("HAVE", "having"), ("V", "had")])
+        obj = gerund.children[-1]
+        self.assertEqual(obj.children[1].features.as_dict()["number"], "plural")
+        self.assertEqual(parts(obj, text)[:4], [
+            ("DET", "any"), ("N", "relations"), ("COMMA", ","), ("EXCEPTIVE", "except"),
+        ])
+        supplement = obj.children[-1]
+        self.assertEqual(supplement.rule_id, "structural_bind_supplement_to_internal_nominal")
+        self.assertEqual(parts(supplement, text), [
+            ("SUPPLEMENT-BASE", "a father and mother"), ("COMMA", ","),
+            ("NOMINAL-RELATIVE", "both of whom had been dead many years"),
+        ])
+        pair, _, relative = supplement.children
+        self.assertEqual(parts(pair, text), [("DET", "a"), ("N", "father"), ("COORD", "and"), ("N", "mother")])
+        self.assertEqual(parts(relative, text), [
+            ("PARTITIVE-REL-SUBJECT", "both of whom"), ("HAVE", "had"),
+            ("COPULA", "been"), ("ADJ", "dead"), ("NP", "many years"),
+        ])
+
+    def test_coordinated_subject_and_object_gaps_modify_inner_nominal(self):
+        text, matrix = self.original(select_cases(500)[0][469], "113f1648c549bbbe")
+        parts = SharedSubjectCoordinationTests.parts
+        nominal = matrix.children[-1]
+        self.assertEqual(parts(matrix, text)[:2], [("NP", "I"), ("V", "remember")])
+        self.assertEqual(parts(nominal, text)[:2], [("NP", "the appearance"), ("PREP", "of")])
+        supplement = nominal.children[-1]
+        self.assertEqual(supplement.rule_id, "structural_bind_supplement_to_internal_nominal")
+        self.assertEqual(parts(supplement, text)[:2], [("SUPPLEMENT-BASE", "his coat"), ("COMMA", ",")])
+        object_rel, comma, coord, subject_rel = supplement.children[-1].children
+        self.assertEqual((text[comma.start:comma.end], text[coord.start:coord.end]), (",", "and"))
+        self.assertEqual(parts(object_rel, text), [
+            ("WH-REL-OBL", "which"), ("NP", "he"), ("V", "patched"), ("EMPHATIC-REFLEXIVE", "himself"),
+            ("ADV", "upstairs"), ("PREP", "in"), ("NP", "his room"),
+        ])
+        self.assertEqual(parts(subject_rel, text), [
+            ("WH-REL-OBL", "which"), ("COMMA", ","), ("PREP", "before"), ("NP", "the end"),
+            ("COMMA", ","), ("COPULA", "was"), ("EXCLUSIVE-NOMINAL", "nothing but patches"),
+        ])
+
+    def test_nominal_supplement_controls_and_counterexamples(self):
+        for text in self.INTERNAL_NOMINAL_CONTROLS:
+            with self.subTest(positive=text):
+                self.assertEqual(self.control(text).best().rule_id, EMBEDDED_RELATIVE_ROOT)
+        for index, old, new in (
+            (0, "a brother and sister", "a brother"),
+            (0, "a brother and sister", "a rock and sister"),
+            (0, "having owned", "having slept"),
+            (0, "had been sick", "had was sick"),
+            (1, "mended herself", "mended it herself"),
+            (1, "mended herself", "mended himself"),
+            (1, "which, before the party, was", "which, before the party, were"),
+            (1, "which, before the party, was", "which, before the party was"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.INTERNAL_NOMINAL_CONTROLS[index].replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != EMBEDDED_RELATIVE_ROOT)
+
+    def test_internal_nominal_semantic_attachments(self):
+        cases = select_cases(500)[0]
+        pair = "COORDINATED_ANTECEDENT"
+        for index, expected, forbidden in (
+            (242, {("MEMBER", pair, "father"), ("MEMBER", pair, "mother"),
+                   ("EXCEPTION", "relations", pair), ("MODIFIER", pair, "been"),
+                   ("COMPLEMENT", "of", pair), ("THEME", "been", "COUNTED_SUBSET"),
+                   ("DURATION", "been", "years"), ("AGENT", "had", "his"),
+                   ("AFFECTED", "had", "relations"), ("COMPLEMENT", "of", "had"),
+                   ("NEGATION", "heard", "never")},
+                  {("MODIFIER", "relations", "been"), ("MODIFIER", "father", "been"),
+                   ("MODIFIER", "mother", "been"), ("EXCEPTION", "heard", pair)}),
+            (469, {("AFFECTED", "remember", "appearance"), ("MODIFIER", "appearance", "of"),
+                   ("COMPLEMENT", "of", "coat"), ("AFFECTED", "patched", "coat"),
+                   ("AGENT", "patched", "he"), ("EMPHASIS", "he", "himself"),
+                   ("MODIFIER", "coat", "patched"), ("MODIFIER", "coat", "was"),
+                   ("THEME", "was", "coat"), ("ADJUNCT", "was", "before"),
+                   ("ATTRIBUTE", "was", "patches")},
+                  {("AFFECTED", "patched", "himself"), ("AFFECTED", "patched", "appearance"),
+                   ("THEME", "was", "appearance"), ("ADJUNCT", "patched", "before")}),
+        ):
+            with self.subTest(index=index):
+                p = prepare_corpus_input(cases[index])
+                report = self.parser.parse(p.analysis_text, structural_constituents=p.structural_constituents,
+                                           max_items=50_000, kbest_work_limit=500_000)
+                graph = report.interpret().graph
+                label = lambda n: n.surface or n.type_name
+                edges = {(r.relation, label(graph.nodes[r.source]), label(graph.nodes[r.target]))
+                         for r in graph.relations}
+                self.assertTrue(expected <= edges, expected - edges)
+                self.assertFalse(forbidden & edges, forbidden & edges)
+
 
 if __name__ == "__main__":
     unittest.main()
