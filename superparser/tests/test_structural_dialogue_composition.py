@@ -1387,6 +1387,115 @@ class FiniteTemporalScopeTests(unittest.TestCase):
                                    if r.relation == rel and label(graph.nodes[r.target]) == "in"]
                         self.assertEqual(target.span[0], p.analysis_text.index(phrase))
 
+    NOMINAL_TEMPORAL_CONTROLS = (
+        "Dr. Carter then directed their attention to one of Miss Green, painted when she was only seven years old.",
+        "Worried and restless, the hour which passed in the library, before the guests arrived, was tedious and dull to a degree that almost made him rude.",
+    )
+
+    def test_nominal_temporals_are_inside_the_selected_modifier(self):
+        cases = select_cases(500)[0]
+        parts = SharedSubjectCoordinationTests.parts
+        for index, digest, nominal_text, temporal_text in (
+            (206, "fe7102c065aebf90", "drawn when she was only eight years old",
+             "when she was only eight years old"),
+            (246, "f696ae0852e22ab4", "which passed in the drawing-room, before the gentlemen came",
+             "before the gentlemen came"),
+        ):
+            with self.subTest(index=index):
+                text = cases[index]["source_text"]
+                self.assertEqual(sha256(text.encode()).hexdigest()[:16], digest)
+                prepared, lattice, result = self.parse(cases[index])
+                self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+                self.assertTrue(result.completed, result.stats)
+                self.assertFalse(result.stats.get("budget_exceeded"))
+                self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+                root = result.best()
+                self.assertEqual(root.rule_id, FINITE_TEMPORAL_ROOT)
+                self.assertEqual((root.start, root.end), (0, len(text)))
+                source = {x["id"]: x for x in prepared.structural_constituents}
+                self.assertEqual(source["a0"]["governor"], "n0")
+                self.assertEqual(source["n0"]["governor"], "s0")
+                for key, value in (("n0", nominal_text), ("a0", temporal_text)):
+                    self.assertEqual(text[source[key]["start"]:source[key]["end"]], value)
+                matrix = root.children[0]
+                if index == 206:
+                    self.assertEqual(matrix.rule_id, "structural_temporal_scope_directed_depiction")
+                    depiction = matrix.children[-1].children[-1]
+                    self.assertEqual(parts(depiction, text), [
+                        ("DEPICTED-ONE", "one of Miss Darcy"), ("COMMA", ","),
+                        ("TIMED-NOMINAL-MODIFIER", nominal_text),
+                    ])
+                    modifier = depiction.children[-1]
+                    self.assertEqual(parts(modifier, text), [("V", "drawn"), ("FINITE-TEMPORAL", temporal_text)])
+                    age = modifier.children[-1].children[-1]
+                    self.assertEqual(parts(age, text), [
+                        ("NP", "she"), ("COPULA", "was"), ("ADV", "only"), ("NUM", "eight"),
+                        ("N", "years"), ("ADJ", "old"),
+                    ])
+                    self.assertEqual(age.children[-2].features.as_dict()["number"], "plural")
+                else:
+                    self.assertEqual(matrix.rule_id, "structural_temporal_scope_experiencer_interval")
+                    interval = matrix.children[2]
+                    self.assertEqual(parts(interval, text), [
+                        ("NP", "the period"), ("TIMED-NOMINAL-MODIFIER", nominal_text),
+                    ])
+                    self.assertEqual(parts(interval.children[-1], text), [
+                        ("WH-REL-OBL", "which"), ("V", "passed"), ("PP", "in the drawing-room"),
+                        ("COMMA", ","), ("FINITE-TEMPORAL", temporal_text),
+                    ])
+                    arrival = interval.children[-1].children[-1].children[-1]
+                    self.assertEqual(parts(arrival, text), [("PLURAL-TEMPORAL-SUBJECT", "the gentlemen"), ("V", "came")])
+                    self.assertEqual(arrival.children[0].features.as_dict()["number"], "plural")
+                    self.assertEqual(matrix.children[-1].category, "INTERVAL-ATTRIBUTE")
+
+    def test_nominal_temporal_independent_controls(self):
+        for text in self.NOMINAL_TEMPORAL_CONTROLS:
+            with self.subTest(positive=text):
+                self.assertEqual(self.control(text).best().rule_id, FINITE_TEMPORAL_ROOT)
+        for index, old, new in (
+            (0, "painted when", "arrived when"),
+            (0, "she was", "she were"),
+            (0, "seven years", "seven people"),
+            (0, "Green, painted", "Green painted"),
+            (1, "guests arrived", "guest arrived"),
+            (1, "guests arrived", "guests painted"),
+            (1, "arrived, was", "arrived was"),
+            (1, "made him rude", "slept him rude"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.NOMINAL_TEMPORAL_CONTROLS[index].replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != FINITE_TEMPORAL_ROOT)
+
+    def test_nominal_temporal_semantics_distinguish_the_two_levels(self):
+        cases = select_cases(500)[0]
+        for index, expected, forbidden in (
+            (206, {("AFFECTED", "directed", "attention"), ("GOAL", "directed", "to"),
+                   ("COMPLEMENT", "to", "one"), ("DEPICTS", "one", "Darcy"),
+                   ("THEME", "drawn", "one"), ("TIME", "drawn", "was"),
+                   ("THEME", "was", "she"), ("ATTRIBUTE", "was", "old"),
+                   ("QUANTITY", "years", "eight"), ("FOCUS", "eight", "only")},
+                  {("TIME", "directed", "was"), ("THEME", "drawn", "Darcy"),
+                   ("AFFECTED", "directed", "one")}),
+            (246, {("THEME", "passed", "period"), ("MODIFIER", "period", "passed"),
+                   ("BEFORE", "passed", "came"), ("AGENT", "came", "gentlemen"),
+                   ("THEME", "was", "period"), ("ATTRIBUTE", "was", "wearisome"),
+                   ("DEGREE", "wearisome", "degree"), ("CAUSE", "made", "degree"),
+                   ("AFFECTED", "made", "her"), ("RESULT", "her", "uncivil"),
+                   ("DEPICTIVE", "her", "Anxious")},
+                  {("BEFORE", "was", "came"), ("BEFORE", "made", "came"),
+                   ("DEPICTIVE", "period", "Anxious"), ("CAUSE", "made", "period")}),
+        ):
+            with self.subTest(index=index):
+                p = prepare_corpus_input(cases[index])
+                report = self.parser.parse(p.analysis_text, structural_constituents=p.structural_constituents,
+                                           max_items=50_000, kbest_work_limit=500_000)
+                graph = report.interpret().graph
+                label = lambda n: n.surface or n.type_name
+                edges = {(r.relation, label(graph.nodes[r.source]), label(graph.nodes[r.target]))
+                         for r in graph.relations}
+                self.assertTrue(expected <= edges, expected - edges)
+                self.assertFalse(forbidden & edges, forbidden & edges)
+
 
 if __name__ == "__main__":
     unittest.main()

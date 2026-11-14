@@ -86,6 +86,10 @@ class QuotedSentenceComposer:
             frame: frozenset(lemmas) for rule in temporal
             for frame, lemmas in rule.provenance.get("temporal_frames", {}).items()
         }
+        self._temporal_source_forms = {
+            spelling: entry for rule in temporal
+            for spelling, entry in rule.provenance.get("temporal_source_forms", {}).items()
+        }
         self._source_honorifics = {
             spelling: lemma for rule in shared
             for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
@@ -348,6 +352,25 @@ class QuotedSentenceComposer:
                         provenance={"original_source_span": [a, b]},
                     ))
                 candidates.extend(titles)
+            elif kind == "temporal-source-form":
+                if expected_rule != FINITE_TEMPORAL_ROOT:
+                    return None
+                native = [c for c in original_lattice.candidates
+                          if c.span == (a, b) and c.category == category
+                          and all(c.features.as_dict().get(k) == v for k, v in required.items())]
+                if native:
+                    candidates.extend(native)
+                else:
+                    entry = self._temporal_source_forms.get(surface.casefold())
+                    if (not entry or entry["category"] != category
+                            or any(entry["features"].get(k) != v for k, v in required.items())):
+                        return None
+                    candidates.append(LexicalCandidate(
+                        span_start=a, span_end=b, surface=surface, lemma=entry["lemma"],
+                        category=category, features=FeatureStructure.build(entry["features"]),
+                        source="source-attested-temporal-form", score=0,
+                        provenance={"original_source_span": [a, b], "evidence": entry["evidence"]},
+                    ))
             elif kind == "source-preventive-conjunction":
                 if expected_rule != EMBEDDED_RELATIVE_ROOT or category != "PREVENTIVE-CONJ":
                     return None
