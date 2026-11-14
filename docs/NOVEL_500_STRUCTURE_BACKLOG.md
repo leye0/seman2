@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #64](https://github.com/leye0/seman2/pull/64)** — 466/500, 34 phrases restantes. Le lot #228 et #337 sur les infinitifs sélectionnés par un adjectif est résolu. Prochain lot à explorer : #328 et #499 sur les relatives à complément manquant imbriqué.
+
 **Suivi après la [PR #63](https://github.com/leye0/seman2/pull/63)** — 464/500, 36 phrases restantes. Le lot #226 et #350 sur le groupe de manière interposé est résolu. Prochain lot à explorer : #228 et #337 sur les adjectifs qui sélectionnent un infinitif.
 
 **Suivi après la [PR #62](https://github.com/leye0/seman2/pull/62)** — 462/500, 38 phrases restantes. Le cas #113 avec point-virgule et coordinations imbriquées est résolu. Le prochain témoin à sujet partagé est #226.
@@ -69,10 +71,10 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #122 | Racines sans analyse valide | Mr. Micawber considered it necessary to prepare either my aunt or his wife, by degrees, and said, sooner than he had expected yesterday. | Coordination de considered et said, contenu implicite de said, comparatif temporel détaché. |
 | #124 | Racines sans analyse valide | If that were so, my sacrifice was nothing; my plainest obligation to her unfulfilled; and every poor action I had shrunk from, I was hourly doing. | Parallélisme au point-virgule, copule élidée et objet antéposé. |
 | #221 | Forêt saturée | Mrs. Bennet was prevented replying by the entrance of the footman with a note for Miss Bennet; it came from Netherfield, and the servant waited for an answer. | Passif avec gérondif, puis propositions distinctes au point-virgule. |
-| #228 | Racines sans analyse valide | Mrs. Hurst and her sister scarcely opened their mouths, except to complain of fatigue, and were evidently impatient to have the house to themselves. | Except to à portée verbale et coordination de prédicats. |
+| #228 | Racines sans analyse valide | Mrs. Hurst and her sister scarcely opened their mouths, except to complain of fatigue, and were evidently impatient to have the house to themselves. | Except to à portée verbale et coordination de prédicats. — Corrigé par la PR #64. |
 | #238 | Racines sans analyse valide | That he should even speak to her was amazing!--but to speak with such civility, to inquire after her family! | Sujet propositionnel en that, puis infinitifs détachés à valeur exclamative. |
 | #249 | Racines sans analyse valide | Its effect was most extraordinary; for on first hearing it, Mrs. Bennet sat quite still, and unable to utter a syllable. | Point-virgule causal en for et coordination adjectivale sous sat. |
-| #337 | Racines sans analyse valide | I was unable to pursue the train of thought; a thousand feelings pressed upon me, and I wept bitterly. | Point-virgule suivi d’une coordination entre propositions indépendantes. |
+| #337 | Racines sans analyse valide | I was unable to pursue the train of thought; a thousand feelings pressed upon me, and I wept bitterly. | Point-virgule suivi d’une coordination entre propositions indépendantes. — Corrigé par la PR #64. |
 | #348 | Racines sans analyse valide | When I mingled with other families I distinctly discerned how peculiarly fortunate my lot was, and gratitude assisted the development of filial love. | Temporelle initiale sans virgule, interrogation indirecte et coordination finale. |
 | #350 | Forêt saturée | He heard with attention the little narration concerning my studies and smiled at the names of Cornelius Agrippa and Paracelsus, but without the contempt that M. Krempe had exhibited. | Prédicats coordonnés, contraste en but without et relative. — Corrigé par la PR #63. |
 | #362 | Racines sans analyse valide | I enjoyed this scene, and yet my enjoyment was embittered both by the memory of the past and the anticipation of the future. | Coordination de propositions, puis both…and sous la même préposition. |
