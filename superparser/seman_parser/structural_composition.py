@@ -84,7 +84,7 @@ class QuotedSentenceComposer:
         )
         self._finite_temporal_frames = {
             frame: frozenset(lemmas) for rule in temporal
-            for frame, lemmas in rule.provenance.get("relative_frames", {}).items()
+            for frame, lemmas in rule.provenance.get("temporal_frames", {}).items()
         }
         self._source_honorifics = {
             spelling: lemma for rule in shared
@@ -403,11 +403,12 @@ class QuotedSentenceComposer:
                         if k == "nonbase_surface"
                         else c.lemma.casefold() in v.split("|")
                         if k == "lemma_in"
-                        else (c.lemma.casefold() in (
-                            self._embedded_relative_frames.get(v, ()) if expected_rule == EMBEDDED_RELATIVE_ROOT
-                            else self._finite_temporal_frames.get(v, ()) if expected_rule == FINITE_TEMPORAL_ROOT
-                            else ()))
+                        else (expected_rule == EMBEDDED_RELATIVE_ROOT
+                              and c.lemma.casefold() in self._embedded_relative_frames.get(v, ()))
                         if k == "relative_frame"
+                        else (expected_rule == FINITE_TEMPORAL_ROOT
+                              and c.lemma.casefold() in self._finite_temporal_frames.get(v, ()))
+                        if k == "temporal_frame"
                         else c.features.as_dict().get("gender") == {
                             "he": "masculine", "she": "feminine", "it": "neuter",
                         }.get(v, c.features.as_dict().get("gender"))
