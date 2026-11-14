@@ -18,7 +18,8 @@ from seman_parser.dialogue_clause_plans import PARENTHETICAL_MODAL
 from seman_parser.adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT
 from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
-from seman_parser.engine import Parser
+from seman_parser.engine import ParseReport, Parser
+from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
 from seman_parser.structural_preanalysis import analyze_paragraph
 
 DATA = Path(__file__).resolve().parents[1] / "data"
@@ -308,6 +309,98 @@ class SourceParentheticalModalTests(unittest.TestCase):
         for sentence in analyze_paragraph("He stayed (she knew and waited."):
             self.assertFalse(any(c.function == "parenthetical_candidate"
                                  for c in sentence.constituents))
+
+class ParentheticalAlternativeTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    CONTROL = (
+        "Or (so she imagined) a reversal might soon happen to defeat them "
+        "and put an end to the dispute permanently."
+    )
+    SIMPLE_CONTROL = (
+        "Or (so he thought) a storm could later arise to wreck the bridge "
+        "and damage the road."
+    )
+
+    def test_case_360_preserves_both_finite_scopes_and_one_infinitival_marker(self):
+        case = select_cases(500)[0][360]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "74fc9f769935201a")
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        tree = result.best()
+        self.assertEqual((tree.rule_id, tree.start, tree.end),
+                         (PARENTHETICAL_ALTERNATIVE, 0, len(text)))
+        self.assertEqual(self.spans(tree.children, text), [
+            ("COORD", "Or"),
+            ("ALTERNATIVE-COGNITION", "(so my fond fancy imaged)"),
+            ("ALTERNATIVE-HOST", "some accident might meanwhile occur to destroy him and put an end to my slavery forever"),
+            ("SPEECH-STOP", "."),
+        ])
+        _, aside, host, _ = tree.children
+        self.assertEqual(prepared.source_component(f"p{aside.start}"), "(so my fond fancy imaged)")
+        self.assertEqual(self.spans(aside.children, text), [
+            ("OPEN-PAREN", "("), ("ADV", "so"), ("NP", "my fond fancy"),
+            ("V", "imaged"), ("CLOSE-PAREN", ")"),
+        ])
+        self.assertEqual(self.spans(host.children[:4], text), [
+            ("NP", "some accident"), ("MODAL", "might"), ("ADV", "meanwhile"), ("V", "occur"),
+        ])
+        coordinated = host.children[-1]
+        self.assertEqual(self.spans(coordinated.children, text), [
+            ("TO", "to"), ("VP-NP", "destroy him"), ("COORD", "and"),
+            ("TERMINATION-VP", "put an end to my slavery forever"),
+        ])
+        self.assertEqual(self.spans(coordinated.children[-1].children, text), [
+            ("V", "put"), ("NP", "an end"), ("TERMINATION-TARGET", "to my slavery"),
+            ("ADV", "forever"),
+        ])
+
+    def test_case_360_semantics_do_not_promote_the_aside_or_the_infinitives(self):
+        case = select_cases(500)[0][360]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, PARENTHETICAL_ALTERNATIVE)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                 for r in graph.relations}
+        expected = {
+            ("DISCOURSE", "occur", "Or"), ("AGENT", "imaged", "fancy"),
+            ("COMPLEMENT", "imaged", "occur"), ("CONTENT", "so", "occur"),
+            ("THEME", "occur", "accident"), ("MODALITY", "occur", "might"),
+            ("TIME", "occur", "meanwhile"), ("CONSEQUENCE", "occur", "destroy"),
+            ("CONSEQUENCE", "occur", "put"), ("CONJUNCT", "destroy", "put"),
+            ("AFFECTED", "destroy", "him"), ("TERMINATES", "put", "slavery"),
+            ("DURATION", "put", "forever"),
+        }
+        forbidden = {
+            ("AGENT", "occur", "fancy"), ("COMPLEMENT", "imaged", "destroy"),
+            ("TIME", "imaged", "meanwhile"), ("DURATION", "occur", "forever"),
+            ("DURATION", "destroy", "forever"), ("PURPOSE", "occur", "destroy"),
+        }
+        self.assertTrue(expected <= edges, expected - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_alternative_uses_lexically_proven_cognition_and_bare_conjuncts(self):
+        for text in (self.CONTROL, self.SIMPLE_CONTROL):
+            with self.subTest(positive=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, PARENTHETICAL_ALTERNATIVE)
+        for old, new in (
+            ("she imagined", "she laughed"), ("soon happen", "soon happens"),
+            ("and put", "and puts"), ("(so she imagined)", "so she imagined"),
+            ("and put", "and to put"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != PARENTHETICAL_ALTERNATIVE)
+
 
 class SubjectResumptionTests(unittest.TestCase):
     CASES = {
