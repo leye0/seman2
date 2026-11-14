@@ -72,3 +72,5 @@ Checkpoint 2026-11-08 UTC: compare bounded complete syntactic alternative trees 
 Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in independent strict and marked modes for #463/#480; report distinct syntactic relation patterns rather than lexical k-best repetitions.
 
 2026-11-14: verify #360 parenthetic cognition and coordinated prospective consequences on the fixed 500.
+
+2026-11-14: verify #362 shared passive by coordination on the fixed 500.
