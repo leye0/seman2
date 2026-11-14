@@ -13,7 +13,7 @@ the full dialogue grammar until their own compositional licensing exists.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -54,10 +54,13 @@ class QuotedSentenceComposer:
         self._shared_subject_vector = VectorGrammar(
             Grammar(shared), preserve_quote_delimiters=True,
         )
+        adjectival = tuple(rule for rule in rules
+                          if rule.provenance.get("source_plan") == ADJECTIVE_INFINITIVE_ROOT)
         self._adjective_infinitive_vector = VectorGrammar(
-            Grammar(rule for rule in rules
-                    if rule.provenance.get("source_plan") == ADJECTIVE_INFINITIVE_ROOT),
-            preserve_quote_delimiters=True,
+            Grammar(adjectival), preserve_quote_delimiters=True,
+        )
+        self._scoped_adjective_valency = frozenset(
+            lemma for rule in adjectival for lemma in rule.provenance.get("to_infinitive_lemmas", ())
         )
         self._source_honorifics = {
             spelling: lemma for rule in shared
@@ -321,6 +324,23 @@ class QuotedSentenceComposer:
                         provenance={"original_source_span": [a, b]},
                     ))
                 candidates.extend(titles)
+            elif kind == "adjective-infinitive-valency":
+                if expected_rule != ADJECTIVE_INFINITIVE_ROOT or category != "ADJ":
+                    return None
+                matched = [
+                    c for c in original_lattice.candidates if c.span == (a, b)
+                    and c.category == category and (
+                        c.features.as_dict().get("to_infinitive") == "true"
+                        or c.lemma.casefold() in self._scoped_adjective_valency
+                    )
+                ]
+                if not matched:
+                    return None
+                candidates.extend(
+                    replace(c, features=FeatureStructure.build(
+                        {**c.features.as_dict(), "to_infinitive": "true"}))
+                    for c in matched
+                )
             elif kind in ("lexical", "lexical-alternatives", "nominal-lexical"):
                 matching = [
                     c for c in original_lattice.candidates

@@ -49,7 +49,7 @@ def plan_adjective_infinitive_scope(text, components):
         piece(group, category, "source-punctuation")
 
     lexical("copula", "COPULA", vform="finite")
-    lexical("adj", "ADJ", to_infinitive="true")
+    piece("adj", "ADJ", "adjective-infinitive-valency")
     lexical("to", "TO")
     lexical("verb", "V", vform="base", subcat_member="transitive")
     piece("object", "NP")
