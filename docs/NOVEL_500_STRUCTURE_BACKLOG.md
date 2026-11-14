@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #67](https://github.com/leye0/seman2/pull/67)** — 472/500, 28 phrases restantes. Le lot #242 et #469 sur les relatives détachées attachées à un groupe nominal interne est résolu. Prochain lot à examiner : #73, #95 et #348, des temporelles finies placées à différents niveaux. La parenthèse explicite de #360 demeure dans la file structurelle.
+
 **Suivi après la [PR #66](https://github.com/leye0/seman2/pull/66)** — 470/500, 30 phrases restantes. Le lot #363 et #480 sur les relatives imbriquées et les suppléments est résolu. Prochain lot à examiner, #242 et #469, relatives supplémentaires attachées à un groupe nominal interne. La parenthèse explicite de #360 demeure dans la file structurelle.
 
 **Suivi après la [PR #65](https://github.com/leye0/seman2/pull/65)** — 468/500, 32 phrases restantes. Le lot #328 et #499 sur les relatives à complément manquant imbriqué est résolu. Prochains cas à examiner ensemble : #363 et #480, relatives avec un complément manquant sous un autre prédicat.
@@ -59,12 +61,12 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #110 | Délai | She knew no more than I did, where he was going, but she thought he had some project shaped out in his mind. | Comparatif elliptique no more than I did avant le contenu interrogatif where. |
 | #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. |
 | #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… |
-| #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. |
+| #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. — Corrigé par la PR #67. |
 | #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. — Corrigé par la PR #60. |
 | #294 | Racines sans analyse valide | Who could arrest a creature capable of scaling the overhanging sides of Mont Saleve? | Interrogative à sujet who et adjectif capable suivi d’un gérondif. |
 | #328 | Racines sans analyse valide | These sublime and magnificent scenes afforded me the greatest consolation that I was capable of receiving. | Relative à objet direct non exprimé de receiving. — Corrigé par la PR #65. |
 | #363 | Racines sans analyse valide | Sometimes I sat with my eyes fixed on the ground, fearing to raise them lest they should encounter the object which I so much dreaded to behold. | Supplément participial, subordonnée en lest et relative à complément infinitival. — Corrigé par la PR #66. |
-| #469 | Aucune racine | I remember the appearance of his coat, which he patched himself upstairs in his room, and which, before the end, was nothing but patches. | Relatives coordonnées sur le même antécédent, avec incise dans la seconde. |
+| #469 | Aucune racine | I remember the appearance of his coat, which he patched himself upstairs in his room, and which, before the end, was nothing but patches. | Relatives coordonnées sur le même antécédent, avec incise dans la seconde. — Corrigé par la PR #67. |
 
 ## P4 — Frontières entre propositions, coordinations et ellipses (17)
 
