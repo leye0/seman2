@@ -54,13 +54,12 @@ def plan_embedded_relative_scope(text):
     if not text or text[-1] not in ".!":
         return None
     m = TRANSFER.fullmatch(text[:-1]) if text.endswith(".") else None
-    family = "transfer"
     if m is None and text.endswith("."):
-        m, family = AFTERTHOUGHT.fullmatch(text[:-1]), "afterthought"
+        m = AFTERTHOUGHT.fullmatch(text[:-1])
     if m is None and text.endswith("."):
-        m, family = PREVENTIVE.fullmatch(text[:-1]), "preventive"
+        m = PREVENTIVE.fullmatch(text[:-1])
     if m is None:
-        m, family = STRANDED_SUPPLEMENT.fullmatch(text[:-1]), "stranded_supplement"
+        m = STRANDED_SUPPLEMENT.fullmatch(text[:-1])
     if m is None:
         return None
     specs, add, punct, _ = _specs()
@@ -74,12 +73,12 @@ def plan_embedded_relative_scope(text):
     def verb(group, form, frame, **features):
         lex(group, "V", vform=form, subcat_member=frame, **features)
 
-    if family in ("transfer", "afterthought"):
+    if m.re in (TRANSFER, AFTERTHOUGHT):
         lex("that", "COMP-THAT")
         piece("inner", "NP", "subject-phrase", pronominal="true")
         lex("copula", "COPULA", vform="finite")
         piece("head", "NP", proof_rule="np_det_n")
-        if family == "transfer":
+        if m.re is TRANSFER:
             piece("subject", "NP", proof_rule="np_determiner_adjp_head")
             verb("matrix", "finite", "transitive", nonbase_surface="true",
                  relative_frame="ditransitive")
@@ -104,7 +103,7 @@ def plan_embedded_relative_scope(text):
             verb("bare", "base", "intransitive", relative_frame="comitative_movement")
             lex("manner", "ADV")
             lex("with", "PREP")
-    elif family == "preventive":
+    elif m.re is PREVENTIVE:
         lex("frequency", "ADV")
         piece("subject", "NP", "subject-phrase", pronominal="true")
         verb("matrix", "finite", "intransitive", nonbase_surface="true")
