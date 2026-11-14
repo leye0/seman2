@@ -17,6 +17,7 @@ from scripts.diagnose_novel_parses import select_cases
 from seman_parser.dialogue_clause_plans import PARENTHETICAL_MODAL
 from seman_parser.adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT
 from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
+from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import Parser
 from seman_parser.structural_preanalysis import analyze_paragraph
 
@@ -1257,6 +1258,134 @@ class EmbeddedRelativeScopeTests(unittest.TestCase):
                          for r in graph.relations}
                 self.assertTrue(expected <= edges, expected - edges)
                 self.assertFalse(forbidden & edges, forbidden & edges)
+
+class FiniteTemporalScopeTests(unittest.TestCase):
+    setUpClass = classmethod(EmbeddedRelativeScopeTests.setUpClass.__func__)
+    parse = EmbeddedRelativeScopeTests.parse
+    control = EmbeddedRelativeScopeTests.control
+
+    TEMPORAL_CASES = (
+        (73, "d42bea92dd357fce", "as they came towards us", "structural_temporal_scope_interposed_before_content"),
+        (95, "16ef86f47f909d4b", "when Mr. Peggotty came home about nine o’clock", "structural_temporal_scope_progressive_with_connective"),
+        (348, "a40661181be78fa8", "When I mingled with other families", "structural_temporal_scope_two_conjuncts"),
+    )
+    TEMPORAL_CONTROLS = (
+        "She believed, as we walked towards them, that they were neatly dressed even in that photograph.",
+        "Therefore, when Dr. Carter went home around seven o’clock, that cheerful Mrs. Green was sewing in her room, in a very calm and peaceful mood.",
+        "When she walked with old friends she clearly noticed how strangely silent her house was, and fear altered the course of her journey.",
+    )
+
+    def test_temporal_scope_sources_and_selected_predicates(self):
+        cases = select_cases(500)[0]
+        parts = SharedSubjectCoordinationTests.parts
+        for index, digest, expected_time, rule in self.TEMPORAL_CASES:
+            with self.subTest(index=index):
+                text = cases[index]["source_text"]
+                self.assertEqual(sha256(text.encode()).hexdigest()[:16], digest)
+                prepared, lattice, result = self.parse(cases[index])
+                self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+                self.assertTrue(result.completed, result.stats)
+                self.assertFalse(result.stats.get("budget_exceeded"))
+                self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+                spans = [x for x in prepared.structural_constituents
+                         if x["function"] == "adverbial_subordinate_clause"]
+                self.assertEqual([(text[x["start"]:x["end"]], x["governor"]) for x in spans],
+                                 [(expected_time, "s0")])
+                root = result.best()
+                self.assertEqual(root.rule_id, FINITE_TEMPORAL_ROOT)
+                self.assertEqual((root.start, root.end), (0, len(text)))
+                matrix = root.children[0]
+                self.assertEqual(matrix.rule_id, rule)
+                if index == 73:
+                    self.assertEqual(parts(matrix, text)[:6], [
+                        ("NP", "I"), ("V", "thought"), ("COMMA", ","),
+                        ("FINITE-TEMPORAL", expected_time), ("COMMA", ","),
+                        ("FINITE-THAT-CONTENT", "that they were well matched even in that particular"),
+                    ])
+                    self.assertEqual([c.category for c in matrix.children[-1].children],
+                                     ["COMP-THAT", "NP", "AUX-BE", "ADV", "V", "PP"])
+                elif index == 95:
+                    self.assertEqual(parts(matrix, text)[2:8], [
+                        ("FINITE-TEMPORAL", expected_time), ("COMMA", ","),
+                        ("DESCRIBED-SUBJECT", "this unfortunate Mrs. Gummidge"), ("AUX-BE", "was"),
+                        ("V", "knitting"), ("PP", "in her corner"),
+                    ])
+                    arrival = matrix.children[2].children[1]
+                    self.assertEqual(parts(arrival, text), [
+                        ("TITLED-SUBJECT", "Mr. Peggotty"), ("V", "came"),
+                        ("ADV", "home"), ("CLOCK-PP", "about nine o’clock"),
+                    ])
+                    self.assertEqual(parts(arrival.children[-1].children[-1], text),
+                                     [("NUM", "nine"), ("ADV", "o’clock")])
+                    self.assertEqual(matrix.children[-1].category, "COORDINATED-STATE-PP")
+                else:
+                    first, _, _, second = matrix.children
+                    self.assertEqual(parts(first, text)[:4], [
+                        ("FINITE-TEMPORAL", expected_time), ("NP", "I"),
+                        ("ADV", "distinctly"), ("V", "discerned"),
+                    ])
+                    self.assertEqual(parts(first.children[-1], text), [
+                        ("WH-NOM", "how"), ("ADV", "peculiarly"), ("ADJ", "fortunate"),
+                        ("NP", "my lot"), ("COPULA", "was"),
+                    ])
+                    self.assertEqual(parts(second, text), [
+                        ("NP", "gratitude"), ("V", "assisted"), ("NOMINAL-OF-THEME", "the development of filial love"),
+                    ])
+
+    def test_temporal_scope_independent_controls_and_rejections(self):
+        for t in self.TEMPORAL_CONTROLS:
+            with self.subTest(positive=t):
+                self.assertEqual(self.control(t).best().rule_id, FINITE_TEMPORAL_ROOT)
+        for index, old, new in (
+            (0, "them, that", "them that"),
+            (0, "they were", "they was"),
+            (0, "we walked", "we painted"),
+            (1, "seven o’clock", "trees o’clock"),
+            (1, "Green was", "Green were"),
+            (1, "Carter went", "Carter painted"),
+            (2, "how strangely silent", "how strangely quietly"),
+            (2, "she clearly noticed", "she clearly slept"),
+            (2, "her house was", "her house were"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.TEMPORAL_CONTROLS[index].replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != FINITE_TEMPORAL_ROOT)
+
+    def test_temporal_scope_exact_semantic_governors(self):
+        cases = select_cases(500)[0]
+        for index, expected, forbidden in (
+            (73, {("TIME", "thought", "came"), ("COMPLEMENT", "thought", "matched"),
+                  ("THEME", "matched", "they"), ("MANNER", "matched", "well")},
+                 {("TIME", "matched", "came"), ("COMPLEMENT", "thought", "came")}),
+            (95, {("TIME", "knitting", "came"), ("TIME", "came", "about"),
+                  ("AGENT", "knitting", "Gummidge"), ("AGENT", "came", "Peggotty"),
+                  ("DESTINATION", "came", "home"), ("ASPECT", "knitting", "was"),
+                  ("DEPICTIVE", "Gummidge", "in"), ("COMPLEMENT", "in", "condition"),
+                  ("MODIFIER", "condition", "miserable")},
+                 {("TIME", "knitting", "about"), ("DEPICTIVE", "Peggotty", "in"),
+                  ("AGENT", "was", "Gummidge")}),
+            (348, {("TIME", "discerned", "mingled"), ("COMPLEMENT", "discerned", "was"),
+                   ("THEME", "was", "lot"), ("ATTRIBUTE", "was", "fortunate"),
+                   ("DEGREE", "fortunate", "how"), ("CONJUNCT", "discerned", "assisted"),
+                   ("THEME", "development", "love"), ("AFFECTED", "assisted", "development")},
+                  {("TIME", "assisted", "mingled"), ("TIME", "was", "mingled"),
+                   ("AFFECTED", "assisted", "love")}),
+        ):
+            with self.subTest(index=index):
+                p = prepare_corpus_input(cases[index])
+                report = self.parser.parse(p.analysis_text, structural_constituents=p.structural_constituents,
+                                           max_items=50_000, kbest_work_limit=500_000)
+                graph = report.interpret().graph
+                label = lambda n: n.surface or n.type_name
+                edges = {(r.relation, label(graph.nodes[r.source]), label(graph.nodes[r.target]))
+                         for r in graph.relations}
+                self.assertTrue(expected <= edges, expected - edges)
+                self.assertFalse(forbidden & edges, forbidden & edges)
+                if index == 95:
+                    for rel, phrase in (("ADJUNCT", "in her corner"), ("DEPICTIVE", "in a very wretched")):
+                        target, = [graph.nodes[r.target] for r in graph.relations
+                                   if r.relation == rel and label(graph.nodes[r.target]) == "in"]
+                        self.assertEqual(target.span[0], p.analysis_text.index(phrase))
 
 
 if __name__ == "__main__":

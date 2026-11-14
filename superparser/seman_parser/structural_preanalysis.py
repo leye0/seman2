@@ -14,6 +14,7 @@ from seman_parser.sentence_boundaries import _abbreviation_at
 from seman_parser.structural_units import review_semicolon_boundaries, skeleton
 from seman_parser.discourse_roles import classify_discourse
 from seman_parser.quoted_discourse import analyze_dialogue
+from seman_parser.finite_temporal_scope import finite_temporal_span
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -330,7 +331,14 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.
     head = source.lstrip("\"'“‘ ")
-    if _INTRO.match(head):
+    temporal = finite_temporal_span(source) if not quotation_spans else None
+    if temporal:
+        a, b = temporal
+        cs.append(StructuralConstituent(
+            "a0", "adverbial_subordinate_clause", a, b, main,
+            "adverbial_modifier", "bounded_finite_temporal_candidate",
+        ))
+    elif _INTRO.match(head):
         a = source.find(head)
         b = source.find(",", a)
         if 0 < b < len(source)-2:

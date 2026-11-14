@@ -34,6 +34,7 @@ from .subject_resumption import plan_subject_resumption
 from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_shared_subject_coordination
 from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
 from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedded_relative_scope
+from .finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT, plan_finite_temporal_scope
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,6 +76,15 @@ class QuotedSentenceComposer:
         self._source_subordinators = {
             spelling: lemma for rule in relative
             for spelling, lemma in rule.provenance.get("source_subordinators", {}).items()
+        }
+        temporal = tuple(rule for rule in rules
+                         if rule.provenance.get("source_plan") == FINITE_TEMPORAL_ROOT)
+        self._finite_temporal_vector = VectorGrammar(
+            Grammar(temporal), preserve_quote_delimiters=True,
+        )
+        self._finite_temporal_frames = {
+            frame: frozenset(lemmas) for rule in temporal
+            for frame, lemmas in rule.provenance.get("relative_frames", {}).items()
         }
         self._source_honorifics = {
             spelling: lemma for rule in shared
@@ -393,8 +403,10 @@ class QuotedSentenceComposer:
                         if k == "nonbase_surface"
                         else c.lemma.casefold() in v.split("|")
                         if k == "lemma_in"
-                        else (expected_rule == EMBEDDED_RELATIVE_ROOT
-                              and c.lemma.casefold() in self._embedded_relative_frames.get(v, ()))
+                        else (c.lemma.casefold() in (
+                            self._embedded_relative_frames.get(v, ()) if expected_rule == EMBEDDED_RELATIVE_ROOT
+                            else self._finite_temporal_frames.get(v, ()) if expected_rule == FINITE_TEMPORAL_ROOT
+                            else ()))
                         if k == "relative_frame"
                         else c.features.as_dict().get("gender") == {
                             "he": "masculine", "she": "feminine", "it": "neuter",
@@ -729,7 +741,9 @@ class QuotedSentenceComposer:
                     self._adjective_infinitive_vector
                     if expected_rule == ADJECTIVE_INFINITIVE_ROOT else
                     self._embedded_relative_vector
-                    if expected_rule == EMBEDDED_RELATIVE_ROOT else self._vector)
+                    if expected_rule == EMBEDDED_RELATIVE_ROOT else
+                    self._finite_temporal_vector
+                    if expected_rule == FINITE_TEMPORAL_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2440,8 +2454,12 @@ class QuotedSentenceComposer:
                 if specs is None:
                     specs = plan_embedded_relative_scope(text)
                     if specs is None:
-                        return None
-                    rule = EMBEDDED_RELATIVE_ROOT
+                        specs = plan_finite_temporal_scope(text)
+                        if specs is None:
+                            return None
+                        rule = FINITE_TEMPORAL_ROOT
+                    else:
+                        rule = EMBEDDED_RELATIVE_ROOT
                 else:
                     rule = ADJECTIVE_INFINITIVE_ROOT
             else:
