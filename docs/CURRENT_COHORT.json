@@ -4,7 +4,7 @@
   "sample_count": 500,
   "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
   "historical_v1_cohort_sha256": "cf58d1c58d07171fa18cc0bf4da5ea95bff7d7fc8d167646e38c59b79413e92a",
-  "note": "PR #65 repairs #328 and #499 with typed embedded relative gaps. Receiving has a missing direct object; stranded with has a missing prepositional object. The relative and its nominal antecedent preserve both bindings, including the dashed restatement in #499. All 466 prior completions and 30 historical dialogues are preserved.",
+  "note": "PR #66 repairs #363 and #480. The relative fills the direct object of behold in #363 and the stranded directional to in #480. The lest clause attaches to raise, us is the direct object of led, and the final apposition attaches to the squire. All 468 prior completions and 30 historical dialogues are preserved.",
   "prior_current_cohort_sha256": "851878102fb4305edbbe3530b54b33fdc22af82428773440f4dd35111c6d1d77",
   "pre_structural_preanalysis_cohort_sha256": "5e2756f664fb05805cb70b48edb2815fb32544dd1187470a9759e1174af51c7b",
   "prior_preanalysis_baseline": {
@@ -73,37 +73,37 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "f0e27ceeb4b555921e7c75656596ef624eb91041",
-    "validated_pr_head": "012da4666927335d61bb93f0725fafcaea6337e1",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43544233785",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43544233852",
-    "completed": 468,
-    "unresolved": 32,
+    "validated_merge_commit": "e785bf2b4dcddca28312cf19304f321eef1f868c",
+    "validated_pr_head": "621d10841449f5821607337f3784019b02f765c5",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43550222705",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43550222819",
+    "completed": 470,
+    "unresolved": 30,
     "statuses": {
-      "complete": 468,
+      "complete": 470,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 2,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 3,
-      "roots_without_valid_analysis": 23,
+      "roots_without_valid_analysis": 21,
       "timeout": 4,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 466,
-      "current_complete": 468,
+      "previous_complete": 468,
+      "current_complete": 470,
       "newly_complete_indexes": [
-        328,
-        499
+        363,
+        480
       ],
       "regressed_completed_indexes": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14088669958,
-      "candidate_artifact_id": 14093557481
+      "baseline_artifact_id": 14093557481,
+      "candidate_artifact_id": 14095833799
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -144,13 +144,13 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 758,
+      "unit_tests": 762,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 73,
-      "case_id": "766:d42bea92dd357fce"
+      "index": 496,
+      "case_id": "120:238d6ed29a444f6d"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
@@ -168,8 +168,10 @@
         328,
         337,
         350,
+        363,
         372,
         463,
+        480,
         485,
         486,
         493,
@@ -177,8 +179,8 @@
       ],
       "shared_subject_next_index": 477,
       "next_batch_indexes": [
-        363,
-        480
+        242,
+        469
       ]
     },
     "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
@@ -203,7 +205,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 32,
+      "active_remaining": 30,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -241,6 +243,7 @@
         337,
         350,
         359,
+        363,
         372,
         384,
         386,
@@ -252,6 +255,7 @@
         464,
         466,
         475,
+        480,
         485,
         486,
         493,
@@ -261,8 +265,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43544233821",
-    "grammatical_attachment_note": "PR #65 repairs #328 and #499 with typed embedded relative gaps. Receiving has a missing direct object; stranded with has a missing prepositional object. The relative and its nominal antecedent preserve both bindings, including the dashed restatement in #499. All 466 prior completions and 30 historical dialogues are preserved."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43550222716",
+    "grammatical_attachment_note": "PR #66 repairs #363 and #480. The relative fills the direct object of behold in #363 and the stranded directional to in #480. The lest clause attaches to raise, us is the direct object of led, and the final apposition attaches to the squire. All 468 prior completions and 30 historical dialogues are preserved."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -3318,5 +3322,197 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43534878037",
     "grammatical_attachment_note": "PR #64 repairs #228 and #337 with a lexically licensed adjectival infinitive bounded to its own predicate. The exception, reflexive controller and semicolon continuation keep their own scopes. All 464 prior completions and all 30 historical dialogues are preserved on the same corpus and parser limits."
+  },
+  "pre_pr66_baseline": {
+    "validated_merge_commit": "f0e27ceeb4b555921e7c75656596ef624eb91041",
+    "validated_pr_head": "012da4666927335d61bb93f0725fafcaea6337e1",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43544233785",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43544233852",
+    "completed": 468,
+    "unresolved": 32,
+    "statuses": {
+      "complete": 468,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 2,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 3,
+      "roots_without_valid_analysis": 23,
+      "timeout": 4,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 466,
+      "current_complete": 468,
+      "newly_complete_indexes": [
+        328,
+        499
+      ],
+      "regressed_completed_indexes": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14088669958,
+      "candidate_artifact_id": 14093557481
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 758,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 73,
+      "case_id": "766:d42bea92dd357fce"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 360,
+      "resolved_indexes": [
+        69,
+        101,
+        113,
+        189,
+        220,
+        226,
+        228,
+        239,
+        291,
+        328,
+        337,
+        350,
+        372,
+        463,
+        485,
+        486,
+        493,
+        499
+      ],
+      "shared_subject_next_index": 477,
+      "next_batch_indexes": [
+        363,
+        480
+      ]
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 32,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        96,
+        99,
+        101,
+        109,
+        113,
+        141,
+        157,
+        175,
+        189,
+        200,
+        209,
+        220,
+        223,
+        226,
+        228,
+        229,
+        235,
+        237,
+        239,
+        241,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        328,
+        337,
+        350,
+        359,
+        372,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        463,
+        464,
+        466,
+        475,
+        485,
+        486,
+        493,
+        495,
+        498,
+        499
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43544233821",
+    "grammatical_attachment_note": "PR #65 repairs #328 and #499 with typed embedded relative gaps. Receiving has a missing direct object; stranded with has a missing prepositional object. The relative and its nominal antecedent preserve both bindings, including the dashed restatement in #499. All 466 prior completions and 30 historical dialogues are preserved."
   }
 }

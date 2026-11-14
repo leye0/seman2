@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #66](https://github.com/leye0/seman2/pull/66)** — 470/500, 30 phrases restantes. Le lot #363 et #480 sur les relatives imbriquées et les suppléments est résolu. Prochain lot à examiner, #242 et #469, relatives supplémentaires attachées à un groupe nominal interne. La parenthèse explicite de #360 demeure dans la file structurelle.
+
 **Suivi après la [PR #65](https://github.com/leye0/seman2/pull/65)** — 468/500, 32 phrases restantes. Le lot #328 et #499 sur les relatives à complément manquant imbriqué est résolu. Prochains cas à examiner ensemble : #363 et #480, relatives avec un complément manquant sous un autre prédicat.
 
 **Suivi après la [PR #64](https://github.com/leye0/seman2/pull/64)** — 466/500, 34 phrases restantes. Le lot #228 et #337 sur les infinitifs sélectionnés par un adjectif est résolu. Prochain lot à explorer : #328 et #499 sur les relatives à complément manquant imbriqué.
@@ -42,7 +44,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #246 | Aucune racine | Anxious and uneasy, the period which passed in the drawing-room, before the gentlemen came, was wearisome and dull to a degree that almost made her uncivil. | Supplément adjectival détaché, puis temporelle intercalée dans le sujet. |
 | #319 | Racines sans analyse valide | Now my desires were complied with, and it would, indeed, have been folly to repent. | Incise indeed entre modal et infinitif parfait. |
 | #463 | Racines sans analyse valide | He himself, I thought, looked somewhat paler and more stern than I was used to. | Incise de pensée entre le sujet emphatique et le prédicat comparatif. — Corrigé par la PR #60. |
-| #480 | Racines sans analyse valide | The squire was sitting down, as white as a sheet, thinking of the harm he had led us to, the good soul! | Équative détachée, participiale et reprise nominale finale. |
+| #480 | Racines sans analyse valide | The squire was sitting down, as white as a sheet, thinking of the harm he had led us to, the good soul! | Équative détachée, participiale et reprise nominale finale. — Corrigé par la PR #66. |
 | #485 | Racines sans analyse valide | I snatched a cutlass from the pile, and someone, at the same time snatching another, gave me a cut across the knuckles which I hardly felt. | Participiale incidente entre sujet et gave. — Corrigé par la PR #60. |
 | #486 | Aucune racine | These biscuits, should anything befall me, would keep me, at least, from starving till far on in the next day. | Conditionnelle inversée sans if entre sujet et modal, puis at least. — Corrigé par la PR #60. |
 | #496 | Racines sans analyse valide | The air, besides, was fresh and stirring, and this, under the sheer sunbeams, was a wonderful refreshment to our senses. | Incises distinctes dans deux propositions coordonnées. |
@@ -60,8 +62,8 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. |
 | #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. — Corrigé par la PR #60. |
 | #294 | Racines sans analyse valide | Who could arrest a creature capable of scaling the overhanging sides of Mont Saleve? | Interrogative à sujet who et adjectif capable suivi d’un gérondif. |
-| #328 | Racines sans analyse valide | These sublime and magnificent scenes afforded me the greatest consolation that I was capable of receiving. | Relative à complément de préposition non exprimé après receiving. — Corrigé par la PR #65. |
-| #363 | Racines sans analyse valide | Sometimes I sat with my eyes fixed on the ground, fearing to raise them lest they should encounter the object which I so much dreaded to behold. | Supplément participial, subordonnée en lest et relative à complément infinitival. |
+| #328 | Racines sans analyse valide | These sublime and magnificent scenes afforded me the greatest consolation that I was capable of receiving. | Relative à objet direct non exprimé de receiving. — Corrigé par la PR #65. |
+| #363 | Racines sans analyse valide | Sometimes I sat with my eyes fixed on the ground, fearing to raise them lest they should encounter the object which I so much dreaded to behold. | Supplément participial, subordonnée en lest et relative à complément infinitival. — Corrigé par la PR #66. |
 | #469 | Aucune racine | I remember the appearance of his coat, which he patched himself upstairs in his room, and which, before the end, was nothing but patches. | Relatives coordonnées sur le même antécédent, avec incise dans la seconde. |
 
 ## P4 — Frontières entre propositions, coordinations et ellipses (17)
