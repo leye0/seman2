@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #69](https://github.com/leye0/seman2/pull/69)** — 477/500, 23 phrases restantes. #206 et #246 gardent leur temporelle à l’intérieur du modificateur nominal. La parenthèse explicite de #360 est la prochaine priorité structurelle.
+
 **Suivi après la [PR #68](https://github.com/leye0/seman2/pull/68)** — 475/500, 25 phrases restantes. Les trois temporelles finies #73, #95 et #348 sont résolues. Prochain lot à examiner : #206 et #246, des temporelles qui doivent rester à l’intérieur d’un supplément nominal. La parenthèse explicite de #360 demeure dans la file structurelle.
 
 **Suivi après la [PR #67](https://github.com/leye0/seman2/pull/67)** — 472/500, 28 phrases restantes. Le lot #242 et #469 sur les relatives détachées attachées à un groupe nominal interne est résolu. Prochain lot à examiner : #73, #95 et #348, des temporelles finies placées à différents niveaux. La parenthèse explicite de #360 demeure dans la file structurelle.
@@ -45,7 +47,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #220 | Aucune racine | He was at the same time haughty, reserved, and fastidious, and his manners, though well-bred, were not inviting. | Concessive réduite though well-bred entre sujet et prédicat. — Corrigé par la PR #60. |
 | #226 | Aucune racine | He inquired how far Netherfield was from Meryton; and, after receiving her answer, asked in a hesitating manner how long Mr. Darcy had been staying there. | Gérondif after receiving her answer intercalé entre deux interrogatives indirectes. — Corrigé par la PR #63. |
 | #239 | Forêt saturée | Elizabeth immediately recognizing the livery, guessed what it meant, and imparted no small degree of her surprise to her relations by acquainting them with the honour which she expected. | Participiale entre le sujet et guessed, puis gérondif de moyen. — Corrigé par la PR #60. |
-| #246 | Aucune racine | Anxious and uneasy, the period which passed in the drawing-room, before the gentlemen came, was wearisome and dull to a degree that almost made her uncivil. | Supplément adjectival détaché, puis temporelle intercalée dans le sujet. |
+| #246 | Aucune racine | Anxious and uneasy, the period which passed in the drawing-room, before the gentlemen came, was wearisome and dull to a degree that almost made her uncivil. | Supplément adjectival détaché, puis temporelle intercalée dans le sujet. — Corrigé par la PR #69. |
 | #319 | Racines sans analyse valide | Now my desires were complied with, and it would, indeed, have been folly to repent. | Incise indeed entre modal et infinitif parfait. |
 | #463 | Racines sans analyse valide | He himself, I thought, looked somewhat paler and more stern than I was used to. | Incise de pensée entre le sujet emphatique et le prédicat comparatif. — Corrigé par la PR #60. |
 | #480 | Racines sans analyse valide | The squire was sitting down, as white as a sheet, thinking of the harm he had led us to, the good soul! | Équative détachée, participiale et reprise nominale finale. — Corrigé par la PR #66. |
@@ -62,7 +64,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #84 | Racines sans analyse valide | Never, never, had I loved Dora so deeply and truly, as I loved her that night. | Inversion après Never répété, puis comparaison en as. |
 | #110 | Délai | She knew no more than I did, where he was going, but she thought he had some project shaped out in his mind. | Comparatif elliptique no more than I did avant le contenu interrogatif where. |
 | #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. |
-| #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… |
+| #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… — Corrigé par la PR #69. |
 | #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. — Corrigé par la PR #67. |
 | #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. — Corrigé par la PR #60. |
 | #294 | Racines sans analyse valide | Who could arrest a creature capable of scaling the overhanging sides of Mont Saleve? | Interrogative à sujet who et adjectif capable suivi d’un gérondif. |
