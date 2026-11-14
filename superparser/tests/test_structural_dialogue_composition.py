@@ -16,6 +16,7 @@ from research.verbnet_lr.gutenberg_novels import Book, extract
 from scripts.diagnose_novel_parses import select_cases
 from seman_parser.dialogue_clause_plans import PARENTHETICAL_MODAL
 from seman_parser.adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT
+from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.engine import Parser
 from seman_parser.structural_preanalysis import analyze_paragraph
 
@@ -940,6 +941,120 @@ class AdjectiveInfinitiveScopeTests(unittest.TestCase):
                     ("CONJUNCT", "pressed", "wept"),
                 })
                 self.assertTrue(required <= edges, required - edges)
+
+
+class EmbeddedRelativeScopeTests(unittest.TestCase):
+    CONTROLS = (
+        "These solemn and majestic landscapes offered us the greatest comfort that we were capable of finding.",
+        "Three of the sacks, tied in a rope's loop, made a heavy burden for a tall worker--one that she was eager to walk quietly with.",
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(DATA, cache_size=0)
+
+    def parse(self, case):
+        return parse_corpus_case(self.parser, case, max_items=50_000, kbest_work_limit=500_000)
+
+    def control(self, text):
+        rows, _ = extract(Book(999, "Synthetic", "Test", "train"), text,
+                          length_min=1, length_max=120)
+        self.assertEqual([row["source_text"] for row in rows], [text])
+        return self.parse(rows[0])[2]
+
+    def original(self, case, checksum):
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], checksum)
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get("budget_exceeded"))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+        root = result.best()
+        self.assertEqual(root.rule_id, EMBEDDED_RELATIVE_ROOT)
+        self.assertEqual((root.start, root.end), (0, len(text)))
+        return text, root.children[0]
+
+    def test_gerund_fills_verb_object_not_the_preposition_of(self):
+        text, matrix = self.original(select_cases(500)[0][328], "3ca68aab1902e8d7")
+        parts = SharedSubjectCoordinationTests.parts
+        self.assertEqual(parts(matrix, text), [
+            ("NP", "These sublime and magnificent scenes"), ("V", "afforded"),
+            ("NP", "me"), ("RELATIVE-HEAD", "the greatest consolation that I was capable of receiving"),
+        ])
+        head, relative = matrix.children[-1].children
+        self.assertEqual(text[head.start:head.end], "the greatest consolation")
+        self.assertEqual(parts(relative, text), [
+            ("COMP-THAT", "that"), ("NP", "I"), ("COPULA", "was"),
+            ("GAPPED-ADJP", "capable of receiving"),
+        ])
+        adjective = relative.children[-1]
+        self.assertEqual(parts(adjective, text), [
+            ("ADJ", "capable"), ("PREP", "of"), ("GAPPED-NONFINITE", "receiving"),
+        ])
+        self.assertEqual(adjective.children[-1].features.as_dict()["gap"], "object")
+        self.assertEqual(parts(adjective.children[-1], text), [("V", "receiving")])
+
+    def test_dashed_nominal_restatement_keeps_the_stranded_with(self):
+        text, matrix = self.original(select_cases(500)[0][499], "831e1f5ff09a8b07")
+        parts = SharedSubjectCoordinationTests.parts
+        subject, _, _, dash, afterthought = matrix.children
+        self.assertEqual(parts(subject, text), [
+            ("PARTITIVE-SUBJECT", "Two of the bars"), ("COMMA", ","), ("V", "slung"),
+            ("PP", "in a rope's end"), ("COMMA", ","),
+        ])
+        self.assertEqual(subject.features.as_dict()["number"], "plural")
+        self.assertEqual(subject.children[2].features.as_dict()["vform"], "ed")
+        self.assertEqual(text[dash.start:dash.end], "--")
+        self.assertEqual(parts(afterthought, text), [
+            ("NUM", "one"), ("EMBEDDED-RELATIVE", "that he was glad to walk slowly with"),
+        ])
+        adjective = afterthought.children[-1].children[-1]
+        self.assertEqual(parts(adjective, text), [
+            ("ADJ", "glad"), ("TO", "to"), ("GAPPED-NONFINITE", "walk slowly with"),
+        ])
+        inner = adjective.children[-1]
+        self.assertEqual(inner.features.as_dict()["gap"], "pp_object")
+        self.assertEqual(parts(inner, text), [("V", "walk"), ("ADV", "slowly"), ("PREP", "with")])
+
+    def test_distinct_lexical_controls_and_invalid_gap_filling(self):
+        for text in self.CONTROLS:
+            with self.subTest(positive=text):
+                self.assertEqual(self.control(text).best().rule_id, EMBEDDED_RELATIVE_ROOT)
+        for index, old, new in (
+            (0, "of finding", "of arriving"),
+            (0, "capable of", "wooden of"),
+            (0, "of finding", "of finding it"),
+            (0, "offered us", "observed us"),
+            (0, "we were", "we was"),
+            (1, "with.", "with it."),
+            (1, "walk quietly", "sleep quietly"),
+            (1, "eager to", "wooden to"),
+            (1, "she was", "she were"),
+            (1, "worker--one", "worker, one"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.CONTROLS[index].replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != EMBEDDED_RELATIVE_ROOT)
+
+    def test_relative_gap_semantics_links_to_the_correct_governor(self):
+        cases = select_cases(500)[0]
+        for index, expected in (
+            (328, {("AFFECTED", "receiving", "consolation"), ("THEME", "afforded", "consolation"),
+                   ("RECIPIENT", "afforded", "me"), ("AGENT", "receiving", "I")}),
+            (499, {("COMPLEMENT", "with", "one"), ("RESTATEMENT", "load", "one"),
+                   ("AGENT", "walk", "he"), ("MANNER", "walk", "slowly"),
+                   ("THEME", "slung", "COUNTED_SUBSET")}),
+        ):
+            with self.subTest(index=index):
+                p = prepare_corpus_input(cases[index])
+                report = self.parser.parse(p.analysis_text, structural_constituents=p.structural_constituents,
+                                           max_items=50_000, kbest_work_limit=500_000)
+                graph = report.interpret().graph
+                label = lambda n: n.surface or n.type_name
+                edges = {(r.relation, label(graph.nodes[r.source]), label(graph.nodes[r.target]))
+                         for r in graph.relations}
+                self.assertTrue(expected <= edges, expected - edges)
 
 
 if __name__ == "__main__":
