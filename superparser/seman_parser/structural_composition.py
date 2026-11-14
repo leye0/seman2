@@ -36,6 +36,7 @@ from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_
 from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedded_relative_scope
 from .finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT, plan_finite_temporal_scope
 from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coordination
+from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
@@ -114,6 +115,16 @@ class QuotedSentenceComposer:
         self._shared_by_causatives = frozenset(
             lemma for rule in shared_by for lemma in rule.provenance.get("causative_lemmas", ())
         )
+        triplet = [rule for rule in rules if rule.provenance.get("source_plan") == TRIPLET_ROOT]
+        names = [rule for rule in temporal if rule.rule_id in (
+            "structural_temporal_scope_honorific_name",
+            "structural_temporal_scope_unabbreviated_title",
+        )]
+        self._triplet_vector = VectorGrammar(Grammar((*triplet, *names)), preserve_quote_delimiters=True)
+        self._triplet_frames = {
+            frame: frozenset(lemmas) for rule in triplet
+            for frame, lemmas in rule.provenance.get("triplet_frames", {}).items()
+        }
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -373,7 +384,9 @@ class QuotedSentenceComposer:
                     ))
                 candidates.extend(titles)
             elif kind == "temporal-source-form":
-                if expected_rule != FINITE_TEMPORAL_ROOT:
+                if expected_rule != FINITE_TEMPORAL_ROOT and not (
+                    expected_rule == TRIPLET_ROOT and category == "TITLE"
+                ):
                     return None
                 native = [c for c in original_lattice.candidates
                           if c.span == (a, b) and c.category == category
@@ -452,6 +465,9 @@ class QuotedSentenceComposer:
                         else (expected_rule == FINITE_TEMPORAL_ROOT
                               and c.lemma.casefold() in self._finite_temporal_frames.get(v, ()))
                         if k == "temporal_frame"
+                        else (expected_rule == TRIPLET_ROOT
+                              and c.lemma.casefold() in self._triplet_frames.get(v, ()))
+                        if k == "triplet_frame"
                         else (expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT
                               and c.lemma.casefold() in self._alternative_frames.get(v, ()))
                         if k == "alternative_frame"
@@ -807,7 +823,9 @@ class QuotedSentenceComposer:
                     self._parenthetical_alternative_vector
                     if expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT else
                     self._shared_by_vector
-                    if expected_rule == SHARED_BY_ROOT else self._vector)
+                    if expected_rule == SHARED_BY_ROOT else
+                    self._triplet_vector
+                    if expected_rule == TRIPLET_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -847,8 +865,9 @@ class QuotedSentenceComposer:
                         "dialogue_structural_dialect_three_act_self_report",
                         "dialogue_structural_vocative_praise_stars_reporter",
                     ) else
-                    3 if expected_rule ==
-                    "dialogue_structural_comparative_negative_tag_sequence" else
+                    3 if expected_rule in (
+                        TRIPLET_ROOT, "dialogue_structural_comparative_negative_tag_sequence",
+                    ) else
                     3 if expected_rule ==
                     "dialogue_structural_three_confirmatory_tags_vocative" else
                     3 if expected_rule ==
@@ -2522,8 +2541,12 @@ class QuotedSentenceComposer:
                         if specs is None:
                             specs = plan_shared_by_coordination(text, components)
                             if specs is None:
-                                return None
-                            rule = SHARED_BY_ROOT
+                                specs = plan_semicolon_triplet(text, components)
+                                if specs is None:
+                                    return None
+                                rule = TRIPLET_ROOT
+                            else:
+                                rule = SHARED_BY_ROOT
                         else:
                             rule = FINITE_TEMPORAL_ROOT
                     else:

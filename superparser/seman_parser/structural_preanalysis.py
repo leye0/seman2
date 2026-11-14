@@ -17,6 +17,7 @@ from seman_parser.quoted_discourse import analyze_dialogue
 from seman_parser.finite_temporal_scope import finite_temporal_span
 from seman_parser.nominal_temporal_scope import nominal_temporal_spans
 from seman_parser.shared_by_coordination import shared_by_match
+from seman_parser.semicolon_triplet import semicolon_triplet_spans
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -336,6 +337,15 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             "b0", "shared_preposition_candidate",
             shared_by.start("both"), shared_by.end("second"), main,
             "prepositional_modifier", "overt_both_by_and_candidate",
+        ))
+    triplet = semicolon_triplet_spans(source) if len(parts) == 2 and not quotation_spans else None
+    if triplet and main == "s0":
+        middle, right = triplet
+        cs.extend((
+            StructuralConstituent("st0", "finite_conjunct_candidate", *middle, "s1",
+                                  "first_conjunct", "semicolon_then_comma_and"),
+            StructuralConstituent("st1", "finite_conjunct_candidate", *right, "st0",
+                                  "coordination", "semicolon_then_comma_and"),
         ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.

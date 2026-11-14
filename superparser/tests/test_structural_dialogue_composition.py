@@ -21,6 +21,7 @@ from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
 from seman_parser.shared_by_coordination import ROOT as SHARED_BY_ROOT
+from seman_parser.semicolon_triplet import ROOT as TRIPLET_ROOT
 from seman_parser.structural_preanalysis import analyze_paragraph
 
 DATA = Path(__file__).resolve().parents[1] / "data"
@@ -493,6 +494,124 @@ class SharedByCoordinationTests(unittest.TestCase):
             with self.subTest(negative=new):
                 best = self.control(positives[0].replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != SHARED_BY_ROOT)
+
+
+class SemicolonTripletTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    SOUND = (
+        "It resounded on my ears briefly and sharply; the walls echoed it, "
+        "and I felt as if the crowd surrounded me with whispers and cries."
+    )
+    PREVENTION = (
+        "Dr. Green was stopped speaking by the arrival of the messenger with a letter "
+        "for Miss Clarke; it came from London, and the messenger waited for a reply."
+    )
+
+    def test_originals_preserve_typed_semicolon_and_the_two_right_conjuncts(self):
+        cases = select_cases(500)[0]
+        for index, digest in ((221, "139e328f9c65aef8"), (371, "725d7c392db73387")):
+            with self.subTest(index=index):
+                text = cases[index]["source_text"]
+                self.assertEqual(sha256(text.encode()).hexdigest()[:16], digest)
+                prepared, lattice, result = self.parse(cases[index])
+                self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+                self.assertTrue(result.completed, result.stats)
+                self.assertFalse(result.stats["budget_exceeded"])
+                self.assertFalse(result.stats["kbest_budget_exceeded"])
+                root = result.best()
+                self.assertEqual((root.rule_id, root.start, root.end), (TRIPLET_ROOT, 0, len(text)))
+                left, semi, post, stop = root.children
+                middle, comma, and_, right = post.children
+                self.assertEqual(self.spans((semi, comma, and_, stop), text), [
+                    ("SEMICOLON", ";"), ("COMMA", ","), ("COORD", "and"), ("SPEECH-STOP", "."),
+                ])
+                self.assertEqual(prepared.source_component("st0"), text[middle.start:middle.end])
+                self.assertEqual(prepared.source_component("st1"), text[right.start:right.end])
+                parts = {x["id"]: x for x in prepared.structural_constituents}
+                self.assertEqual((parts["st0"]["governor"], parts["st1"]["governor"]), ("s1", "st0"))
+                if index == 221:
+                    who, be, prevent, reply, cause = left.children
+                    self.assertEqual(self.spans((who, be, prevent, reply), text), [
+                        ("TITLED-SUBJECT", "Mrs. Bennet"), ("AUX-BE", "was"),
+                        ("V", "prevented"), ("V", "replying"),
+                    ])
+                    arrival = cause.children[-1]
+                    carrier = arrival.children[-1]
+                    letter = carrier.children[-1]
+                    self.assertEqual(self.spans(letter.children, text), [
+                        ("NP", "a note"), ("PREP", "for"), ("TITLED-SUBJECT", "Miss Bennet"),
+                    ])
+                else:
+                    adverbs = left.children[-1]
+                    self.assertEqual(self.spans(adverbs.children, text),
+                                     [("ADV", "long"), ("COORD", "and"), ("ADV", "heavily")])
+                    comparison = right.children[-1]
+                    self.assertEqual(self.spans(comparison.children[:2], text),
+                                     [("ADV", "as"), ("CONJ", "if")])
+                    manner = comparison.children[-1].children[-1]
+                    self.assertEqual(self.spans(manner.children, text),
+                                     [("PREP", "with"), ("NP", "mockery"),
+                                      ("COORD", "and"), ("NP", "laughter")])
+
+    def test_local_attachments_do_not_cross_the_semicolon_or_the_comparison(self):
+        cases = select_cases(500)[0]
+        for i, expected, forbidden in (
+            (221, {("PREVENTED_ACTION", "prevented", "replying"),
+                   ("AGENT", "replying", "Bennet"), ("CAUSE", "prevented", "entrance"),
+                   ("AGENT", "entrance", "footman"), ("CARRIER", "note", "footman"),
+                   ("RECIPIENT", "note", "Bennet"), ("SOURCE", "came", "Netherfield"),
+                   ("PARATAXIS", "prevented", "came"), ("CONJUNCT", "came", "waited")},
+                  {("CAUSE", "replying", "entrance"), ("CAUSE", "prevented", "footman"),
+                   ("CONJUNCT", "prevented", "waited"), ("SOURCE", "waited", "Netherfield")}),
+            (371, {("DURATION", "rang", "long"), ("MANNER", "rang", "heavily"),
+                   ("PARATAXIS", "rang", "re-echoed"), ("CONJUNCT", "re-echoed", "felt"),
+                   ("COMPARISON", "felt", "surrounded"), ("HYPOTHETICAL", "surrounded", "as"),
+                   ("AGENT", "surrounded", "hell"), ("QUANTIFIER", "hell", "all"),
+                   ("AFFECTED", "surrounded", "me"), ("MANNER", "surrounded", "with"),
+                   ("COMPLEMENT", "with", "mockery"), ("COMPLEMENT", "with", "laughter")},
+                  {("MANNER", "re-echoed", "heavily"), ("CONDITION", "felt", "surrounded"),
+                   ("CONJUNCT", "felt", "surrounded"), ("MANNER", "felt", "with"),
+                   ("AGENT", "surrounded", "all")}),
+        ):
+            with self.subTest(index=i):
+                _, lattice, result = self.parse(cases[i])
+                self.assertEqual(result.best().rule_id, TRIPLET_ROOT)
+                graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+                edges = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                         for r in graph.relations}
+                self.assertTrue(expected <= edges, expected - edges)
+                self.assertFalse(forbidden & edges, forbidden & edges)
+                if i == 221:
+                    for relation, event, title in (("AGENT", "replying", "Mrs."),
+                                                   ("RECIPIENT", "note", "Miss")):
+                        target, = [graph.nodes[r.target] for r in graph.relations
+                                   if r.relation == relation and graph.nodes[r.source].surface == event]
+                        offset = cases[i]["source_text"].index(title) + len(title) + 1
+                        self.assertEqual(target.span[0], offset)
+
+    def test_controls_vary_both_internal_hosts_and_reject_missing_finite_evidence(self):
+        for text in (self.SOUND, self.PREVENTION):
+            with self.subTest(positive=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, TRIPLET_ROOT)
+        for text, old, new in (
+            (self.SOUND, "briefly and sharply", "brief and sharply"),
+            (self.SOUND, "echoed it", "echoed he"),
+            (self.SOUND, "felt as if", "felt as when"),
+            (self.SOUND, "it, and I", "it, and"),
+            (self.PREVENTION, "was stopped", "were stopped"),
+            (self.PREVENTION, "stopped speaking", "praised speaking"),
+            (self.PREVENTION, "stopped speaking", "stopped spoke"),
+            (self.PREVENTION, "Clarke; it", "Clarke, it"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(text.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != TRIPLET_ROOT)
 
 
 class SubjectResumptionTests(unittest.TestCase):
