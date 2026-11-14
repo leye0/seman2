@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #68](https://github.com/leye0/seman2/pull/68)** — 475/500, 25 phrases restantes. Les trois temporelles finies #73, #95 et #348 sont résolues. Prochain lot à examiner : #206 et #246, des temporelles qui doivent rester à l’intérieur d’un supplément nominal. La parenthèse explicite de #360 demeure dans la file structurelle.
+
 **Suivi après la [PR #67](https://github.com/leye0/seman2/pull/67)** — 472/500, 28 phrases restantes. Le lot #242 et #469 sur les relatives détachées attachées à un groupe nominal interne est résolu. Prochain lot à examiner : #73, #95 et #348, des temporelles finies placées à différents niveaux. La parenthèse explicite de #360 demeure dans la file structurelle.
 
 **Suivi après la [PR #66](https://github.com/leye0/seman2/pull/66)** — 470/500, 30 phrases restantes. Le lot #363 et #480 sur les relatives imbriquées et les suppléments est résolu. Prochain lot à examiner, #242 et #469, relatives supplémentaires attachées à un groupe nominal interne. La parenthèse explicite de #360 demeure dans la file structurelle.
@@ -35,9 +37,9 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
-| #73 | Délai | I thought, as they came towards us, that they were well matched even in that particular. | Temporelle entre thought et le complément en that. |
+| #73 | Délai | I thought, as they came towards us, that they were well matched even in that particular. | Temporelle entre thought et le complément en that. — Corrigé par la PR #68. |
 | #87 | Racines sans analyse valide | We judged it expedient, now, to tell her all we knew; which I recounted at length. | Incise now dans it…to, puis relative après le point-virgule. |
-| #95 | Forêt saturée | Accordingly, when Mr. Peggotty came home about nine o’clock, this unfortunate Mrs. Gummidge was knitting in her corner, in a very wretched and miserable condition. | Temporelle intercalée après Accordingly, puis ajout descriptif final. |
+| #95 | Forêt saturée | Accordingly, when Mr. Peggotty came home about nine o’clock, this unfortunate Mrs. Gummidge was knitting in her corner, in a very wretched and miserable condition. | Temporelle intercalée après Accordingly, puis ajout descriptif final. — Corrigé par la PR #68. |
 | #101 | Racines sans analyse valide | My face, neck, and hands, from unaccustomed exposure to the air and sun, were burnt to a berry-brown. | Groupe prépositionnel causal entre le sujet coordonné et le passif. — Corrigé par la PR #60. |
 | #189 | Racines sans analyse valide | Miss Bennet had slept ill, and though up, was very feverish, and not well enough to leave her room. | Concessive réduite though up au milieu de prédicats coordonnés. — Corrigé par la PR #61. |
 | #220 | Aucune racine | He was at the same time haughty, reserved, and fastidious, and his manners, though well-bred, were not inviting. | Concessive réduite though well-bred entre sujet et prédicat. — Corrigé par la PR #60. |
@@ -81,7 +83,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #238 | Racines sans analyse valide | That he should even speak to her was amazing!--but to speak with such civility, to inquire after her family! | Sujet propositionnel en that, puis infinitifs détachés à valeur exclamative. |
 | #249 | Racines sans analyse valide | Its effect was most extraordinary; for on first hearing it, Mrs. Bennet sat quite still, and unable to utter a syllable. | Point-virgule causal en for et coordination adjectivale sous sat. |
 | #337 | Racines sans analyse valide | I was unable to pursue the train of thought; a thousand feelings pressed upon me, and I wept bitterly. | Point-virgule suivi d’une coordination entre propositions indépendantes. — Corrigé par la PR #64. |
-| #348 | Racines sans analyse valide | When I mingled with other families I distinctly discerned how peculiarly fortunate my lot was, and gratitude assisted the development of filial love. | Temporelle initiale sans virgule, interrogation indirecte et coordination finale. |
+| #348 | Racines sans analyse valide | When I mingled with other families I distinctly discerned how peculiarly fortunate my lot was, and gratitude assisted the development of filial love. | Temporelle initiale sans virgule, interrogation indirecte et coordination finale. — Corrigé par la PR #68. |
 | #350 | Forêt saturée | He heard with attention the little narration concerning my studies and smiled at the names of Cornelius Agrippa and Paracelsus, but without the contempt that M. Krempe had exhibited. | Prédicats coordonnés, contraste en but without et relative. — Corrigé par la PR #63. |
 | #362 | Racines sans analyse valide | I enjoyed this scene, and yet my enjoyment was embittered both by the memory of the past and the anticipation of the future. | Coordination de propositions, puis both…and sous la même préposition. |
 | #371 | Délai | It rang on my ears long and heavily; the mountains re-echoed it, and I felt as if all hell surrounded me with mockery and laughter. | Point-virgule, coordination et comparaison hypothétique as if. |
