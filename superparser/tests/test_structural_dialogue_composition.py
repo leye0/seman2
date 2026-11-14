@@ -15,6 +15,7 @@ from research.verbnet_lr.corpus_pipeline import parse_corpus_case, prepare_corpu
 from research.verbnet_lr.gutenberg_novels import Book, extract
 from scripts.diagnose_novel_parses import select_cases
 from seman_parser.dialogue_clause_plans import PARENTHETICAL_MODAL
+from seman_parser.adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT
 from seman_parser.engine import Parser
 from seman_parser.structural_preanalysis import analyze_paragraph
 
@@ -802,6 +803,143 @@ class SharedSubjectCoordinationTests(unittest.TestCase):
                 result = self.control(self.CONTROLS[i].replace(before, after))
                 tree = result.best()
                 self.assertTrue(tree is None or tree.rule_id != self.ROOT)
+
+
+class AdjectiveInfinitiveScopeTests(unittest.TestCase):
+    CONTROLS = (
+        "Mrs. Brown and her friend hardly touched their food, except to nibble at the bread, "
+        "and were clearly eager to keep the room to themselves.",
+        "She was reluctant to open the door; a hundred visitors waited outside, and she spoke softly.",
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(DATA, cache_size=0)
+
+    def parse(self, case):
+        return parse_corpus_case(self.parser, case, max_items=50_000, kbest_work_limit=500_000)
+
+    def control(self, text):
+        rows, _ = extract(Book(999, "Synthetic", "Test", "train"), text,
+                          length_min=1, length_max=120)
+        self.assertEqual([r["source_text"] for r in rows], [text])
+        return self.parse(rows[0])[2]
+
+    def original(self, case, sha_prefix):
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], sha_prefix)
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual(prepared.analysis_text, text)
+        self.assertEqual(lattice.text, text)
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats.get("budget_exceeded"))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+        root = result.best()
+        self.assertEqual(root.rule_id, ADJECTIVE_INFINITIVE_ROOT)
+        self.assertEqual((root.start, root.end), (0, len(text)))
+        return text, root.children[0]
+
+    def test_coordinated_subject_controls_only_its_own_infinitive(self):
+        case = select_cases(500)[0][228]
+        text, clause = self.original(case, "700479afe09ec02c")
+        parts = SharedSubjectCoordinationTests.parts
+        subject, first, _, _, second = clause.children
+        self.assertEqual(parts(subject, text), [
+            ("NP", "Mrs. Hurst"), ("COORD", "and"), ("NP", "her sister"),
+        ])
+        self.assertEqual(parts(first, text), [
+            ("ADV", "scarcely"), ("VP", "opened their mouths"), ("COMMA", ","),
+            ("EXCEPTION-SUPPLEMENT", "except to complain of fatigue"),
+        ])
+        self.assertEqual(parts(second, text), [
+            ("COPULA", "were"), ("ADV", "evidently"), ("ADJP", "impatient to have the house to themselves"),
+        ])
+        adjective = second.children[-1]
+        self.assertEqual(parts(adjective, text), [
+            ("ADJ", "impatient"), ("SELECTED-INFINITIVE", "to have the house to themselves"),
+        ])
+        infinitive = adjective.children[-1]
+        self.assertEqual(parts(infinitive, text), [
+            ("TO", "to"), ("V", "have"), ("NP", "the house"), ("EXCLUSIVE-PP", "to themselves"),
+        ])
+        self.assertEqual(infinitive.children[1].features.as_dict()["vform"], "base")
+        for node in (subject, first, second, infinitive.children[-1].children[-1]):
+            self.assertEqual(node.features.as_dict()["number"], "plural")
+
+    def test_parataxis_cannot_become_part_of_the_infinitive(self):
+        case = select_cases(500)[0][337]
+        text, clause = self.original(case, "583db0f51d907c11")
+        parts = SharedSubjectCoordinationTests.parts
+        left, semicolon, continuation = clause.children
+        self.assertEqual(semicolon.category, "SEMICOLON")
+        self.assertEqual(parts(left, text), [
+            ("NP", "I"), ("VP", "was unable to pursue the train of thought"),
+        ])
+        adjective = left.children[-1].children[-1]
+        self.assertEqual(parts(adjective, text), [
+            ("ADJ", "unable"), ("SELECTED-INFINITIVE", "to pursue the train of thought"),
+        ])
+        infinitive = adjective.children[-1]
+        self.assertEqual(parts(infinitive, text), [
+            ("TO", "to"), ("V", "pursue"), ("NP", "the train of thought"),
+        ])
+        self.assertEqual(infinitive.children[-1].children[0].rule_id, "np_det_n_of")
+        self.assertLessEqual(infinitive.end, semicolon.start)
+        self.assertEqual(parts(continuation, text), [
+            ("COUNTED-CLAUSE", "a thousand feelings pressed upon me"),
+            ("COMMA", ","), ("COORD", "and"), ("CLAUSE", "I wept bitterly"),
+        ])
+        counted = continuation.children[0].children[0]
+        self.assertEqual(counted.features.as_dict()["number"], "plural")
+        self.assertEqual(parts(counted, text)[-1], ("N", "feelings"))
+
+    def test_scope_generalizes_to_new_adjectives_and_rejects_wrong_licensing(self):
+        for text in self.CONTROLS:
+            with self.subTest(positive=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, ADJECTIVE_INFINITIVE_ROOT)
+        for i, before, after in (
+            (0, "clearly eager", "clearly wooden"),
+            (0, "were clearly", "was clearly"),
+            (0, "to themselves", "to herself"),
+            (0, "to themselves", "to ourselves"),
+            (0, "except to", "except for"),
+            (1, "reluctant", "wooden"),
+            (1, "was reluctant", "were reluctant"),
+            (1, "door; a hundred", "door, a hundred"),
+            (1, "visitors waited", "visitors waits"),
+        ):
+            with self.subTest(negative=after):
+                best = self.control(self.CONTROLS[i].replace(before, after)).best()
+                self.assertTrue(best is None or best.rule_id != ADJECTIVE_INFINITIVE_ROOT)
+
+    def test_semantic_roles_preserve_both_controllers_and_clause_scope(self):
+        cases = select_cases(500)[0]
+        for index in (228, 337):
+            with self.subTest(index=index):
+                prepared = prepare_corpus_input(cases[index])
+                report = self.parser.parse(
+                    prepared.analysis_text, structural_constituents=prepared.structural_constituents,
+                    max_items=50_000, kbest_work_limit=500_000,
+                )
+                graph = report.interpret().graph
+                label = lambda n: n.surface or n.type_name
+                edges = {(r.relation, label(graph.nodes[r.source]), label(graph.nodes[r.target]))
+                         for r in graph.relations}
+                required = ({
+                    ("MEMBER", "COORDINATED_SUBJECT", "Hurst"),
+                    ("MEMBER", "COORDINATED_SUBJECT", "sister"),
+                    ("AGENT", "have", "COORDINATED_SUBJECT"),
+                    ("EXCEPTION", "opened", "complain"),
+                    ("COMPLEMENT", "impatient", "have"),
+                    ("EXCLUSIVE_HOLDER", "have", "themselves"),
+                } if index == 228 else {
+                    ("COMPLEMENT", "unable", "pursue"), ("AFFECTED", "pursue", "train"),
+                    ("AGENT", "pressed", "feelings"), ("PARATAXIS", "was", "pressed"),
+                    ("CONJUNCT", "pressed", "wept"),
+                })
+                self.assertTrue(required <= edges, required - edges)
 
 
 if __name__ == "__main__":

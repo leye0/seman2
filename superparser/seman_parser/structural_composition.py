@@ -32,6 +32,7 @@ from .vector_chart import SegmentInterface, VectorGrammar
 from .structural_units import skeleton
 from .subject_resumption import plan_subject_resumption
 from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_shared_subject_coordination
+from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,13 +54,18 @@ class QuotedSentenceComposer:
         self._shared_subject_vector = VectorGrammar(
             Grammar(shared), preserve_quote_delimiters=True,
         )
+        self._adjective_infinitive_vector = VectorGrammar(
+            Grammar(rule for rule in rules
+                    if rule.provenance.get("source_plan") == ADJECTIVE_INFINITIVE_ROOT),
+            preserve_quote_delimiters=True,
+        )
         self._source_honorifics = {
             spelling: lemma for rule in shared
             for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
         }
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
-                    if rule.provenance.get("source_plan") != SHARED_SUBJECT_ROOT),
+                    if not rule.provenance.get("source_plan")),
             preserve_quote_delimiters=True,
         )
 
@@ -408,7 +414,7 @@ class QuotedSentenceComposer:
                             and finite.features.as_dict().get("tense") != "past"):
                         return None
                 if kind == "proper-phrase" and selected.rule_id not in (
-                    "np_proper", "np_proper_name", "np_name_seq2",
+                    "np_proper", "np_proper_name", "np_name_seq2", "np_honorific_abbreviation",
                 ):
                     return None
                 if kind == "subject-phrase":
@@ -670,7 +676,9 @@ class QuotedSentenceComposer:
             candidates=tuple(candidates),
         )
         assembly = (self._shared_subject_vector
-                    if expected_rule == SHARED_SUBJECT_ROOT else self._vector)
+                    if expected_rule == SHARED_SUBJECT_ROOT else
+                    self._adjective_infinitive_vector
+                    if expected_rule == ADJECTIVE_INFINITIVE_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2377,8 +2385,12 @@ class QuotedSentenceComposer:
         if plan is None:
             specs = plan_shared_subject_coordination(text, components)
             if specs is None:
-                return None
-            rule = SHARED_SUBJECT_ROOT
+                specs = plan_adjective_infinitive_scope(text, components)
+                if specs is None:
+                    return None
+                rule = ADJECTIVE_INFINITIVE_ROOT
+            else:
+                rule = SHARED_SUBJECT_ROOT
         else:
             specs, rule = plan
         return self._compose_verified_dialogue_pattern(
