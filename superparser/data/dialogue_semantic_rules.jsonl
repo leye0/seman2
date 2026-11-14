@@ -51,3 +51,13 @@
 {"id":"structural_finite_clause_with_counted_subject","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"structural_independent_continuation_coordination","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"first","target":"second"}]}}]}
 {"id":"structural_adjective_clause_with_parataxis","semantic":[{"compose":{"links":[{"relation":"PARATAXIS","source":"first","target":"continuation"}]}}]}
+{"id":"structural_infinitival_preposition_gap","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"gap_event","target":"manner"},{"relation":"ADJUNCT","source":"gap_event","target":"gap_preposition"}]}}]}
+{"id":"structural_of_gerund_adjectival_gap","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"attribute","target":"gap_event"}]}}]}
+{"id":"structural_to_infinitival_adjectival_gap","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"attribute","target":"gap_event"}]}}]}
+{"id":"structural_finite_relative_with_embedded_gap","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"copula","target":"attribute"},{"relation":"AGENT","source":"gap_event","target":"relative_subject"}]}}]}
+{"id":"structural_nominal_binds_embedded_relative","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"antecedent","target":"gap_event"},{"relation":"AFFECTED","source":"gap_event","target":"antecedent"}]}}]}
+{"id":"structural_anaphoric_one_binds_embedded_relative","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"anaphoric_head","target":"gap_event"},{"relation":"COMPLEMENT","source":"gap_preposition","target":"anaphoric_head"}]}}]}
+{"id":"structural_transfer_with_embedded_relative_theme","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
+{"id":"structural_counted_partitive_subject","semantic":[{"introduce":{"kind":"entity","type":"COUNTED_SUBSET","name":"subset"}},{"compose":{"links":[{"relation":"PARTITIVE","source":"subset","target":"whole"},{"relation":"QUANTITY","source":"subset","target":"count"}]}}]}
+{"id":"structural_partitive_subject_passive_supplement","semantic":[{"compose":{"links":[{"relation":"THEME","source":"passive_event","target":"subject"},{"relation":"ADJUNCT","source":"passive_event","target":"passive_oblique"}]}}]}
+{"id":"structural_matrix_with_nominal_afterthought","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"matrix_subject"},{"relation":"AFFECTED","source":"event","target":"matrix_object"},{"relation":"RESTATEMENT","source":"matrix_object","target":"anaphoric_head"}]}}]}

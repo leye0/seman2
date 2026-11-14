@@ -33,6 +33,7 @@ from .structural_units import skeleton
 from .subject_resumption import plan_subject_resumption
 from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_shared_subject_coordination
 from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
+from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedded_relative_scope
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,6 +63,15 @@ class QuotedSentenceComposer:
         self._scoped_adjective_valency = frozenset(
             lemma for rule in adjectival for lemma in rule.provenance.get("to_infinitive_lemmas", ())
         )
+        relative = tuple(rule for rule in rules
+                         if rule.provenance.get("source_plan") == EMBEDDED_RELATIVE_ROOT)
+        self._embedded_relative_vector = VectorGrammar(
+            Grammar(relative), preserve_quote_delimiters=True,
+        )
+        self._embedded_relative_frames = {
+            frame: frozenset(lemmas) for rule in relative
+            for frame, lemmas in rule.provenance.get("relative_frames", {}).items()
+        }
         self._source_honorifics = {
             spelling: lemma for rule in shared
             for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
@@ -367,6 +377,9 @@ class QuotedSentenceComposer:
                         if k == "nonbase_surface"
                         else c.lemma.casefold() in v.split("|")
                         if k == "lemma_in"
+                        else (expected_rule == EMBEDDED_RELATIVE_ROOT
+                              and c.lemma.casefold() in self._embedded_relative_frames.get(v, ()))
+                        if k == "relative_frame"
                         else c.features.as_dict().get("gender") == {
                             "he": "masculine", "she": "feminine", "it": "neuter",
                         }.get(v, c.features.as_dict().get("gender"))
@@ -698,7 +711,9 @@ class QuotedSentenceComposer:
         assembly = (self._shared_subject_vector
                     if expected_rule == SHARED_SUBJECT_ROOT else
                     self._adjective_infinitive_vector
-                    if expected_rule == ADJECTIVE_INFINITIVE_ROOT else self._vector)
+                    if expected_rule == ADJECTIVE_INFINITIVE_ROOT else
+                    self._embedded_relative_vector
+                    if expected_rule == EMBEDDED_RELATIVE_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2407,8 +2422,12 @@ class QuotedSentenceComposer:
             if specs is None:
                 specs = plan_adjective_infinitive_scope(text, components)
                 if specs is None:
-                    return None
-                rule = ADJECTIVE_INFINITIVE_ROOT
+                    specs = plan_embedded_relative_scope(text)
+                    if specs is None:
+                        return None
+                    rule = EMBEDDED_RELATIVE_ROOT
+                else:
+                    rule = ADJECTIVE_INFINITIVE_ROOT
             else:
                 rule = SHARED_SUBJECT_ROOT
         else:
