@@ -35,6 +35,9 @@ from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_share
 from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
 from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedded_relative_scope
 from .finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT, plan_finite_temporal_scope
+from .parenthetical_alternative import (
+    ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,6 +96,17 @@ class QuotedSentenceComposer:
         self._source_honorifics = {
             spelling: lemma for rule in shared
             for spelling, lemma in rule.provenance.get("source_honorifics", {}).items()
+        }
+        alternatives = tuple(
+            rule for rule in rules
+            if rule.provenance.get("source_plan") == PARENTHETICAL_ALTERNATIVE_ROOT
+        )
+        self._parenthetical_alternative_vector = VectorGrammar(
+            Grammar(alternatives), preserve_quote_delimiters=True,
+        )
+        self._alternative_frames = {
+            frame: frozenset(lemmas) for rule in alternatives
+            for frame, lemmas in rule.provenance.get("alternative_frames", {}).items()
         }
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -432,6 +446,9 @@ class QuotedSentenceComposer:
                         else (expected_rule == FINITE_TEMPORAL_ROOT
                               and c.lemma.casefold() in self._finite_temporal_frames.get(v, ()))
                         if k == "temporal_frame"
+                        else (expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT
+                              and c.lemma.casefold() in self._alternative_frames.get(v, ()))
+                        if k == "alternative_frame"
                         else c.features.as_dict().get("gender") == {
                             "he": "masculine", "she": "feminine", "it": "neuter",
                         }.get(v, c.features.as_dict().get("gender"))
@@ -767,7 +784,9 @@ class QuotedSentenceComposer:
                     self._embedded_relative_vector
                     if expected_rule == EMBEDDED_RELATIVE_ROOT else
                     self._finite_temporal_vector
-                    if expected_rule == FINITE_TEMPORAL_ROOT else self._vector)
+                    if expected_rule == FINITE_TEMPORAL_ROOT else
+                    self._parenthetical_alternative_vector
+                    if expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2503,10 +2522,14 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None, beam: int | None = None,
     ) -> ParseResult | None:
         specs = modal_parenthetical_plan(text, components)
+        rule = PARENTHETICAL_MODAL
         if specs is None:
-            return None
+            specs = plan_parenthetical_alternative(text, components)
+            if specs is None:
+                return None
+            rule = PARENTHETICAL_ALTERNATIVE_ROOT
         return self._compose_verified_dialogue_pattern(
-            parser, text, lattice, specs, PARENTHETICAL_MODAL,
+            parser, text, lattice, specs, rule,
             max_items=max_items, kbest_work_limit=kbest_work_limit,
             diagnostic_k=diagnostic_k, beam=beam,
         )
