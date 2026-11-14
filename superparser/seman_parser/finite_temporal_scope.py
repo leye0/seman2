@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from .dialogue_clause_plans import _specs
+from .nominal_temporal_scope import plan_nominal_temporal_scope
 
 ROOT = "structural_finite_temporal_scope_sentence"
 WORD = r"[A-Za-z][A-Za-z'’\-]*"
@@ -60,7 +61,7 @@ def finite_temporal_span(text):
 def plan_finite_temporal_scope(text):
     m = temporal_source_match(text)
     if m is None:
-        return None
+        return plan_nominal_temporal_scope(text)
     specs, add, punct, _ = _specs()
 
     def piece(group, cat, kind="phrase", **features):

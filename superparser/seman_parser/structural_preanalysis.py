@@ -15,6 +15,7 @@ from seman_parser.structural_units import review_semicolon_boundaries, skeleton
 from seman_parser.discourse_roles import classify_discourse
 from seman_parser.quoted_discourse import analyze_dialogue
 from seman_parser.finite_temporal_scope import finite_temporal_span
+from seman_parser.nominal_temporal_scope import nominal_temporal_spans
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -332,7 +333,16 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
     # clause + main-clause comma boundary. Do not claim its NP attachments.
     head = source.lstrip("\"'“‘ ")
     temporal = finite_temporal_span(source) if not quotation_spans else None
-    if temporal:
+    nominal_temporal = nominal_temporal_spans(source) if not quotation_spans else None
+    if nominal_temporal:
+        a, b, start, end = nominal_temporal
+        cs.extend((
+            StructuralConstituent("n0", "nominal_modifier_candidate", a, b, main,
+                                  "embedded_nominal_modifier", "bounded_overt_nominal_modifier"),
+            StructuralConstituent("a0", "adverbial_subordinate_clause", start, end, "n0",
+                                  "adverbial_modifier", "bounded_nominal_temporal_candidate"),
+        ))
+    elif temporal:
         a, b = temporal
         cs.append(StructuralConstituent(
             "a0", "adverbial_subordinate_clause", a, b, main,
