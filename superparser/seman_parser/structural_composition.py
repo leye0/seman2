@@ -35,6 +35,7 @@ from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_share
 from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
 from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedded_relative_scope
 from .finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT, plan_finite_temporal_scope
+from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coordination
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
@@ -108,6 +109,11 @@ class QuotedSentenceComposer:
             frame: frozenset(lemmas) for rule in alternatives
             for frame, lemmas in rule.provenance.get("alternative_frames", {}).items()
         }
+        shared_by = [rule for rule in rules if rule.provenance.get("source_plan") == SHARED_BY_ROOT]
+        self._shared_by_vector = VectorGrammar(Grammar(shared_by), preserve_quote_delimiters=True)
+        self._shared_by_causatives = frozenset(
+            lemma for rule in shared_by for lemma in rule.provenance.get("causative_lemmas", ())
+        )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -496,9 +502,22 @@ class QuotedSentenceComposer:
                 if (not proof.completed or selected is None
                         or selected.category != category
                         or any(selected.features.as_dict().get(k) != v
-                               for k, v in required.items() if k != "proof_rule")
+                               for k, v in required.items()
+                               if k not in ("proof_rule", "simple_nominal_proof", "passive_cause_proof"))
                         or ("proof_rule" in required and selected.rule_id != required["proof_rule"])):
                     return None
+                if required.get("simple_nominal_proof") == "true" and selected.rule_id not in (
+                    "np_bare", "np_det_n", "np_poss", "np_proper", "np_proper_name",
+                ):
+                    return None
+                if required.get("passive_cause_proof") == "true":
+                    # The by-phrase denotes causes only for this licensed
+                    # causative frame. It does not override agentive passives.
+                    vp = selected.children[-1]
+                    participle = vp.children[-1].lexical_candidate if vp.children else None
+                    if (vp.rule_id != "vp_passive" or participle is None
+                            or participle.lemma.casefold() not in self._shared_by_causatives):
+                        return None
                 if kind == "resumed-finite-phrase":
                     # An unmarked present base form cannot inherit 3SG
                     # merely because the lexical feature is underspecified.
@@ -786,7 +805,9 @@ class QuotedSentenceComposer:
                     self._finite_temporal_vector
                     if expected_rule == FINITE_TEMPORAL_ROOT else
                     self._parenthetical_alternative_vector
-                    if expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT else self._vector)
+                    if expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT else
+                    self._shared_by_vector
+                    if expected_rule == SHARED_BY_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2499,8 +2520,12 @@ class QuotedSentenceComposer:
                     if specs is None:
                         specs = plan_finite_temporal_scope(text)
                         if specs is None:
-                            return None
-                        rule = FINITE_TEMPORAL_ROOT
+                            specs = plan_shared_by_coordination(text, components)
+                            if specs is None:
+                                return None
+                            rule = SHARED_BY_ROOT
+                        else:
+                            rule = FINITE_TEMPORAL_ROOT
                     else:
                         rule = EMBEDDED_RELATIVE_ROOT
                 else:

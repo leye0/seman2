@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
+from seman_parser.shared_by_coordination import ROOT as SHARED_BY_ROOT
 from seman_parser.structural_preanalysis import analyze_paragraph
 
 DATA = Path(__file__).resolve().parents[1] / "data"
@@ -400,6 +401,98 @@ class ParentheticalAlternativeTests(unittest.TestCase):
             with self.subTest(negative=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PARENTHETICAL_ALTERNATIVE)
+
+
+class SharedByCoordinationTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    CONTROL = (
+        "She liked the visit, and yet her mood was troubled both by the noise and the delay."
+    )
+    SECOND_CONTROL = (
+        "I enjoyed the visit, but my friend was troubled both by the cost of the journey "
+        "and the loss of her notes."
+    )
+
+    def test_case_362_shared_by_and_independent_of_complements(self):
+        case = select_cases(500)[0][362]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "33e4ba2f255c0841")
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end),
+                         (SHARED_BY_ROOT, 0, len(text)))
+        left, _, contrast, right, _ = root.children
+        self.assertEqual(text[left.start:left.end], "I enjoyed this scene")
+        self.assertEqual(self.spans(contrast.children, text), [("COORD", "and"), ("COORD", "yet")])
+        passive, pp = right.children
+        self.assertEqual(text[passive.start:passive.end], "my enjoyment was embittered")
+        self.assertEqual(prepared.source_component("b0"), text[pp.start:pp.end])
+        both, by, pair = pp.children
+        self.assertEqual(self.spans((both, by), text), [("DET", "both"), ("PREP-BY", "by")])
+        first, coord, second = pair.children
+        self.assertEqual(self.spans((first, coord, second), text), [
+            ("CAUSE-NOMINAL", "the memory of the past"), ("COORD", "and"),
+            ("CAUSE-NOMINAL", "the anticipation of the future"),
+        ])
+        for nominal, head, content in (
+            (first, "the memory", "the past"), (second, "the anticipation", "the future"),
+        ):
+            self.assertEqual(self.spans(nominal.children, text),
+                             [("NP", head), ("PREP", "of"), ("NP", content)])
+
+    def test_case_362_semantics_keeps_both_causes_under_the_second_predicate(self):
+        case = select_cases(500)[0][362]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, SHARED_BY_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                 for r in graph.relations}
+        required = {
+            ("CONTRAST", "enjoyed", "embittered"), ("THEME", "embittered", "enjoyment"),
+            ("AFFECTED", "enjoyed", "scene"), ("ADJUNCT", "embittered", "by"),
+            ("CAUSE", "embittered", "memory"), ("CAUSE", "embittered", "anticipation"),
+            ("COMPLEMENT", "by", "memory"), ("COMPLEMENT", "by", "anticipation"),
+            ("FOCUS", "memory", "both"), ("FOCUS", "anticipation", "both"),
+        }
+        forbidden = {
+            ("CAUSE", "enjoyed", "memory"), ("CAUSE", "embittered", "past"),
+            ("CAUSE", "embittered", "future"), ("CONJUNCT", "past", "anticipation"),
+            ("PARTITIVE", "memory", "past"), ("PARTITIVE", "anticipation", "future"),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+        for head, particle, complement in (("memory", "of the past", "past"),
+                                             ("anticipation", "of the future", "future")):
+            offset = case["source_text"].index(particle)
+            of, = [i for i, n in graph.nodes.items() if n.surface == "of" and n.span[0] == offset]
+            links = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                     for r in graph.relations if of in (r.source, r.target)}
+            self.assertEqual(links, {("MODIFIER", head, "of"), ("COMPLEMENT", "of", complement)})
+
+    def test_shared_preposition_independent_positives_and_near_misses(self):
+        positives = (self.CONTROL, self.SECOND_CONTROL)
+        for text in positives:
+            with self.subTest(positive=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, SHARED_BY_ROOT)
+        for old, new in (
+            ("and yet", "and but"), ("was troubled", "were troubled"),
+            ("was troubled", "was interviewed"), ("both by", "both at"),
+            ("and the delay", "and by the delay"), ("and the delay", "and she left"),
+            ("both by", "by"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(positives[0].replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != SHARED_BY_ROOT)
 
 
 class SubjectResumptionTests(unittest.TestCase):
