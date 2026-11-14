@@ -73,39 +73,38 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "43fc6b516998ce539b8d95bd09a7c0dfe2820ae2",
-    "validated_pr_head": "17ee4690c30f35e9ce7455d0a81eb5e908f93582",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43561372722",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43561372752",
-    "completed": 477,
-    "unresolved": 23,
+    "validated_merge_commit": "d568fdce77a1cf7aa111f2d2dd46cb370d7c2932",
+    "validated_pr_head": "095ecebaa25409ffa6053befe68626f9bd20f073",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43645051205",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43645051140",
+    "completed": 478,
+    "unresolved": 22,
     "statuses": {
-      "complete": 477,
+      "complete": 478,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 1,
       "kbest_budget_exceeded": 0,
-      "no_structural_root": 1,
+      "no_structural_root": 0,
       "roots_without_valid_analysis": 19,
       "timeout": 2,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 475,
-      "current_complete": 477,
+      "previous_complete": 477,
+      "current_complete": 478,
       "newly_complete_indexes": [
-        206,
-        246
+        360
       ],
       "regressed_completed_indexes": [],
-      "previous_selected_trees_compared": 475,
+      "previous_selected_trees_compared": 477,
       "previous_selected_trees_changed": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14100076039,
-      "candidate_artifact_id": 14100249745
+      "baseline_artifact_id": 14100249745,
+      "candidate_artifact_id": 14133937762
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -146,17 +145,17 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 772,
+      "unit_tests": 775,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 358,
-      "case_id": "84:6ba22d6151fcb22c"
+      "index": 362,
+      "case_id": "84:33e4ba2f255c0841"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
-      "next_index": 360,
+      "next_index": 362,
       "resolved_indexes": [
         69,
         73,
@@ -176,6 +175,7 @@
         337,
         348,
         350,
+        360,
         363,
         372,
         463,
@@ -186,10 +186,7 @@
         493,
         499
       ],
-      "shared_subject_next_index": 477,
-      "next_batch_indexes": [
-        360
-      ]
+      "shared_subject_next_index": 477
     },
     "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
     "original_85_source_failure_inventory": {
@@ -213,7 +210,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 23,
+      "active_remaining": 22,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -257,6 +254,7 @@
         348,
         350,
         359,
+        360,
         363,
         372,
         384,
@@ -280,8 +278,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43561372742",
-    "grammatical_attachment_note": "PR #69 preserves the temporal adjunct inside two distinct nominal modifiers. In #206 when dates drawn, not directed. In #246 before dates passed, not the matrix was or made. All 475 prior selected trees and all 30 historical dialogues are preserved."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43645051243",
+    "grammatical_attachment_note": "PR #70 preserves the fronted cognition comment inside the clause introduced by Or. Might and meanwhile govern occur, the two consequences share one overt to, and forever applies to the termination. All 477 prior trees and 30 historical dialogues are preserved."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -4145,5 +4143,216 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43558252935",
     "grammatical_attachment_note": "PR #68 repairs #73, #95 and #348 with a typed finite temporal adjunct. The adjunct modifies the reporting event in #73, the progressive event in #95 and only the first conjunct in #348. The source spans, lexical roles and embedded complements remain separate. All 472 prior completions and 30 historical dialogues are preserved."
+  },
+  "pre_pr70_baseline": {
+    "validated_merge_commit": "43fc6b516998ce539b8d95bd09a7c0dfe2820ae2",
+    "validated_pr_head": "17ee4690c30f35e9ce7455d0a81eb5e908f93582",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43561372722",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43561372752",
+    "completed": 477,
+    "unresolved": 23,
+    "statuses": {
+      "complete": 477,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 1,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 1,
+      "roots_without_valid_analysis": 19,
+      "timeout": 2,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 475,
+      "current_complete": 477,
+      "newly_complete_indexes": [
+        206,
+        246
+      ],
+      "regressed_completed_indexes": [],
+      "previous_selected_trees_compared": 475,
+      "previous_selected_trees_changed": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14100076039,
+      "candidate_artifact_id": 14100249745
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 772,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 358,
+      "case_id": "84:6ba22d6151fcb22c"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 360,
+      "resolved_indexes": [
+        69,
+        73,
+        95,
+        101,
+        113,
+        189,
+        206,
+        220,
+        226,
+        228,
+        239,
+        242,
+        246,
+        291,
+        328,
+        337,
+        348,
+        350,
+        363,
+        372,
+        463,
+        469,
+        480,
+        485,
+        486,
+        493,
+        499
+      ],
+      "shared_subject_next_index": 477,
+      "next_batch_indexes": [
+        360
+      ]
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 23,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        73,
+        95,
+        96,
+        99,
+        101,
+        109,
+        113,
+        141,
+        157,
+        175,
+        189,
+        200,
+        206,
+        209,
+        220,
+        223,
+        226,
+        228,
+        229,
+        235,
+        237,
+        239,
+        241,
+        242,
+        246,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        328,
+        337,
+        348,
+        350,
+        359,
+        363,
+        372,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        463,
+        464,
+        466,
+        469,
+        475,
+        480,
+        485,
+        486,
+        493,
+        495,
+        498,
+        499
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43561372742",
+    "grammatical_attachment_note": "PR #69 preserves the temporal adjunct inside two distinct nominal modifiers. In #206 when dates drawn, not directed. In #246 before dates passed, not the matrix was or made. All 475 prior selected trees and all 30 historical dialogues are preserved."
   }
 }

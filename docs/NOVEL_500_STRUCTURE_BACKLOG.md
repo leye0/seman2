@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #70](https://github.com/leye0/seman2/pull/70)** — 478/500, 22 phrases restantes. L’incise de #360 garde la possibilité entière dans la portée de la pensée, tandis que ses deux conséquences partagent le même to. #362 est le prochain cas de la file.
+
 **Suivi après la [PR #69](https://github.com/leye0/seman2/pull/69)** — 477/500, 23 phrases restantes. #206 et #246 gardent leur temporelle à l’intérieur du modificateur nominal. La parenthèse explicite de #360 est la prochaine priorité structurelle.
 
 **Suivi après la [PR #68](https://github.com/leye0/seman2/pull/68)** — 475/500, 25 phrases restantes. Les trois temporelles finies #73, #95 et #348 sont résolues. Prochain lot à examiner : #206 et #246, des temporelles qui doivent rester à l’intérieur d’un supplément nominal. La parenthèse explicite de #360 demeure dans la file structurelle.
@@ -33,7 +35,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
 | #493 | Aucune racine | I should lie down in my own place (I thought with a silent chuckle) and enjoy their faces when they found me in the morning. | Incise de pensée entre deux prédicats sous un seul modal. Premier cas traité. |
-| #360 | Aucune racine | Or (so my fond fancy imaged) some accident might meanwhile occur to destroy him and put an end to my slavery forever. | Incise introduite par so, juste après Or. La principale reste à prouver séparément. |
+| #360 | Aucune racine | Or (so my fond fancy imaged) some accident might meanwhile occur to destroy him and put an end to my slavery forever. | Incise introduite par so, juste après Or. — Corrigé par la PR #70. |
 
 ## P2 — Incises, suppléments et ruptures apparentées (16)
 
