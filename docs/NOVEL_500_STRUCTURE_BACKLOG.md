@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #72](https://github.com/leye0/seman2/pull/72)** — 481/500, 19 phrases restantes. #221 et #371 partagent une structure à trois propositions. Le point-virgule sépare la première des deux que relie and. #373 est le prochain cas de la file.
+
 **Suivi après la [PR #71](https://github.com/leye0/seman2/pull/71)** — 479/500, 21 phrases restantes. #362 garde les deux causes sous le même by, avec un complément en of distinct pour chacune. #371 est le prochain cas de la file.
 
 **Suivi après la [PR #70](https://github.com/leye0/seman2/pull/70)** — 478/500, 22 phrases restantes. L’incise de #360 garde la possibilité entière dans la portée de la pensée, tandis que ses deux conséquences partagent le même to. #362 est le prochain cas de la file.
@@ -84,7 +86,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #113 | Racines sans analyse valide | Here she ceased; and snapping her reticule again, and shutting her mouth, looked as if she might be broken, but could never be bent. | Point-virgule, sujet implicite et participiales coordonnées. — Corrigé par la PR #62. |
 | #122 | Racines sans analyse valide | Mr. Micawber considered it necessary to prepare either my aunt or his wife, by degrees, and said, sooner than he had expected yesterday. | Coordination de considered et said, contenu implicite de said, comparatif temporel détaché. |
 | #124 | Racines sans analyse valide | If that were so, my sacrifice was nothing; my plainest obligation to her unfulfilled; and every poor action I had shrunk from, I was hourly doing. | Parallélisme au point-virgule, copule élidée et objet antéposé. |
-| #221 | Forêt saturée | Mrs. Bennet was prevented replying by the entrance of the footman with a note for Miss Bennet; it came from Netherfield, and the servant waited for an answer. | Passif avec gérondif, puis propositions distinctes au point-virgule. |
+| #221 | Forêt saturée | Mrs. Bennet was prevented replying by the entrance of the footman with a note for Miss Bennet; it came from Netherfield, and the servant waited for an answer. | Passif avec gérondif, puis propositions distinctes au point-virgule. — Corrigé par la PR #72. |
 | #228 | Racines sans analyse valide | Mrs. Hurst and her sister scarcely opened their mouths, except to complain of fatigue, and were evidently impatient to have the house to themselves. | Except to à portée verbale et coordination de prédicats. — Corrigé par la PR #64. |
 | #238 | Racines sans analyse valide | That he should even speak to her was amazing!--but to speak with such civility, to inquire after her family! | Sujet propositionnel en that, puis infinitifs détachés à valeur exclamative. |
 | #249 | Racines sans analyse valide | Its effect was most extraordinary; for on first hearing it, Mrs. Bennet sat quite still, and unable to utter a syllable. | Point-virgule causal en for et coordination adjectivale sous sat. |
@@ -92,7 +94,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #348 | Racines sans analyse valide | When I mingled with other families I distinctly discerned how peculiarly fortunate my lot was, and gratitude assisted the development of filial love. | Temporelle initiale sans virgule, interrogation indirecte et coordination finale. — Corrigé par la PR #68. |
 | #350 | Forêt saturée | He heard with attention the little narration concerning my studies and smiled at the names of Cornelius Agrippa and Paracelsus, but without the contempt that M. Krempe had exhibited. | Prédicats coordonnés, contraste en but without et relative. — Corrigé par la PR #63. |
 | #362 | Racines sans analyse valide | I enjoyed this scene, and yet my enjoyment was embittered both by the memory of the past and the anticipation of the future. | Coordination de propositions, puis both…and sous la même préposition. — Corrigé par la PR #71. |
-| #371 | Délai | It rang on my ears long and heavily; the mountains re-echoed it, and I felt as if all hell surrounded me with mockery and laughter. | Point-virgule, coordination et comparaison hypothétique as if. |
+| #371 | Délai | It rang on my ears long and heavily; the mountains re-echoed it, and I felt as if all hell surrounded me with mockery and laughter. | Point-virgule, coordination et comparaison hypothétique as if. — Corrigé par la PR #72. |
 | #372 | Racines sans analyse valide | The Greeks wept for joy when they beheld the Mediterranean from the hills of Asia, and hailed with rapture the boundary of their toils. | Prédicats coordonnés, avec une subordonnée temporelle dans le premier. — Corrigé par la PR #61. |
 | #373 | Racines sans analyse valide | I wish to soothe him, yet can I counsel one so infinitely miserable, so destitute of every hope of consolation, to live? | Coordination adversative avec inversion interrogative et suppléments adjectivaux. |
 | #462 | Racines sans analyse valide | At least, and at last, I was off the sea, nor had I returned thence empty-handed. | Adverbiaux initiaux coordonnés, puis inversion en nor. |
