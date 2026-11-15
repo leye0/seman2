@@ -817,7 +817,7 @@ class PairedClauseSupplementTests(unittest.TestCase):
     control = SourceParentheticalModalTests.control
     spans = SourceParentheticalModalTests.spans
 
-    CONTROL = ("The roads, furthermore, were quiet and dry, and that, beneath the trees, "
+    CONTROL = ("These roads, furthermore, were quiet and dry, and that, beneath the trees, "
                "was a real comfort to the visitors.")
 
     def test_case_496_keeps_two_finite_clauses_and_separate_source_governors(self):
@@ -894,7 +894,8 @@ class PairedClauseSupplementTests(unittest.TestCase):
 
     def test_nonparallel_and_incomplete_variants_do_not_get_the_scoped_tree(self):
         for old, new in (
-            ("roads, furthermore, were", "roads, furthermore, was"),
+            ("These roads, furthermore, were", "They, furthermore, was"),
+            ("These roads, furthermore, were", "These roads, furthermore, was"),
             ("trees, was", "trees, were"),
             ("quiet and dry", "quiet and danced"),
             ("and that,", "and the roads,"),
