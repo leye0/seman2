@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #86](https://github.com/leye0/seman2/pull/86)** — 496/500, 4 phrases restantes. #238 conserve le sujet propositionnel et les deux développements exclamatifs. Le prochain cas est #249.
+
 **Suivi après la [PR #85](https://github.com/leye0/seman2/pull/85)** — 495/500, 5 phrases restantes. #213 distingue les deux cadres de présence et le complément prédicatif de la relative. Le prochain cas est #238.
 
 **Suivi après la [PR #84](https://github.com/leye0/seman2/pull/84)** — 494/500, 6 phrases restantes. #166 garde l’apposition sous Charlotte et most sous humiliating. Le prochain cas est #213..
@@ -114,7 +116,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #124 | Racines sans analyse valide | If that were so, my sacrifice was nothing; my plainest obligation to her unfulfilled; and every poor action I had shrunk from, I was hourly doing. | Parallélisme au point-virgule, copule élidée et objet antéposé. — Corrigé par la PR #83. |
 | #221 | Forêt saturée | Mrs. Bennet was prevented replying by the entrance of the footman with a note for Miss Bennet; it came from Netherfield, and the servant waited for an answer. | Passif avec gérondif, puis propositions distinctes au point-virgule. — Corrigé par la PR #72. |
 | #228 | Racines sans analyse valide | Mrs. Hurst and her sister scarcely opened their mouths, except to complain of fatigue, and were evidently impatient to have the house to themselves. | Except to à portée verbale et coordination de prédicats. — Corrigé par la PR #64. |
-| #238 | Racines sans analyse valide | That he should even speak to her was amazing!--but to speak with such civility, to inquire after her family! | Sujet propositionnel en that, puis infinitifs détachés à valeur exclamative. |
+| #238 | Racines sans analyse valide | That he should even speak to her was amazing!--but to speak with such civility, to inquire after her family! | Sujet propositionnel en that, puis infinitifs détachés à valeur exclamative. — Corrigé par la PR #86. |
 | #249 | Racines sans analyse valide | Its effect was most extraordinary; for on first hearing it, Mrs. Bennet sat quite still, and unable to utter a syllable. | Point-virgule causal en for et coordination adjectivale sous sat. |
 | #337 | Racines sans analyse valide | I was unable to pursue the train of thought; a thousand feelings pressed upon me, and I wept bitterly. | Point-virgule suivi d’une coordination entre propositions indépendantes. — Corrigé par la PR #64. |
 | #348 | Racines sans analyse valide | When I mingled with other families I distinctly discerned how peculiarly fortunate my lot was, and gratitude assisted the development of filial love. | Temporelle initiale sans virgule, interrogation indirecte et coordination finale. — Corrigé par la PR #68. |

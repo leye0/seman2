@@ -73,38 +73,38 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "2083ec4a8a74019d72018a11b7f76852124eb5e0",
-    "validated_pr_head": "c03006c111c0f924ba7763cf57263b0597ee4baa",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43739036005",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43739035899",
-    "completed": 495,
-    "unresolved": 5,
+    "validated_merge_commit": "514086e361554980ec8ccb91ae6e06069531045a",
+    "validated_pr_head": "a3933de160d818ae1541b0d1cea6941105245950",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43739474793",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43739474807",
+    "completed": 496,
+    "unresolved": 4,
     "statuses": {
-      "complete": 495,
+      "complete": 496,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 0,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 0,
-      "roots_without_valid_analysis": 5,
+      "roots_without_valid_analysis": 4,
       "timeout": 0,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 494,
-      "current_complete": 495,
+      "previous_complete": 495,
+      "current_complete": 496,
       "newly_complete_indexes": [
-        213
+        238
       ],
       "regressed_completed_indexes": [],
-      "previous_selected_trees_compared": 494,
+      "previous_selected_trees_compared": 495,
       "previous_selected_trees_changed": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14172292326,
-      "candidate_artifact_id": 14172102556
+      "baseline_artifact_id": 14172102556,
+      "candidate_artifact_id": 14171783734
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -145,17 +145,17 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 825,
+      "unit_tests": 828,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 238,
-      "case_id": "1342:08d6a393247bacc2"
+      "index": 249,
+      "case_id": "1342:35097475da3bca83"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
-      "next_index": 238,
+      "next_index": 249,
       "resolved_indexes": [
         69,
         73,
@@ -178,6 +178,7 @@
         221,
         226,
         228,
+        238,
         239,
         242,
         246,
@@ -226,7 +227,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 5,
+      "active_remaining": 4,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -266,6 +267,7 @@
         229,
         235,
         237,
+        238,
         239,
         241,
         242,
@@ -311,8 +313,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43739035915",
-    "grammatical_attachment_note": "The modal and embedded copula have separate social settings. What fills the fused relative predicative position and the shared possessive scopes to both relatives."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43739474830",
+    "grammatical_attachment_note": "A finite that-clause supplies the subject of the assessment, and the dashed infinitival details preserve their own manner and inquiry topic."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -7772,5 +7774,247 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43738640627",
     "grammatical_attachment_note": "The integrated unpunctuated role apposition remains under the named subject and the degree marker modifies the adjective, not the predicative noun."
+  },
+  "pre_pr86_baseline": {
+    "validated_merge_commit": "2083ec4a8a74019d72018a11b7f76852124eb5e0",
+    "validated_pr_head": "c03006c111c0f924ba7763cf57263b0597ee4baa",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43739036005",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43739035899",
+    "completed": 495,
+    "unresolved": 5,
+    "statuses": {
+      "complete": 495,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 0,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 0,
+      "roots_without_valid_analysis": 5,
+      "timeout": 0,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 494,
+      "current_complete": 495,
+      "newly_complete_indexes": [
+        213
+      ],
+      "regressed_completed_indexes": [],
+      "previous_selected_trees_compared": 494,
+      "previous_selected_trees_changed": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14172292326,
+      "candidate_artifact_id": 14172102556
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 825,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 238,
+      "case_id": "1342:08d6a393247bacc2"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 238,
+      "resolved_indexes": [
+        69,
+        73,
+        74,
+        80,
+        84,
+        87,
+        95,
+        101,
+        110,
+        111,
+        113,
+        122,
+        124,
+        166,
+        189,
+        206,
+        213,
+        220,
+        221,
+        226,
+        228,
+        239,
+        242,
+        246,
+        291,
+        328,
+        337,
+        348,
+        350,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        462,
+        463,
+        469,
+        477,
+        480,
+        485,
+        486,
+        493,
+        496,
+        499
+      ]
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 5,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        73,
+        74,
+        80,
+        84,
+        87,
+        95,
+        96,
+        99,
+        101,
+        109,
+        110,
+        111,
+        113,
+        122,
+        124,
+        141,
+        157,
+        166,
+        175,
+        189,
+        200,
+        206,
+        209,
+        213,
+        220,
+        221,
+        223,
+        226,
+        228,
+        229,
+        235,
+        237,
+        239,
+        241,
+        242,
+        246,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        328,
+        337,
+        348,
+        350,
+        359,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        462,
+        463,
+        464,
+        466,
+        469,
+        475,
+        477,
+        480,
+        485,
+        486,
+        493,
+        495,
+        496,
+        498,
+        499
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43739035915",
+    "grammatical_attachment_note": "The modal and embedded copula have separate social settings. What fills the fused relative predicative position and the shared possessive scopes to both relatives."
   }
 }
