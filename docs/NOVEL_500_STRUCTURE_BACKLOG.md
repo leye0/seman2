@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #84](https://github.com/leye0/seman2/pull/84)** — 494/500, 6 phrases restantes. #166 garde l’apposition sous Charlotte et most sous humiliating. Le prochain cas est #213..
+
 **Suivi après la [PR #83](https://github.com/leye0/seman2/pull/83)** — 493/500, 7 phrases restantes. #124 étend la condition aux trois conséquences et conserve les deux dépendances de l’objet antéposé. Le prochain cas est #166..
 
 **Suivi après la [PR #82](https://github.com/leye0/seman2/pull/82)** — 492/500, 8 phrases restantes. #122 reconnaît la réponse sur l’heure du départ et préserve le sujet partagé. Le prochain cas est #124.
@@ -91,7 +93,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #80 | Racines sans analyse valide | It was difficult to believe that a night so long to me, could be short to anybody else. | Comparatif et virgule historique avant le prédicat enchâssé. — Corrigé par la PR #78. |
 | #84 | Racines sans analyse valide | Never, never, had I loved Dora so deeply and truly, as I loved her that night. | Inversion après Never répété, puis comparaison en as. — Corrigé par la PR #74. |
 | #110 | Délai | She knew no more than I did, where he was going, but she thought he had some project shaped out in his mind. | Comparatif elliptique no more than I did avant le contenu interrogatif where. — Corrigé par la PR #80. |
-| #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. |
+| #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. — Corrigé par la PR #84. |
 | #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… — Corrigé par la PR #69. |
 | #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. — Corrigé par la PR #67. |
 | #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. — Corrigé par la PR #60. |
