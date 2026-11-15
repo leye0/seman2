@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.subject_question_ability import ROOT as QUESTION_ABILITY_ROOT
 from seman_parser.causal_posture_response import ROOT as CAUSAL_POSTURE_ROOT
 from seman_parser.exclamative_infinitive_contrast import ROOT as EXCLAMATIVE_CONTRAST_ROOT
 from seman_parser.modal_context_free_relative import ROOT as MODAL_CONTEXT_ROOT
@@ -918,6 +919,76 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class SubjectQuestionAbilityTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = "Who would stop a climber capable of crossing the rising ridges of Mount Rainier?"
+
+    def test_case_294_keeps_the_subject_question_and_nominal_internal_gerund(self):
+        case = select_cases(500)[0][294]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "d656e31fd97d4e08")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (QUESTION_ABILITY_ROOT, 0, len(text)))
+        self.assertEqual(root.features.as_dict()["stype"], "question")
+        self.assertEqual(self.spans(root.children[:3], text),
+                         [("WH-PRONOUN", "Who"), ("MODAL", "could"), ("V", "arrest")])
+        obj = root.children[3]
+        self.assertEqual(self.spans(obj.children, text), [
+            ("NP", "a creature"), ("ADJP", "capable of scaling the overhanging sides of Mont Saleve"),
+        ])
+        self.assertEqual(self.spans(obj.children[-1].children, text), [
+            ("ADJ", "capable"), ("PREP", "of"), ("GERUND-CLAUSE", "scaling the overhanging sides of Mont Saleve"),
+        ])
+        terrain = obj.children[-1].children[-1].children[-1]
+        self.assertEqual(self.spans(terrain.children, text), [
+            ("DET", "the"), ("V", "overhanging"), ("N", "sides"), ("PREP", "of"), ("TOPONYM", "Mont Saleve"),
+        ])
+
+    def test_case_294_uses_the_creature_as_scaling_agent(self):
+        case = select_cases(500)[0][294]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, QUESTION_ABILITY_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("AGENT", p("arrest"), 0), ("AFFECTED", p("arrest"), p("creature")),
+            ("MODALITY", p("arrest"), p("could")), ("MODIFIER", p("creature"), p("capable")),
+            ("CONTENT", p("capable"), p("scaling")), ("AGENT", p("scaling"), p("creature")),
+            ("AFFECTED", p("scaling"), p("sides")), ("MODIFIER", p("sides"), p("overhanging")),
+            ("COMPLEMENT", p("sides"), p("Saleve")),
+        }
+        forbidden = {
+            ("AGENT", p("scaling"), 0), ("AGENT", p("arrest"), p("creature")),
+            ("MODIFIER", p("creature"), p("Saleve")), ("AFFECTED", p("arrest"), p("sides")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_subject_questions_and_near_misses(self):
+        for text in (self.CONTROL, "Who can catch an animal capable of climbing the sloping walls of Mount Royal?"):
+            self.assertEqual(self.control(text).best().rule_id, QUESTION_ABILITY_ROOT)
+        for old, new in (
+            ("Who would", "Whom would"), ("would stop", "would stopped"),
+            ("capable of", "capable for"), ("of crossing", "of crossed"),
+            ("rising ridges", "rise ridges"), ("Mount Rainier", "mount Rainier"),
+            ("would stop", "would sleep"), ("Rainier?", "Rainier."),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != QUESTION_ABILITY_ROOT)
 
 
 class CausalPostureResponseTests(unittest.TestCase):
