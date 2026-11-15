@@ -276,3 +276,7 @@
 {"id":"structural_question_ability_ability","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"head","target":"action"}]}}]}
 {"id":"structural_question_ability_described_object","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"quality"},{"relation":"AGENT","source":"action","target":"head"}]}}]}
 {"id":"structural_subject_question_ability","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
+{"id":"structural_passive_extraposition_stranded_passive","semantic":[{"compose":{"links":[{"relation":"TIME","source":"event","target":"time"},{"relation":"VOICE","source":"event","target":"aux"},{"relation":"COMPLEMENT","source":"prep","target":"subject"},{"relation":"AFFECTED","source":"event","target":"subject"}]}}]}
+{"id":"structural_passive_extraposition_perfect","semantic":[{"compose":{"links":[{"relation":"ASPECT","source":"event","target":"perfect"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"},{"relation":"EXTRAPOSED_SUBJECT","source":"event","target":"action"}]}}]}
+{"id":"structural_passive_extraposition_evaluation","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"STANCE","source":"event","target":"stance"}]}}]}
+{"id":"structural_passive_and_perfect_extraposition","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"event","target":"evaluation"}]}}]}

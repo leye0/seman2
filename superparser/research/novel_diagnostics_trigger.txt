@@ -108,3 +108,5 @@ Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in i
 2026-11-15: verify #249 causal explanation, temporal onset and coordinated depictives.
 
 2026-11-15: verify #294 subject-wh and the nominal-internal ability complement.
+
+2026-11-15: verify #319 stranded prepositional passive and interrupted modal perfect.

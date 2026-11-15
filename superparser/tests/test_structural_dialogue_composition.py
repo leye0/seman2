@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.passive_and_perfect_extraposition import ROOT as PASSIVE_EXTRAPOSITION_ROOT
 from seman_parser.subject_question_ability import ROOT as QUESTION_ABILITY_ROOT
 from seman_parser.causal_posture_response import ROOT as CAUSAL_POSTURE_ROOT
 from seman_parser.exclamative_infinitive_contrast import ROOT as EXCLAMATIVE_CONTRAST_ROOT
@@ -919,6 +920,74 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class PassivePerfectExtrapositionTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = "Then our requests were agreed to, and it might, surely, have been a mistake to object."
+
+    def test_case_319_keeps_the_stranded_passive_and_modal_perfect(self):
+        case = select_cases(500)[0][319]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "7ee87a8a9ac10b1f")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (PASSIVE_EXTRAPOSITION_ROOT, 0, len(text)))
+        first, comma, and_, second, stop = root.children
+        self.assertEqual(self.spans((comma, and_, stop), text),
+                         [("COMMA", ","), ("COORD", "and"), ("SPEECH-STOP", ".")])
+        self.assertEqual(first.features.as_dict()["voice"], "passive")
+        self.assertEqual(self.spans(first.children, text), [
+            ("ADV", "Now"), ("NP", "my desires"), ("AUX-BE", "were"), ("V", "complied"), ("PREP", "with"),
+        ])
+        self.assertEqual(self.spans(second.children, text), [
+            ("EXTRAPOSITION-IT", "it"), ("MODAL", "would"), ("STANCE-SUPPLEMENT", ", indeed,"),
+            ("VP-NP", "have been folly to repent"),
+        ])
+        self.assertEqual(self.spans(second.children[2].children, text),
+                         [("COMMA", ","), ("ADV", "indeed"), ("COMMA", ",")])
+        self.assertEqual(self.spans(second.children[-1].children, text), [
+            ("HAVE", "have"), ("COPULA", "been"), ("NP", "folly"), ("INF-CLAUSE", "to repent"),
+        ])
+
+    def test_case_319_distinguishes_evaluated_action_and_preposition_object(self):
+        case = select_cases(500)[0][319]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, PASSIVE_EXTRAPOSITION_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("COMPLEMENT", p("with"), p("desires")), ("AFFECTED", p("complied"), p("desires")),
+            ("TIME", p("complied"), 0), ("VOICE", p("complied"), p("were")),
+            ("CONJUNCT", p("complied"), p("been")), ("MODALITY", p("been"), p("would")),
+            ("ASPECT", p("been"), p("have")), ("STANCE", p("been"), p("indeed")),
+            ("ATTRIBUTE", p("been"), p("folly")), ("EXTRAPOSED_SUBJECT", p("been"), p("repent")),
+        }
+        forbidden = {("AGENT", p("repent"), p("it would")), ("STANCE", p("complied"), p("indeed")),
+                     ("COMPLEMENT", p("with"), p("it would"))}
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_preposition_and_perfect_frames(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, PASSIVE_EXTRAPOSITION_ROOT)
+        for old, new in (
+            ("requests were", "requests was"), ("were agreed", "were agree"),
+            ("agreed to", "agreed with"), ("and it", "and he"), ("might, surely,", "might surely"),
+            ("have been", "had been"), ("have been", "have be"), ("to object", "to objected"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != PASSIVE_EXTRAPOSITION_ROOT)
 
 
 class SubjectQuestionAbilityTests(unittest.TestCase):
