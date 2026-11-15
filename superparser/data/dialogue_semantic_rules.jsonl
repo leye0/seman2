@@ -245,3 +245,10 @@
 {"id":"structural_role_apposition_description_simple","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"quality"}]}}]}
 {"id":"structural_role_apposition_description_scalar","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"quality"}]}}]}
 {"id":"structural_integrated_role_apposition","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
+{"id":"structural_modal_context_joint_kin","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"joint","target":"first"},{"relation":"CONJUNCT","source":"joint","target":"second"},{"relation":"POSSESSOR","source":"first","target":"poss"},{"relation":"POSSESSOR","source":"second","target":"poss"}]}}]}
+{"id":"structural_modal_context_audience","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"before","target":"audience"}]}}]}
+{"id":"structural_modal_context_fused_predicative","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"state"},{"relation":"CIRCUMSTANCE","source":"event","target":"audience"}]}}]}
+{"id":"structural_modal_context_present_setting","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"presence"}]}}]}
+{"id":"structural_modal_context_copular_state","semantic":[{"compose":{"links":[{"relation":"CIRCUMSTANCE","source":"event","target":"setting"},{"relation":"ATTRIBUTE","source":"event","target":"state"}]}}]}
+{"id":"structural_modal_context_modal_negated","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"NEGATION","source":"modal","target":"not"}]}}]}
+{"id":"structural_modal_context_free_relative","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"DISCOURSE","source":"event","target":"contrast"},{"relation":"STANCE","source":"event","target":"stance"}]}}]}
