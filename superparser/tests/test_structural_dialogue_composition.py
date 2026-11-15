@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.exclamative_infinitive_contrast import ROOT as EXCLAMATIVE_CONTRAST_ROOT
 from seman_parser.modal_context_free_relative import ROOT as MODAL_CONTEXT_ROOT
 from seman_parser.integrated_role_apposition import ROOT as ROLE_APPOSITION_ROOT
 from seman_parser.conditional_ellipsis_series import ROOT as CONDITIONAL_SERIES_ROOT
@@ -916,6 +917,83 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class ExclamativeInfinitiveContrastTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("That she should even talk to him was astonishing!—but to talk with such warmth, "
+               "to enquire about his sister!")
+
+    def test_case_238_preserves_the_clausal_subject_and_detached_details(self):
+        case = select_cases(500)[0][238]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "08d6a393247bacc2")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (EXCLAMATIVE_CONTRAST_ROOT, 0, len(text)))
+        main, exclamation, dash, but, details, stop = root.children
+        self.assertEqual(self.spans((exclamation, dash, but, stop), text),
+                         [("EXCL", "!"), ("DASH", "--"), ("COORD", "but"), ("SPEECH-STOP", "!")])
+        self.assertEqual(self.spans(main.children, text), [
+            ("THAT-CLAUSE", "That he should even speak to her"), ("COPULA", "was"), ("ADJ", "amazing"),
+        ])
+        subject = main.children[0]
+        self.assertEqual(self.spans(subject.children, text), [
+            ("COMP-THAT", "That"), ("NP", "he"), ("MODAL", "should"), ("ADV", "even"),
+            ("V", "speak"), ("ADDRESS-PP", "to her"),
+        ])
+        self.assertEqual(self.spans(details.children, text), [
+            ("INF-CLAUSE", "to speak with such civility"), ("COMMA", ","),
+            ("INF-CLAUSE", "to inquire after her family"),
+        ])
+        self.assertEqual(self.spans(details.children[0].children[-1].children, text),
+                         [("PREP", "with"), ("DEGREE", "such"), ("N", "civility")])
+        self.assertEqual(self.spans(details.children[-1].children[-1].children, text),
+                         [("PREP", "after"), ("NP", "her family")])
+
+    def test_case_238_scope_and_elaboration_do_not_invent_a_second_matrix(self):
+        case = select_cases(500)[0][238]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, EXCLAMATIVE_CONTRAST_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        first, second = p("speak to"), p("speak with")
+        required = {
+            ("THEME", p("was"), first), ("ATTRIBUTE", p("was"), p("amazing")),
+            ("FOCUS", first, p("even")), ("RECIPIENT", first, p("her was")),
+            ("CONTRAST", p("was"), second), ("ELABORATION", first, second),
+            ("MANNER", second, p("civility")), ("DEGREE", p("civility"), p("such")),
+            ("ELABORATION", second, p("inquire")), ("TOPIC", p("inquire"), p("family")),
+            ("AGENT", p("inquire"), p("he should")),
+        }
+        forbidden = {
+            ("TOPIC", second, p("family")), ("MANNER", first, p("civility")),
+            ("TIME", p("inquire"), p("after")), ("THEME", p("was"), p("he should")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_exclamation_and_near_misses(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, EXCLAMATIVE_CONTRAST_ROOT)
+        for old, new in (
+            ("she should", "her should"), ("should even talk", "should even talked"),
+            ("was astonishing", "were astonishing"), ("!—but", "!—and"),
+            ("to talk with", "to write with"), ("with such", "with herself"),
+            ("to enquire", "to enquired"), ("enquire about", "walk about"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != EXCLAMATIVE_CONTRAST_ROOT)
 
 
 class ModalContextFreeRelativeTests(unittest.TestCase):
