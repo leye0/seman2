@@ -702,6 +702,114 @@ class InvertedObjectControlTests(unittest.TestCase):
                 self.assertTrue(best is None or best.rule_id != INVERTED_CONTROL_ROOT)
 
 
+class MeasuredVoiceCoordinationTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    POSITIVE = ("The boats were pushed two yards closer to the dock and then followed "
+                "a channel that could almost skirt the reef on the west.")
+
+    @staticmethod
+    def coordination(result):
+        root = result.best()
+        if root is not None and root.rule_id == "structural_shared_subject_source_sentence":
+            host = root.children[0]
+            if host.rule_id == "structural_measured_voice_coordination":
+                return host
+        return None
+
+    def test_case_477_keeps_the_named_subject_and_two_finite_voices(self):
+        case = select_cases(500)[0][477]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "1a8e1aa200463f0d")
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual((prepared.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        self.assertEqual((result.best().start, result.best().end), (0, len(text)))
+        host = self.coordination(result)
+        self.assertIsNotNone(host)
+        subject, passive, conjunction, active = host.children
+        self.assertEqual(self.spans(subject.children, text), [("DET", "The"), ("PROPER-NOUN", "HISPANIOLA")])
+        self.assertEqual(self.spans((conjunction,), text), [("COORD", "and")])
+        self.assertEqual(prepared.source_component("mv0"), text[passive.start:passive.end])
+        self.assertEqual(prepared.source_component("mv1"), text[active.start:active.end])
+        for vp, voice in ((passive, "passive"), (active, "active")):
+            self.assertEqual(vp.features.as_dict()["voice"], voice)
+            self.assertEqual(vp.features.as_dict()["vform"], "finite")
+            self.assertEqual(vp.features.as_dict()["number"], "singular")
+        self.assertEqual(self.spans(passive.children, text), [
+            ("AUX-BE", "was"), ("V", "laid"), ("DISTANCE-PREDICATE", "a couple of points nearer the wind"),
+        ])
+        self.assertEqual(self.spans(passive.children[-1].children, text), [
+            ("SPATIAL-MEASURE", "a couple of points"), ("ADV", "nearer"), ("NP", "the wind"),
+        ])
+        route = active.children[-1]
+        self.assertEqual(self.spans(route.children, text), [
+            ("NP", "a course"), ("ROUTE-SUBJECT-RELATIVE", "that would just clear the island on the east"),
+        ])
+        self.assertEqual(self.spans(route.children[-1].children, text), [
+            ("WH-PRONOUN", "that"), ("MODAL", "would"), ("DEGREE", "just"),
+            ("V", "clear"), ("NP", "the island"), ("PP", "on the east"),
+        ])
+
+    def test_case_477_places_degree_time_and_location_on_distinct_heads(self):
+        case = select_cases(500)[0][477]
+        _, lattice, result = self.parse(case)
+        self.assertIsNotNone(self.coordination(result))
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                 for r in graph.relations}
+        required = {
+            ("THEME", "laid", "HISPANIOLA"), ("AGENT", "sailed", "HISPANIOLA"),
+            ("CONJUNCT", "laid", "sailed"), ("TIME", "sailed", "now"),
+            ("RESULT", "laid", "nearer"), ("MEASURE", "nearer", "points"),
+            ("LANDMARK", "nearer", "wind"), ("QUANTIFIER", "points", "couple"),
+            ("THEME", "sailed", "course"), ("THEME", "clear", "course"),
+            ("MODIFIER", "course", "clear"), ("MODALITY", "clear", "would"),
+            ("DEGREE", "clear", "just"), ("AFFECTED", "clear", "island"),
+            ("LOCATION", "clear", "on"), ("COMPLEMENT", "on", "east"),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        forbidden = {
+            ("AGENT", "laid", "HISPANIOLA"), ("AGENT", "sailed", "now"),
+            ("TIME", "laid", "now"), ("MEASURE", "laid", "points"), ("TIME", "clear", "just"),
+            ("THEME", "clear", "HISPANIOLA"), ("MODIFIER", "island", "on"),
+            ("LOCATION", "sailed", "on"),
+        }
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_plural_with_overt_landmark_preposition(self):
+        result = self.control(self.POSITIVE)
+        self.assertTrue(result.completed, result.stats)
+        host = self.coordination(result)
+        self.assertIsNotNone(host)
+        subject, passive, _, active = host.children
+        self.assertEqual(subject.features.as_dict()["number"], "plural")
+        self.assertEqual(passive.features.as_dict()["number"], "plural")
+        self.assertEqual(active.features.as_dict()["number"], "plural")
+        distance = passive.children[-1]
+        self.assertEqual(self.spans(distance.children, self.POSITIVE), [
+            ("SPATIAL-MEASURE", "two yards"), ("ADV", "closer"), ("PREP", "to"), ("NP", "the dock"),
+        ])
+
+    def test_wrong_voice_agreement_measure_and_relative_do_not_get_this_analysis(self):
+        for old, new in (
+            ("boats were", "boats was"), ("were pushed", "were push"),
+            ("were pushed", "were ran"), ("two yards", "two yard"),
+            ("closer to", "closer from"), ("then followed", "then follow"),
+            ("then followed", "then she followed"),
+            ("that could almost skirt", "that she could almost skirt"),
+            ("could almost skirt", "could almost skirted"),
+            ("a channel", "him"), ("the reef on the west", "the reef from the west"),
+        ):
+            with self.subTest(replacement=new):
+                self.assertIsNone(self.coordination(self.control(self.POSITIVE.replace(old, new))))
+
+
 class NegativePerfectInversionTests(unittest.TestCase):
     setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
     parse = SourceParentheticalModalTests.parse
