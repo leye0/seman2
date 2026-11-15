@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #85](https://github.com/leye0/seman2/pull/85)** — 495/500, 5 phrases restantes. #213 distingue les deux cadres de présence et le complément prédicatif de la relative. Le prochain cas est #238.
+
 **Suivi après la [PR #84](https://github.com/leye0/seman2/pull/84)** — 494/500, 6 phrases restantes. #166 garde l’apposition sous Charlotte et most sous humiliating. Le prochain cas est #213..
 
 **Suivi après la [PR #83](https://github.com/leye0/seman2/pull/83)** — 493/500, 7 phrases restantes. #124 étend la condition aux trois conséquences et conserve les deux dépendances de l’objet antéposé. Le prochain cas est #166..
@@ -130,5 +132,5 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | --- | --- | --- | --- |
 | #74 | Racines sans analyse valide | However much astonished I might be, I was sensible that I had no right to refuse compliance with such a peremptory command. | Concessive de degré et adjectif sensible suivi d’un complément en that. — Corrigé par la PR #77. |
 | #111 | Racines sans analyse valide | That condition was, that he should make a solemn resolution to grant no more loans of his name, or anything else, to Mr. Micawber. | Complément prédicatif en that et alternative nominale détachée. — Corrigé par la PR #81. |
-| #213 | Racines sans analyse valide | But, perhaps he could not in her mother's presence be what he was before her uncle and aunt. | Groupe prépositionnel entre le modal nié et be, puis propositions en what et before. |
+| #213 | Racines sans analyse valide | But, perhaps he could not in her mother's presence be what he was before her uncle and aunt. | Groupe prépositionnel entre le modal nié et be, puis propositions en what et before. — Corrigé par la PR #85. |
 | #358 | Racines sans analyse valide | The sight of the awful and majestic in nature had indeed always the effect of solemnizing my mind and causing me to forget the passing cares of life. | Gérondifs coordonnés sous of, puis infinitif sélectionné par causing. |
