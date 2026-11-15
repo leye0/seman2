@@ -252,3 +252,12 @@
 {"id":"structural_modal_context_copular_state","semantic":[{"compose":{"links":[{"relation":"CIRCUMSTANCE","source":"event","target":"setting"},{"relation":"ATTRIBUTE","source":"event","target":"state"}]}}]}
 {"id":"structural_modal_context_modal_negated","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"NEGATION","source":"modal","target":"not"}]}}]}
 {"id":"structural_modal_context_free_relative","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"DISCOURSE","source":"event","target":"contrast"},{"relation":"STANCE","source":"event","target":"stance"}]}}]}
+{"id":"structural_exclamative_contrast_address","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"to","target":"recipient"}]}}]}
+{"id":"structural_exclamative_contrast_finite_subject","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"FOCUS","source":"event","target":"focus"},{"relation":"RECIPIENT","source":"event","target":"recipient"}]}}]}
+{"id":"structural_exclamative_contrast_assessment","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
+{"id":"structural_exclamative_contrast_manner","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"manner"},{"relation":"DEGREE","source":"manner","target":"degree"}]}}]}
+{"id":"structural_exclamative_contrast_speaking","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"manner"}]}}]}
+{"id":"structural_exclamative_contrast_topic","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"topic"}]}}]}
+{"id":"structural_exclamative_contrast_inquiry","semantic":[{"compose":{"links":[{"relation":"TOPIC","source":"event","target":"topic"}]}}]}
+{"id":"structural_exclamative_contrast_details","semantic":[{"compose":{"links":[{"relation":"ELABORATION","source":"event","target":"inquiry"}]}}]}
+{"id":"structural_exclamative_infinitive_contrast","semantic":[{"compose":{"links":[{"relation":"CONTRAST","source":"event","target":"detail"},{"relation":"ELABORATION","source":"original","target":"detail"},{"relation":"AGENT","source":"detail","target":"speaker"},{"relation":"AGENT","source":"inquiry","target":"speaker"},{"relation":"RECIPIENT","source":"detail","target":"recipient"}]}}]}
