@@ -20,6 +20,7 @@ from seman_parser.shared_by_coordination import shared_by_match
 from seman_parser.semicolon_triplet import semicolon_triplet_spans
 from seman_parser.inverted_object_control import inverted_control_spans
 from seman_parser.negative_perfect import negative_perfect_span
+from seman_parser.paired_clause_supplements import paired_supplement_spans
 from seman_parser.measured_voice_coordination import measured_voice_spans
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
@@ -371,6 +372,19 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             f"mv{i}", "coordinate_predicate", *span, main,
             "shared_subject", "measured_passive_then_finite_active",
         ) for i, span in enumerate(measured))
+    paired = paired_supplement_spans(source) if len(parts) == 1 and not quotation_spans else None
+    if paired:
+        left, discourse, right, spatial = paired
+        cs.extend((
+            StructuralConstituent("cs0", "finite_conjunct_candidate", *left, main,
+                                  "first_conjunct", "paired_medial_supplements"),
+            StructuralConstituent("csd", "medial_supplement_candidate", *discourse, "cs0",
+                                  "discourse_modifier", "comma_delimited_additive_adverb"),
+            StructuralConstituent("cs1", "finite_conjunct_candidate", *right, main,
+                                  "coordination", "paired_medial_supplements"),
+            StructuralConstituent("csp", "medial_supplement_candidate", *spatial, "cs1",
+                                  "circumstantial_modifier", "comma_delimited_spatial_phrase"),
+        ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.
     head = source.lstrip("\"'“‘ ")

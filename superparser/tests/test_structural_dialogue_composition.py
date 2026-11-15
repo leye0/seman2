@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
 from seman_parser.shared_by_coordination import ROOT as SHARED_BY_ROOT
 from seman_parser.semicolon_triplet import ROOT as TRIPLET_ROOT
@@ -808,6 +809,104 @@ class MeasuredVoiceCoordinationTests(unittest.TestCase):
         ):
             with self.subTest(replacement=new):
                 self.assertIsNone(self.coordination(self.control(self.POSITIVE.replace(old, new))))
+
+
+class PairedClauseSupplementTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    CONTROL = ("These roads, furthermore, were quiet and dry, and that, beneath the trees, "
+               "was a real comfort to the visitors.")
+
+    def test_case_496_keeps_two_finite_clauses_and_separate_source_governors(self):
+        case = select_cases(500)[0][496]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "238d6ed29a444f6d")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (PAIRED_SUPPLEMENTS_ROOT, 0, len(text)))
+        first, comma, and_, second, stop = root.children
+        self.assertEqual(self.spans((first, second), text), [
+            ("CLAUSE", "The air, besides, was fresh and stirring"),
+            ("CLAUSE", "this, under the sheer sunbeams, was a wonderful refreshment to our senses"),
+        ])
+        self.assertEqual(self.spans(first.children, text), [
+            ("NP", "The air"), ("COMMA", ","), ("ADV", "besides"), ("COMMA", ","),
+            ("COPULA", "was"), ("ADJP", "fresh and stirring"),
+        ])
+        self.assertEqual(self.spans(first.children[-1].children, text),
+                         [("ADJ", "fresh"), ("COORD", "and"), ("ADJ", "stirring")])
+        self.assertEqual(self.spans(second.children, text), [
+            ("PRONOUN", "this"), ("COMMA", ","), ("PP", "under the sheer sunbeams"), ("COMMA", ","),
+            ("COPULA", "was"), ("NP", "a wonderful refreshment to our senses"),
+        ])
+        self.assertEqual(self.spans(second.children[-1].children, text),
+                         [("NP", "a wonderful refreshment"), ("PP", "to our senses")])
+        self.assertEqual(self.spans((comma, and_, stop), text), [("COMMA", ","), ("COORD", "and"), ("SPEECH-STOP", ".")])
+        by_id = {c["id"]: c for c in pre.structural_constituents}
+        for supplement, governor, expected in (("csd", "cs0", "besides"), ("csp", "cs1", "under the sheer sunbeams")):
+            self.assertEqual(by_id[supplement]["governor"], governor)
+            self.assertEqual(pre.source_component(supplement), expected)
+
+    def test_case_496_links_this_to_first_predication_and_localizes_both_supplements(self):
+        case = select_cases(500)[0][496]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, PAIRED_SUPPLEMENTS_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].span[0], graph.nodes[r.target].span[0])
+                 for r in graph.relations}
+        left, right = text.index("was"), text.rindex("was")
+        discourse, place, anaphor = (text.index(w) for w in ("besides", "under", "this"))
+        attr, affected, senses = (text.index(w) for w in ("refreshment", "to our", "senses"))
+        required = {
+            ("CONJUNCT", left, right), ("CONTENT", anaphor, left),
+            ("DISCOURSE", left, discourse), ("CIRCUMSTANCE", right, place),
+            ("THEME", left, text.index("air")), ("THEME", right, anaphor),
+            ("ATTRIBUTE", left, text.index("fresh")), ("ATTRIBUTE", left, text.index("stirring")),
+            ("ATTRIBUTE", right, attr), ("MODIFIER", attr, affected),
+            ("COMPLEMENT", affected, senses), ("COMPLEMENT", place, text.index("sunbeams")),
+        }
+        forbidden = {
+            ("CONTENT", anaphor, text.index("air")), ("CONTENT", anaphor, right),
+            ("DISCOURSE", right, discourse), ("CIRCUMSTANCE", left, place),
+            ("MODIFIER", anaphor, place), ("MODIFIER", right, affected),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_plural_subject_does_not_share_second_copulas_agreement(self):
+        result = self.control(self.CONTROL)
+        self.assertTrue(result.completed, result.stats)
+        root = result.best()
+        self.assertEqual(root.rule_id, PAIRED_SUPPLEMENTS_ROOT)
+        first, _, _, second, _ = root.children
+        self.assertEqual(first.children[-2].features.as_dict()["number"], "plural")
+        self.assertEqual(second.children[-2].features.as_dict()["number"], "singular")
+        self.assertEqual(self.spans(second.children[:3:2], self.CONTROL),
+                         [("PRONOUN", "that"), ("PP", "beneath the trees")])
+
+    def test_nonparallel_and_incomplete_variants_do_not_get_the_scoped_tree(self):
+        for old, new in (
+            ("These roads, furthermore, were", "They, furthermore, was"),
+            ("These roads, furthermore, were", "These roads, furthermore, was"),
+            ("trees, was", "trees, were"),
+            ("quiet and dry", "quiet and danced"),
+            ("and that,", "and the roads,"),
+            ("and that,", "and that"),
+            ("beneath the trees,", "beneath visited,"),
+            ("furthermore,", "rapidly,"),
+            ("to the visitors", "to arrive"),
+        ):
+            with self.subTest(replacement=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
 
 
 class NegativePerfectInversionTests(unittest.TestCase):
