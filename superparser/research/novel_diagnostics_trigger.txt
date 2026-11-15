@@ -88,3 +88,5 @@ Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in i
 2026-11-15: verify #74 fronted degree concession and nested adjective and entitlement content.
 
 2026-11-15: verify #80 scalar viewpoints inside extraposed clausal content.
+
+2026-11-15: verify #87 evaluative object extraposition and supplementary content relative.
