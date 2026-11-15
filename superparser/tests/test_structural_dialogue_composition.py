@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.degree_concessive import ROOT as DEGREE_CONCESSIVE_ROOT
 from seman_parser.paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
 from seman_parser.shared_by_coordination import ROOT as SHARED_BY_ROOT
@@ -907,6 +908,104 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class DegreeConcessiveAttitudeTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    INTENSIFIED = ("However much alarmed she might be, I was aware that they had no authority "
+                   "to demand compliance with the new rules.")
+    SIMPLE = ("However worried they may be, they are certain that we have no permission "
+              "to require cooperation with the committee.")
+
+    def test_case_74_uses_a_preposed_attribute_and_nested_content(self):
+        case = select_cases(500)[0][74]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "a4b638e307998ebb")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (DEGREE_CONCESSIVE_ROOT, 0, len(text)))
+        front, _, matrix, _ = root.children
+        self.assertEqual(self.spans(front.children, text), [
+            ("ADJP", "However much astonished"), ("NP", "I"), ("MODAL", "might"), ("COPULA", "be"),
+        ])
+        self.assertEqual(self.spans(front.children[0].children, text),
+                         [("ADV", "However"), ("ADV", "much"), ("ADJ", "astonished")])
+        self.assertEqual(front.children[-1].features.as_dict()["vform"], "base")
+        attitude, content = matrix.children[-1].children
+        self.assertEqual(self.spans((attitude,), text), [("ADJ", "sensible")])
+        self.assertEqual(self.spans(content.children[:3], text),
+                         [("COMP-THAT", "that"), ("NP", "I"), ("V", "had")])
+        right = content.children[-1]
+        infinitive = right.children[-1]
+        self.assertEqual(self.spans(right.children[:2], text), [("DET", "no"), ("N", "right")])
+        self.assertEqual(self.spans(infinitive.children, text), [
+            ("TO", "to"), ("V", "refuse"), ("NP", "compliance with such a peremptory command"),
+        ])
+        self.assertEqual(self.spans(infinitive.children[-1].children, text),
+                         [("N", "compliance"), ("PP", "with such a peremptory command")])
+        by_id = {c["id"]: c for c in pre.structural_constituents}
+        self.assertEqual(by_id["gc1"]["governor"], "gc2")
+        self.assertEqual(pre.source_component("gc0"), "However much astonished I might be")
+        self.assertEqual(pre.source_component("gc2"), "sensible")
+
+    def test_case_74_semantic_edges_do_not_flatten_the_aligned_scopes(self):
+        case = select_cases(500)[0][74]
+        text = case["source_text"]
+        _, lattice, rr = self.parse(case)
+        self.assertEqual(rr.best().rule_id, DEGREE_CONCESSIVE_ROOT)
+        graph = ParseReport(rr, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].span[0], graph.nodes[r.target].span[0])
+                 for r in graph.relations}
+        pos = text.index
+        front, main, inner = pos("be,"), pos("was"), pos("had")
+        agent = pos("I had")
+        required = {
+            ("CONCESSION", main, front), ("DEGREE", pos("astonished"), pos("much")),
+            ("DEGREE", pos("much"), 0), ("MODALITY", front, pos("might")),
+            ("THEME", front, pos("I might")), ("ATTRIBUTE", front, pos("astonished")),
+            ("ATTRIBUTE", main, pos("sensible")), ("CONTENT", pos("sensible"), inner),
+            ("THEME", inner, pos("right")), ("NEGATION", pos("right"), pos("no right")),
+            ("COMPLEMENT", pos("right"), pos("refuse")), ("AGENT", pos("refuse"), agent),
+            ("AFFECTED", pos("refuse"), pos("compliance")), ("COMPLEMENT", pos("compliance"), pos("with")),
+            ("COMPLEMENT", pos("with"), pos("command")),
+        }
+        forbidden = {
+            ("CONCESSION", inner, front), ("CONTENT", main, inner),
+            ("AGENT", pos("refuse"), pos("right")), ("COMPLEMENT", inner, pos("refuse")),
+            ("COMPLEMENT", pos("refuse"), pos("with")), ("NEGATION", pos("refuse"), pos("no right")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_concessions_with_and_without_much(self):
+        for source in (self.INTENSIFIED, self.SIMPLE):
+            with self.subTest(source=source):
+                r = self.control(source)
+                self.assertTrue(r.completed, r.stats)
+                self.assertEqual(r.best().rule_id, DEGREE_CONCESSIVE_ROOT)
+                front, _, main, _ = r.best().children
+                self.assertEqual(len(front.children[0].children), 3 if source == self.INTENSIFIED else 2)
+                self.assertEqual(main.children[-1].rule_id, "structural_degree_concessive_attitude_attribute")
+
+    def test_bad_modal_agreement_lexical_selection_and_boundaries_do_not_get_tree(self):
+        for old, new in (
+            ("might be,", "might was,"), ("might be,", "might be"),
+            ("alarmed she", "alarmed her"), ("I was aware", "I were aware"),
+            ("I was aware", "I was wooden"), ("they had no", "they has no"),
+            ("no authority", "no table"), ("to demand", "to demanded"),
+            ("demand compliance with", "demand bread with"),
+        ):
+            with self.subTest(replacement=new):
+                best = self.control(self.INTENSIFIED.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != DEGREE_CONCESSIVE_ROOT)
 
 
 class NegativePerfectInversionTests(unittest.TestCase):

@@ -84,3 +84,5 @@ Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in i
 2026-11-14: verify #477 measured passive and active predicates sharing one subject.
 
 2026-11-15: verify #496 paired medial supplements with distinct finite hosts.
+
+2026-11-15: verify #74 fronted degree concession and nested adjective and entitlement content.
