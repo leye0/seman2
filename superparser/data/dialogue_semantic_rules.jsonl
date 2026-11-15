@@ -201,3 +201,13 @@
 {"id":"structural_evaluative_gapped_report","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"manner"}]}}]}
 {"id":"structural_evaluative_content_relative","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"AFFECTED","source":"event","target":"relative"}]}}]}
 {"id":"structural_extraposed_object_relative","semantic":[{"compose":{"links":[{"relation":"SUPPLEMENT","source":"event","target":"report"},{"relation":"COREFERENCE","source":"relative","target":"antecedent"}]}}]}
+{"id":"structural_compared_cognition_comparison_standard","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
+{"id":"structural_compared_cognition_degree_bound","semantic":[{"compose":{"links":[{"relation":"NEGATION","source":"more","target":"no"},{"relation":"COMPARISON","source":"more","target":"standard"}]}}]}
+{"id":"structural_compared_cognition_destination_question","semantic":[{"compose":{"links":[{"relation":"GOAL","source":"event","target":"destination"},{"relation":"AGENT","source":"event","target":"mover"},{"relation":"ASPECT","source":"event","target":"progressive"}]}}]}
+{"id":"structural_compared_cognition_knowledge","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"knower"},{"relation":"DEGREE","source":"event","target":"degree"},{"relation":"CONTENT","source":"event","target":"content"},{"relation":"ELLIPSIS_ANTECEDENT","source":"standard","target":"event"}]}}]}
+{"id":"structural_compared_cognition_mental_nominal","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"head","target":"owner"}]}}]}
+{"id":"structural_compared_cognition_mental_location","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"object"}]}}]}
+{"id":"structural_compared_cognition_participle_result","semantic":[{"compose":{"links":[{"relation":"PARTICLE","source":"event","target":"particle"},{"relation":"LOCATION","source":"event","target":"location"}]}}]}
+{"id":"structural_compared_cognition_possession","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"theme","target":"holder"},{"relation":"THEME","source":"event","target":"theme"},{"relation":"THEME","source":"state","target":"theme"},{"relation":"RESULT","source":"theme","target":"state"}]}}]}
+{"id":"structural_compared_cognition_conjecture","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"thinker"},{"relation":"CONTENT","source":"event","target":"embedded"}]}}]}
+{"id":"structural_comparative_content_coordination","semantic":[{"compose":{"links":[{"relation":"CONTRAST","source":"event","target":"conjecture"}]}}]}
