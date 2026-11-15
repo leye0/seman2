@@ -18,6 +18,7 @@ from seman_parser.finite_temporal_scope import finite_temporal_span
 from seman_parser.nominal_temporal_scope import nominal_temporal_spans
 from seman_parser.shared_by_coordination import shared_by_match
 from seman_parser.semicolon_triplet import semicolon_triplet_spans
+from seman_parser.inverted_object_control import inverted_control_spans
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -346,6 +347,15 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                                   "first_conjunct", "semicolon_then_comma_and"),
             StructuralConstituent("st1", "finite_conjunct_candidate", *right, "st0",
                                   "coordination", "semicolon_then_comma_and"),
+        ))
+    inverted = inverted_control_spans(source) if len(parts) == 1 and not quotation_spans else None
+    if inverted:
+        question, obj = inverted
+        cs.extend((
+            StructuralConstituent("iq0", "interrogative_conjunct_candidate", *question, main,
+                                  "coordination", "adversative_with_inverted_modal"),
+            StructuralConstituent("iq1", "supplemented_object_candidate", *obj, "iq0",
+                                  "object", "degree_phrases_after_nominal"),
         ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.
