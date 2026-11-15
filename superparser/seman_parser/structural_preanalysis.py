@@ -20,6 +20,7 @@ from seman_parser.shared_by_coordination import shared_by_match
 from seman_parser.semicolon_triplet import semicolon_triplet_spans
 from seman_parser.inverted_object_control import inverted_control_spans
 from seman_parser.negative_perfect import negative_perfect_span
+from seman_parser.measured_voice_coordination import measured_voice_spans
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -364,6 +365,12 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             "ni0", "negative_inversion_candidate", *negated, main,
             "declarative_scope", "negative_licensor_before_perfect_auxiliary",
         ))
+    measured = measured_voice_spans(source) if len(parts) == 1 and not quotation_spans else None
+    if measured:
+        cs.extend(StructuralConstituent(
+            f"mv{i}", "coordinate_predicate", *span, main,
+            "shared_subject", "measured_passive_then_finite_active",
+        ) for i, span in enumerate(measured))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.
     head = source.lstrip("\"'“‘ ")

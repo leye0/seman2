@@ -7,6 +7,7 @@ import re
 from .dialogue import quotation_boundaries
 from .dialogue_clause_plans import _specs
 from .manner_coordination import manner_coordination_plan, semicolon_coordination
+from .measured_voice_coordination import measured_voice_plan
 
 ROOT = "structural_shared_subject_source_sentence"
 WORD = r"[A-Za-z][A-Za-z’'\-]*"
@@ -47,7 +48,9 @@ PATTERNS = (
 
 
 def plan_shared_subject_coordination(text, components=()):
-    if not text.endswith(".") or "," not in text or quotation_boundaries(text):
+    if "," not in text:
+        return measured_voice_plan(text, components)
+    if not text.endswith(".") or quotation_boundaries(text):
         return None
     for family, pattern in PATTERNS:
         match = pattern.fullmatch(text[:-1])
