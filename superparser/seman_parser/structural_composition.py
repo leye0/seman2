@@ -39,6 +39,7 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .extraposed_scalar_content import ROOT as EXTRAPOSED_SCALAR_ROOT, plan_extraposed_scalar_content
 from .degree_concessive import ROOT as DEGREE_CONCESSIVE_ROOT, degree_concession_plan
 from .paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT, paired_supplement_plan
 from .parenthetical_alternative import (
@@ -144,6 +145,8 @@ class QuotedSentenceComposer:
         self._paired_supplements_vector = VectorGrammar(Grammar(paired), preserve_quote_delimiters=True)
         degree = [rule for rule in rules if rule.provenance.get("source_plan") == DEGREE_CONCESSIVE_ROOT]
         self._degree_concessive_vector = VectorGrammar(Grammar(degree), preserve_quote_delimiters=True)
+        extraposed = [rule for rule in rules if rule.provenance.get("source_plan") == EXTRAPOSED_SCALAR_ROOT]
+        self._extraposed_scalar_vector = VectorGrammar(Grammar(extraposed), preserve_quote_delimiters=True)
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -877,7 +880,9 @@ class QuotedSentenceComposer:
                     self._paired_supplements_vector
                     if expected_rule == PAIRED_SUPPLEMENTS_ROOT else
                     self._degree_concessive_vector
-                    if expected_rule == DEGREE_CONCESSIVE_ROOT else self._vector)
+                    if expected_rule == DEGREE_CONCESSIVE_ROOT else
+                    self._extraposed_scalar_vector
+                    if expected_rule == EXTRAPOSED_SCALAR_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2595,6 +2600,7 @@ class QuotedSentenceComposer:
                 (NEGATIVE_PERFECT_ROOT, lambda: plan_negative_perfect(text, components)),
                 (PAIRED_SUPPLEMENTS_ROOT, lambda: paired_supplement_plan(text, components)),
                 (DEGREE_CONCESSIVE_ROOT, lambda: degree_concession_plan(text, components)),
+                (EXTRAPOSED_SCALAR_ROOT, lambda: plan_extraposed_scalar_content(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate

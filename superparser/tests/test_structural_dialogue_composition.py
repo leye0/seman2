@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.extraposed_scalar_content import ROOT as EXTRAPOSED_SCALAR_ROOT
 from seman_parser.degree_concessive import ROOT as DEGREE_CONCESSIVE_ROOT
 from seman_parser.paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
@@ -908,6 +909,106 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class ExtraposedScalarContentTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    CONTROL = ("It is easy to imagine that those mountains so small to us, "
+               "might be large to someone else.")
+
+    def test_case_80_preserves_extraposition_and_the_historical_subject_pause(self):
+        case = select_cases(500)[0][80]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "57dba5c2e4bb4629")
+        pre, lattice, parsed = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, parsed.text), (text, text, text))
+        self.assertTrue(parsed.completed, parsed.stats)
+        self.assertFalse(parsed.stats["budget_exceeded"])
+        self.assertFalse(parsed.stats["kbest_budget_exceeded"])
+        root = parsed.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (EXTRAPOSED_SCALAR_ROOT, 0, len(text)))
+        self.assertEqual(self.spans(root.children, text), [
+            ("EXTRAPOSITION-IT", "It"), ("COPULA", "was"), ("ADJ", "difficult"),
+            ("INF-CLAUSE", text[17:-1]), ("SPEECH-STOP", "."),
+        ])
+        infinitive = root.children[3]
+        self.assertEqual(self.spans(infinitive.children, text),
+                         [("TO", "to"), ("V", "believe"), ("THAT-CLAUSE", text[28:-1])])
+        _, subject, comma, vp = infinitive.children[-1].children
+        self.assertEqual(self.spans((subject, comma, vp), text), [
+            ("NP", "a night so long to me"), ("COMMA", ","), ("VP", "could be short to anybody else"),
+        ])
+        self.assertEqual(self.spans(subject.children, text),
+                         [("NP", "a night"), ("ADJP", "so long to me")])
+        self.assertEqual(subject.features.as_dict()["person"], "3")
+        self.assertEqual(self.spans(subject.children[1].children, text),
+                         [("DEGREE", "so"), ("ADJP", "long to me")])
+        self.assertEqual(self.spans(subject.children[1].children[1].children, text),
+                         [("ADJ", "long"), ("PERSPECTIVE-PP", "to me")])
+        self.assertEqual(self.spans(vp.children, text),
+                         [("MODAL", "could"), ("COPULA", "be"), ("ADJP", "short to anybody else")])
+        self.assertEqual(self.spans(vp.children[-1].children, text),
+                         [("ADJ", "short"), ("PERSPECTIVE-PP", "to anybody else")])
+        self.assertEqual(self.spans(vp.children[-1].children[-1].children[-1].children, text),
+                         [("PRONOUN", "anybody"), ("ADJ", "else")])
+        source = {node["id"]: node for node in pre.structural_constituents}
+        for node, governor in (("xs0", "s0"), ("xs1", "xs0"), ("xs2", "xs1")):
+            self.assertEqual(source[node]["governor"], governor)
+        self.assertEqual(pre.source_component("xs2"), "a night so long to me")
+
+    def test_case_80_semantic_edges_keep_the_two_perspectives_distinct(self):
+        case = select_cases(500)[0][80]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, EXTRAPOSED_SCALAR_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(rel.relation, graph.nodes[rel.source].span[0], graph.nodes[rel.target].span[0])
+                 for rel in graph.relations}
+        p = text.index
+        expected = {
+            ("EXTRAPOSED_SUBJECT", p("was"), p("believe")),
+            ("ATTRIBUTE", p("was"), p("difficult")),
+            ("CONTENT", p("believe"), p("be short")),
+            ("THEME", p("be short"), p("night")),
+            ("MODALITY", p("be short"), p("could")),
+            ("MODIFIER", p("night"), p("long")),
+            ("DEGREE", p("long"), p("so long")),
+            ("PERSPECTIVE", p("long"), p("me,")),
+            ("ATTRIBUTE", p("be short"), p("short")),
+            ("PERSPECTIVE", p("short"), p("anybody")),
+            ("MODIFIER", p("anybody"), p("else")),
+        }
+        forbidden = {
+            ("PERSPECTIVE", p("short"), p("me,")),
+            ("PERSPECTIVE", p("long"), p("anybody")),
+            ("AGENT", p("believe"), 0),
+        }
+        self.assertTrue(expected <= edges, expected - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_plural_subject_with_and_without_the_comma(self):
+        for text in (self.CONTROL, self.CONTROL.replace("us,", "us")):
+            with self.subTest(source=text):
+                parsed = self.control(text)
+                self.assertTrue(parsed.completed, parsed.stats)
+                self.assertEqual(parsed.best().rule_id, EXTRAPOSED_SCALAR_ROOT)
+                content = parsed.best().children[3].children[-1]
+                self.assertEqual(content.children[1].features.as_dict()["number"], "plural")
+                self.assertEqual(content.children[-1].children[0].category, "MODAL")
+
+    def test_extraposition_cannot_erase_valency_case_or_punctuation(self):
+        for old, new in (
+            ("It is", "It are"), ("It is", "This is"), ("easy to", "blue to"),
+            ("imagine that", "sleep that"), ("us,", "we,"), ("us,", "us else,"),
+            ("us,", "us;"), ("might be", "might was"), ("those mountains", "those mountain"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != EXTRAPOSED_SCALAR_ROOT)
 
 
 class DegreeConcessiveAttitudeTests(unittest.TestCase):
