@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.conditional_ellipsis_series import ROOT as CONDITIONAL_SERIES_ROOT
 from seman_parser.shared_comparative_reply import ROOT as COMPARATIVE_REPLY_ROOT
 from seman_parser.copular_resolution_content import ROOT as RESOLUTION_CONTENT_ROOT
 from seman_parser.comparative_content_coordination import ROOT as COMPARATIVE_CONTENT_ROOT
@@ -913,6 +914,88 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class ConditionalEllipsisSeriesTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("If that were so, her effort was nothing; her duty to them unmet; "
+               "and every task she had shrunk from, she was daily repeating.")
+
+    def test_case_124_preserves_three_consequences_and_distinct_gaps(self):
+        case = select_cases(500)[0][124]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "e5f30c6dd18d4da6")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (CONDITIONAL_SERIES_ROOT, 0, len(text)))
+        condition, _, series, _ = root.children
+        self.assertEqual(condition.features.as_dict()["irrealis"], "true")
+        self.assertEqual(self.spans(condition.children, text), [
+            ("CONJ", "If"), ("PRONOUN", "that"), ("COPULA", "were"), ("ADV", "so"),
+        ])
+        first, semi1, middle, semi2, coord, last = series.children
+        self.assertEqual(self.spans((semi1, semi2, coord), text),
+                         [("SEMICOLON", ";"), ("SEMICOLON", ";"), ("COORD", "and")])
+        self.assertEqual(self.spans(first.children, text),
+                         [("NP", "my sacrifice"), ("COPULA", "was"), ("PRONOUN", "nothing")])
+        self.assertEqual(self.spans(middle.children, text),
+                         [("NP", "my plainest obligation to her"), ("ADJ", "unfulfilled")])
+        self.assertEqual(middle.features.as_dict()["ellipsis"], "copula")
+        self.assertEqual(self.spans(middle.children[0].children, text),
+                         [("NP", "my plainest obligation"), ("PREP", "to"), ("PRONOUN", "her")])
+        topic, comma, subject, pred = last.children
+        self.assertEqual(self.spans((comma, subject), text), [("COMMA", ","), ("NP", "I")])
+        self.assertEqual(self.spans(topic.children, text),
+                         [("NP", "every poor action"), ("REL-CLAUSE-OBJ", "I had shrunk from")])
+        self.assertEqual(self.spans(topic.children[-1].children, text), [
+            ("NP", "I"), ("HAVE", "had"), ("V", "shrunk"), ("PREP", "from"),
+        ])
+        self.assertEqual(pred.features.as_dict()["gap"], "object")
+        self.assertEqual(self.spans(pred.children, text),
+                         [("COPULA", "was"), ("ADV", "hourly"), ("V", "doing")])
+
+    def test_case_124_condition_reaches_every_consequence(self):
+        case = select_cases(500)[0][124]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, CONDITIONAL_SERIES_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("CONDITION", p("was nothing"), p("were")), ("CONDITION", p("unfulfilled"), p("were")),
+            ("CONDITION", p("doing"), p("were")),
+            ("ELLIPSIS_ANTECEDENT", p("unfulfilled"), p("was nothing")),
+            ("ATTRIBUTE", p("obligation"), p("unfulfilled")), ("MODIFIER", p("action"), p("shrunk")),
+            ("COMPLEMENT", p("from"), p("action")), ("AFFECTED", p("doing"), p("action")),
+            ("TIME", p("doing"), p("hourly")), ("AGENT", p("doing"), p("I was")),
+        }
+        forbidden = {
+            ("AFFECTED", p("shrunk"), p("action")), ("TIME", p("shrunk"), p("hourly")),
+            ("CONDITION", p("shrunk"), p("were")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_ellipsis_and_near_misses(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, CONDITIONAL_SERIES_ROOT)
+        for old, new in (
+            ("If that", "Because that"), ("were so", "are so"), ("effort was", "effort were"),
+            ("unmet; and", "unmet and"), ("and every", "and some"), ("had shrunk", "had shrink"),
+            ("shrunk from", "slept from"), ("from, she", "from, her"),
+            ("she was daily", "she were daily"), ("daily repeating", "daily sleeping"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != CONDITIONAL_SERIES_ROOT)
 
 
 class SharedComparativeReplyTests(unittest.TestCase):
