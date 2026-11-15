@@ -193,3 +193,11 @@
 {"id":"structural_scalar_content_with_subject_pause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"}]}}]}
 {"id":"structural_scalar_infinitival_subject","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"event","target":"content"}]}}]}
 {"id":"structural_extraposed_scalar_content","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"event","target":"attribute"},{"relation":"EXTRAPOSED_SUBJECT","source":"event","target":"extraposed_subject"}]}}]}
+{"id":"structural_evaluative_zero_relative","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"knower"}]}}]}
+{"id":"structural_evaluative_nominal_content","semantic":[{"compose":{"links":[{"relation":"THEME","source":"known","target":"head"},{"relation":"MODIFIER","source":"head","target":"known"}]}}]}
+{"id":"structural_evaluative_content_transfer","semantic":[{"compose":{"links":[{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
+{"id":"structural_evaluative_small_clause","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"assessed_action","target":"attribute"}]}}]}
+{"id":"structural_evaluative_matrix","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"CONTENT","source":"event","target":"assessment"},{"relation":"AGENT","source":"assessment","target":"subject"},{"relation":"TIME","source":"event","target":"time"}]}}]}
+{"id":"structural_evaluative_gapped_report","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"event","target":"manner"}]}}]}
+{"id":"structural_evaluative_content_relative","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"AFFECTED","source":"event","target":"relative"}]}}]}
+{"id":"structural_extraposed_object_relative","semantic":[{"compose":{"links":[{"relation":"SUPPLEMENT","source":"event","target":"report"},{"relation":"COREFERENCE","source":"relative","target":"antecedent"}]}}]}

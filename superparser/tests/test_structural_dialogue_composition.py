@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.extraposed_object_relative import ROOT as EXTRAPOSED_OBJECT_ROOT
 from seman_parser.extraposed_scalar_content import ROOT as EXTRAPOSED_SCALAR_ROOT
 from seman_parser.degree_concessive import ROOT as DEGREE_CONCESSIVE_ROOT
 from seman_parser.paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT
@@ -909,6 +910,104 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class ExtraposedObjectRelativeTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("They deemed it wise, then, to show him everything they found; "
+               "which she described in detail.")
+
+    def test_case_87_preserves_the_evaluation_and_both_object_gaps(self):
+        case = select_cases(500)[0][87]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "1d4f2bfad396bcbd")
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual((prepared.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (EXTRAPOSED_OBJECT_ROOT, 0, len(text)))
+        matrix, semicolon, relative, stop = root.children
+        self.assertEqual(self.spans((semicolon, stop), text), [("SEMICOLON", ";"), ("SPEECH-STOP", ".")])
+        self.assertEqual(self.spans(matrix.children[:2], text), [("NP", "We"), ("V", "judged")])
+        quality = matrix.children[-1]
+        self.assertEqual(self.spans(quality.children, text), [
+            ("EXTRAPOSITION-IT", "it"), ("ADJ", "expedient"),
+            ("TEMPORAL-SUPPLEMENT", ", now,"), ("INF-CLAUSE", "to tell her all we knew"),
+        ])
+        self.assertEqual(self.spans(quality.children[2].children, text),
+                         [("COMMA", ","), ("ADV", "now"), ("COMMA", ",")])
+        transfer = quality.children[-1]
+        self.assertEqual(self.spans(transfer.children, text),
+                         [("TO", "to"), ("V", "tell"), ("PRONOUN", "her"), ("NP", "all we knew")])
+        theme = transfer.children[-1]
+        self.assertEqual(self.spans(theme.children, text),
+                         [("PRONOUN", "all"), ("REL-CLAUSE-OBJ", "we knew")])
+        zero_relative = theme.children[-1]
+        self.assertEqual(self.spans(zero_relative.children, text), [("NP", "we"), ("VP-GAP", "knew")])
+        self.assertEqual(zero_relative.children[-1].features.as_dict()["gap"], "object")
+        self.assertEqual(self.spans(relative.children, text), [
+            ("WH-REL-OBL", "which"), ("NP", "I"), ("VP-GAP", "recounted at length"),
+        ])
+        report = relative.children[-1]
+        self.assertEqual(report.features.as_dict()["gap"], "object")
+        self.assertEqual(self.spans(report.children, text), [("V", "recounted"), ("PP", "at length")])
+        by_id = {node["id"]: node for node in prepared.structural_constituents}
+        self.assertEqual(by_id["s1"]["governor"], "s0")
+        self.assertEqual(prepared.source_component("s1"), "which I recounted at length.")
+
+    def test_case_87_semantics_distinguish_control_recipient_and_reprise(self):
+        case = select_cases(500)[0][87]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, EXTRAPOSED_OBJECT_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("AGENT", p("judged"), 0), ("CONTENT", p("judged"), p("tell")),
+            ("AGENT", p("tell"), 0), ("ATTRIBUTE", p("tell"), p("expedient")),
+            ("TIME", p("judged"), p("now")), ("RECIPIENT", p("tell"), p("her all")),
+            ("THEME", p("tell"), p("all")), ("AGENT", p("knew"), p("we knew")),
+            ("THEME", p("knew"), p("all")), ("MODIFIER", p("all"), p("knew")),
+            ("SUPPLEMENT", p("judged"), p("recounted")), ("AGENT", p("recounted"), p("I recounted")),
+            ("AFFECTED", p("recounted"), p("which")), ("COREFERENCE", p("which"), p("all")),
+            ("MANNER", p("recounted"), p("at length")),
+        }
+        forbidden = {
+            ("AGENT", p("tell"), p("it expedient")), ("AGENT", p("tell"), p("her all")),
+            ("THEME", p("tell"), p("her all")), ("COREFERENCE", p("which"), p("judged")),
+            ("COREFERENCE", p("which"), p("her all")), ("TIME", p("knew"), p("now")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_evaluation_changes_all_major_lexical_heads(self):
+        parsed = self.control(self.CONTROL)
+        self.assertTrue(parsed.completed, parsed.stats)
+        root = parsed.best()
+        self.assertEqual(root.rule_id, EXTRAPOSED_OBJECT_ROOT)
+        transfer = root.children[0].children[-1].children[-1]
+        self.assertEqual(self.spans(transfer.children, self.CONTROL), [
+            ("TO", "to"), ("V", "show"), ("PRONOUN", "him"), ("NP", "everything they found"),
+        ])
+        self.assertEqual(root.children[0].children[0].features.as_dict()["number"], "plural")
+
+    def test_requires_the_overt_delimiters_and_licensed_lexical_frames(self):
+        for old, new in (
+            ("They deemed", "They deems"), ("it wise", "him wise"), ("wise, then,", "wise then,"),
+            ("show him", "explained him"), ("show him", "show he"), ("show him", "sleep him"),
+            ("they found", "they slept"), ("they found", "they discovers"),
+            ("; which", "; who"), ("; which", "; and"), ("described in detail", "slept in detail"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != EXTRAPOSED_OBJECT_ROOT)
 
 
 class ExtraposedScalarContentTests(unittest.TestCase):
