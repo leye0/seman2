@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #82](https://github.com/leye0/seman2/pull/82)** — 492/500, 8 phrases restantes. #122 reconnaît la réponse sur l’heure du départ et préserve le sujet partagé. Le prochain cas est #124.
+
 **Suivi après la [PR #81](https://github.com/leye0/seman2/pull/81)** — 491/500, 9 phrases restantes. #111 distingue le contenu de la condition, celui de la résolution et le destinataire de grant. Le prochain cas est #122.
 
 **Suivi après la [PR #80](https://github.com/leye0/seman2/pull/80)** — 490/500, 10 phrases restantes. #110 rattache l’interrogative à knew et élimine le dernier dépassement de délai à budgets constants. Le prochain cas est #111.
@@ -102,7 +104,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | --- | --- | --- | --- |
 | #69 | Délai | I informed her that he sent his compliments, and was getting on very well indeed. | Complément en that avec deux prédicats partageant he. — Corrigé par la PR #61. |
 | #113 | Racines sans analyse valide | Here she ceased; and snapping her reticule again, and shutting her mouth, looked as if she might be broken, but could never be bent. | Point-virgule, sujet implicite et participiales coordonnées. — Corrigé par la PR #62. |
-| #122 | Racines sans analyse valide | Mr. Micawber considered it necessary to prepare either my aunt or his wife, by degrees, and said, sooner than he had expected yesterday. | Coordination de considered et said, contenu implicite de said, comparatif temporel détaché. |
+| #122 | Racines sans analyse valide | Mr. Micawber considered it necessary to prepare either my aunt or his wife, by degrees, and said, sooner than he had expected yesterday. | Coordination de considered et said, contenu implicite de said, comparatif temporel détaché. — Corrigé par la PR #82. |
 | #124 | Racines sans analyse valide | If that were so, my sacrifice was nothing; my plainest obligation to her unfulfilled; and every poor action I had shrunk from, I was hourly doing. | Parallélisme au point-virgule, copule élidée et objet antéposé. |
 | #221 | Forêt saturée | Mrs. Bennet was prevented replying by the entrance of the footman with a note for Miss Bennet; it came from Netherfield, and the servant waited for an answer. | Passif avec gérondif, puis propositions distinctes au point-virgule. — Corrigé par la PR #72. |
 | #228 | Racines sans analyse valide | Mrs. Hurst and her sister scarcely opened their mouths, except to complain of fatigue, and were evidently impatient to have the house to themselves. | Except to à portée verbale et coordination de prédicats. — Corrigé par la PR #64. |
