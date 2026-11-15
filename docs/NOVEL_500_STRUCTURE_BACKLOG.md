@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #89](https://github.com/leye0/seman2/pull/89)** — 499/500, 1 phrases restantes. #319 sépare le passif prépositionnel de l’évaluation au parfait modal. Le prochain cas est #358.
+
 **Suivi après la [PR #88](https://github.com/leye0/seman2/pull/88)** — 498/500, 2 phrases restantes. #294 garde who comme sujet de la question et creature comme agent implicite du gérondif. Le prochain cas est #319.
 
 **Suivi après la [PR #87](https://github.com/leye0/seman2/pull/87)** — 497/500, 3 phrases restantes. #249 rattache la réaction à l’évaluation et coordonne les deux états de Mrs. Bennet. Le prochain cas est #294.
@@ -86,7 +88,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #226 | Aucune racine | He inquired how far Netherfield was from Meryton; and, after receiving her answer, asked in a hesitating manner how long Mr. Darcy had been staying there. | Gérondif after receiving her answer intercalé entre deux interrogatives indirectes. — Corrigé par la PR #63. |
 | #239 | Forêt saturée | Elizabeth immediately recognizing the livery, guessed what it meant, and imparted no small degree of her surprise to her relations by acquainting them with the honour which she expected. | Participiale entre le sujet et guessed, puis gérondif de moyen. — Corrigé par la PR #60. |
 | #246 | Aucune racine | Anxious and uneasy, the period which passed in the drawing-room, before the gentlemen came, was wearisome and dull to a degree that almost made her uncivil. | Supplément adjectival détaché, puis temporelle intercalée dans le sujet. — Corrigé par la PR #69. |
-| #319 | Racines sans analyse valide | Now my desires were complied with, and it would, indeed, have been folly to repent. | Incise indeed entre modal et infinitif parfait. |
+| #319 | Racines sans analyse valide | Now my desires were complied with, and it would, indeed, have been folly to repent. | Incise indeed entre modal et infinitif parfait. — Corrigé par la PR #89. |
 | #463 | Racines sans analyse valide | He himself, I thought, looked somewhat paler and more stern than I was used to. | Incise de pensée entre le sujet emphatique et le prédicat comparatif. — Corrigé par la PR #60. |
 | #480 | Racines sans analyse valide | The squire was sitting down, as white as a sheet, thinking of the harm he had led us to, the good soul! | Équative détachée, participiale et reprise nominale finale. — Corrigé par la PR #66. |
 | #485 | Racines sans analyse valide | I snatched a cutlass from the pile, and someone, at the same time snatching another, gave me a cut across the knuckles which I hardly felt. | Participiale incidente entre sujet et gave. — Corrigé par la PR #60. |
