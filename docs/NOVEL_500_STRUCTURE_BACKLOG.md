@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #88](https://github.com/leye0/seman2/pull/88)** — 498/500, 2 phrases restantes. #294 garde who comme sujet de la question et creature comme agent implicite du gérondif. Le prochain cas est #319.
+
 **Suivi après la [PR #87](https://github.com/leye0/seman2/pull/87)** — 497/500, 3 phrases restantes. #249 rattache la réaction à l’évaluation et coordonne les deux états de Mrs. Bennet. Le prochain cas est #294.
 
 **Suivi après la [PR #86](https://github.com/leye0/seman2/pull/86)** — 496/500, 4 phrases restantes. #238 conserve le sujet propositionnel et les deux développements exclamatifs. Le prochain cas est #249.
@@ -103,7 +105,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… — Corrigé par la PR #69. |
 | #242 | Racines sans analyse valide | She had never heard of his having had any relations, except a father and mother, both of whom had been dead many years. | Gérondif possessif parfait, exception et relative partitive. — Corrigé par la PR #67. |
 | #291 | Racines sans analyse valide | A meeting, which he anticipated with such joy, so strangely turned to bitterness. | Relative supplémentaire au milieu du sujet. — Corrigé par la PR #60. |
-| #294 | Racines sans analyse valide | Who could arrest a creature capable of scaling the overhanging sides of Mont Saleve? | Interrogative à sujet who et adjectif capable suivi d’un gérondif. |
+| #294 | Racines sans analyse valide | Who could arrest a creature capable of scaling the overhanging sides of Mont Saleve? | Interrogative à sujet who et adjectif capable suivi d’un gérondif. — Corrigé par la PR #88. |
 | #328 | Racines sans analyse valide | These sublime and magnificent scenes afforded me the greatest consolation that I was capable of receiving. | Relative à objet direct non exprimé de receiving. — Corrigé par la PR #65. |
 | #363 | Racines sans analyse valide | Sometimes I sat with my eyes fixed on the ground, fearing to raise them lest they should encounter the object which I so much dreaded to behold. | Supplément participial, subordonnée en lest et relative à complément infinitival. — Corrigé par la PR #66. |
 | #469 | Aucune racine | I remember the appearance of his coat, which he patched himself upstairs in his room, and which, before the end, was nothing but patches. | Relatives coordonnées sur le même antécédent, avec incise dans la seconde. — Corrigé par la PR #67. |
