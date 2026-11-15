@@ -20,6 +20,7 @@ from seman_parser.shared_by_coordination import shared_by_match
 from seman_parser.semicolon_triplet import semicolon_triplet_spans
 from seman_parser.inverted_object_control import inverted_control_spans
 from seman_parser.negative_perfect import negative_perfect_span
+from seman_parser.comparative_content_coordination import comparative_content_spans
 from seman_parser.extraposed_scalar_content import extraposed_scalar_spans
 from seman_parser.degree_concessive import degree_concession_spans
 from seman_parser.paired_clause_supplements import paired_supplement_spans
@@ -408,6 +409,19 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                                   "xs0", "complement", "overt_that_after_infinitival_verb"),
             StructuralConstituent("xs2", "subject_candidate", *subject,
                                   "xs1", "subject", "scalar_modifier_before_modal"),
+        ))
+    comparison = comparative_content_spans(source) if len(parts) == 1 and not quotation_spans else None
+    if comparison:
+        left, standard, content, right = comparison
+        cs.extend((
+            StructuralConstituent("kc0", "finite_conjunct_candidate", *left, main,
+                                  "first_conjunct", "negative_degree_then_wh_content"),
+            StructuralConstituent("kc1", "comparative_standard_candidate", *standard, "kc0",
+                                  "comparison_standard", "than_and_overt_do"),
+            StructuralConstituent("kc2", "finite_content_candidate", *content, "kc0",
+                                  "complement", "where_after_comparative_standard"),
+            StructuralConstituent("kc3", "finite_conjunct_candidate", *right, main,
+                                  "coordination", "comma_then_adversative"),
         ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.

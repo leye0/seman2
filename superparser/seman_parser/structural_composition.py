@@ -39,6 +39,9 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .comparative_content_coordination import (
+    ROOT as COMPARATIVE_CONTENT_ROOT, plan_comparative_content,
+)
 from .extraposed_object_relative import (
     ROOT as EXTRAPOSED_OBJECT_ROOT, plan_extraposed_object_relative,
 )
@@ -154,6 +157,11 @@ class QuotedSentenceComposer:
                            if rule.provenance.get("source_plan") == EXTRAPOSED_OBJECT_ROOT]
         self._extraposed_object_vector = VectorGrammar(
             Grammar(object_relative), preserve_quote_delimiters=True,
+        )
+        compared_content = [rule for rule in rules
+                            if rule.provenance.get("source_plan") == COMPARATIVE_CONTENT_ROOT]
+        self._comparative_content_vector = VectorGrammar(
+            Grammar(compared_content), preserve_quote_delimiters=True,
         )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -892,7 +900,9 @@ class QuotedSentenceComposer:
                     self._extraposed_scalar_vector
                     if expected_rule == EXTRAPOSED_SCALAR_ROOT else
                     self._extraposed_object_vector
-                    if expected_rule == EXTRAPOSED_OBJECT_ROOT else self._vector)
+                    if expected_rule == EXTRAPOSED_OBJECT_ROOT else
+                    self._comparative_content_vector
+                    if expected_rule == COMPARATIVE_CONTENT_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -932,6 +942,7 @@ class QuotedSentenceComposer:
                         "dialogue_structural_dialect_three_act_self_report",
                         "dialogue_structural_vocative_praise_stars_reporter",
                     ) else
+                    5 if expected_rule == COMPARATIVE_CONTENT_ROOT else
                     3 if expected_rule in (
                         TRIPLET_ROOT, DEGREE_CONCESSIVE_ROOT,
                         "dialogue_structural_comparative_negative_tag_sequence",
@@ -2612,6 +2623,7 @@ class QuotedSentenceComposer:
                 (DEGREE_CONCESSIVE_ROOT, lambda: degree_concession_plan(text, components)),
                 (EXTRAPOSED_SCALAR_ROOT, lambda: plan_extraposed_scalar_content(text, components)),
                 (EXTRAPOSED_OBJECT_ROOT, lambda: plan_extraposed_object_relative(text, components)),
+                (COMPARATIVE_CONTENT_ROOT, lambda: plan_comparative_content(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate

@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.comparative_content_coordination import ROOT as COMPARATIVE_CONTENT_ROOT
 from seman_parser.extraposed_object_relative import ROOT as EXTRAPOSED_OBJECT_ROOT
 from seman_parser.extraposed_scalar_content import ROOT as EXTRAPOSED_SCALAR_ROOT
 from seman_parser.degree_concessive import ROOT as DEGREE_CONCESSIVE_ROOT
@@ -910,6 +911,93 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class ComparativeContentCoordinationTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("They understood no more than we did, where she was heading, "
+               "but they believed she had a route mapped out in her mind.")
+
+    def test_case_110_separates_the_comparison_question_and_conjecture(self):
+        case = select_cases(500)[0][110]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "c31971a0a1ada1d9")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (COMPARATIVE_CONTENT_ROOT, 0, len(text)))
+        knowledge, comma, coordinator, thought, stop = root.children
+        self.assertEqual(self.spans((comma, coordinator, stop), text),
+                         [("COMMA", ","), ("COORD", "but"), ("SPEECH-STOP", ".")])
+        self.assertEqual(self.spans(knowledge.children, text), [
+            ("NP", "She"), ("V", "knew"), ("DEGREE-COMPARISON", "no more than I did"),
+            ("COMMA", ","), ("WH-CLAUSE", "where he was going"),
+        ])
+        standard = knowledge.children[2].children[-1]
+        self.assertEqual(self.spans(standard.children, text),
+                         [("CONJ", "than"), ("NP", "I"), ("AUX", "did")])
+        self.assertEqual(standard.features.as_dict()["ellipsis"], "true")
+        self.assertEqual(self.spans(knowledge.children[-1].children, text), [
+            ("WH-NOM", "where"), ("NP", "he"), ("COPULA", "was"), ("V", "going"),
+        ])
+        have = thought.children[-1]
+        self.assertEqual(self.spans(have.children, text), [
+            ("NP", "he"), ("V", "had"), ("NP", "some project"),
+            ("RESULT-STATE", "shaped out in his mind"),
+        ])
+        state = have.children[-1]
+        self.assertEqual(self.spans(state.children, text),
+                         [("V", "shaped"), ("PARTICLE", "out"), ("MENTAL-LOCATION", "in his mind")])
+        self.assertEqual(state.features.as_dict()["voice"], "passive")
+        parts = {part["id"]: part for part in pre.structural_constituents}
+        self.assertEqual([parts[key]["governor"] for key in ("kc1", "kc2", "kc3")], ["kc0", "kc0", "s0"])
+
+    def test_case_110_semantic_scope_preserves_the_ellipsis_and_local_result(self):
+        case = select_cases(500)[0][110]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, COMPARATIVE_CONTENT_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("NEGATION", p("more"), p("no more")), ("DEGREE", p("knew"), p("more")),
+            ("COMPARISON", p("more"), p("did")), ("ELLIPSIS_ANTECEDENT", p("did"), p("knew")),
+            ("CONTENT", p("knew"), p("going")), ("GOAL", p("going"), p("where")),
+            ("CONTRAST", p("knew"), p("thought")), ("CONTENT", p("thought"), p("had")),
+            ("THEME", p("had"), p("project")), ("RESULT", p("project"), p("shaped")),
+            ("PARTICLE", p("shaped"), p("out in")), ("LOCATION", p("shaped"), p("in his")),
+            ("POSSESSOR", p("mind"), p("his")),
+        }
+        forbidden = {
+            ("NEGATION", p("knew"), p("no more")), ("CONTENT", p("did"), p("going")),
+            ("CONTENT", p("thought"), p("going")), ("AGENT", p("shaped"), p("he had")),
+            ("LOCATION", p("had"), p("in his")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_lexical_frames_and_invalid_near_misses(self):
+        result = self.control(self.CONTROL)
+        self.assertTrue(result.completed, result.stats)
+        self.assertEqual(result.best().rule_id, COMPARATIVE_CONTENT_ROOT)
+        for old, new in (
+            ("we did", "we does"), ("she was", "she were"), ("she had", "she have"),
+            ("did, where", "did where"), ("where she", "that she"),
+            ("she was heading", "she was knowing"), ("but they", "and they"),
+            ("they believed", "they slept"), ("mapped out", "mapping out"),
+            ("mapped out", "mapped up"), ("mapped out", "slept out"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != COMPARATIVE_CONTENT_ROOT)
 
 
 class ExtraposedObjectRelativeTests(unittest.TestCase):
