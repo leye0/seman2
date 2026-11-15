@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #77](https://github.com/leye0/seman2/pull/77)** — 487/500, 13 phrases restantes. #74 conserve la portée de la concessive de degré et les compléments de sensible, right et compliance. Le prochain cas est #80.
+
 **Suivi après la [PR #76](https://github.com/leye0/seman2/pull/76)** — 486/500, 14 phrases restantes. Les deux incises de #496 ont des propositions gouvernantes distinctes et this reprend la prédication précédente. La file revient à #74.
 
 **Suivi après la [PR #75](https://github.com/leye0/seman2/pull/75)** — 485/500, 15 phrases restantes. #477 conserve un seul sujet pour le passif et l’actif, la mesure sous nearer et la relative sous a course. #496 est le prochain cas de la file.
@@ -112,7 +114,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
-| #74 | Racines sans analyse valide | However much astonished I might be, I was sensible that I had no right to refuse compliance with such a peremptory command. | Concessive de degré et adjectif sensible suivi d’un complément en that. |
+| #74 | Racines sans analyse valide | However much astonished I might be, I was sensible that I had no right to refuse compliance with such a peremptory command. | Concessive de degré et adjectif sensible suivi d’un complément en that. — Corrigé par la PR #77. |
 | #111 | Racines sans analyse valide | That condition was, that he should make a solemn resolution to grant no more loans of his name, or anything else, to Mr. Micawber. | Complément prédicatif en that et alternative nominale détachée. |
 | #213 | Racines sans analyse valide | But, perhaps he could not in her mother's presence be what he was before her uncle and aunt. | Groupe prépositionnel entre le modal nié et be, puis propositions en what et before. |
 | #358 | Racines sans analyse valide | The sight of the awful and majestic in nature had indeed always the effect of solemnizing my mind and causing me to forget the passing cares of life. | Gérondifs coordonnés sous of, puis infinitif sélectionné par causing. |
