@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #74](https://github.com/leye0/seman2/pull/74)** — 484/500, 16 phrases restantes. #84 et #462 partagent l’inversion négative déclarative au parfait. Le deuxième never de #84 renforce la négation sans la déplacer vers la comparaison. Dans #462, nor ne nie que le retour. Au prochain cas, #477, un même sujet gouverne les prédicats passif et actif.
+
 **Suivi après la [PR #73](https://github.com/leye0/seman2/pull/73)** — 482/500, 18 phrases restantes. #373 conserve l’inversion can I, les deux modificateurs de one et le contrôle de to live sous counsel. #462 est le prochain cas de la file.
 
 **Suivi après la [PR #72](https://github.com/leye0/seman2/pull/72)** — 481/500, 19 phrases restantes. #221 et #371 partagent une structure à trois propositions. Le point-virgule sépare la première des deux que relie and. #373 est le prochain cas de la file.
@@ -69,7 +71,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
 | #80 | Racines sans analyse valide | It was difficult to believe that a night so long to me, could be short to anybody else. | Comparatif et virgule historique avant le prédicat enchâssé. |
-| #84 | Racines sans analyse valide | Never, never, had I loved Dora so deeply and truly, as I loved her that night. | Inversion après Never répété, puis comparaison en as. |
+| #84 | Racines sans analyse valide | Never, never, had I loved Dora so deeply and truly, as I loved her that night. | Inversion après Never répété, puis comparaison en as. — Corrigé par la PR #74. |
 | #110 | Délai | She knew no more than I did, where he was going, but she thought he had some project shaped out in his mind. | Comparatif elliptique no more than I did avant le contenu interrogatif where. |
 | #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. |
 | #206 | Délai | Mrs. Reynolds then directed their attention to one of Miss Darcy, drawn when she was only eight years old. | Ellipse nominale dans one of Miss Darcy et supplément participial drawn when… — Corrigé par la PR #69. |
@@ -99,7 +101,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #371 | Délai | It rang on my ears long and heavily; the mountains re-echoed it, and I felt as if all hell surrounded me with mockery and laughter. | Point-virgule, coordination et comparaison hypothétique as if. — Corrigé par la PR #72. |
 | #372 | Racines sans analyse valide | The Greeks wept for joy when they beheld the Mediterranean from the hills of Asia, and hailed with rapture the boundary of their toils. | Prédicats coordonnés, avec une subordonnée temporelle dans le premier. — Corrigé par la PR #61. |
 | #373 | Racines sans analyse valide | I wish to soothe him, yet can I counsel one so infinitely miserable, so destitute of every hope of consolation, to live? | Coordination adversative avec inversion interrogative et suppléments adjectivaux. — Corrigé par la PR #73. |
-| #462 | Racines sans analyse valide | At least, and at last, I was off the sea, nor had I returned thence empty-handed. | Adverbiaux initiaux coordonnés, puis inversion en nor. |
+| #462 | Racines sans analyse valide | At least, and at last, I was off the sea, nor had I returned thence empty-handed. | Adverbiaux initiaux coordonnés, puis inversion en nor. — Corrigé par la PR #74. |
 | #477 | Racines sans analyse valide | The HISPANIOLA was laid a couple of points nearer the wind and now sailed a course that would just clear the island on the east. | Prédicats coordonnés à sujet partagé, comparatif nautique et relative. |
 
 ## P5 — Subordination et sélection des compléments (4)
