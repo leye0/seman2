@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.copular_resolution_content import ROOT as RESOLUTION_CONTENT_ROOT
 from seman_parser.comparative_content_coordination import ROOT as COMPARATIVE_CONTENT_ROOT
 from seman_parser.extraposed_object_relative import ROOT as EXTRAPOSED_OBJECT_ROOT
 from seman_parser.extraposed_scalar_content import ROOT as EXTRAPOSED_SCALAR_ROOT
@@ -911,6 +912,91 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class CopularResolutionContentTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("This requirement is, that she must make a pledge to give "
+               "no more grants of her estate, or anything else, to Alice.")
+
+    def test_case_111_preserves_the_three_attached_content_levels(self):
+        case = select_cases(500)[0][111]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "a7d236f294fefa98")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (RESOLUTION_CONTENT_ROOT, 0, len(text)))
+        self.assertEqual(self.spans(root.children[:3], text),
+                         [("NP", "That condition"), ("COPULA", "was"), ("COMMA", ",")])
+        content = root.children[3]
+        self.assertEqual(self.spans(content.children[:4], text),
+                         [("COMP-THAT", "that"), ("NP", "he"), ("MODAL", "should"), ("V", "make")])
+        decision = content.children[-1]
+        self.assertEqual(self.spans(decision.children[:1], text), [("NP", "a solemn resolution")])
+        act = decision.children[-1]
+        self.assertEqual(self.spans(act.children, text), [
+            ("TO", "to"), ("V", "grant"), ("NP", "no more loans of his name, or anything else,"),
+            ("RECIPIENT-PP", "to Mr. Micawber"),
+        ])
+        themes = act.children[2]
+        self.assertEqual(self.spans(themes.children, text), [
+            ("NP", "no more loans of his name"), ("COMMA", ","), ("COORD", "or"),
+            ("NP", "anything else"), ("COMMA", ","),
+        ])
+        self.assertEqual(self.spans(themes.children[0].children, text), [
+            ("DET", "no"), ("DEGREE", "more"), ("N", "loans"), ("PREP", "of"), ("NP", "his name"),
+        ])
+        self.assertEqual(self.spans(themes.children[3].children, text),
+                         [("INDEF-PRONOUN", "anything"), ("ADJ", "else")])
+        self.assertEqual(self.spans(act.children[-1].children[-1].children, text),
+                         [("TITLE", "Mr"), ("ABBREVIATION-STOP", "."), ("PROPER-NOUN", "Micawber")])
+
+    def test_case_111_scopes_the_nominal_content_recipient_and_negation(self):
+        case = select_cases(500)[0][111]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, RESOLUTION_CONTENT_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("CONTENT", p("condition"), p("make")), ("CONTENT", p("resolution"), p("grant")),
+            ("MODALITY", p("make"), p("should")), ("AGENT", p("grant"), p("he should")),
+            ("RECIPIENT", p("grant"), p("Micawber")), ("THEME", p("grant"), p("loans")),
+            ("QUANTITY", p("loans"), p("more")), ("NEGATION", p("more"), p("no more")),
+            ("NEGATION", p("anything"), p("no more")), ("ALTERNATIVE", p("loans"), p("anything")),
+            ("MODIFIER", p("anything"), p("else")), ("COMPLEMENT", p("loans"), p("name")),
+        }
+        forbidden = {
+            ("CONTENT", p("make"), p("grant")), ("RECIPIENT", p("make"), p("Micawber")),
+            ("RECIPIENT", p("loans"), p("Micawber")), ("NEGATION", p("make"), p("no more")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_nominal_and_transfer_frames_and_near_misses(self):
+        for source in (self.CONTROL,
+                       "That stipulation was, that they should make a firm commitment to offer "
+                       "no more advances of their funds, or anything else, to Dr. Brown."):
+            self.assertEqual(self.control(source).best().rule_id, RESOLUTION_CONTENT_ROOT)
+        for old, new in (
+            ("requirement is", "requirement are"), ("is, that", "is, which"),
+            ("is, that", "is that"), ("she must", "her must"),
+            ("must make", "must made"), ("a pledge", "a chair"), ("give no", "sleep no"),
+            ("more grants", "more grant"), ("or anything else", "and anything else"),
+            ("else, to", "else to"), ("to Alice", "for Alice"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != RESOLUTION_CONTENT_ROOT)
 
 
 class ComparativeContentCoordinationTests(unittest.TestCase):

@@ -39,6 +39,9 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .copular_resolution_content import (
+    ROOT as RESOLUTION_CONTENT_ROOT, plan_resolution_content,
+)
 from .comparative_content_coordination import (
     ROOT as COMPARATIVE_CONTENT_ROOT, plan_comparative_content,
 )
@@ -162,6 +165,11 @@ class QuotedSentenceComposer:
                             if rule.provenance.get("source_plan") == COMPARATIVE_CONTENT_ROOT]
         self._comparative_content_vector = VectorGrammar(
             Grammar(compared_content), preserve_quote_delimiters=True,
+        )
+        resolution = [rule for rule in rules
+                      if rule.provenance.get("source_plan") == RESOLUTION_CONTENT_ROOT]
+        self._resolution_content_vector = VectorGrammar(
+            Grammar(resolution), preserve_quote_delimiters=True,
         )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -902,7 +910,9 @@ class QuotedSentenceComposer:
                     self._extraposed_object_vector
                     if expected_rule == EXTRAPOSED_OBJECT_ROOT else
                     self._comparative_content_vector
-                    if expected_rule == COMPARATIVE_CONTENT_ROOT else self._vector)
+                    if expected_rule == COMPARATIVE_CONTENT_ROOT else
+                    self._resolution_content_vector
+                    if expected_rule == RESOLUTION_CONTENT_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -930,7 +940,7 @@ class QuotedSentenceComposer:
                 "structural_clause_count": (
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT) else
                     2 if expected_rule in (
-                        CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT,
+                        CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
                         "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
                     ) else
@@ -2624,6 +2634,7 @@ class QuotedSentenceComposer:
                 (EXTRAPOSED_SCALAR_ROOT, lambda: plan_extraposed_scalar_content(text, components)),
                 (EXTRAPOSED_OBJECT_ROOT, lambda: plan_extraposed_object_relative(text, components)),
                 (COMPARATIVE_CONTENT_ROOT, lambda: plan_comparative_content(text, components)),
+                (RESOLUTION_CONTENT_ROOT, lambda: plan_resolution_content(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate
