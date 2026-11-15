@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.causal_posture_response import ROOT as CAUSAL_POSTURE_ROOT
 from seman_parser.exclamative_infinitive_contrast import ROOT as EXCLAMATIVE_CONTRAST_ROOT
 from seman_parser.modal_context_free_relative import ROOT as MODAL_CONTEXT_ROOT
 from seman_parser.integrated_role_apposition import ROOT as ROLE_APPOSITION_ROOT
@@ -917,6 +918,79 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class CausalPostureResponseTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("The impact was quite remarkable; for upon first reading it, "
+               "Dr. Brown stood perfectly silent, and unable to speak a word.")
+
+    def test_case_249_has_a_causal_clause_and_local_coordinated_adjectives(self):
+        case = select_cases(500)[0][249]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "35097475da3bca83")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (CAUSAL_POSTURE_ROOT, 0, len(text)))
+        assessment, semi, cause, reaction, stop = root.children
+        self.assertEqual(self.spans((semi, cause, stop), text),
+                         [("SEMICOLON", ";"), ("COORD", "for"), ("SPEECH-STOP", ".")])
+        self.assertEqual(self.spans(assessment.children, text),
+                         [("NP", "Its effect"), ("COPULA", "was"), ("ADJP", "most extraordinary")])
+        self.assertEqual(self.spans(reaction.children, text), [
+            ("TEMPORAL-PP", "on first hearing it"), ("COMMA", ","), ("NP", "Mrs. Bennet"),
+            ("V", "sat"), ("ADJP", "quite still, and unable to utter a syllable"),
+        ])
+        self.assertEqual(self.spans(reaction.children[0].children, text), [
+            ("PREP", "on"), ("ADV", "first"), ("V", "hearing"), ("PRONOUN", "it"),
+        ])
+        self.assertEqual(self.spans(reaction.children[-1].children, text), [
+            ("ADJP", "quite still"), ("COMMA", ","), ("COORD", "and"), ("ADJP", "unable to utter a syllable"),
+        ])
+        self.assertEqual(self.spans(reaction.children[-1].children[-1].children, text),
+                         [("ADJ", "unable"), ("INF-CLAUSE", "to utter a syllable")])
+
+    def test_case_249_semantics_do_not_assert_that_a_syllable_was_uttered(self):
+        case = select_cases(500)[0][249]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, CAUSAL_POSTURE_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("CAUSE", p("was"), p("sat")), ("TIME", p("sat"), p("hearing")),
+            ("TIME", p("hearing"), p("first")), ("AGENT", p("hearing"), p("Bennet")),
+            ("DEPICTIVE", p("Bennet"), p("still")), ("DEPICTIVE", p("Bennet"), p("unable")),
+            ("CONJUNCT", p("still"), p("unable")), ("CONTENT", p("unable"), p("utter")),
+            ("THEME", p("utter"), p("syllable")), ("AGENT", p("utter"), p("Bennet")),
+        }
+        forbidden = {
+            ("CONJUNCT", p("sat"), p("utter")), ("CAUSE", p("was"), p("utter")),
+            ("TIME", p("was"), p("hearing")), ("CONTENT", p("still"), p("utter")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_causal_chain_and_near_misses(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, CAUSAL_POSTURE_ROOT)
+        for old, new in (
+            ("impact was", "impact were"), ("remarkable; for", "remarkable; and"),
+            ("first reading", "first read"), ("reading it,", "reading it"),
+            ("stood perfectly", "stood perfect"), ("perfectly silent", "perfectly manager"),
+            ("unable to speak", "unable to spoke"), ("unable to speak", "unable to sleep"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != CAUSAL_POSTURE_ROOT)
 
 
 class ExclamativeInfinitiveContrastTests(unittest.TestCase):

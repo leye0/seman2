@@ -261,3 +261,12 @@
 {"id":"structural_exclamative_contrast_inquiry","semantic":[{"compose":{"links":[{"relation":"TOPIC","source":"event","target":"topic"}]}}]}
 {"id":"structural_exclamative_contrast_details","semantic":[{"compose":{"links":[{"relation":"ELABORATION","source":"event","target":"inquiry"}]}}]}
 {"id":"structural_exclamative_infinitive_contrast","semantic":[{"compose":{"links":[{"relation":"CONTRAST","source":"event","target":"detail"},{"relation":"ELABORATION","source":"original","target":"detail"},{"relation":"AGENT","source":"detail","target":"speaker"},{"relation":"AGENT","source":"inquiry","target":"speaker"},{"relation":"RECIPIENT","source":"detail","target":"recipient"}]}}]}
+{"id":"structural_posture_response_graded","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"head","target":"degree"}]}}]}
+{"id":"structural_posture_response_assessment","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"quality"}]}}]}
+{"id":"structural_posture_response_temporal_onset","semantic":[{"compose":{"links":[{"relation":"TIME","source":"event","target":"first"},{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
+{"id":"structural_posture_response_person","semantic":[{"compose":{"links":[{"relation":"TITLE","source":"head","target":"title"}]}}]}
+{"id":"structural_posture_response_utterance_infinitive","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"theme"}]}}]}
+{"id":"structural_posture_response_ability","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"head","target":"action"}]}}]}
+{"id":"structural_posture_response_depictives","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"still","target":"unable"}]}}]}
+{"id":"structural_posture_response_reaction","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"TIME","source":"event","target":"onset"},{"relation":"AGENT","source":"onset","target":"subject"},{"relation":"DEPICTIVE","source":"subject","target":"still"},{"relation":"DEPICTIVE","source":"subject","target":"unable"},{"relation":"AGENT","source":"action","target":"subject"}]}}]}
+{"id":"structural_causal_posture_response","semantic":[{"compose":{"links":[{"relation":"CAUSE","source":"event","target":"reaction"}]}}]}

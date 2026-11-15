@@ -39,6 +39,7 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .causal_posture_response import ROOT as CAUSAL_POSTURE_ROOT, plan_causal_posture
 from .exclamative_infinitive_contrast import (
     ROOT as EXCLAMATIVE_CONTRAST_ROOT, plan_exclamative_contrast,
 )
@@ -210,6 +211,11 @@ class QuotedSentenceComposer:
                                 if rule.provenance.get("source_plan") == EXCLAMATIVE_CONTRAST_ROOT]
         self._exclamative_contrast_vector = VectorGrammar(
             Grammar(exclamative_contrast), preserve_quote_delimiters=True,
+        )
+        causal_posture = [rule for rule in rules
+                          if rule.provenance.get("source_plan") == CAUSAL_POSTURE_ROOT]
+        self._causal_posture_vector = VectorGrammar(
+            Grammar(causal_posture), preserve_quote_delimiters=True,
         )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -962,7 +968,9 @@ class QuotedSentenceComposer:
                     self._modal_context_vector
                     if expected_rule == MODAL_CONTEXT_ROOT else
                     self._exclamative_contrast_vector
-                    if expected_rule == EXCLAMATIVE_CONTRAST_ROOT else self._vector)
+                    if expected_rule == EXCLAMATIVE_CONTRAST_ROOT else
+                    self._causal_posture_vector
+                    if expected_rule == CAUSAL_POSTURE_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -990,7 +998,7 @@ class QuotedSentenceComposer:
                 "structural_clause_count": (
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT) else
                     2 if expected_rule in (
-                        CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT, MODAL_CONTEXT_ROOT, EXCLAMATIVE_CONTRAST_ROOT,
+                        CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT, MODAL_CONTEXT_ROOT, EXCLAMATIVE_CONTRAST_ROOT, CAUSAL_POSTURE_ROOT,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
                         "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
                     ) else
@@ -2690,6 +2698,7 @@ class QuotedSentenceComposer:
                 (ROLE_APPOSITION_ROOT, lambda: plan_integrated_role_apposition(text, components)),
                 (MODAL_CONTEXT_ROOT, lambda: plan_modal_context(text, components)),
                 (EXCLAMATIVE_CONTRAST_ROOT, lambda: plan_exclamative_contrast(text, components)),
+                (CAUSAL_POSTURE_ROOT, lambda: plan_causal_posture(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate
