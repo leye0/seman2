@@ -211,3 +211,12 @@
 {"id":"structural_compared_cognition_possession","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"theme","target":"holder"},{"relation":"THEME","source":"event","target":"theme"},{"relation":"THEME","source":"state","target":"theme"},{"relation":"RESULT","source":"theme","target":"state"}]}}]}
 {"id":"structural_compared_cognition_conjecture","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"thinker"},{"relation":"CONTENT","source":"event","target":"embedded"}]}}]}
 {"id":"structural_comparative_content_coordination","semantic":[{"compose":{"links":[{"relation":"CONTRAST","source":"event","target":"conjecture"}]}}]}
+{"id":"structural_resolution_loan_theme","semantic":[{"compose":{"links":[{"relation":"QUANTITY","source":"head","target":"more"},{"relation":"NEGATION","source":"more","target":"no"},{"relation":"COMPLEMENT","source":"head","target":"resource"}]}}]}
+{"id":"structural_resolution_other_nominal","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"focus"}]}}]}
+{"id":"structural_resolution_alternative","semantic":[{"compose":{"links":[{"relation":"ALTERNATIVE","source":"head","target":"other"}]}}]}
+{"id":"structural_resolution_titled_recipient","semantic":[{"compose":{"links":[{"relation":"TITLE","source":"name","target":"title"}]}}]}
+{"id":"structural_resolution_recipient_pp","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"recipient"}]}}]}
+{"id":"structural_resolution_transfer","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"theme"},{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"NEGATION","source":"alternative","target":"no"}]}}]}
+{"id":"structural_resolution_decision_nominal","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"decision","target":"action"}]}}]}
+{"id":"structural_resolution_finite_content","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"THEME","source":"event","target":"decision"},{"relation":"AGENT","source":"action","target":"subject"}]}}]}
+{"id":"structural_copular_resolution_content","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"CONTENT","source":"subject","target":"content"}]}}]}
