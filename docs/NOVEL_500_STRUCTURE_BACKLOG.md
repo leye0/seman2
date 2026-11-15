@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #76](https://github.com/leye0/seman2/pull/76)** — 486/500, 14 phrases restantes. Les deux incises de #496 ont des propositions gouvernantes distinctes et this reprend la prédication précédente. La file revient à #74.
+
 **Suivi après la [PR #75](https://github.com/leye0/seman2/pull/75)** — 485/500, 15 phrases restantes. #477 conserve un seul sujet pour le passif et l’actif, la mesure sous nearer et la relative sous a course. #496 est le prochain cas de la file.
 
 **Suivi après la [PR #74](https://github.com/leye0/seman2/pull/74)** — 484/500, 16 phrases restantes. #84 et #462 partagent l’inversion négative déclarative au parfait. Le deuxième never de #84 renforce la négation sans la déplacer vers la comparaison. Dans #462, nor ne nie que le retour. Au prochain cas, #477, un même sujet gouverne les prédicats passif et actif.
@@ -65,7 +67,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #480 | Racines sans analyse valide | The squire was sitting down, as white as a sheet, thinking of the harm he had led us to, the good soul! | Équative détachée, participiale et reprise nominale finale. — Corrigé par la PR #66. |
 | #485 | Racines sans analyse valide | I snatched a cutlass from the pile, and someone, at the same time snatching another, gave me a cut across the knuckles which I hardly felt. | Participiale incidente entre sujet et gave. — Corrigé par la PR #60. |
 | #486 | Aucune racine | These biscuits, should anything befall me, would keep me, at least, from starving till far on in the next day. | Conditionnelle inversée sans if entre sujet et modal, puis at least. — Corrigé par la PR #60. |
-| #496 | Racines sans analyse valide | The air, besides, was fresh and stirring, and this, under the sheer sunbeams, was a wonderful refreshment to our senses. | Incises distinctes dans deux propositions coordonnées. |
+| #496 | Racines sans analyse valide | The air, besides, was fresh and stirring, and this, under the sheer sunbeams, was a wonderful refreshment to our senses. | Incises distinctes dans deux propositions coordonnées. — Corrigé par la PR #76. |
 | #499 | Forêt saturée | Two of the bars, slung in a rope's end, made a good load for a grown man--one that he was glad to walk slowly with. | Participiale passive dans le sujet, puis reprise en one après un tiret non apparié. — Corrigé par la PR #65. |
 
 ## P3 — Relatives, appositions et comparatifs (11)

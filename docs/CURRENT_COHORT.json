@@ -73,38 +73,38 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "e2df8eef214c10a5acb5d1cc52d9e2490e74b95b",
-    "validated_pr_head": "b95c3f6bd23060b099318698bda5ad19a7433a8a",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43677532868",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43677532865",
-    "completed": 485,
-    "unresolved": 15,
+    "validated_merge_commit": "72e00b85ddd70178fc0cb9618e245085d2252920",
+    "validated_pr_head": "f65867e8c3b6b14ddb508c491ad8af7de1a4f028",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43719389071",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43719389069",
+    "completed": 486,
+    "unresolved": 14,
     "statuses": {
-      "complete": 485,
+      "complete": 486,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 0,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 0,
-      "roots_without_valid_analysis": 14,
+      "roots_without_valid_analysis": 13,
       "timeout": 1,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 484,
-      "current_complete": 485,
+      "previous_complete": 485,
+      "current_complete": 486,
       "newly_complete_indexes": [
-        477
+        496
       ],
       "regressed_completed_indexes": [],
-      "previous_selected_trees_compared": 484,
+      "previous_selected_trees_compared": 485,
       "previous_selected_trees_changed": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14145579280,
-      "candidate_artifact_id": 14147492231
+      "baseline_artifact_id": 14147492231,
+      "candidate_artifact_id": 14163982865
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -145,17 +145,17 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 791,
+      "unit_tests": 795,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 496,
-      "case_id": "120:238d6ed29a444f6d"
+      "index": 74,
+      "case_id": "766:a4b638e307998ebb"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
-      "next_index": 496,
+      "next_index": 74,
       "resolved_indexes": [
         69,
         73,
@@ -191,6 +191,7 @@
         485,
         486,
         493,
+        496,
         499
       ]
     },
@@ -216,7 +217,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 15,
+      "active_remaining": 14,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -286,13 +287,14 @@
         486,
         493,
         495,
+        496,
         498,
         499
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43677532877",
-    "grammatical_attachment_note": "One named subject governs a passive and an active finite predicate. #477 keeps the differential measure with nearer in the passive conjunct, now with sailed, and the directional PP with clear in the subject relative of course."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43719389070",
+    "grammatical_attachment_note": "The first copular predication hosts besides and the coordinated qualities. The second hosts the sunbeam circumstance. Its demonstrative represents the prior predication, and to our senses modifies refreshment."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -5442,5 +5444,227 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43675350220",
     "grammatical_attachment_note": "A fronted negative licenses declarative auxiliary inversion with past-perfect aspect. #84 treats repeated never as emphasis and keeps that night inside the positive comparison standard. #462 limits nor to returning, retaining thence as source and empty-handed as a depictive of the returning subject."
+  },
+  "pre_pr76_baseline": {
+    "validated_merge_commit": "e2df8eef214c10a5acb5d1cc52d9e2490e74b95b",
+    "validated_pr_head": "b95c3f6bd23060b099318698bda5ad19a7433a8a",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43677532868",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43677532865",
+    "completed": 485,
+    "unresolved": 15,
+    "statuses": {
+      "complete": 485,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 0,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 0,
+      "roots_without_valid_analysis": 14,
+      "timeout": 1,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 484,
+      "current_complete": 485,
+      "newly_complete_indexes": [
+        477
+      ],
+      "regressed_completed_indexes": [],
+      "previous_selected_trees_compared": 484,
+      "previous_selected_trees_changed": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14145579280,
+      "candidate_artifact_id": 14147492231
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 791,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 496,
+      "case_id": "120:238d6ed29a444f6d"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 496,
+      "resolved_indexes": [
+        69,
+        73,
+        84,
+        95,
+        101,
+        113,
+        189,
+        206,
+        220,
+        221,
+        226,
+        228,
+        239,
+        242,
+        246,
+        291,
+        328,
+        337,
+        348,
+        350,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        462,
+        463,
+        469,
+        477,
+        480,
+        485,
+        486,
+        493,
+        499
+      ]
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 15,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        73,
+        84,
+        95,
+        96,
+        99,
+        101,
+        109,
+        113,
+        141,
+        157,
+        175,
+        189,
+        200,
+        206,
+        209,
+        220,
+        221,
+        223,
+        226,
+        228,
+        229,
+        235,
+        237,
+        239,
+        241,
+        242,
+        246,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        328,
+        337,
+        348,
+        350,
+        359,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        462,
+        463,
+        464,
+        466,
+        469,
+        475,
+        477,
+        480,
+        485,
+        486,
+        493,
+        495,
+        498,
+        499
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43677532877",
+    "grammatical_attachment_note": "One named subject governs a passive and an active finite predicate. #477 keeps the differential measure with nearer in the passive conjunct, now with sailed, and the directional PP with clear in the subject relative of course."
   }
 }
