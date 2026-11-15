@@ -73,38 +73,38 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "65aa58ce1adcca07ae448adace4b53de46a76105",
-    "validated_pr_head": "5de4eb21477f3060bdf1425647706726cb564db2",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43736611942",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43736611968",
-    "completed": 490,
-    "unresolved": 10,
+    "validated_merge_commit": "588dcb660676ebc87ec40646952e19861ac0676c",
+    "validated_pr_head": "d10773e15c46f0c6e71b6dad0d5e4405ee4b136e",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43737138290",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43737138760",
+    "completed": 491,
+    "unresolved": 9,
     "statuses": {
-      "complete": 490,
+      "complete": 491,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 0,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 0,
-      "roots_without_valid_analysis": 10,
+      "roots_without_valid_analysis": 9,
       "timeout": 0,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 489,
-      "current_complete": 490,
+      "previous_complete": 490,
+      "current_complete": 491,
       "newly_complete_indexes": [
-        110
+        111
       ],
       "regressed_completed_indexes": [],
-      "previous_selected_trees_compared": 489,
+      "previous_selected_trees_compared": 490,
       "previous_selected_trees_changed": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14171575014,
-      "candidate_artifact_id": 14170882145
+      "baseline_artifact_id": 14170882145,
+      "candidate_artifact_id": 14171172688
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -145,17 +145,17 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 810,
+      "unit_tests": 813,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 111,
-      "case_id": "766:a7d236f294fefa98"
+      "index": 122,
+      "case_id": "766:fb2158d6e71fe059"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
-      "next_index": 111,
+      "next_index": 122,
       "resolved_indexes": [
         69,
         73,
@@ -166,6 +166,7 @@
         95,
         101,
         110,
+        111,
         113,
         189,
         206,
@@ -221,7 +222,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 10,
+      "active_remaining": 9,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -240,6 +241,7 @@
         101,
         109,
         110,
+        111,
         113,
         141,
         157,
@@ -301,8 +303,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43736612007",
-    "grammatical_attachment_note": "The degree negation is local. The delayed destination question belongs to knew, and the zero-that conjecture contains lexical possession and the embedded result state."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43737138244",
+    "grammatical_attachment_note": "The copular that-clause specifies the condition. The decision noun selects a controlled infinitive, whose expanded negative theme and titled recipient have distinct attachments."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -6582,5 +6584,237 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43736228156",
     "grammatical_attachment_note": "The evaluated infinitival action retains an anticipatory object, a separate recipient and content, and a supplementary relative that reprises that content."
+  },
+  "pre_pr81_baseline": {
+    "validated_merge_commit": "65aa58ce1adcca07ae448adace4b53de46a76105",
+    "validated_pr_head": "5de4eb21477f3060bdf1425647706726cb564db2",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43736611942",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43736611968",
+    "completed": 490,
+    "unresolved": 10,
+    "statuses": {
+      "complete": 490,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 0,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 0,
+      "roots_without_valid_analysis": 10,
+      "timeout": 0,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 489,
+      "current_complete": 490,
+      "newly_complete_indexes": [
+        110
+      ],
+      "regressed_completed_indexes": [],
+      "previous_selected_trees_compared": 489,
+      "previous_selected_trees_changed": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14171575014,
+      "candidate_artifact_id": 14170882145
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 810,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 111,
+      "case_id": "766:a7d236f294fefa98"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 111,
+      "resolved_indexes": [
+        69,
+        73,
+        74,
+        80,
+        84,
+        87,
+        95,
+        101,
+        110,
+        113,
+        189,
+        206,
+        220,
+        221,
+        226,
+        228,
+        239,
+        242,
+        246,
+        291,
+        328,
+        337,
+        348,
+        350,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        462,
+        463,
+        469,
+        477,
+        480,
+        485,
+        486,
+        493,
+        496,
+        499
+      ]
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 10,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        73,
+        74,
+        80,
+        84,
+        87,
+        95,
+        96,
+        99,
+        101,
+        109,
+        110,
+        113,
+        141,
+        157,
+        175,
+        189,
+        200,
+        206,
+        209,
+        220,
+        221,
+        223,
+        226,
+        228,
+        229,
+        235,
+        237,
+        239,
+        241,
+        242,
+        246,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        328,
+        337,
+        348,
+        350,
+        359,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        462,
+        463,
+        464,
+        466,
+        469,
+        475,
+        477,
+        480,
+        485,
+        486,
+        493,
+        495,
+        496,
+        498,
+        499
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43736612007",
+    "grammatical_attachment_note": "The degree negation is local. The delayed destination question belongs to knew, and the zero-that conjecture contains lexical possession and the embedded result state."
   }
 }
