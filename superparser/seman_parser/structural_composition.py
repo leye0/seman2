@@ -38,6 +38,7 @@ from .finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT, plan_finite_tem
 from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coordination
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
+from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
@@ -131,6 +132,12 @@ class QuotedSentenceComposer:
         self._control_adjectives_of = frozenset(
             lemma for rule in inverted for lemma in rule.provenance.get("adjectives_of", ())
         )
+        negative = [rule for rule in rules if rule.provenance.get("source_plan") == NEGATIVE_PERFECT_ROOT]
+        self._negative_perfect_vector = VectorGrammar(Grammar(negative), preserve_quote_delimiters=True)
+        self._negative_perfect_frames = {
+            frame: frozenset(lemmas) for rule in negative
+            for frame, lemmas in rule.provenance.get("inversion_frames", {}).items()
+        }
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -410,6 +417,19 @@ class QuotedSentenceComposer:
                         source="source-attested-temporal-form", score=0,
                         provenance={"original_source_span": [a, b], "evidence": entry["evidence"]},
                     ))
+            elif kind == "negative-off-preposition":
+                if expected_rule != NEGATIVE_PERFECT_ROOT or category != "PREP":
+                    return None
+                backing = [c for c in original_lattice.candidates if c.span == (a, b)
+                           and c.category == "PARTICLE" and c.lemma.casefold() == "off"]
+                if not backing:
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma="off", category="PREP",
+                    features=FeatureStructure.empty(), score=max(c.score for c in backing),
+                    source="source-attested-predicative-preposition",
+                    provenance={"original_source_span": [a, b], "source_category": "PARTICLE"},
+                ))
             elif kind == "source-preventive-conjunction":
                 if expected_rule != EMBEDDED_RELATIVE_ROOT or category != "PREVENTIVE-CONJ":
                     return None
@@ -474,6 +494,9 @@ class QuotedSentenceComposer:
                         else (expected_rule == TRIPLET_ROOT
                               and c.lemma.casefold() in self._triplet_frames.get(v, ()))
                         if k == "triplet_frame"
+                        else (expected_rule == NEGATIVE_PERFECT_ROOT
+                              and c.lemma.casefold() in self._negative_perfect_frames.get(v, ()))
+                        if k == "inversion_frame"
                         else (expected_rule == INVERTED_CONTROL_ROOT
                               and c.lemma.casefold() in self._control_adjectives_of)
                         if k == "control_adjective_of"
@@ -842,7 +865,9 @@ class QuotedSentenceComposer:
                     self._triplet_vector
                     if expected_rule == TRIPLET_ROOT else
                     self._inverted_control_vector
-                    if expected_rule == INVERTED_CONTROL_ROOT else self._vector)
+                    if expected_rule == INVERTED_CONTROL_ROOT else
+                    self._negative_perfect_vector
+                    if expected_rule == NEGATIVE_PERFECT_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2556,6 +2581,7 @@ class QuotedSentenceComposer:
                 (SHARED_BY_ROOT, lambda: plan_shared_by_coordination(text, components)),
                 (TRIPLET_ROOT, lambda: plan_semicolon_triplet(text, components)),
                 (INVERTED_CONTROL_ROOT, lambda: plan_inverted_object_control(text, components)),
+                (NEGATIVE_PERFECT_ROOT, lambda: plan_negative_perfect(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate
