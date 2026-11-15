@@ -20,6 +20,7 @@ from seman_parser.shared_by_coordination import shared_by_match
 from seman_parser.semicolon_triplet import semicolon_triplet_spans
 from seman_parser.inverted_object_control import inverted_control_spans
 from seman_parser.negative_perfect import negative_perfect_span
+from seman_parser.degree_concessive import degree_concession_spans
 from seman_parser.paired_clause_supplements import paired_supplement_spans
 from seman_parser.measured_voice_coordination import measured_voice_spans
 
@@ -384,6 +385,17 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                                   "coordination", "paired_medial_supplements"),
             StructuralConstituent("csp", "medial_supplement_candidate", *spatial, "cs1",
                                   "circumstantial_modifier", "comma_delimited_spatial_phrase"),
+        ))
+    degree = degree_concession_spans(source) if len(parts) == 1 and not quotation_spans else None
+    if degree:
+        concessive, adjective, content = degree
+        cs.extend((
+            StructuralConstituent("gc0", "adverbial_subordinate_clause", *concessive,
+                                  main, "concessive_modifier", "fronted_degree_predicate"),
+            StructuralConstituent("gc2", "predicative_adjective_candidate", *adjective,
+                                  main, "attribute", "finite_copula_with_adjective_content"),
+            StructuralConstituent("gc1", "adjective_content_candidate", *content,
+                                  "gc2", "complement", "overt_that_after_predicative_adjective"),
         ))
     # Detect fronted subordinate adjunct with the conventional dependent
     # clause + main-clause comma boundary. Do not claim its NP attachments.

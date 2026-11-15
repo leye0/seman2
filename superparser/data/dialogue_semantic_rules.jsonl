@@ -172,3 +172,14 @@
 {"id":"structural_paired_supplement_affected_nominal","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"affected"}]}}]}
 {"id":"structural_paired_supplement_framed_clause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"CIRCUMSTANCE","source":"event","target":"circumstance"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
 {"id":"structural_paired_copular_supplements","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"event","target":"right"},{"relation":"CONTENT","source":"anaphor","target":"event"}]}}]}
+{"id":"structural_degree_concessive_fronted_quality","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"head","target":"however"}]}}]}
+{"id":"structural_degree_concessive_fronted_intensified_quality","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"much","target":"however"},{"relation":"DEGREE","source":"head","target":"much"}]}}]}
+{"id":"structural_degree_concessive_modal_clause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"quality"},{"relation":"MODALITY","source":"event","target":"modal"}]}}]}
+{"id":"structural_degree_concessive_with_complement","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"standard"}]}}]}
+{"id":"structural_degree_concessive_nominal_with_standard","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"with"}]}}]}
+{"id":"structural_degree_concessive_infinitival_content","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
+{"id":"structural_degree_concessive_entitlement","semantic":[{"compose":{"links":[{"relation":"NEGATION","source":"head","target":"no"},{"relation":"COMPLEMENT","source":"head","target":"action"}]}}]}
+{"id":"structural_degree_concessive_that_content","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"right","target":"subject"},{"relation":"THEME","source":"event","target":"right"},{"relation":"AGENT","source":"action","target":"subject"}]}}]}
+{"id":"structural_degree_concessive_attitude_attribute","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"head","target":"content"}]}}]}
+{"id":"structural_degree_concessive_main_clause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
+{"id":"structural_degree_concessive_attitude","semantic":[{"compose":{"links":[{"relation":"CONCESSION","source":"event","target":"concession"}]}}]}
