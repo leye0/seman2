@@ -104,3 +104,5 @@ Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in i
 2026-11-15: verify #213 interrupted modal and separate fused-relative social setting.
 
 2026-11-15: verify #238 clausal subject and exclamative infinitival elaboration.
+
+2026-11-15: verify #249 causal explanation, temporal onset and coordinated depictives.
