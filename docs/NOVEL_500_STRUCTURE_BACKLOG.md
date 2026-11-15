@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #78](https://github.com/leye0/seman2/pull/78)** — 488/500, 12 phrases restantes. #80 conserve la virgule historique et rattache séparément les deux points de vue à long et à short. Le prochain cas est #87.
+
 **Suivi après la [PR #77](https://github.com/leye0/seman2/pull/77)** — 487/500, 13 phrases restantes. #74 conserve la portée de la concessive de degré et les compléments de sensible, right et compliance. Le prochain cas est #80.
 
 **Suivi après la [PR #76](https://github.com/leye0/seman2/pull/76)** — 486/500, 14 phrases restantes. Les deux incises de #496 ont des propositions gouvernantes distinctes et this reprend la prédication précédente. La file revient à #74.
@@ -76,7 +78,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
-| #80 | Racines sans analyse valide | It was difficult to believe that a night so long to me, could be short to anybody else. | Comparatif et virgule historique avant le prédicat enchâssé. |
+| #80 | Racines sans analyse valide | It was difficult to believe that a night so long to me, could be short to anybody else. | Comparatif et virgule historique avant le prédicat enchâssé. — Corrigé par la PR #78. |
 | #84 | Racines sans analyse valide | Never, never, had I loved Dora so deeply and truly, as I loved her that night. | Inversion après Never répété, puis comparaison en as. — Corrigé par la PR #74. |
 | #110 | Délai | She knew no more than I did, where he was going, but she thought he had some project shaped out in his mind. | Comparatif elliptique no more than I did avant le contenu interrogatif where. |
 | #166 | Racines sans analyse valide | Charlotte the wife of Mr. Collins was a most humiliating picture! | Apposition nominale sans virgule après le nom propre. |
