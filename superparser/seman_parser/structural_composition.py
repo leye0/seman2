@@ -37,6 +37,7 @@ from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedd
 from .finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT, plan_finite_temporal_scope
 from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coordination
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
+from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
@@ -125,6 +126,11 @@ class QuotedSentenceComposer:
             frame: frozenset(lemmas) for rule in triplet
             for frame, lemmas in rule.provenance.get("triplet_frames", {}).items()
         }
+        inverted = [rule for rule in rules if rule.provenance.get("source_plan") == INVERTED_CONTROL_ROOT]
+        self._inverted_control_vector = VectorGrammar(Grammar(inverted), preserve_quote_delimiters=True)
+        self._control_adjectives_of = frozenset(
+            lemma for rule in inverted for lemma in rule.provenance.get("adjectives_of", ())
+        )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -468,6 +474,9 @@ class QuotedSentenceComposer:
                         else (expected_rule == TRIPLET_ROOT
                               and c.lemma.casefold() in self._triplet_frames.get(v, ()))
                         if k == "triplet_frame"
+                        else (expected_rule == INVERTED_CONTROL_ROOT
+                              and c.lemma.casefold() in self._control_adjectives_of)
+                        if k == "control_adjective_of"
                         else (expected_rule == PARENTHETICAL_ALTERNATIVE_ROOT
                               and c.lemma.casefold() in self._alternative_frames.get(v, ()))
                         if k == "alternative_frame"
@@ -519,8 +528,14 @@ class QuotedSentenceComposer:
                         or selected.category != category
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items()
-                               if k not in ("proof_rule", "simple_nominal_proof", "passive_cause_proof"))
+                               if k not in ("proof_rule", "simple_nominal_proof", "passive_cause_proof",
+                                            "finite_statement_proof"))
                         or ("proof_rule" in required and selected.rule_id != required["proof_rule"])):
+                    return None
+                if required.get("finite_statement_proof") == "true" and (
+                    selected.rule_id != "clause_np_vp" or len(selected.children) != 2
+                    or selected.children[1].features.as_dict().get("vform") != "finite"
+                ):
                     return None
                 if required.get("simple_nominal_proof") == "true" and selected.rule_id not in (
                     "np_bare", "np_det_n", "np_poss", "np_proper", "np_proper_name",
@@ -825,7 +840,9 @@ class QuotedSentenceComposer:
                     self._shared_by_vector
                     if expected_rule == SHARED_BY_ROOT else
                     self._triplet_vector
-                    if expected_rule == TRIPLET_ROOT else self._vector)
+                    if expected_rule == TRIPLET_ROOT else
+                    self._inverted_control_vector
+                    if expected_rule == INVERTED_CONTROL_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -2531,30 +2548,20 @@ class QuotedSentenceComposer:
             return None
         plan = plan_subject_resumption(text)
         if plan is None:
-            specs = plan_shared_subject_coordination(text, components)
-            if specs is None:
-                specs = plan_adjective_infinitive_scope(text, components)
-                if specs is None:
-                    specs = plan_embedded_relative_scope(text)
-                    if specs is None:
-                        specs = plan_finite_temporal_scope(text)
-                        if specs is None:
-                            specs = plan_shared_by_coordination(text, components)
-                            if specs is None:
-                                specs = plan_semicolon_triplet(text, components)
-                                if specs is None:
-                                    return None
-                                rule = TRIPLET_ROOT
-                            else:
-                                rule = SHARED_BY_ROOT
-                        else:
-                            rule = FINITE_TEMPORAL_ROOT
-                    else:
-                        rule = EMBEDDED_RELATIVE_ROOT
-                else:
-                    rule = ADJECTIVE_INFINITIVE_ROOT
+            for candidate, build in (
+                (SHARED_SUBJECT_ROOT, lambda: plan_shared_subject_coordination(text, components)),
+                (ADJECTIVE_INFINITIVE_ROOT, lambda: plan_adjective_infinitive_scope(text, components)),
+                (EMBEDDED_RELATIVE_ROOT, lambda: plan_embedded_relative_scope(text)),
+                (FINITE_TEMPORAL_ROOT, lambda: plan_finite_temporal_scope(text)),
+                (SHARED_BY_ROOT, lambda: plan_shared_by_coordination(text, components)),
+                (TRIPLET_ROOT, lambda: plan_semicolon_triplet(text, components)),
+                (INVERTED_CONTROL_ROOT, lambda: plan_inverted_object_control(text, components)),
+            ):
+                if (specs := build()) is not None:
+                    rule = candidate
+                    break
             else:
-                rule = SHARED_SUBJECT_ROOT
+                return None
         else:
             specs, rule = plan
         return self._compose_verified_dialogue_pattern(

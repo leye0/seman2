@@ -22,6 +22,7 @@ from seman_parser.engine import ParseReport, Parser
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
 from seman_parser.shared_by_coordination import ROOT as SHARED_BY_ROOT
 from seman_parser.semicolon_triplet import ROOT as TRIPLET_ROOT
+from seman_parser.inverted_object_control import ROOT as INVERTED_CONTROL_ROOT
 from seman_parser.structural_preanalysis import analyze_paragraph
 
 DATA = Path(__file__).resolve().parents[1] / "data"
@@ -612,6 +613,92 @@ class SemicolonTripletTests(unittest.TestCase):
             with self.subTest(negative=new):
                 best = self.control(text.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != TRIPLET_ROOT)
+
+
+class InvertedObjectControlTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    CONTROL = (
+        "We hope to help her, yet could we persuade someone so deeply exhausted, "
+        "so bereft of any sense of safety, to rest?"
+    )
+
+    def test_case_373_question_and_object_scope_are_source_exact(self):
+        case = select_cases(500)[0][373]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "df685628548f2648")
+        prepared, lattice, result = self.parse(case)
+        self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (INVERTED_CONTROL_ROOT, 0, len(text)))
+        statement, comma, adversative, question = root.children
+        self.assertEqual(self.spans((statement, comma, adversative), text),
+                         [("CLAUSE", "I wish to soothe him"), ("COMMA", ","), ("COORD", "yet")])
+        self.assertEqual(question.features.as_dict()["stype"], "question")
+        modal, subject, counsel, obj, comma, to, live, stop = question.children
+        self.assertEqual(self.spans((modal, subject, counsel, comma, to, live, stop), text),
+                         [("MODAL", "can"), ("NP", "I"), ("V", "counsel"), ("COMMA", ","),
+                          ("TO", "to"), ("V", "live"), ("QMARK", "?")])
+        self.assertEqual(self.spans(obj.children, text), [
+            ("CONTROL-OBJECT-HEAD", "one"), ("CONTROL-OBJECT-DEGREE", "so infinitely miserable"),
+            ("COMMA", ","), ("CONTROL-OBJECT-DEGREE-OF", "so destitute of every hope of consolation"),
+        ])
+        self.assertEqual(prepared.source_component("iq0"), text[question.start:question.end])
+        self.assertEqual(prepared.source_component("iq1"), text[obj.start:obj.end])
+        parts = {x["id"]:x for x in prepared.structural_constituents}
+        self.assertEqual(parts["iq1"]["governor"], "iq0")
+
+    def test_case_373_two_of_dependencies_and_the_infinitival_controller(self):
+        case = select_cases(500)[0][373]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, INVERTED_CONTROL_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                 for r in graph.relations}
+        preferred = {
+            ("COMPLEMENT", "wish", "soothe"), ("AFFECTED", "soothe", "him"),
+            ("CONTRAST", "wish", "counsel"), ("MODALITY", "counsel", "can"),
+            ("AFFECTED", "counsel", "one"), ("MODIFIER", "one", "miserable"),
+            ("SUPPLEMENT", "one", "destitute"), ("CONTENT", "hope", "consolation"),
+            ("COMPLEMENT", "counsel", "live"), ("AGENT", "live", "one"),
+        }
+        forbidden = {
+            ("AGENT", "live", "I"), ("COMPLEMENT", "destitute", "live"),
+            ("COMPLEMENT", "wish", "live"), ("PARTITIVE", "hope", "consolation"),
+            ("MODIFIER", "counsel", "miserable"), ("SUPPLEMENT", "counsel", "destitute"),
+        }
+        self.assertTrue(preferred <= edges, preferred - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+        for start, expected in (
+            ("of every hope", {("COMPLEMENT", "destitute", "of"), ("COMPLEMENT", "of", "hope")}),
+            ("of consolation", {("MODIFIER", "hope", "of"), ("COMPLEMENT", "of", "consolation")}),
+        ):
+            offset = case["source_text"].index(start)
+            of, = [key for key, node in graph.nodes.items() if node.surface == "of" and node.span[0] == offset]
+            self.assertEqual({(r.relation, graph.nodes[r.source].surface, graph.nodes[r.target].surface)
+                              for r in graph.relations if of in (r.source, r.target)}, expected)
+
+    def test_controls_require_inversion_and_object_control_valency(self):
+        for text in (self.CONTROL, self.CONTROL.replace("yet", "but").replace("so deeply exhausted", "so tired")):
+            with self.subTest(positive=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, INVERTED_CONTROL_ROOT)
+        for old, new in (
+            ("could we", "we could"), ("could we", "could us"),
+            ("persuade someone", "admire someone"), ("to rest", "to rested"),
+            ("bereft of", "happy of"), ("safety, to", "safety to"),
+            ("could we persuade", "could we persuaded"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != INVERTED_CONTROL_ROOT)
 
 
 class SubjectResumptionTests(unittest.TestCase):
