@@ -3346,5 +3346,120 @@ class FiniteTemporalScopeTests(unittest.TestCase):
                 self.assertFalse(forbidden & edges, forbidden & edges)
 
 
+class SpokenStatementQuestionSequenceTests(unittest.TestCase):
+    TWO = "dialogue_structural_statement_then_wh_question"
+    THREE = "dialogue_structural_two_statements_then_wh_question"
+    ROOTS = {TWO, THREE}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(DATA, cache_size=0)
+
+    def _parse(self, source, max_items=50_000, kbest_work_limit=500_000):
+        cases, _ = extract(
+            Book(45, "Anne of Green Gables", "L. M. Montgomery", "test"),
+            source, length_min=1, length_max=120,
+        )
+        self.assertEqual(len(cases), 1, source)
+        return parse_corpus_case(
+            self.parser, cases[0], max_items=max_items,
+            kbest_work_limit=kbest_work_limit,
+        )
+
+    def test_attested_transfer_case_keeps_all_three_acts_and_roles(self):
+        # Gutenberg #45, diagnostic case T45-0545. Preserve source punctuation.
+        source = (
+            "“So you do know something then, thank goodness! "
+            "You’re not quite a heathen. Where did you learn that?”"
+        )
+        prepared, lattice, result = self._parse(source)
+        root = result.best()
+        self.assertEqual(prepared.analysis_text, source)
+        self.assertEqual(result.text, source)
+        self.assertEqual(lattice.text, source)
+        self.assertTrue(result.completed)
+        self.assertEqual(root.rule_id, self.THREE)
+
+        def spans(nodes):
+            return [source[node.start:node.end] for node in nodes]
+
+        self.assertEqual(spans(root.children), [
+            "“", "So you do know something then, thank goodness", "!",
+            "You’re not quite a heathen", ".", "Where did you learn that?", "”",
+        ])
+        first, second, question = (root.children[i] for i in (1, 3, 5))
+        self.assertEqual(spans(first.children), [
+            "So", "you do know something", "then", ",", "thank goodness",
+        ])
+        self.assertEqual(first.children[1].children[0].children[1].rule_id, "vp_emphatic")
+        self.assertEqual(spans(second.children), ["You", "’re", "not", "quite a heathen"])
+        self.assertEqual(second.children[-1].children[0].rule_id, "np_such")
+        self.assertEqual(question.category, "WH-QUESTION")
+        self.assertEqual(question.features.as_dict()["stype"], "question")
+        self.assertEqual(spans(question.children), ["Where", "did", "you", "learn that", "?"])
+        self.assertEqual(spans(question.children[3].children[0].children), ["learn", "that"])
+        self.assertEqual(result.stats["structural_clause_count"], 3)
+        self.assertEqual(
+            [source[a:b] for a, b in result.stats["source_punctuation_spans"]],
+            ["“", ",", "!", ".", "?", "”"],
+        )
+        self.assertEqual(result.stats["max_items_total_across_segments"], 50_000)
+        self.assertEqual(result.stats["kbest_work_limit_total_across_segments"], 500_000)
+        report = ParseReport(result, self.parser._quoted_sentence_resources, lattice)
+        semantic = report.best_semantic_graph()
+        h = semantic["handles"]
+        edges = {(r["relation"], r["source"], r["target"])
+                 for r in semantic["graph"]["relations"]}
+        self.assertIn(("CONTINUED_SPEECH", h["speech_1"], h["speech_2"]), edges)
+        self.assertIn(("CONTINUED_SPEECH", h["speech_2"], h["speech_3"]), edges)
+        self.assertIn(("ATTRIBUTE", h["speech_2"], h["attribute"]), edges)
+        self.assertIn(("NEGATION", h["speech_2"], h["negation"]), edges)
+        self.assertIn(("INTERROGATIVE_ADJUNCT", h["speech_3"], h["interrogative_adjunct"]), edges)
+
+    def test_generalizes_across_one_or_two_statements_and_an_abbreviation(self):
+        for source, rule, question in [
+            ("“You have a map. Where did you find it?”", self.TWO, "Where did you find it?"),
+            ("“Dr. Gray is here. Where did you meet him?”", self.TWO, "Where did you meet him?"),
+            ("“The clock stopped. He left. When did he leave?”", self.THREE, "When did he leave?"),
+            ("“She reads. How does she find it?”", self.TWO, "How does she find it?"),
+            ("“So you found it then, thank heavens! Where did you find it?”",
+             self.TWO, "Where did you find it?"),
+            ("“They’re not the owners. Why do they work here?”", self.TWO, "Why do they work here?"),
+        ]:
+            with self.subTest(source=source):
+                _, _, result = self._parse(source)
+                self.assertTrue(result.completed)
+                root = result.best()
+                self.assertEqual(root.rule_id, rule)
+                tail = root.children[-2]
+                self.assertEqual(source[tail.start:tail.end], question)
+                self.assertEqual(source[tail.children[-1].start:tail.children[-1].end], "?")
+                if "Dr." in source:
+                    statement = root.children[1]
+                    self.assertEqual(source[statement.start:statement.end], "Dr. Gray is here")
+
+    def test_does_not_promote_incomplete_or_unlicensed_units(self):
+        for source in (
+            "“Because she left. Where did you find it?”",
+            "“You have a map. Where does you find it?”",
+            "“You have a map. Where did you went?”",
+            "“You is not a thief. Where did you find it?”",
+            "“You have a map. What did you find?”",  # object WH, not adjunct
+            "“You have a map. Where did you find it.”",  # no question stop
+            "“You have a ‘map’. Where did you find it?”",  # nested quotation
+            "“You found a map,” said Jane, “Where did you find it?”",  # two source quotes
+        ):
+            with self.subTest(source=source):
+                _, _, result = self._parse(source)
+                self.assertNotIn(result.best().rule_id if result.best() else None, self.ROOTS)
+
+    def test_composition_does_not_bypass_small_budgets(self):
+        _, _, result = self._parse(
+            "“You have a map. Where did you find it?”",
+            max_items=10, kbest_work_limit=10,
+        )
+        self.assertNotIn(result.best().rule_id if result.best() else None, self.ROOTS)
+
+
 if __name__ == "__main__":
     unittest.main()
