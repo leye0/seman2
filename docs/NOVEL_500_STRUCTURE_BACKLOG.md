@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #73](https://github.com/leye0/seman2/pull/73)** — 482/500, 18 phrases restantes. #373 conserve l’inversion can I, les deux modificateurs de one et le contrôle de to live sous counsel. #462 est le prochain cas de la file.
+
 **Suivi après la [PR #72](https://github.com/leye0/seman2/pull/72)** — 481/500, 19 phrases restantes. #221 et #371 partagent une structure à trois propositions. Le point-virgule sépare la première des deux que relie and. #373 est le prochain cas de la file.
 
 **Suivi après la [PR #71](https://github.com/leye0/seman2/pull/71)** — 479/500, 21 phrases restantes. #362 garde les deux causes sous le même by, avec un complément en of distinct pour chacune. #371 est le prochain cas de la file.
@@ -96,7 +98,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #362 | Racines sans analyse valide | I enjoyed this scene, and yet my enjoyment was embittered both by the memory of the past and the anticipation of the future. | Coordination de propositions, puis both…and sous la même préposition. — Corrigé par la PR #71. |
 | #371 | Délai | It rang on my ears long and heavily; the mountains re-echoed it, and I felt as if all hell surrounded me with mockery and laughter. | Point-virgule, coordination et comparaison hypothétique as if. — Corrigé par la PR #72. |
 | #372 | Racines sans analyse valide | The Greeks wept for joy when they beheld the Mediterranean from the hills of Asia, and hailed with rapture the boundary of their toils. | Prédicats coordonnés, avec une subordonnée temporelle dans le premier. — Corrigé par la PR #61. |
-| #373 | Racines sans analyse valide | I wish to soothe him, yet can I counsel one so infinitely miserable, so destitute of every hope of consolation, to live? | Coordination adversative avec inversion interrogative et suppléments adjectivaux. |
+| #373 | Racines sans analyse valide | I wish to soothe him, yet can I counsel one so infinitely miserable, so destitute of every hope of consolation, to live? | Coordination adversative avec inversion interrogative et suppléments adjectivaux. — Corrigé par la PR #73. |
 | #462 | Racines sans analyse valide | At least, and at last, I was off the sea, nor had I returned thence empty-handed. | Adverbiaux initiaux coordonnés, puis inversion en nor. |
 | #477 | Racines sans analyse valide | The HISPANIOLA was laid a couple of points nearer the wind and now sailed a course that would just clear the island on the east. | Prédicats coordonnés à sujet partagé, comparatif nautique et relative. |
 
