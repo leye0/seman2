@@ -238,3 +238,10 @@
 {"id":"structural_conditional_series_topic_clause","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"AFFECTED","source":"event","target":"theme"}]}}]}
 {"id":"structural_conditional_series_series","semantic":[{"compose":{"links":[{"relation":"ELLIPSIS_ANTECEDENT","source":"state","target":"event"},{"relation":"CONJUNCT","source":"event","target":"state"},{"relation":"CONJUNCT","source":"event","target":"last"}]}}]}
 {"id":"structural_conditional_ellipsis_series","semantic":[{"compose":{"links":[{"relation":"CONDITION","source":"event","target":"condition"},{"relation":"CONDITION","source":"state","target":"condition"},{"relation":"CONDITION","source":"last","target":"condition"}]}}]}
+{"id":"structural_role_apposition_titled_name","semantic":[{"compose":{"links":[{"relation":"TITLE","source":"head","target":"title"}]}}]}
+{"id":"structural_role_apposition_role_nominal","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"partner"}]}}]}
+{"id":"structural_role_apposition_integrated_subject","semantic":[{"compose":{"links":[{"relation":"APPOSITION","source":"person","target":"role"}]}}]}
+{"id":"structural_role_apposition_scalar_attribute","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"quality","target":"degree"}]}}]}
+{"id":"structural_role_apposition_description_simple","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"quality"}]}}]}
+{"id":"structural_role_apposition_description_scalar","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"quality"}]}}]}
+{"id":"structural_integrated_role_apposition","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
