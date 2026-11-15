@@ -19,6 +19,7 @@ from seman_parser.adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE
 from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
+from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
 from seman_parser.parenthetical_alternative import ROOT as PARENTHETICAL_ALTERNATIVE
 from seman_parser.shared_by_coordination import ROOT as SHARED_BY_ROOT
 from seman_parser.semicolon_triplet import ROOT as TRIPLET_ROOT
@@ -699,6 +700,108 @@ class InvertedObjectControlTests(unittest.TestCase):
             with self.subTest(negative=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != INVERTED_CONTROL_ROOT)
+
+
+class NegativePerfectInversionTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+
+    FREQUENCY = "Never, had she admired the singer so openly and warmly, as she admired him that evening."
+    COORDINATION = "At least, and at last, we were off the island, nor had we departed thence unharmed."
+
+    def test_originals_keep_the_perfect_inverted_and_declarative(self):
+        cases = select_cases(500)[0]
+        for index, digest, kind in ((84, "895b8100ffcc44d0", "never"), (462, "891db2bd005ff977", "nor")):
+            with self.subTest(index=index):
+                text = cases[index]["source_text"]
+                self.assertEqual(sha256(text.encode()).hexdigest()[:16], digest)
+                prepared, lattice, result = self.parse(cases[index])
+                self.assertEqual((prepared.analysis_text, lattice.text), (text, text))
+                self.assertTrue(result.completed, result.stats)
+                self.assertFalse(result.stats["budget_exceeded"])
+                self.assertFalse(result.stats["kbest_budget_exceeded"])
+                root = result.best()
+                self.assertEqual((root.rule_id, root.start, root.end), (NEGATIVE_PERFECT_ROOT, 0, len(text)))
+                self.assertEqual(root.features.as_dict()["stype"], "declarative")
+                host, stop = root.children
+                self.assertEqual(text[stop.start:stop.end], ".")
+                inversion = host.children[-1]
+                self.assertEqual(inversion.features.as_dict()["kind"], kind)
+                self.assertEqual(inversion.features.as_dict()["aspect"], "perfect")
+                self.assertEqual(inversion.features.as_dict()["inversion"], "negative")
+                licensor, aux, subject, vp = inversion.children
+                self.assertEqual(self.spans((aux, subject), text), [("HAVE", "had"), ("NP", "I")])
+                self.assertEqual(prepared.source_component("ni0"), text[inversion.start:inversion.end])
+                self.assertEqual(vp.children[0].features.as_dict()["vform"], "ed")
+                if index == 84:
+                    self.assertEqual(self.spans(licensor.children, text),
+                                     [("DEGREE", "Never"), ("COMMA", ","), ("DEGREE", "never"), ("COMMA", ",")])
+                    self.assertEqual(self.spans(vp.children, text), [
+                        ("V", "loved"), ("NP", "Dora"), ("NEGATIVE-EQUATIVE-DEGREE", "so deeply and truly"),
+                        ("COMMA", ","), ("NEGATIVE-EQUATIVE-STANDARD", "as I loved her that night"),
+                    ])
+                    self.assertEqual(vp.children[-1].children[2].features.as_dict()["vform"], "finite")
+                else:
+                    self.assertEqual(self.spans(vp.children, text),
+                                     [("V", "returned"), ("ADV", "thence"), ("ADJ", "empty-handed")])
+                    self.assertEqual(self.spans(host.children[0].children[-1].children, text),
+                                     [("PREP", "off"), ("NP", "the sea")])
+
+    def test_scope_uses_distinct_events_and_subject_spans(self):
+        cases = select_cases(500)[0]
+        for i in (84, 462):
+            case = cases[i]
+            text = case["source_text"]
+            _, lattice, result = self.parse(case)
+            self.assertEqual(result.best().rule_id, NEGATIVE_PERFECT_ROOT)
+            graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+            edges = {(r.relation, graph.nodes[r.source].span[0], graph.nodes[r.target].span[0])
+                     for r in graph.relations}
+            if i == 84:
+                matrix, standard = text.index("loved"), text.rindex("loved")
+                required = {
+                    ("NEGATION", matrix, 0), ("EMPHASIS", 0, text.index("never")),
+                    ("ASPECT", matrix, text.index("had")), ("AFFECTED", matrix, text.index("Dora")),
+                    ("TIME", standard, text.index("night")), ("AFFECTED", standard, text.index("her that")),
+                    ("MANNER", matrix, text.index("deeply")), ("MANNER", matrix, text.index("truly")),
+                    ("COMPARISON", text.index("deeply"), standard),
+                }
+                forbidden = {("NEGATION", standard, 0), ("TIME", matrix, text.index("night")),
+                             ("NEGATION", matrix, text.index("never"))}
+            else:
+                left, right, subject = text.index("was"), text.index("returned"), text.rindex("I")
+                required = {
+                    ("NEGATION", right, text.index("nor")), ("ASPECT", right, text.index("had")),
+                    ("CONJUNCT", left, right), ("LOCATION", left, text.index("off")),
+                    ("TIME", left, text.index("at last")), ("SOURCE", right, text.index("thence")),
+                    ("AGENT", right, subject), ("DEPICTIVE", subject, text.index("empty-handed")),
+                }
+                forbidden = {("NEGATION", left, text.index("nor")), ("SOURCE", left, text.index("thence")),
+                             ("DEPICTIVE", text.index("I"), text.index("empty-handed"))}
+            self.assertTrue(required <= edges, required - edges)
+            self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_variants_and_invalid_negative_perfects(self):
+        for text in (self.FREQUENCY, self.COORDINATION):
+            with self.subTest(positive=text):
+                result = self.control(text)
+                self.assertTrue(result.completed, result.stats)
+                self.assertEqual(result.best().rule_id, NEGATIVE_PERFECT_ROOT)
+        for text, old, new in (
+            (self.FREQUENCY, "Never,", "Once,"),
+            (self.FREQUENCY, "had she", "she had"),
+            (self.FREQUENCY, "admired the singer", "admire the singer"),
+            (self.FREQUENCY, "as she admired", "as her admired"),
+            (self.COORDINATION, "nor had we", "and had we"),
+            (self.COORDINATION, "nor had we", "nor we had"),
+            (self.COORDINATION, "were off", "was off"),
+            (self.COORDINATION, "had we departed", "had we depart"),
+        ):
+            with self.subTest(negative=new):
+                best = self.control(text.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != NEGATIVE_PERFECT_ROOT)
 
 
 class SubjectResumptionTests(unittest.TestCase):

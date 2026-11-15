@@ -78,3 +78,5 @@ Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in i
 2026-11-14: verify #221 and #371 under one source-scoped finite semicolon triplet on the fixed 500.
 
 2026-11-14: verify #373 adversative inversion and object control over a supplemented nominal.
+
+2026-11-14: verify #84 and #462 negative perfect inversion on the fixed 500.
