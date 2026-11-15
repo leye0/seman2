@@ -220,3 +220,11 @@
 {"id":"structural_resolution_decision_nominal","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"decision","target":"action"}]}}]}
 {"id":"structural_resolution_finite_content","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"THEME","source":"event","target":"decision"},{"relation":"AGENT","source":"action","target":"subject"}]}}]}
 {"id":"structural_copular_resolution_content","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"CONTENT","source":"subject","target":"content"}]}}]}
+{"id":"structural_comparative_reply_named_subject","semantic":[{"compose":{"links":[{"relation":"TITLE","source":"head","target":"title"}]}}]}
+{"id":"structural_comparative_reply_alternative_people","semantic":[{"compose":{"links":[{"relation":"ALTERNATIVE","source":"either","target":"left"},{"relation":"ALTERNATIVE","source":"either","target":"right"}]}}]}
+{"id":"structural_comparative_reply_preparation","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"people"},{"relation":"MANNER","source":"event","target":"manner"}]}}]}
+{"id":"structural_comparative_reply_evaluation","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"event","target":"preparation"},{"relation":"ATTRIBUTE","source":"preparation","target":"attribute"}]}}]}
+{"id":"structural_comparative_reply_expectation_standard","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"ASPECT","source":"event","target":"aux"},{"relation":"TIME","source":"event","target":"time"}]}}]}
+{"id":"structural_comparative_reply_comparative_answer","semantic":[{"compose":{"links":[{"relation":"COMPARISON","source":"head","target":"standard"}]}}]}
+{"id":"structural_comparative_reply_report","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"event","target":"answer"}]}}]}
+{"id":"structural_shared_comparative_reply","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"speaker"},{"relation":"AGENT","source":"preparation","target":"speaker"},{"relation":"AGENT","source":"speech","target":"speaker"},{"relation":"CONJUNCT","source":"event","target":"speech"}]}}]}

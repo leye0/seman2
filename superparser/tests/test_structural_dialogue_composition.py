@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.shared_comparative_reply import ROOT as COMPARATIVE_REPLY_ROOT
 from seman_parser.copular_resolution_content import ROOT as RESOLUTION_CONTENT_ROOT
 from seman_parser.comparative_content_coordination import ROOT as COMPARATIVE_CONTENT_ROOT
 from seman_parser.extraposed_object_relative import ROOT as EXTRAPOSED_OBJECT_ROOT
@@ -912,6 +913,86 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class SharedComparativeReplyTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("Dr. Brown judged it prudent to warn either her colleague or their manager, "
+               "with care, and replied, earlier than she had anticipated yesterday.")
+
+    def test_case_122_preserves_shared_subject_and_reported_fragment(self):
+        case = select_cases(500)[0][122]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "fb2158d6e71fe059")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (COMPARATIVE_REPLY_ROOT, 0, len(text)))
+        speaker, evaluation, coord, reply, end = root.children
+        self.assertEqual(self.spans((speaker, coord, end), text),
+                         [("NP", "Mr. Micawber"), ("COORD", "and"), ("SPEECH-STOP", ".")])
+        self.assertEqual(self.spans(speaker.children, text),
+                         [("TITLE", "Mr"), ("ABBREVIATION-STOP", "."), ("PROPER-NOUN", "Micawber")])
+        self.assertEqual(self.spans(evaluation.children[:3], text),
+                         [("V", "considered"), ("EXTRAPOSITION-IT", "it"), ("ADJ", "necessary")])
+        prep = evaluation.children[-1]
+        self.assertEqual(self.spans(prep.children, text), [
+            ("TO", "to"), ("V", "prepare"), ("NP", "either my aunt or his wife"),
+            ("COMMA", ","), ("PP", "by degrees"), ("COMMA", ","),
+        ])
+        self.assertEqual(self.spans(prep.children[2].children, text),
+                         [("ADV", "either"), ("NP", "my aunt"), ("COORD", "or"), ("NP", "his wife")])
+        self.assertEqual(self.spans(reply.children, text), [
+            ("V", "said"), ("COMMA", ","), ("ADVP", "sooner than he had expected yesterday"),
+        ])
+        head, standard = reply.children[-1].children
+        self.assertEqual(self.spans((head,), text), [("ADV", "sooner")])
+        self.assertEqual(standard.features.as_dict()["ellipsis"], "true")
+        self.assertEqual(self.spans(standard.children, text), [
+            ("CONJ", "than"), ("NP", "he"), ("HAVE", "had"), ("V", "expected"), ("ADV", "yesterday"),
+        ])
+
+    def test_case_122_edges_mark_an_answer_and_an_unresolved_alternative(self):
+        case = select_cases(500)[0][122]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, COMPARATIVE_REPLY_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("AGENT", p("considered"), p("Micawber")), ("AGENT", p("said"), p("Micawber")),
+            ("AGENT", p("prepare"), p("Micawber")), ("AFFECTED", p("prepare"), p("either")),
+            ("ALTERNATIVE", p("either"), p("aunt")), ("ALTERNATIVE", p("either"), p("wife")),
+            ("MANNER", p("prepare"), p("by degrees")), ("REPORTED_CONTENT", p("said"), p("sooner")),
+            ("COMPARISON", p("sooner"), p("expected")), ("TIME", p("expected"), p("yesterday")),
+        }
+        forbidden = {
+            ("TIME", p("said"), p("sooner")), ("TIME", p("said"), p("yesterday")),
+            ("AFFECTED", p("prepare"), p("aunt")), ("AFFECTED", p("prepare"), p("wife")),
+            ("MANNER", p("said"), p("by degrees")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_reply_and_near_misses(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, COMPARATIVE_REPLY_ROOT)
+        for old, new in (
+            ("judged it", "judged him"), ("prudent to", "blue to"), ("to warn", "to warned"),
+            ("or their", "and their"), ("manager, with", "manager with"), ("care, and", "care and"),
+            ("and replied", "and slept"), ("replied, earlier", "replied earlier"),
+            ("she had", "her had"), ("had anticipated", "had anticipate"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != COMPARATIVE_REPLY_ROOT)
 
 
 class CopularResolutionContentTests(unittest.TestCase):
