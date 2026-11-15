@@ -183,3 +183,13 @@
 {"id":"structural_degree_concessive_attitude_attribute","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"head","target":"content"}]}}]}
 {"id":"structural_degree_concessive_main_clause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
 {"id":"structural_degree_concessive_attitude","semantic":[{"compose":{"links":[{"relation":"CONCESSION","source":"event","target":"concession"}]}}]}
+{"id":"structural_scalar_indefinite_else","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"alternative"}]}}]}
+{"id":"structural_scalar_perspective","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"viewpoint"}]}}]}
+{"id":"structural_scalar_adjective_view","semantic":[{"compose":{"links":[{"relation":"PERSPECTIVE","source":"head","target":"view"}]}}]}
+{"id":"structural_scalar_degree_view","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"head","target":"degree"}]}}]}
+{"id":"structural_scalar_postmodified_nominal","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"modifier"}]}}]}
+{"id":"structural_scalar_modal_predicate","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
+{"id":"structural_scalar_content","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"}]}}]}
+{"id":"structural_scalar_content_with_subject_pause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"}]}}]}
+{"id":"structural_scalar_infinitival_subject","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"event","target":"content"}]}}]}
+{"id":"structural_extraposed_scalar_content","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"event","target":"attribute"},{"relation":"EXTRAPOSED_SUBJECT","source":"event","target":"extraposed_subject"}]}}]}
