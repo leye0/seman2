@@ -110,3 +110,5 @@ Checkpoint 2026-11-08 UTC: sample up to 16 complete grammatical competitors in i
 2026-11-15: verify #294 subject-wh and the nominal-internal ability complement.
 
 2026-11-15: verify #319 stranded prepositional passive and interrupted modal perfect.
+
+2026-11-15: verify #358 coordinated effect gerunds and the controlled infinitive on the same 500-case cohort.

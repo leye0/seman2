@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.coordinated_gerund_effect import ROOT as GERUND_EFFECT_ROOT
 from seman_parser.passive_and_perfect_extraposition import ROOT as PASSIVE_EXTRAPOSITION_ROOT
 from seman_parser.subject_question_ability import ROOT as QUESTION_ABILITY_ROOT
 from seman_parser.causal_posture_response import ROOT as CAUSAL_POSTURE_ROOT
@@ -920,6 +921,86 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class CoordinatedGerundEffectTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("The sound of the strange and beautiful in music had certainly often the effect of "
+               "calming her nerves and causing her to ignore the daily worries of work.")
+
+    def test_case_358_preserves_both_gerunds_and_local_control(self):
+        case = select_cases(500)[0][358]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "6ba22d6151fcb22c")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (GERUND_EFFECT_ROOT, 0, len(text)))
+        subject, have, stance, frequency, effect, stop = root.children
+        self.assertEqual(self.spans((have, stance, frequency), text),
+                         [("V", "had"), ("ADV", "indeed"), ("ADV", "always")])
+        self.assertEqual(self.spans(subject.children, text), [
+            ("NP", "The sight"), ("PREP", "of"), ("NP", "the awful and majestic in nature"),
+        ])
+        self.assertEqual(self.spans(subject.children[-1].children, text), [
+            ("DET", "the"), ("ADJ", "awful"), ("COORD", "and"), ("ADJ", "majestic"),
+            ("PREP", "in"), ("N", "nature"),
+        ])
+        self.assertEqual(self.spans(effect.children, text), [
+            ("NP", "the effect"), ("PREP", "of"), ("GERUND-CLAUSE", "solemnizing my mind"),
+            ("COORD", "and"), ("GERUND-CLAUSE", "causing me to forget the passing cares of life"),
+        ])
+        self.assertEqual(self.spans(effect.children[2].children, text),
+                         [("V", "solemnizing"), ("NP", "my mind")])
+        self.assertEqual(self.spans(effect.children[-1].children, text), [
+            ("V", "causing"), ("PRONOUN", "me"), ("INF-CLAUSE", "to forget the passing cares of life"),
+        ])
+        self.assertEqual(self.spans(effect.children[-1].children[-1].children, text), [
+            ("TO", "to"), ("V", "forget"), ("NP", "the passing cares of life"),
+        ])
+
+    def test_case_358_links_the_passage_to_me_and_not_mind(self):
+        case = select_cases(500)[0][358]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, GERUND_EFFECT_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("THEME", p("had"), p("sight")), ("FREQUENCY", p("had"), p("always")),
+            ("STANCE", p("had"), p("indeed")),
+            ("CONTENT", p("effect"), p("solemnizing")), ("CONTENT", p("effect"), p("causing")),
+            ("CONJUNCT", p("solemnizing"), p("causing")), ("AFFECTED", p("solemnizing"), p("mind")),
+            ("AFFECTED", p("causing"), p("me to")), ("AGENT", p("forget"), p("me to")),
+            ("THEME", p("forget"), p("cares")), ("MODIFIER", p("cares"), p("passing")),
+            ("COMPLEMENT", p("cares"), p("life")),
+        }
+        forbidden = {
+            ("AGENT", p("forget"), p("mind")), ("AGENT", p("forget"), p("sight")),
+            ("CONTENT", p("solemnizing"), p("forget")), ("FREQUENCY", p("causing"), p("always")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_gerunds_and_near_misses(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, GERUND_EFFECT_ROOT)
+        for old, new in (
+            ("strange and", "strange or"), ("music had", "music have"),
+            ("effect of", "effect with"), ("of calming", "of calmed"),
+            ("and causing", "and caused"), ("causing her", "causing she"),
+            ("to ignore", "to ignored"), ("worries of", "worries on"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != GERUND_EFFECT_ROOT)
 
 
 class PassivePerfectExtrapositionTests(unittest.TestCase):

@@ -39,6 +39,7 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .coordinated_gerund_effect import ROOT as GERUND_EFFECT_ROOT, plan_gerund_effect
 from .passive_and_perfect_extraposition import (
     ROOT as PASSIVE_EXTRAPOSITION_ROOT, plan_passive_extraposition,
 )
@@ -232,6 +233,11 @@ class QuotedSentenceComposer:
                                  if rule.provenance.get("source_plan") == PASSIVE_EXTRAPOSITION_ROOT]
         self._passive_extraposition_vector = VectorGrammar(
             Grammar(passive_extraposition), preserve_quote_delimiters=True,
+        )
+        gerund_effect = [rule for rule in rules
+                         if rule.provenance.get("source_plan") == GERUND_EFFECT_ROOT]
+        self._gerund_effect_vector = VectorGrammar(
+            Grammar(gerund_effect), preserve_quote_delimiters=True,
         )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -990,7 +996,9 @@ class QuotedSentenceComposer:
                     self._question_ability_vector
                     if expected_rule == QUESTION_ABILITY_ROOT else
                     self._passive_extraposition_vector
-                    if expected_rule == PASSIVE_EXTRAPOSITION_ROOT else self._vector)
+                    if expected_rule == PASSIVE_EXTRAPOSITION_ROOT else
+                    self._gerund_effect_vector
+                    if expected_rule == GERUND_EFFECT_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -1016,7 +1024,7 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
-                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT, QUESTION_ABILITY_ROOT) else
+                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT, QUESTION_ABILITY_ROOT, GERUND_EFFECT_ROOT) else
                     2 if expected_rule in (
                         CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT, MODAL_CONTEXT_ROOT, EXCLAMATIVE_CONTRAST_ROOT, CAUSAL_POSTURE_ROOT, PASSIVE_EXTRAPOSITION_ROOT,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
@@ -2721,6 +2729,7 @@ class QuotedSentenceComposer:
                 (CAUSAL_POSTURE_ROOT, lambda: plan_causal_posture(text, components)),
                 (QUESTION_ABILITY_ROOT, lambda: plan_subject_question_ability(text, components)),
                 (PASSIVE_EXTRAPOSITION_ROOT, lambda: plan_passive_extraposition(text, components)),
+                (GERUND_EFFECT_ROOT, lambda: plan_gerund_effect(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate
