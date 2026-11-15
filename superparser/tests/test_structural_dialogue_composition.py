@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.modal_context_free_relative import ROOT as MODAL_CONTEXT_ROOT
 from seman_parser.integrated_role_apposition import ROOT as ROLE_APPOSITION_ROOT
 from seman_parser.conditional_ellipsis_series import ROOT as CONDITIONAL_SERIES_ROOT
 from seman_parser.shared_comparative_reply import ROOT as COMPARATIVE_REPLY_ROOT
@@ -915,6 +916,78 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class ModalContextFreeRelativeTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = ("But, possibly she might not in his sister’s presence "
+               "be what she was before his mother and father.")
+
+    def test_case_213_keeps_the_two_social_settings_separate(self):
+        case = select_cases(500)[0][213]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "48e79a37d0f3c544")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (MODAL_CONTEXT_ROOT, 0, len(text)))
+        self.assertEqual(self.spans(root.children[:4], text),
+                         [("COORD", "But"), ("COMMA", ","), ("ADV", "perhaps"), ("NP", "he")])
+        vp = root.children[4]
+        self.assertEqual(self.spans(vp.children[:2], text), [("MODAL", "could"), ("NEG", "not")])
+        copular = vp.children[-1]
+        self.assertEqual(self.spans(copular.children, text), [
+            ("PRESENCE-PP", "in her mother's presence"), ("COPULA", "be"),
+            ("NP", "what he was before her uncle and aunt"),
+        ])
+        relative = copular.children[-1]
+        self.assertEqual(relative.features.as_dict()["gap"], "predicative")
+        self.assertEqual(self.spans(relative.children, text), [
+            ("WH-NOM", "what"), ("NP", "he"), ("COPULA", "was"), ("AUDIENCE-PP", "before her uncle and aunt"),
+        ])
+        self.assertEqual(self.spans(relative.children[-1].children[-1].children, text), [
+            ("POSS", "her"), ("N", "uncle"), ("COORD", "and"), ("N", "aunt"),
+        ])
+
+    def test_case_213_scopes_modal_negation_and_internal_audience(self):
+        case = select_cases(500)[0][213]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, MODAL_CONTEXT_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("CIRCUMSTANCE", p("be what"), p("in her")), ("CIRCUMSTANCE", p("was"), p("before")),
+            ("ATTRIBUTE", p("be what"), p("what")), ("ATTRIBUTE", p("was"), p("what")),
+            ("THEME", p("was"), p("he was")), ("MODALITY", p("be what"), p("could")),
+            ("NEGATION", p("could"), p("not")), ("STANCE", p("be what"), p("perhaps")),
+            ("POSSESSOR", p("uncle"), p("her uncle")), ("POSSESSOR", p("aunt"), p("her uncle")),
+        }
+        forbidden = {
+            ("CIRCUMSTANCE", p("be what"), p("before")), ("CIRCUMSTANCE", p("was"), p("in her")),
+            ("STANCE", p("was"), p("perhaps")), ("TIME", p("was"), p("before")),
+        }
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_settings_and_near_misses(self):
+        self.assertEqual(self.control(self.CONTROL).best().rule_id, MODAL_CONTEXT_ROOT)
+        for old, new in (
+            ("But,", "And,"), ("she might", "her might"), ("might not", "might"),
+            ("presence be", "presence was"), ("what she", "that she"), ("she was", "she were"),
+            ("before his", "after his"), ("mother and", "mother or"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != MODAL_CONTEXT_ROOT)
 
 
 class IntegratedRoleAppositionTests(unittest.TestCase):
