@@ -39,6 +39,9 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .integrated_role_apposition import (
+    ROOT as ROLE_APPOSITION_ROOT, plan_integrated_role_apposition,
+)
 from .conditional_ellipsis_series import (
     ROOT as CONDITIONAL_SERIES_ROOT, plan_conditional_series,
 )
@@ -186,6 +189,11 @@ class QuotedSentenceComposer:
                              if rule.provenance.get("source_plan") == CONDITIONAL_SERIES_ROOT]
         self._conditional_series_vector = VectorGrammar(
             Grammar(conditional_series), preserve_quote_delimiters=True,
+        )
+        role_apposition = [rule for rule in rules
+                           if rule.provenance.get("source_plan") == ROLE_APPOSITION_ROOT]
+        self._role_apposition_vector = VectorGrammar(
+            Grammar(role_apposition), preserve_quote_delimiters=True,
         )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -932,7 +940,9 @@ class QuotedSentenceComposer:
                     self._comparative_reply_vector
                     if expected_rule == COMPARATIVE_REPLY_ROOT else
                     self._conditional_series_vector
-                    if expected_rule == CONDITIONAL_SERIES_ROOT else self._vector)
+                    if expected_rule == CONDITIONAL_SERIES_ROOT else
+                    self._role_apposition_vector
+                    if expected_rule == ROLE_APPOSITION_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -958,7 +968,7 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
-                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT) else
+                    1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT) else
                     2 if expected_rule in (
                         CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
@@ -2657,6 +2667,7 @@ class QuotedSentenceComposer:
                 (RESOLUTION_CONTENT_ROOT, lambda: plan_resolution_content(text, components)),
                 (COMPARATIVE_REPLY_ROOT, lambda: plan_comparative_reply(text, components)),
                 (CONDITIONAL_SERIES_ROOT, lambda: plan_conditional_series(text, components)),
+                (ROLE_APPOSITION_ROOT, lambda: plan_integrated_role_apposition(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate

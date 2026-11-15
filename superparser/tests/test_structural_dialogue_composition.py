@@ -20,6 +20,7 @@ from seman_parser.embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT
 from seman_parser.finite_temporal_scope import ROOT as FINITE_TEMPORAL_ROOT
 from seman_parser.engine import ParseReport, Parser
 from seman_parser.negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT
+from seman_parser.integrated_role_apposition import ROOT as ROLE_APPOSITION_ROOT
 from seman_parser.conditional_ellipsis_series import ROOT as CONDITIONAL_SERIES_ROOT
 from seman_parser.shared_comparative_reply import ROOT as COMPARATIVE_REPLY_ROOT
 from seman_parser.copular_resolution_content import ROOT as RESOLUTION_CONTENT_ROOT
@@ -914,6 +915,69 @@ class PairedClauseSupplementTests(unittest.TestCase):
             with self.subTest(replacement=new):
                 best = self.control(self.CONTROL.replace(old, new)).best()
                 self.assertTrue(best is None or best.rule_id != PAIRED_SUPPLEMENTS_ROOT)
+
+
+class IntegratedRoleAppositionTests(unittest.TestCase):
+    setUpClass = classmethod(SourceParentheticalModalTests.setUpClass.__func__)
+    parse = SourceParentheticalModalTests.parse
+    control = SourceParentheticalModalTests.control
+    spans = SourceParentheticalModalTests.spans
+    CONTROL = "Helen the daughter of Dr. Brown was a familiar sight."
+
+    def test_case_166_preserves_the_role_and_degree_attribute(self):
+        case = select_cases(500)[0][166]
+        text = case["source_text"]
+        self.assertEqual(sha256(text.encode()).hexdigest()[:16], "fea088254f0ae7bd")
+        pre, lattice, result = self.parse(case)
+        self.assertEqual((pre.analysis_text, lattice.text, result.text), (text, text, text))
+        self.assertTrue(result.completed, result.stats)
+        self.assertFalse(result.stats["budget_exceeded"])
+        self.assertFalse(result.stats["kbest_budget_exceeded"])
+        root = result.best()
+        self.assertEqual((root.rule_id, root.start, root.end), (ROLE_APPOSITION_ROOT, 0, len(text)))
+        subject, copula, attribute, stop = root.children
+        self.assertEqual(self.spans((copula, stop), text), [("COPULA", "was"), ("SPEECH-STOP", "!")])
+        self.assertEqual(self.spans(subject.children, text),
+                         [("PROPER-NOUN", "Charlotte"), ("ROLE-NP", "the wife of Mr. Collins")])
+        self.assertEqual(self.spans(subject.children[1].children, text), [
+            ("DET", "the"), ("N", "wife"), ("PREP", "of"), ("PARTNER-NP", "Mr. Collins"),
+        ])
+        self.assertEqual(self.spans(subject.children[1].children[-1].children, text),
+                         [("TITLE", "Mr"), ("ABBREVIATION-STOP", "."), ("PROPER-NOUN", "Collins")])
+        self.assertEqual(self.spans(attribute.children, text),
+                         [("DET", "a"), ("ADJP", "most humiliating"), ("N", "picture")])
+        self.assertEqual(self.spans(attribute.children[1].children, text),
+                         [("ADV", "most"), ("ADJ", "humiliating")])
+
+    def test_case_166_predicates_the_picture_of_charlotte_not_collins(self):
+        case = select_cases(500)[0][166]
+        text = case["source_text"]
+        _, lattice, result = self.parse(case)
+        self.assertEqual(result.best().rule_id, ROLE_APPOSITION_ROOT)
+        graph = ParseReport(result, self.parser._quoted_sentence_resources, lattice).interpret().graph
+        edges = {(link.relation, graph.nodes[link.source].span[0], graph.nodes[link.target].span[0])
+                 for link in graph.relations}
+        p = text.index
+        required = {
+            ("APPOSITION", 0, p("wife")), ("COMPLEMENT", p("wife"), p("Collins")),
+            ("THEME", p("was"), 0), ("ATTRIBUTE", p("was"), p("picture")),
+            ("MODIFIER", p("picture"), p("humiliating")), ("DEGREE", p("humiliating"), p("most")),
+        }
+        forbidden = {("THEME", p("was"), p("Collins")), ("MODIFIER", p("picture"), p("most"))}
+        self.assertTrue(required <= edges, required - edges)
+        self.assertFalse(forbidden & edges, forbidden & edges)
+
+    def test_independent_appositions_and_near_misses(self):
+        for text in (self.CONTROL, "Robert the brother of Alice was an unlikely ally."):
+            self.assertEqual(self.control(text).best().rule_id, ROLE_APPOSITION_ROOT)
+        for old, new in (
+            ("daughter of", "daughter from"), ("daughter of", "book of"), ("the daughter", "a daughter"),
+            ("Brown was", "Brown were"), ("a familiar sight", "many familiar sights"), ("Brown", "brown"),
+            ("Helen the", "Helen, the"), ("familiar sight", "quietly sight"),
+        ):
+            with self.subTest(contrast=new):
+                best = self.control(self.CONTROL.replace(old, new)).best()
+                self.assertTrue(best is None or best.rule_id != ROLE_APPOSITION_ROOT)
 
 
 class ConditionalEllipsisSeriesTests(unittest.TestCase):
