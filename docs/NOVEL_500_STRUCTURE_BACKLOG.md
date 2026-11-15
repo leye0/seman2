@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #90](https://github.com/leye0/seman2/pull/90)** — 500/500, 0 phrases restantes. #358 rattache les deux gérondifs à effect et maintient le contrôle de forget par me. La file de la cohorte épinglée est vide.
+
 **Suivi après la [PR #89](https://github.com/leye0/seman2/pull/89)** — 499/500, 1 phrases restantes. #319 sépare le passif prépositionnel de l’évaluation au parfait modal. Le prochain cas est #358.
 
 **Suivi après la [PR #88](https://github.com/leye0/seman2/pull/88)** — 498/500, 2 phrases restantes. #294 garde who comme sujet de la question et creature comme agent implicite du gérondif. Le prochain cas est #319.
@@ -141,4 +143,4 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | #74 | Racines sans analyse valide | However much astonished I might be, I was sensible that I had no right to refuse compliance with such a peremptory command. | Concessive de degré et adjectif sensible suivi d’un complément en that. — Corrigé par la PR #77. |
 | #111 | Racines sans analyse valide | That condition was, that he should make a solemn resolution to grant no more loans of his name, or anything else, to Mr. Micawber. | Complément prédicatif en that et alternative nominale détachée. — Corrigé par la PR #81. |
 | #213 | Racines sans analyse valide | But, perhaps he could not in her mother's presence be what he was before her uncle and aunt. | Groupe prépositionnel entre le modal nié et be, puis propositions en what et before. — Corrigé par la PR #85. |
-| #358 | Racines sans analyse valide | The sight of the awful and majestic in nature had indeed always the effect of solemnizing my mind and causing me to forget the passing cares of life. | Gérondifs coordonnés sous of, puis infinitif sélectionné par causing. |
+| #358 | Racines sans analyse valide | The sight of the awful and majestic in nature had indeed always the effect of solemnizing my mind and causing me to forget the passing cares of life. | Gérondifs coordonnés sous of, puis infinitif sélectionné par causing. — Corrigé par la PR #90. |
