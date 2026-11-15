@@ -2,6 +2,8 @@
 
 Inventaire de départ après la [PR #58](https://github.com/leye0/seman2/pull/58), à 450/500 analyses complètes et 30/30 dialogues historiques. Textes et statuts issus du [rapport Novel-500](https://github.com/leye0/seman2/actions/runs/43432601124).
 
+**Suivi après la [PR #79](https://github.com/leye0/seman2/pull/79)** — 489/500, 11 phrases restantes. #87 sépare la destinataire du contenu et fait reprendre ce contenu par la relative. Le prochain cas est #110.
+
 **Suivi après la [PR #78](https://github.com/leye0/seman2/pull/78)** — 488/500, 12 phrases restantes. #80 conserve la virgule historique et rattache séparément les deux points de vue à long et à short. Le prochain cas est #87.
 
 **Suivi après la [PR #77](https://github.com/leye0/seman2/pull/77)** — 487/500, 13 phrases restantes. #74 conserve la portée de la concessive de degré et les compléments de sensible, right et compliance. Le prochain cas est #80.
@@ -58,7 +60,7 @@ Statuts de départ : 5 délai, 5 forêt saturée, 7 aucune racine, 33 racines sa
 | Cas | Statut de départ | Texte source intégral | Structure à vérifier |
 | --- | --- | --- | --- |
 | #73 | Délai | I thought, as they came towards us, that they were well matched even in that particular. | Temporelle entre thought et le complément en that. — Corrigé par la PR #68. |
-| #87 | Racines sans analyse valide | We judged it expedient, now, to tell her all we knew; which I recounted at length. | Incise now dans it…to, puis relative après le point-virgule. |
+| #87 | Racines sans analyse valide | We judged it expedient, now, to tell her all we knew; which I recounted at length. | Incise now dans it…to, puis relative après le point-virgule. — Corrigé par la PR #79. |
 | #95 | Forêt saturée | Accordingly, when Mr. Peggotty came home about nine o’clock, this unfortunate Mrs. Gummidge was knitting in her corner, in a very wretched and miserable condition. | Temporelle intercalée après Accordingly, puis ajout descriptif final. — Corrigé par la PR #68. |
 | #101 | Racines sans analyse valide | My face, neck, and hands, from unaccustomed exposure to the air and sun, were burnt to a berry-brown. | Groupe prépositionnel causal entre le sujet coordonné et le passif. — Corrigé par la PR #60. |
 | #189 | Racines sans analyse valide | Miss Bennet had slept ill, and though up, was very feverish, and not well enough to leave her room. | Concessive réduite though up au milieu de prédicats coordonnés. — Corrigé par la PR #61. |

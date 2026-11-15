@@ -73,38 +73,38 @@
     }
   },
   "baseline": {
-    "validated_merge_commit": "d6eedf8a70debf43bce346d5af77973932935b94",
-    "validated_pr_head": "e0f95d7c22b09bf31caa7d2dd3a600ecea3b8316",
-    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43731153534",
-    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43731153495",
-    "completed": 488,
-    "unresolved": 12,
+    "validated_merge_commit": "64753bee2736a7b9a6ee7382d2d064e30aebeaec",
+    "validated_pr_head": "c78f89c493801c7c5b61c8910c76594db4306610",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43736228130",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43736228146",
+    "completed": 489,
+    "unresolved": 11,
     "statuses": {
-      "complete": 488,
+      "complete": 489,
       "both_budgets_exceeded": 0,
       "forest_budget_exceeded": 0,
       "kbest_budget_exceeded": 0,
       "no_structural_root": 0,
-      "roots_without_valid_analysis": 11,
+      "roots_without_valid_analysis": 10,
       "timeout": 1,
       "error": 0
     },
     "paired_same_500": {
       "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-      "previous_complete": 487,
-      "current_complete": 488,
+      "previous_complete": 488,
+      "current_complete": 489,
       "newly_complete_indexes": [
-        80
+        87
       ],
       "regressed_completed_indexes": [],
-      "previous_selected_trees_compared": 487,
+      "previous_selected_trees_compared": 488,
       "previous_selected_trees_changed": [],
       "previous_unresolved_changed_failure_type": [],
       "verified_dialogue_failures_fixed": 30,
       "initial_dialogue_failures": 30,
       "remaining_dialogue_failures": 0,
-      "baseline_artifact_id": 14168593586,
-      "candidate_artifact_id": 14168878825
+      "baseline_artifact_id": 14168878825,
+      "candidate_artifact_id": 14171575014
     },
     "real_dialogue_30_audit": {
       "by_subtype": {
@@ -145,23 +145,24 @@
       "not_currently_planned": 12
     },
     "test_quality": {
-      "unit_tests": 803,
+      "unit_tests": 807,
       "gold": "120/120",
       "grammatical_contrasts": "24/24"
     },
     "next_grammar_case": {
-      "index": 87,
-      "case_id": "766:1d4f2bfad396bcbd"
+      "index": 110,
+      "case_id": "766:c31971a0a1ada1d9"
     },
     "structure_backlog": {
       "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
-      "next_index": 87,
+      "next_index": 110,
       "resolved_indexes": [
         69,
         73,
         74,
         80,
         84,
+        87,
         95,
         101,
         113,
@@ -219,7 +220,7 @@
       },
       "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
       "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
-      "active_remaining": 12,
+      "active_remaining": 11,
       "now_repaired_original_indexes": [
         22,
         41,
@@ -231,6 +232,7 @@
         74,
         80,
         84,
+        87,
         95,
         96,
         99,
@@ -297,8 +299,8 @@
       ],
       "manifest": "superparser/research/pinned_original_failure_85.json"
     },
-    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43731153509",
-    "grammatical_attachment_note": "Anticipatory it is not referential. Believe selects the finite that-content. The subject nominal preserves its integrated scalar adjective; each viewpoint modifies its own adjective, and else modifies the indefinite pronoun."
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43736228156",
+    "grammatical_attachment_note": "The evaluated infinitival action retains an anticipatory object, a separate recipient and content, and a supplementary relative that reprises that content."
   },
   "pre_compositional_baseline": {
     "validated_merge_commit": "106347aa814b3cc86a740a33e6f57bc586991f25",
@@ -6120,5 +6122,233 @@
     },
     "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43731145303",
     "grammatical_attachment_note": "The modal degree concession modifies the matrix. Sensible takes finite content; the entitlement noun selects an infinitive controlled by its holder, and compliance selects the with-phrase."
+  },
+  "pre_pr79_baseline": {
+    "validated_merge_commit": "d6eedf8a70debf43bce346d5af77973932935b94",
+    "validated_pr_head": "e0f95d7c22b09bf31caa7d2dd3a600ecea3b8316",
+    "core_ci_run": "https://github.com/leye0/seman2/actions/runs/43731153534",
+    "novel_ci_run": "https://github.com/leye0/seman2/actions/runs/43731153495",
+    "completed": 488,
+    "unresolved": 12,
+    "statuses": {
+      "complete": 488,
+      "both_budgets_exceeded": 0,
+      "forest_budget_exceeded": 0,
+      "kbest_budget_exceeded": 0,
+      "no_structural_root": 0,
+      "roots_without_valid_analysis": 11,
+      "timeout": 1,
+      "error": 0
+    },
+    "paired_same_500": {
+      "same_cohort_sha": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
+      "previous_complete": 487,
+      "current_complete": 488,
+      "newly_complete_indexes": [
+        80
+      ],
+      "regressed_completed_indexes": [],
+      "previous_selected_trees_compared": 487,
+      "previous_selected_trees_changed": [],
+      "previous_unresolved_changed_failure_type": [],
+      "verified_dialogue_failures_fixed": 30,
+      "initial_dialogue_failures": 30,
+      "remaining_dialogue_failures": 0,
+      "baseline_artifact_id": 14168593586,
+      "candidate_artifact_id": 14168878825
+    },
+    "real_dialogue_30_audit": {
+      "by_subtype": {
+        "multisentence_quotation": {
+          "baseline_failed": 6,
+          "still_failed": 0,
+          "now_complete": 6
+        },
+        "nested_quotation": {
+          "baseline_failed": 2,
+          "still_failed": 0,
+          "now_complete": 2
+        },
+        "single_quote_with_reporting_clause": {
+          "baseline_failed": 8,
+          "still_failed": 0,
+          "now_complete": 8
+        },
+        "split_speech_with_intercalated_reporting_clause": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        },
+        "unattributed_single_quotation": {
+          "baseline_failed": 7,
+          "still_failed": 0,
+          "now_complete": 7
+        }
+      },
+      "source_composition_candidate_plans": {
+        "nested_nominal_title": 1,
+        "intercalated_two_finite_clauses": 6,
+        "multi_clause_quote": 6,
+        "topical_modal_vp_ellipsis": 1,
+        "postposed_vocative_with_reporter": 4,
+        "intercalated_that_complement": 1
+      },
+      "not_currently_planned": 12
+    },
+    "test_quality": {
+      "unit_tests": 803,
+      "gold": "120/120",
+      "grammatical_contrasts": "24/24"
+    },
+    "next_grammar_case": {
+      "index": 87,
+      "case_id": "766:1d4f2bfad396bcbd"
+    },
+    "structure_backlog": {
+      "path": "docs/NOVEL_500_STRUCTURE_BACKLOG.md",
+      "next_index": 87,
+      "resolved_indexes": [
+        69,
+        73,
+        74,
+        80,
+        84,
+        95,
+        101,
+        113,
+        189,
+        206,
+        220,
+        221,
+        226,
+        228,
+        239,
+        242,
+        246,
+        291,
+        328,
+        337,
+        348,
+        350,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        462,
+        463,
+        469,
+        477,
+        480,
+        485,
+        486,
+        493,
+        496,
+        499
+      ]
+    },
+    "grammar_ablation_run": "https://github.com/leye0/seman2/actions/runs/43255106541",
+    "original_85_source_failure_inventory": {
+      "total": 85,
+      "audit_script": "superparser/scripts/audit_failure_families_85.py",
+      "original_failure_statuses": {
+        "roots_without_valid_analysis": 54,
+        "no_structural_root": 15,
+        "forest_budget_exceeded": 11,
+        "timeout": 5
+      },
+      "nonexclusive_observations": {
+        "direct_speech": 26,
+        "intercalated_reporter": 6,
+        "question": 12,
+        "semicolon_interclausal": 10,
+        "coordination_surface": 47,
+        "subordination_surface": 40,
+        "multiple_comma_constituents": 50,
+        "resource_censored": 16
+      },
+      "artifact_run": "https://github.com/leye0/seman2/actions/runs/43255107176",
+      "caveat": "Overlapping surface signals are hypotheses, NOT proven causes; source corpus and ids are pinned.",
+      "active_remaining": 12,
+      "now_repaired_original_indexes": [
+        22,
+        41,
+        52,
+        56,
+        66,
+        69,
+        73,
+        74,
+        80,
+        84,
+        95,
+        96,
+        99,
+        101,
+        109,
+        113,
+        141,
+        157,
+        175,
+        189,
+        200,
+        206,
+        209,
+        220,
+        221,
+        223,
+        226,
+        228,
+        229,
+        235,
+        237,
+        239,
+        241,
+        242,
+        246,
+        247,
+        270,
+        280,
+        291,
+        301,
+        315,
+        328,
+        337,
+        348,
+        350,
+        359,
+        360,
+        362,
+        363,
+        371,
+        372,
+        373,
+        384,
+        386,
+        408,
+        441,
+        445,
+        456,
+        462,
+        463,
+        464,
+        466,
+        469,
+        475,
+        477,
+        480,
+        485,
+        486,
+        493,
+        495,
+        496,
+        498,
+        499
+      ],
+      "manifest": "superparser/research/pinned_original_failure_85.json"
+    },
+    "scoped_probe_run": "https://github.com/leye0/seman2/actions/runs/43731153509",
+    "grammatical_attachment_note": "Anticipatory it is not referential. Believe selects the finite that-content. The subject nominal preserves its integrated scalar adjective; each viewpoint modifies its own adjective, and else modifies the indefinite pronoun."
   }
 }
