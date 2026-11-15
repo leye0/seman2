@@ -270,3 +270,9 @@
 {"id":"structural_posture_response_depictives","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"still","target":"unable"}]}}]}
 {"id":"structural_posture_response_reaction","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"TIME","source":"event","target":"onset"},{"relation":"AGENT","source":"onset","target":"subject"},{"relation":"DEPICTIVE","source":"subject","target":"still"},{"relation":"DEPICTIVE","source":"subject","target":"unable"},{"relation":"AGENT","source":"action","target":"subject"}]}}]}
 {"id":"structural_causal_posture_response","semantic":[{"compose":{"links":[{"relation":"CAUSE","source":"event","target":"reaction"}]}}]}
+{"id":"structural_question_ability_toponym","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"qualifier"}]}}]}
+{"id":"structural_question_ability_terrain","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"modifier"},{"relation":"THEME","source":"modifier","target":"head"},{"relation":"COMPLEMENT","source":"head","target":"location"}]}}]}
+{"id":"structural_question_ability_gerund","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
+{"id":"structural_question_ability_ability","semantic":[{"compose":{"links":[{"relation":"CONTENT","source":"head","target":"action"}]}}]}
+{"id":"structural_question_ability_described_object","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"quality"},{"relation":"AGENT","source":"action","target":"head"}]}}]}
+{"id":"structural_subject_question_ability","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
