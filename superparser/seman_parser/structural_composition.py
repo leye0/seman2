@@ -39,6 +39,7 @@ from .shared_by_coordination import ROOT as SHARED_BY_ROOT, plan_shared_by_coord
 from .semicolon_triplet import ROOT as TRIPLET_ROOT, plan_semicolon_triplet
 from .inverted_object_control import ROOT as INVERTED_CONTROL_ROOT, plan_inverted_object_control
 from .negative_perfect import ROOT as NEGATIVE_PERFECT_ROOT, plan_negative_perfect
+from .paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT, paired_supplement_plan
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
@@ -138,6 +139,8 @@ class QuotedSentenceComposer:
             frame: frozenset(lemmas) for rule in negative
             for frame, lemmas in rule.provenance.get("inversion_frames", {}).items()
         }
+        paired = [rule for rule in rules if rule.provenance.get("source_plan") == PAIRED_SUPPLEMENTS_ROOT]
+        self._paired_supplements_vector = VectorGrammar(Grammar(paired), preserve_quote_delimiters=True)
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -867,7 +870,9 @@ class QuotedSentenceComposer:
                     self._inverted_control_vector
                     if expected_rule == INVERTED_CONTROL_ROOT else
                     self._negative_perfect_vector
-                    if expected_rule == NEGATIVE_PERFECT_ROOT else self._vector)
+                    if expected_rule == NEGATIVE_PERFECT_ROOT else
+                    self._paired_supplements_vector
+                    if expected_rule == PAIRED_SUPPLEMENTS_ROOT else self._vector)
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -895,7 +900,7 @@ class QuotedSentenceComposer:
                 "structural_clause_count": (
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT) else
                     2 if expected_rule in (
-                        CLEFT_TURN,
+                        CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT,
                         "dialogue_structural_semicolon_epistemic_assurance_comparative",
                         "dialogue_structural_anterior_passive_shared_subject_conjectured_purpose",
                     ) else
@@ -2582,6 +2587,7 @@ class QuotedSentenceComposer:
                 (TRIPLET_ROOT, lambda: plan_semicolon_triplet(text, components)),
                 (INVERTED_CONTROL_ROOT, lambda: plan_inverted_object_control(text, components)),
                 (NEGATIVE_PERFECT_ROOT, lambda: plan_negative_perfect(text, components)),
+                (PAIRED_SUPPLEMENTS_ROOT, lambda: paired_supplement_plan(text, components)),
             ):
                 if (specs := build()) is not None:
                     rule = candidate

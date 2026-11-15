@@ -165,3 +165,10 @@
 {"id":"structural_measured_voice_modified_route","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"relative"},{"relation":"THEME","source":"relative","target":"head"}]}}]}
 {"id":"structural_measured_voice_active","semantic":[{"compose":{"links":[{"relation":"TIME","source":"event","target":"time"},{"relation":"THEME","source":"event","target":"route"}]}}]}
 {"id":"structural_measured_voice_coordination","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"AGENT","source":"second","target":"subject"},{"relation":"CONJUNCT","source":"event","target":"second"}]}}]}
+{"id":"structural_paired_supplement_quality_pair","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"head","target":"second"}]}}]}
+{"id":"structural_paired_supplement_additive_clause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"ATTRIBUTE","source":"event","target":"first"},{"relation":"ATTRIBUTE","source":"event","target":"second"},{"relation":"DISCOURSE","source":"event","target":"discourse"}]}}]}
+{"id":"structural_paired_supplement_place","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"place"}]}}]}
+{"id":"structural_paired_supplement_recipient","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"head","target":"recipient"}]}}]}
+{"id":"structural_paired_supplement_affected_nominal","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"affected"}]}}]}
+{"id":"structural_paired_supplement_framed_clause","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"subject"},{"relation":"CIRCUMSTANCE","source":"event","target":"circumstance"},{"relation":"ATTRIBUTE","source":"event","target":"attribute"}]}}]}
+{"id":"structural_paired_copular_supplements","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"event","target":"right"},{"relation":"CONTENT","source":"anaphor","target":"event"}]}}]}
