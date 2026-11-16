@@ -3822,7 +3822,7 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
             DOUBLE_PERFECT_PERSPECTIVE, HESITANT_ADMISSION, HESITANT_RESUMPTION, INTERRUPTED_CLOCK,
             NOR_POSSESSION, REPORTED_INVERTED_CONTROL, REPORTED_OPINION, REPORTED_REGRET, SPLIT_SELF_IDENTIFICATION,
         )
-        from seman_parser.spoken_three_acts import DIALECTAL_EVIDENCE, NEGATIVE_REPLY, WAIT_QUESTION
+        from seman_parser.spoken_three_acts import DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, NEGATIVE_REPLY, WAIT_QUESTION
 
         for source, expected, spans, links in (
             ("“So most people think. But wait a moment. Can an _instantaneous_ cube exist?”",
@@ -3850,6 +3850,10 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
              REPORTED_REGRET, ("Diana might just have smiled at me once", "I think", "that night"),
              (("REPORTED_CONTENT", "report", "content"), ("STANCE", "content", "stance"),
               ("TIME", "report", "time"))),
+            ("“Oh, I must, hey? I rather think Diana did her share of the jumping at least. Such carryings on in a respectable house!”",
+             MODAL_ECHO_REBUKE, ("Oh, I must, hey", "I rather think Diana did her share of the jumping at least",
+                                 "Such carryings on in a respectable house"),
+             (("TAG", "echo", "tag"), ("LOCATION", "conduct", "setting"))),
             ("“Well now, you’ve guessed it! But I reckon Mrs. Spencer described it so’s you could tell.”",
              DIALECTAL_EVIDENCE, ("Well now, you’ve guessed it", "But I reckon Mrs. Spencer described it so’s you could tell"),
              (("RESULT", "description", "result"), ("COMPLEMENT", "belief", "description"))),
@@ -3890,7 +3894,7 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
         )
         from seman_parser.scoped_motion_supplements import CAUSATIVE_RESPONSE, COORDINATED_PARTICIPLES, SPELLING_RESULT
         from seman_parser.scoped_transfer_clauses import DASH_REFORMULATION, PARENTHETICAL_PURPOSE
-        from seman_parser.spoken_three_acts import DIALECTAL_EVIDENCE
+        from seman_parser.spoken_three_acts import DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE
 
         for source, expected, accepted in (
             ("A Parker fellowship!", NOMINAL_EXCLAMATION, True),
@@ -3959,6 +3963,10 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
              REPORTED_REGRET, True),
             ("“Mary could just have smiled at us twice, I suppose,” she mourned him that morning.",
              REPORTED_REGRET, False),
+            ("“Oh, I should, eh? I rather think Mary did her share of the shouting at least. Such carryings on in a quiet room!”",
+             MODAL_ECHO_REBUKE, True),
+            ("“Oh, I should, eh? I rather think Mary did her share of the shouting at least. Such carryings on in a quiet room.”",
+             MODAL_ECHO_REBUKE, False),
             ("“Well now, you’ve guessed it! But I suppose Mr. Brown explained it so’s we might understand.”",
              DIALECTAL_EVIDENCE, True),
             ("“Well now, you’ve guessed it! But I suppose Mr. Brown explained it so’s we might understand it.”",

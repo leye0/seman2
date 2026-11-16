@@ -159,3 +159,53 @@ def plan_dialectal_evidence(text, spans):
     mark("SPEECH-STOP",end2,end2+1)
     mark("CLOSE-QUOTE",len(text)-1,len(text))
     return DIALECTAL_EVIDENCE,specs
+
+
+MODAL_ECHO_REBUKE = "dialogue_structural_modal_echo_assertion_and_nominal_rebuke"
+_ECHO = re.compile(r"(?P<oh>Oh), +(?P<subject>I) +(?P<modal>must|should), +(?P<hey>hey|eh)")
+_ASSERTION = re.compile(
+    rf"(?P<i>I) +(?P<hedge>rather) +(?P<think>think|suppose) +(?P<subject>[A-Z][a-z]+) +"
+    rf"(?P<did>did) +(?P<object>(?:his|her|their) +share +of +the +[a-z]+ing) +(?P<atleast>at +least)"
+)
+_REBUKE = re.compile(
+    rf"(?P<such>Such) +(?P<behavior>carryings) +(?P<on>on) +(?P<where>in +(?:a|an|the) +{_NP})"
+)
+
+
+def plan_modal_echo_rebuke(text, spans):
+    if len(spans) != 3 or tuple(text[stop] for _,_,stop in spans) != ("?",".","!"):
+        return None
+    (a,b,_),(c,d,_),(i,j,_) = spans
+    m,n,q = _ECHO.fullmatch(text[a:b]),_ASSERTION.fullmatch(text[c:d]),_REBUKE.fullmatch(text[i:j])
+    if m is None or n is None or q is None:
+        return None
+    specs,_,mark,part = _specs()
+    mark("OPEN-QUOTE",0,1)
+    part(m,a,(("oh","INTERJECTION","source-echo-interjection",{}),))
+    mark("COMMA",a+m.end("oh"),a+m.end("oh")+1)
+    part(m,a,(
+        ("subject","NP","subject-phrase",{}),
+        ("modal","MODAL","lexical",{"vform":"finite"}),
+    ))
+    mark("COMMA",a+m.end("modal"),a+m.end("modal")+1)
+    part(m,a,(("hey","INTERJECTION","source-echo-interjection",{}),))
+    mark("QMARK",b,b+1)
+    part(n,c,(
+        ("i","NP","subject-phrase",{}),
+        ("hedge","ADV","lexical",{}),
+        ("think","V","lexical-alternatives",_v("finite","clausal")),
+        ("subject","NP","proper-phrase",{}),
+        ("did","V","lexical-alternatives",_v("finite","transitive",lemma_in="do")),
+        ("object","NP","phrase",{"proof_rule":"np_pp_mod"}),
+        ("atleast","ADV","lexical",{}),
+    ))
+    mark("SPEECH-STOP",d,d+1)
+    part(q,i,(
+        ("such","DEGREE","lexical",{}),
+        ("behavior","N","source-carryings-nominal",{}),
+        ("on","PARTICLE","lexical",{}),
+        ("where","PP","phrase",{"proof_rule":"pp_prep_np"}),
+    ))
+    mark("EXCL",j,j+1)
+    mark("CLOSE-QUOTE",len(text)-1,len(text))
+    return MODAL_ECHO_REBUKE,specs

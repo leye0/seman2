@@ -9,7 +9,7 @@ The selected tree, including attachments, matters more than accepting a root.
 
 | Sample | Before | After | Selected-tree comparison |
 |---|---:|---:|---|
-| Literary replay (96, used for diagnosis) | 72/96 complete | 92/96 complete | 20 repaired. All 72 previously complete trees unchanged. |
+| Literary replay (96, used for diagnosis) | 72/96 complete | 93/96 complete | 21 repaired. All 72 previously complete trees unchanged. |
 | Transfer-24 (diagnostic replay) | 24/24 complete | 24/24 complete | 8 repaired rank-one trees, 16 unchanged. One previous forest saturation removed. |
 | Blind control (48 other units, same two books) | 41/48 complete | 41/48 complete | All 48 trees/statuses and budget flags unchanged. |
 | Pinned Novel-500 | 500/500 complete | 500/500 complete | All 500 selected trees byte-identical in the snapshot, including original source identity, statuses and budget flags. |
@@ -44,6 +44,7 @@ not measure full-tree accuracy or demonstrate a gain on unseen sentences.
 | U45-3246 | `Away` directs the motion, `kindly` modifies it, and Anne is the affected participant of leaving and the controller of keeping vigil. |
 | U45-3080 | The negated modal licenses the opinion and its finite complement. `Sort` remains the nominal head, and the object gap in the relative belongs to the domain noun. |
 | U45-1730 | The family name and origin appose the cousins. The overt semicolon separates two clauses. Floating `all` quantifies `they`; straw and robes are distinct conjuncts. |
+| U45-1807 | A modal echo question is distinct from both the hedged assertion and the nominal rebuke. The tag does not become an argument, and no missing complement is supplied. |
 | U45-2722 | Both modal perfects remain distinct. The first day qualifies the retrospective judgment, and `three years ago` anchors the time of being there. |
 | T35-0181 | The three finite predicates share one subject. `But` coordinates, `painfully` modifies coming, and the last PP remains inside the motion nominal. |
 | T35-0071 | `About the room` stays inside the passive relative on the plural domain of the partitive. The two legs are a circumstance of placing. |
@@ -82,8 +83,7 @@ grammatical contrasts, with the 9 known false accepts unchanged. Targeted
 tests also exercise independent variants and reject close agreement, role,
 scope, quotation, and punctuation counterexamples.
 
-No text is dropped from the replay. Its remaining cases are U45-1807
-(wall-clock limit), U45-2643 (forest limit), U45-1550 (a standalone postscript
+No text is dropped from the replay. Its remaining cases are U45-2643 (forest limit), U45-1550 (a standalone postscript
 marker), and U35-0368 (the opening italic marker has no closing marker within
 the sampled unit). The latter two are better investigated as source-unit
 classification questions before proposing a grammatical repair. Verse

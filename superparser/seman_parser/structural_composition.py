@@ -72,7 +72,8 @@ from .scoped_literary_quotes import (
 )
 from .spoken_three_acts import (
     PLAN as THREE_ACTS_PLAN, ROOTS as THREE_ACTS_COUNTS, NEGATIVE_REPLY,
-    DIALECTAL_EVIDENCE, plan_three_spoken_acts, plan_dialectal_evidence,
+    DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, plan_three_spoken_acts,
+    plan_dialectal_evidence, plan_modal_echo_rebuke,
 )
 from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_shared_subject_coordination
 from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
@@ -167,10 +168,10 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
-    **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
+    **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, MODAL_ECHO_REBUKE: 3, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
     DITRANSITIVE_COMMAND: 1, CHEER_REPORT: 0, PROGRESSIVE_REPORT: 1, SHARED_MODAL: 1, NEGATIVE_COGNITION: 2,
     RIGHT_INITIAL_PP: 2, NEGATIVE_POSSESSION: 1, POINTING_INSTRUMENT: 1,
     CAUSAL_PERFECT: 1, NOMINAL_EXCLAMATION: 0, NEGATIVE_PROFORM: 1, CONTRASTIVE_SERIES: 3,
@@ -646,6 +647,24 @@ class QuotedSentenceComposer:
                     features = {"vform": "ed", "subcat": "intransitive", "irregular": "true"}
                 candidates.append(LexicalCandidate(
                     span_start=a, span_end=b, surface=surface, lemma=surface_form,
+                    category=category, features=FeatureStructure.build(features),
+                    source=kind, score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind in ("source-echo-interjection", "source-carryings-nominal"):
+                form = surface.casefold()
+                allowed = {"oh", "hey", "eh"} if kind == "source-echo-interjection" else {"carryings"}
+                if expected_rule != MODAL_ECHO_REBUKE or form not in allowed:
+                    return None
+                expected_category = "INTERJECTION" if kind == "source-echo-interjection" else "N"
+                if category != expected_category or not any(
+                    c.span == (a, b) and c.category in ("N", category)
+                    for c in original_lattice.candidates
+                ):
+                    return None
+                features = {"number": "plural"} if category == "N" else {}
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=form,
                     category=category, features=FeatureStructure.build(features),
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
@@ -1292,7 +1311,7 @@ class QuotedSentenceComposer:
                     self._spoken_question_vector
                     if expected_rule in SPOKEN_QUESTION_COUNTS else
                     self._three_acts_vector
-                    if expected_rule in THREE_ACTS_COUNTS or expected_rule == DIALECTAL_EVIDENCE else
+                    if expected_rule in THREE_ACTS_COUNTS or expected_rule in (DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE) else
                     self._additional_source_vectors.get(expected_rule, self._vector))
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
@@ -3659,13 +3678,12 @@ class QuotedSentenceComposer:
         # for the WH sequence without widening the legacy finite-only path.
         dialect_source = plan or self._plan(text, components, allow_curly_apostrophe=True)
         if dialect_source is not None:
+            sequence_spans = [(part.start, part.end, part.stop) for part in dialect_source]
             scoped_sequence = (
                 plan_three_spoken_acts(
                     text, [(part.start, part.end, part.stop) for part in plan],
                 ) if plan is not None else None
-            ) or plan_dialectal_evidence(
-                text, [(part.start, part.end, part.stop) for part in dialect_source],
-            )
+            ) or plan_dialectal_evidence(text, sequence_spans) or plan_modal_echo_rebuke(text, sequence_spans)
             if scoped_sequence is not None:
                 rule, specs = scoped_sequence
                 result = self._compose_verified_dialogue_pattern(
