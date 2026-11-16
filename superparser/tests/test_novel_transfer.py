@@ -9,9 +9,50 @@ import unittest
 from unittest.mock import patch
 
 from scripts import evaluate_novel_transfer as transfer
+from scripts import transfer_source_anchors as anchors
+from research.verbnet_lr.gutenberg_novels import Book
 
 
 class NovelTransferTests(unittest.TestCase):
+    def test_frozen_anchors_use_source_offsets_and_distinguish_postscript_markers(self):
+        prose = "We went to London yesterday."
+        body = f"She opened the door.\n\nP.S. I left my coat inside.\n\n{prose}"
+        start = body.index(prose)
+        marker = body.index("P.S.")
+        book = Book(99, "Test", "Test", "transfer")
+        cases = [
+            ["legacy-1234", 99, "04-08", start, start + len(prose), sha256(prose.encode()).hexdigest()],
+            ["legacy-5678", 99, "04-08", marker, marker + 4, sha256(b"P.S.").hexdigest()],
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "pg99.txt").write_text(body, encoding="utf-8")
+            manifest = root / "anchors.json"
+
+            def resolve(entries, *, pin=None):
+                manifest.write_text(json.dumps({
+                    "schema": "seman2-transfer-source-anchors-v1",
+                    "cohorts": {"test": entries},
+                }), encoding="utf-8")
+                with patch.object(anchors, "PINS", {"test": pin or anchors.manifest_digest(entries)}), \
+                        patch.object(anchors, "SOURCES", ((book, "", None, None),)), \
+                        patch.object(anchors, "source_body", side_effect=lambda raw, *_: raw.decode()):
+                    return anchors.resolve_anchors(root, manifest=manifest)["test"]
+
+            eligible, documentary = resolve(cases)
+            self.assertEqual(eligible["transfer_id"], "legacy-1234")
+            self.assertEqual(eligible["source_text"], prose)
+            self.assertEqual(documentary["transfer_id"], "legacy-5678")
+            self.assertEqual(documentary["disposition"], "document_marker_not_a_standalone_utterance")
+            self.assertEqual(body[slice(*documentary["documentary_owner_span"])],
+                             "P.S. I left my coat inside.")
+            with self.assertRaisesRegex(ValueError, "Frozen source anchors changed"):
+                resolve(cases, pin="a" * 64)
+            with self.assertRaisesRegex(ValueError, "Exact source text changed"):
+                resolve([[*cases[0][:-1], "a" * 64]])
+            with self.assertRaisesRegex(ValueError, "Frozen source unit no longer resolves"):
+                resolve([["legacy-9999", 99, "04-08", 0, 3, sha256(b"She").hexdigest()]])
+
     def test_normalized_identity_rejects_typographic_duplicates(self):
         self.assertEqual(
             transfer.normalized_identity("“I DON’T know.”"),

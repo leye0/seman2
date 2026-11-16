@@ -33,7 +33,8 @@ DEADLINE_SECONDS = 10
 PER_BOOK_BAND = 3
 # Identity pins the exact ordered source units; typed constituents are
 # observable outputs of the preanalyzer and can evolve independently.
-EXPECTED_COHORT_SHA256 = "e628012351233ce6605b77257d048be7bfee05aa7f398286162365c96a3b8b8b"
+TRANSFER_COHORT_VERSION = "source-typography-v2"
+EXPECTED_COHORT_SHA256 = "0d6439dc568a49f8b7b6dcc48d7f2c323fd2bacd9c0815d4c74f0eca3293b4a5"
 # Editions are pinned before sampling. Update only for a new experiment.
 SOURCES = (
     (
@@ -212,6 +213,7 @@ def main() -> None:
         signal.signal(signal.SIGALRM, old_handler)
 
     summary = {
+        "cohort_version": TRANSFER_COHORT_VERSION,
         "cohort_sha256": digest, "cohort_with_preanalysis_sha256": preanalysis_digest,
         "max_items": MAX_ITEMS,
         "kbest_work_limit": KBEST_WORK_LIMIT, "deadline_seconds": DEADLINE_SECONDS,

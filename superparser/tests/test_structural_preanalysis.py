@@ -104,6 +104,44 @@ class ParagraphPreanalysisTests(unittest.TestCase):
         self.assertEqual(rows, [])
         self.assertEqual(counts["requires_source_context"], 1)
 
+    def test_indented_quote_line_keeps_original_book_and_normalized_spans(self):
+        prefix = "We found these verses in the book.\n\n"
+        quote = "“Listen to the sound of the rain\n      While darkness covers the trees.”"
+        unit = list(analysis_units(prefix + quote))[1]
+        self.assertEqual((unit.core_start, unit.core_end), (len(prefix), len(prefix + quote)))
+        line, = (c for c in unit.constituents if c.function == "typographic_line_break")
+        self.assertEqual((line.start, line.end), (quote.index("\n"), quote.index("\n") + 1))
+        self.assertEqual(unit.text[line.start - 4:line.end + 5], "rain While")
+        for raw in (quote.replace("\n      ", "    "), quote.replace("      ", " "), quote[1:-1]):
+            with self.subTest(raw=raw):
+                self.assertFalse(any(c.function == "typographic_line_break"
+                                     for u in analysis_units(raw) for c in u.constituents))
+
+    def test_paragraph_emphasis_keeps_exact_punctuation_and_sentence_boundaries(self):
+        from research.verbnet_lr.gutenberg_novels import Book, extract
+
+        source = "_She went to London. Then she returned home._ He waited here."
+        expected = ["_She went to London.", "Then she returned home._", "He waited here."]
+        units = analyze_paragraph(source)
+        self.assertEqual([u.source_text for u in units], expected)
+        for unit, relation in zip(units, ("begin_and_continue", "continuation_and_close", None)):
+            self.assertEqual(source[unit.source_start:unit.source_end], unit.source_text)
+            emphasis = [c for c in unit.constituents if c.function == "typographic_emphasis"]
+            if relation is None:
+                self.assertEqual(emphasis, [])
+            else:
+                self.assertEqual(len(emphasis), 1)
+                self.assertEqual((emphasis[0].start, emphasis[0].end), (0, len(unit.text)))
+                self.assertEqual(emphasis[0].relation, relation)
+        rows, _ = extract(Book(999, "Mock", "No", "train"), source, length_min=1)
+        self.assertEqual([r["source_text"] for r in rows], expected)
+        single, _ = extract(Book(999, "Mock", "No", "train"), "_They went away here._", length_min=1)
+        self.assertEqual([r["source_text"] for r in single], ["_They went away here._"])
+        plain, = analyze_paragraph("It was a snake_case identifier.")
+        self.assertFalse(any(c.function == "typographic_emphasis" for c in plain.constituents))
+        orphan, = analyze_paragraph("I was here without an opener._")
+        self.assertFalse(orphan.eligible_for_parse)
+
     def test_apostrophes_are_lexical_not_misidentified_as_speech(self):
         for text in ("He couldn't go.", "Don't wait for John's dog.",
                      "He went out o' that place.", "The boys' house was old."):

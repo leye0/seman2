@@ -12,7 +12,7 @@ import re
 
 from seman_parser.sentence_boundaries import _abbreviation_at
 from seman_parser.structural_units import review_semicolon_boundaries, skeleton
-from seman_parser.discourse_roles import classify_discourse
+from seman_parser.discourse_roles import POSTSCRIPT_FRAME, classify_discourse
 from seman_parser.quoted_discourse import analyze_dialogue
 from seman_parser.finite_temporal_scope import finite_temporal_span
 from seman_parser.nominal_temporal_scope import nominal_temporal_spans
@@ -26,6 +26,19 @@ from seman_parser.degree_concessive import degree_concession_spans
 from seman_parser.paired_clause_supplements import paired_supplement_spans
 from seman_parser.measured_voice_coordination import measured_voice_spans
 from seman_parser.coordination_with_initial_pp import source_spans as right_initial_pp_spans
+
+# Project Gutenberg uses underscore pairs for emphasis. Only complete,
+# source-paired runs are trusted as markup, not arbitrary underscores.
+_EMPHASIS_RUN = re.compile(r"(?<![\w_])_(?=[^\s_])[^_]+?(?<=\S)_(?![\w_])")
+
+
+def emphasis_spans(paragraph: str) -> tuple[tuple[int, int], ...]:
+    """Return exact paragraph-relative spans of paired Gutenberg emphasis."""
+    return tuple((match.start(), match.end()) for match in _EMPHASIS_RUN.finditer(paragraph))
+
+
+def paired_terminal_emphasis(paragraph: str) -> bool:
+    return paragraph.endswith("_") and any(b == len(paragraph) for _, b in emphasis_spans(paragraph))
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -149,6 +162,9 @@ def sentence_spans(paragraph: str) -> tuple[tuple[int, int], ...]:
     n = len(paragraph)
     start = 0
     spans: list[tuple[int, int]] = []
+    emphasis = emphasis_spans(paragraph) if "_" in paragraph else ()
+    emphasis_openers = {a for a, _ in emphasis}
+    emphasis_closers = {b - 1 for _, b in emphasis}
     i = 0
     while i < n:
         mark = paragraph[i]
@@ -163,7 +179,10 @@ def sentence_spans(paragraph: str) -> tuple[tuple[int, int], ...]:
             i += 1
             continue
         end = i + 1
-        while end < n and paragraph[end] in "\"'”’)]}":
+        while end < n and (
+            paragraph[end] in "\"'”’)]}"
+            or end in emphasis_closers
+        ):
             end += 1
         if end == n or not paragraph[end].isspace():
             i += 1
@@ -172,13 +191,26 @@ def sentence_spans(paragraph: str) -> tuple[tuple[int, int], ...]:
         while nxt < n and paragraph[nxt].isspace():
             nxt += 1
         first = nxt
-        while first < n and paragraph[first] in "\"'“‘([{":
+        while first < n and (
+            paragraph[first] in "\"'“‘([{"
+            or first in emphasis_openers
+        ):
             first += 1
         if first >= n or not paragraph[first].isupper():
             i += 1
             continue
         next_word = paragraph[first:first+20].split(maxsplit=1)[0]
         if mark == "." and _abbreviation_at(paragraph, i, next_word):
+            i += 1
+            continue
+        # A period attached to an initial documentary prefix is not a
+        # boundary. Lowercase continuations were already left attached.
+        frame = (
+            POSTSCRIPT_FRAME.match(paragraph, start)
+            if mark == "." and paragraph[start:start + 2].casefold() == "p."
+            else None
+        )
+        if frame is not None and nxt == frame.end():
             i += 1
             continue
         # An inner sentence inside one continuous quoted speech act does
@@ -277,19 +309,20 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
     # Preserve internal structure of source documents: these are not full
     # narrative matrix clauses, yet may contain an interpretable grammatical
     # clause or participial direction. All spans are literal source offsets.
-    frame = re.match(r"(?i)^(?:P\.\s?S\.|P\.\s?P\.\s?S\.)\s*(?:--|—|:)\s*", source)
-    if frame and frame.end() < len(source):
-        cs.extend((
+    frame = POSTSCRIPT_FRAME.match(source)
+    if frame:
+        cs.append(
             StructuralConstituent(
                 "d0", "document_marker", 0, frame.end(), "u0",
                 "documentary_frame", "postscript_marker_source_span",
             ),
-            StructuralConstituent(
+        )
+        if frame.end() < len(source):
+            cs.append(StructuralConstituent(
                 "d1", "document_content_clause_candidate",
                 frame.end(), len(source), "d0",
                 "document_content", "postscript_content_source_span",
-            ),
-        ))
+            ))
     direction = re.search(r"(?i),\s*bearing\b", source)
     if direction and classify_discourse(source).function == "documentary_navigation_notation":
         cs.extend((
@@ -468,12 +501,16 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
 def analyze_paragraph(paragraph: str) -> tuple[PreanalyzedSentence, ...]:
     """Build complete source units and high-level grammatical graphs."""
     result: list[PreanalyzedSentence] = []
+    emphasis = emphasis_spans(paragraph) if "_" in paragraph else ()
     for a, b in sentence_spans(paragraph):
         text = paragraph[a:b]
         _, quotes, faults = quote_scan(text)
         quote_status = ("balanced" if not faults
                         else "unresolved_source_quotation")
-        terminal = bool(re.search(r"""[.!?]["'”’)\]}]*$""", text))
+        # Recognize a source-paired closing emphasis delimiter without
+        # deleting it from the returned text.
+        terminal_text = text[:-1] if text.endswith("_") and any(hi == b for _, hi in emphasis) else text
+        terminal = bool(re.search(r"""[.!?]["'”’)\]}]*$""", terminal_text))
         prior_text = result[-1].text if result else None
         role = classify_discourse(text, previous_utterance=prior_text)
         viable = terminal and not faults and role.parse_as_standalone_clause
@@ -484,6 +521,20 @@ def analyze_paragraph(paragraph: str) -> tuple[PreanalyzedSentence, ...]:
         else:
             structural_status = "provisional_complete_utterance"
         cs = list(constituency(text, quotes))
+        for i, (start, end) in enumerate(emphasis):
+            # Mark the exact in-unit intersection. A range that continued
+            # in from the previous sentence has no local opening delimiter.
+            if start >= b or end <= a:
+                continue
+            relation = (
+                "continuation_and_close" if start < a and end <= b else
+                "begin_and_continue" if a <= start and b < end else
+                "interior_continuation" if start < a and b < end else "closed_emphasis"
+            )
+            cs.append(StructuralConstituent(
+                f"em{i}", "typographic_emphasis", max(a, start)-a, min(b, end)-a, "u0",
+                relation, "paired_gutenberg_underscores_in_paragraph",
+            ))
         if role.function != "clausal_utterance_candidate":
             # A formulaic reply or a compass-bearing document line must NOT
             # be falsely described as a full matrix clause.

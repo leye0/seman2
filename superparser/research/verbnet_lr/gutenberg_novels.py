@@ -18,7 +18,9 @@ from urllib.request import Request, urlopen
 
 from seman_parser.segmentation import tokenize
 from seman_parser.sentence_boundaries import has_final_punctuation
-from seman_parser.structural_preanalysis import analyze_paragraph
+from seman_parser.structural_preanalysis import (
+    PreanalyzedSentence, StructuralConstituent, analyze_paragraph, paired_terminal_emphasis,
+)
 
 
 @dataclass(frozen=True)
@@ -112,6 +114,23 @@ def _normalized_paragraph_with_offsets(paragraph: str) -> tuple[str, list[int]]:
     return "".join(chars), offsets
 
 
+def _source_line_breaks(unit: PreanalyzedSentence, original: str) -> tuple[StructuralConstituent, ...]:
+    """Expose indented line boundaries from whole quotations, not punctuation."""
+    if (len(original) > 400 or (original[:1], original[-1:]) not in
+            {("“", "”"), ('"', '"'), ("‘", "’")}):
+        return ()
+    spans = []
+    for row in re.finditer(r"\n[ \t]{4,}(?=\S)", original):
+        # The newline plus indentation occupies one character in unit.text.
+        start = len(" ".join(original[:row.start()].split()))
+        if unit.text[start:start + 1] == " ":
+            spans.append(StructuralConstituent(
+                f"line{len(spans)}", "typographic_line_break", start, start + 1, "u0",
+                "indented_line_boundary", "original_newline_followed_by_indentation",
+            ))
+    return tuple(spans)
+
+
 def analysis_units(
     core: str, *, balance_sentence_quotes: bool = False,
 ):
@@ -136,8 +155,9 @@ def analysis_units(
         if not lines or CHAPTER.match(lines[0]):
             continue
         joined = re.sub(r"\s+", " ", " ".join(lines))
-        if not has_final_punctuation(joined) and (
-                joined.isupper() or len(joined) < 45):
+        if (not has_final_punctuation(joined)
+                and not (paired_terminal_emphasis(joined) and has_final_punctuation(joined[:-1]))
+                and (joined.isupper() or len(joined) < 45)):
             continue
         normalized, offsets = _normalized_paragraph_with_offsets(paragraph)
         if normalized != joined:
@@ -165,6 +185,10 @@ def analysis_units(
                     governor.paragraph_index if governor else None
                 ),
             )
+            exact = source[enriched.core_start:enriched.core_end]
+            line_breaks = _source_line_breaks(enriched, exact)
+            if line_breaks:
+                enriched = replace(enriched, constituents=(*enriched.constituents, *line_breaks))
             yield enriched
             last_unit = enriched
 
@@ -218,7 +242,13 @@ def extract(book: Book, core: str, *, length_min=4, length_max=45):
         if len(tokens) > length_max:
             counters["too_long"] += 1
             continue
-        if not has_final_punctuation(sentence):
+        has_source_emphasis_stop = (
+            sentence.endswith("_") and has_final_punctuation(sentence[:-1])
+            and any(c.function == "typographic_emphasis" and c.end == len(sentence)
+                    and c.relation in ("closed_emphasis", "continuation_and_close")
+                    for c in unit.constituents)
+        )
+        if not has_final_punctuation(sentence) and not has_source_emphasis_stop:
             counters["non_sentence"] += 1
             continue
         normalized = " ".join(sentence.lower().split())
