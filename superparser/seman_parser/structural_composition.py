@@ -31,9 +31,9 @@ from .structural_units import skeleton
 from .subject_resumption import plan_subject_resumption
 from .additional_spoken_acts import (
     PLAN as ADDITIONAL_SPOKEN_PLAN, ADVERB_ELLIPSIS, CHEER_REPORT, CHEERS,
-    COMMAND, CLOSINGS, EXEMPLIFIERS, MODAL_QUESTION, NEGATIVE_COGNITION,
+    COMMAND, CLOSINGS, DITRANSITIVE_COMMAND, EXEMPLIFIERS, MODAL_QUESTION, NEGATIVE_COGNITION,
     PROGRESSIVE_REPORT, SHARED_MODAL,
-    adverb_coordination_ellipsis_plan, command_closing_plan,
+    adverb_coordination_ellipsis_plan, command_closing_plan, ditransitive_command_plan,
     negative_cognition_plan, negative_modal_question_plan, reported_cheer_plan,
     reported_progressive_plan, shared_modal_plan,
 )
@@ -106,6 +106,7 @@ _SPOKEN_SINGLE = (
     (CHEER_REPORT, reported_cheer_plan),
     (PROGRESSIVE_REPORT, reported_progressive_plan),
     (SHARED_MODAL, shared_modal_plan),
+    (DITRANSITIVE_COMMAND, ditransitive_command_plan),
     (NEGATIVE_COGNITION, negative_cognition_plan),
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, *(rule for rule, _ in _SPOKEN_SINGLE))
@@ -119,7 +120,7 @@ _SCOPED_UNSATURATED = frozenset((
 ))
 _SCOPED_COUNTS = {
     **SPOKEN_QUESTION_COUNTS, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
-    CHEER_REPORT: 0, PROGRESSIVE_REPORT: 1, SHARED_MODAL: 1, NEGATIVE_COGNITION: 2,
+    DITRANSITIVE_COMMAND: 1, CHEER_REPORT: 0, PROGRESSIVE_REPORT: 1, SHARED_MODAL: 1, NEGATIVE_COGNITION: 2,
     RIGHT_INITIAL_PP: 2, NEGATIVE_POSSESSION: 1, POINTING_INSTRUMENT: 1,
 }
 _NONFINITE_IMPERATIVE_ROOTS = frozenset((
