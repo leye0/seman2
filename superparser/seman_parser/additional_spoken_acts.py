@@ -11,6 +11,7 @@ from .structural_units import skeleton
 
 PLAN = "source_scoped_spoken_acts"
 COMMAND = "dialogue_structural_command_then_closing"
+DITRANSITIVE_COMMAND = "dialogue_structural_ditransitive_command"
 MODAL_QUESTION = "dialogue_structural_contracted_negative_modal_perfect_question"
 ADVERB_ELLIPSIS = "dialogue_structural_adverb_coordination_auxiliary_ellipsis"
 CHEER_REPORT = "dialogue_structural_reported_cheer"
@@ -287,6 +288,32 @@ def negative_cognition_plan(text, components):
         ("dash", "DASH", "source-punctuation", {}),
         ("coord", "COORD", "lexical", {}),
         ("right", "CLAUSE", "phrase", {"finite_statement_proof": "true"}),
+    ))
+    mark("SPEECH-STOP", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    return specs
+
+
+_DOUBLE_OBJECT = re.compile(
+    r"(?i)(?P<verb>[a-z-]+) +(?P<recipient>me|you|him|her|it|us|them) +"
+    r"(?P<theme>(?:a|an|the|this|that|my|your|his|her|its|our|their) +[^,;.!?]+)"
+)
+
+
+def ditransitive_command_plan(text, components):
+    span = _single_spoken_span(text, components)
+    if span is None or text[span[0]] not in ".!":
+        return None
+    stop, _ = span
+    match = _DOUBLE_OBJECT.fullmatch(text[1:stop])
+    if match is None or len(match["theme"].split()) > 12:
+        return None
+    specs, _, mark, parts = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    parts(match, 1, (
+        ("verb", "V", "lexical-alternatives", {"vform": "base", "subcat_member": "ditransitive"}),
+        ("recipient", "NP", "phrase", {"proof_rule": "np_indef_pron"}),
+        ("theme", "NP", "phrase", {"grounded_object_proof": "true"}),
     ))
     mark("SPEECH-STOP", stop, stop + 1)
     mark("CLOSE-QUOTE", stop + 1, stop + 2)

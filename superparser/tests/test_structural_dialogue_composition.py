@@ -3723,6 +3723,35 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
                 _, _, result = self._parse(source)
                 self.assertNotEqual(result.best().rule_id if result.best() else None, disallowed)
 
+    def test_source_ditransitive_command_proves_recipient_and_theme(self):
+        source = "“Lend me your hand.”"  # Gutenberg #35, U35-0095.
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, "dialogue_structural_ditransitive_command")
+        self.assertEqual(self._spans(source, root.children),
+                         ["“", "Lend me your hand", ".", "”"])
+        command = root.children[1]
+        self.assertEqual(command.features.as_dict()["stype"], "imperative")
+        self.assertEqual(self._spans(source, command.children), ["Lend", "me", "your hand"])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("RECIPIENT", h["event"], h["recipient"]), e)
+        self.assertIn(("THEME", h["event"], h["theme"]), e)
+
+    def test_ditransitive_command_controls(self):
+        rule = "dialogue_structural_ditransitive_command"
+        for source, accepted in (
+            ("“Give me the key.”", True), ("“Pass her the book.”", True),
+            ("“Send him a message.”", True), ("“Tell us a story!”", True),
+            ("“Arrive him the book.”", False), ("“Give he the key.”", False),
+            ("“He gave her a book.”", False), ("“He might send her a message.”", False),
+            ("“Give her red dress.”", False),
+        ):
+            with self.subTest(source=source):
+                _, _, result = self._parse(source)
+                root = result.best()
+                self.assertEqual(root is not None and root.rule_id == rule, accepted)
+
     def test_scoped_proofs_respect_small_budgets(self):
         _, _, result = self._parse("“Couldn’t you have sent her back?”", max_items=10, work=10)
         self.assertNotEqual(result.best().rule_id if result.best() else None, self.MODAL)

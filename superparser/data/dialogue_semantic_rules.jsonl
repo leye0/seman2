@@ -314,3 +314,4 @@
 {"id":"structural_right_initial_pp_finite_particle_predication","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"PARTICLE","source":"event","target":"particle"}]}}]}
 {"id":"structural_right_initial_pp_prefaced_clause","semantic":[{"compose":{"links":[{"relation":"ADJUNCT","source":"event","target":"adjunct"}]}}]}
 {"id":"structural_coordinated_clauses_with_right_initial_pp","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
+{"id":"dialogue_structural_bare_double_object_predicate","semantic":[{"compose":{"links":[{"relation":"RECIPIENT","source":"event","target":"recipient"},{"relation":"THEME","source":"event","target":"theme"}]}}]}
