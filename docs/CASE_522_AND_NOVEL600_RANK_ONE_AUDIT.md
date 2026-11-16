@@ -69,3 +69,20 @@ included among the 44. Of the other 84 current trees, all are unchanged
 from PR #97's previous result. Novel-700 remains unopened. Next is N502,
 where the structure is plausible but the exported adverb is a topic and
 `of rain` is assigned a partitive role.
+
+## Follow-up — N502
+
+In the contiguous Frankenstein paragraph, the rising wind, moving clouds and
+waves precede the sudden onset of a rainstorm. The complete source utterance
+is “Suddenly a heavy storm of rain descended.” The clause-initial adverb
+modifies the onset of descending. The subject is “a heavy storm of rain”.
+“Heavy” describes “storm”, while “of rain” specifies its precipitation and
+does not make the storm a subset of a larger whole.
+
+The source-scoped grammar preserves the terminal full stop and separates the
+finite event, its subject, and the precipitation PP under the subject. The
+selected graph exports TIME, THEME, MODIFIER and MATERIAL for these links.
+An independent shower-of-hail example exercises the same structure, and an
+actual portion-of-hail construction must not select it. The 99 other
+Novel-600 signatures, source anchors, original baselines and budget flags
+are unchanged. The ledger now records 45 verified trees and 55 open cases.

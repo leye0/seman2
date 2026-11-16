@@ -16,7 +16,7 @@ class NovelLadderAttachmentTests(unittest.TestCase):
     def setUpClass(cls):
         cls.parser = Parser.from_dir(DATA, cache_size=0)
 
-    def assert_family(self, rule, attested, positive, negative, links):
+    def assert_family(self, rule, attested, positive, negative, links, *, attested_spans=()):
         for source, shared in ((attested, True), (positive, True), (negative, False)):
             with self.subTest(source=source):
                 cases, _ = extract(PROBE, source, length_min=1, length_max=120)
@@ -40,6 +40,32 @@ class NovelLadderAttachmentTests(unittest.TestCase):
                           for e in graph["graph"]["relations"]}
                 for relation, before, after in links:
                     self.assertIn((relation, handles[before], handles[after]), actual)
+                if source == attested:
+                    nodes = {n["id"]: n for n in graph["graph"]["nodes"]}
+                    for handle, start, end, surface in attested_spans:
+                        self.assertEqual(nodes[handles[handle]]["span"], [start, end])
+                        self.assertEqual(source[start:end], surface)
+
+    def test_novel_502_fronted_precipitation(self):
+        self.assert_family(
+            plans.FRONTED_PRECIPITATION,
+            "Suddenly a heavy storm of rain descended.",
+            "Abruptly the thick shower of hail fell.",
+            "Abruptly the final portion of hail fell.",
+            [
+                ("TIME", "event", "onset"),
+                ("THEME", "event", "weather"),
+                ("MODIFIER", "weather", "intensity"),
+                ("MATERIAL", "weather", "precipitation"),
+            ],
+            attested_spans=[
+                ("onset", 0, 8, "Suddenly"),
+                ("intensity", 11, 16, "heavy"),
+                ("weather", 17, 22, "storm"),
+                ("precipitation", 26, 30, "rain"),
+                ("event", 31, 40, "descended"),
+            ],
+        )
 
     def test_novel_506_postpos_quality(self):
         self.assert_family(

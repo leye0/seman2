@@ -7,6 +7,34 @@ from .dialogue_clause_plans import _specs
 from .scoped_transfer_clauses import _matrix, _v
 from .additional_spoken_acts import _single_spoken_span
 
+FRONTED_PRECIPITATION = "structural_fronted_onset_with_precipitation_subject"
+_PRECIPITATION = re.compile(
+    r"(?P<onset>Suddenly|Abruptly) +(?P<det>a|the) +"
+    r"(?P<intensity>[a-z][a-z-]+) +(?P<weather>storm|shower|downpour) +"
+    r"(?P<of>of) +(?P<precipitation>rain|hail|snow|sleet) +"
+    r"(?P<event>descended|fell)(?P<stop>[.!])"
+)
+
+
+def plan_fronted_precipitation(text, components):
+    """A fronted onset modifier and a precipitation PP inside the subject."""
+    match = _PRECIPITATION.fullmatch(text)
+    if match is None or not _matrix(text, components):
+        return None
+    specs, _, _, part = _specs()
+    part(match, 0, (
+        ("onset", "ADV", "lexical", {}),
+        ("det", "DET", "lexical", {"number": "singular"} if match["det"] != "the" else {}),
+        ("intensity", "ADJ", "lexical", {}),
+        ("weather", "N", "lexical", {"number": "singular"}),
+        ("of", "PREP", "lexical", {"nominal_complement": "of"}),
+        ("precipitation", "N", "lexical", {"number": "singular"}),
+        ("event", "V", "lexical-alternatives", _v("finite", "intransitive")),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
 POSTPOS_QUALITY = "structural_copular_nominal_with_integrated_postpositive_quality"
 
 _POSTPOS = re.compile(

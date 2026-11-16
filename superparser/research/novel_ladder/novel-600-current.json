@@ -24,9 +24,9 @@
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_front_adv_nocomma",
-      "rank_one_sha256": "9def984ed9bb098d9c615e9a7e8f065281d075168162d03b0b799fb5cf4343c8",
-      "selected_graph_sha256": "7fd82d0ecd63aad25821f149ace32af21968eeb7624086af4a7adaf9398c3c5b"
+      "root_rule": "structural_fronted_onset_with_precipitation_subject",
+      "rank_one_sha256": "af644afb05f2805d35189f56f1a57e831cc5df18ae908116e69e47aab6f5bd9d",
+      "selected_graph_sha256": "658bbfdb591284d0cff4262d93e47474cbe11c0726b225a8c1904c3ab0a4d3c5"
     },
     {
       "index": 503,
