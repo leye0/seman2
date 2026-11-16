@@ -3757,6 +3757,146 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
         self.assertNotEqual(result.best().rule_id if result.best() else None, self.MODAL)
 
 
+    def test_transfer_followup_selected_attachments(self):
+        from seman_parser.scoped_discourse_followup import (
+            ELAPSED, EMPHATIC_MODAL_CONTRAST, EMPHATIC_QUESTION_TURN, EXTRAPOSED_PASSIVE_REPORT,
+            REPORTED_EMPHATIC_OPINIONS, TELLING,
+        )
+        from seman_parser.scoped_narrative_followup import EQUATIVE_DOUBT, INVERTED_EXTENT
+
+        cases = (
+            ("“That is what I want to tell you, Anne, if you’ll ever give me a chance to get a word in edgewise. She was talking about you.”",
+             TELLING, (("VOCATIVE", "pseudocleft", "addressee"), ("CONDITION", "tell", "condition"),
+                       ("TOPIC", "followup", "topic"))),
+            ("The Time Traveller vanished three years ago.", ELAPSED,
+             (("THEME", "event", "subject"), ("TIME", "event", "time"))),
+            ("“You _can_ move about in all directions of Space, but you cannot move about in Time.”",
+             EMPHATIC_MODAL_CONTRAST, (("CONTRAST", "positive", "negative"),)),
+            ("“Josie Pye told me you did. Josie said you were _infatuated_ with her.”",
+             REPORTED_EMPHATIC_OPINIONS, (("RECIPIENT", "first", "recipient"),)),
+            ("“Now, it is very remarkable that this is so extensively overlooked,” continued the Time Traveller, with a slight accession of cheerfulness.",
+             EXTRAPOSED_PASSIVE_REPORT, (("REPORTED_CONTENT", "report", "content"),
+                                          ("MANNER", "report", "speaker_manner"))),
+            ("“Oh, Diana,” cried Anne, clasping her hands, “do you _love_ me?”",
+             EMPHATIC_QUESTION_TURN, (("VOCATIVE", "question", "addressee"),
+                                      ("AGENT", "gesture", "speaker"), ("REPORTED_CONTENT", "report", "question"))),
+            ("She wore a faded brown sailor hat and beneath the hat, extending down her back, were two braids of very thick, decidedly red hair.",
+             INVERTED_EXTENT, (("AGENT", "wear", "wearer"), ("MODIFIER", "subject", "extent"))),
+            ("Previously the rivalry had been rather one-sided, but there was no longer any doubt that Gilbert was as determined to be first in class as Anne was.",
+             EQUATIVE_DOUBT, (("CONTRAST", "prior", "after"),)),
+        )
+        for source, expected, links in cases:
+            with self.subTest(source=source):
+                _, lattice, result = self._parse(source)
+                self.assertTrue(result.completed)
+                root = result.best()
+                self.assertEqual(expected, root.rule_id)
+                self.assertEqual((0, len(source)), (root.start, root.end))
+                self.assertFalse(result.stats.get("budget_exceeded"))
+                self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+                h, relations = self._semantic(result, lattice)
+                for rel, a, b in links:
+                    self.assertIn((rel, h[a], h[b]), relations)
+
+    def test_transfer_followup_generalization_and_near_misses(self):
+        from seman_parser.scoped_discourse_followup import (
+            ELAPSED, EMPHATIC_MODAL_CONTRAST, EMPHATIC_QUESTION_TURN, EXTRAPOSED_PASSIVE_REPORT,
+            REPORTED_EMPHATIC_OPINIONS, TELLING,
+        )
+        from seman_parser.scoped_narrative_followup import EQUATIVE_DOUBT, INVERTED_EXTENT
+
+        for source, expected, accepted in (
+            ("“This is what I meant to tell her, Mary, if you’ll ever give me a chance to get a word in edgeways. He was speaking about us.”", TELLING, True),
+            ("“This is what I meant to tell her, Mary, if you’ll ever give us a chance to get a word in edgeways. He was speaking about us.”", TELLING, False),
+            ("She arrived two weeks ago.", ELAPSED, True),
+            ("She arrived two week ago.", ELAPSED, False),
+            ("“We _can_ walk about in the garden, but we cannot walk about in the house.”", EMPHATIC_MODAL_CONTRAST, True),
+            ("“We _can_ walk about in the garden, but they cannot walk about in the house.”", EMPHATIC_MODAL_CONTRAST, False),
+            ("“Mary Brown told me she did. Mary said she was _enchanted_ with him.”", REPORTED_EMPHATIC_OPINIONS, True),
+            ("“Mary Brown told me she did. Mary said she were _enchanted_ with him.”", REPORTED_EMPHATIC_OPINIONS, False),
+            ("“Now, it was quite surprising that it was so widely ignored,” said Mary, with a smile.", EXTRAPOSED_PASSIVE_REPORT, True),
+            ("“Now, it was quite surprising that it was so widely ignore,” said Mary, with a smile.", EXTRAPOSED_PASSIVE_REPORT, False),
+            ("“Oh, John,” asked Mary, folding her hands, “do you _trust_ him?”", EMPHATIC_QUESTION_TURN, True),
+            ("“Oh, John,” asked Mary, folding her hands, “does you _trust_ him?”", EMPHATIC_QUESTION_TURN, False),
+            ("She wore a straw hat and under the hat, hanging down her back, were two curls of very thick, distinctly brown hair.", INVERTED_EXTENT, True),
+            ("She wore a straw hat and under the hat, hanging down his back, were two curls of very thick, distinctly brown hair.", INVERTED_EXTENT, False),
+            ("Formerly the contest had been quite uneven, but there was no longer any question that Mary was as eager to be first in school as Edward was.", EQUATIVE_DOUBT, True),
+            ("Formerly the contest had been quite uneven, but there was no longer any question that Mary was as eager to be first in school as Edward were.", EQUATIVE_DOUBT, False),
+        ):
+            with self.subTest(source=source, expected=expected):
+                _, _, result = self._parse(source)
+                root = result.best()
+                self.assertEqual(accepted, root is not None and root.rule_id == expected)
+
+    def test_verse_condition_needs_original_line_break_and_preserves_roles(self):
+        from seman_parser.scoped_discourse_followup import CONDITIONAL_VERSE
+
+        for raw, accepted in (
+            ("“If you love me as I love you\n      Nothing but death can part us two.”", True),
+            ("“If you trust us as we trust you\n      Nothing but silence could separate us two.”", True),
+            ("“If you love me as I love you Nothing but death can part us two.”", False),
+            ("“If you love me as I love you\n Nothing but death can part us two.”", False),
+            ("“If you love me as I love you\n      Nothing and death can part us two.”", False),
+        ):
+            with self.subTest(raw=raw):
+                normalized = " ".join(raw.split())
+                cases, _ = extract(Book(999, "Grammar probes", "Test", "test"), raw, length_min=1)
+                case, = cases
+                prepared, lattice, result = parse_corpus_case(
+                    self.parser, case, max_items=50_000, kbest_work_limit=500_000,
+                )
+                root = result.best()
+                self.assertEqual(normalized, prepared.analysis_text)
+                self.assertEqual([0, len(raw)], case["structural_core_source_span"])
+                self.assertEqual(accepted, root is not None and root.rule_id == CONDITIONAL_VERSE)
+                if accepted:
+                    self.assertFalse(case["synthetic_prefix"])
+                    self.assertFalse(case["synthetic_suffix"])
+                    self.assertFalse(case["synthetic_terminal"])
+                    h, links = self._semantic(result, lattice)
+                    self.assertIn(("CONDITION", h["consequent"], h["condition"]), links)
+                    self.assertIn(("COMPARISON", h["condition"], h["standard"]), links)
+                    self.assertIn(("EXCEPTION", h["domain"], h["exception"]), links)
+                    self.assertIn(("QUANTIFIER", h["parted_pair"], h["count"]), links)
+                    self.assertIn(("THEME", h["consequent"], h["parted_pair"]), links)
+
+    def test_literary_markup_is_not_a_syntactic_attachment(self):
+        from seman_parser.scoped_narrative_followup import EMPHASIS_CLOSURE, EMPHATIC_NARRATIVE, EXPLAINED_QUOTED_THEME
+
+        paragraph = ("_The Time Traveller paused, put his hand into his pocket, and silently placed two withered flowers, "
+                     "not unlike very large white mallows, upon the little table. Then he resumed his narrative._")
+        cases, _ = extract(Book(999, "Grammar probes", "Test", "test"), paragraph, length_min=1, length_max=100)
+        self.assertEqual(len(cases), 2)
+        self.assertEqual(" ".join(c["source_text"] for c in cases), paragraph)
+        for case, expected in zip(cases, (EMPHATIC_NARRATIVE, EMPHASIS_CLOSURE)):
+            prepared, lattice, result = parse_corpus_case(
+                self.parser, case, max_items=50_000, kbest_work_limit=500_000,
+            )
+            self.assertTrue(result.completed)
+            root = result.best()
+            self.assertEqual(root.rule_id, expected)
+            self.assertEqual(root.end, len(prepared.source_text))
+            self.assertFalse(prepared.synthetic_suffix)
+            if expected == EMPHATIC_NARRATIVE:
+                h, relations = self._semantic(result, lattice)
+                self.assertIn(("DIRECTION", h["third"], h["goal"]), relations)
+                self.assertIn(("MODIFIER", h["theme"], h["similarity"]), relations)
+        _, _, orphan = self._parse(cases[0]["source_text"])
+        self.assertNotEqual(orphan.best().rule_id if orphan.best() else None, EMPHATIC_NARRATIVE)
+
+        source = ("The Editor wanted that explained to him, and the Psychologist volunteered a wooden account "
+                  "of the “ingenious paradox and trick” we had witnessed that day week.")
+        _, lattice, result = self._parse(source)
+        self.assertEqual(result.best().rule_id, EXPLAINED_QUOTED_THEME)
+        h, relations = self._semantic(result, lattice)
+        self.assertIn(("CONJUNCT", h["want"], h["report"]), relations)
+        self.assertIn(("COMPLEMENT", h["want"], h["request"]), relations)
+        self.assertIn(("THEME", h["relative"], h["topic"]), relations)
+        self.assertIn(("TIME", h["relative"], h["time"]), relations)
+        near_miss = source.replace("we had witnessed", "we had witnessed it")
+        _, _, wrong = self._parse(near_miss)
+        self.assertNotEqual(wrong.best().rule_id if wrong.best() else None, EXPLAINED_QUOTED_THEME)
+
     def test_transfer_narrative_scope_repairs(self):
         from seman_parser.scoped_transfer_clauses import (
             CAUSAL_PERFECT, CONTRASTIVE_SERIES, NEGATIVE_PROFORM, NOMINAL_EXCLAMATION,

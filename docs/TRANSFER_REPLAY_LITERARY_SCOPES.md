@@ -88,3 +88,8 @@ marker), and U35-0368 (the opening italic marker has no closing marker within
 the sampled unit). The latter two are better investigated as source-unit
 classification questions before proposing a grammatical repair. Verse
 T45-1665 remains untouched.
+
+This is the historical result at the end of the attachment replay. The
+[source follow-up](TRANSFER_SOURCE_FOLLOWUP.md) records the subsequent
+repairs, the current reproduction filenames, and the independent 42-unit
+control.

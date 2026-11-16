@@ -36,7 +36,17 @@ _QUOTED_DASH_CONTINUATION = re.compile(
     r"^[“‘\"']\s*(?:--|—|–)\s*[a-z]",
     re.IGNORECASE,
 )
-_POSTSCRIPT = re.compile(r"(?i)^(?:P\.\s?S\.|P\.\s?P\.\s?S\.)\s*(?:--|—|:)")
+# The final period can be a separator when the marker is followed by
+# whitespace and quoted prose or an uppercase start. The marker must
+# begin the unit, so initials in a signature remain untouched.
+POSTSCRIPT_FRAME = re.compile(
+    # An explicit separator is unambiguous for compact or spaced initials.
+    r"(?i:P\.\s?P\.\s?S\.|P\.\s?S\.)(?:\s*(?:--|—|:)\s*|$)"
+    # Without a separator, compact markers can precede uppercase prose;
+    # spaced marks are initials unless a pronoun or quote follows them.
+    r"|(?i:P\.(?:P\.)?S\.)\s+(?=[A-Z“‘\"])"
+    r"|(?i:P\.\s+S\.|P\.\s+P\.\s+S\.)\s+(?=(?:I|He|We|You|She|They|It)\b|[“‘\"])"
+)
 _BEARING = re.compile(
     r"(?i)\bbearing\s+(?:(?:a|one)\s+)?(?:point\s+)?to\s+"
     r"(?:the\s+)?[NSEW]\."
@@ -72,9 +82,10 @@ def classify_discourse(
     replies and salutations remain legitimate utterances.
     """
     text = source.strip()
-    if _POSTSCRIPT.match(text):
+    if frame := POSTSCRIPT_FRAME.match(text):
         return DiscourseRole(
-            "documentary_postscript", "paratext_with_embedded_clause",
+            "documentary_postscript",
+            "paratext_with_embedded_clause" if frame.end() < len(text) else "documentary_marker_only",
             "source_postscript_marker", False,
         )
     if (_BEARING.search(text) and _COMPASS.search(text)

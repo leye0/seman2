@@ -97,6 +97,26 @@ class DiscourseTriageTests(unittest.TestCase):
         self.assertEqual(source[nodes["d1"].start:nodes["d1"].end],
                          "Hawkins may stay one night with his mother.")
 
+    def test_postscript_period_does_not_strand_marker_or_prose(self):
+        source = "P. S. I shall sleep well. Tomorrow I may write again."
+        wrapper, prose = analyze_paragraph(source)
+        self.assertEqual(wrapper.source_text, "P. S. I shall sleep well.")
+        self.assertEqual(prose.source_text, "Tomorrow I may write again.")
+        self.assertFalse(wrapper.eligible_for_parse)
+        self.assertTrue(prose.eligible_for_parse)
+        parts = {c.id: c for c in wrapper.constituents}
+        self.assertEqual(wrapper.text[parts["d0"].start:parts["d0"].end], "P. S. ")
+        self.assertEqual(wrapper.text[parts["d1"].start:parts["d1"].end], "I shall sleep well.")
+        self.assertEqual(parts["d1"].governor, "d0")
+        marker, = analyze_paragraph("P.S.")
+        self.assertEqual(marker.discourse_relation, "documentary_marker_only")
+        self.assertFalse(marker.eligible_for_parse)
+        ordinary, = analyze_paragraph("P. S. Carter wrote to us.")
+        self.assertEqual(ordinary.discourse_function, "clausal_utterance_candidate")
+        rows, counts = extract(Book(999, "Mock", "No", "train"), source, length_min=1)
+        self.assertEqual([r["source_text"] for r in rows], [prose.source_text])
+        self.assertEqual(counts["nonprose_documentary"], 1)
+
     def test_minor_sentences_are_valid_utterances_not_broken_clauses(self):
         examples = (
             ("‘Perfectly, sir.’", "dialogue_response"),

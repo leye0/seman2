@@ -70,6 +70,20 @@ from .scoped_literary_quotes import (
     DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
+from .scoped_narrative_followup import (
+    INVERTED_EXTENT, EQUATIVE_DOUBT, plan_inverted_extent, plan_existential_equative,
+    EMPHATIC_NARRATIVE, plan_emphatic_narrative,
+    EMPHASIS_CLOSURE, plan_emphasis_closure,
+    EXPLAINED_QUOTED_THEME, plan_explained_quoted_theme,
+)
+from .scoped_discourse_followup import (
+    TELLING, ELAPSED, plan_telling_pseudocleft, plan_elapsed_event,
+    EMPHATIC_MODAL_CONTRAST, plan_emphatic_modal_contrast,
+    REPORTED_EMPHATIC_OPINIONS, plan_reported_emphatic_opinions,
+    EXTRAPOSED_PASSIVE_REPORT, plan_extraposed_passive_report,
+    EMPHATIC_QUESTION_TURN, plan_emphatic_question_turn,
+    CONDITIONAL_VERSE, plan_conditional_verse,
+)
 from .spoken_three_acts import (
     PLAN as THREE_ACTS_PLAN, ROOTS as THREE_ACTS_COUNTS, NEGATIVE_REPLY,
     DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, plan_three_spoken_acts,
@@ -128,8 +142,12 @@ _PROOF_CHECKS = frozenset((
     "finite_statement_proof", "bare_predicate_proof", "predicative_nominal_proof",
     "imperative_predicate_proof", "comparative_pp_proof", "perfect_predicate_proof",
     "grounded_object_proof", "demonstrated_full_nominal_proof", "appositive_nominal_proof",
+    "emphasis_finite_proof",
 ))
 _SPOKEN_SINGLE = (
+    (CONDITIONAL_VERSE, plan_conditional_verse),
+    (EXTRAPOSED_PASSIVE_REPORT, plan_extraposed_passive_report),
+    (EMPHATIC_MODAL_CONTRAST, plan_emphatic_modal_contrast),
     (MODAL_QUESTION, negative_modal_question_plan),
     (ADVERB_ELLIPSIS, adverb_coordination_ellipsis_plan),
     (CHEER_REPORT, reported_cheer_plan),
@@ -143,8 +161,12 @@ _SPOKEN_SINGLE = (
     (REPORTED_REGRET, plan_reported_regret),
     (DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective),
 )
-_SPOKEN_ACT_ROOTS = (COMMAND, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
+_SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    (ELAPSED, plan_elapsed_event),
+    (EMPHATIC_NARRATIVE, plan_emphatic_narrative),
+    (EMPHASIS_CLOSURE, plan_emphasis_closure),
+    (INVERTED_EXTENT, plan_inverted_extent), (EQUATIVE_DOUBT, plan_existential_equative),
     (CAUSAL_PERFECT, plan_causal_perfect),
     (NOMINAL_EXCLAMATION, plan_nominal_exclamation),
     (NEGATIVE_PROFORM, plan_negative_proform),
@@ -168,10 +190,13 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
-    **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, MODAL_ECHO_REBUKE: 3, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
+    **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, MODAL_ECHO_REBUKE: 3, TELLING: 2, ELAPSED: 1,
+    EMPHATIC_MODAL_CONTRAST: 2, REPORTED_EMPHATIC_OPINIONS: 2,
+    EXTRAPOSED_PASSIVE_REPORT: 2, EMPHATIC_QUESTION_TURN: 1,
+    INVERTED_EXTENT: 2, EQUATIVE_DOUBT: 4, EMPHATIC_NARRATIVE: 3, EMPHASIS_CLOSURE: 1, EXPLAINED_QUOTED_THEME: 3, CONDITIONAL_VERSE: 3, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
     DITRANSITIVE_COMMAND: 1, CHEER_REPORT: 0, PROGRESSIVE_REPORT: 1, SHARED_MODAL: 1, NEGATIVE_COGNITION: 2,
     RIGHT_INITIAL_PP: 2, NEGATIVE_POSSESSION: 1, POINTING_INSTRUMENT: 1,
     CAUSAL_PERFECT: 1, NOMINAL_EXCLAMATION: 0, NEGATIVE_PROFORM: 1, CONTRASTIVE_SERIES: 3,
@@ -627,6 +652,25 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
+            elif kind == "source-fused-modal":
+                # Only recover the existing can/not senses at their overt
+                # sub-token offsets in this source-scoped contrast.
+                sides = {"MODAL": ("can", 0), "NEG": ("not", 3)}
+                if expected_rule != EMPHATIC_MODAL_CONTRAST or category not in sides:
+                    return None
+                spelling, offset = sides[category]
+                start = a - offset
+                if start < 0 or text[start:start + 6].casefold() != "cannot":
+                    return None
+                lattice = parser._lattice_for_text(surface)
+                matches = [c for c in lattice.candidates
+                           if c.span == (0, len(surface)) and c.category == category
+                           and c.lemma == spelling]
+                if not matches:
+                    return None
+                candidates.extend(replace(c, span_start=a, span_end=b,
+                                          source="source-fused-modal")
+                                  for c in matches)
             elif kind in ("source-negative-human-head", "source-irregular-participle"):
                 expected_category, surface_form = (
                     ("PRONOUN", "one") if kind == "source-negative-human-head" else ("V", "come")
@@ -654,7 +698,9 @@ class QuotedSentenceComposer:
             elif kind in ("source-echo-interjection", "source-carryings-nominal"):
                 form = surface.casefold()
                 allowed = {"oh", "hey", "eh"} if kind == "source-echo-interjection" else {"carryings"}
-                if expected_rule != MODAL_ECHO_REBUKE or form not in allowed:
+                if (expected_rule not in (MODAL_ECHO_REBUKE, EMPHATIC_QUESTION_TURN)
+                        or form not in allowed
+                        or expected_rule == EMPHATIC_QUESTION_TURN and kind != "source-echo-interjection"):
                     return None
                 expected_category = "INTERJECTION" if kind == "source-echo-interjection" else "N"
                 if category != expected_category or not any(
@@ -969,6 +1015,13 @@ class QuotedSentenceComposer:
                     "np_det_n", "np_pp_mod",
                 ):
                     return None
+                if required.get("emphasis_finite_proof") == "true":
+                    finite = selected
+                    if finite.rule_id == "clause_front_adv_nocomma":
+                        finite = finite.children[-1]
+                    if (finite.rule_id != "clause_np_vp" or len(finite.children) != 2
+                            or finite.children[-1].features.as_dict().get("vform") != "finite"):
+                        return None
                 if required.get("simple_nominal_proof") == "true" and selected.rule_id not in (
                     "np_bare", "np_det_n", "np_poss", "np_proper", "np_proper_name",
                 ):
@@ -1311,7 +1364,7 @@ class QuotedSentenceComposer:
                     self._spoken_question_vector
                     if expected_rule in SPOKEN_QUESTION_COUNTS else
                     self._three_acts_vector
-                    if expected_rule in THREE_ACTS_COUNTS or expected_rule in (DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE) else
+                    if expected_rule in THREE_ACTS_COUNTS or expected_rule in (DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS) else
                     self._additional_source_vectors.get(expected_rule, self._vector))
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
@@ -3536,6 +3589,7 @@ class QuotedSentenceComposer:
         beam: int | None = None,
     ) -> ParseResult | None:
         for planner, rule in (
+            (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),
             (narrative_comparative_plan, NARRATIVE_TURN),
@@ -3683,7 +3737,12 @@ class QuotedSentenceComposer:
                 plan_three_spoken_acts(
                     text, [(part.start, part.end, part.stop) for part in plan],
                 ) if plan is not None else None
-            ) or plan_dialectal_evidence(text, sequence_spans) or plan_modal_echo_rebuke(text, sequence_spans)
+            ) or (
+                plan_dialectal_evidence(text, sequence_spans)
+                or plan_modal_echo_rebuke(text, sequence_spans)
+                or plan_telling_pseudocleft(text, sequence_spans)
+                or plan_reported_emphatic_opinions(text, sequence_spans)
+            )
             if scoped_sequence is not None:
                 rule, specs = scoped_sequence
                 result = self._compose_verified_dialogue_pattern(
@@ -3730,6 +3789,17 @@ class QuotedSentenceComposer:
             )
             if scoped_modal is not None:
                 return scoped_modal
+            emphatic_turn = plan_emphatic_question_turn(
+                text, self._intercalation_plan(text, components),
+            )
+            if emphatic_turn is not None:
+                outcome = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, emphatic_turn, EMPHATIC_QUESTION_TURN,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if outcome is not None:
+                    return outcome
             intercalated = self._compose_intercalated(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,
