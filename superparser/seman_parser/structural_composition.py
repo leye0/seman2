@@ -29,6 +29,19 @@ from .segmentation import LexicalCandidate, LexicalLattice
 from .vector_chart import SegmentInterface, VectorGrammar
 from .structural_units import skeleton
 from .subject_resumption import plan_subject_resumption
+from .additional_spoken_acts import (
+    PLAN as ADDITIONAL_SPOKEN_PLAN, ADVERB_ELLIPSIS, CHEER_REPORT, CHEERS,
+    COMMAND, CLOSINGS, EXEMPLIFIERS, MODAL_QUESTION, NEGATIVE_COGNITION,
+    PROGRESSIVE_REPORT, SHARED_MODAL,
+    adverb_coordination_ellipsis_plan, command_closing_plan,
+    negative_cognition_plan, negative_modal_question_plan, reported_cheer_plan,
+    reported_progressive_plan, shared_modal_plan,
+)
+from .coordination_with_initial_pp import ROOT as RIGHT_INITIAL_PP, plan_coordination_with_initial_pp
+from .scoped_pointing_instrument import ROOT as POINTING_INSTRUMENT, plan_pointing_instrument
+from .scoped_possession_exception import (
+    ROOT as NEGATIVE_POSSESSION, plan_negative_possession_with_exception,
+)
 from .spoken_question_sequence import (
     PLAN as SPOKEN_QUESTION_PLAN, ROOT_COUNTS as SPOKEN_QUESTION_COUNTS,
     is_stance_supplement, statement_question_plan,
@@ -79,6 +92,43 @@ from .paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT, paired_s
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
+
+
+_PROOF_CHECKS = frozenset((
+    "proof_rule", "simple_nominal_proof", "passive_cause_proof",
+    "finite_statement_proof", "bare_predicate_proof", "predicative_nominal_proof",
+    "imperative_predicate_proof", "comparative_pp_proof", "perfect_predicate_proof",
+    "grounded_object_proof", "demonstrated_full_nominal_proof",
+))
+_SPOKEN_SINGLE = (
+    (MODAL_QUESTION, negative_modal_question_plan),
+    (ADVERB_ELLIPSIS, adverb_coordination_ellipsis_plan),
+    (CHEER_REPORT, reported_cheer_plan),
+    (PROGRESSIVE_REPORT, reported_progressive_plan),
+    (SHARED_MODAL, shared_modal_plan),
+    (NEGATIVE_COGNITION, negative_cognition_plan),
+)
+_SPOKEN_ACT_ROOTS = (COMMAND, *(rule for rule, _ in _SPOKEN_SINGLE))
+_UNQUOTED_SCOPED = (
+    (RIGHT_INITIAL_PP, plan_coordination_with_initial_pp),
+    (NEGATIVE_POSSESSION, plan_negative_possession_with_exception),
+    (POINTING_INSTRUMENT, plan_pointing_instrument),
+)
+_SCOPED_UNSATURATED = frozenset((
+    *SPOKEN_QUESTION_COUNTS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+))
+_SCOPED_COUNTS = {
+    **SPOKEN_QUESTION_COUNTS, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
+    CHEER_REPORT: 0, PROGRESSIVE_REPORT: 1, SHARED_MODAL: 1, NEGATIVE_COGNITION: 2,
+    RIGHT_INITIAL_PP: 2, NEGATIVE_POSSESSION: 1, POINTING_INSTRUMENT: 1,
+}
+_NONFINITE_IMPERATIVE_ROOTS = frozenset((
+    "vp_bare", "vp_bare_trans", "vp_np_particle", "vpnp_base_intransitive_adverb",
+    "vpnp_bare_intransitive_pp",
+))
+_PERFECT_PREDICATES = frozenset((
+    "vpnp_base_perfect_intransitive", "vpnp_base_perfect_transitive",
+))
 
 
 @dataclass(frozen=True, slots=True)
@@ -246,6 +296,19 @@ class QuotedSentenceComposer:
                     if rule.provenance.get("source_plan") == SPOKEN_QUESTION_PLAN),
             preserve_quote_delimiters=True,
         )
+        spoken_acts = VectorGrammar(
+            Grammar(rule for rule in rules
+                    if rule.provenance.get("source_plan") == ADDITIONAL_SPOKEN_PLAN),
+            preserve_quote_delimiters=True,
+        )
+        self._additional_source_vectors = dict.fromkeys(_SPOKEN_ACT_ROOTS, spoken_acts)
+        self._additional_source_vectors.update({
+            plan: VectorGrammar(
+                Grammar(rule for rule in rules if rule.provenance.get("source_plan") == plan),
+                preserve_quote_delimiters=True,
+            )
+            for plan, _ in _UNQUOTED_SCOPED
+        })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -487,6 +550,31 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
+            elif kind == "source-generic-one":
+                if expected_rule != SHARED_MODAL or category != "NP" or surface.casefold() != "one":
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma="one",
+                    category="NP", features=FeatureStructure.build({
+                        "number": "singular", "person": "3", "pronominal": "true", "generic": "true",
+                    }),
+                    source="source-generic-pronoun", score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind in ("source-closing-formula", "source-cheer-formula", "source-exemplification-formula"):
+                rule, required_category, inventory = {
+                    "source-closing-formula": (COMMAND, "CLOSING-FORMULA", CLOSINGS),
+                    "source-cheer-formula": (CHEER_REPORT, "CHEER", CHEERS),
+                    "source-exemplification-formula": (SHARED_MODAL, "EXAMPLE-FORMULA", EXEMPLIFIERS),
+                }[kind]
+                if expected_rule != rule or category != required_category or surface.casefold() not in inventory:
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=surface.casefold(),
+                    category=category, features=FeatureStructure.empty(),
+                    source=kind, score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
             elif kind == "source-stance-formula":
                 if (expected_rule not in SPOKEN_QUESTION_COUNTS
                         or category != "STANCE-FORMULA" or not is_stance_supplement(surface)):
@@ -669,9 +757,7 @@ class QuotedSentenceComposer:
                         or selected.category != category
                         or any(selected.features.as_dict().get(k) != v
                                for k, v in required.items()
-                               if k not in ("proof_rule", "simple_nominal_proof", "passive_cause_proof",
-                                            "finite_statement_proof", "bare_predicate_proof",
-                                            "predicative_nominal_proof"))
+                               if k not in _PROOF_CHECKS)
                         or ("proof_rule" in required and selected.rule_id != required["proof_rule"])):
                     return None
                 if required.get("finite_statement_proof") == "true" and (
@@ -679,10 +765,35 @@ class QuotedSentenceComposer:
                     or selected.children[1].features.as_dict().get("vform") != "finite"
                 ):
                     return None
-                if expected_rule in SPOKEN_QUESTION_COUNTS and (
+                if expected_rule in _SCOPED_UNSATURATED and (
                     proof.stats.get("budget_exceeded") or proof.stats.get("kbest_budget_exceeded")
                 ):
                     return None
+                if required.get("imperative_predicate_proof") == "true" and (
+                    selected.rule_id not in _NONFINITE_IMPERATIVE_ROOTS
+                    or not selected.children or selected.children[0].category != "V"
+                    or selected.children[0].features.as_dict().get("vform") != "base"
+                ):
+                    return None
+                if required.get("comparative_pp_proof") == "true" and (
+                    selected.rule_id != "pp_prep_np" or not selected.children
+                    or selected.children[0].features.as_dict().get("comparison") != "true"
+                ):
+                    return None
+                if required.get("demonstrated_full_nominal_proof") == "true" and selected.rule_id not in (
+                    "np_det_n", "np_det_n_of", "np_poss", "np_demonstrative",
+                ):
+                    return None
+                if required.get("grounded_object_proof") == "true" and selected.rule_id not in (
+                    "np_det_n", "np_poss", "np_demonstrative",
+                ):
+                    return None
+                if required.get("perfect_predicate_proof") == "true":
+                    core = selected
+                    while core.rule_id in ("vpnp_post_adv", "vpnp_base_post_pp") and core.children:
+                        core = core.children[0]
+                    if core.rule_id not in _PERFECT_PREDICATES:
+                        return None
                 if required.get("bare_predicate_proof") == "true" and (
                     not selected.children or selected.children[0].category != "V"
                     or selected.children[0].features.as_dict().get("vform") != "base"
@@ -839,7 +950,7 @@ class QuotedSentenceComposer:
                     return None
                 if category == "CLAUSE" and (
                     selected.rule_id in ("clause_np_relative", "np_relative_obj")
-                    or (expected_rule not in SPOKEN_QUESTION_COUNTS
+                    or (expected_rule not in (*SPOKEN_QUESTION_COUNTS, NEGATIVE_COGNITION)
                         and any(s in surface for s in ['"', '“', '”', '‘', '’']))
                 ):
                     return None
@@ -1034,7 +1145,8 @@ class QuotedSentenceComposer:
                     self._gerund_effect_vector
                     if expected_rule == GERUND_EFFECT_ROOT else
                     self._spoken_question_vector
-                    if expected_rule in SPOKEN_QUESTION_COUNTS else self._vector)
+                    if expected_rule in SPOKEN_QUESTION_COUNTS else
+                    self._additional_source_vectors.get(expected_rule, self._vector))
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
             max_items=total_items - phrase_n * piece_items,
@@ -1045,7 +1157,7 @@ class QuotedSentenceComposer:
         selected = assembled.best()
         if (not assembled.completed or selected is None
                 or selected.rule_id != expected_rule
-                or (expected_rule in SPOKEN_QUESTION_COUNTS and (
+                or (expected_rule in _SCOPED_UNSATURATED and (
                     assembled.stats.get("budget_exceeded") or assembled.stats.get("kbest_budget_exceeded")
                 ))):
             return None
@@ -1063,8 +1175,7 @@ class QuotedSentenceComposer:
                 # reporting tags and reduced clauses are not extra
                 # autonomous spoken sentences.
                 "structural_clause_count": (
-                    SPOKEN_QUESTION_COUNTS[expected_rule]
-                    if expected_rule in SPOKEN_QUESTION_COUNTS else
+                    _SCOPED_COUNTS[expected_rule] if expected_rule in _SCOPED_COUNTS else
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT, QUESTION_ABILITY_ROOT, GERUND_EFFECT_ROOT) else
                     2 if expected_rule in (
                         CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT, MODAL_CONTEXT_ROOT, EXCLAMATIVE_CONTRAST_ROOT, CAUSAL_POSTURE_ROOT, PASSIVE_EXTRAPOSITION_ROOT,
@@ -2735,6 +2846,17 @@ class QuotedSentenceComposer:
             diagnostic_k=diagnostic_k,beam=beam,
         )
 
+    def compose_unquoted_scoped_constructions(
+        self, parser, text, original_lattice, components, **limits,
+    ):
+        for rule, planner in _UNQUOTED_SCOPED:
+            specs = planner(text, components)
+            if specs is not None:
+                return self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, specs, rule, **limits,
+                )
+        return None
+
     def compose_unquoted_subject_resumption(
         self, parser: Any, text: str, lattice: LexicalLattice,
         components: Sequence[Mapping[str, Any]], *,
@@ -3375,6 +3497,28 @@ class QuotedSentenceComposer:
                     # The existing finite-only route cannot license an open
                     # question. Keep its fallback without redoing that work.
                     return None
+        if plan is not None:
+            command = command_closing_plan(
+                text, [(part.start, part.end, part.stop) for part in plan],
+            )
+            if command is not None:
+                return self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, command, COMMAND,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+        else:
+            for rule, planner in _SPOKEN_SINGLE:
+                specs = planner(text, components)
+                if specs is not None:
+                    spoken = self._compose_verified_dialogue_pattern(
+                        parser, text, original_lattice, specs, rule,
+                        max_items=max_items, kbest_work_limit=kbest_work_limit,
+                        diagnostic_k=diagnostic_k, beam=beam,
+                    )
+                    if spoken is not None:
+                        return spoken
+                    break
         if plan is None:
             bulk = self._compose_bulk_dialogue_families(
                 parser, text, original_lattice, components,

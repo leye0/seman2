@@ -3461,5 +3461,272 @@ class SpokenStatementQuestionSequenceTests(unittest.TestCase):
         self.assertNotIn(result.best().rule_id if result.best() else None, self.ROOTS)
 
 
+class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
+    COMMAND = "dialogue_structural_command_then_closing"
+    MODAL = "dialogue_structural_contracted_negative_modal_perfect_question"
+    ADVERBS = "dialogue_structural_adverb_coordination_auxiliary_ellipsis"
+    CHEER = "dialogue_structural_reported_cheer"
+    PROGRESSIVE = "dialogue_structural_reported_progressive_with_weekday"
+    COORD = "structural_coordinated_clauses_with_right_initial_pp"
+    POSSESSION = "structural_negative_possession_with_locative_exception"
+    POINT = "structural_pointing_to_target_with_body_instrument"
+    SHARED_MODAL = "dialogue_structural_exemplified_shared_modal"
+    NEGATIVE_COGNITION = "dialogue_structural_negative_cognition_then_contrast"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser.from_dir(DATA, cache_size=0)
+
+    def _parse(self, source, max_items=50_000, work=500_000):
+        cases, _ = extract(
+            Book(999, "Grammar probes", "Test", "test"),
+            source, length_min=1, length_max=100,
+        )
+        self.assertEqual(len(cases), 1, source)
+        prepared, lattice, result = parse_corpus_case(
+            self.parser, cases[0], max_items=max_items, kbest_work_limit=work,
+        )
+        self.assertEqual((source, source, source),
+                         (prepared.analysis_text, lattice.text, result.text))
+        return prepared, lattice, result
+
+    @staticmethod
+    def _spans(source, children):
+        return [source[node.start:node.end] for node in children]
+
+    def _semantic(self, result, lattice):
+        package = ParseReport(result, self.parser._quoted_sentence_resources, lattice).best_semantic_graph()
+        handles = package["handles"]
+        edges = {(r["relation"], r["source"], r["target"])
+                 for r in package["graph"]["relations"]}
+        return handles, edges
+
+    def test_attested_command_and_closing_are_separate_acts(self):
+        source = "“Go to sleep now like a good child. Good night.”"
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.COMMAND)
+        self.assertEqual([c.category for c in root.children],
+                         ["OPEN-QUOTE", "COMMAND", "SPEECH-STOP", "CLOSING", "SPEECH-STOP", "CLOSE-QUOTE"])
+        self.assertEqual(self._spans(source, root.children),
+                         ["“", "Go to sleep now like a good child", ".", "Good night", ".", "”"])
+        command, closing = root.children[1], root.children[3]
+        self.assertEqual(self._spans(source, command.children), ["Go to sleep now", "like a good child"])
+        self.assertEqual(command.features.as_dict()["stype"], "imperative")
+        self.assertEqual(closing.features.as_dict()["minor_utterance"], "true")
+        self.assertEqual([c.category for c in closing.children], ["CLOSING-FORMULA"])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("COMPARISON", h["command"], h["comparison"]), e)
+        self.assertIn(("CONTINUED_SPEECH", h["command"], h["closing"]), e)
+
+    def test_attested_modal_negation_is_not_a_subject_modifier(self):
+        source = "“Couldn’t you have sent her back?”"
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.MODAL)
+        self.assertEqual(self._spans(source, root.children),
+                         ["“", "Could", "n’t", "you", "have sent her back", "?", "”"])
+        self.assertEqual(root.features.as_dict()["aspect"], "perfect")
+        self.assertEqual(root.features.as_dict()["stype"], "question")
+        self.assertEqual(root.children[3].children[0].rule_id, "np_indef_pron")
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("NEGATION", h["modal"], h["negation"]), e)
+        self.assertIn(("AGENT", h["event"], h["subject"]), e)
+
+    def test_attested_adverbs_modify_one_elliptical_proposition(self):
+        source = "“Really and truly I do.”"
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.ADVERBS)
+        self.assertEqual(self._spans(source, root.children), ["“", "Really and truly", "I do", ".", "”"])
+        self.assertEqual([c.category for c in root.children[1].children], ["ADV", "COORD", "ADV"])
+        self.assertEqual(root.children[2].children[0].rule_id, "clause_aux_ellipsis")
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("ADJUNCT", h["event"], h["manner"]), e)
+        self.assertIn(("CONJUNCT", h["manner"], h["right"]), e)
+
+    def test_attested_cheer_and_single_full_name_speaker(self):
+        source = "“Hurrah!” said Moody Spurgeon."
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.CHEER)
+        self.assertEqual(root.children[1].category, "CHEER")
+        name = root.children[4].children[1]
+        self.assertEqual(source[name.start:name.end], "Moody Spurgeon")
+        self.assertEqual([c.category for c in name.children], ["PROPER-NOUN", "PROPER-NOUN"])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("AGENT", h["report"], h["speaker"]), e)
+        self.assertIn(("REPORTED_CONTENT", h["report"], h["content"]), e)
+        self.assertNotIn("target", h)
+
+    def test_attested_weekday_modifies_event_not_object(self):
+        source = "“I’ll be haunting the post office Wednesday,” vowed Diana."
+        prepared, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        self.assertEqual(prepared.source_component("r0"), "vowed Diana")
+        root = result.best()
+        self.assertEqual(root.rule_id, self.PROGRESSIVE)
+        speech = root.children[1]
+        self.assertEqual(speech.features.as_dict()["aspect"], "progressive")
+        self.assertEqual(self._spans(source, speech.children),
+                         ["I", "’ll", "be", "haunting", "the post office", "Wednesday"])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("TIME", h["content"], h["time"]), e)
+        self.assertIn(("AFFECTED", h["content"], h["object"]), e)
+        self.assertIn(("ASPECT", h["content"], h["progressive_auxiliary"]), e)
+        self.assertIn(("AGENT", h["report"], h["speaker"]), e)
+
+    def test_attested_initial_pp_governs_only_the_right_conjunct(self):
+        source = "He took up the lamp, and, in an absolute silence, we returned to the smoking-room."
+        prepared, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        self.assertEqual(prepared.source_component("rcp"), "in an absolute silence")
+        self.assertEqual(prepared.source_component("rc1"), "we returned to the smoking-room")
+        pp = next(c for c in prepared.structural_constituents if c["id"] == "rcp")
+        self.assertEqual(pp["governor"], "rc1")
+        root = result.best()
+        self.assertEqual(root.rule_id, self.COORD)
+        first, right = root.children[0], root.children[3]
+        self.assertEqual(self._spans(source, first.children), ["He", "took", "up", "the lamp"])
+        self.assertEqual(first.children[2].category, "PARTICLE")
+        self.assertEqual(self._spans(source, right.children), [",", "in an absolute silence", ",",
+                                                            "we returned to the smoking-room"])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("ADJUNCT", h["right"], h["adjunct"]), e)
+        self.assertIn(("AFFECTED", h["left"], h["object"]), e)
+        self.assertNotIn(("ADJUNCT", h["left"], h["adjunct"]), e)
+
+    def test_attested_modal_scopes_over_both_bare_predicates(self):
+        source = (
+            "“One might travel back and verify the accepted account of "
+            "the Battle of Hastings, for instance!”"
+        )
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.SHARED_MODAL)
+        self.assertEqual(root.children[1].features.as_dict()["generic"], "true")
+        self.assertEqual(root.children[1].features.as_dict()["pronominal"], "true")
+        pair = root.children[3]
+        self.assertEqual(self._spans(source, pair.children),
+                         ["travel back", "and", "verify the accepted account of the Battle of Hastings"])
+        obj = pair.children[-1].children[-1]
+        self.assertEqual(source[obj.start:obj.end], "the accepted account of the Battle of Hastings")
+        self.assertEqual(obj.children[0].rule_id, "np_det_n_of")
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("MODALITY", h["left"], h["modal"]), e)
+        self.assertIn(("MODALITY", h["right"], h["modal"]), e)
+        self.assertIn(("AFFECTED", h["right"], h["object"]), e)
+
+    def test_attested_do_negation_and_contrast_do_not_extend_complement(self):
+        source = (
+            "“I don’t think it’s as pretty as my blue-flowered muslin"
+            "--and it certainly isn’t so fashionable.”"
+        )
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.NEGATIVE_COGNITION)
+        self.assertEqual(self._spans(source, root.children[1].children),
+                         ["I", "do", "n’t", "think", "it’s as pretty as my blue-flowered muslin"])
+        self.assertEqual(self._spans(source, root.children[2:5]),
+                         ["--", "and", "it certainly isn’t so fashionable"])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("NEGATION", h["left"], h["negation"]), e)
+        self.assertIn(("COMPLEMENT", h["left"], h["complement"]), e)
+        self.assertNotIn(("COMPLEMENT", h["left"], h["right"]), e)
+
+    def test_attested_exceptive_scopes_over_the_negative_domain(self):
+        source = "He had nothing on them but a pair of tattered, blood-stained socks."
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.POSSESSION)
+        self.assertEqual(self._spans(source, root.children), [
+            "He", "had", "nothing", "on them", "but", "a pair of tattered, blood-stained socks", ".",
+        ])
+        self.assertEqual(root.children[4].category, "EXCEPTIVE")
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("EXCEPTION", h["negative_domain"], h["exception"]), e)
+        self.assertIn(("LOCATION", h["event"], h["location"]), e)
+        self.assertNotIn(("CONJUNCT", h["location"], h["exception"]), e)
+
+    def test_attested_body_part_is_instrument_of_pointing(self):
+        source = "He pointed to the part with his finger."
+        _, lattice, result = self._parse(source)
+        self.assertTrue(result.completed)
+        root = result.best()
+        self.assertEqual(root.rule_id, self.POINT)
+        self.assertEqual(self._spans(source, root.children),
+                         ["He", "pointed", "to the part", "with his finger", "."])
+        h, e = self._semantic(result, lattice)
+        self.assertIn(("INSTRUMENT", h["event"], h["instrument"]), e)
+        self.assertIn(("DIRECTION", h["event"], h["destination"]), e)
+        self.assertNotIn(("MODIFIER", h["destination"], h["instrument"]), e)
+
+    def test_independent_positive_controls(self):
+        for source, expected in (
+            ("“Speak softly like a professional. Goodbye!”", self.COMMAND),
+            ("“Close the door. Farewell!”", self.COMMAND),
+            ("“Wouldn’t she have arrived?”", self.MODAL),
+            ("“Slowly and silently he did.”", self.ADVERBS),
+            ("“Hooray!” cried Mary Jane.", self.CHEER),
+            ("“She will be reading the letters on Wednesday,” promised Mary Jane.", self.PROGRESSIVE),
+            ("She opened the window, and, without a word, he left the room.", self.COORD),
+            ("I put down the glass, but, after a long pause, she spoke.", self.COORD),
+            ("“We could leave early and visit the old town, for example.”", self.SHARED_MODAL),
+            ("“They may sing or read the letters, for example.”", self.SHARED_MODAL),
+            ("“She doesn’t believe the clock stopped—and she saw it.”", self.NEGATIVE_COGNITION),
+            ("She had nothing on her but a red scarf.", self.POSSESSION),
+            ("They have nothing on them but their coats.", self.POSSESSION),
+            ("She pointed to the exit with her right hand.", self.POINT),
+        ):
+            with self.subTest(source=source):
+                _, _, result = self._parse(source)
+                self.assertTrue(result.completed)
+                self.assertEqual(result.best().rule_id, expected)
+
+    def test_near_misses_do_not_enter_the_scoped_rules(self):
+        for source, disallowed in (
+            ("“She spoke softly. Goodbye!”", self.COMMAND),
+            ("“Like a child. Good night.”", self.COMMAND),
+            ("“Sit down. The good night.”", self.COMMAND),
+            ("“Wouldn’t she have arrive?”", self.MODAL),
+            ("“Couldn’t your have gone?”", self.MODAL),
+            ("“Really and truly she do.”", self.ADVERBS),
+            ("“Slowly and Silvia he did.”", self.ADVERBS),
+            ("“Hurrah!” said Moody to Spurgeon.", self.CHEER),
+            ("“Magnificent!” said Mary Jane.", self.CHEER),
+            ("“I’ll be seeing Wednesday,” said Diana.", self.PROGRESSIVE),
+            ("“I’ll be friendly on Wednesday,” said Diana.", self.PROGRESSIVE),
+            ("“I’ll be reading the letters on Monday,” disobeyed Diana.", self.PROGRESSIVE),
+            ("She opened the window, and, he left the room.", self.COORD),
+            ("She opened the window, and, without a word, closed the door.", self.COORD),
+            ("She opened the window, and, after he spoke, they left.", self.COORD),
+            ("She opened the window, and he left the room.", self.COORD),
+            ("“We could leave early and he visited the town, for example.”", self.SHARED_MODAL),
+            ("“We could leave early and visited the town, for example.”", self.SHARED_MODAL),
+            ("“I don’t think it was ready—and because she left.”", self.NEGATIVE_COGNITION),
+            ("“I don’t carry it was ready—and she thought so.”", self.NEGATIVE_COGNITION),
+            ("She had nothing on her but she found a scarf.", self.POSSESSION),
+            ("She has nothing on the shelf but a book.", self.POSSESSION),
+            ("They has nothing on them but their coats.", self.POSSESSION),
+            ("She pointed to the statue with a broken arm.", self.POINT),
+            ("She looked to the exit with her right hand.", self.POINT),
+            ("She pointed to the exit with his right hand.", self.POINT),
+        ):
+            with self.subTest(source=source):
+                _, _, result = self._parse(source)
+                self.assertNotEqual(result.best().rule_id if result.best() else None, disallowed)
+
+    def test_scoped_proofs_respect_small_budgets(self):
+        _, _, result = self._parse("“Couldn’t you have sent her back?”", max_items=10, work=10)
+        self.assertNotEqual(result.best().rule_id if result.best() else None, self.MODAL)
+
+
 if __name__ == "__main__":
     unittest.main()

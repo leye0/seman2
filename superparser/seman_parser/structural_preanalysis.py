@@ -25,6 +25,7 @@ from seman_parser.extraposed_scalar_content import extraposed_scalar_spans
 from seman_parser.degree_concessive import degree_concession_spans
 from seman_parser.paired_clause_supplements import paired_supplement_spans
 from seman_parser.measured_voice_coordination import measured_voice_spans
+from seman_parser.coordination_with_initial_pp import source_spans as right_initial_pp_spans
 
 _OPEN_TO_CLOSE = {"“": "”", "‘": "’", '"': '"', "'": "'"}
 _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
@@ -387,6 +388,17 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
                                   "coordination", "paired_medial_supplements"),
             StructuralConstituent("csp", "medial_supplement_candidate", *spatial, "cs1",
                                   "circumstantial_modifier", "comma_delimited_spatial_phrase"),
+        ))
+    right_initial = right_initial_pp_spans(source) if not quotation_spans else None
+    if right_initial:
+        left, right, fronted = right_initial
+        cs.extend((
+            StructuralConstituent("rc0", "finite_conjunct_candidate", *left, main,
+                                  "first_conjunct", "coordinator_with_comma_bounded_pp"),
+            StructuralConstituent("rc1", "finite_conjunct_candidate", *right, "rc0",
+                                  "coordination", "overt_subject_after_fronted_pp"),
+            StructuralConstituent("rcp", "prepositional_phrase", *fronted, "rc1",
+                                  "preposed_adjunct", "paired_commas_after_coordinator"),
         ))
     degree = degree_concession_spans(source) if len(parts) == 1 and not quotation_spans else None
     if degree:

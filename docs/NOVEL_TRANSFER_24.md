@@ -8,7 +8,7 @@
 - Pinned both raw editions and cut front matter at the first narrative opening. Used the existing `gutenberg_novels.extract` pipeline, with chapter heads excluded, and rejected normalized text duplicates against Novel-500 and within the new pool. No selected case differs from the original source span after whitespace normalization, and no punctuation or quotes were added.
 - Selected three evenly spaced source units per book and token band (4–8, 9–16, 17–24, 25–32). No output from the parser was used to select or replace cases. Candidate pool sizes were 310 and 2,277. The extractor excluded 180 and 85 source-dependent units, respectively, before sampling. Long units, units under four tokens, and excluded source context are outside this measurement.
 - Used WordNet 3.0 and the usual `parse_corpus_case` gateway, with 50,000 forest items, 500,000 k-best work units, a 10-second deadline per utterance, and no parse cache. Audited the selected rank-one tree, not the best-looking alternative.
-- The transfer SHA-256 is `2d87e7f698aba01835e5638ac140b50ee047556809e317cd47d51e545186a073`. Novel-500 retains its separate SHA-256, `d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`.
+- The original annotated transfer snapshot has SHA-256 `2d87e7f698aba01835e5638ac140b50ee047556809e317cd47d51e545186a073`. Its ordered source identity, excluding the independently mutable `structural_constituents` field, is `e628012351233ce6605b77257d048be7bfee05aa7f398286162365c96a3b8b8b`. The runner pins the latter and reports both. Novel-500 retains its separate SHA-256, `d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f`.
 
 ## Observed results
 
