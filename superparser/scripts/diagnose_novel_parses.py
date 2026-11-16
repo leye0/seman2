@@ -1028,6 +1028,7 @@ def run(
                     )
                     row["lexical_category_sequence"] = word_category_sequence(lattice)
                     stats = result.stats
+                    best = result.best() if result.completed else None
                     row.update(compact_stats(stats))
                     row.update({
                         "status": classify(result.completed, stats),
@@ -1041,7 +1042,10 @@ def run(
                             or (stats.get("dialogue_attempt") or {}).get(
                                 "kbest_budget_exceeded")),
                         "dialogue_attempt": stats.get("dialogue_attempt"),
-                        "root_rule": result.best().rule_id if result.completed else None,
+                        "root_rule": best.rule_id if best else None,
+                        "rank_one_sha256": sha256(json.dumps(
+                            best.as_dict(), sort_keys=True,
+                        ).encode()).hexdigest() if best else None,
                         "dialogue_scoped": bool(stats.get("dialogue_scoped")),
                         "complexity_route": stats.get("complexity_route", "canonical"),
                     })
