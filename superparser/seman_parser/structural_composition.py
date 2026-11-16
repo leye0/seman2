@@ -46,6 +46,34 @@ from .spoken_question_sequence import (
     PLAN as SPOKEN_QUESTION_PLAN, ROOT_COUNTS as SPOKEN_QUESTION_COUNTS,
     is_stance_supplement, statement_question_plan,
 )
+from .scoped_transfer_clauses import (
+    CAUSAL_PERFECT, NOMINAL_EXCLAMATION, NEGATIVE_PROFORM, CONTRASTIVE_SERIES,
+    PROGRESSIVE_REPORT as NARRATIVE_REPORT, PROGRESSIVE_PERCEPTION, REPORT_PLAN, RESULTATIVE_PURPOSE,
+    plan_causal_perfect, plan_nominal_exclamation, plan_negative_proform, plan_contrastive_series,
+    plan_report_with_relative, plan_perception_after_particle, plan_departure_resultative,
+    PARENTHETICAL_PURPOSE, plan_parenthesized_purpose,
+    DASH_REFORMULATION, plan_dash_reformulation,
+)
+from .scoped_motion_supplements import (
+    CARRY, RISE, APPOSITIVE, PARTITIVE_LOCATION, plan_carry, plan_rise, plan_family_apposition, plan_partitive_location,
+    SPELLING_RESULT, plan_competitive_result,
+    CAUSATIVE_RESPONSE, plan_causative_response,
+    COORDINATED_PARTICIPLES, plan_accidental_participles,
+)
+from .scoped_literary_quotes import (
+    NOR_POSSESSION, INTERRUPTED_CLOCK, REPORTED_OPINION,
+    plan_nor_possession, plan_interrupted_clock, plan_reported_opinion,
+    REPORTED_INVERTED_CONTROL, plan_reported_inverted_control,
+    HESITANT_ADMISSION, plan_elliptical_admission,
+    REPORTED_REGRET, plan_reported_regret,
+    SPLIT_SELF_IDENTIFICATION, plan_split_self_identification,
+    DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
+    HESITANT_RESUMPTION, plan_hesitant_resumption,
+)
+from .spoken_three_acts import (
+    PLAN as THREE_ACTS_PLAN, ROOTS as THREE_ACTS_COUNTS, NEGATIVE_REPLY,
+    DIALECTAL_EVIDENCE, plan_three_spoken_acts, plan_dialectal_evidence,
+)
 from .shared_subject_coordination import ROOT as SHARED_SUBJECT_ROOT, plan_shared_subject_coordination
 from .adjective_infinitive_scope import ROOT as ADJECTIVE_INFINITIVE_ROOT, plan_adjective_infinitive_scope
 from .embedded_relative_scope import ROOT as EMBEDDED_RELATIVE_ROOT, plan_embedded_relative_scope
@@ -98,7 +126,7 @@ _PROOF_CHECKS = frozenset((
     "proof_rule", "simple_nominal_proof", "passive_cause_proof",
     "finite_statement_proof", "bare_predicate_proof", "predicative_nominal_proof",
     "imperative_predicate_proof", "comparative_pp_proof", "perfect_predicate_proof",
-    "grounded_object_proof", "demonstrated_full_nominal_proof",
+    "grounded_object_proof", "demonstrated_full_nominal_proof", "appositive_nominal_proof",
 ))
 _SPOKEN_SINGLE = (
     (MODAL_QUESTION, negative_modal_question_plan),
@@ -108,20 +136,58 @@ _SPOKEN_SINGLE = (
     (SHARED_MODAL, shared_modal_plan),
     (DITRANSITIVE_COMMAND, ditransitive_command_plan),
     (NEGATIVE_COGNITION, negative_cognition_plan),
+    (NOR_POSSESSION, plan_nor_possession), (INTERRUPTED_CLOCK, plan_interrupted_clock),
+    (REPORTED_OPINION, plan_reported_opinion),
+    (REPORTED_INVERTED_CONTROL, plan_reported_inverted_control),
+    (REPORTED_REGRET, plan_reported_regret),
+    (DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective),
 )
-_SPOKEN_ACT_ROOTS = (COMMAND, *(rule for rule, _ in _SPOKEN_SINGLE))
+_SPOKEN_ACT_ROOTS = (COMMAND, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    (CAUSAL_PERFECT, plan_causal_perfect),
+    (NOMINAL_EXCLAMATION, plan_nominal_exclamation),
+    (NEGATIVE_PROFORM, plan_negative_proform),
+    (CONTRASTIVE_SERIES, plan_contrastive_series),
+    (NARRATIVE_REPORT, plan_report_with_relative),
+    (PROGRESSIVE_PERCEPTION, plan_perception_after_particle),
+    (RESULTATIVE_PURPOSE, plan_departure_resultative),
+    (CARRY, plan_carry), (RISE, plan_rise), (APPOSITIVE, plan_family_apposition),
+    (PARTITIVE_LOCATION, plan_partitive_location),
+    (SPELLING_RESULT, plan_competitive_result),
+    (CAUSATIVE_RESPONSE, plan_causative_response),
+    (COORDINATED_PARTICIPLES, plan_accidental_participles),
+    (PARENTHETICAL_PURPOSE, plan_parenthesized_purpose),
+    (DASH_REFORMULATION, plan_dash_reformulation),
     (RIGHT_INITIAL_PP, plan_coordination_with_initial_pp),
     (NEGATIVE_POSSESSION, plan_negative_possession_with_exception),
     (POINTING_INSTRUMENT, plan_pointing_instrument),
 )
+_SHARED_SOURCE_PLANS = {
+    NARRATIVE_REPORT: REPORT_PLAN,
+    PROGRESSIVE_PERCEPTION: REPORT_PLAN,
+}
 _SCOPED_UNSATURATED = frozenset((
-    *SPOKEN_QUESTION_COUNTS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
-    **SPOKEN_QUESTION_COUNTS, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
+    **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, COMMAND: 1, MODAL_QUESTION: 1, ADVERB_ELLIPSIS: 1,
     DITRANSITIVE_COMMAND: 1, CHEER_REPORT: 0, PROGRESSIVE_REPORT: 1, SHARED_MODAL: 1, NEGATIVE_COGNITION: 2,
     RIGHT_INITIAL_PP: 2, NEGATIVE_POSSESSION: 1, POINTING_INSTRUMENT: 1,
+    CAUSAL_PERFECT: 1, NOMINAL_EXCLAMATION: 0, NEGATIVE_PROFORM: 1, CONTRASTIVE_SERIES: 3,
+    NARRATIVE_REPORT: 4, PROGRESSIVE_PERCEPTION: 3, RESULTATIVE_PURPOSE: 1,
+    CARRY: 2, RISE: 2, APPOSITIVE: 2,
+    PARTITIVE_LOCATION: 3,
+    SPELLING_RESULT: 2,
+    CAUSATIVE_RESPONSE: 2,
+    COORDINATED_PARTICIPLES: 2,
+    PARENTHETICAL_PURPOSE: 3,
+    DASH_REFORMULATION: 1,
+    NOR_POSSESSION: 1, INTERRUPTED_CLOCK: 1, REPORTED_OPINION: 3,
+    REPORTED_INVERTED_CONTROL: 1,
+    HESITANT_ADMISSION: 1,
+    REPORTED_REGRET: 1, SPLIT_SELF_IDENTIFICATION: 2,
+    DOUBLE_PERFECT_PERSPECTIVE: 1,
+    HESITANT_RESUMPTION: 0,
 }
 _NONFINITE_IMPERATIVE_ROOTS = frozenset((
     "vp_bare", "vp_bare_trans", "vp_np_particle", "vpnp_base_intransitive_adverb",
@@ -297,6 +363,11 @@ class QuotedSentenceComposer:
                     if rule.provenance.get("source_plan") == SPOKEN_QUESTION_PLAN),
             preserve_quote_delimiters=True,
         )
+        self._three_acts_vector = VectorGrammar(
+            Grammar(rule for rule in rules
+                    if rule.provenance.get("source_plan") == THREE_ACTS_PLAN),
+            preserve_quote_delimiters=True,
+        )
         spoken_acts = VectorGrammar(
             Grammar(rule for rule in rules
                     if rule.provenance.get("source_plan") == ADDITIONAL_SPOKEN_PLAN),
@@ -305,7 +376,7 @@ class QuotedSentenceComposer:
         self._additional_source_vectors = dict.fromkeys(_SPOKEN_ACT_ROOTS, spoken_acts)
         self._additional_source_vectors.update({
             plan: VectorGrammar(
-                Grammar(rule for rule in rules if rule.provenance.get("source_plan") == plan),
+                Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
             for plan, _ in _UNQUOTED_SCOPED
@@ -533,6 +604,10 @@ class QuotedSentenceComposer:
             "SPEECH-STOP": set(".!?"),
             "ABBREVIATION-STOP": {"."},
             "DASH": {"--", "—"},
+            "EMPHASIS": {"_"},
+            "JOIN-HYPHEN": {"-"},
+            "ELLIPSIS-MARK": {"...", "....", "....."},
+            "SPACED-ELLIPSIS": {". . ."},
             "OPEN-PAREN": {"("},
             "CLOSE-PAREN": {")"},
         }
@@ -549,6 +624,71 @@ class QuotedSentenceComposer:
                     span_start=a, span_end=b, surface=surface, lemma=surface,
                     category=category, features=FeatureStructure.empty(),
                     source="overt-original-dialogue-punctuation", score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind in ("source-negative-human-head", "source-irregular-participle"):
+                expected_category, surface_form = (
+                    ("PRONOUN", "one") if kind == "source-negative-human-head" else ("V", "come")
+                )
+                if (expected_rule != NEGATIVE_REPLY or category != expected_category
+                        or surface.casefold() != surface_form):
+                    return None
+                if kind == "source-negative-human-head":
+                    if not any(c.span == (a, b) and c.category == "N" and c.lemma == "one"
+                               for c in original_lattice.candidates):
+                        return None
+                    features = {"person": "3", "number": "singular", "human": "true"}
+                else:
+                    if not any(c.span == (a, b) and c.category == "V" and c.lemma == "come"
+                               and c.features.as_dict().get("vform") == "base"
+                               for c in original_lattice.candidates):
+                        return None
+                    features = {"vform": "ed", "subcat": "intransitive", "irregular": "true"}
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=surface_form,
+                    category=category, features=FeatureStructure.build(features),
+                    source=kind, score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "source-regarding-preposition":
+                if (expected_rule != SPLIT_SELF_IDENTIFICATION or category != "PREP"
+                        or surface.casefold() not in ("regarding",)
+                        or not any(c.span == (a, b) and c.category == "V" and c.lemma == "regard"
+                                   for c in original_lattice.candidates)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma="regarding",
+                    category=category, features=FeatureStructure.build({"topic": "true"}),
+                    source=kind, score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "source-dialectal-so-as":
+                if (expected_rule != DIALECTAL_EVIDENCE or category != "RESULT-CONJ"
+                        or surface.casefold() not in ("so's", "so’s")
+                        or not any(c.span == (a, a + 2) and c.category == "ADV" and c.lemma == "so"
+                                   for c in original_lattice.candidates)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma="so as",
+                    category=category, features=FeatureStructure.build({
+                        "consecutive": "true", "dialectal": "true",
+                    }),
+                    source=kind, score=0,
+                    provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "source-negative-proform":
+                if (expected_rule != NEGATIVE_PROFORM or category != "NP"
+                        or surface.casefold() != "none"
+                        or not any(c.span == (a, b) and c.lemma.casefold() == "none"
+                                   for c in original_lattice.candidates)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma="none",
+                    category="NP", features=FeatureStructure.build({
+                        "person": "3", "pronominal": "true", "negation": "true",
+                        "anaphoric": "true",
+                    }),
+                    source="source-negative-indefinite-proform", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
             elif kind == "source-generic-one":
@@ -806,6 +946,10 @@ class QuotedSentenceComposer:
                         nominal = selected.children[1]
                     if nominal.rule_id != "np_det_n":
                         return None
+                if required.get("appositive_nominal_proof") == "true" and selected.rule_id not in (
+                    "np_det_n", "np_pp_mod",
+                ):
+                    return None
                 if required.get("simple_nominal_proof") == "true" and selected.rule_id not in (
                     "np_bare", "np_det_n", "np_poss", "np_proper", "np_proper_name",
                 ):
@@ -1147,6 +1291,8 @@ class QuotedSentenceComposer:
                     if expected_rule == GERUND_EFFECT_ROOT else
                     self._spoken_question_vector
                     if expected_rule in SPOKEN_QUESTION_COUNTS else
+                    self._three_acts_vector
+                    if expected_rule in THREE_ACTS_COUNTS or expected_rule == DIALECTAL_EVIDENCE else
                     self._additional_source_vectors.get(expected_rule, self._vector))
         assembled = assembly.parse_lattice(
             graph, goal_category="CLAUSE",
@@ -3371,6 +3517,8 @@ class QuotedSentenceComposer:
         beam: int | None = None,
     ) -> ParseResult | None:
         for planner, rule in (
+            (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
+            (plan_hesitant_resumption, HESITANT_RESUMPTION),
             (narrative_comparative_plan, NARRATIVE_TURN),
             (cleft_conditional_plan, CLEFT_TURN),
             (nested_temporal_comparative_plan, NESTED_TEMPORAL_TURN),
@@ -3475,6 +3623,15 @@ class QuotedSentenceComposer:
         )
         if temporal is not None:
             return temporal
+        admission = plan_elliptical_admission(text, components)
+        if admission is not None:
+            result = self._compose_verified_dialogue_pattern(
+                parser, text, original_lattice, admission, HESITANT_ADMISSION,
+                max_items=max_items, kbest_work_limit=kbest_work_limit,
+                diagnostic_k=diagnostic_k, beam=beam,
+            )
+            if result is not None:
+                return result
         # Curly apostrophes inside words are not quote delimiters. Keep
         # existing specialized routes ahead of this narrower mixed-act one.
         plan = self._plan(text, components)
@@ -3498,6 +3655,26 @@ class QuotedSentenceComposer:
                     # The existing finite-only route cannot license an open
                     # question. Keep its fallback without redoing that work.
                     return None
+        # Require the same quote-boundary proof for dialectal clitics as
+        # for the WH sequence without widening the legacy finite-only path.
+        dialect_source = plan or self._plan(text, components, allow_curly_apostrophe=True)
+        if dialect_source is not None:
+            scoped_sequence = (
+                plan_three_spoken_acts(
+                    text, [(part.start, part.end, part.stop) for part in plan],
+                ) if plan is not None else None
+            ) or plan_dialectal_evidence(
+                text, [(part.start, part.end, part.stop) for part in dialect_source],
+            )
+            if scoped_sequence is not None:
+                rule, specs = scoped_sequence
+                result = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, specs, rule,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if result is not None:
+                    return result
         if plan is not None:
             command = command_closing_plan(
                 text, [(part.start, part.end, part.stop) for part in plan],

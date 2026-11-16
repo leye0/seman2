@@ -3757,5 +3757,238 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
         self.assertNotEqual(result.best().rule_id if result.best() else None, self.MODAL)
 
 
+    def test_transfer_narrative_scope_repairs(self):
+        from seman_parser.scoped_transfer_clauses import (
+            CAUSAL_PERFECT, CONTRASTIVE_SERIES, NEGATIVE_PROFORM, NOMINAL_EXCLAMATION,
+            PROGRESSIVE_REPORT, PROGRESSIVE_PERCEPTION, RESULTATIVE_PURPOSE,
+        )
+        from seman_parser.scoped_transfer_clauses import DASH_REFORMULATION, PARENTHETICAL_PURPOSE
+        from seman_parser.scoped_motion_supplements import (
+            APPOSITIVE, CARRY, CAUSATIVE_RESPONSE, COORDINATED_PARTICIPLES,
+            PARTITIVE_LOCATION, RISE, SPELLING_RESULT,
+        )
+
+        cases = (
+            ("An Avery scholarship!", NOMINAL_EXCLAMATION, (("MODIFIER", "content", "modifier"),)),
+            ("For Anne’s eyes had suddenly filled with tears.", CAUSAL_PERFECT,
+             (("THEME", "event", "subject"), ("ASPECT", "event", "perfect_aux"),
+              ("OBLIQUE", "event", "oblique"))),
+            ("But none developed.", NEGATIVE_PROFORM, (("THEME", "event", "subject"),)),
+            ("He said not a word, but came painfully to the table, and made a motion towards the wine.",
+             CONTRASTIVE_SERIES, (("AGENT", "left", "subject"), ("AGENT", "middle", "subject"),
+                                  ("AGENT", "right", "subject"), ("MANNER", "middle", "manner"))),
+            ("The Medical Man looked into his face and, with a certain hesitation, told him he was suffering from overwork, at which he laughed hugely.",
+             PROGRESSIVE_REPORT, (("RECIPIENT", "report", "recipient"), ("REPORTED_CONTENT", "report", "report_content"),
+                                  ("RELATIVE", "report", "reaction"))),
+            ("Then he turned over the hand holding his pipe, and I saw he was looking at some half-healed scars on his knuckles.",
+             PROGRESSIVE_PERCEPTION, (("PARTICLE", "movement", "particle"), ("COMPLEMENT", "perception", "perceived"))),
+            ("But she went away kindly, leaving Anne alone to keep her first vigil with sorrow.",
+             RESULTATIVE_PURPOSE, (("RESULT", "event", "result"), ("AGENT", "result", "subject"))),
+            ("He caught up the lamp swiftly, and carried it, flaring red, through the door into the corridor.",
+             CARRY, (("THEME", "supplement", "carried"), ("PATH", "carry", "route"),
+                     ("DIRECTION", "carry", "goal"))),
+            ("Then, getting up, he went to the tobacco jar on the mantel, and with his back to us began to fill his pipe.",
+             RISE, (("AGENT", "prior", "subject"), ("CIRCUMSTANCE", "right", "circumstance"))),
+            ("Then Diana’s cousins, the Murrays from Newbridge, came; they all crowded into the big pung sleigh, among straw and furry robes.",
+             APPOSITIVE, (("APPOSITION", "subject", "appositive"), ("QUANTIFIER", "group", "quantifier"))),
+            ("He took one of the small octagonal tables that were scattered about the room, and set it in front of the fire, with two legs on the hearthrug.",
+             PARTITIVE_LOCATION, (("DIRECTION", "place", "goal"), ("CIRCUMSTANCE", "place", "support"))),
+            ("(The Psychologist, to show that he was not unhinged, helped himself to a cigar and tried to light it uncut.)",
+             PARENTHETICAL_PURPOSE, (("AGENT", "action", "subject"), ("PURPOSE", "left", "purpose"))),
+            ("Gilbert Blythe spelled her down in class and left her clear out of sight in mental arithmetic.",
+             SPELLING_RESULT, (("PARTICLE", "spell", "particle"), ("PREDICATE", "affected", "result"))),
+            ("Miss Barry actually laughed--a sound which caused Diana, waiting in speechless anxiety in the kitchen outside, to give a great gasp of relief.",
+             CAUSATIVE_RESPONSE, (("APPOSITION", "matrix", "sound"), ("CAUSER", "cause", "sound"))),
+            ("Anne lighted the lamp, oversetting the match safe and using up half a dozen matches before her shaking hands could accomplish the task.",
+             COORDINATED_PARTICIPLES, (("CONJUNCT", "first", "second"), ("ANTERIOR", "second", "boundary"))),
+            ("In writing it down I feel with only too much keenness the inadequacy of pen and ink—and, above all, my own inadequacy—to express its quality.",
+             DASH_REFORMULATION, (("CIRCUMSTANCE", "event", "context"), ("AGENT", "context", "subject"))),
+        )
+        for source, expected, links in cases:
+            with self.subTest(source=source):
+                _, lattice, result = self._parse(source)
+                self.assertTrue(result.completed, result.stats)
+                root = result.best()
+                self.assertEqual(root.rule_id, expected)
+                self.assertEqual((root.start, root.end), (0, len(source)))
+                self.assertFalse(result.stats.get("budget_exceeded"))
+                self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+                h, relations = self._semantic(result, lattice)
+                for rel, a, b in links:
+                    self.assertIn((rel, h[a], h[b]), relations)
+
+    def test_transfer_quoted_scope_repairs(self):
+        from seman_parser.scoped_literary_quotes import (
+            DOUBLE_PERFECT_PERSPECTIVE, HESITANT_ADMISSION, HESITANT_RESUMPTION, INTERRUPTED_CLOCK,
+            NOR_POSSESSION, REPORTED_INVERTED_CONTROL, REPORTED_OPINION, REPORTED_REGRET, SPLIT_SELF_IDENTIFICATION,
+        )
+        from seman_parser.spoken_three_acts import DIALECTAL_EVIDENCE, NEGATIVE_REPLY, WAIT_QUESTION
+
+        for source, expected, spans, links in (
+            ("“So most people think. But wait a moment. Can an _instantaneous_ cube exist?”",
+             WAIT_QUESTION, ("So most people think", "But wait a moment", "Can an _instantaneous_ cube exist"),
+             (("MODALITY", "question", "modal"), ("DURATION", "directive", "duration"))),
+            ("“No, sir. No one has come out this way. I was expecting to find him here.”",
+             NEGATIVE_REPLY, ("No, sir", "No one has come out this way", "I was expecting to find him here"),
+             (("ASPECT", "movement", "aux"), ("AGENT", "action", "expecter"))),
+            ("“Nor, having only length, breadth, and thickness, can a cube have a real existence.”",
+             NOR_POSSESSION, ("having only length, breadth, and thickness", "a real existence"),
+             (("NEGATION", "modal", "negation"), ("POSSESSOR", "supplement", "subject"))),
+            ("I looked round for the Time Traveller, and—“It’s half-past seven now,” said the Medical Man.",
+             INTERRUPTED_CLOCK, ("It’s half-past seven now", "the Medical Man"),
+             (("INTERRUPTION", "look", "report"), ("REPORTED_CONTENT", "report", "clock"))),
+            ("“But I shouldn’t think she was the sort of girl Gilbert would like,” whispered Jane to Anne.",
+             REPORTED_OPINION, ("But I shouldn’t think she was the sort of girl Gilbert would like", "to Anne"),
+             (("REPORTED_CONTENT", "report", "opinion"), ("RECIPIENT", "report", "recipient"))),
+            ("“Is not that rather a large thing to expect us to begin upon?” said Filby, an argumentative person with red hair.",
+             REPORTED_INVERTED_CONTROL, ("Is not that rather a large thing to expect us to begin upon", "Filby"),
+             (("REPORTED_CONTENT", "report", "content"), ("APPOSITION", "speaker", "appositive"))),
+            ("“To tell you the truth... I hardly believe it myself..... And yet...”",
+             HESITANT_ADMISSION, ("To tell you the truth", "I hardly believe it myself", "And yet"),
+             (("STANCE", "admission", "preface"), ("DISCOURSE", "admission", "unfinished"))),
+            ("“Diana might just have smiled at me once, I think,” she mourned to Marilla that night.",
+             REPORTED_REGRET, ("Diana might just have smiled at me once", "I think", "that night"),
+             (("REPORTED_CONTENT", "report", "content"), ("STANCE", "content", "stance"),
+              ("TIME", "report", "time"))),
+            ("“Well now, you’ve guessed it! But I reckon Mrs. Spencer described it so’s you could tell.”",
+             DIALECTAL_EVIDENCE, ("Well now, you’ve guessed it", "But I reckon Mrs. Spencer described it so’s you could tell"),
+             (("RESULT", "description", "result"), ("COMPLEMENT", "belief", "description"))),
+            ("“Anne Shirley,” faltered the shrinking child, not daring to make any stipulations regarding the spelling thereof, “and I’m eleven years old.”",
+             SPLIT_SELF_IDENTIFICATION, ("Anne Shirley", "the shrinking child", "and I’m eleven years old"),
+             (("AGENT", "potential_action", "speaker"), ("REPORTED_CONTENT", "report", "age_statement"))),
+            ("“I never would have thought she’d have turned out so well that first day I was here three years ago,” said Mrs. Rachel.",
+             DOUBLE_PERFECT_PERSPECTIVE, ("I never would have thought she’d have turned out so well that first day I was here three years ago", "Mrs. Rachel"),
+             (("REPORTED_CONTENT", "report", "content"), ("TIME", "content", "perspective"))),
+            ("“That,” said a very young man, making spasmodic efforts to relight his cigar over the lamp; “that . . . very clear indeed.”",
+             HESITANT_RESUMPTION, ("That", "a very young man", "that . . . very clear indeed"),
+             (("RESUMPTION", "abandoned", "resumed"), ("AGENT", "intention", "speaker"))),
+
+        ):
+            with self.subTest(source=source):
+                _, lattice, result = self._parse(source)
+                self.assertTrue(result.completed, result.stats)
+                root = result.best()
+                self.assertEqual(root.rule_id, expected)
+                self.assertEqual((root.start, root.end), (0, len(source)))
+                self.assertTrue(set(spans).issubset(self._spans(source, root.children)))
+                h, relations = self._semantic(result, lattice)
+                for rel, a, b in links:
+                    self.assertIn((rel, h[a], h[b]), relations)
+
+    def test_transfer_scoped_positive_variants_and_near_misses(self):
+        from seman_parser.scoped_transfer_clauses import (
+            CAUSAL_PERFECT, CONTRASTIVE_SERIES, NEGATIVE_PROFORM, NOMINAL_EXCLAMATION,
+            PROGRESSIVE_PERCEPTION, PROGRESSIVE_REPORT, RESULTATIVE_PURPOSE,
+        )
+        from seman_parser.scoped_motion_supplements import APPOSITIVE, CARRY, PARTITIVE_LOCATION, RISE
+        from seman_parser.scoped_literary_quotes import INTERRUPTED_CLOCK, NOR_POSSESSION, REPORTED_OPINION
+        from seman_parser.spoken_three_acts import NEGATIVE_REPLY, WAIT_QUESTION
+
+        from seman_parser.scoped_literary_quotes import (
+            DOUBLE_PERFECT_PERSPECTIVE, HESITANT_ADMISSION, HESITANT_RESUMPTION,
+            REPORTED_INVERTED_CONTROL, REPORTED_REGRET, SPLIT_SELF_IDENTIFICATION,
+        )
+        from seman_parser.scoped_motion_supplements import CAUSATIVE_RESPONSE, COORDINATED_PARTICIPLES, SPELLING_RESULT
+        from seman_parser.scoped_transfer_clauses import DASH_REFORMULATION, PARENTHETICAL_PURPOSE
+        from seman_parser.spoken_three_acts import DIALECTAL_EVIDENCE
+
+        for source, expected, accepted in (
+            ("A Parker fellowship!", NOMINAL_EXCLAMATION, True),
+            ("A Parker walked!", NOMINAL_EXCLAMATION, False),
+            ("For his face had suddenly filled with blood.", CAUSAL_PERFECT, True),
+            ("For his face had suddenly to fill with blood.", CAUSAL_PERFECT, False),
+            ("But none returned.", NEGATIVE_PROFORM, True),
+            ("But none developed a plan.", NEGATIVE_PROFORM, False),
+            ("She took not a step, but walked slowly to the door, and made a sound.", CONTRASTIVE_SERIES, True),
+            ("She said not a word, but left painfully to the table, and made a motion.", CONTRASTIVE_SERIES, False),
+            ("He looked into her eyes and, with a sigh, told her she were suffering from overwork, at which she laughed loudly.",
+             PROGRESSIVE_REPORT, False),
+            ("Then she turned over the hand holding her pipe, and I saw she was looking at a scar.",
+             PROGRESSIVE_PERCEPTION, True),
+            ("Then she turned over the hand holding her pipe, and I saw she were looking at a scar.",
+             PROGRESSIVE_PERCEPTION, False),
+            ("But he went away softly, leaving Mary alone to read her book with pleasure.",
+             RESULTATIVE_PURPOSE, True),
+            ("But he go away softly, leaving Mary alone to read her book with pleasure.",
+             RESULTATIVE_PURPOSE, False),
+            ("She picked up the lantern quickly, and carried it, glowing blue, through the door into the room.",
+             CARRY, True),
+            ("She picked up the lantern quickly, and carried it, holding blue, through the door into the room.",
+             CARRY, False),
+            ("Then, standing up, she went to the table, and with her back to us began to read her book.", RISE, True),
+            ("Then, standing up, she went to the table, and with his back to us began to read her book.", RISE, False),
+            ("Then Mary’s brothers, the Smiths from London, arrived; they all climbed into the wagon, among hay and woolen blankets.",
+             APPOSITIVE, True),
+            ("Then Mary’s brothers, the Smiths from London, arrived, they all climbed into the wagon, among hay and woolen blankets.",
+             APPOSITIVE, False),
+            ("She picked one of the tables that were placed around the room, and put it in front of the door, with two legs on the carpet.",
+             PARTITIVE_LOCATION, True),
+            ("She picked one of the tables that was placed around the room, and put it in front of the door, with two legs on the carpet.",
+             PARTITIVE_LOCATION, False),
+            ("“So many people believe. But wait a minute. Could a _different_ result occur?”", WAIT_QUESTION, True),
+            ("“So many people believe. But wait a minute. Could a different result occur?”", WAIT_QUESTION, False),
+            ("“No, sir. No one had come out that way. She was hoping to meet them there.”", NEGATIVE_REPLY, True),
+            ("“No, sir. No one has came out that way. She was hoping to meet them there.”", NEGATIVE_REPLY, False),
+            ("“Nor, having only flour, water and salt, could a baker have a real cake.”", NOR_POSSESSION, True),
+            ("“Nor, having only flour, water and salt, a baker could have a real cake.”", NOR_POSSESSION, False),
+            ("I looked around for Mary, and—“It’s half-past six now,” said John.", INTERRUPTED_CLOCK, True),
+            ("I looked around for Mary, and—“It’s half-past thirteen now,” said John.", INTERRUPTED_CLOCK, False),
+            ("“But I wouldn’t think it was the sort of book Mary would choose,” whispered Jane to Anne.",
+             REPORTED_OPINION, True),
+            ("“But I wouldn’t think it was the sort of book Mary would choose it,” whispered Jane to Anne.",
+             REPORTED_OPINION, False),
+            ("(The Doctor, to prove that he was not afraid, helped himself to a drink and tried to eat it raw.)",
+             PARENTHETICAL_PURPOSE, True),
+            ("(The Doctor, to prove that he was not afraid, helped herself to a drink and tried to eat it raw.)",
+             PARENTHETICAL_PURPOSE, False),
+            ("Mary Smith spelt him down in class and left him far out of sight in written arithmetic.",
+             SPELLING_RESULT, True),
+            ("Mary Smith spelt him down in class and left her far out of sight in written arithmetic.",
+             SPELLING_RESULT, False),
+            ("Miss Smith suddenly shouted—a sound which caused Mary, sitting in great fear in the room upstairs, to utter a cry.",
+             CAUSATIVE_RESPONSE, True),
+            ("Miss Smith suddenly shouted—a sound which caused Mary, sitting in great fear in the room upstairs, uttered a cry.",
+             CAUSATIVE_RESPONSE, False),
+            ("“Was not this quite a heavy task to expect them to begin on?” said Mary, a girl with black hair.",
+             REPORTED_INVERTED_CONTROL, True),
+            ("“Was not this quite a heavy task to expect they to begin on?” said Mary, a girl with black hair.",
+             REPORTED_INVERTED_CONTROL, False),
+            ("“To tell you the truth... I scarcely believe it myself... And yet...”", HESITANT_ADMISSION, True),
+            ("“To tell you the truth... I scarcely believe it himself... And yet...”", HESITANT_ADMISSION, False),
+            ("“Mary could just have smiled at us twice, I suppose,” she mourned to John that morning.",
+             REPORTED_REGRET, True),
+            ("“Mary could just have smiled at us twice, I suppose,” she mourned him that morning.",
+             REPORTED_REGRET, False),
+            ("“Well now, you’ve guessed it! But I suppose Mr. Brown explained it so’s we might understand.”",
+             DIALECTAL_EVIDENCE, True),
+            ("“Well now, you’ve guessed it! But I suppose Mr. Brown explained it so’s we might understand it.”",
+             DIALECTAL_EVIDENCE, False),
+            ("“Mary Brown,” stammered the trembling girl, not daring to make any comments regarding the pronunciation thereof, “and I’m twelve years old.”",
+             SPLIT_SELF_IDENTIFICATION, True),
+            ("“Mary Brown,” stammered the trembling girl, not daring to make any comments regarding the pronunciation thereof, “and I’m twelve year old.”",
+             SPLIT_SELF_IDENTIFICATION, False),
+            ("In setting it down I feel with only too much sadness the failure of speech—and, above all, my own failure—to describe its beauty.",
+             DASH_REFORMULATION, True),
+            ("In setting it down I feel with only too much sadness the failure of speech—and, above all, my own inability—to describe its beauty.",
+             DASH_REFORMULATION, False),
+            ("“I never would have guessed he’d have turned out so badly that second morning I was there four months ago,” replied Mr. Smith.",
+             DOUBLE_PERFECT_PERSPECTIVE, True),
+            ("“I never would have guessed he’d have turned out so badly that second morning I was there four month ago,” replied Mr. Smith.",
+             DOUBLE_PERFECT_PERSPECTIVE, False),
+            ("“This,” said a very young girl, making desperate efforts to light her pipe over the fire; “this . . . very simple indeed.”",
+             HESITANT_RESUMPTION, True),
+            ("“This,” said a very young girl, making desperate efforts to light her pipe over the fire; “that . . . very simple indeed.”",
+             HESITANT_RESUMPTION, False),
+            ("Mary lit the candle, upsetting the box and using up half a dozen matches before her trembling fingers could finish the task.",
+             COORDINATED_PARTICIPLES, True),
+            ("Mary lit the candle, upsetting the box and using up half a dozen matches before her trembling fingers finished.",
+             COORDINATED_PARTICIPLES, False),
+        ):
+            with self.subTest(source=source, expected=expected):
+                _, _, result = self._parse(source)
+                root = result.best()
+                self.assertEqual(root is not None and root.rule_id == expected, accepted)
+
+
 if __name__ == "__main__":
     unittest.main()
