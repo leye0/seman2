@@ -87,3 +87,23 @@ PYTHONPATH=superparser python -m scripts.evaluate_novel_transfer_replay \
 The runner writes paired `_cohort.jsonl` and `_parses.jsonl` files for
 `transfer24-v1`, `replay96-v1`, `extension48-v1` and `blind42-v1`.
 Only the source manifest is emitted with `--sample-only`.
+
+## Second, separate development sample
+
+A 24-unit development sample from Anne of Green Gables uses paragraphs
+outside the four frozen sets above. It was sampled without replacement
+within each paragraph, with six units in each of four length bands
+(6–10, 11–17, 18–23, and 24–28 tokens), ordered by SHA-256 of book ID,
+source start offset and salt `seman2-dev-scout-v1`. This sample was then
+used to develop two additional repairs, so it is not a control.
+
+| Source anchor | Verified change |
+| --- | --- |
+| S45-0913 | Direction home and the independent genitive origin both modify the motion. The implicit possessed location stays distinct from its possessor and no noun is inserted into the tree. The same subject governs the coordinated call to account. |
+| S45-3220 | The two coordinated participants are agents of the attempt and its controlled infinitive, not the observer. The resulting state is a goal of restoring, not a claim that recovery happened. |
+
+The locked development sample moves from 21/24 to 23/24, with all 21
+previous selected trees unchanged. Its original ordered source anchors are
+replayable as `scout24-v1` through the same command. The remaining case,
+S45-3011, combines coordinated possessors, a quoted title used as a direct
+object, and two coordinated actions. It is kept as an open development case.

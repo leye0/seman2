@@ -75,6 +75,7 @@ from .scoped_narrative_followup import (
     EMPHATIC_NARRATIVE, plan_emphatic_narrative,
     EMPHASIS_CLOSURE, plan_emphasis_closure,
     EXPLAINED_QUOTED_THEME, plan_explained_quoted_theme,
+    PERCEIVED_ATTEMPT, plan_perceived_attempt, GENITIVE_ORIGIN, plan_genitive_origin,
 )
 from .scoped_discourse_followup import (
     TELLING, ELAPSED, plan_telling_pseudocleft, plan_elapsed_event,
@@ -163,6 +164,8 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    (GENITIVE_ORIGIN, plan_genitive_origin),
+    (PERCEIVED_ATTEMPT, plan_perceived_attempt),
     (ELAPSED, plan_elapsed_event),
     (EMPHATIC_NARRATIVE, plan_emphatic_narrative),
     (EMPHASIS_CLOSURE, plan_emphasis_closure),
@@ -193,6 +196,7 @@ _SCOPED_UNSATURATED = frozenset((
     *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    PERCEIVED_ATTEMPT: 1, GENITIVE_ORIGIN: 1,
     **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, MODAL_ECHO_REBUKE: 3, TELLING: 2, ELAPSED: 1,
     EMPHATIC_MODAL_CONTRAST: 2, REPORTED_EMPHATIC_OPINIONS: 2,
     EXTRAPOSED_PASSIVE_REPORT: 2, EMPHATIC_QUESTION_TURN: 1,

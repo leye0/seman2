@@ -1,4 +1,4 @@
-"""Reproduce the recorded 24-, 96-, 48- and 42-unit source cohorts.
+"""Reproduce frozen literary transfer, control, and development cohorts.
 
 The exact source coordinates are pinned even when extraction ordinals
 change. Marker-only documentary dispositions are recorded, not parsed.

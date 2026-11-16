@@ -267,3 +267,69 @@ def plan_explained_quoted_theme(text, components):
         ))
     mark("SPEECH-STOP", *m.span("stop"))
     return specs
+
+
+PERCEIVED_ATTEMPT = "structural_perceived_coordinated_attempt_with_result_goal"
+_OBSERVED = re.compile(
+    rf"(?P<observer>(?i:{_PRON}|the +[a-z][a-z-]*)) +(?P<perception>found|saw|observed|discovered) +"
+    rf"(?P<left>{_PERSON}) +(?P<and>and) +(?P<right>{_PERSON}) +"
+    r"(?P<manner>[a-z]+ly) +(?P<attempt>trying|attempting|striving) +(?P<to>to) +"
+    rf"(?P<action>restore|bring|pull|return|take) +(?P<patient>{_PERSON}|him|her|them) +"
+    r"(?P<goal>to +(?:(?:the|a) +)?(?:consciousness|safety|health|shore|surface|life|room))(?P<stop>[.!])"
+)
+
+
+def plan_perceived_attempt(text, components):
+    """The coordinated participants control the participle and its infinitive."""
+    m = _OBSERVED.fullmatch(text)
+    if m is None or not _matrix(text, components) or m["left"] == m["right"]:
+        return None
+    specs, _, _, part = _specs()
+    part(m, 0, (
+        ("observer", "NP", "subject-phrase", {}),
+        ("perception", "V", "lexical-alternatives",
+         _v("finite", "clausal", lemma_in="find|see|observe|discover", nonbase_surface="true")),
+        ("left", "NP", "proper-phrase", {}),
+        ("and", "COORD", "lexical", {"nominal_coordination": "true", "lemma_in": "and"}),
+        ("right", "NP", "proper-phrase", {}),
+        ("manner", "ADV", "lexical", {}),
+        ("attempt", "V", "lexical-alternatives", _v("ing", "subject_control")),
+        ("to", "TO", "lexical", {}),
+        ("action", "V", "lexical-alternatives", _v("base", "prep_ditransitive")),
+        ("patient", "NP", "proper-phrase" if m["patient"][0].isupper() else "phrase", {}),
+        ("goal", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+GENITIVE_ORIGIN = "structural_motion_with_genitive_origin_and_coordinated_accountability"
+_ORIGIN = re.compile(
+    rf"(?P<subject>(?i:{_PRON})) +(?P<move>came|went|returned|walked) +(?P<home>home) +"
+    rf"(?P<from>from) +(?P<owner>(?:Mr\.|Mrs\.|Dr\.|Miss) +{_PERSON}|{_PERSON})"
+    rf"(?P<genitive>[’']s) +(?P<and>and) +(?P<call>called) +(?P<questioned>{_PERSON}|him|her|them)"
+    r" +(?P<account>to +account)(?P<stop>[.!])"
+)
+
+
+def plan_genitive_origin(text, components):
+    """Preserve the independent genitive without inventing a possessed noun."""
+    m = _ORIGIN.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, _, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("move", "V", "lexical-alternatives",
+         _v("finite", "intransitive", lemma_in="come|go|return|walk", nonbase_surface="true")),
+        ("home", "ADV", "lexical", {"lemma_in": "home"}),
+        ("from", "PREP", "lexical", {"lemma_in": "from"}),
+        ("owner", "NP", "proper-phrase", {}),
+        ("genitive", "POSS", "lexical", {"genitive_clitic": "true"}),
+        ("and", "COORD", "lexical", {"lemma_in": "and"}),
+        ("call", "V", "lexical-alternatives", _v("finite", "prep_ditransitive", lemma_in="call")),
+        ("questioned", "NP", "proper-phrase" if m["questioned"][0].isupper() else "phrase", {}),
+        ("account", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs

@@ -3828,6 +3828,69 @@ class TransferSpokenActsAndCoordinationTests(unittest.TestCase):
                 root = result.best()
                 self.assertEqual(accepted, root is not None and root.rule_id == expected)
 
+    def test_independent_genitive_origin_preserves_possessor_but_not_a_fabricated_noun(self):
+        from seman_parser.scoped_narrative_followup import GENITIVE_ORIGIN
+
+        for source, accepted in (
+            ("She came home from Mrs. Lynde’s and called Anne to account.", True),
+            ("He returned home from John’s and called Mary to account.", True),
+            ("She came home from Mrs. Lynde and called Anne to account.", False),
+            ("She came home from Mrs. Lynde’s and called Anne to apologize.", False),
+        ):
+            with self.subTest(source=source):
+                _, lattice, result = self._parse(source)
+                root = result.best()
+                self.assertEqual(accepted, root is not None and root.rule_id == GENITIVE_ORIGIN)
+                if not accepted:
+                    continue
+                self.assertEqual((0, len(source)), (root.start, root.end))
+                possessive = root.children[1].children[-1].children[-1]
+                self.assertEqual([child.category for child in possessive.children], ["NP", "POSS"])
+                self.assertEqual(self._spans(source, possessive.children)[-1], "’s")
+                h, links = self._semantic(result, lattice)
+                self.assertNotEqual(h["possessor"], h["origin"])
+                for rel, a, b in (
+                    ("POSSESSOR", "origin", "possessor"), ("SOURCE", "motion", "origin"),
+                    ("DESTINATION", "motion", "destination"), ("AGENT", "motion", "subject"),
+                    ("AGENT", "calling", "subject"), ("AFFECTED", "calling", "questioned"),
+                    ("CONJUNCT", "motion", "calling"),
+                ):
+                    self.assertIn((rel, h[a], h[b]), links)
+                self.assertNotIn(("SOURCE", h["calling"], h["origin"]), links)
+
+    def test_observed_attempt_keeps_both_controllers_and_local_result_goal(self):
+        from seman_parser.scoped_narrative_followup import PERCEIVED_ATTEMPT
+
+        for source, coordinated, goal, accepted in (
+            ("They found Anne and Marilla distractedly trying to restore Matthew to consciousness.",
+             "Anne and Marilla", "to consciousness", True),
+            ("We saw Mary and John desperately trying to pull him to safety.",
+             "Mary and John", "to safety", True),
+            ("We saw Mary and John desperately tried to pull him to safety.", "", "", False),
+            ("We saw Mary and John desperately trying to pull him in safety.", "", "", False),
+            ("We told Mary and John desperately trying to pull him to safety.", "", "", False),
+        ):
+            with self.subTest(source=source):
+                _, lattice, result = self._parse(source)
+                root = result.best()
+                self.assertEqual(accepted, root is not None and root.rule_id == PERCEIVED_ATTEMPT)
+                if not accepted:
+                    continue
+                self.assertEqual((0, len(source)), (root.start, root.end))
+                self.assertEqual(source[root.children[2].start:root.children[2].end], coordinated)
+                tail = root.children[3].children[-1].children[-1]
+                self.assertEqual(source[tail.start:tail.end], goal)
+                h, links = self._semantic(result, lattice)
+                self.assertIn(("COMPLEMENT", h["perception"], h["attempt"]), links)
+                self.assertIn(("MANNER", h["attempt"], h["attempt_manner"]), links)
+                self.assertIn(("CONTROL_COMPLEMENT", h["attempt"], h["action"]), links)
+                self.assertIn(("RESULT_GOAL", h["action"], h["goal"]), links)
+                self.assertNotIn(("RESULT_GOAL", h["perception"], h["goal"]), links)
+                for agent in (h["participant1"], h["participant2"]):
+                    self.assertIn(("AGENT", h["attempt"], agent), links)
+                    self.assertIn(("AGENT", h["action"], agent), links)
+                self.assertNotIn(("AGENT", h["action"], h["observer"]), links)
+
     def test_verse_condition_needs_original_line_break_and_preserves_roles(self):
         from seman_parser.scoped_discourse_followup import CONDITIONAL_VERSE
 
