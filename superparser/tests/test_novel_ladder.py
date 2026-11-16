@@ -1,4 +1,6 @@
 from collections import Counter
+from contextlib import redirect_stdout
+from io import StringIO
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -33,7 +35,8 @@ def sources():
 
 
 def complete_row(index):
-    return {"index": index, "status": "complete", "rank_one_sha256": f"tree-{index}",
+    return {"index": index, "status": "complete", "rank_one_sha256": ladder.digest(["tree", index]),
+            "selected_graph_sha256": ladder.digest(["graph", index]),
             "root_rule": "example", "forest_budget_exceeded": False, "kbest_budget_exceeded": False}
 
 
@@ -42,10 +45,17 @@ def result(cohort, *, incomplete=False):
     rows = [complete_row(i) for i in range(begin, begin + 100)]
     if incomplete:
         rows[-1] = {**rows[-1], "status": "no_structural_root",
-                    "root_rule": None, "rank_one_sha256": None}
+                    "root_rule": None, "rank_one_sha256": None, "selected_graph_sha256": None}
     return {"schema": "seman2-novel-ladder-result-v1", "limits": ladder.LIMITS,
             "cohort_sha256": cohort["cohort_sha256"],
             "counts": dict(Counter(r["status"] for r in rows)), "cases": rows}
+
+
+def review_doc(cohort, rows, verdict="verified"):
+    return {"schema": ladder.REVIEW_SCHEMA, "cohort_sha256": cohort["cohort_sha256"],
+            "cases": [{"index": r["index"], "verdict": verdict, "evidence": "Gold attachment",
+                       "rank_one_sha256": r["rank_one_sha256"],
+                       "selected_graph_sha256": r["selected_graph_sha256"]} for r in rows]}
 
 
 class NovelLadderTests(unittest.TestCase):
@@ -66,8 +76,11 @@ class NovelLadderTests(unittest.TestCase):
             ladder.write_json(directory / "novel-600-accepted.json", accepted)
             with self.assertRaisesRegex(ValueError, "reviewed before expanding"):
                 ladder.freeze(directory, src)
-            accepted["rank_one_reviewed"] = list(range(501, 601))
+            accepted["rank_one_reviewed"] = list(range(501, 601))  # IDs are not evidence.
             ladder.write_json(directory / "novel-600-accepted.json", accepted)
+            with self.assertRaisesRegex(ValueError, "reviewed before expanding"):
+                ladder.freeze(directory, src)
+            ladder.write_json(directory / "novel-600-review.json", review_doc(cohort, accepted["cases"]))
             next_path = ladder.freeze(directory, src)
             self.assertEqual(next_path.name, "novel-700-cohort.json")
             self.assertEqual(path.read_bytes(), first)
@@ -100,3 +113,50 @@ class NovelLadderTests(unittest.TestCase):
     def test_source_fingerprint_is_from_an_ordered_anchor_list(self):
         self.assertEqual(ladder.digest({"b": 2, "a": 1}), ladder.digest({"a": 1, "b": 2}))
         self.assertNotEqual(ladder.digest([501, 502]), ladder.digest([502, 501]))
+
+    def test_quality_does_not_count_wrong_or_unreviewed_trees(self):
+        src = sources()
+        with TemporaryDirectory() as temp:
+            directory = Path(temp)
+            cohort = ladder.read_json(ladder.freeze(directory, src))
+            data = result(cohort)
+            ladder.write_json(directory / "novel-600-current.json", data)
+            review = review_doc(cohort, data["cases"][:2])
+            review["cases"][1]["verdict"] = "needs_fix"
+            ladder.write_json(directory / "novel-600-review.json", review)
+            cohorts, _, _ = ladder.read_ladder(directory, src)
+            output = StringIO()
+            with redirect_stdout(output):
+                ladder.quality(cohorts, directory)
+            self.assertIn("1/100 verified; 1 need a fix; 98 unreviewed", output.getvalue())
+            output = StringIO()
+            with redirect_stdout(output):
+                ladder.print_queue(cohorts, directory, 500)
+            self.assertEqual(json.loads(output.getvalue())["index"], 502)
+            review["cases"].pop()
+            ladder.write_json(directory / "novel-600-review.json", review)
+            output = StringIO()
+            with redirect_stdout(output):
+                ladder.print_queue(cohorts, directory, 500)
+            self.assertEqual(json.loads(output.getvalue())["index"], 502)
+
+    def test_stale_semantic_review_is_not_accepted(self):
+        cohort = {"cohort_sha256": "same", "first_index": 501}
+        original = result(cohort)
+        observed = result(cohort)
+        observed["cases"][0]["selected_graph_sha256"] = "different"
+        with TemporaryDirectory() as temp:
+            directory = Path(temp)
+            ladder.write_json(directory / "novel-600-review.json", review_doc(cohort, original["cases"][:1]))
+            with self.assertRaisesRegex(ValueError, "selected_graph_sha256 changed"):
+                ladder.load_review(directory, 600, cohort, observed)
+
+    def test_graph_hash_ignores_ids_but_not_attachment(self):
+        def package(a, b, *, reversed_edge=False):
+            return {"handles": {"head": a}, "graph": {
+                "nodes": [{"id": a, "span": [0, 3]}, {"id": b, "span": [4, 7]}],
+                "relations": [{"relation": "AGENT", "source": b if reversed_edge else a,
+                               "target": a if reversed_edge else b}]}}
+        self.assertEqual(ladder.graph_digest(package("a", "b")), ladder.graph_digest(package("c", "d")))
+        self.assertNotEqual(ladder.graph_digest(package("a", "b")),
+                            ladder.graph_digest(package("a", "b", reversed_edge=True)))

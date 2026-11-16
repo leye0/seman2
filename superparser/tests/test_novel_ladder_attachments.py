@@ -20,8 +20,6 @@ class NovelLadderAttachmentTests(unittest.TestCase):
         for source, shared in ((attested, True), (positive, True), (negative, False)):
             with self.subTest(source=source):
                 cases, _ = extract(PROBE, source, length_min=1, length_max=120)
-                if not shared and len(cases) != 1:
-                    continue
                 case, = cases
                 prepared, lattice, result = parse_corpus_case(
                     self.parser, case, max_items=50_000, kbest_work_limit=500_000,
@@ -432,3 +430,186 @@ class NovelLadderAttachmentTests(unittest.TestCase):
             ],
         )
 
+
+    def test_novel_522_distinguishes_comparison_and_outer_relative(self):
+        self.assert_family(
+            plans.COPULAR_COMPARED_RELATIVE,
+            "It was, in fact, a sledge, like that we had seen before, which had drifted towards us in the night on a large fragment of ice.",
+            "It was, indeed, a boat, like that we had found earlier, which had floated towards the shore during the storm on a rising tide.",
+            "It was, indeed, a boat, like that we had find earlier, which had floated towards the shore during the storm on a rising tide.",
+            [
+                ("ATTRIBUTE", "event", "vehicle"), ("DISCOURSE", "event", "stance"),
+                ("COMPARISON", "vehicle", "standard"), ("RELATIVE", "standard", "observation"),
+                ("THEME", "observation", "standard"), ("AGENT", "observation", "observer"),
+                ("RELATIVE", "vehicle", "motion"), ("THEME", "motion", "vehicle"),
+                ("COREFERENCE", "relative_marker", "vehicle"), ("TIME", "motion", "time"),
+                ("DIRECTION", "motion", "direction"), ("CIRCUMSTANCE", "motion", "support"),
+            ],
+        )
+
+    def test_novel_543_concession_is_modal_perfect_and_capacity_controls_infinitive(self):
+        self.assert_family(
+            plans.MODAL_PERFECT_CONCESSION,
+            "Sharp as must have been his annoyance, Silver had the strength of mind to hide it.",
+            "Great as might have been her fear, Clara had the strength of character to face it.",
+            "Great as might have be her fear, Clara had the strength of character to face it.",
+            [
+                ("CONCESSION", "possession", "state"), ("THEME", "state", "state_bearer"),
+                ("ATTRIBUTE", "state", "degree_state"), ("MODALITY", "state", "modal"),
+                ("ASPECT", "state", "aspect"), ("THEME", "possession", "capacity"),
+                ("COMPLEMENT", "capacity", "action"), ("AGENT", "action", "subject"),
+                ("THEME", "action", "anaphor"),
+            ],
+        )
+
+    def test_novel_566_preserves_the_full_existential_content(self):
+        self.assert_family(
+            plans.INCISED_EXISTENTIAL_CONTENT,
+            "My impression is, after many years of consideration, that there never can have been anybody in the world who played worse.",
+            "Her conclusion was, after several months of observation, that there never could have been anybody in the village who sang better.",
+            "Her conclusion was, after several months of observation, that there never could has been anybody in the village who sang better.",
+            [
+                ("TIME", "event", "consideration_time"), ("CONTENT", "subject", "content"),
+                ("EXISTENT", "content", "pivot"), ("DOMAIN", "pivot", "domain"),
+                ("MODALITY", "content", "modal"), ("ASPECT", "content", "aspect"),
+                ("NEGATION", "modal", "negation"), ("RELATIVE", "pivot", "relative_action"),
+                ("AGENT", "relative_action", "pivot"), ("MANNER", "relative_action", "relative_manner"),
+            ],
+        )
+
+    def test_novel_588_frequency_has_scope_and_charlotte_stays_subject(self):
+        self.assert_family(
+            plans.FREQUENCY_CONTRAST,
+            "Once or twice she could discern a faint blush; but in general Charlotte wisely did not hear.",
+            "Once or twice he could notice a slight movement; but in general Clara prudently did not speak.",
+            "Once or twice he could noticed a slight movement; but in general Clara prudently did not speak.",
+            [
+                ("ALTERNATIVE", "first_frequency", "second_frequency"),
+                ("FREQUENCY", "perception", "first_frequency"), ("EXPERIENCER", "perception", "observer"),
+                ("THEME", "perception", "perceived"), ("FREQUENCY", "hearing", "generalization"),
+                ("EXPERIENCER", "hearing", "hearer"), ("MANNER", "hearing", "manner"),
+                ("NEGATION", "hearing", "negation"), ("CONTRAST", "perception", "hearing"),
+            ],
+        )
+
+    def test_novel_599_shared_subject_depictive_and_finite_purpose(self):
+        self.assert_family(
+            plans.DEPICTIVE_FINITE_PURPOSE,
+            "Elizabeth received her congratulations amongst the rest, and then, sick of this folly, took refuge in her own room, that she might think with freedom.",
+            "Clara accepted her apologies among the guests, and then, tired of the commotion, took shelter in her room, that she might rest with ease.",
+            "Clara accepted her apologies among the guests, and then, tired of the commotion, took shelter in her room, that she might rested with ease.",
+            [
+                ("THEME", "event", "item"), ("CIRCUMSTANCE", "event", "group"),
+                ("AGENT", "event", "subject"), ("AGENT", "second", "subject"),
+                ("CONJUNCT", "event", "second"), ("TIME", "second", "then"),
+                ("DEPICTIVE", "second", "state"), ("THEME", "state", "subject"),
+                ("LOCATION", "second", "location"), ("PURPOSE", "second", "purpose"),
+                ("AGENT", "purpose", "purpose_subject"), ("MANNER", "purpose", "purpose_manner"),
+            ],
+        )
+
+    def test_novel_503_relative_object_gap_refers_to_the_matrix_object(self):
+        self.assert_family(
+            plans.EMPHATIC_OBJECT_RELATIVE,
+            "She indeed gained the resignation she desired.",
+            "He indeed bought the book he wanted.",
+            "He indeed bought the book him wanted.",
+            [("THEME", "event", "object"), ("THEME", "relative_event", "object"),
+             ("AGENT", "relative_event", "relative_subject"), ("RELATIVE", "object", "relative_event")],
+        )
+
+    def test_novel_507_interjection_and_addressee_are_not_two_names(self):
+        self.assert_family(
+            plans.REPORTED_EXCLAMATION_VOCATIVE,
+            '"Oh, Justine!" said she.',
+            '“Ah, Margaret!” exclaimed he.',
+            '“Oh, Margaret!” he broke the chair.',
+            [("VOCATIVE", "outcry", "addressee"), ("AGENT", "event", "speaker"),
+             ("REPORTED_CONTENT", "event", "outcry"), ("ADDRESSEE", "event", "addressee")],
+        )
+
+    def test_novel_511_fever_is_antecedent_and_months_are_duration(self):
+        self.assert_family(
+            plans.EMBEDDED_DURATION_RELATIVE,
+            "This was the commencement of a nervous fever which confined me for several months.",
+            "This was the onset of a severe illness which detained her for several weeks.",
+            "This was the onset of a severe illness which detain her for several weeks.",
+            [("ATTRIBUTE", "event", "classification"), ("COMPLEMENT", "classification", "antecedent"),
+             ("RELATIVE", "antecedent", "relative_event"), ("AGENT", "relative_event", "antecedent"),
+             ("THEME", "relative_event", "affected"), ("DURATION", "relative_event", "duration")],
+        )
+
+    def test_novel_530_reports_a_negative_modal_question(self):
+        self.assert_family(
+            plans.REPORTED_MODAL_CONFIRMATION,
+            '\"You won\'t forget?\" he inquired anxiously.',
+            '\"She wouldn\'t listen?\" he asked softly.',
+            '\"You won forget?\" he inquired anxiously.',
+            [("AGENT", "question_event", "question_subject"), ("MODALITY", "question_event", "modal"),
+             ("NEGATION", "modal", "negation"), ("AGENT", "event", "speaker"),
+             ("MANNER", "event", "manner"), ("REPORTED_CONTENT", "event", "question_event")],
+        )
+
+    def test_novel_576_quoted_reprise_is_a_response_not_an_apposition(self):
+        self.assert_family(
+            plans.QUOTED_NEGATIVE_REPRISE,
+            '“No, not at all.”',
+            '“No, not in the least.”',
+            '“No, not a word.”',
+            [("DEGREE", "negation", "degree"), ("REINFORCEMENT", "response", "negation")],
+        )
+
+    def test_novel_577_reporting_manner_stays_outside_the_elliptical_answer(self):
+        self.assert_family(
+            plans.REPORT_COPULAR_ELLIPSIS,
+            "Elizabeth replied very concisely that she was.",
+            "Clara answered very calmly that he was.",
+            "Clara answered very calmly that he were.",
+            [("AGENT", "event", "subject"), ("MANNER", "event", "manner"),
+             ("DEGREE", "manner", "degree"), ("REPORTED_CONTENT", "event", "content"),
+             ("THEME", "content", "embedded_subject")],
+        )
+
+    def test_novel_578_maam_is_a_vocative_not_a_contraction_of_be(self):
+        self.assert_family(
+            plans.AFFIRMATIVE_TOTALITY,
+            "“Yes, ma'am, all.”",
+            '“Yes, sir, all.”',
+            '“Yes, sir, all agreed.”',
+            [("VOCATIVE", "answer", "addressee"), ("ANSWER_VALUE", "answer", "totality")],
+        )
+
+    def test_novel_579_not_stands_for_negative_content_not_manner(self):
+        self.assert_family(
+            plans.NEGATIVE_PROPOSITIONAL_REPLY,
+            '“No, I believe not.”',
+            '“No, we think not.”',
+            '“No, we walk not.”',
+            [("EXPERIENCER", "belief", "thinker"), ("CONTENT_PROFORM", "belief", "negative_proform"),
+             ("QUALIFICATION", "answer", "belief")],
+        )
+
+    def test_novel_501_reports_an_interjection_not_a_stranded_adverb(self):
+        self.assert_family(
+            plans.REPORTED_INTERJECTION,
+            '"Alas!" said she.', '“Ah!” exclaimed he.', '“Quickly!” exclaimed he.',
+            [("AGENT", "event", "speaker"), ("REPORTED_CONTENT", "event", "outcry")],
+        )
+
+    def test_novel_504_keeps_cause_on_the_passive_event(self):
+        self.assert_family(
+            plans.PHONATION_PASSIVE_CAUSE,
+            "Her voice was suffocated with sobs.", "Her voice was choked with emotion.",
+            "Her voice was choked with a scarf.",
+            [("THEME", "event", "voice"), ("AUXILIARY", "event", "auxiliary"),
+             ("CAUSE", "event", "cause"), ("POSSESSOR", "voice", "possessor")],
+        )
+
+    def test_novel_505_response_and_scoped_copular_negation(self):
+        self.assert_family(
+            plans.NEGATED_GRADED_RESPONSE,
+            "No; I am not so selfish.", "No; we were not so careless.", "No; we was not so careless.",
+            [("RESPONSE_ELABORATION", "response", "event"), ("THEME", "event", "subject"),
+             ("ATTRIBUTE", "event", "attribute"), ("NEGATION", "event", "negation"),
+             ("DEGREE", "attribute", "degree")],
+        )

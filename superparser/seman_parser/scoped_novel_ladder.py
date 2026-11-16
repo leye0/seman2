@@ -1098,3 +1098,555 @@ def plan_perfect_located_motion(text, components):
         ("stop", "SPEECH-STOP", "source-punctuation", {}),
     ))
     return specs
+
+
+COPULAR_COMPARED_RELATIVE = "structural_copular_classification_with_comparison_and_supplementary_relative"
+_COMPARED_RELATIVE = re.compile(
+    r"(?P<subject>It|This|That) +(?P<be>was|is), +(?P<stance>in fact|in truth|indeed), +"
+    r"(?P<classification>(?:a|an|the) +[a-z][a-z-]*(?: +[a-z][a-z-]*)?), +"
+    r"(?P<like>like) +(?P<standard>that|the one) +"
+    r"(?P<observer>I|he|she|we|you|they) +(?P<observed_aspect>had) +"
+    r"(?P<observed>[a-z][a-z-]*) +(?P<earlier>before|earlier|previously), +"
+    r"(?P<which>which) +(?P<motion_aspect>had) +(?P<motion>drifted|floated|sailed|moved|rolled) +"
+    r"(?P<direction>(?:towards?|to) +(?:(?:the|a|an) +)?[a-z][a-z-]*) +"
+    r"(?P<time>(?:in|during) +the +[a-z][a-z-]*) +"
+    r"(?P<support>on +(?:a|an|the) +[a-z][a-z-]*(?: +[a-z][a-z-]*){0,2}(?: +of +[a-z][a-z-]*)?)"
+    r"(?P<stop>[.!])"
+)
+
+
+def plan_copular_compared_relative(text, components):
+    """Keep the comparison standard and the outer relative antecedent distinct."""
+    m = _COMPARED_RELATIVE.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, mark, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "phrase", {"pronominal": "true"} if m["subject"] == "It" else {}),
+        ("be", "COPULA", "lexical", {"vform": "finite", "number": "singular"}),
+    ))
+    mark("COMMA", m.end("be"), m.end("be") + 1)
+    part(m, 0, (("stance", "ADV", "lexical", {}),))
+    mark("COMMA", m.end("stance"), m.end("stance") + 1)
+    part(m, 0, (("classification", "NP", "phrase", {"proof_rule": "np_det_n"}),))
+    mark("COMMA", m.end("classification"), m.end("classification") + 1)
+    part(m, 0, (
+        ("like", "PREP", "lexical", {"comparison": "true"}),
+        ("standard", "NP", "phrase", {"proof_rule": "np_demonstrative" if m["standard"] == "that" else "np_det_n"}),
+        ("observer", "NP", "subject-phrase", {}),
+        ("observed_aspect", "HAVE", "lexical", {"vform": "finite"}),
+        ("observed", "V", "lexical-alternatives", _v("ed", "transitive")),
+        ("earlier", "ADV", "lexical", {}),
+    ))
+    mark("COMMA", m.end("earlier"), m.end("earlier") + 1)
+    part(m, 0, (
+        ("which", "WH-PRONOUN", "lexical", {"wh": "true"}),
+        ("motion_aspect", "HAVE", "lexical", {"vform": "finite"}),
+        ("motion", "V", "lexical-alternatives", _v("ed", "intransitive")),
+        ("direction", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("time", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("support", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+MODAL_PERFECT_CONCESSION = "structural_inverted_modal_perfect_concession_with_capacity_infinitive"
+_PERFECT_CONCESSION = re.compile(
+    r"(?P<degree>[A-Z][a-z-]+) +(?P<as>as) +(?P<modal>must|might|may|could|would) +"
+    r"(?P<have>have) +(?P<be>been) +(?P<bearer>(?:my|your|his|her|their|our|the) +[a-z][a-z-]*), +"
+    r"(?P<subject>[A-Z][a-z]+|he|she|they|I|you|we) +(?P<had>had) +(?P<det>the) +"
+    r"(?P<capacity>strength|courage|presence) +(?P<of>of) +(?P<domain>mind|character|conviction) +"
+    r"(?P<to>to) +(?P<action>[a-z][a-z-]+) +(?P<object>it|him|her|them|me|us|you)(?P<stop>[.!])"
+)
+
+
+def plan_modal_perfect_concession(text, components):
+    """Fronted predicative adjective in a concessive as-clause, not equative as."""
+    m = _PERFECT_CONCESSION.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, mark, part = _specs()
+    part(m, 0, (
+        ("degree", "ADJ", "lexical", {}),
+        ("as", "CONJ", "lexical", {"degree": "true"}),
+        ("modal", "MODAL", "lexical", {"vform": "finite"}),
+        ("have", "HAVE", "lexical", {"vform": "base"}),
+        ("be", "COPULA", "lexical", {"vform": "ed"}),
+        ("bearer", "NP", "phrase", {"simple_nominal_proof": "true"}),
+    ))
+    mark("COMMA", m.end("bearer"), m.end("bearer") + 1)
+    part(m, 0, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("had", "V", "lexical-alternatives", _v("finite", "transitive", lemma_in="have")),
+        ("det", "DET", "lexical", {"definiteness": "definite", "number": "singular"}),
+        ("capacity", "N", "lexical", {"number": "singular"}),
+        ("of", "PREP", "lexical", {"nominal_complement": "of"}),
+        ("domain", "N", "lexical", {"number": "singular"}),
+        ("to", "TO", "lexical", {}),
+        ("action", "V", "lexical-alternatives", _v("base", "transitive")),
+        ("object", "PRONOUN", "lexical", {"reflexive": "false"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+INCISED_EXISTENTIAL_CONTENT = "structural_incised_copular_proposition_with_modal_perfect_existential"
+_EXISTENTIAL_CONTENT = re.compile(
+    r"(?P<subject>(?:My|His|Her|Our|Their|Your|The) +(?:impression|belief|conclusion|opinion)) +"
+    r"(?P<be>is|was), +(?P<time>after +(?:many|several|some|a +few) +(?:years|months|days|hours) +"
+    r"of +[a-z][a-z-]*), +(?P<that>that) +(?P<there>there) +(?P<never>never) +"
+    r"(?P<modal>can|could|may|might|must) +(?P<have>have) +(?P<been>been) +"
+    r"(?P<pivot>anybody|any +[a-z][a-z-]*) +(?P<domain>in +the +[a-z][a-z-]*) +"
+    r"(?P<who>who) +(?P<action>[a-z][a-z-]*) +(?P<manner>worse|better)(?P<stop>[.!])"
+)
+
+
+def plan_incised_existential_content(text, components):
+    """The proposition is the copular attribute; the relative restricts its pivot."""
+    m = _EXISTENTIAL_CONTENT.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, mark, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "phrase", {"number": "singular", "simple_nominal_proof": "true"}),
+        ("be", "COPULA", "lexical", {"vform": "finite", "number": "singular"}),
+    ))
+    mark("COMMA", m.end("be"), m.end("be") + 1)
+    part(m, 0, (("time", "PP", "phrase", {"proof_rule": "pp_prep_np"}),))
+    mark("COMMA", m.end("time"), m.end("time") + 1)
+    part(m, 0, (
+        ("that", "COMP-THAT", "lexical", {}),
+        ("there", "EXPL", "lexical", {"expletive": "true"}),
+        ("never", "DEGREE", "lexical", {"negation": "true"}),
+        ("modal", "MODAL", "lexical", {"vform": "finite"}),
+        ("have", "HAVE", "lexical", {"vform": "base"}),
+        ("been", "COPULA", "lexical", {"vform": "ed"}),
+        ("pivot", "NP", "phrase", {"proof_rule": "np_det_n" if " " in m["pivot"] else "np_indef_pron"}),
+        ("domain", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("who", "WH-PRONOUN", "lexical", {"wh": "true"}),
+        ("action", "V", "lexical-alternatives", _v("finite", "intransitive", nonbase_surface="true")),
+        ("manner", "ADV", "lexical", {"manner_comparative": "true"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+FREQUENCY_CONTRAST = "structural_frequency_alternative_and_adversative_perception"
+_FREQUENCY_CONTRAST = re.compile(
+    r"(?P<first>Once|Twice) +(?P<or>or) +(?P<second>twice|thrice) +(?P<observer>I|we|she|he|you|they) +"
+    r"(?P<modal>could|can|might|would) +(?P<perceive>[a-z][a-z-]*) +"
+    r"(?P<perceived>(?:a|an|the) +[a-z][a-z-]* +[a-z][a-z-]*); +(?P<but>but) +"
+    r"(?P<generalization>in +general|usually|mostly) +(?P<subject>[A-Z][a-z]+|I|we|she|he|you|they) +"
+    r"(?P<manner>[a-z]+ly) +(?P<did>did) +(?P<not>not) +(?P<action>hear|listen|look|speak|answer)"
+    r"(?P<stop>[.!])"
+)
+
+
+def plan_frequency_contrast(text, components):
+    """A disjunction of frequency adverbs modifies the first of two clauses."""
+    m = _FREQUENCY_CONTRAST.fullmatch(text)
+    if m is None or m["first"].casefold() == m["second"]:
+        return None
+    spans = {(c["function"], c["start"], c["end"]) for c in components}
+    if ("matrix_clause", 0, m.end("perceived")) not in spans or (
+        "coordinate_clause", m.start("but"), len(text)
+    ) not in spans or any(c.get("function") == "direct_speech" for c in components):
+        return None
+    specs, _, mark, part = _specs()
+    part(m, 0, (
+        ("first", "ADV", "lexical", {}),
+        ("or", "COORD", "lexical", {"lemma_in": "or"}),
+        ("second", "ADV", "lexical", {}),
+        ("observer", "NP", "subject-phrase", {}),
+        ("modal", "MODAL", "lexical", {"vform": "finite"}),
+        ("perceive", "V", "lexical-alternatives", _v("base", "transitive")),
+        ("perceived", "NP", "phrase", {"proof_rule": "np_det_n"}),
+    ))
+    mark("SEMICOLON", m.end("perceived"), m.end("perceived") + 1)
+    part(m, 0, (
+        ("but", "COORD", "lexical", {"lemma_in": "but"}),
+        ("generalization", "ADV", "lexical", {}),
+        ("subject", "NP", "subject-phrase", {}),
+        ("manner", "ADV", "lexical", {}),
+        ("did", "AUX", "lexical", {"lemma_in": "do", "vform": "finite"}),
+        ("not", "NEG", "lexical", {"negation": "true"}),
+        ("action", "V", "lexical-alternatives", _v("base", "intransitive")),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+DEPICTIVE_FINITE_PURPOSE = "structural_sequential_coordination_with_depictive_and_finite_purpose"
+_DEPICTIVE_PURPOSE = re.compile(
+    r"(?P<subject>[A-Z][a-z]+|I|He|She|We|You|They) +(?P<received>received|accepted|acknowledged) +"
+    r"(?P<object>(?:my|your|his|her|their|our|the) +[a-z][a-z-]*) +(?P<among>amongst|among) +"
+    r"(?P<group>(?:the|these|those) +[a-z][a-z-]*), +(?P<and>and) +(?P<then>then), +"
+    r"(?P<state>sick|tired|weary|ashamed|afraid) +(?P<cause>of +(?:the|this|that|their|his|her) +[a-z][a-z-]*), +"
+    r"(?P<took>took) +(?P<refuge>refuge|shelter) +"
+    r"(?P<location>in +(?:the|my|your|his|her|their|our) +(?:own +)?[a-z][a-z-]*), +"
+    r"(?P<that>that) +(?P<actor>I|he|she|we|you|they) +(?P<modal>might|could) +"
+    r"(?P<purpose>think|rest|sleep|reflect|read) +(?P<manner>with +[a-z][a-z-]*)(?P<stop>[.!])"
+)
+
+
+def plan_depictive_finite_purpose(text, components):
+    """A shared subject continues across a supplement and a finite purpose."""
+    m = _DEPICTIVE_PURPOSE.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, mark, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("received", "V", "lexical-alternatives", _v("finite", "transitive", nonbase_surface="true")),
+        ("object", "NP", "phrase", {"simple_nominal_proof": "true"}),
+        ("among", "PREP", "scoped-lexical", {"lemma_in": "among|amongst"}),
+        ("group", "NP", "phrase", {"proof_rule": "np_det_n"}),
+    ))
+    mark("COMMA", m.end("group"), m.end("group") + 1)
+    part(m, 0, (
+        ("and", "COORD", "lexical", {"lemma_in": "and"}),
+        ("then", "ADV", "lexical", {"lemma_in": "then"}),
+    ))
+    mark("COMMA", m.end("then"), m.end("then") + 1)
+    part(m, 0, (
+        ("state", "ADJ", "lexical", {}),
+        ("cause", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+    ))
+    mark("COMMA", m.end("cause"), m.end("cause") + 1)
+    part(m, 0, (
+        ("took", "V", "lexical-alternatives", _v("finite", "transitive", lemma_in="take")),
+        ("refuge", "N", "lexical", {"number": "singular"}),
+        ("location", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+    ))
+    mark("COMMA", m.end("location"), m.end("location") + 1)
+    part(m, 0, (
+        ("that", "COMP-THAT", "lexical", {}),
+        ("actor", "NP", "subject-phrase", {}),
+        ("modal", "MODAL", "lexical", {"vform": "finite"}),
+        ("purpose", "V", "lexical-alternatives", _v("base", "intransitive")),
+        ("manner", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+EMPHATIC_OBJECT_RELATIVE = "structural_emphatic_transitive_with_nominal_object_gap_relative"
+_EMPHATIC_OBJECT_RELATIVE = re.compile(
+    r"(?P<subject>I|He|She|They|We|You) +(?P<emphasis>indeed|certainly|really) +"
+    r"(?P<verb>[a-z][a-z-]*) +(?P<object>the +[a-z][a-z-]*(?: +[a-z][a-z-]*)?) +"
+    r"(?P<relative_subject>I|he|she|we|you|they) +(?P<relative_verb>[a-z][a-z-]*)(?P<stop>[.!])"
+)
+
+
+def plan_emphatic_object_relative(text, components):
+    """Make the missing object of a restrictive relative the overt NP head."""
+    m = _EMPHATIC_OBJECT_RELATIVE.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, _, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("emphasis", "ADV", "lexical", {}),
+        ("verb", "V", "lexical-alternatives", _v("finite", "transitive", nonbase_surface="true")),
+        ("object", "NP", "phrase", {"proof_rule": "np_det_n"}),
+        ("relative_subject", "NP", "subject-phrase", {}),
+        ("relative_verb", "V", "lexical-alternatives", _v("finite", "transitive", nonbase_surface="true")),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+EMBEDDED_DURATION_RELATIVE = "structural_copular_event_nominal_with_embedded_relative_duration"
+_EMBEDDED_DURATION_RELATIVE = re.compile(
+    r"(?P<subject>This|That|It) +(?P<be>was|is) +"
+    r"(?P<classification>the +(?:beginning|onset|commencement|start)) +(?P<of>of) +"
+    r"(?P<antecedent>(?:a|an|the) +[a-z][a-z-]*(?: +[a-z][a-z-]*)?) +(?P<which>which|that) +"
+    r"(?P<verb>confined|detained|troubled|afflicted|prevented|kept|stopped|delayed) +"
+    r"(?P<affected>me|him|her|us|them|you) +"
+    r"(?P<duration>for +(?:several|many|two|three|four|five|six|seven) +(?:hours|days|weeks|months|years))"
+    r"(?P<stop>[.!])"
+)
+
+
+def plan_embedded_duration_relative(text, components):
+    """Duration belongs to the relative event, whose subject is the lower NP."""
+    m = _EMBEDDED_DURATION_RELATIVE.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    specs, _, _, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "phrase", {"proof_rule": "np_indef_pron" if m["subject"] == "It" else "np_demonstrative"}),
+        ("be", "COPULA", "lexical", {"vform": "finite", "number": "singular"}),
+        ("classification", "NP", "phrase", {"proof_rule": "np_det_n"}),
+        ("of", "PREP", "lexical", {"nominal_complement": "of"}),
+        ("antecedent", "NP", "phrase", {"proof_rule": "np_det_n"}),
+        ("which", "WH-PRONOUN", "lexical", {"wh": "true"}),
+        ("verb", "V", "lexical-alternatives", _v("finite", "transitive", nonbase_surface="true")),
+        ("affected", "PRONOUN", "lexical", {"reflexive": "false"}),
+        ("duration", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+REPORTED_EXCLAMATION_VOCATIVE = "dialogue_structural_exclamation_with_vocative_and_attribution"
+_EXCLAMATION_VOCATIVE = re.compile(r"(?P<outcry>Oh|Ah|Alas), +(?P<addressee>[A-Z][a-z]+)")
+_EXCLAMATION_REPORT = re.compile(r"(?P<report>said|cried|exclaimed|shouted) +(?P<speaker>he|she|[A-Z][a-z]+)")
+
+
+def plan_reported_exclamation_vocative(text, components):
+    """An emotional interjection and a vocative, not a nominal exclamation."""
+    evidence = _single_spoken_span(text, components, reported=True)
+    if evidence is None:
+        return None
+    stop, reporter = evidence
+    m = _EXCLAMATION_VOCATIVE.fullmatch(text[1:stop])
+    r = _EXCLAMATION_REPORT.fullmatch(text[reporter["start"]:reporter["end"]])
+    if m is None or r is None or text[stop] != "!":
+        return None
+    specs, _, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    part(m, 1, (("outcry", "INTERJECTION", "scoped-lexical", {"exclamative": "true"}),))
+    mark("COMMA", 1 + m.end("outcry"), 2 + m.end("outcry"))
+    part(m, 1, (("addressee", "NP", "proper-phrase", {}),))
+    mark("SPEECH-STOP", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    part(r, reporter["start"], (
+        ("report", "V", "lexical-alternatives", {"vform": "finite", "lemma_in": "say|cry|exclaim|shout"}),
+        ("speaker", "NP", "subject-phrase", {}),
+    ))
+    mark("SPEECH-STOP", len(text) - 1, len(text))
+    return specs
+
+
+QUOTED_NEGATIVE_REPRISE = "dialogue_structural_negative_response_with_degree_reprise"
+_NEGATIVE_REPRISE = re.compile(r"(?P<response>No), +(?P<neg>not) +(?P<degree>at +all|in +the +least|by +any +means)")
+
+
+def plan_quoted_negative_reprise(text, components):
+    """Preserve both the answer particle and its intensified negative reprise."""
+    evidence = _single_spoken_span(text, components)
+    if evidence is None:
+        return None
+    stop, _ = evidence
+    m = _NEGATIVE_REPRISE.fullmatch(text[1:stop])
+    if m is None or text[stop] not in ".!" or not any(c.get("function") == "minor_utterance" for c in components):
+        return None
+    specs, _, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    part(m, 1, (("response", "RESPONSE", "scoped-lexical", {"polarity": "negative"}),))
+    mark("COMMA", 1 + m.end("response"), 2 + m.end("response"))
+    part(m, 1, (("neg", "NEG", "lexical", {"negation": "true"}), ("degree", "ADV", "lexical", {})))
+    mark("SPEECH-STOP", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    return specs
+
+
+REPORTED_MODAL_CONFIRMATION = "dialogue_structural_reported_negative_modal_confirmation_question"
+_MODAL_CONFIRMATION = re.compile(
+    r"(?P<subject>I|You|We|They|He|She|It) +(?P<modal>wo|could|would|should|might|must|need)"
+    r"(?P<neg>n['’]t) +(?P<predicate>[a-z][a-z-]*)"
+)
+_MANNER_REPORT = re.compile(
+    r"(?P<speaker>I|he|she|we|they|you|[A-Z][a-z]+) +(?P<report>inquired|asked|whispered|replied) +(?P<manner>[a-z]+ly)"
+)
+
+
+def plan_reported_modal_confirmation(text, components):
+    """Keep negative modal contraction and its reporter in separate clauses."""
+    evidence = _single_spoken_span(text, components, reported=True)
+    if evidence is None:
+        return None
+    stop, reporter = evidence
+    m = _MODAL_CONFIRMATION.fullmatch(text[1:stop])
+    r = _MANNER_REPORT.fullmatch(text[reporter["start"]:reporter["end"]])
+    if m is None or r is None or text[stop] != "?":
+        return None
+    specs, _, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    part(m, 1, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("modal", "MODAL", "scoped-lexical", {"vform": "finite", "modal": "true"}),
+        ("neg", "NEG", "lexical", {"negation": "true"}),
+        ("predicate", "V", "lexical-alternatives", _v("base", "intransitive")),
+    ))
+    mark("QMARK", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    part(r, reporter["start"], (
+        ("speaker", "NP", "subject-phrase", {}),
+        ("report", "V", "lexical-alternatives", {"vform": "finite", "lemma_in": "inquire|ask|whisper|reply"}),
+        ("manner", "ADV", "lexical", {}),
+    ))
+    mark("SPEECH-STOP", len(text) - 1, len(text))
+    return specs
+
+
+REPORT_COPULAR_ELLIPSIS = "structural_reported_copular_ellipsis_with_reporting_manner"
+_REPORT_COPULAR_ELLIPSIS = re.compile(
+    r"(?P<subject>[A-Z][a-z]+|I|He|She|They|We|You) +(?P<report>replied|answered|responded|remarked) +"
+    r"(?P<degree>very|quite|most) +(?P<manner>[a-z]+ly) +(?P<that>that) +"
+    r"(?P<embedded>I|he|she|it|you|we|they) +(?P<copula>was|were|am|is|are)(?P<stop>[.!])"
+)
+
+
+def plan_report_copular_ellipsis(text, components):
+    """Report manner scopes outside the that-clause and its unrecovered predicate."""
+    m = _REPORT_COPULAR_ELLIPSIS.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    if m["copula"] not in _COPULAR_AGREEMENT[m["embedded"]]:
+        return None
+    specs, _, _, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("report", "V", "lexical-alternatives", _v("finite", "clausal", nonbase_surface="true")),
+        ("degree", "DEGREE", "lexical", {}),
+        ("manner", "ADV", "lexical", {}),
+        ("that", "COMP-THAT", "lexical", {}),
+        ("embedded", "NP", "subject-phrase", {}),
+        ("copula", "COPULA", "lexical", {"vform": "finite"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+AFFIRMATIVE_TOTALITY = "dialogue_structural_affirmative_reply_with_address_and_totality"
+_AFFIRMATIVE_TOTALITY = re.compile(r"(?P<yes>Yes), +(?P<address>ma['’]am|madam|sir), +(?P<all>all)")
+
+
+def plan_affirmative_totality(text, components):
+    """Keep address separate from the polarity and the elliptical answer."""
+    evidence = _single_spoken_span(text, components)
+    if evidence is None or not any(c.get("function") == "minor_utterance" for c in components):
+        return None
+    stop, _ = evidence
+    m = _AFFIRMATIVE_TOTALITY.fullmatch(text[1:stop])
+    if m is None or text[stop] not in ".!":
+        return None
+    specs, _, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    part(m, 1, (("yes", "RESPONSE", "scoped-lexical", {"polarity": "positive"}),))
+    mark("COMMA", 1 + m.end("yes"), 2 + m.end("yes"))
+    part(m, 1, (("address", "VOCATIVE", "scoped-lexical", {"honorific": "true"}),))
+    mark("COMMA", 1 + m.end("address"), 2 + m.end("address"))
+    part(m, 1, (("all", "PRONOUN", "lexical", {"lemma_in": "all"}),))
+    mark("SPEECH-STOP", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    return specs
+
+
+NEGATIVE_PROPOSITIONAL_REPLY = "dialogue_structural_negative_reply_with_propositional_not"
+_NEGATIVE_PROPOSITIONAL_REPLY = re.compile(
+    r"(?P<no>No), +(?P<subject>I|we|they|you) +(?P<belief>believe|think|suppose|expect|hope) +(?P<not>not)"
+)
+
+
+def plan_negative_propositional_reply(text, components):
+    """Clause-final not stands for a negative answer to preceding content."""
+    evidence = _single_spoken_span(text, components)
+    if evidence is None or not any(c.get("function") == "minor_utterance" for c in components):
+        return None
+    stop, _ = evidence
+    m = _NEGATIVE_PROPOSITIONAL_REPLY.fullmatch(text[1:stop])
+    if m is None or text[stop] not in ".!":
+        return None
+    specs, _, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    part(m, 1, (("no", "RESPONSE", "scoped-lexical", {"polarity": "negative"}),))
+    mark("COMMA", 1 + m.end("no"), 2 + m.end("no"))
+    part(m, 1, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("belief", "V", "lexical-alternatives", _v("finite", "clausal")),
+        ("not", "NEG", "lexical", {"negation": "true"}),
+    ))
+    mark("SPEECH-STOP", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    return specs
+
+
+REPORTED_INTERJECTION = "dialogue_structural_reported_standalone_interjection"
+
+
+def plan_reported_interjection(text, components):
+    """An attested singleton interjection is the whole reportable speech act."""
+    evidence = _single_spoken_span(text, components, reported=True)
+    if evidence is None:
+        return None
+    stop, reporter = evidence
+    if text[stop] != "!" or text[1:stop].casefold() not in {"alas", "ah", "oh", "avast"}:
+        return None
+    r = _EXCLAMATION_REPORT.fullmatch(text[reporter["start"]:reporter["end"]])
+    if r is None:
+        return None
+    specs, add, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    add("INTERJECTION", 1, stop, "scoped-lexical", exclamative="true")
+    mark("SPEECH-STOP", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    part(r, reporter["start"], (
+        ("report", "V", "lexical-alternatives", {"vform": "finite", "lemma_in": "say|cry|exclaim|shout"}),
+        ("speaker", "NP", "subject-phrase", {}),
+    ))
+    mark("SPEECH-STOP", len(text) - 1, len(text))
+    return specs
+
+
+NEGATED_GRADED_RESPONSE = "structural_response_then_negated_graded_copular_predication"
+_COPULAR_AGREEMENT = {"I": {"am", "was"}, "he": {"is", "was"}, "she": {"is", "was"}, "it": {"is", "was"},
+                      "you": {"are", "were"}, "we": {"are", "were"}, "they": {"are", "were"}}
+_NEGATED_GRADED_RESPONSE = re.compile(
+    r"(?P<response>No); +(?P<subject>I|he|she|it|we|you|they) +(?P<be>am|is|are|was|were) +"
+    r"(?P<neg>not) +(?P<degree>so|too|that|very) +(?P<quality>[a-z][a-z-]+)(?P<stop>[.!])"
+)
+
+
+def plan_negated_graded_response(text, components):
+    """A separate No is elaborated by an overtly negative finite clause."""
+    m = _NEGATED_GRADED_RESPONSE.fullmatch(text)
+    if m is None or m["be"] not in _COPULAR_AGREEMENT[m["subject"]]:
+        return None
+    spans = {(c["function"], c["start"], c["end"]) for c in components}
+    if ("matrix_clause", 0, m.end("response")) not in spans or (
+        "independent_clause", m.start("subject"), len(text)
+    ) not in spans or any(c.get("function") == "direct_speech" for c in components):
+        return None
+    specs, _, mark, part = _specs()
+    part(m, 0, (("response", "RESPONSE", "scoped-lexical", {"polarity": "negative"}),))
+    mark("SEMICOLON", m.end("response"), m.end("response") + 1)
+    part(m, 0, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("be", "COPULA", "lexical", {"vform": "finite"}),
+        ("neg", "NEG", "lexical", {"negation": "true"}),
+        ("degree", "DEGREE", "lexical", {}),
+        ("quality", "ADJ", "lexical", {}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs
+
+
+PHONATION_PASSIVE_CAUSE = "structural_passive_phonation_with_causal_with_phrase"
+_PASSIVE_PHONATION = re.compile(
+    r"(?P<subject>(?:My|Her|His|Their|Our|The) +(?:voice|speech|words)) +"
+    r"(?P<be>was|were) +(?P<verb>suffocated|choked|muffled|smothered|stifled) +"
+    r"(?P<cause>with +(?:(?:his|her|my|their|the) +)?(?:sobs|tears|emotion|grief|weeping))(?P<stop>[.!])"
+)
+
+
+def plan_passive_phonation(text, components):
+    """Causal with in a passive of suppressed vocal production."""
+    m = _PASSIVE_PHONATION.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    number = "plural" if m["subject"].endswith(" words") else "singular"
+    if (m["be"] == "were") != (number == "plural"):
+        return None
+    specs, _, _, part = _specs()
+    part(m, 0, (
+        ("subject", "NP", "phrase", {"simple_nominal_proof": "true"}),
+        ("be", "AUX-BE", "lexical", {"vform": "finite", "number": number}),
+        ("verb", "V", "lexical-alternatives", _v("ed", "transitive")),
+        ("cause", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("stop", "SPEECH-STOP", "source-punctuation", {}),
+    ))
+    return specs

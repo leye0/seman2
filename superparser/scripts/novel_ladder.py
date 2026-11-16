@@ -6,6 +6,7 @@ from collections import Counter
 from hashlib import sha256
 import json
 from pathlib import Path
+import re
 import signal
 
 from research.verbnet_lr.clean_novel_corpus import load_cleaned, read_manifest
@@ -23,6 +24,7 @@ LADDER = ROOT / "research" / "novel_ladder"
 FIRST = 501
 SIZE = 100
 SCHEMA = "seman2-novel-ladder-cohort-v1"
+REVIEW_SCHEMA = "seman2-novel-ladder-review-v1"
 LIMITS = {"chart_items": MAX_ITEMS, "kbest_work": KBEST_WORK_LIMIT,
           "seconds_per_case": DEADLINE_SECONDS}
 
@@ -172,7 +174,7 @@ def freeze(directory, sources):
         if not marker.exists():
             raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
         accepted = read_json(marker)
-        accepted_cases(accepted, prior, end)
+        accepted_cases(accepted, prior, end, load_review(directory, end, prior, accepted))
     first = FIRST + len(cohorts) * SIZE
     entries = [anchor(i, band, case) for i, band, case in pick(sources[1], paras, texts, first)]
     manifest = {"schema": SCHEMA, "first_index": first,
@@ -186,12 +188,25 @@ def freeze(directory, sources):
     return path
 
 
+def graph_digest(package):
+    """Fingerprint selected relations without process-local node IDs."""
+    graph = package["graph"]
+    identifiers = {n["id"]: i for i, n in enumerate(graph["nodes"])}
+    nodes = [{k: v for k, v in node.items() if k != "id"} for node in graph["nodes"]]
+    edges = [{**edge, "source": identifiers[edge["source"]],
+              "target": identifiers[edge["target"]]} for edge in graph["relations"]]
+    handles = {key: identifiers[value] for key, value in package["handles"].items()}
+    return digest({"nodes": nodes, "relations": edges, "handles": handles})
+
+
 def signatures(rows):
     return [{"index": r["ladder_index"], "status": r["status"],
              "forest_budget_exceeded": bool(r.get("forest_budget_exceeded")),
              "kbest_budget_exceeded": bool(r.get("kbest_budget_exceeded")),
              "root_rule": r.get("root_rule"),
-             "rank_one_sha256": digest(r["tree"]) if r.get("tree") else None}
+             "rank_one_sha256": digest(r["tree"]) if r.get("tree") else None,
+             "selected_graph_sha256": graph_digest(r["selected_graph"])
+             if r.get("selected_graph") else None}
             for r in rows]
 
 
@@ -205,6 +220,10 @@ def result_cases(result, cohort, end):
         raise ValueError(f"Novel-{end} result identity, limits or counts differ from its pin")
     if any((r["status"] == "complete") != bool(r["rank_one_sha256"]) for r in rows):
         raise ValueError(f"Novel-{end} result contains an inconsistent selected-tree digest")
+    if any("selected_graph_sha256" in r and (
+        (r["status"] == "complete") != bool(r["selected_graph_sha256"])
+    ) for r in rows):
+        raise ValueError(f"Novel-{end} result contains an inconsistent selected-graph digest")
     return {r["index"]: r for r in rows}
 
 
@@ -228,10 +247,35 @@ def compare_rows(reference, observed, *, sealed=False):
     return regressions
 
 
-def accepted_cases(result, cohort, end):
+def load_review(directory, end, cohort, result):
+    rows = result_cases(result, cohort, end)
+    path = directory / f"novel-{end}-review.json"
+    doc = read_json(path) if path.exists() else {"schema": REVIEW_SCHEMA,
+           "cohort_sha256": cohort["cohort_sha256"], "cases": []}
+    if doc.get("schema") != REVIEW_SCHEMA or doc.get("cohort_sha256") != cohort["cohort_sha256"]:
+        raise ValueError(f"Novel-{end} review identity differs from its cohort")
+    review = {}
+    for entry in doc["cases"]:
+        index = entry["index"]
+        observed = rows.get(index)
+        if (not observed or index in review or entry["verdict"] not in ("verified", "needs_fix")
+                or not isinstance(entry.get("evidence"), str) or not entry["evidence"].strip()):
+            raise ValueError(f"Invalid Novel-{end} review entry {index}")
+        for signature in ("rank_one_sha256", "selected_graph_sha256"):
+            if entry.get(signature) != observed.get(signature):
+                raise ValueError(f"Stale Novel-{end} review for N{index}: {signature} changed")
+            if entry["verdict"] == "verified" and not re.fullmatch(r"[0-9a-f]{64}", entry.get(signature) or ""):
+                raise ValueError(f"Cannot verify N{index} without a selected tree and graph")
+        if entry["verdict"] == "verified" and observed["status"] != "complete":
+            raise ValueError(f"Cannot verify an incomplete parse for N{index}")
+        review[index] = entry
+    return review
+
+
+def accepted_cases(result, cohort, end, review):
     rows = result_cases(result, cohort, end)
     if (any(r["status"] != "complete" for r in rows.values())
-            or result.get("rank_one_reviewed") != list(rows)):
+            or {i for i, r in review.items() if r["verdict"] == "verified"} != set(rows)):
         raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
     return rows
 
@@ -247,29 +291,62 @@ def check(cohorts, directory, out_dir):
         baseline = read_json(directory / f"{prefix}-initial.json")
         reference_data = read_json(reference)
         result_cases(baseline, cohort, end)
-        pin = (accepted_cases if accepted.exists() else result_cases)(reference_data, cohort, end)
-        candidate = result_cases(read_json(out_dir / f"{prefix}-result.json"), cohort, end)
+        review = load_review(directory, end, cohort, reference_data)
+        pin = (accepted_cases(reference_data, cohort, end, review) if accepted.exists()
+               else result_cases(reference_data, cohort, end))
+        candidate_data = read_json(out_dir / f"{prefix}-result.json")
+        candidate = result_cases(candidate_data, cohort, end)
         errors = compare_rows(pin, candidate, sealed=accepted.exists())
         failures.extend(errors)
-        print(f"{prefix}: initial {baseline['counts']}; current "
+        if not errors:
+            load_review(directory, end, cohort, candidate_data)
+        print_quality(prefix, candidate, review)
+        print(f"{prefix} coverage diagnostics: initial {baseline['counts']}; current "
               f"{dict(Counter(r['status'] for r in candidate.values()))}", flush=True)
     if failures:
         raise ValueError(f"Novel Ladder regressions: {failures}")
 
 
+def print_quality(prefix, rows, review):
+    verified = sum(r["verdict"] == "verified" for r in review.values())
+    needs_fix = len(review) - verified
+    print(f"{prefix} quality: {verified}/{len(rows)} verified; {needs_fix} need a fix; "
+          f"{len(rows) - len(review)} unreviewed", flush=True)
+
+
+def quality(cohorts, directory):
+    for cohort, cases in cohorts:
+        end = cases[-1]["ladder_index"]
+        prefix = f"novel-{end}"
+        accepted = directory / f"{prefix}-accepted.json"
+        data = read_json(accepted if accepted.exists() else directory / f"{prefix}-current.json")
+        review = load_review(directory, end, cohort, data)
+        rows = accepted_cases(data, cohort, end, review) if accepted.exists() else result_cases(data, cohort, end)
+        print_quality(prefix, rows, review)
+
+
 def print_queue(cohorts, directory, after):
     for cohort, cases in cohorts:
         end = cases[-1]["ladder_index"]
-        if (directory / f"novel-{end}-accepted.json").exists():
+        accepted = directory / f"novel-{end}-accepted.json"
+        if accepted.exists():
+            data = read_json(accepted)
+            accepted_cases(data, cohort, end, load_review(directory, end, cohort, data))
             continue
         reference = read_json(directory / f"novel-{end}-current.json")
         rows = result_cases(reference, cohort, end)
-        eligible = [r for r in rows.values() if r["status"] != "complete"]
+        reviewed = load_review(directory, end, cohort, reference)
         audit = {int(i): reason for i, reason in reference.get("rank_one_review_queue", {}).items()}
+        audit.update({i: r["evidence"] for i, r in reviewed.items() if r["verdict"] == "needs_fix"})
+        unreviewed = [r for i, r in rows.items() if i not in reviewed]
+        eligible = [r for r in unreviewed if r["status"] != "complete"]
         if not eligible and audit:
-            eligible = [r for i, r in rows.items() if i in audit]
+            eligible = [r for i, r in rows.items()
+                        if i in audit and reviewed.get(i, {}).get("verdict") != "verified"]
         if not eligible:
-            print(f"Novel-{end}: 100 complete rank-one trees, review required before expansion.")
+            eligible = unreviewed
+        if not eligible:
+            print(f"Novel-{end}: all selected analyses verified; save the accepted pin before expansion.")
             return
         next_row = next((r for r in eligible if r["index"] > after), eligible[0])
         case = cases[next_row["index"] - cohort["first_index"]]
@@ -306,7 +383,7 @@ def run(cohorts, wordnet_dir, out_dir):
             rows = []
             with (out_dir / f"novel-{end}-parses.jsonl").open("w", buffering=1, encoding="utf-8") as out:
                 for case in cases:
-                    row = {**case, **measure(parser, case)}
+                    row = {**case, **measure(parser, case, with_semantics=True)}
                     rows.append(row)
                     out.write(json.dumps(row, ensure_ascii=False) + "\n")
             counts = dict(sorted(Counter(r["status"] for r in rows).items()))
@@ -333,6 +410,7 @@ def main():
     verify.add_argument("--legacy-diagnostics", type=Path)
     queue = actions.add_parser("next")
     queue.add_argument("--after", type=int, default=FIRST - 1)
+    actions.add_parser("quality")
     args = cli.parse_args()
     sources = load_sources()
     if args.action == "freeze":
@@ -343,6 +421,8 @@ def main():
         cli.error("No pinned ladder cohorts")
     if args.action == "next":
         print_queue(cohorts, args.ladder_dir, args.after)
+    elif args.action == "quality":
+        quality(cohorts, args.ladder_dir)
     elif args.action == "run":
         run(cohorts, args.wordnet_dir, args.out_dir)
     else:

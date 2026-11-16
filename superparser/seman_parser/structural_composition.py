@@ -74,6 +74,22 @@ from .scoped_literary_quotes import (
 )
 from .scoped_novel_ladder import (
     AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
+    COPULAR_COMPARED_RELATIVE, plan_copular_compared_relative,
+    MODAL_PERFECT_CONCESSION, plan_modal_perfect_concession,
+    INCISED_EXISTENTIAL_CONTENT, plan_incised_existential_content,
+    FREQUENCY_CONTRAST, plan_frequency_contrast,
+    DEPICTIVE_FINITE_PURPOSE, plan_depictive_finite_purpose,
+    EMPHATIC_OBJECT_RELATIVE, plan_emphatic_object_relative,
+    EMBEDDED_DURATION_RELATIVE, plan_embedded_duration_relative,
+    REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative,
+    QUOTED_NEGATIVE_REPRISE, plan_quoted_negative_reprise,
+    REPORTED_MODAL_CONFIRMATION, plan_reported_modal_confirmation,
+    REPORT_COPULAR_ELLIPSIS, plan_report_copular_ellipsis,
+    AFFIRMATIVE_TOTALITY, plan_affirmative_totality,
+    NEGATIVE_PROPOSITIONAL_REPLY, plan_negative_propositional_reply,
+    REPORTED_INTERJECTION, plan_reported_interjection,
+    NEGATED_GRADED_RESPONSE, plan_negated_graded_response,
+    PHONATION_PASSIVE_CAUSE, plan_passive_phonation,
     CLOCK_STATUS, CONCESSIVE_AFFECT, DISPATCH_PURPOSES, DOCUMENT_RELATIVE, EMOTIVE_REBUKE,
     EXPERIENTIAL_EXISTENTIAL, FACTIVE_GESTURE, FRAMED_RESULT, GENITIVE_WHERE,
     INTERPOSED_MANNER, MINOR_NEGATIVE, MODAL_GERUND_CONTRAST, MOTION_SPEECH, NEGATIVE_EQUATIVE,
@@ -164,7 +180,16 @@ _PROOF_CHECKS = frozenset((
     "grounded_object_proof", "demonstrated_full_nominal_proof", "appositive_nominal_proof",
     "emphasis_finite_proof",
 ))
+_LADDER_SPOKEN = (
+    (REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative),
+    (REPORTED_INTERJECTION, plan_reported_interjection),
+    (QUOTED_NEGATIVE_REPRISE, plan_quoted_negative_reprise),
+    (REPORTED_MODAL_CONFIRMATION, plan_reported_modal_confirmation),
+    (AFFIRMATIVE_TOTALITY, plan_affirmative_totality),
+    (NEGATIVE_PROPOSITIONAL_REPLY, plan_negative_propositional_reply),
+)
 _SPOKEN_SINGLE = (
+    *_LADDER_SPOKEN,
     (FACTIVE_GESTURE, plan_factive_gesture),
     (AMOUNT_RESTART, plan_amount_restart),
     (NUMERIC_VOCATIVE, plan_numeric_vocative),
@@ -186,6 +211,16 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    (COPULAR_COMPARED_RELATIVE, plan_copular_compared_relative),
+    (MODAL_PERFECT_CONCESSION, plan_modal_perfect_concession),
+    (INCISED_EXISTENTIAL_CONTENT, plan_incised_existential_content),
+    (FREQUENCY_CONTRAST, plan_frequency_contrast),
+    (DEPICTIVE_FINITE_PURPOSE, plan_depictive_finite_purpose),
+    (EMPHATIC_OBJECT_RELATIVE, plan_emphatic_object_relative),
+    (EMBEDDED_DURATION_RELATIVE, plan_embedded_duration_relative),
+    (REPORT_COPULAR_ELLIPSIS, plan_report_copular_ellipsis),
+    (NEGATED_GRADED_RESPONSE, plan_negated_graded_response),
+    (PHONATION_PASSIVE_CAUSE, plan_passive_phonation),
     (PERFECT_LOCATED_MOTION, plan_perfect_located_motion),
     (INTERPOSED_MANNER, plan_interposed_manner),
     (TEMPORAL_SHARED_MODAL, plan_temporal_shared_modal),
@@ -242,6 +277,11 @@ _SCOPED_UNSATURATED = frozenset((
     *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    COPULAR_COMPARED_RELATIVE: 3, MODAL_PERFECT_CONCESSION: 2, INCISED_EXISTENTIAL_CONTENT: 3, FREQUENCY_CONTRAST: 2, DEPICTIVE_FINITE_PURPOSE: 3,
+    EMPHATIC_OBJECT_RELATIVE: 2, EMBEDDED_DURATION_RELATIVE: 2,
+    REPORTED_EXCLAMATION_VOCATIVE: 0, QUOTED_NEGATIVE_REPRISE: 0, REPORTED_MODAL_CONFIRMATION: 1,
+    REPORTED_INTERJECTION: 0, NEGATED_GRADED_RESPONSE: 1, PHONATION_PASSIVE_CAUSE: 1,
+    REPORT_COPULAR_ELLIPSIS: 2, AFFIRMATIVE_TOTALITY: 0, NEGATIVE_PROPOSITIONAL_REPLY: 1,
     PERFECT_LOCATED_MOTION: 1, INTERPOSED_MANNER: 2, TEMPORAL_SHARED_MODAL: 2,
     RECALL_PROGRESSIVE: 2, PURPOSE_THEN: 2, POSTPOS_QUALITY: 1, FRAMED_RESULT: 2,
     NEGATIVE_EQUATIVE: 1, VOCATIVE_COMPARISON: 1, BARE_PASSIVE_RECIPIENT: 2, MOTION_SPEECH: 1,
@@ -469,7 +509,7 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in _UNQUOTED_SCOPED
+            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN)
         })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules

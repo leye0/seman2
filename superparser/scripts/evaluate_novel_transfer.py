@@ -25,7 +25,7 @@ from scripts.corpus_samples import BANDS, sample_spread
 from scripts.diagnose_novel_parses import (
     ROOT, SentenceDeadline, _deadline, classify, compact_stats, select_cases, tally,
 )
-from seman_parser.engine import Parser, ParserResources
+from seman_parser.engine import ParseReport, Parser, ParserResources
 
 MAX_ITEMS = 50_000
 KBEST_WORK_LIMIT = 500_000
@@ -142,11 +142,11 @@ def cohort_identity(cases: list[dict]) -> str:
     return sha256(_serialized_cohort(identity)).hexdigest()
 
 
-def measure(parser: Parser, case: dict) -> dict:
+def measure(parser: Parser, case: dict, *, with_semantics: bool = False) -> dict:
     started = perf_counter()
     signal.setitimer(signal.ITIMER_REAL, DEADLINE_SECONDS)
     try:
-        _, _, result = parse_corpus_case(
+        _, lattice, result = parse_corpus_case(
             parser, case, max_items=MAX_ITEMS, kbest_work_limit=KBEST_WORK_LIMIT,
         )
         stats = result.stats
@@ -163,6 +163,15 @@ def measure(parser: Parser, case: dict) -> dict:
             "tree": best.as_dict() if best else None,
             "display_tree": display_tree(best, result.text) if best else None,
         }
+        if with_semantics and best is not None:
+            # Use the same resources as the public parse report. Ordinary
+            # hierarchy also sets structural metadata, but not the verified
+            # source composition flag used by these two source-aware routes.
+            resources = ((parser._quoted_sentence_resources or parser.resources)
+                         if stats.get("structural_composition") else
+                         (parser._dialogue_resources or parser.resources)
+                         if stats.get("dialogue_scoped") else parser.resources)
+            row["selected_graph"] = ParseReport(result, resources, lattice).best_semantic_graph()
     except SentenceDeadline:
         row = {"status": "timeout"}
     finally:
