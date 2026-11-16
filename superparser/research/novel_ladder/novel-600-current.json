@@ -7,11 +7,7 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 78,
-    "forest_budget_exceeded": 1,
-    "no_structural_root": 1,
-    "roots_without_valid_analysis": 18,
-    "timeout": 2
+    "complete": 100
   },
   "cases": [
     {
@@ -56,11 +52,11 @@
     },
     {
       "index": 506,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_copular_nominal_with_integrated_postpositive_quality",
+      "rank_one_sha256": "333095ece7363004bda7da720b3c144ea4c3b3495d4b73364826e8739f73e906"
     },
     {
       "index": 507,
@@ -72,19 +68,19 @@
     },
     {
       "index": 508,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_framed_continuation_and_graded_result_state",
+      "rank_one_sha256": "cec3887ac698cf8b8608753ae5df66e60f98ecd07448a611bddc61cee3efdec0"
     },
     {
       "index": 509,
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_correlative",
-      "rank_one_sha256": "5f498d91f25504873850a4299cef099a32bcf78dadf60ef705d0db4cd58234b8"
+      "root_rule": "structural_shared_subject_purpose_then_finite_sequence",
+      "rank_one_sha256": "24570aa4eda5d8b3c39d3a176663c71e17d422a81253193ee520008e82441d03"
     },
     {
       "index": 510,
@@ -107,16 +103,16 @@
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_front_np",
-      "rank_one_sha256": "c64b09b27f1d904da1756835ad4556bb35a34a9313fb0e425cdc368e9cecdad4"
+      "root_rule": "structural_imperative_recall_with_negated_progressive_content",
+      "rank_one_sha256": "1e01b7de26d8b08fc42249cb944c573badb0f267306bb36a838bb50385d3fcbe"
     },
     {
       "index": 513,
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_gapping_np",
-      "rank_one_sha256": "39581b24578d2902cf0552440859b18419edb397cc03cf981ee90a6ed936092d"
+      "root_rule": "structural_fronted_temporal_with_shared_modal_and_infinitival_control",
+      "rank_one_sha256": "ee72c696b48d4f286241b377e6bb8ab64dd97c0f89537a260e1b466bea1a1cb9"
     },
     {
       "index": 514,
@@ -128,19 +124,19 @@
     },
     {
       "index": 515,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_negative_do_inversion_with_equative_nominal",
+      "rank_one_sha256": "f064facedb034321b4f7a06d3204d6b565a75ec5771efe1a9fdcab72c2ad4af6"
     },
     {
       "index": 516,
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_sub_front",
-      "rank_one_sha256": "448773e22031b8d177a3be115b36a610717d24547cd40c02864da25b59c129e9"
+      "root_rule": "structural_fronted_temporal_transitive_with_interposed_manner",
+      "rank_one_sha256": "c206855cef93a154528e19df206933d467c718affda337616d99601bec37071d"
     },
     {
       "index": 517,
@@ -168,11 +164,11 @@
     },
     {
       "index": 520,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_vocative_with_incised_experiential_comparison",
+      "rank_one_sha256": "8a7d301357fc8ff0f6ea903cee14880f70586e27249001d8a2f923faac7eb2ac"
     },
     {
       "index": 521,
@@ -192,11 +188,11 @@
     },
     {
       "index": 523,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_contrast_with_control_and_bare_passive_recipient",
+      "rank_one_sha256": "46bacdcdb649cfd4f427223cb9f30b6771ef091a0545219ae097b2081a8194d2"
     },
     {
       "index": 524,
@@ -280,11 +276,11 @@
     },
     {
       "index": 534,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_motion_with_immediate_time_and_speech_supplement",
+      "rank_one_sha256": "8f7342f810c31712a767a64f7b4072a701f65217b95667f7baa599609ef17cd7"
     },
     {
       "index": 535,
@@ -336,11 +332,11 @@
     },
     {
       "index": 541,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_overt_parallel_assignment_with_elliptical_groups",
+      "rank_one_sha256": "a903d65ea282f4097273e9bc558159a492e15bf7ecea20c6e60e751f5b5af8c9"
     },
     {
       "index": 542,
@@ -392,11 +388,11 @@
     },
     {
       "index": 548,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_experiential_existential_with_explanatory_participant",
+      "rank_one_sha256": "af1a01a002823fcca2e489fd53292c41520d8c5e20faf7aaf99071e37161b5a9"
     },
     {
       "index": 549,
@@ -416,11 +412,11 @@
     },
     {
       "index": 551,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_negative_degree_minor_response",
+      "rank_one_sha256": "5804364bc7255dd91808d31a2e3c3b44c751b6c192a42afa9989a2c2cc388cee"
     },
     {
       "index": 552,
@@ -432,11 +428,11 @@
     },
     {
       "index": 553,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_demonstrative_object_topicalization_with_lexical_possession",
+      "rank_one_sha256": "32140fe9160b6210841adb64e4cd72d9ff553ce8fd811fc4ff7064fdfaa9b20b"
     },
     {
       "index": 554,
@@ -472,19 +468,19 @@
     },
     {
       "index": 558,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "dialogue_structural_numeric_vocative_with_reporter_participle",
+      "rank_one_sha256": "1aaac6ff57ce3f7583c04a3e9e21fa3b7c4336aae0a6ba276999204706d985ab"
     },
     {
       "index": 559,
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_np_vp",
-      "rank_one_sha256": "f67a1ff609ebeb00b4ee8a1c877538dca94e49c39f098a06b103b0f7d121dd4a"
+      "root_rule": "structural_perfect_motion_with_locative_modifier_of_destination",
+      "rank_one_sha256": "36f870acea989e015df2d2f2c7c2a1589286ea9c99b5548604b8b8169abae683"
     },
     {
       "index": 560,
@@ -568,43 +564,43 @@
     },
     {
       "index": 570,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "dialogue_structural_question_restarts_with_extraposed_amount",
+      "rank_one_sha256": "b5fe3ddf682475395d5395d5938d6ecc4f9e1beb94a1f6473f1c31003e3908a4"
     },
     {
       "index": 571,
-      "status": "timeout",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_semicolon_temporal_evaluation_with_controlled_means",
+      "rank_one_sha256": "bea10615b1a9ba730b75720d2f11b956b5f5ecc92af16ba10d7712e4209c4761"
     },
     {
       "index": 572,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_shared_subject_apprehension_and_gaze_with_possessive_reference",
+      "rank_one_sha256": "9417af214d9ca7588ace7da77cf62709c98248b4686a9f45521d8f92be7b8207"
     },
     {
       "index": 573,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "dialogue_structural_negated_knowledge_with_factive_all_and_gesture",
+      "rank_one_sha256": "ac7ebc0261bf7ba64dab8e2dbc22f037cf9f3579ec52120b267e26a13ca08c6b"
     },
     {
       "index": 574,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_clock_time_relative_and_reflexive_status_report",
+      "rank_one_sha256": "27a515b5b9f201bd2b840a01d13d51d8c4d6bd4145ba357327640c6dbe8a409c"
     },
     {
       "index": 575,
@@ -672,11 +668,11 @@
     },
     {
       "index": 583,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_referential_locative_independent_genitive_where_relative",
+      "rank_one_sha256": "3b6cf7c267fab14941273179df19e2971dcf52758de3f987dfbecc6cf4a20b85"
     },
     {
       "index": 584,
@@ -720,11 +716,11 @@
     },
     {
       "index": 589,
-      "status": "timeout",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_emotive_perfect_relative_with_rebuke_reason",
+      "rank_one_sha256": "35fe2136567b3a8d15ccabcb99e9533def970d4f727bdb3a232d965c418f8300"
     },
     {
       "index": 590,
@@ -768,11 +764,11 @@
     },
     {
       "index": 595,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_shared_subject_modal_gerund_contrasted_with_reactive_progressive",
+      "rank_one_sha256": "0ff8d5e1e7fb317bc19bf67766e382203fdd145eecc964d66d0413185a03aaa1"
     },
     {
       "index": 596,
@@ -784,19 +780,19 @@
     },
     {
       "index": 597,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_dispatch_with_two_subject_controlled_purposes",
+      "rank_one_sha256": "dccf853941fd7cf1f63c2572bd578cf1f6e46010b5567b9b1cbcf9d8c9ce5c7d"
     },
     {
       "index": 598,
-      "status": "forest_budget_exceeded",
-      "forest_budget_exceeded": true,
+      "status": "complete",
+      "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_fronted_motion_to_document_part_with_passive_locative_relative",
+      "rank_one_sha256": "1522aaa174127656aca3436c755df1238c513e490285f175dd1b4c81e54984d0"
     },
     {
       "index": 599,
@@ -808,11 +804,47 @@
     },
     {
       "index": 600,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null
+      "root_rule": "structural_reduced_concessive_and_affective_subject_supplement",
+      "rank_one_sha256": "aa8de23e67904dd30ba59d408bd1f6579bc2340cb017c4473d1d6e5d67b2401d"
     }
-  ]
+  ],
+  "attachment_repairs": [
+    506,
+    508,
+    509,
+    512,
+    513,
+    515,
+    516,
+    520,
+    523,
+    534,
+    541,
+    548,
+    551,
+    553,
+    558,
+    559,
+    570,
+    571,
+    572,
+    573,
+    574,
+    583,
+    589,
+    595,
+    597,
+    598,
+    600
+  ],
+  "rank_one_review_queue": {
+    "522": "Copular comparison split into a false imperative; check both comparative standard and relative attachment.",
+    "543": "Concessive modal plus perfect is read as an adjective and a noun.",
+    "566": "Copular content clause is broken after My impression is; review the embedded clause roles.",
+    "588": "Temporal adverb is lost and the next words are misread as a title.",
+    "599": "Second coordinated action and its purpose are folded into the first object."
+  }
 }

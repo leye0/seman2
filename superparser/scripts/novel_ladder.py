@@ -172,10 +172,7 @@ def freeze(directory, sources):
         if not marker.exists():
             raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
         accepted = read_json(marker)
-        rows = result_cases(accepted, prior, end)
-        if (any(r["status"] != "complete" for r in rows.values())
-                or set(accepted.get("rank_one_reviewed", ())) != set(rows)):
-            raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
+        accepted_cases(accepted, prior, end)
     first = FIRST + len(cohorts) * SIZE
     entries = [anchor(i, band, case) for i, band, case in pick(sources[1], paras, texts, first)]
     manifest = {"schema": SCHEMA, "first_index": first,
@@ -231,6 +228,14 @@ def compare_rows(reference, observed, *, sealed=False):
     return regressions
 
 
+def accepted_cases(result, cohort, end):
+    rows = result_cases(result, cohort, end)
+    if (any(r["status"] != "complete" for r in rows.values())
+            or result.get("rank_one_reviewed") != list(rows)):
+        raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
+    return rows
+
+
 def check(cohorts, directory, out_dir):
     failures = []
     for cohort, cases in cohorts:
@@ -242,7 +247,7 @@ def check(cohorts, directory, out_dir):
         baseline = read_json(directory / f"{prefix}-initial.json")
         reference_data = read_json(reference)
         result_cases(baseline, cohort, end)
-        pin = result_cases(reference_data, cohort, end)
+        pin = (accepted_cases if accepted.exists() else result_cases)(reference_data, cohort, end)
         candidate = result_cases(read_json(out_dir / f"{prefix}-result.json"), cohort, end)
         errors = compare_rows(pin, candidate, sealed=accepted.exists())
         failures.extend(errors)
@@ -260,12 +265,16 @@ def print_queue(cohorts, directory, after):
         reference = read_json(directory / f"novel-{end}-current.json")
         rows = result_cases(reference, cohort, end)
         eligible = [r for r in rows.values() if r["status"] != "complete"]
+        audit = {int(i): reason for i, reason in reference.get("rank_one_review_queue", {}).items()}
+        if not eligible and audit:
+            eligible = [r for i, r in rows.items() if i in audit]
         if not eligible:
             print(f"Novel-{end}: 100 complete rank-one trees, review required before expansion.")
             return
         next_row = next((r for r in eligible if r["index"] > after), eligible[0])
         case = cases[next_row["index"] - cohort["first_index"]]
-        print(json.dumps({**next_row, "source_text": case["source_text"],
+        review = {"review_reason": audit[next_row["index"]]} if next_row["index"] in audit else {}
+        print(json.dumps({**next_row, **review, "source_text": case["source_text"],
                           "book_id": case["book_id"],
                           "source_span": case["structural_core_source_span"]}, ensure_ascii=False))
         return

@@ -120,7 +120,7 @@ jobs:
           PY
       - name: Replay additive novel cohorts and check selected trees
         run: |
-          PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_ladder
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" PYTHONPATH=superparser python -m unittest -v superparser.tests.test_novel_ladder superparser.tests.test_novel_ladder_attachments
           PYTHONPATH=superparser python -m scripts.novel_ladder run \
             --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" \
             --out-dir /tmp/novel-parse-diagnostics/ladder

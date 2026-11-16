@@ -12,6 +12,7 @@ route. No missing word, delimiter, finite predicate, or role is invented.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+import json
 import re
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -25,7 +26,8 @@ from .dialogue_clause_plans import (
 )
 from .features import FeatureStructure
 from .grammar import Grammar, load_grammar
-from .segmentation import LexicalCandidate, LexicalLattice
+from .lexicon import load_lexicon_rows
+from .segmentation import LexicalCandidate, LexicalLattice, build_lattice
 from .vector_chart import SegmentInterface, VectorGrammar
 from .structural_units import skeleton
 from .subject_resumption import plan_subject_resumption
@@ -69,6 +71,23 @@ from .scoped_literary_quotes import (
     SPLIT_SELF_IDENTIFICATION, plan_split_self_identification,
     DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
     HESITANT_RESUMPTION, plan_hesitant_resumption,
+)
+from .scoped_novel_ladder import (
+    AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
+    CLOCK_STATUS, CONCESSIVE_AFFECT, DISPATCH_PURPOSES, DOCUMENT_RELATIVE, EMOTIVE_REBUKE,
+    EXPERIENTIAL_EXISTENTIAL, FACTIVE_GESTURE, FRAMED_RESULT, GENITIVE_WHERE,
+    INTERPOSED_MANNER, MINOR_NEGATIVE, MODAL_GERUND_CONTRAST, MOTION_SPEECH, NEGATIVE_EQUATIVE,
+    NUMERIC_VOCATIVE, PARALLEL_GROUPS, PERFECT_LOCATED_MOTION, POSTPOS_QUALITY, PURPOSE_THEN,
+    RECALL_PROGRESSIVE, TEMPORAL_SHARED_MODAL, TOPICAL_POSSESSION, VOCATIVE_COMPARISON,
+    plan_amount_restart, plan_anticipatory_means, plan_apprehensive_gaze,
+    plan_bare_passive_recipient, plan_clock_status, plan_concessive_affect,
+    plan_dispatch_purposes, plan_document_relative, plan_emotive_rebuke,
+    plan_experiential_existential, plan_factive_gesture, plan_framed_result,
+    plan_genitive_where, plan_interposed_manner, plan_minor_negative,
+    plan_modal_gerund_contrast, plan_motion_speech, plan_negative_equative,
+    plan_numeric_vocative, plan_parallel_groups, plan_perfect_located_motion,
+    plan_postpositive_quality, plan_purpose_then, plan_recall_progressive,
+    plan_temporal_shared_modal, plan_topical_possession, plan_vocative_comparison,
 )
 from .scoped_narrative_followup import (
     INVERTED_EXTENT, EQUATIVE_DOUBT, plan_inverted_extent, plan_existential_equative,
@@ -146,6 +165,9 @@ _PROOF_CHECKS = frozenset((
     "emphasis_finite_proof",
 ))
 _SPOKEN_SINGLE = (
+    (FACTIVE_GESTURE, plan_factive_gesture),
+    (AMOUNT_RESTART, plan_amount_restart),
+    (NUMERIC_VOCATIVE, plan_numeric_vocative),
     (CONDITIONAL_VERSE, plan_conditional_verse),
     (EXTRAPOSED_PASSIVE_REPORT, plan_extraposed_passive_report),
     (EMPHATIC_MODAL_CONTRAST, plan_emphatic_modal_contrast),
@@ -164,6 +186,30 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    (PERFECT_LOCATED_MOTION, plan_perfect_located_motion),
+    (INTERPOSED_MANNER, plan_interposed_manner),
+    (TEMPORAL_SHARED_MODAL, plan_temporal_shared_modal),
+    (RECALL_PROGRESSIVE, plan_recall_progressive),
+    (PURPOSE_THEN, plan_purpose_then),
+    (POSTPOS_QUALITY, plan_postpositive_quality),
+    (FRAMED_RESULT, plan_framed_result),
+    (NEGATIVE_EQUATIVE, plan_negative_equative),
+    (VOCATIVE_COMPARISON, plan_vocative_comparison),
+    (BARE_PASSIVE_RECIPIENT, plan_bare_passive_recipient),
+    (MOTION_SPEECH, plan_motion_speech),
+    (PARALLEL_GROUPS, plan_parallel_groups),
+    (EXPERIENTIAL_EXISTENTIAL, plan_experiential_existential),
+    (MINOR_NEGATIVE, plan_minor_negative),
+    (TOPICAL_POSSESSION, plan_topical_possession),
+    (APPREHENSIVE_GAZE, plan_apprehensive_gaze),
+    (CLOCK_STATUS, plan_clock_status),
+    (GENITIVE_WHERE, plan_genitive_where),
+    (ANTICIPATORY_MEANS, plan_anticipatory_means),
+    (EMOTIVE_REBUKE, plan_emotive_rebuke),
+    (CONCESSIVE_AFFECT, plan_concessive_affect),
+    (DISPATCH_PURPOSES, plan_dispatch_purposes),
+    (MODAL_GERUND_CONTRAST, plan_modal_gerund_contrast),
+    (DOCUMENT_RELATIVE, plan_document_relative),
     (GENITIVE_ORIGIN, plan_genitive_origin),
     (PERCEIVED_ATTEMPT, plan_perceived_attempt),
     (ELAPSED, plan_elapsed_event),
@@ -196,6 +242,13 @@ _SCOPED_UNSATURATED = frozenset((
     *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    PERFECT_LOCATED_MOTION: 1, INTERPOSED_MANNER: 2, TEMPORAL_SHARED_MODAL: 2,
+    RECALL_PROGRESSIVE: 2, PURPOSE_THEN: 2, POSTPOS_QUALITY: 1, FRAMED_RESULT: 2,
+    NEGATIVE_EQUATIVE: 1, VOCATIVE_COMPARISON: 1, BARE_PASSIVE_RECIPIENT: 2, MOTION_SPEECH: 1,
+    PARALLEL_GROUPS: 0, EXPERIENTIAL_EXISTENTIAL: 2, MINOR_NEGATIVE: 0, TOPICAL_POSSESSION: 1,
+    NUMERIC_VOCATIVE: 0, AMOUNT_RESTART: 1, APPREHENSIVE_GAZE: 3, FACTIVE_GESTURE: 2,
+    CLOCK_STATUS: 2, GENITIVE_WHERE: 2, ANTICIPATORY_MEANS: 2, EMOTIVE_REBUKE: 2,
+    CONCESSIVE_AFFECT: 1, DISPATCH_PURPOSES: 2, MODAL_GERUND_CONTRAST: 3, DOCUMENT_RELATIVE: 3,
     PERCEIVED_ATTEMPT: 1, GENITIVE_ORIGIN: 1,
     **SPOKEN_QUESTION_COUNTS, **THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE: 2, MODAL_ECHO_REBUKE: 3, TELLING: 2, ELAPSED: 1,
     EMPHATIC_MODAL_CONTRAST: 2, REPORTED_EMPHATIC_OPINIONS: 2,
@@ -240,6 +293,13 @@ class QuotedSentenceComposer:
 
     def __init__(self, rules_path: str | Path) -> None:
         rules = load_grammar(rules_path)
+        scoped_lexicon = Path(rules_path).with_name("source_scoped_lexicon.jsonl")
+        by_plan = {}
+        if scoped_lexicon.exists():
+            for line in scoped_lexicon.read_text(encoding="utf-8").splitlines():
+                row = json.loads(line)
+                by_plan.setdefault(row["source_plan"], []).append(row)
+        self._source_lexicons = {plan: load_lexicon_rows(rows) for plan, rows in by_plan.items()}
         # A generic finite coordination must not compete with a more
         # specific attachment inside an already validated source plan.
         shared = tuple(rule for rule in rules
@@ -875,9 +935,23 @@ class QuotedSentenceComposer:
                         {**c.features.as_dict(), "to_infinitive": "true"}))
                     for c in matched
                 )
-            elif kind in ("lexical", "lexical-alternatives", "nominal-lexical"):
+            elif kind in ("lexical", "lexical-alternatives", "nominal-lexical", "scoped-lexical"):
+                available = original_lattice.candidates
+                if kind == "scoped-lexical":
+                    lexicon = self._source_lexicons.get(expected_rule)
+                    if lexicon is not None:
+                        scopes = []
+                        for candidate in build_lattice(surface, lexicon).covering(0, len(surface)):
+                            if not candidate.sense_ids or candidate.source not in ("lexicon", "lexicon-multiword"):
+                                continue
+                            scopes.append(replace(
+                                candidate, span_start=a, span_end=b,
+                                source="source-scoped-lexical-evidence",
+                                provenance={**candidate.provenance, "source_plan": expected_rule},
+                            ))
+                        available = (*available, *scopes)
                 matching = [
-                    c for c in original_lattice.candidates
+                    c for c in available
                     if c.category == category
                     and (c.span_start, c.span_end) == (a, b)
                     # Reciprocal pronouns are fixed multiword pronominal
@@ -928,7 +1002,7 @@ class QuotedSentenceComposer:
                 ]
                 if not matching:
                     return None
-                if kind == "lexical-alternatives":
+                if kind in ("lexical-alternatives", "scoped-lexical"):
                     # Agreement is decided by unification, not by selecting
                     # one equally scored inflection before seeing its subject.
                     candidates.extend(matching)

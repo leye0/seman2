@@ -71,5 +71,19 @@ rungs strictly and continues to report their untouched starting scores.
 python -m scripts.novel_ladder freeze
 ```
 
-Completion of this first pass opens work on Novel-600. It does not claim
-the whole 600-case benchmark has already been validated.
+## Novel-600 repair pass
+
+The first repair pass reaches 100 complete trees out of 100, using the
+same limits. The 22 formerly incomplete cases have attachment tests.
+Five already-complete cases also had selected-tree repairs, N509, N512,
+N513, N516 and N559. The 73 other initially complete trees are unchanged.
+These are audited changes, not 100 independently verified analyses.
+
+For example, N509 keeps the original subject of both coordinated verbs
+and treats *then* as a sequencing modifier. N559 makes *before the fire*
+locate the chair, which is the destination of the motion.
+
+The current result records known remaining rank-one review cases. Start
+with `next` for N522, where an apparent imperative breaks a comparison,
+then audit N543, N566, N588 and N599. Keep this rung open while selected
+trees still need review. No Novel-700 anchors have been drawn yet.

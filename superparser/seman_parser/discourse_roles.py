@@ -64,6 +64,7 @@ _SALUTATION = re.compile(
     r"(?i)^(?:good\s+(?:night|morning|evening|day|bye)|"
     r"farewell)(?=[,!.?]|\s|$)"
 )
+_NEGATIVE_DEGREE_RESPONSE = re.compile(r"(?i)not\s+(?:at\s+all|in\s+the\s+least|by\s+any\s+means)[.!]")
 _DIALOGUE_REPLY = re.compile(
     r"(?i)^[“‘\"']\s*(?:yes|no|certainly|perfectly|indeed|"
     r"precisely|exactly|perhaps|of course)\s*(?:[,!.?]|[”’\"'])"
@@ -110,7 +111,7 @@ def classify_discourse(
             "restrictive_prepositional_afterthought_with_prior_governor",
             False, "preceding_utterance",
         )
-    if _DIALOGUE_REPLY.match(text):
+    if _DIALOGUE_REPLY.match(text) or _NEGATIVE_DEGREE_RESPONSE.fullmatch(text):
         return DiscourseRole(
             "minor_utterance", "dialogue_response",
             "formulaic_elliptical_answer_or_adverbial_response", True,
