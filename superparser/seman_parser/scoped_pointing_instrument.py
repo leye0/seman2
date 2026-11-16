@@ -24,9 +24,12 @@ def plan_pointing_instrument(text, components):
     if match is None:
         return None
     subject = match["subject"].casefold()
-    verb = match["verb"].casefold()
+    # Match overt present agreement from the construction's licensed spellings.
+    # Its past form is compatible with both subject classes.
+    agreement = {"point": "non_third_singular", "points": "third_singular", "pointed": "any"}
+    person_number = "third_singular" if subject in ("he", "she", "it") else "non_third_singular"
     if (match["poss"].casefold() != _EXPECTED_POSSESSIVE[subject]
-            or (verb != "pointed" and (verb == "points") != (subject in ("he", "she", "it")))):
+            or agreement[match["verb"].casefold()] not in (person_number, "any")):
         return None
     # A full source matrix, not an isolated quote, relative or fragment.
     if not any(c["id"] == "s0" and c["function"] == "matrix_clause"
