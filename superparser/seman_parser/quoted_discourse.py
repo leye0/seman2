@@ -38,6 +38,9 @@ _REPORTING_VERB = re.compile(
 # At most one *local* attribution, not a distant narrative mention of
 # someone who happened to have spoken at another point in the paragraph.
 _TAG_LIMIT = 150
+_INVERTED_COMMITMENT_TAG = re.compile(
+    r"(?:vowed|promised) [A-Z][a-z]+(?: [A-Z][a-z]+){0,2}[.!]"
+)
 _ABBREVIATION = re.compile(
     r"(?i)\b(?:Mr|Mrs|Ms|Dr|Prof|St|Mme|Mlle|Capt|Rev)\.$"
 )
@@ -215,6 +218,13 @@ def analyze_dialogue(
         # Prefer a contiguous source attribution after speech. Fall back to
         # the overt reporting clause before a preposed quotation.
         post = _local_reporting_tag(source, b, next_)
+        # Commitment verbs can also head ordinary narration. Only infer a
+        # tag for a complete contiguous inverted name immediately after a
+        # real quote-final comma, rather than widening all reporting gaps.
+        if post is None and b >= 2 and source[b - 2] == ",":
+            start, end = _trim(source, b, next_)
+            if _INVERTED_COMMITMENT_TAG.fullmatch(source[start:end]):
+                post = (start, end - 1, start)
         pre = _local_reporting_tag(source, prev, a)
         if post:
             tags.append((post, (q,), "postposed_reporting_clause"))

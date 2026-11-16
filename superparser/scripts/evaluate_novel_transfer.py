@@ -31,7 +31,9 @@ MAX_ITEMS = 50_000
 KBEST_WORK_LIMIT = 500_000
 DEADLINE_SECONDS = 10
 PER_BOOK_BAND = 3
-EXPECTED_COHORT_SHA256 = "2d87e7f698aba01835e5638ac140b50ee047556809e317cd47d51e545186a073"
+# Identity pins the exact ordered source units; typed constituents are
+# observable outputs of the preanalyzer and can evolve independently.
+EXPECTED_COHORT_SHA256 = "e628012351233ce6605b77257d048be7bfee05aa7f398286162365c96a3b8b8b"
 # Editions are pinned before sampling. Update only for a new experiment.
 SOURCES = (
     (
@@ -127,6 +129,18 @@ def select_transfer_cases(books_dir: Path) -> tuple[list[dict], list[dict]]:
     return selected, sources
 
 
+def _serialized_cohort(cases: list[dict]) -> bytes:
+    return "".join(
+        json.dumps(case, ensure_ascii=False, sort_keys=True) + "\n" for case in cases
+    ).encode("utf-8")
+
+
+def cohort_identity(cases: list[dict]) -> str:
+    identity = [{k: v for k, v in case.items() if k != "structural_constituents"}
+                for case in cases]
+    return sha256(_serialized_cohort(identity)).hexdigest()
+
+
 def measure(parser: Parser, case: dict) -> dict:
     started = perf_counter()
     signal.setitimer(signal.ITIMER_REAL, DEADLINE_SECONDS)
@@ -167,17 +181,17 @@ def main() -> None:
     cases, sources = select_transfer_cases(args.books_dir)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     cohort = args.out_dir / "cohort.jsonl"
-    cohort_bytes = "".join(
-        json.dumps(case, ensure_ascii=False, sort_keys=True) + "\n" for case in cases
-    ).encode("utf-8")
-    digest = sha256(cohort_bytes).hexdigest()
+    cohort_bytes = _serialized_cohort(cases)
+    digest = cohort_identity(cases)
+    preanalysis_digest = sha256(cohort_bytes).hexdigest()
     if digest != EXPECTED_COHORT_SHA256:
         raise ValueError(
             f"Transfer cohort changed: expected {EXPECTED_COHORT_SHA256}, got {digest}. "
             "Use a separate baseline for a different cohort."
         )
     cohort.write_bytes(cohort_bytes)
-    print(f"{len(cases)} transfer cases, cohort SHA-256 {digest}", flush=True)
+    print(f"{len(cases)} transfer cases, source cohort SHA-256 {digest}, "
+          f"with annotations {preanalysis_digest}", flush=True)
     if args.sample_only:
         return
     resources = ParserResources.from_dir(ROOT / "data", wordnet_dict=args.wordnet_dir)
@@ -198,7 +212,8 @@ def main() -> None:
         signal.signal(signal.SIGALRM, old_handler)
 
     summary = {
-        "cohort_sha256": digest, "max_items": MAX_ITEMS,
+        "cohort_sha256": digest, "cohort_with_preanalysis_sha256": preanalysis_digest,
+        "max_items": MAX_ITEMS,
         "kbest_work_limit": KBEST_WORK_LIMIT, "deadline_seconds": DEADLINE_SECONDS,
         "sources": sources, "total": tally(rows),
         "by_book": {

@@ -115,6 +115,24 @@ class QuotedDiscourseStructureTests(unittest.TestCase):
                 self.assertEqual(source[parts["r0"].start:parts["r0"].end].strip(","),
                                  "said Mary" if expected.startswith("post") else "Mary said")
 
+    def test_commitment_reporter_requires_the_contiguous_inverted_tag(self):
+        source = '“I will be there,” promised Mary Jane.'
+        unit, = analyze_paragraph(source)
+        parts = by_id(unit)
+        self.assertEqual(parts["q0"].governor, "r0")
+        tag = parts["r0"]
+        self.assertEqual(source[tag.start:tag.end], "promised Mary Jane")
+
+        for text in (
+            '“I am here.” Mary promised to return.',
+            '“I am here,” promised Mary to bring the book.',
+            '“I will be there.” Vowed Mary.',
+        ):
+            with self.subTest(text=text):
+                for sentence in analyze_paragraph(text):
+                    self.assertFalse(any(p.function == "reporting_clause"
+                                         for p in sentence.constituents))
+
     def test_neighbouring_independent_dialogues_remain_distinct(self):
         text = '“Hello!” she cried. “Come back,” he said.'
         units = analyze_paragraph(text)

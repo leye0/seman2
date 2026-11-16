@@ -49,6 +49,19 @@ class NovelTransferTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Non-source-exact"):
             transfer.verify_source({**case, "structural_core_source_span": [-1, 4]}, core)
 
+    def test_identity_distinguishes_source_drift_from_preanalysis_changes(self):
+        row = {"source_text": "He sat.", "structural_core_source_span": [0, 7],
+               "structural_constituents": [{"id": "u0"}]}
+        enriched = {**row, "structural_constituents": [{"id": "u0"}, {"id": "s0"}]}
+        self.assertEqual(transfer.cohort_identity([row]), transfer.cohort_identity([enriched]))
+        self.assertNotEqual(transfer._serialized_cohort([row]), transfer._serialized_cohort([enriched]))
+        self.assertNotEqual(transfer.cohort_identity([row]), transfer.cohort_identity([
+            {**row, "source_text": "He sat!"}
+        ]))
+        self.assertNotEqual(transfer.cohort_identity([row]), transfer.cohort_identity([
+            {**row, "structural_core_source_span": [1, 8]}
+        ]))
+
     def test_cli_rejects_drift_before_writing_cohort(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
