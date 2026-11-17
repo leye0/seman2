@@ -1,0 +1,44 @@
+name: Novel-800 lexical and construction probe
+on:
+  push:
+    branches: [research/novel-ladder-800-exploration]
+    paths:
+      - 'superparser/scripts/probe_novel800.py'
+      - '.github/workflows/novel-800-probe.yml'
+permissions:
+  contents: read
+jobs:
+  probes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',headers={'User-Agent':'Seman2-research'}),timeout=90) as response:
+              raw=response.read()
+          dst=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dst.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for p in ('noun','verb','adj','adv'):
+              keep.update((f'index.{p}',f'data.{p}',f'{p}.exc'))
+          with ZipFile(BytesIO(raw)) as archive:
+              for name in archive.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dst/leaf).write_bytes(archive.read(name))
+          PY
+      - name: Inspect grounded phrases at existing 50k and 500k limits
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -u -m scripts.probe_novel800
