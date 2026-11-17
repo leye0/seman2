@@ -104,5 +104,60 @@ class Novel800ResidualTests(unittest.TestCase):
         self.assertEqual(root.features.as_dict().get("elliptical"),"true")
         self.assertFalse(any(c.category=="V" or c.category=="CLAUSE" for c in root.children))
 
+
+    def test_n708_nonfinite_letter_subscription_and_signatory(self):
+        from seman_parser.scoped_novel_800 import LETTER_SIGNOFF
+        self.verify(708,'"Your affectionate and afflicted father, "Arthur Morgan.',
+            '"Your affectionate and afflicted father "Arthur Morgan.',
+            LETTER_SIGNOFF,["OPEN-QUOTE","NP","COMMA","CLOSE-QUOTE","NP","SPEECH-STOP"],
+            [("DOCUMENT_SIGNATORY","subscription","signature")])
+        for text in (708,'"Your affectionate and afflicted father, "Arthur Morgan.'):
+            prepared,lattice,result=self.parse(text)
+            root=result.best()
+            self.assertEqual(root.features.as_dict().get("documentary"),"true")
+            self.assertEqual(root.features.as_dict().get("nonfinite"),"true")
+
+    def test_n713_source_date_keeps_truncated_year(self):
+        from seman_parser.scoped_novel_800 import DOCUMENT_DATELINE
+        self.verify(713,'"Oxford, May 13th, 17--."',
+            '"Oxford, May 13th, 1700."',
+            DOCUMENT_DATELINE,["OPEN-QUOTE","NP","COMMA","N","SOURCE-ORDINAL",
+                               "COMMA","TRUNCATED-YEAR","SPEECH-STOP","CLOSE-QUOTE"],
+            [("DOCUMENT_LOCATION","day","place"),("TRUNCATED_YEAR","day","year")])
+        prepared,lattice,result=self.parse(713)
+        root=result.best()
+        year=root.children[6]
+        self.assertEqual(prepared.analysis_text[year.start:year.end],"17--")
+        self.assertEqual(year.features.as_dict().get("year_incomplete"),"true")
+        self.assertEqual(root.features.as_dict().get("documentary"),"true")
+
+    def test_n718_spoken_plan_colon_vocative_and_purpose(self):
+        from seman_parser.scoped_novel_800 import SPOKEN_PLAN_COMMAND
+        self.verify(718,'"To go instantly to London: come with me, Edward, to order the horses."',
+            '"To go instantly to London; come with me, Edward, to order the horses."',
+            SPOKEN_PLAN_COMMAND,["OPEN-QUOTE","TO","V","ADV","PP","COLON","CLAUSE","COMMA",
+                                 "NP","COMMA","TO","V","NP","SPEECH-STOP","CLOSE-QUOTE"],
+            [("GOAL","go","destination"),("DISCOURSE_PLAN","go","come"),
+             ("VOCATIVE","come","vocative"),("PURPOSE","come","order"),
+             ("THEME","order","horses")])
+
+    def test_n732_overt_aborted_thought_and_reporting(self):
+        from seman_parser.scoped_novel_800 import DASH_INTERRUPTED
+        self.verify(732,'"I thought perhaps Dr. Murray--" I began.',
+            '"I thought perhaps Dr. Murray." I began.',
+            DASH_INTERRUPTED,["OPEN-QUOTE","CLAUSE","ADV","TITLE","ABBREVIATION-STOP",
+                              "NP","DASH","CLOSE-QUOTE","CLAUSE","SPEECH-STOP"],
+            [("UNFINISHED_CONTENT","thought","name"),("REPORTED_CONTENT","report","thought"),
+             ("HONORIFIC","name","title")])
+
+    def test_n735_epistemic_incise_not_locative(self):
+        from seman_parser.scoped_novel_800 import PARENTHETICAL_CHANCE
+        self.verify(735,"In the meantime I had a better chance, as I supposed, before him.",
+            "In the meantime I had a better chance as I supposed, before him.",
+            PARENTHETICAL_CHANCE,["PP","CLAUSE","COMMA","CONJ","NP","V",
+                                  "COMMA","PP","SPEECH-STOP"],
+            [("TIME","matrix","time"),("EPISTEMIC_PARENTHESESIS","matrix","supposed"),
+             ("LOCATIVE_COMPLEMENT","matrix","locative")])
+
 if __name__=="__main__":
     unittest.main()
