@@ -479,7 +479,82 @@ def plan_n648_progressive(text, components):
     ))
     return specs
 
+
+# N647: a focused instrument cleft (with these only), not a second plain
+# locative PP on the coordination. The control gerund remains subordinate.
+N647_CLEFT = "structural_coordinated_superlative_with_instrument_cleft"
+_N647 = re.compile(
+    r'(?P<guineas>The +(?:guineas|coins))(?P<comma1>,) +(?P<too>too)'
+    r'(?P<comma2>,) +(?P<were>were) +(?P<about>about) +'
+    r'(?P<scarcest>the +scarcest)(?P<comma3>,) +(?P<and>and) +'
+    r'(?P<it>it) +(?P<was>was) +(?P<with>with +these) +'
+    r'(?P<only>only) +(?P<that>that) +(?P<mother>my +mother) +'
+    r'(?P<knew>knew) +(?P<how>how) +(?P<to>to) +'
+    r'(?P<make>make) +(?P<count>her +count)(?P<stop>\.)'
+)
+def plan_n647_cleft(text, components):
+    m=_N647.fullmatch(text)
+    if m is None or not _matrix(text,components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _phr('guineas','NP',proof_rule='np_det_n'),_punct('comma1','COMMA'),
+        _lex('too','ADV'),_punct('comma2','COMMA'),
+        _lex('were','COPULA',vform='finite'),_lex('about','ADV'),
+        _phr('scarcest','NP',proof_rule='np_det_n'),
+        _punct('comma3','COMMA'),_lex('and','COORD',lemma_in='and'),
+        _lex('it','EXTRAPOSITION-IT'),
+        _lex('was','COPULA',vform='finite'),
+        _phr('with','PP',proof_rule='pp_prep_np'),_lex('only','ADV'),
+        _lex('that','COMP-THAT'),
+        _phr('mother','NP',proof_rule='np_poss'),
+        _verb('knew','finite','transitive'),
+        _lex('how','WH-NOM'),_lex('to','TO'),
+        _verb('make','base','transitive'),
+        _phr('count','NP',proof_rule='np_poss'),
+        _punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
+# N649: parallel indirect manner complements to the evaluative adjective.
+# Keep "with what politeness" on kept, and all on ingratiate.
+N649_PARALLEL = "structural_evaluative_parallel_how_and_with_what_manner"
+_N649 = re.compile(
+    r'(?P<indeed>Indeed)(?P<comma>,) +(?P<remark>it +was +remarkable) +'
+    r'(?P<how>how) +(?P<well>well) +'
+    r'(?P<bore>he +bore +these +(?:slights|insults)) +'
+    r'(?P<and>and) +(?P<with>with) +(?P<what>what) +'
+    r'(?P<unwearying>unwearying) +(?P<politeness>politeness) +'
+    r'(?P<he>he) +(?P<kept>kept) +(?P<on>on) +(?P<trying>trying) +'
+    r'(?P<to>to) +(?P<ingratiate>ingratiate) +'
+    r'(?P<himself>himself) +(?P<withall>with +all)(?P<stop>\.)'
+)
+def plan_n649_parallel_manner(text, components):
+    m=_N649.fullmatch(text)
+    if m is None or not _matrix(text,components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _lex('indeed','ADV'),_punct('comma','COMMA'),
+        _phr('remark','CLAUSE',finite_statement_proof='true'),
+        _lex('how','WH-NOM'),_lex('well','ADV'),
+        _phr('bore','CLAUSE',finite_statement_proof='true'),
+        _lex('and','COORD',lemma_in='and'),
+        _lex('with','PREP',lemma_in='with'),_lex('what','WH-NOM'),
+        _lex('unwearying','ADJ'),_lex('politeness','N'),
+        _subject('he'),_lex('kept','V',vform='finite'),
+        _lex('on','PARTICLE',lemma_in='on'),
+        _verb('trying','ing','subject_control'),
+        _lex('to','TO'),_verb('ingratiate','base','transitive'),
+        _lex('himself','EMPHATIC-REFLEXIVE',reflexive='true'),
+        _phr('withall','PP',proof_rule='pp_prep_np'),
+        _punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
 NARRATIVE_PLANS = (
+    (N647_CLEFT, plan_n647_cleft),
+    (N649_PARALLEL, plan_n649_parallel_manner),
     (N648_PROGRESSIVE, plan_n648_progressive),
     (N624_PARATAXIS, plan_n624_parataxis),
     (CONCESSIVE_LEAD, plan_concessive_lead),
@@ -611,5 +686,5 @@ SPOKEN_PLANS = (
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
