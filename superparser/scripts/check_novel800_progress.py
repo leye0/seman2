@@ -41,12 +41,35 @@ def check(directory:Path,expect_new:set[int]):
     counts=now["counts"]
     if counts.get("complete")!=len(protected)+len(newly):
         raise AssertionError(f"Inconsistent completion count {counts}")
+    # On the fully repaired exploratory rung, preserve both the original
+    # 85 selected graphs and all 15 source-verified recovery signatures.
+    if counts != {"complete": 100}:
+        raise AssertionError(f"Final candidate must be 100/100: {counts}")
+    if any(observed[i] != baseline[i] for i in range(701,801)
+           if baseline[i]["status"] == "complete"):
+        raise AssertionError("One of the original 85 selected trees changed")
+    recovered={i for i in range(701,801) if baseline[i]["status"] != "complete"}
+    review_doc=ladder.read_json(DIR/"novel-800-candidate-review.json")
+    if review_doc.get("cohort_sha256") != manifest["cohort_sha256"]:
+        raise AssertionError("Review cohort identity mismatch")
+    reviewed=set()
+    for entry in review_doc.get("cases", []):
+        idx=entry["index"]
+        if (idx in reviewed or idx not in recovered
+                or entry["verdict"] != "verified"
+                or not entry.get("evidence","").strip()
+                or entry["rank_one_sha256"] != observed[idx]["rank_one_sha256"]
+                or entry["selected_graph_sha256"] != observed[idx]["selected_graph_sha256"]):
+            raise AssertionError(f"Missing or stale source-grounded N{idx} review")
+        reviewed.add(idx)
+    if reviewed != recovered or len(reviewed) != 15:
+        raise AssertionError(f"Expected all 15 recovered cases reviewed: {sorted(reviewed)}")
     result={"initial_complete":85,"previous_complete":len(protected),
             "newly_complete":sorted(newly),"current_complete":counts["complete"],
             "remaining":100-counts["complete"],"counts":counts,
             "source_sha256":manifest["cohort_sha256"],
             "unchanged_previous_trees":len(protected),
-            "reviewed_trees":0,"candidate_only":True}
+            "reviewed_trees":len(reviewed),"candidate_only":True}
     print("N800_INCREMENTAL_VERIFIED",json.dumps(result,sort_keys=True),flush=True)
     return result
 
