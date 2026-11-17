@@ -34,7 +34,7 @@ def main():
       for rank,tree in enumerate(result.alternatives(limit=2)):
         print('TREE',rank, '\n'.join(display_tree(tree,prepared.analysis_text))[:6500],flush=True)
     except Exception as e:
-      print('FAIL:',type(e).__name__,str(e),flush=True)
+      print('FAIL:',type(e).__name__+':'+str(e),str(e),flush=True)
     finally:signal.alarm(0)
 
 FRAGMENTS = {"624": ["My rage was without bounds","I sprang on him","the feelings","all the feelings","one being","the existence of another","against the existence of another","on him","impelled by all the feelings"],"625": ["I thank you","all that you mention is nothing to me","there is no comfort","on the whole earth","no comfort","I am capable of receiving","the whole earth","I am capable"],"639": ["there's something under that","something under that","no doubt","bad or good","under that","Jim"],"643": ["what shall we do?","Where is he wounded?","we cried","Oh, doctor","doctor"],"647": ["The guineas","the scarcest","my mother","how to make her count","her count","with these","these slights"],"648": ["we were both groping downstairs","the empty chest","the candle","by the empty chest","we had opened the door","the next","in full retreat","the door"],"649": ["it was remarkable","these slights","he bore these slights","with all","with what unwearying politeness","he kept on trying to ingratiate himself with all","to ingratiate himself with all"],"660": ["my dear Daisy","will you mind my calling you Daisy?","my calling you Daisy","you mind my calling you Daisy","Not I!"],"661": ["shall you see her?","d’ye think?","Davy","Mas’r Davy"],"669": ["Mrs. Crupp said","the range","come and look at the range","a fish-kittle","would I only come and look at the range?"],"672": ["I wish there was not.","I have almost forgotten","there is anything to do in the world","anything to do in the world","on the sea","I wish there was not","to go out tossing on the sea here"],"691": ["I am grieved indeed","grieved--shocked","is it certain?","But is it certain--absolutely certain?","cried Darcy"]};
@@ -47,7 +47,7 @@ def fragments():
       for category in ('NP','PP','VP','CLAUSE','ADJP','SPEECH-TAG'):
         try:
           gram=parser._dialogue_vector_grammar if category=='SPEECH-TAG' else parser._vector_grammar
-          result=gram.parse_lattice(parser._lattice_for_text(text),goal_category=category,max_items=2500,kbest_work_limit=25000)
+          result=gram.parse_lattice(parser._lattice_for_text(text),goal_category=category,max_items=2500,kbest_work_limit=25000,beam=parser.beam)
           b=result.best()
           if b is not None: scores[category]=b.rule_id
         except Exception as e: scores[category]=type(e).__name__
