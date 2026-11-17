@@ -117,4 +117,65 @@ class Novel700ResidualTests(unittest.TestCase):
                     self.assertIn((relation,handles[left],handles[right]),edges)
 
 
+
+    def verify_new_source_plan(self, idx, positive, negative, rule_id, relations,
+                               expected_children=None):
+        for source,must in ((idx,True),(positive,True),(negative,False)):
+            with self.subTest(index=idx,source=str(source)[:50]):
+                prepared,lattice,result=self.parse(source)
+                root=result.best()
+                if not must:
+                    self.assertTrue(root is None or root.rule_id!=rule_id)
+                    continue
+                self.assertTrue(result.completed, (idx,result.stats))
+                self.assertIsNotNone(root)
+                self.assertEqual(root.rule_id,rule_id)
+                self.assertEqual((root.start,root.end),(0,len(prepared.analysis_text)))
+                self.assertFalse(result.stats.get('budget_exceeded'))
+                self.assertFalse(result.stats.get('kbest_budget_exceeded'))
+                if expected_children:
+                    self.assertEqual([c.category for c in root.children],expected_children)
+                package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
+                self.assertIsNotNone(package)
+                handles=package['handles']
+                edges={(e['relation'],e['source'],e['target']) for e in package['graph']['relations']}
+                for relation,left,right in relations:
+                    self.assertIn((relation,handles[left],handles[right]),edges)
+                for node in package['graph']['nodes']:
+                    if node.get('span') is not None and node.get('surface') is not None:
+                        a,b=node['span']
+                        self.assertEqual(node['surface'],prepared.analysis_text[a:b])
+
+    def test_n625_existential_relative_and_semicolon(self):
+        from seman_parser.scoped_novel_700 import N625_EXISTENTIAL
+        positive=('"I thank him, but all that you mention is nothing to me; '
+                  'on the whole earth there is no comfort which I am capable of receiving."')
+        negative=('"I thank him, but all that you mentions is nothing to me; '
+                  'on the whole earth there is no comfort which I am capable of receiving."')
+        self.verify_new_source_plan(625,positive,negative,N625_EXISTENTIAL,
+            [('CONTRAST','thank','copular'),('PARATAXIS','copular','existent')],
+            ['OPEN-QUOTE','CLAUSE','COMMA','COORD','RELATIVE-COPULAR',
+             'SEMICOLON','EXISTENTIAL-RELATIVE','SPEECH-STOP','CLOSE-QUOTE'])
+
+    def test_n639_dashed_reformulation(self):
+        from seman_parser.scoped_novel_700 import N639_APPOSITIVE
+        positive=('"And there\'s something under that, no doubt--something, surely, '
+                  'under that, Ben--bad or good."')
+        negative=('"And there\'s something under that, no doubt--something, surely, '
+                  'under that, Ben--bad or goods."')
+        self.verify_new_source_plan(639,positive,negative,N639_APPOSITIVE,
+            [('NEGATION','doubt','no'),('APPOSITION','existential','something'),
+             ('ATTRIBUTE','something','qualities')])
+
+    def test_n672_source_quoted_two_sentences_and_wish(self):
+        from seman_parser.scoped_novel_700 import N672_WISH
+        positive=('‘I have almost forgotten that there is something to do in the world '
+                  'but to go out tossing on the sea here. I wish there was not.’')
+        negative=('‘I have almost forgotten that there are anything to do in the world '
+                  'but to go out tossing on the sea here. I wish there was not.’')
+        self.verify_new_source_plan(672,positive,negative,N672_WISH,
+            [('DISCOURSE_SEQUENCE','first','wish'),('ANAPHORIC_REPRISE','wish','first')],
+            ['OPEN-QUOTE','FIRST-SPOKEN-CLAUSE','CLAUSE','CLOSE-QUOTE'])
+
+
 if __name__=='__main__': unittest.main()
