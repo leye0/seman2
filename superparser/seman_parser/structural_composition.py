@@ -849,6 +849,44 @@ class QuotedSentenceComposer:
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
+            elif kind in ("source-dialectal-honorific", "source-dialectal-do-ye"):
+                # Attested Dickens dialectal spelling is a single lexical
+                # expression with an exact source span. Tokenization produces
+                # Mas+r and d+ye; do not insert canonical words or punctuation.
+                if expected_rule != N661_DIALECTAL:
+                    return None
+                inventory = {
+                    "source-dialectal-honorific": (
+                        "mas’r", ("mas", "r"), "TITLE", "master",
+                        {"dialectal": "true", "honorific": "true"},
+                    ),
+                    "source-dialectal-do-ye": (
+                        "d’ye", ("d", "ye"), "DIALECT-DO-YE", "do-ye",
+                        {"dialectal": "true", "vform": "finite", "person": "2"},
+                    ),
+                }
+                spelling, parts, expected_category, lemma, features = inventory[kind]
+                overt_tokens = [
+                    t for t in original_lattice.tokens
+                    if t.start >= a and t.end <= b
+                ]
+                if (category != expected_category or surface.casefold() != spelling
+                        or tuple(t.text.casefold() for t in overt_tokens) != parts
+                        or any(required.get(k) != v for k, v in required.items()
+                               if k in features)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=lemma,
+                    category=category, features=FeatureStructure.build(features),
+                    source="attested-dialectal-morphology", score=0,
+                    provenance={
+                        "original_source_span": [a, b],
+                        "source_tokens": [
+                            [t.text,t.start,t.end] for t in overt_tokens
+                        ],
+                        "original_spelling_preserved": True,
+                    },
+                ))
             elif kind == "source-dialectal-so-as":
                 if (expected_rule != DIALECTAL_EVIDENCE or category != "RESULT-CONJ"
                         or surface.casefold() not in ("so's", "so’s")
