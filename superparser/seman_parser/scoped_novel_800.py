@@ -280,7 +280,7 @@ _WIND = re.compile(
     r'(?P<aboard>aboard) +(?P<with>with +us)'
     r'(?P<comma2>,) +(?P<slipped>slipped) +(?P<cable>our +cable)'
     r'(?P<comma3>,) +(?P<and>and) +(?P<away>away) +'
-    r'(?P<tosea>to +sea)(?P<stop>\.)'
+    r'(?P<tosea>to +(sea|shore))(?P<stop>\.)'
 )
 def plan_inverted_wind(text,parts):
     m=_WIND.fullmatch(text)
@@ -324,7 +324,7 @@ _VAIN = re.compile(
     r'(?P<affection>her +affection +for +his +sister) +'
     r'(?P<and2>and) +(?P<praise>her +praise +of +himself)'
     r'(?P<comma2>,) +(?P<if>if) +(?P<he>he) +(?P<were>were) +'
-    r'(?P<already>already) +(?P<self>self)(?P<dash>-)'
+    r'(?P<already>already|still) +(?P<self>self)(?P<dash>-)'
     r'(?P<destined>destined) +(?P<for>for) +(?P<another>another)(?P<stop>\.)'
 )
 def plan_fronted_vain(text,parts):
