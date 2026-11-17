@@ -1,4 +1,4 @@
-name: Novel-800 100-case full replay and protected 600/700 regression
+name: Novel-800 final pinned 100/100 + protected 500/600/700
 on:
   push:
     branches: [research/novel-ladder-800-exploration]
@@ -54,7 +54,7 @@ jobs:
         env:
           PYTHONPATH: superparser
         run: |
-          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 763 791 797
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new
       - name: Replay and compare protected Novel-600 and Novel-700
         env:
           PYTHONPATH: superparser
@@ -72,6 +72,25 @@ jobs:
                   raise AssertionError(f'Novel-{n} selected tree or graph signatures changed')
               print(f'N800_PROTECTED_PREFIX Novel-{n}: 100/100 identical')
           PY
+      - name: Confirm legacy Novel-500 selected fingerprints unchanged
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m scripts.diagnose_novel_parses --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --count 500 --max-items 50000 --kbest-work-limit 500000 --deadline-seconds 10 --out-dir /tmp/novel800-legacy
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.novel_ladder import compare_legacy,read_json,LADDER
+          compare_legacy(Path('/tmp/novel800-legacy/per_sentence.jsonl'),
+              read_json(LADDER/'novel-500-protected.json')['rank_one_run_sha256'])
+          print('N800_LEGACY_500_SELECTED_SIGNATURES_IDENTICAL',flush=True)
+          PY
+      - name: Verify direct syntax and real-dialogue regression suite
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m scripts.smoke_layer1
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m scripts.validate_direct_grammar --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out /tmp/novel800-direct-quality.json
+          python -m scripts.audit_anchored_dialogue_30 --diagnostics /tmp/novel800-legacy/per_sentence.jsonl --summary /tmp/novel800-legacy/summary.json --out /tmp/novel800-anchored-dialogue.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
