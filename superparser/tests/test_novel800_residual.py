@@ -144,7 +144,7 @@ class Novel800ResidualTests(unittest.TestCase):
     def test_n732_overt_aborted_thought_and_reporting(self):
         from seman_parser.scoped_novel_800 import DASH_INTERRUPTED
         self.verify(732,'"I thought perhaps Dr. Murray--" I began.',
-            '"I thought perhaps Dr. Murray." I began.',
+            '"I thought perhaps Dr. Murray—" I began.',
             DASH_INTERRUPTED,["OPEN-QUOTE","CLAUSE","ADV","TITLE","ABBREVIATION-STOP",
                               "NP","DASH","CLOSE-QUOTE","CLAUSE","SPEECH-STOP"],
             [("UNFINISHED_CONTENT","thought","name"),("REPORTED_CONTENT","report","thought"),
