@@ -80,11 +80,32 @@
       "selected_graph_sha256": "3764ca04b1eaca9017ddcb4687858d2fc810b56416fe3295f05899a380e24d8b"
     },
     {
+      "index": 763,
+      "verdict": "verified",
+      "evidence": "Source split quotation has a real reporting clause he returned respectfully, a source vocative sir, and a resumed that-clause whose shared modal will scopes passive be seated and allow me to do this; me is agent of do under allow's control, not an argument of seated. Original and independent demonstrative positive plus passive-near-miss negative pass.",
+      "rank_one_sha256": "2c4c55053bdd9b343c48fc5936775e090a0ff26a0db86bc440feeab33dd9f824",
+      "selected_graph_sha256": "615c73066bf588571050cfaf2827fba8adb22eaa2e9ef3b525557319e1dd2946"
+    },
+    {
+      "index": 791,
+      "verdict": "verified",
+      "evidence": "Original Wickham and perhaps form a bounded copular evaluative statement; but introduces think with modal shall like. Your husband is the comparison target, and Jane's is source-attested POSSESSIVE-ELLIPSIS with no invented husband token; equative comparison and genitive antecedent are explicit graph edges. Darcy/Mary's independent positive and non-genitive negative pass.",
+      "rank_one_sha256": "59e93d0cd7e0eb2facd6362e220aced69ff1e75d2a4a73a0ec0c371059454d74",
+      "selected_graph_sha256": "2180ccc0ba8312ca0c1e9b14dde03b7ca9bc6c319842218f1daea149ce3a3e7f"
+    },
+    {
       "index": 795,
       "verdict": "verified",
       "evidence": "Vain indeed must be all her attentions is a fronted modal predicative inversion; the following vain and useless attributes govern separate coordinated nominals without supplying missing copulas. The if-clause is a finite source-backed condition, and self-destined-for-another remains an explicit adjectival complement. Independent time and coordination controls checked.",
       "rank_one_sha256": "7acebedf26eb033a6455f3a08b05f2bb7e7dc524eee4538a5fee0295e8fb984e",
       "selected_graph_sha256": "21c4fd0f1c55307a52a5f81422dfb25ef6e4f2f6f891747940f893f6ad3319fe"
+    },
+    {
+      "index": 797,
+      "verdict": "verified",
+      "evidence": "Split source quotations retain Thank you as the overt imperative formula and said Lydia as reporter. Causal for introduces anaphoric if you did; the first modal consequent is I should certainly tell you all, coordinated with then Wickham would be angry. The graph keeps condition, source reporter, two outcomes and temporal order, without inventing the action omitted after did. Lydia/Mary positive and tense contrast pass.",
+      "rank_one_sha256": "38d3f96dc9c2df5f1ddc17c2a5cf7c69593b41999aff48a88272180e858e34e1",
+      "selected_graph_sha256": "497a83b11857eedcbeda49380d5da5d22594c439548d3dade80c4269eef4c190"
     }
   ]
 }
