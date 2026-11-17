@@ -203,5 +203,57 @@ class Novel800ResidualTests(unittest.TestCase):
              ("ATTRIBUTE","affection","vain2"),("ATTRIBUTE","praise","useless"),
              ("CONDITIONAL","be","were"),("CONDITION_ATTRIBUTE","were","destined")])
 
+
+    def test_n763_polite_intercalated_report_and_shared_modal_control(self):
+        from seman_parser.scoped_novel_800 import SPLIT_POLITE_REQUEST
+        source=self.cases[763]["source_text"]
+        positive=source.replace("to do this.","to do that.")
+        negative=source.replace("will be seated","will be seating")
+        self.verify(763,positive,negative,SPLIT_POLITE_REQUEST,
+            ["OPEN-QUOTE","NP","V","COMMA","TITLE","COMMA","CLOSE-QUOTE",
+             "CLAUSE","COMMA","OPEN-QUOTE","COMP-THAT","NP","MODAL","COPULA",
+             "V","COMMA","COORD","V","NP","TO","V","NP","SPEECH-STOP","CLOSE-QUOTE"],
+            [("REPORTED_CONTENT","report","beg"),("VOCATIVE","beg","sir"),
+             ("SHARED_MODAL_CONJUNCT","seated","allow"),
+             ("PASSIVE_PATIENT","seated","you"),
+             ("CONTROL_COMPLEMENT","allow","do"),("AGENT","do","me")])
+
+    def test_n791_comparative_genitive_ellipsis_preserves_source_token(self):
+        from seman_parser.scoped_novel_800 import EQUATIVE_FAVOURITE
+        source=self.cases[791]["source_text"]
+        positive=source.replace("Wickham","Darcy").replace("Jane's","Mary's")
+        negative=source.replace("Jane's","Jane")
+        self.verify(791,positive,negative,EQUATIVE_FAVOURITE,
+            ["OPEN-QUOTE","NP","COMMA","ADV","COMMA","COPULA","NP",
+             "SEMICOLON","COORD","NP","V","NP","MODAL","V","NP","ADV",
+             "EQUATIVE-AS","ADV","EQUATIVE-AS","POSSESSIVE-ELLIPSIS",
+             "SPEECH-STOP","CLOSE-QUOTE"],
+            [("SUBJECT","is","wickham"),("EPISTEMIC_PARENTHESESIS","is","perhaps"),
+             ("CONTENT","think","like"),("THEME","like","husband"),
+             ("COMPARISON_STANDARD","well","jane"),
+             ("ELLIPSIS_ANTECEDENT","jane","husband")])
+        for text,expected in ((791,"Jane's"),(positive,"Mary's")):
+            prepared,lattice,result=self.parse(text)
+            root=result.best()
+            nominal=next(c for c in root.children if c.category=="POSSESSIVE-ELLIPSIS")
+            self.assertEqual(prepared.analysis_text[nominal.start:nominal.end],expected)
+            self.assertTrue(nominal.features.as_dict().get("elliptical_nominal")=="true")
+            self.assertFalse(any(c.surface=="husband" and
+                                 c.start >= nominal.start for c in root.children
+                                 if hasattr(c,"surface")))
+
+    def test_n797_split_thanks_causal_anaphoric_if_and_two_outcomes(self):
+        from seman_parser.scoped_novel_800 import SPLIT_CAUSAL_CONDITIONAL
+        source=self.cases[797]["source_text"]
+        positive=source.replace("said Lydia","said Mary")
+        negative=source.replace("if you did","if you do")
+        self.verify(797,positive,negative,SPLIT_CAUSAL_CONDITIONAL,
+            ["OPEN-QUOTE","CLAUSE","COMMA","CLOSE-QUOTE","V","NP","COMMA",
+             "OPEN-QUOTE","COORD","CONJ","NP","AUX","COMMA","CLAUSE","COMMA",
+             "COORD","ADV","CLAUSE","SPEECH-STOP","CLOSE-QUOTE"],
+            [("REPORTING_AGENT","said","name"),("REPORTED_CONTENT","said","thanks"),
+             ("CONDITION","tell","did"),("SHARED_CONSEQUENCE","tell","consequence"),
+             ("SEQUENCE","consequence","then")])
+
 if __name__=="__main__":
     unittest.main()
