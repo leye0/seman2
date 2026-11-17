@@ -30,6 +30,7 @@ CURRENT800 = ROOT / "research" / "novel_800_exploration" / "novel-800-candidate-
 REVIEW800 = ROOT / "research" / "novel_800_exploration" / "novel-800-candidate-review.json"
 COHORT800 = ROOT / "research" / "novel_800_exploration" / "novel-800-candidate-cohort.json"
 DEFECTS = ROOT / "research" / "semantic_quality" / "confirmed_selected_defects.json"
+VERDICTS = ROOT / "research" / "semantic_quality" / "quality-verdicts-700-800.json"
 
 NEGATORS = frozenset(("not", "never", "n't", "n’t"))
 MODALS = frozenset(("can", "could", "may", "might", "must", "shall", "should", "will", "would"))
@@ -216,6 +217,27 @@ def run(args):
     ]
     if len(entries)!=200 or len({e["index"] for e in entries})!=200:
         raise AssertionError("Expected 200 unique source-anchored reviewed candidates")
+    # This is an explicit ledger, not a score from coverage or SHA stability.
+    # Every expected verdict must match the presently selected tree and
+    # graph, and each 'verified' requires an independent prior review entry.
+    quality=ladder.read_json(VERDICTS)
+    if (quality.get("schema")!="seman2-selected-semantic-verdicts-v1"
+            or quality.get("acceptance_status")!="blocked"
+            or len(quality.get("cases",[]))!=200):
+        raise AssertionError("Missing/invalid complete semantic verdict register")
+    by_quality={e["index"]:e for e in quality["cases"]}
+    if len(by_quality)!=200:
+        raise AssertionError("Duplicate semantic review verdict")
+    for entry in entries:
+        prior=by_quality.get(entry["index"])
+        if (prior is None or prior["verdict"]!=entry["quality_state"]
+                or prior["rank_one_sha256"]!=entry["selected_tree_sha256"]
+                or prior["selected_graph_sha256"]!=entry["selected_graph_sha256"]):
+            raise AssertionError(f"Stale or ungrounded semantic verdict N{entry['index']}")
+        if prior["verdict"]=="verified" and not entry["review_evidence"]:
+            raise AssertionError(f"N{entry['index']} claimed verified without evidence")
+        if prior["verdict"]=="needs_fix" and not entry["confirmed_defect"]:
+            raise AssertionError(f"N{entry['index']} lost its source-confirmed defect")
     flags=Counter(issue for entry in entries for issue in entry["automatic_issues"])
     warnings=Counter(issue for entry in entries for issue in entry["automatic_warnings"])
     counts=Counter(entry["quality_state"] for entry in entries)
