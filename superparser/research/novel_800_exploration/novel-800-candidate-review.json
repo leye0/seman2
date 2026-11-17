@@ -24,11 +24,67 @@
       "selected_graph_sha256": "1880b9e77657bc67742a2d215eec9f74515440d8b170ad1af8f1b39db87eafa1"
     },
     {
+      "index": 708,
+      "verdict": "verified",
+      "evidence": "The exact source letter subscription is a nonfinite documentary NP followed by the independently proven two-part proper-name signatory; both real quotation delimiters and the comma are retained, with no fabricated finite clause. A matched nonmatching source and independent signatory were checked.",
+      "rank_one_sha256": "0715825ab0117dc5683c1874ac2c179d2d6b0015b3350a2f53ce4928a5414063",
+      "selected_graph_sha256": "416ca8935f0aaaeb7ab56b826c7e015a085c0fb7000458e5aede045c1fb7294b"
+    },
+    {
+      "index": 713,
+      "verdict": "verified",
+      "evidence": "Source-preserved quotation encloses a dateline with overt named location, calendar month, source-attested ordinal and an incomplete year 17--; the graph records the missing year digits as unknown, never manufactures a date. Independent Oxford 13th and completed-year negative controls pass.",
+      "rank_one_sha256": "b1e955f472eba222b8830e613cf55b0ea20796e1c79334ac69c3f781a841b413",
+      "selected_graph_sha256": "e3df145e7ccdc45c02f19ac3c31b7afb76f2de1ca119252d8031fa4f2ab7037d"
+    },
+    {
+      "index": 718,
+      "verdict": "verified",
+      "evidence": "The overt colon separates the infinitival resolution from a separate imperative Come with me, which has a genuine vocative Henry and purpose to order the horses. Goal, discourse plan, vocative, purpose and object graph relations are tested; a semicolon contrast is rejected.",
+      "rank_one_sha256": "c53353fd070a53c47e0c551b9aa0caab07594d1ba8ea137c9f91317d02618155",
+      "selected_graph_sha256": "ff4eca991c53dcb5bfe0cb0f014bae41b359f3e927a5f9ddd1bb39e85ad384d4"
+    },
+    {
+      "index": 721,
+      "verdict": "verified",
+      "evidence": "The storm is agent of hung, exactly north of the town is its direct locative, and the later over-the-part phrase bears the independently identified relative which lies between... attached to the part. Tested with a separate proper-place control and an invalid who-for-which contrast.",
+      "rank_one_sha256": "649268e2313332118953d86f7ae7446ee066ac9e3abd5c61cc7e1c471ae57be5",
+      "selected_graph_sha256": "b3ef8bc82d2d1db2c3863dd0b0e17508c7ca32b48b12f4404e2bd7daa117dd09"
+    },
+    {
       "index": 730,
       "verdict": "verified",
       "evidence": "So with the second is licensed as conventional anaphoric minor predication with overt so ADV, full with-the-second PP and source stop; the tree deliberately does not invent an unspoken finite verb. The third is a positive independent control, without is an unsuitable contrast.",
       "rank_one_sha256": "b7b5581787d0d1f4d8352743565a41bfce34eb28e2dd087c34b2045c9541f627",
       "selected_graph_sha256": "e60aba738dcba4d0d8ad778c3dc90d57e275ff33b5edd19b057541b481c08ae5"
+    },
+    {
+      "index": 732,
+      "verdict": "verified",
+      "evidence": "Original double dash signals abandoned quoted content rather than an invented predicate. The overt I thought...Dr. Livesey spans the interrupted content, while I began is an independently proven external reporting clause. Abbreviation, honorific, selected reporter relation, exact punctuation and an em-dash contrast are checked.",
+      "rank_one_sha256": "248f4910ee54dc6360f08d877d6965fe67e5d146359433e120f0d17531a5fd63",
+      "selected_graph_sha256": "9348bedb19588fcfd66f748e6f8ead0a5b347b4e52d241581dad9b67c10489dd"
+    },
+    {
+      "index": 735,
+      "verdict": "verified",
+      "evidence": "The preposed In the meantime is a temporal PP; I had a better chance independently supplies the matrix clause; as I supposed is a bounded epistemic incise between two real commas; before me is separately parsed as the final location, not a locative of supposed. Both independent pronoun and punctuation controls are tested.",
+      "rank_one_sha256": "402ab5557920c851063fbdfb8716ed01f19488557822bbdc19bbb2881ef32a29",
+      "selected_graph_sha256": "cacc4fc17597d714e13cd63b1f82ebe2719cfc15d66a54a769424bbcc3e7d19b"
+    },
+    {
+      "index": 749,
+      "verdict": "verified",
+      "evidence": "Inverted Had there been a breath of wind is the explicit counterfactual condition; should-have-fallen heads the modal consequence, the six mutineers contains its source-backed relative who were left aboard, slipped our cable inherits the shared modal, and away to sea is overt directional ellipsis without a fabricated went/gone. The directional shore and ungrammatical fall controls establish the selection.",
+      "rank_one_sha256": "d50f4d222686197b91e04a132ffe4204149b3517518ec653db38995ad139b042",
+      "selected_graph_sha256": "3764ca04b1eaca9017ddcb4687858d2fc810b56416fe3295f05899a380e24d8b"
+    },
+    {
+      "index": 795,
+      "verdict": "verified",
+      "evidence": "Vain indeed must be all her attentions is a fronted modal predicative inversion; the following vain and useless attributes govern separate coordinated nominals without supplying missing copulas. The if-clause is a finite source-backed condition, and self-destined-for-another remains an explicit adjectival complement. Independent time and coordination controls checked.",
+      "rank_one_sha256": "7acebedf26eb033a6455f3a08b05f2bb7e7dc524eee4538a5fee0295e8fb984e",
+      "selected_graph_sha256": "21c4fd0f1c55307a52a5f81422dfb25ef6e4f2f6f891747940f893f6ad3319fe"
     }
   ]
 }
