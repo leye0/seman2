@@ -1,0 +1,76 @@
+name: Novel-700 / 800 full semantic quality gate
+on:
+  push:
+    branches: [research/novel-ladder-full-semantic-audit]
+    paths:
+      - '.github/workflows/novel-700-800-semantic-audit.yml'
+      - 'superparser/scripts/audit_ladder_semantic_quality.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exhaustive-selected-tree-audit:
+    name: All 200 selected trees, actual edges and review ledger
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              raw=f.read()
+          dst=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dst.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for category in ('noun','verb','adj','adv'):
+              keep.update((f'index.{category}',f'data.{category}',f'{category}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for name in z.namelist():
+                  leaf=Path(name).name
+                  if name.startswith('wordnet/') and leaf in keep:
+                      (dst/leaf).write_bytes(z.read(name))
+          PY
+      - name: Reparse all frozen Novel-600 and Novel-700 cases at unchanged limits
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.novel_ladder run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/semantic-audit-ladder
+          python -m scripts.novel_ladder check --out-dir /tmp/semantic-audit-ladder
+      - name: Reparse all 100 exploratory Novel-800 cases at unchanged limits
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.novel800_exploratory run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/semantic-audit-800
+      - name: Audit every selected tree, semantic graph and individual review
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.audit_ladder_semantic_quality --novel700 /tmp/semantic-audit-ladder/novel-700-parses.jsonl --novel800 /tmp/semantic-audit-800/novel-800-candidate-parses.jsonl --out /tmp/semantic-audit-results
+      - name: Upload complete per-case quality dossier
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: novel700-800-semantic-review-dossier
+          path: |
+            /tmp/semantic-audit-results/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Block semantic acceptance until all attachments are verified
+        if: always()
+        env:
+          PYTHONPATH: superparser
+        run: |
+          if [ ! -f /tmp/semantic-audit-results/semantic-audit-all-200.json ]; then
+            echo "Semantic quality report not produced; acceptance blocked"
+            exit 1
+          fi
+          python -m scripts.audit_ladder_semantic_quality --novel700 /tmp/semantic-audit-ladder/novel-700-parses.jsonl --novel800 /tmp/semantic-audit-800/novel-800-candidate-parses.jsonl --out /tmp/semantic-audit-results --gate
