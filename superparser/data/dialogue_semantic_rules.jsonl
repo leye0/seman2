@@ -846,3 +846,9 @@
 {"id":"structural_n647_bare_causative","semantic":[{"compose":{"links":[{"relation":"CAUSATIVE","source":"make","target":"count"},{"relation":"PATIENT","source":"make","target":"her"},{"relation":"AGENT","source":"count","target":"her"}]}}]}
 {"id":"structural_n624_quantified_nominal","semantic":[{"compose":{"links":[{"relation":"QUANTITY","source":"being","target":"one"}]}}]}
 {"id":"structural_n624_genitive_nominal","semantic":[{"compose":{"links":[{"relation":"DEFINITE","source":"existence","target":"the"},{"relation":"POSSESSOR","source":"existence","target":"another"},{"relation":"GENITIVE_MARKER","source":"existence","target":"of"}]}}]}
+{"id":"structural_fronted_directional_deictic_with_finite_motion","semantic":[{"compose":{"links":[{"relation":"SOURCE","source":"motion","target":"deictic"},{"relation":"MARKER","source":"deictic","target":"from"}]}}]}
+{"id":"structural_yn_past_perfect_possessive_plural_subject","semantic":[{"compose":{"links":[{"relation":"PERFECT_ASPECT","source":"deceived","target":"had"},{"relation":"AGENT","source":"deceived","target":"subject"},{"relation":"PATIENT","source":"deceived","target":"patient"}]}}]}
+{"id":"structural_n800_plural_possessive_eyes","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"eyes","target":"poss"}]}}]}
+{"id":"structural_degree_unlike_comparison_predicate","semantic":[{"compose":{"links":[{"relation":"SUBJECT","source":"was","target":"subject"},{"relation":"PREDICATE","source":"was","target":"comparison"}]}}]}
+{"id":"structural_n800_unlike_adj_complement","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"unlike","target":"very"},{"relation":"COMPARISON_STANDARD","source":"unlike","target":"complement"}]}}]}
+{"id":"structural_so_with_nominal_anaphoric_ellipsis","semantic":[{"compose":{"links":[{"relation":"ANAPHORIC_PARALLEL","source":"so","target":"with"}]}}]}
