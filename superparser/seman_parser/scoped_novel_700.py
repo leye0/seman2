@@ -399,7 +399,88 @@ def plan_n624_parataxis(text, components):
     ))
     return specs
 
+
+# N643: two overt questions resume a source speech turn after the reporter.
+N643_SPLIT_QUESTIONS = "dialogue_structural_intercalated_reported_two_questions"
+_N643 = re.compile(
+    r'(?P<open1>")(?P<oh>Oh)(?P<comma1>,) +(?P<vocative>doctor|captain|nurse)'
+    r'(?P<comma2>,)(?P<close1>") +(?P<reporter>we +(?:cried|asked))'
+    r'(?P<comma3>,) +(?P<open2>")'
+    r'(?P<question1>what +shall +we +do\?) +'
+    r'(?P<question2>Where +is +(?:he|she) +wounded\?)(?P<close2>")'
+)
+def plan_n643_split_questions(text, components):
+    m = _N643.fullmatch(text)
+    if m is None:
+        return None
+    by_id = {c['id']:c for c in components}
+    left,right,report,turn = (by_id.get(k) for k in ('q0','q1','r0','t0'))
+    if (not all((left,right,report,turn))
+            or left.get('function') != 'direct_speech'
+            or right.get('function') != 'direct_speech'
+            or report.get('function') != 'reporting_clause'
+            or turn.get('function') != 'split_direct_speech_turn'
+            or (left['start'],left['end']) != (0,m.end('close1'))
+            or (right['start'],right['end']) != (m.start('open2'),len(text))
+            or (report['start'],report['end']) != m.span('reporter')):
+        return None
+    specs,_,_,part = _specs()
+    part(m,0,(
+        _punct('open1','OPEN-QUOTE'),
+        ('oh','INTERJECTION','scoped-lexical',{'exclamative':'true'}),
+        _punct('comma1','COMMA'),
+        _phr('vocative','NP',proof_rule='np_bare'),
+        _punct('comma2','COMMA'),_punct('close1','CLOSE-QUOTE'),
+        _phr('reporter','SPEECH-TAG',proof_rule='dialogue_speech_tag_post'),
+        _punct('comma3','COMMA'),_punct('open2','OPEN-QUOTE'),
+        _phr('question1','CLAUSE',proof_rule='clause_wh_obj_modal'),
+        _phr('question2','CLAUSE',proof_rule='clause_wh_copular_nominal_question'),
+        _punct('close2','CLOSE-QUOTE'),
+    ))
+    return specs
+
+# N648: source-preserved progressive, simultaneous participle and two
+# finite predicates in the semicolon-linked second time frame.
+N648_PROGRESSIVE = "structural_semicolon_progressive_with_participial_and_result"
+_N648 = re.compile(
+    r'(?P<next>Next) +(?P<moment>moment) +'
+    r'(?P<first>we +were +both +groping +downstairs)'
+    r'(?P<comma>,) +(?P<leaving>leaving) +(?P<candle>the +(?:candle|lantern)) +'
+    r'(?P<place>by +the +empty +chest)(?P<semicolon>;) +(?P<and1>and) +'
+    r'(?P<next2>the +next) +(?P<second>we +had +opened +the +(?:door|gate)) +'
+    r'(?P<and2>and) +(?P<were>were) +(?P<retreat>in +full +retreat)'
+    r'(?P<stop>\.)'
+)
+def plan_n648_progressive(text, components):
+    m = _N648.fullmatch(text)
+    if m is None:
+        return None
+    first=next((c for c in components if c.get('function')=='matrix_clause'),None)
+    second=next((c for c in components if c.get('function')=='coordinate_clause'),None)
+    if (first is None or second is None
+            or first['start'] != 0 or second['start'] != m.start('and1')
+            or second['end'] != len(text)):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _lex('next','ADJ'),_lex('moment','N'),
+        _phr('first','CLAUSE',finite_statement_proof='true'),
+        _punct('comma','COMMA'),
+        _verb('leaving','ing','transitive'),
+        _phr('candle','NP',proof_rule='np_det_n'),
+        _phr('place','PP',proof_rule='pp_prep_np'),
+        _punct('semicolon','SEMICOLON'),_lex('and1','COORD',lemma_in='and'),
+        _phr('next2','NP',proof_rule='np_det_adj'),
+        _phr('second','CLAUSE',finite_statement_proof='true'),
+        _lex('and2','COORD',lemma_in='and'),
+        _lex('were','COPULA',vform='finite'),
+        _phr('retreat','PP',proof_rule='pp_prep_np'),
+        _punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
 NARRATIVE_PLANS = (
+    (N648_PROGRESSIVE, plan_n648_progressive),
     (N624_PARATAXIS, plan_n624_parataxis),
     (CONCESSIVE_LEAD, plan_concessive_lead),
     (SCALAR_BUT_THAT, plan_scalar_but_that),
@@ -412,8 +493,9 @@ NARRATIVE_PLANS = (
     (COORDINATED_PASSIVE, plan_coordinated_passive),
 )
 SPOKEN_PLANS = (
+    (N643_SPLIT_QUESTIONS, plan_n643_split_questions),
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
