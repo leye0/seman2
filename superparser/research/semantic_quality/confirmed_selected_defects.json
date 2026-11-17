@@ -177,6 +177,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
+      "index": 627,
+      "status": "needs_fix",
+      "selected_tree_sha256": "b6e0d07ed36a63611b953dbc490c84f7aaf26e3e5fd01cb9501b72570a5c1fcc",
+      "selected_graph_sha256": "b03db7efa6f75063d2c80a439a7a12d465a57b9baaa0d0c46d7daf0ae0678690",
+      "observed_defect": "In I took a step nearer, the light-verb take+a-step construction is reduced to AFFECTED(took,step) and MANNER(took,nearer); the selected graph does not represent the locomotion event and directional goal correctly.",
+      "required_linguistic_correction": "Treat take a step as an eventive locomotion predicate with agent I and step as the action nominal, and nearer as DIRECTION/PROXIMITY rather than a simple manner adverb.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
+    },
+    {
       "index": 628,
       "status": "needs_fix",
       "selected_tree_sha256": "8e0628bf8ed51b5cfc70e08a9fb01b6acf5dfaa29d0965645b5ed9a550337fd8",
