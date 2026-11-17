@@ -17,6 +17,19 @@ def by_id(unit):
 
 
 class QuotedDiscourseStructureTests(unittest.TestCase):
+    def test_bare_postposed_interruption_is_a_source_attribution(self):
+        spoken = '“No, sir,” Alice interposed.'
+        unit, = analyze_paragraph(spoken)
+        parts = by_id(unit)
+        self.assertEqual(parts["q0"].governor, "r0")
+        tag = parts["r0"]
+        self.assertEqual(spoken[tag.start:tag.end], "Alice interposed")
+
+        # The transitive verb in narration is not a reporting predicate.
+        narration = '“No, sir,” Alice interposed a hand.'
+        units = analyze_paragraph(narration)
+        self.assertFalse(any(part.function == "reporting_clause" for u in units for part in u.constituents))
+
     def test_reporting_intercalation_links_both_halves_to_one_tag(self):
         source = (
             '“I am afraid, Mr. Darcy,” observed Miss Bingley in a half whisper, '

@@ -15,7 +15,9 @@ concurrency:
 jobs:
   core:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # The core tests alone took 24m25s on PR #97; give the existing final
+    # grammar and route checks time to finish. Per-parse limits are unchanged.
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -84,6 +86,7 @@ jobs:
             superparser.tests.test_anchored_failure_85 \
             superparser.tests.test_discourse_triage \
             superparser.tests.test_fragment_grammar_rules \
+            superparser.tests.test_next_grammar_case \
             superparser.tests.test_complexity_routing \
             superparser.tests.test_shared_trie_forest \
             superparser.tests.test_clean_novel_corpus \

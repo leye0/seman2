@@ -41,6 +41,9 @@ _TAG_LIMIT = 150
 _INVERTED_COMMITMENT_TAG = re.compile(
     r"(?:vowed|promised) [A-Z][a-z]+(?: [A-Z][a-z]+){0,2}[.!]"
 )
+_POSTPOSED_INTERRUPTION_TAG = re.compile(
+    r"(?P<speaker>[A-Z][a-z]+(?: [A-Z][a-z]+){0,2}) (?P<verb>interposed)[.!]"
+)
 _ABBREVIATION = re.compile(
     r"(?i)\b(?:Mr|Mrs|Ms|Dr|Prof|St|Mme|Mlle|Capt|Rev)\.$"
 )
@@ -225,6 +228,10 @@ def analyze_dialogue(
             start, end = _trim(source, b, next_)
             if _INVERTED_COMMITMENT_TAG.fullmatch(source[start:end]):
                 post = (start, end - 1, start)
+            elif (interruption := _POSTPOSED_INTERRUPTION_TAG.fullmatch(source[start:end])):
+                # Unlike a transitive interruption in narration, the local
+                # bare predicate after a quote-final comma has no other object.
+                post = (start, end - 1, start + interruption.start("verb"))
         pre = _local_reporting_tag(source, prev, a)
         if post:
             tags.append((post, (q,), "postposed_reporting_clause"))
