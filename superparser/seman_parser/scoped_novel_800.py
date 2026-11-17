@@ -104,7 +104,7 @@ def plan_anaphoric_ellipsis(text,parts):
 LETTER_SIGNOFF = "documentary_source_letter_subscription_and_signature"
 _LETTER = re.compile(
     r'(?P<open>")(?P<subscription>Your +affectionate +and +afflicted +father)'
-    r'(?P<comma>,) +(?P<close>")(?P<signature>Alphonse +Frankenstein)'
+    r'(?P<comma>,) +(?P<close>")(?P<signature>[A-Z][a-z]+ +[A-Z][a-z]+)'
     r'(?P<stop>\.)'
 )
 def plan_letter_signoff(text,parts):
@@ -218,7 +218,7 @@ _CHANCE = re.compile(
     r'(?P<time>In +the +meantime) +'
     r'(?P<matrix>I +had +a +better +chance)(?P<comma1>,) +'
     r'(?P<as>as) +(?P<subject>I) +(?P<supposed>supposed)'
-    r'(?P<comma2>,) +(?P<locative>before +me)(?P<stop>\.)'
+    r'(?P<comma2>,) +(?P<locative>before +(me|him|her))(?P<stop>\.)'
 )
 def plan_parenthetical_chance(text,parts):
     m=_CHANCE.fullmatch(text)
