@@ -1,5 +1,8 @@
 # Novel-800 — 100/100 exploratory coverage, with source-verified residual trees
 
+> **Semantic accuracy not certified.** The recorded 100/100 means complete selected syntax trees and generated graphs, **not correct selected roles or attachments**. The full source-and-graph audit in [the semantic defect register](NOVEL700800_SEMANTIC_DEFECTS.md), [second pass](NOVEL700800_SEMANTIC_SECOND_PASS.md), [third pass](NOVEL700800_SEMANTIC_THIRD_PASS.md), and [final pass](NOVEL700800_SEMANTIC_FINAL_PASS.md) documents 158 selected semantic shortcomings across Novel-700/800, including a contradiction of a previous positive review. The semantic acceptance gate is intentionally blocked. Do not use 100/100 as an accuracy claim.
+
+
 Novel-800 is a **reproducible candidate cohort**, not an accepted ladder
 rung. The production `scripts.novel_ladder.freeze` review gate is unchanged.
 Novel-700's 100 full-span analyses still have only **24/100 individual
