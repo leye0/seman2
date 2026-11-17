@@ -73,6 +73,14 @@ from .scoped_literary_quotes import (
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
 from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
+from .scoped_novel_700 import (
+    NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN,
+    COUNTS as N700_COUNTS,
+    N672_WISH, plan_n672_wish,
+    N660_GERUND_QUESTION, plan_n660_gerund_question,
+    N661_DIALECTAL, plan_n661_dialectal,
+    N691_INTERCALATED, plan_n691_intercalated,
+)
 from .scoped_novel_ladder import (
     AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
     FRONTED_PRECIPITATION, plan_fronted_precipitation,
@@ -183,6 +191,7 @@ _PROOF_CHECKS = frozenset((
     "emphasis_finite_proof",
 ))
 _LADDER_SPOKEN = (
+    *N700_SPOKEN,
     *SPEECH_PLANS,
     (REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative),
     (REPORTED_INTERJECTION, plan_reported_interjection),
@@ -214,6 +223,7 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    *N700_NARRATIVE,
     *NARRATIVE_PLANS,
     (FRONTED_PRECIPITATION, plan_fronted_precipitation),
     (COPULAR_COMPARED_RELATIVE, plan_copular_compared_relative),
@@ -282,6 +292,7 @@ _SCOPED_UNSATURATED = frozenset((
     *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    **N700_COUNTS,
     **CLAUSE_COUNTS,
     FRONTED_PRECIPITATION: 1,
     COPULAR_COMPARED_RELATIVE: 3, MODAL_PERFECT_CONCESSION: 2, INCISED_EXISTENTIAL_CONTENT: 3, FREQUENCY_CONTRAST: 2, DEPICTIVE_FINITE_PURPOSE: 3,
@@ -837,6 +848,44 @@ class QuotedSentenceComposer:
                     category=category, features=FeatureStructure.build({"topic": "true"}),
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
+                ))
+            elif kind in ("source-dialectal-honorific", "source-dialectal-do-ye"):
+                # Attested Dickens dialectal spelling is a single lexical
+                # expression with an exact source span. Tokenization produces
+                # Mas+r and d+ye; do not insert canonical words or punctuation.
+                if expected_rule != N661_DIALECTAL:
+                    return None
+                inventory = {
+                    "source-dialectal-honorific": (
+                        "mas’r", ("mas", "r"), "TITLE", "master",
+                        {"dialectal": "true", "honorific": "true"},
+                    ),
+                    "source-dialectal-do-ye": (
+                        "d’ye", ("d", "ye"), "DIALECT-DO-YE", "do-ye",
+                        {"dialectal": "true", "vform": "finite", "person": "2"},
+                    ),
+                }
+                spelling, parts, expected_category, lemma, features = inventory[kind]
+                overt_tokens = [
+                    t for t in original_lattice.tokens
+                    if t.start >= a and t.end <= b
+                ]
+                if (category != expected_category or surface.casefold() != spelling
+                        or tuple(t.text.casefold() for t in overt_tokens) != parts
+                        or any(required.get(k) != v for k, v in required.items()
+                               if k in features)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=lemma,
+                    category=category, features=FeatureStructure.build(features),
+                    source="attested-dialectal-morphology", score=0,
+                    provenance={
+                        "original_source_span": [a, b],
+                        "source_tokens": [
+                            [t.text,t.start,t.end] for t in overt_tokens
+                        ],
+                        "original_spelling_preserved": True,
+                    },
                 ))
             elif kind == "source-dialectal-so-as":
                 if (expected_rule != DIALECTAL_EVIDENCE or category != "RESULT-CONJ"
@@ -3713,7 +3762,13 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        # Complete-source mixed acts can contain more than one speech sentence.
+        # Validate their overt spans here before the finite-only quote sequence.
         for planner, rule in (
+            (plan_n672_wish, N672_WISH),
+            (plan_n660_gerund_question, N660_GERUND_QUESTION),
+            (plan_n661_dialectal, N661_DIALECTAL),
+            (plan_n691_intercalated, N691_INTERCALATED),
             (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),

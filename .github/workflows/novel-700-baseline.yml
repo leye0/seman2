@@ -1,0 +1,90 @@
+name: Novel-700 frozen-source baseline
+on:
+  push:
+    branches: [research/novel-ladder-700]
+    paths:
+      - '.github/workflows/novel-700-baseline.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: novel-700-source-baseline
+  cancel-in-progress: false
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare exactly the same WordNet 3.0 dictionary
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          import os
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent': 'Seman2-research'}), timeout=90) as f:
+              raw = f.read()
+          dest = Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict'
+          dest.mkdir(parents=True, exist_ok=True)
+          keep = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb', 'sents.vrb', 'cntlist.rev'}
+          for part in ('noun', 'verb', 'adj', 'adv'):
+              keep.update((f'index.{part}', f'data.{part}', f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf = Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (dest / leaf).write_bytes(z.read(item))
+          assert (dest / 'index.verb').exists()
+          PY
+      - name: Freeze 100 new source anchors without consulting parser output
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from scripts.novel_ladder import LADDER, freeze, load_sources, read_json, read_ladder
+          sources = load_sources()
+          cohorts, _, _ = read_ladder(LADDER, sources)
+          assert len(cohorts) == 1 and cohorts[-1][1][-1]['ladder_index'] == 600, 'Expected sealed Novel-600 as only existing rung'
+          path = freeze(LADDER, sources)
+          assert path.name == 'novel-700-cohort.json'
+          manifest = read_json(path)
+          assert len(manifest['anchors']) == 100 and manifest['first_index'] == 601
+          out = Path('/tmp/novel700')
+          out.mkdir(parents=True, exist_ok=True)
+          (out / path.name).write_text(path.read_text(encoding='utf-8'), encoding='utf-8')
+          print('NOVEL700_COHORT=' + json.dumps(manifest, separators=(',', ':')), flush=True)
+          PY
+      - name: Measure only the new 100 passages through the canonical parser
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from scripts.novel_ladder import LADDER, load_sources, read_ladder, run, read_json, result_cases
+          cohorts, _, _ = read_ladder(LADDER, load_sources())
+          cohort, cases = cohorts[-1]
+          assert cases[0]['ladder_index'] == 601 and cases[-1]['ladder_index'] == 700
+          out = Path('/tmp/novel700')
+          run([(cohort, cases)], Path(os.environ['RUNNER_TEMP']) / 'wordnet3' / 'dict', out)
+          result = read_json(out / 'novel-700-result.json')
+          result_cases(result, cohort, 700)
+          print('NOVEL700_RESULT=' + json.dumps(result, separators=(',', ':')), flush=True)
+          PY
+      - name: Preserve source manifest, initial signatures and full parse evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: novel-700-unmodified-baseline
+          path: /tmp/novel700/
+          retention-days: 30
+          if-no-files-found: warn
