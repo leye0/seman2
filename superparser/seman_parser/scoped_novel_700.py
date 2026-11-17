@@ -502,7 +502,7 @@ _N625 = re.compile(
     r'(?P<you>you) +(?P<mention>mention) +(?P<be>is) +'
     r'(?P<nothing>nothing) +(?P<tome>to +(?:me|him|her))'
     r'(?P<semi>;) +(?P<earth>on +the +whole +earth) +'
-    r'(?P<existential>there +is +no +comfort) +(?P<which>which) +'
+    r'(?P<there>there) +(?P<is>is) +(?P<comfort>no +comfort) +(?P<which>which) +'
     r'(?P<capable>I +am +capable) +(?P<of>of) +'
     r'(?P<receiving>receiving)(?P<stop>\.)(?P<close>")'
 )
@@ -523,7 +523,8 @@ def plan_n625_existential(text, components):
         _phr('tome','PP',proof_rule='pp_prep_np'),
         _punct('semi','SEMICOLON'),
         _phr('earth','PP',proof_rule='pp_prep_np'),
-        _phr('existential','CLAUSE',proof_rule='clause_there'),
+        _lex('there','EXPL'),_lex('is','COPULA',vform='finite'),
+        _phr('comfort','NP',proof_rule='np_det_n'),
         _lex('which','WH-PRONOUN',wh='true'),
         _phr('capable','CLAUSE',finite_statement_proof='true'),
         _lex('of','PREP',lemma_in='of'),
