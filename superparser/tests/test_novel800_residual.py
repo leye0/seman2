@@ -159,5 +159,49 @@ class Novel800ResidualTests(unittest.TestCase):
             [("TIME","matrix","time"),("EPISTEMIC_PARENTHESESIS","matrix","supposed"),
              ("LOCATIVE_COMPLEMENT","matrix","locative")])
 
+
+    def test_n721_nested_lake_relative_is_attached_to_the_part(self):
+        from seman_parser.scoped_novel_800 import STORM_LOCATIVE
+        positive=("The most violent storm hung exactly north of the town, over the part of the lake "
+                  "which lies between the promontory of Riverton and the village of Acton.")
+        negative=("The most violent storm hung exactly north of the town, over the part of the lake "
+                  "who lies between the promontory of Riverton and the village of Acton.")
+        self.verify(721,positive,negative,STORM_LOCATIVE,
+            ["NP","V","ADV","PP","COMMA","PREP","NP","WH-PRONOUN","V","PP","SPEECH-STOP"],
+            [("AGENT","hung","storm"),("LOCATION","hung","north"),
+             ("RELATIVE","part","lies"),("LOCATION","lies","between")])
+
+    def test_n749_conditional_shared_perfect_and_overt_directional_ellipsis(self):
+        from seman_parser.scoped_novel_800 import INVERTED_CONDITIONAL
+        source=self.cases[749]["source_text"]
+        positive=source.replace("away to sea.","away to shore.")
+        negative=source.replace("should have fallen","should have fall")
+        self.verify(749,positive,negative,INVERTED_CONDITIONAL,
+            ["HAVE","EXPL","AUX-BE","NP","COMMA","NP","MODAL","HAVE","V","PREP",
+             "NP","WH-PRONOUN","AUX-BE","V","ADV","PP","COMMA","V","NP","COMMA",
+             "COORD","ADV","PP","SPEECH-STOP"],
+            [("INVERTED_CONDITION","fallen","been"),
+             ("MODALITY","fallen","should"),
+             ("RELATIVE","mutineers","left"),
+             ("SHARED_MODAL_CONJUNCT","fallen","slipped"),
+             ("DIRECTIONAL_ELLIPSIS","slipped","away")])
+        prepared,lattice,result=self.parse(749)
+        self.assertEqual(result.best().features.as_dict().get("ellipsis"),"directional")
+        self.assertFalse(any(c.category=="V" and prepared.analysis_text[c.start:c.end]=="gone"
+                             for c in result.best().children))
+
+    def test_n795_fronted_predicate_and_parallel_elliptic_attributes(self):
+        from seman_parser.scoped_novel_800 import FRONTED_VAIN
+        source=self.cases[795]["source_text"]
+        positive=source.replace("already self-destined","still self-destined")
+        negative=source.replace("vain and useless","vain or useless")
+        self.verify(795,positive,negative,FRONTED_VAIN,
+            ["ADJ","ADV","MODAL","COPULA","NP","COMMA","ADJ","COORD","ADJ","NP",
+             "COORD","NP","COMMA","CONJ","NP","COPULA","ADV","ADJ","JOIN-HYPHEN",
+             "ADJ","PREP","INDEF-PRONOUN","SPEECH-STOP"],
+            [("MODALITY","be","must"),("ATTRIBUTE","attentions","vain"),
+             ("ATTRIBUTE","affection","vain2"),("ATTRIBUTE","praise","useless"),
+             ("CONDITIONAL","be","were"),("CONDITION_ATTRIBUTE","were","destined")])
+
 if __name__=="__main__":
     unittest.main()
