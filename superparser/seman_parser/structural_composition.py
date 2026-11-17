@@ -76,6 +76,8 @@ from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, 
 from .scoped_novel_800 import (
     NARRATIVE_PLANS as N800_NARRATIVE, SPOKEN_PLANS as N800_SPOKEN,
     COUNTS as N800_COUNTS, DOCUMENT_DATELINE,
+    EQUATIVE_FAVOURITE, SPLIT_POLITE_REQUEST, SPLIT_CAUSAL_CONDITIONAL,
+    plan_equative_favourite, plan_split_polite_request, plan_split_causal_conditional,
 )
 from .scoped_novel_700 import (
     NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN,
@@ -856,6 +858,33 @@ class QuotedSentenceComposer:
                     category=category, features=FeatureStructure.build({"topic": "true"}),
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "source-possessive-ellipsis":
+                # Keep Jane's, without silently inserting a husband noun.
+                # The overt comparison antecedent is in this same quotation.
+                if expected_rule != EQUATIVE_FAVOURITE or category != "POSSESSIVE-ELLIPSIS":
+                    return None
+                m = re.fullmatch(r"([A-Z][a-z]+)'s", surface)
+                tokens = [t for t in original_lattice.tokens
+                          if a <= t.start and t.end <= b]
+                if (m is None or len(tokens) != 1 or tokens[0].text != surface
+                        or not re.search(r"your\s+husband\s+quite\s+as\s+well\s+as\s*$",
+                                         text[:a], re.I)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a,span_end=b,surface=surface,
+                    lemma=m[1],category=category,
+                    features=FeatureStructure.build({
+                        "source_genitive":"true",
+                        "elliptical_nominal":"true",
+                        "anaphoric_antecedent":"husband",
+                    }),
+                    source="attested-comparative-possessive-ellipsis",score=0,
+                    provenance={
+                        "original_source_span":[a,b],
+                        "original_source_tokens":[[tokens[0].text,tokens[0].start,tokens[0].end]],
+                        "inserted_nominal":False,
+                    },
                 ))
             elif kind in ("source-attested-ordinal", "source-truncated-year"):
                 if expected_rule != DOCUMENT_DATELINE:
@@ -3807,6 +3836,9 @@ class QuotedSentenceComposer:
             (plan_n660_gerund_question, N660_GERUND_QUESTION),
             (plan_n661_dialectal, N661_DIALECTAL),
             (plan_n691_intercalated, N691_INTERCALATED),
+            (plan_split_polite_request, SPLIT_POLITE_REQUEST),
+            (plan_split_causal_conditional, SPLIT_CAUSAL_CONDITIONAL),
+            (plan_equative_favourite, EQUATIVE_FAVOURITE),
             (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),
