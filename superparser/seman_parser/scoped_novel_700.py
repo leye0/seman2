@@ -678,7 +678,74 @@ def plan_n672_wish(text, components):
     ))
     return specs
 
+
+# N660: an overt minor negative assertion precedes the vocative and a
+# syntactically distinct modal question containing a possessive gerund.
+N660_GERUND_QUESTION = "dialogue_structural_negative_reprise_vocative_and_modal_gerund"
+_N660 = re.compile(
+    r'(?P<open>‘)(?P<minor>Not +I!)[ ]+'
+    r'(?P<vocative>my +dear +(?:Daisy|Alice|Lucy))'
+    r'(?P<dash>--)'
+    r'(?P<will>will) +(?P<you>you) +(?P<mind>mind) +'
+    r'(?P<my>my) +(?P<calling>calling) +(?P<you2>you) +'
+    r'(?P<name>Daisy|Alice|Lucy)(?P<q>\?)(?P<close>’)'
+)
+def plan_n660_gerund_question(text,components):
+    m=_N660.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and (c['start'],c['end'])==(0,len(text))
+                            for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        _phr('minor','CLAUSE',proof_rule='clause_nominal_exclamation'),
+        _phr('vocative','NP',proof_rule='np_poss_n_name'),
+        _punct('dash','DASH'),
+        _lex('will','MODAL',vform='finite'),
+        _subject('you'),
+        _verb('mind','base','transitive'),
+        _lex('my','POSS'),
+        _verb('calling','ing','transitive'),
+        _phr('you2','NP',proof_rule='np_bare'),
+        _phr('name','NP',proof_rule='np_proper'),
+        _punct('q','QMARK'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
+# N661: the dialectal title and do-ye tag are overt source spans; nothing
+# is silently normalized into new written words or punctuation.
+N661_DIALECTAL = "dialogue_structural_dialectal_vocative_question_and_epistemic_tag"
+_N661 = re.compile(
+    r'(?P<open>‘)(?P<title>Mas’r) +(?P<name>Davy|John|Henry)'
+    r'(?P<comma1>,) +(?P<shall>shall) +(?P<you>you) +(?P<see>see) +'
+    r'(?P<her>her|him)(?P<comma2>,) +(?P<tag>d’ye) +'
+    r'(?P<think>think)(?P<q>\?)(?P<close>’)'
+)
+def plan_n661_dialectal(text,components):
+    m=_N661.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and (c['start'],c['end'])==(0,len(text))
+                            for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        ('title','TITLE','scoped-lexical',{'honorific':'true','dialectal':'true'}),
+        _phr('name','NP',proof_rule='np_proper'),
+        _punct('comma1','COMMA'),
+        _lex('shall','MODAL',vform='finite'),_subject('you'),
+        _verb('see','base','transitive'),_phr('her','NP',proof_rule='np_bare'),
+        _punct('comma2','COMMA'),
+        ('tag','DIALECT-DO-YE','scoped-lexical',{'dialectal':'true'}),
+        _verb('think','base','intransitive'),
+        _punct('q','QMARK'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
 SPOKEN_PLANS = (
+    (N660_GERUND_QUESTION, plan_n660_gerund_question),
+    (N661_DIALECTAL, plan_n661_dialectal),
     (N625_EXISTENTIAL, plan_n625_existential),
     (N639_APPOSITIVE, plan_n639_appositive),
     (N672_WISH, plan_n672_wish),
@@ -686,5 +753,5 @@ SPOKEN_PLANS = (
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N660_GERUND_QUESTION: 1, N661_DIALECTAL: 1, N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
