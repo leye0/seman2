@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 from scripts import novel_ladder as ladder
 
@@ -150,6 +151,47 @@ class NovelLadderTests(unittest.TestCase):
             ladder.write_json(directory / "novel-600-review.json", review_doc(cohort, original["cases"][:1]))
             with self.assertRaisesRegex(ValueError, "selected_graph_sha256 changed"):
                 ladder.load_review(directory, 600, cohort, observed)
+
+    def test_confirmed_defects_block_semantic_acceptance_despite_all_green_reviews(self):
+        """The default ladder must not accept a known bad rank-one interpretation."""
+        cohort={"cohort_sha256":"pinned-700","first_index":601}
+        data=result(cohort)
+        complete=ladder.result_cases(data,cohort,700)
+        verified={r["index"]:{"index":r["index"],"verdict":"verified"}
+                  for r in data["cases"]}
+        with TemporaryDirectory() as temp:
+            ledger=Path(temp)/"confirmed_selected_defects.json"
+            ladder.write_json(ledger,{
+                "schema":"seman2-selected-semantic-defect-ledger-v1",
+                "cases":[{
+                    "index":629,"status":"needs_fix",
+                    "selected_tree_sha256":complete[629]["rank_one_sha256"],
+                    "selected_graph_sha256":complete[629]["selected_graph_sha256"],
+                    "observed_defect":"Wrong selected agent",
+                    "required_linguistic_correction":"The doctor is the agent",
+                }],
+            })
+            with patch.object(ladder,"SEMANTIC_DEFECTS",ledger):
+                with self.assertRaisesRegex(ValueError,"semantic acceptance blocked"):
+                    ladder.accepted_cases(data,cohort,700,verified)
+                # A correctly sealed older rung remains accepted.
+                old={"cohort_sha256":"pinned-600","first_index":501}
+                data600=result(old)
+                self.assertEqual(len(ladder.accepted_cases(
+                    data600,old,600,
+                    {r["index"]:{"index":r["index"],"verdict":"verified"}
+                     for r in data600["cases"]}
+                )),100)
+            # Removing the outstanding defect after a separate source
+            # review is the explicit route to eventual promotion.
+            ladder.write_json(ledger,{
+                "schema":"seman2-selected-semantic-defect-ledger-v1",
+                "cases":[],
+            })
+            with patch.object(ladder,"SEMANTIC_DEFECTS",ledger):
+                self.assertEqual(len(ladder.accepted_cases(
+                    data,cohort,700,verified
+                )),100)
 
     def test_graph_hash_ignores_ids_but_not_attachment(self):
         def package(a, b, *, reversed_edge=False):
