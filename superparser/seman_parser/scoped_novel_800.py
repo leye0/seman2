@@ -236,7 +236,128 @@ def plan_parenthetical_chance(text,parts):
     return specs
 
 
+
+# N721: a nominal relative modifies "the part of the lake" inside the
+# second locative; the between-PP belongs to lies, not to the storm.
+STORM_LOCATIVE = "structural_two_locatives_with_lake_part_relative"
+_STORM = re.compile(
+    r'(?P<storm>The +most +violent +storm) +(?P<hung>hung) +'
+    r'(?P<exactly>exactly) +(?P<north>north +of +the +town)'
+    r'(?P<comma>,) +(?P<over>over) +(?P<part>the +part +of +the +lake) +'
+    r'(?P<which>which) +(?P<lies>lies) +'
+    r'(?P<between>between +the +promontory +of +[A-Z][a-z]+ +and +the +village +of +[A-Z][a-z]+)'
+    r'(?P<stop>\.)'
+)
+def plan_storm_locative(text,parts):
+    m=_STORM.fullmatch(text)
+    if m is None or not _matrix(text,parts):return None
+    specs,_,_,put=_specs()
+    put(m,0,(
+        _phrase("storm","NP",proof_rule="np_det_n"),
+        _lex_alt("hung","V",vform="finite"),
+        _lex("exactly","ADV"),
+        _phrase("north","PP",proof_rule="pp_adv_prep"),
+        _punct("comma","COMMA"),_lex("over","PREP",lemma_in="over"),
+        _phrase("part","NP",proof_rule="np_det_n_of"),
+        _lex("which","WH-PRONOUN",wh="true"),
+        _lex_alt("lies","V",vform="finite"),
+        _phrase("between","PP",proof_rule="pp_np_coord"),
+        _punct("stop","SPEECH-STOP"),
+    ))
+    return specs
+
+# N749: inverted existential condition and a shared modal-perfect
+# consequent: fallen, slipped and the final verbless "away to sea".
+# Do not manufacture a third past participle "gone".
+INVERTED_CONDITIONAL = "structural_inverted_conditional_shared_modal_perfect_and_direction_ellipsis"
+_WIND = re.compile(
+    r'(?P<had>Had) +(?P<there>there) +(?P<been>been) +'
+    r'(?P<wind>a +breath +of +wind)(?P<comma1>,) +'
+    r'(?P<subject>we) +(?P<should>should) +(?P<have>have) +'
+    r'(?P<fallen>fallen) +(?P<on>on) +'
+    r'(?P<mutineers>the +six +mutineers) +'
+    r'(?P<who>who) +(?P<were>were) +(?P<left>left) +'
+    r'(?P<aboard>aboard) +(?P<with>with +us)'
+    r'(?P<comma2>,) +(?P<slipped>slipped) +(?P<cable>our +cable)'
+    r'(?P<comma3>,) +(?P<and>and) +(?P<away>away) +'
+    r'(?P<tosea>to +sea)(?P<stop>\.)'
+)
+def plan_inverted_wind(text,parts):
+    m=_WIND.fullmatch(text)
+    if m is None or not _matrix(text,parts):return None
+    specs,_,_,put=_specs()
+    put(m,0,(
+        _lex("had","HAVE",vform="finite"),
+        _lex("there","EXPL",expletive="true"),
+        _lex_alt("been","AUX-BE",vform="ed"),
+        _phrase("wind","NP",proof_rule="np_det_n_of"),
+        _punct("comma1","COMMA"),
+        _phrase("subject","NP"),
+        _lex("should","MODAL",vform="finite"),
+        _lex("have","HAVE",vform="base"),
+        _lex_alt("fallen","V",vform="ed"),
+        _lex("on","PREP",lemma_in="on"),
+        _phrase("mutineers","NP",proof_rule="np_det_n"),
+        _lex("who","WH-PRONOUN",wh="true"),
+        _lex("were","AUX-BE",vform="finite",number="plural"),
+        _lex_alt("left","V",vform="ed"),
+        _lex("aboard","ADV"),
+        _phrase("with","PP",proof_rule="pp_prep_np"),
+        _punct("comma2","COMMA"),
+        _lex_alt("slipped","V",vform="ed"),
+        _phrase("cable","NP",proof_rule="np_poss"),
+        _punct("comma3","COMMA"),
+        _lex("and","COORD",lemma_in="and"),
+        _lex("away","ADV"),
+        _phrase("tosea","PP",proof_rule="pp_prep_np"),
+        _punct("stop","SPEECH-STOP"),
+    ))
+    return specs
+
+# N795: original fronted predication and parallel verbless predication,
+# with a real condition and an overt hyphenated compound adjective.
+FRONTED_VAIN = "structural_fronted_predicative_inversion_parallel_ellipsis_if_subjunctive"
+_VAIN = re.compile(
+    r'(?P<vain>Vain) +(?P<indeed>indeed) +(?P<must>must) +(?P<be>be) +'
+    r'(?P<attentions>all +her +attentions)(?P<comma1>,) +'
+    r'(?P<vain2>vain) +(?P<and1>and) +(?P<useless>useless) +'
+    r'(?P<affection>her +affection +for +his +sister) +'
+    r'(?P<and2>and) +(?P<praise>her +praise +of +himself)'
+    r'(?P<comma2>,) +(?P<if>if) +(?P<he>he) +(?P<were>were) +'
+    r'(?P<already>already) +(?P<self>self)(?P<dash>-)'
+    r'(?P<destined>destined) +(?P<for>for) +(?P<another>another)(?P<stop>\.)'
+)
+def plan_fronted_vain(text,parts):
+    m=_VAIN.fullmatch(text)
+    if m is None or not _matrix(text,parts):return None
+    specs,_,_,put=_specs()
+    put(m,0,(
+        _lex("vain","ADJ"),_lex("indeed","ADV"),
+        _lex("must","MODAL",vform="finite"),
+        _lex("be","COPULA",vform="base"),
+        _phrase("attentions","NP",proof_rule="np_universal_quantifier_possessive"),
+        _punct("comma1","COMMA"),_lex("vain2","ADJ"),
+        _lex("and1","COORD",lemma_in="and"),_lex("useless","ADJ"),
+        _phrase("affection","NP",proof_rule="np_pp_mod"),
+        _lex("and2","COORD",lemma_in="and"),
+        _phrase("praise","NP",proof_rule="np_pp_mod"),
+        _punct("comma2","COMMA"),
+        _lex("if","CONJ",complementizer="conditional"),
+        _phrase("he","NP"),
+        _lex("were","COPULA",vform="finite"),
+        _lex("already","ADV"),
+        _lex("self","ADJ"),_punct("dash","JOIN-HYPHEN"),
+        _lex("destined","ADJ"),
+        _lex("for","PREP"),_lex("another","INDEF-PRONOUN"),
+        _punct("stop","SPEECH-STOP"),
+    ))
+    return specs
+
+
 NARRATIVE_PLANS = (
+    (STORM_LOCATIVE,plan_storm_locative),
+    (INVERTED_CONDITIONAL,plan_inverted_wind),
+    (FRONTED_VAIN,plan_fronted_vain),
     (PARENTHETICAL_CHANCE,plan_parenthetical_chance),
     (FRONTED_SOURCE,plan_fronted_deictic),
     (PERFECT_INVERSION,plan_perfect_inversion),
@@ -249,4 +370,4 @@ SPOKEN_PLANS = (
     (SPOKEN_PLAN_COMMAND,plan_resolution_command),
     (DASH_INTERRUPTED,plan_unfinished_quote),
 )
-COUNTS={LETTER_SIGNOFF:1,DOCUMENT_DATELINE:1,SPOKEN_PLAN_COMMAND:1,DASH_INTERRUPTED:1,PARENTHETICAL_CHANCE:1,FRONTED_SOURCE:1,PERFECT_INVERSION:1,UNLIKE_PREDICATE:1,ANAPHORIC_ELLIPSIS:1}
+COUNTS={STORM_LOCATIVE:2,INVERTED_CONDITIONAL:3,FRONTED_VAIN:3,LETTER_SIGNOFF:1,DOCUMENT_DATELINE:1,SPOKEN_PLAN_COMMAND:1,DASH_INTERRUPTED:1,PARENTHETICAL_CHANCE:1,FRONTED_SOURCE:1,PERFECT_INVERSION:1,UNLIKE_PREDICATE:1,ANAPHORIC_ELLIPSIS:1}
