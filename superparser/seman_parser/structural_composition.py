@@ -73,7 +73,13 @@ from .scoped_literary_quotes import (
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
 from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
-from .scoped_novel_700 import NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN, COUNTS as N700_COUNTS
+from .scoped_novel_700 import (
+    NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN,
+    COUNTS as N700_COUNTS,
+    N672_WISH, plan_n672_wish,
+    N660_GERUND_QUESTION, plan_n660_gerund_question,
+    N661_DIALECTAL, plan_n661_dialectal,
+)
 from .scoped_novel_ladder import (
     AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
     FRONTED_PRECIPITATION, plan_fronted_precipitation,
@@ -3717,7 +3723,12 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        # Complete-source mixed acts can contain more than one speech sentence.
+        # Validate their overt spans here before the finite-only quote sequence.
         for planner, rule in (
+            (plan_n672_wish, N672_WISH),
+            (plan_n660_gerund_question, N660_GERUND_QUESTION),
+            (plan_n661_dialectal, N661_DIALECTAL),
             (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),
