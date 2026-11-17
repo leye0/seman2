@@ -781,7 +781,52 @@ def plan_n661_dialectal(text,components):
     ))
     return specs
 
+
+# N691: the reporter separates two actual quotation spans and the second
+# quote contains an adjectival repair followed by an emphatic polar question.
+N691_INTERCALATED = "dialogue_structural_intercalated_affect_reprise_and_emphatic_question"
+_N691 = re.compile(
+    r'(?P<open1>“)(?P<first>I +am +grieved +indeed)(?P<comma>,)'
+    r'(?P<close1>”)[ ]+(?P<report>cried +(?:Darcy|Henry|Charles))'
+    r'(?P<semi>;)[ ]+(?P<open2>“)'
+    r'(?P<grieved>grieved)(?P<dash1>--)(?P<shocked>shocked)'
+    r'(?P<stop>\.)[ ]+(?P<but>But) +(?P<is>is) +(?P<it>it) +'
+    r'(?P<certain>certain)(?P<dash2>--)(?P<absolutely>absolutely) +'
+    r'(?P<certain2>certain)(?P<question>\?)(?P<close2>”)'
+)
+def plan_n691_intercalated(text,components):
+    m=_N691.fullmatch(text)
+    if m is None:return None
+    by_id={c['id']:c for c in components}
+    q0,q1,r0,t0=(by_id.get(n) for n in ('q0','q1','r0','t0'))
+    if (not all((q0,q1,r0,t0))
+            or q0.get('function')!='direct_speech'
+            or q1.get('function')!='direct_speech'
+            or r0.get('function')!='reporting_clause'
+            or t0.get('function')!='split_direct_speech_turn'
+            or (q0['start'],q0['end'])!=(0,m.end('close1'))
+            or (q1['start'],q1['end'])!=(m.start('open2'),len(text))
+            or (r0['start'],r0['end'])!=m.span('report')):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open1','OPEN-QUOTE'),
+        _phr('first','CLAUSE',proof_rule='clause_passive'),
+        _punct('comma','COMMA'),_punct('close1','CLOSE-QUOTE'),
+        _phr('report','SPEECH-TAG',proof_rule='dialogue_speech_tag_inverted'),
+        _punct('semi','SEMICOLON'),_punct('open2','OPEN-QUOTE'),
+        _lex('grieved','ADJ'),_punct('dash1','DASH'),_lex('shocked','ADJ'),
+        _punct('stop','SPEECH-STOP'),_lex('but','COORD',lemma_in='but'),
+        _lex('is','COPULA',vform='finite',number='singular'),
+        _subject('it'),_lex('certain','ADJ'),
+        _punct('dash2','DASH'),_lex('absolutely','ADV'),
+        _lex('certain2','ADJ'),_punct('question','QMARK'),
+        _punct('close2','CLOSE-QUOTE'),
+    ))
+    return specs
+
 SPOKEN_PLANS = (
+    (N691_INTERCALATED, plan_n691_intercalated),
     (N660_GERUND_QUESTION, plan_n660_gerund_question),
     (N661_DIALECTAL, plan_n661_dialectal),
     (N625_EXISTENTIAL, plan_n625_existential),
@@ -791,5 +836,5 @@ SPOKEN_PLANS = (
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {N669_TOPICAL_REPORT: 1, N660_GERUND_QUESTION: 1, N661_DIALECTAL: 1, N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N691_INTERCALATED: 2, N669_TOPICAL_REPORT: 1, N660_GERUND_QUESTION: 1, N661_DIALECTAL: 1, N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
