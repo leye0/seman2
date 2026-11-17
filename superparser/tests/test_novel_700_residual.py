@@ -178,4 +178,55 @@ class Novel700ResidualTests(unittest.TestCase):
             ['OPEN-QUOTE','FIRST-SPOKEN-CLAUSE','CLAUSE','CLOSE-QUOTE'])
 
 
+
+    def test_n647_superlative_and_instrument_cleft(self):
+        from seman_parser.scoped_novel_700 import N647_CLEFT
+        positive=('The coins, too, were about the scarcest, and it was with these only '
+                  'that my mother knew how to make her count.')
+        negative=('The coins, too, was about the scarcest, and it was with these only '
+                  'that my mother knew how to make her count.')
+        self.verify_new_source_plan(647,positive,negative,N647_CLEFT,
+            [('THEME','were','guineas'),('ATTRIBUTE','were','scarcest'),
+             ('CONJUNCT','were','cleft')])
+
+    def test_n649_parallel_interrogative_manner(self):
+        from seman_parser.scoped_novel_700 import N649_PARALLEL
+        positive=('Indeed, it was remarkable how well he bore these insults and '
+                  'with what unwearying politeness he kept on trying to ingratiate himself with all.')
+        negative=('Indeed, it was remarkable how well he bore these insults and '
+                  'with what unwearying politeness he keeps on trying to ingratiate himself with all.')
+        self.verify_new_source_plan(649,positive,negative,N649_PARALLEL,
+            [('CONTENT','remark','bore'),('MANNER','bore','well'),
+             ('PARALLEL_MANNER','bore','manner')])
+
+    def test_n660_negative_minor_vocative_and_modal_gerund(self):
+        from seman_parser.scoped_novel_700 import N660_GERUND_QUESTION
+        positive='‘Not I! my dear Alice--will you mind my calling you Alice?’'
+        negative='‘Not I! my dear Alice--will you mind my calling you Alice!’'
+        self.verify_new_source_plan(660,positive,negative,N660_GERUND_QUESTION,
+            [('DISCOURSE_SEQUENCE','minor','question'),('VOCATIVE','question','vocative')])
+
+    def test_n661_preserve_dialectal_title_and_epistemic_tag(self):
+        from seman_parser.scoped_novel_700 import N661_DIALECTAL
+        positive='‘Mas’r John, shall you see him, d’ye think?’'
+        negative='‘Mas’r John, shall you sees him, d’ye think?’'
+        self.verify_new_source_plan(661,positive,negative,N661_DIALECTAL,
+            [('ADDRESS','see','name'),('AGENT','see','you'),
+             ('THEME','see','her'),('EPISTEMIC_TAG','see','think')])
+
+    def test_n669_as_to_topic_reporter_and_coordinated_question(self):
+        from seman_parser.scoped_novel_700 import N669_TOPICAL_REPORT
+        positive='As to a fish-kettle, Mrs. Smith said, well! would I only come and look at the range?'
+        negative='As to a fish-kettle, Mrs. Smith said, well! would I only comes and look at the range?'
+        self.verify_new_source_plan(669,positive,negative,N669_TOPICAL_REPORT,
+            [('TOPIC','report','topic'),('REPORTED_CONTENT','report','question')])
+
+    def test_n691_two_quotations_with_affect_and_emphatic_question(self):
+        from seman_parser.scoped_novel_700 import N691_INTERCALATED
+        positive='“I am grieved indeed,” cried Henry; “grieved--shocked. But is it certain--absolutely certain?”'
+        negative='“I am grieved indeed,” cried Henry; “grieved--shocked. But are it certain--absolutely certain?”'
+        self.verify_new_source_plan(691,positive,negative,N691_INTERCALATED,
+            [('REPORTED_CONTENT','report','first'),('DISCOURSE_REPRISE','first','affect'),
+             ('DISCOURSE_SEQUENCE','affect','question')])
+
 if __name__=='__main__': unittest.main()
