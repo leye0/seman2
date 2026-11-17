@@ -123,9 +123,6 @@ def inspect(row: dict[str, Any], old_review: dict[str, Any] | None) -> dict[str,
             e["source"]==node["id"] or e["target"]==node["id"] for e in edges
         ):
             informational.append("UNATTACHED_EVENT")
-    if any(n.get("surface","").lower() in ("said", "replied", "asked", "cried")
-           for n in graph["nodes"] if isinstance(n.get("surface"),str)) and "“" in text+"“" if False else False:
-        pass
     issues=list(dict.fromkeys(issues))
     informational=list(dict.fromkeys(informational))
     # These are objective interface defects or obvious lexical/role risk signals;
