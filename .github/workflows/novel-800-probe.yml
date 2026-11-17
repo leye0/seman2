@@ -42,3 +42,8 @@ jobs:
           PYTHONPATH: superparser
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -u -m scripts.probe_novel800
+      - name: Verify four source-grounded rank-one trees and semantic links
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m unittest -v superparser.tests.test_novel800_residual
