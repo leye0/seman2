@@ -24,6 +24,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 604,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9b300a2080b92a718a9dfac71aa6290ed3c1e29b4b137819aa4d5df09b4bdc86",
+      "selected_graph_sha256": "8899e346cc9ba8e0ba3520b2d4dfde436773243ea40702004e044c03f104ae0f",
+      "observed_defect": "AGENT(troubled,speech) treats an informational speech as a volitional agent and AFFECTED(troubled,me) only as physical affectedness",
+      "required_linguistic_correction": "The speech is a STIMULUS/CAUSE of distress; me is EXPERIENCER of being troubled, not agent and physical patient",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
+    },
+    {
       "index": 605,
       "status": "needs_fix",
       "selected_tree_sha256": "4fc414ec908fca343026394b309e9d8449af89d29e01e80182ea05167d74fe2e",
@@ -31,6 +40,15 @@
       "observed_defect": "`roughly` is attached to auxiliary `do` rather than lexical `answer`",
       "required_linguistic_correction": "Degree/manner of answering; interrogative reason attached to question predicate",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 606,
+      "status": "needs_fix",
+      "selected_tree_sha256": "0d34c599d50f22a136a825aabca90114f801f87a515061a5bd954173a3d80068",
+      "selected_graph_sha256": "ccc29ad93f1047969ff5756aa333c503d48c681ae4766b79c6fc3b72a16922e9",
+      "observed_defect": "AGENT(was,letter) attributes agency to letter in My letter was calm and affectionate",
+      "required_linguistic_correction": "The copular subject letter is THEME/PREDICAND and calm/affectionate are two predicative attributes",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
     },
     {
       "index": 607,
@@ -85,6 +103,15 @@
       "observed_defect": "`to reply` is selected with `reply` as N, not infinitival predicate",
       "required_linguistic_correction": "`unable` governs a verbal infinitive `to reply`",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 614,
+      "status": "needs_fix",
+      "selected_tree_sha256": "13bf1b7952c704e8dd06239b5a829263a6f8d7b91d20fdb84a5aa190e896536e",
+      "selected_graph_sha256": "c7c78e3b05ad2e18804bc13a0305e874620dd0e96e3b47d13cd311462eb170bd",
+      "observed_defect": "MANNER(continued,still) classifies the persistence adverb still as manner; graph has ADJUNCT(enveloped,in) but never attaches the actual darkness nominal object",
+      "required_linguistic_correction": "Still is ASPECTUAL/TEMPORAL persistence, and in an impenetrable darkness contributes the actual locative/state modifier of enveloped",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
     },
     {
       "index": 616,
@@ -303,6 +330,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 651,
+      "status": "needs_fix",
+      "selected_tree_sha256": "a0677f15d801f906cba3808180a30d18c2a16792f0d61d4b73f9781bff85d255",
+      "selected_graph_sha256": "ef971773cfc3819b95271ae74d85207416df99053e188068ca496b25508b5121",
+      "observed_defect": "The perfect auxiliary has in The boy has got the baby is absent from all semantic relations",
+      "required_linguistic_correction": "The HAVE auxiliary expresses perfect aspect of got; full source quote and exclamatory illocution need correctly scoped representation",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
+    },
+    {
       "index": 653,
       "status": "needs_fix",
       "selected_tree_sha256": "3a989fe325c2b8d32c5e2c7d54b311888268b1f97e10c58f6792d54ace9691e4",
@@ -310,6 +346,15 @@
       "observed_defect": "`Will you be improved?` has no MODALITY link for `Will`",
       "required_linguistic_correction": "Interrogative modal scope and passive/stative patient `you`",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 656,
+      "status": "needs_fix",
+      "selected_tree_sha256": "219d79b3a04d587de41fd9dc9175212606739de09d4542bac811b7a1dbec3d7f",
+      "selected_graph_sha256": "9657201769c3457163ca4afc6cfe2c85774ba580eacbbb83c61d4daed2b7b420",
+      "observed_defect": "Hands in We shook hands heartily has semantic node type EVENT rather than a concrete body-part/object",
+      "required_linguistic_correction": "Hands is the hand-object of shake (or reciprocal handshaking event participants), not itself typed as an independent event",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
     },
     {
       "index": 657,
@@ -427,6 +472,15 @@
       "observed_defect": "`had` from `hadn't` is selected as V with `AGENT(said,had)`",
       "required_linguistic_correction": "Negative perfect auxiliary inversion and subject `I` of `said`",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 676,
+      "status": "needs_fix",
+      "selected_tree_sha256": "56e2868e4374f53c9b48619e0b5650371673d0dea1b47c8c082e65c6ee550417",
+      "selected_graph_sha256": "0fd68ed8bac574a853744f5b31f7d383eba52c9c4d8403f1756e4907b38956d5",
+      "observed_defect": "MANNER(was,directly) treats directly in She was gone directly as manner of the copula",
+      "required_linguistic_correction": "Directly is a temporal immediately/soon modifier of the departure/state gone, not manner",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
     },
     {
       "index": 677,
@@ -978,6 +1032,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 754,
+      "status": "needs_fix",
+      "selected_tree_sha256": "fee8acd3fdd820beb6aa03e6e48ddb7b0779fbdfa79faea98de3da78aaf29b23",
+      "selected_graph_sha256": "bf71505c571649149e0e6032a5d909b38f368796c8c9f8b1638281c968cd5760",
+      "observed_defect": "He made a short pause has no semantic relation for short despite the overt attributive modifier",
+      "required_linguistic_correction": "Short restricts duration of the pause nominal / event and must be attached",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
+    },
+    {
       "index": 755,
       "status": "needs_fix",
       "selected_tree_sha256": "6adfb9d2cf6cfb6d7a539d582b9285f4255f9bae4d9df0d4ee867fc85707521d",
@@ -1030,6 +1093,15 @@
       "observed_defect": "`it must have been` selects `it` POSS, `must` N, `have` N",
       "required_linguistic_correction": "Copular perfect modal chain, not an NP headed by must",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 761,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ae18ce60c1713035bd98d289afb76ba8c22f6b8e954f82b9638328c5125fef10",
+      "selected_graph_sha256": "556c76520645358c3d0b5b4a64215cec9507ce959f17b29e320b9ac7c0015eba",
+      "observed_defect": "The perfect HAVE in I have forgot her name is absent from the selected semantic graph",
+      "required_linguistic_correction": "Have is the perfect auxiliary of forgot; the preceding A little woman is a separate discourse fragment or topic and must not silently blend with tense/aspect",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
     },
     {
       "index": 762,
