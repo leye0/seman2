@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: novel800-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   source-freeze-and-baseline:
     runs-on: ubuntu-latest
@@ -51,7 +54,7 @@ jobs:
         env:
           PYTHONPATH: superparser
         run: |
-          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 708 713 718 721 732 735 749 795
       - name: Replay and compare protected Novel-600 and Novel-700
         env:
           PYTHONPATH: superparser
