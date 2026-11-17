@@ -59,4 +59,62 @@ class Novel700ResidualTests(unittest.TestCase):
                 self.assertIn(('PARATAXIS',handles['first'],handles['second']),edges)
                 self.assertIn(('SUPPLEMENT',handles['second'],handles['depictive']),edges)
 
+
+    def test_n643_split_questions_source_and_controls(self):
+        from seman_parser.scoped_novel_700 import N643_SPLIT_QUESTIONS
+        positive='"Oh, captain," we cried, "what shall we do? Where is she wounded?"'
+        negative='"Oh, captain," we cried, "what shall we do Where is she wounded?"'
+        for text,must in ((643,True),(positive,True),(negative,False)):
+            with self.subTest(text=str(text)[:45]):
+                prepared,lattice,result=self.parse(text)
+                root=result.best()
+                if not must:
+                    self.assertTrue(root is None or root.rule_id!=N643_SPLIT_QUESTIONS)
+                    continue
+                self.assertTrue(result.completed)
+                self.assertIsNotNone(root)
+                self.assertEqual(root.rule_id,N643_SPLIT_QUESTIONS)
+                self.assertEqual((root.start,root.end),(0,len(prepared.analysis_text)))
+                self.assertEqual([c.category for c in root.children],
+                    ['OPEN-QUOTE','INTERJECTION','COMMA','NP','COMMA','CLOSE-QUOTE',
+                     'SPEECH-TAG','COMMA','OPEN-QUOTE','CLAUSE','CLAUSE','CLOSE-QUOTE'])
+                self.assertFalse(result.stats.get('budget_exceeded'))
+                package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
+                self.assertIsNotNone(package)
+                handles=package['handles']
+                edges={(e['relation'],e['source'],e['target']) for e in package['graph']['relations']}
+                self.assertIn(('QUESTION_SEQUENCE',handles['question1'],handles['question2']),edges)
+                self.assertIn(('REPORTED_CONTENT',handles['reporter'],handles['question2']),edges)
+
+    def test_n648_progressive_source_and_controls(self):
+        from seman_parser.scoped_novel_700 import N648_PROGRESSIVE
+        positive=('Next moment we were both groping downstairs, leaving the lantern '
+                  'by the empty chest; and the next we had opened the gate and were in full retreat.')
+        negative=('Next moment we were both groping downstairs, leaving the lantern '
+                  'by the empty chest; and the next we has opened the gate and were in full retreat.')
+        for text,must in ((648,True),(positive,True),(negative,False)):
+            with self.subTest(text=str(text)[:45]):
+                prepared,lattice,result=self.parse(text)
+                root=result.best()
+                if not must:
+                    self.assertTrue(root is None or root.rule_id!=N648_PROGRESSIVE)
+                    continue
+                self.assertTrue(result.completed)
+                self.assertIsNotNone(root)
+                self.assertEqual(root.rule_id,N648_PROGRESSIVE)
+                self.assertEqual((root.start,root.end),(0,len(prepared.analysis_text)))
+                self.assertEqual([c.category for c in root.children],
+                    ['ADJ','N','CLAUSE','COMMA','V','NP','PP','SEMICOLON','COORD',
+                     'NP','CLAUSE','COORD','COPULA','PP','SPEECH-STOP'])
+                self.assertFalse(result.stats.get('budget_exceeded'))
+                package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
+                self.assertIsNotNone(package)
+                handles=package['handles']
+                edges={(e['relation'],e['source'],e['target']) for e in package['graph']['relations']}
+                for relation,left,right in (
+                    ('SUPPLEMENT','first','leaving'),('THEME','leaving','candle'),
+                    ('PARATAXIS','first','second'),('STATE','were','retreat')):
+                    self.assertIn((relation,handles[left],handles[right]),edges)
+
+
 if __name__=='__main__': unittest.main()
