@@ -29,6 +29,7 @@ COHORT700 = ROOT / "research" / "novel_ladder" / "novel-700-cohort.json"
 CURRENT800 = ROOT / "research" / "novel_800_exploration" / "novel-800-candidate-current.json"
 REVIEW800 = ROOT / "research" / "novel_800_exploration" / "novel-800-candidate-review.json"
 COHORT800 = ROOT / "research" / "novel_800_exploration" / "novel-800-candidate-cohort.json"
+DEFECTS = ROOT / "research" / "semantic_quality" / "confirmed_selected_defects.json"
 
 NEGATORS = frozenset(("not", "never", "n't", "n’t"))
 MODALS = frozenset(("can", "could", "may", "might", "must", "shall", "should", "will", "would"))
@@ -61,7 +62,8 @@ def fingerprint_and_source(row, expected, anchor) -> None:
         or row["kbest_budget_exceeded"]!=expected["kbest_budget_exceeded"]):
         raise AssertionError(f"N{index}: rank-one tree/graph/source/budget drift")
 
-def inspect(row: dict[str, Any], old_review: dict[str, Any] | None) -> dict[str, Any]:
+def inspect(row: dict[str, Any], old_review: dict[str, Any] | None,
+            known_defect: dict[str, Any] | None = None) -> dict[str, Any]:
     index=row["ladder_index"]
     text=row["source_text"]
     tree=row["tree"]
@@ -140,8 +142,25 @@ def inspect(row: dict[str, Any], old_review: dict[str, Any] | None) -> dict[str,
         if len(leaf.get("span",()))==2 and
         0<=leaf["span"][0]<=leaf["span"][1]<=len(text)
     ]
+    existing_review=old_review["verdict"] if old_review else "unreviewed"
+    signature_match=(known_defect is not None
+        and known_defect["selected_tree_sha256"]==ladder.digest(tree)
+        and known_defect["selected_graph_sha256"]==ladder.graph_digest(package))
+    if known_defect is not None:
+        quality_state=("needs_fix" if signature_match
+                       else "changed_since_defect_requires_independent_recheck")
+    elif existing_review=="verified" and issues:
+        quality_state="review_conflict"
+    else:
+        quality_state=existing_review
     return {
         "index":index,
+        "quality_state":quality_state,
+        "confirmed_defect":({
+            "observed":known_defect["observed_defect"],
+            "required":known_defect["required_linguistic_correction"],
+            "bad_signature_unchanged":signature_match,
+        } if known_defect else None),
         "book_id":row["book_id"],
         "source":text,
         "source_span":row["structural_core_source_span"],
@@ -156,7 +175,7 @@ def inspect(row: dict[str, Any], old_review: dict[str, Any] | None) -> dict[str,
         "semantic_relations":semantic_edges,
     }
 
-def audit_collection(path, *, first, expected_path, cohort_path, review_path):
+def audit_collection(path, *, first, expected_path, cohort_path, review_path, known_defects):
     expected=ladder.read_json(expected_path)
     cohort=ladder.read_json(cohort_path)
     reviews=ladder.read_json(review_path)
@@ -177,28 +196,40 @@ def audit_collection(path, *, first, expected_path, cohort_path, review_path):
             if (entry["rank_one_sha256"]!=by_result[index]["rank_one_sha256"] or
                 entry["selected_graph_sha256"]!=by_result[index]["selected_graph_sha256"]):
                 raise AssertionError(f"Stale individual review N{index}")
-        observed.append(inspect(row,entry))
+        observed.append(inspect(row,entry,known_defects.get(index)))
     return observed
 
 def run(args):
+    ledger=ladder.read_json(DEFECTS)
+    if ledger.get("schema")!="seman2-selected-semantic-defect-ledger-v1":
+        raise AssertionError("Unknown semantic defect ledger schema")
+    known_defects={r["index"]:r for r in ledger["cases"]}
+    if len(known_defects)!=len(ledger["cases"]):
+        raise AssertionError("Duplicate semantic defect IDs")
+    if any(r["status"]!="needs_fix" for r in known_defects.values()):
+        raise AssertionError("Cannot silently drop a known semantic defect")
     entries=[
         *audit_collection(args.novel700,first=601,expected_path=CURRENT700,
-                          cohort_path=COHORT700,review_path=REVIEW700),
+                          cohort_path=COHORT700,review_path=REVIEW700,known_defects=known_defects),
         *audit_collection(args.novel800,first=701,expected_path=CURRENT800,
-                          cohort_path=COHORT800,review_path=REVIEW800)
+                          cohort_path=COHORT800,review_path=REVIEW800,known_defects=known_defects)
     ]
     if len(entries)!=200 or len({e["index"] for e in entries})!=200:
         raise AssertionError("Expected 200 unique source-anchored reviewed candidates")
     flags=Counter(issue for entry in entries for issue in entry["automatic_issues"])
     warnings=Counter(issue for entry in entries for issue in entry["automatic_warnings"])
-    counts=Counter(entry["review_status"] for entry in entries)
+    counts=Counter(entry["quality_state"] for entry in entries)
     synopsis={
         "cohorts":{"Novel-700":CURRENT700.name,"Novel-800":CURRENT800.name},
         "total_cases":200,"complete_selected_trees":200,
         "individual_reviewed":counts["verified"],
         "individual_needs_fix":counts["needs_fix"],
+        "individual_review_conflicts":counts["review_conflict"],
+        "individual_recheck_needed":counts["changed_since_defect_requires_independent_recheck"],
         "individual_unreviewed":counts["unreviewed"],
+        "original_review_coverage":sum(e["review_status"]=="verified" for e in entries),
         "individual_review_coverage":f"{counts['verified']}/200",
+        "confirmed_semantic_defects":len(known_defects),
         "automatic_issue_cases":sum(bool(e["automatic_issues"]) for e in entries),
         "automatic_issue_types":dict(flags),
         "automatic_warning_types":dict(warnings),
@@ -209,8 +240,9 @@ def run(args):
         json.dumps({"summary":synopsis,"cases":entries},ensure_ascii=False,indent=2)+"\n",
         encoding="utf-8"
     )
-    ranked=sorted((e for e in entries if e["automatic_issues"]),
-                  key=lambda e:(e["review_status"]!="unreviewed",
+    ranked=sorted((e for e in entries if e["automatic_issues"]
+                   or e["confirmed_defect"]),
+                  key=lambda e:(e["quality_state"] not in ("needs_fix","review_conflict"),
                                 -len(e["automatic_issues"]),e["index"]))
     lines=[
         "# Semantic fidelity: **not certified**",
@@ -221,19 +253,25 @@ def run(args):
         "linguistic attachment still needs source-grounded human/model review,",
         "independent positive/negative controls, and explicit verdicts.",
         "",
-        f"- **{synopsis['individual_reviewed']}** previously verified",
-        f"- **{synopsis['individual_unreviewed']}** lacking individual review",
+        f"- **{synopsis['individual_reviewed']}** verified without an automatic contradiction",
+        f"- **{synopsis['individual_needs_fix']}** individually identified wrong selected trees",
+        f"- **{synopsis['individual_review_conflicts']}** previously verified analyses needing recheck",
+        f"- **{synopsis['individual_unreviewed']}** still lacking individual review",
         f"- **{synopsis['automatic_issue_cases']}** cases with automatic issue flags",
         "",
         "## Prioritized issues",
         "",
-        "| Case | Review | Source | Automatic issues |",
+        "| Case | Quality verdict | Source | Confirmed selected defect / automatic issues |",
         "| --- | --- | --- | --- |",
     ]
     for e in ranked:
         source=e["source"].replace("|","\\|").replace("\n"," ")[:100]
-        lines.append(f"| N{e['index']} | {e['review_status']} | {source} | "
-                     f"{', '.join(e['automatic_issues'])} |")
+        known=e["confirmed_defect"]
+        reason=known["observed"] if known else ""
+        reason=reason.replace("|","/")[:150]
+        flags=", ".join(e["automatic_issues"])
+        lines.append(f"| N{e['index']} | {e['quality_state']} | {source} | "
+                     f"{reason} {flags} |")
     lines.extend(["", "## Guardrail", "",
                   "Full coverage and digest stability are not semantic accuracy.",
                   "The final acceptance gate must remain closed until every case",
@@ -244,9 +282,9 @@ def run(args):
     for e in ranked:
         print("SEMANTIC_AUDIT_FLAG",json.dumps({
             "index":e["index"],"source":e["source"][:155],
-            "status":e["review_status"],"issues":e["automatic_issues"]
+            "status":e["quality_state"],"issues":e["automatic_issues"],"confirmed":bool(e["confirmed_defect"])
         },ensure_ascii=False),flush=True)
-    if args.gate and (counts["unreviewed"] or counts["needs_fix"] or ranked):
+    if args.gate and (counts["unreviewed"] or counts["needs_fix"] or counts["review_conflict"] or counts["changed_since_defect_requires_independent_recheck"] or ranked):
         raise SystemExit(
             "Semantic acceptance blocked: unreviewed analyses and/or flagged defects remain"
         )
