@@ -745,7 +745,7 @@ def plan_n660_gerund_question(text,components):
         _verb('mind','base','transitive'),
         _lex('my','POSS'),
         _verb('calling','ing','transitive'),
-        _phr('you2','NP',proof_rule='np_bare'),
+        _phr('you2','NP'),
         _phr('name','NP',proof_rule='np_proper'),
         _punct('q','QMARK'),_punct('close','CLOSE-QUOTE'),
     ))
@@ -769,14 +769,14 @@ def plan_n661_dialectal(text,components):
     specs,_,_,part=_specs()
     part(m,0,(
         _punct('open','OPEN-QUOTE'),
-        ('title','TITLE','scoped-lexical',{'honorific':'true','dialectal':'true'}),
+        ('title','TITLE','source-dialectal-honorific',{'honorific':'true','dialectal':'true'}),
         _phr('name','NP',proof_rule='np_proper'),
         _punct('comma1','COMMA'),
         _lex('shall','MODAL',vform='finite'),_subject('you'),
-        _verb('see','base','transitive'),_phr('her','NP',proof_rule='np_bare'),
+        _verb('see','base','transitive'),_phr('her','NP'),
         _punct('comma2','COMMA'),
-        ('tag','DIALECT-DO-YE','scoped-lexical',{'dialectal':'true'}),
-        _verb('think','base','intransitive'),
+        ('tag','DIALECT-DO-YE','source-dialectal-do-ye',{'dialectal':'true'}),
+        _lex('think','V',vform='base'),
         _punct('q','QMARK'),_punct('close','CLOSE-QUOTE'),
     ))
     return specs
@@ -815,7 +815,7 @@ def plan_n691_intercalated(text,components):
         _punct('comma','COMMA'),_punct('close1','CLOSE-QUOTE'),
         _phr('report','SPEECH-TAG',proof_rule='dialogue_speech_tag_inverted'),
         _punct('semi','SEMICOLON'),_punct('open2','OPEN-QUOTE'),
-        _lex('grieved','ADJ'),_punct('dash1','DASH'),_lex('shocked','ADJ'),
+        _lex('grieved','V',vform='ed'),_punct('dash1','DASH'),_lex('shocked','ADJ'),
         _punct('stop','SPEECH-STOP'),_lex('but','COORD',lemma_in='but'),
         _lex('is','COPULA',vform='finite',number='singular'),
         _subject('it'),_lex('certain','ADJ'),
