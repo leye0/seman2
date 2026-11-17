@@ -193,6 +193,31 @@ class NovelLadderTests(unittest.TestCase):
                     data,cohort,700,verified
                 )),100)
 
+    def test_quality_overrides_stale_verified_when_semantic_defect_is_known(self):
+        cohort={"cohort_sha256":"same-700","first_index":601}
+        dataset=result(cohort)
+        rows=ladder.result_cases(dataset,cohort,700)
+        reviews={i:{"index":i,"verdict":"verified","evidence":"Prior selected tree"}
+                 for i in rows}
+        with TemporaryDirectory() as temp:
+            path=Path(temp)/"confirmed_selected_defects.json"
+            ladder.write_json(path,{
+                "schema":"seman2-selected-semantic-defect-ledger-v1",
+                "cases":[{
+                    "index":660,"status":"needs_fix",
+                    "observed_defect":"Unscoped source negation",
+                    "selected_tree_sha256":rows[660]["rank_one_sha256"],
+                    "selected_graph_sha256":rows[660]["selected_graph_sha256"],
+                }]
+            })
+            with patch.object(ladder,"SEMANTIC_DEFECTS",path):
+                out=StringIO()
+                with redirect_stdout(out):
+                    ladder.print_quality("novel-700",rows,reviews)
+                self.assertIn("99/100 verified; 1 need a fix; 0 unreviewed",out.getvalue())
+                self.assertIn(660,ladder.known_semantic_defects(700))
+                self.assertEqual(ladder.known_semantic_defects(600),{})
+
     def test_graph_hash_ignores_ids_but_not_attachment(self):
         def package(a, b, *, reversed_edge=False):
             return {"handles": {"head": a}, "graph": {
