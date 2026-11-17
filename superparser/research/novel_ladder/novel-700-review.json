@@ -1,0 +1,174 @@
+{
+  "schema": "seman2-novel-ladder-review-v1",
+  "cohort_sha256": "92076729dc1ee5763c9981831b02af84e394f4d0daa7ebe05ad8a1c014660687",
+  "cases": [
+    {
+      "index": 603,
+      "verdict": "verified",
+      "evidence": "Discourse-return is an elliptical infinitival transition; no invented finite subject, with the topic explicitly attached to return.",
+      "rank_one_sha256": "f2868dff3e1d08dbd025a0880adc69ac2d4934cc65170345da36d7b4871a8066",
+      "selected_graph_sha256": "8e96428ecedac06323b1e1914020be141029ce6028ebcec43b1dec9ec9cc4f76"
+    },
+    {
+      "index": 612,
+      "verdict": "verified",
+      "evidence": "The selected verbal lemma for overt saw is SEE, not the unrelated sawing sense; the source has two coordinated visual/travel predicates and beautiful towns is the object of see.",
+      "rank_one_sha256": "54bc33db0be4f4cb1cefa9d3f852643b11583874c3498f9c396fac00df2ce10c",
+      "selected_graph_sha256": "021c79702affea2b5245ef4a0b403d63fb0da61ecc80c4cb0abb58c3be842caa"
+    },
+    {
+      "index": 615,
+      "verdict": "verified",
+      "evidence": "A single overt modal and negation govern lead on; the as-clause is a subject-oriented concession and the two outcome nominals remain local results.",
+      "rank_one_sha256": "cf0b26b0689b00a957150cc49a2ac9ef2d54d079d7fc4ba15aeb6b8b40ce0641",
+      "selected_graph_sha256": "151f7fc4fbc7c11b16cf1263106d1fd167e79320f7037679758411eab4190470"
+    },
+    {
+      "index": 619,
+      "verdict": "verified",
+      "evidence": "The temporal As-night clause dates finding, with a locative relative belonging to cemetery and the three conjoined people as agents of repose; myself refers to I.",
+      "rank_one_sha256": "9778d1cfaa69c7644e0097f0b1c3c2defeaee279278096affaa526edd4f02ad9",
+      "selected_graph_sha256": "4f87baf63b08196fc76ad6533cc4f94d40023b423c3374247d05637c8b88ad0d"
+    },
+    {
+      "index": 623,
+      "verdict": "verified",
+      "evidence": "The scalar negative passive scopes to occupied, with but-that limiting it; himself is reflexive to the subordinate he, whose projects are the topic.",
+      "rank_one_sha256": "439d56231323bb36bbf19483df1a00c340f5e7ca7481403bd8714f69cb2031c7",
+      "selected_graph_sha256": "4f8d5cbe17c035ff5a75c24739832fd54f7615f98808012c4520ff0071b3a7a7"
+    },
+    {
+      "index": 624,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 625,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved forest_budget_exceeded: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 639,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 641,
+      "verdict": "verified",
+      "evidence": "Sometimes and by-quivering independently modify appeared; as-if introduces a hypothetical attempt, not a true assertion of rising.",
+      "rank_one_sha256": "af2b08941dbf68976054f78b4d8421f6f12ba8e8f79f25ea6b8405ba31e7821f",
+      "selected_graph_sha256": "8158575cf4ccfb27b7fafdc50d7d09d569d40579005a43d5843e1211f2779279"
+    },
+    {
+      "index": 643,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 647,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 648,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved forest_budget_exceeded: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 649,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 652,
+      "verdict": "verified",
+      "evidence": "What is a minimal wh question with no fabricated predicate, and Agnes is the explicit postposed reporter.",
+      "rank_one_sha256": "da68fba0e42783f8b79908ab7782afb71d14427f632e9274587a92fbe53d636f",
+      "selected_graph_sha256": "59e284d228df79d11d90d36a0d378649378a1145d4f29bb11123dc0117e5a2a4"
+    },
+    {
+      "index": 654,
+      "verdict": "verified",
+      "evidence": "Which is a retrospective propositional anaphor with an unresolved discourse antecedent, not an invented antecedent inside the sentence; enough grades true.",
+      "rank_one_sha256": "8a882197bac4977bba318ae32533f5e0fbbb7bfdbdf0e0787eeab52cdb443647",
+      "selected_graph_sha256": "4a8d53f4e0abbb460e4c864f83c05b1872cd9c098154d6211252c315325d6b73"
+    },
+    {
+      "index": 660,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 661,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved no_structural_root: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 665,
+      "verdict": "verified",
+      "evidence": "Regarding is the overt topic preposition for curious. The as-if is counterfactual, the first time is the comparison, and final it refers to cottage.",
+      "rank_one_sha256": "53ba9f19e7a03ac569856cfa46c4a021732fb96a2463e5f3b14f501e267f16db",
+      "selected_graph_sha256": "5c4f1772025c5c64260fb023ca4ac92fb65b575dff2c28cc5b15a28357afd002"
+    },
+    {
+      "index": 666,
+      "verdict": "verified",
+      "evidence": "The semicolon separates comes from a distinct passive blotted out; for a time scopes the passive and of my remembrance is its source.",
+      "rank_one_sha256": "569f889dde299e8606277a34142a8d60129c81073a3bc95b324d304eb3eafa1f",
+      "selected_graph_sha256": "a07a0510ded3375f339190514b1e9ab7d19cf536e761a9e40903883bb1e6320a"
+    },
+    {
+      "index": 669,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved no_structural_root: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 672,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved forest_budget_exceeded: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 685,
+      "verdict": "verified",
+      "evidence": "The quoted demonstrative copula has with-him as the way companion, and she added reports that quoted predication.",
+      "rank_one_sha256": "f7962dd19d23aadf59df647a38eedbd173020da8122396dd3e0ee1341ed2c15d",
+      "selected_graph_sha256": "be6e888ffeaeed35d0454d3fcc66838ab916526a070e93633173c7b8376c710a"
+    },
+    {
+      "index": 691,
+      "verdict": "needs_fix",
+      "evidence": "Baseline-unresolved roots_without_valid_analysis: independently select a correct source-grounded tree and audit its semantic attachments; do not change input or resource limits.",
+      "rank_one_sha256": null,
+      "selected_graph_sha256": null
+    },
+    {
+      "index": 700,
+      "verdict": "verified",
+      "evidence": "The fronted of-having gerund is the subject matter of thought; the two with-phrases independently carry certainty and pleasure, with though-not-equal local to pleasure.",
+      "rank_one_sha256": "325062ea8857a2f8fe1637edc1cb46b73a57e6d714b0a2613a0ee68cb621ea01",
+      "selected_graph_sha256": "cbd35425e37518a35621f7060d8e3fb6d0a839fb11fd9b20a04d714e61d0e686"
+    }
+  ]
+}

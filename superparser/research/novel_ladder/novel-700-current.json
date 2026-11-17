@@ -7,10 +7,10 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 77,
+    "complete": 88,
     "forest_budget_exceeded": 3,
-    "no_structural_root": 5,
-    "roots_without_valid_analysis": 15
+    "no_structural_root": 2,
+    "roots_without_valid_analysis": 7
   },
   "cases": [
     {
@@ -33,12 +33,12 @@
     },
     {
       "index": 603,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_discourse_return_with_infinitive_topic",
+      "rank_one_sha256": "f2868dff3e1d08dbd025a0880adc69ac2d4934cc65170345da36d7b4871a8066",
+      "selected_graph_sha256": "8e96428ecedac06323b1e1914020be141029ce6028ebcec43b1dec9ec9cc4f76"
     },
     {
       "index": 604,
@@ -118,8 +118,8 @@
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
       "root_rule": "clause_front_pp_nocomma",
-      "rank_one_sha256": "08074d53fa71e69ba281d4c8a4bee7136d950a290d74ecbf1ee28ecea63203e7",
-      "selected_graph_sha256": "9f2f082d87823eab16fabb8e32f09dcc03abd1f92eca1a1bd6b2ec325a11a788"
+      "rank_one_sha256": "54bc33db0be4f4cb1cefa9d3f852643b11583874c3498f9c396fac00df2ce10c",
+      "selected_graph_sha256": "021c79702affea2b5245ef4a0b403d63fb0da61ecc80c4cb0abb58c3be842caa"
     },
     {
       "index": 613,
@@ -141,12 +141,12 @@
     },
     {
       "index": 615,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_negated_modal_with_self_concessive_and_result",
+      "rank_one_sha256": "cf0b26b0689b00a957150cc49a2ac9ef2d54d079d7fc4ba15aeb6b8b40ce0641",
+      "selected_graph_sha256": "151f7fc4fbc7c11b16cf1263106d1fd167e79320f7037679758411eab4190470"
     },
     {
       "index": 616,
@@ -177,12 +177,12 @@
     },
     {
       "index": 619,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_temporal_as_with_locative_relative_and_coordination",
+      "rank_one_sha256": "9778d1cfaa69c7644e0097f0b1c3c2defeaee279278096affaa526edd4f02ad9",
+      "selected_graph_sha256": "4f87baf63b08196fc76ad6533cc4f94d40023b423c3374247d05637c8b88ad0d"
     },
     {
       "index": 620,
@@ -213,12 +213,12 @@
     },
     {
       "index": 623,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_scalar_passive_but_that_self_engagement",
+      "rank_one_sha256": "439d56231323bb36bbf19483df1a00c340f5e7ca7481403bd8714f69cb2031c7",
+      "selected_graph_sha256": "4f8d5cbe17c035ff5a75c24739832fd54f7615f98808012c4520ff0071b3a7a7"
     },
     {
       "index": 624,
@@ -375,12 +375,12 @@
     },
     {
       "index": 641,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_periodic_perception_with_evidential_as_if",
+      "rank_one_sha256": "af2b08941dbf68976054f78b4d8421f6f12ba8e8f79f25ea6b8405ba31e7821f",
+      "selected_graph_sha256": "8158575cf4ccfb27b7fafdc50d7d09d569d40579005a43d5843e1211f2779279"
     },
     {
       "index": 642,
@@ -474,12 +474,12 @@
     },
     {
       "index": 652,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_structural_reported_minor_wh_reply",
+      "rank_one_sha256": "da68fba0e42783f8b79908ab7782afb71d14427f632e9274587a92fbe53d636f",
+      "selected_graph_sha256": "59e284d228df79d11d90d36a0d378649378a1145d4f29bb11123dc0117e5a2a4"
     },
     {
       "index": 653,
@@ -492,12 +492,12 @@
     },
     {
       "index": 654,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_propositional_relative_resumption",
+      "rank_one_sha256": "8a882197bac4977bba318ae32533f5e0fbbb7bfdbdf0e0787eeab52cdb443647",
+      "selected_graph_sha256": "4a8d53f4e0abbb460e4c864f83c05b1872cd9c098154d6211252c315325d6b73"
     },
     {
       "index": 655,
@@ -591,21 +591,21 @@
     },
     {
       "index": 665,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_raising_curiosity_with_counterfactual_comparison",
+      "rank_one_sha256": "53ba9f19e7a03ac569856cfa46c4a021732fb96a2463e5f3b14f501e267f16db",
+      "selected_graph_sha256": "5c4f1772025c5c64260fb023ca4ac92fb65b575dff2c28cc5b15a28357afd002"
     },
     {
       "index": 666,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_semicolon_temporal_passive_coordination",
+      "rank_one_sha256": "569f889dde299e8606277a34142a8d60129c81073a3bc95b324d304eb3eafa1f",
+      "selected_graph_sha256": "a07a0510ded3375f339190514b1e9ab7d19cf536e761a9e40903883bb1e6320a"
     },
     {
       "index": 667,
@@ -771,12 +771,12 @@
     },
     {
       "index": 685,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_structural_reported_copular_comment_with_companion",
+      "rank_one_sha256": "f7962dd19d23aadf59df647a38eedbd173020da8122396dd3e0ee1341ed2c15d",
+      "selected_graph_sha256": "be6e888ffeaeed35d0454d3fcc66838ab916526a070e93633173c7b8376c710a"
     },
     {
       "index": 686,
@@ -906,12 +906,12 @@
     },
     {
       "index": 700,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_fronted_gerund_judgment_with_concessive_affect",
+      "rank_one_sha256": "325062ea8857a2f8fe1637edc1cb46b73a57e6d714b0a2613a0ee68cb621ea01",
+      "selected_graph_sha256": "cbd35425e37518a35621f7060d8e3fb6d0a839fb11fd9b20a04d714e61d0e686"
     }
   ]
 }
