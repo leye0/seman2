@@ -357,7 +357,50 @@ def plan_scalar_but_that(text, components):
         _lex('of','PREP',nominal_complement='of'),_lex('others','N'),_punct('stop','SPEECH-STOP'),
     ));return specs
 
+
+# N624: two independently licensed finite clauses; the second carries
+# a depictive passive participle with an overt causal agent and relative.
+N624_PARATAXIS = 'structural_semicolon_parataxis_with_participial_cause_and_relative'
+_N624 = re.compile(
+    r'(?P<first>(?:My|His|Her) +(?:rage|anger|fury) +(?:was|is) +without +(?:bounds|limits))'
+    r'(?P<semicolon>;) +'
+    r'(?P<second>(?:I|he|she) +(?:sprang|leaped|jumped) +(?:on|upon) +(?:him|her|them))'
+    r'(?P<comma>,) +(?P<impelled>impelled|driven) +(?P<by>by) +'
+    r'(?P<feelings>all +the +(?:feelings|passions)) +(?P<which>which) +'
+    r'(?P<can>can|could) +(?P<arm>arm|turn) +(?P<one>one) +'
+    r'(?P<being>being|person) +(?P<against>against) +(?P<the>the) +'
+    r'(?P<existence>existence|life) +(?P<of>of) +(?P<another>another)'
+    r'(?P<stop>\.)'
+)
+
+def plan_n624_parataxis(text, components):
+    m = _N624.fullmatch(text)
+    if m is None:
+        return None
+    first = next((c for c in components if c.get('function') == 'matrix_clause'), None)
+    second = next((c for c in components if c.get('function') == 'independent_clause'), None)
+    if (first is None or second is None or first['start'] != 0
+            or second['start'] != m.start('second')):
+        return None
+    specs,_,_,part = _specs()
+    part(m, 0, (
+        _phr('first','CLAUSE',finite_statement_proof='true'),
+        _punct('semicolon','SEMICOLON'),
+        _phr('second','CLAUSE',finite_statement_proof='true'),
+        _punct('comma','COMMA'),
+        _verb('impelled','ed','transitive'), _lex('by','PREP-BY'),
+        _phr('feelings','NP',proof_rule='np_det_det_n'),
+        _lex('which','WH-NOM'),
+        _lex('can','MODAL',vform='finite'), _verb('arm','base','transitive'),
+        _lex('one','NUM'),_lex('being','N'),
+        _lex('against','PREP',lemma_in='against'),_lex('the','DET'),
+        _lex('existence','N'),_lex('of','PREP',lemma_in='of'),
+        _lex('another','INDEF-PRONOUN'),_punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
 NARRATIVE_PLANS = (
+    (N624_PARATAXIS, plan_n624_parataxis),
     (CONCESSIVE_LEAD, plan_concessive_lead),
     (SCALAR_BUT_THAT, plan_scalar_but_that),
     (FRONTED_GERUND_JUDGMENT, plan_fronted_gerund_judgment),
@@ -372,5 +415,5 @@ SPOKEN_PLANS = (
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
