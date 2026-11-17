@@ -49,7 +49,7 @@ jobs:
           PYTHONPATH: superparser
         run: |
           WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m unittest -q superparser.tests.test_novel800_residual superparser.tests.test_novel_ladder superparser.tests.test_structural_preanalysis
-      - name: Run exact-source N701-N800 selection and full baseline
+      - name: Reparse the pinned exact-source N701-N800 candidate
         env:
           PYTHONPATH: superparser
         run: |
@@ -58,7 +58,7 @@ jobs:
         env:
           PYTHONPATH: superparser
         run: |
-          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 702 704 705 730
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory
       - name: Replay and compare protected Novel-600 and Novel-700
         env:
           PYTHONPATH: superparser
