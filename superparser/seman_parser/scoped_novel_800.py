@@ -377,7 +377,7 @@ _POLITE = re.compile(
     r'(?P<will>will) +(?P<be>be) +(?P<seated>seated)'
     r'(?P<comma4>,) +(?P<and>and) +(?P<allow>allow) +'
     r'(?P<me>me) +(?P<to>to) +(?P<do>do) +'
-    r'(?P<this>this)(?P<stop>\.)(?P<close2>’)'
+    r'(?P<this>this|that)(?P<stop>\.)(?P<close2>’)'
 )
 def plan_split_polite_request(text,parts):
     m=_POLITE.fullmatch(text)
