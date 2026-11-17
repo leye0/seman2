@@ -122,6 +122,13 @@
       "selected_graph_sha256": "e868595ca02ea81712bc2af66be8a283d1117751800d69456853910d2789ea77"
     },
     {
+      "index": 663,
+      "verdict": "verified",
+      "evidence": "Selected source ‘I hope Mrs. Micawber and your family are well, sir,’ said my aunt is tested at original source offsets: the overt I→hope subject, hope→are embedded complement, are→well predication, coordinated Micawber and family, postposed my aunt reporter, and said→hope reported content plus sir addressee. Independent positive with his aunt and nonmatching grammatical negative have been run under WordNet 3.0 and unchanged limits; see test_semantic_ladder_review_candidates.py and CI 44183471999.",
+      "rank_one_sha256": "9fd31ecd44c26a306454ecb0ee39d2d66cb06110fa125cd62e506aa042f5c523",
+      "selected_graph_sha256": "408971254ab7dab649e6893102dd8bf298e2060b8ae96991f0b99716b353de75"
+    },
+    {
       "index": 665,
       "verdict": "verified",
       "evidence": "Regarding is the overt topic preposition for curious. The as-if is counterfactual, the first time is the comparison, and final it refers to cottage.",
@@ -148,6 +155,13 @@
       "evidence": "The source retains both finite sentences inside one original quotation; forgotten governs the actual existential content and exceptive but-to-go-out-tossing; I wish there was not is an independently proven elliptic reprise, not an invented full proposition.",
       "rank_one_sha256": "648074e4d0563b2f89967ba7035d76e8f3d08d695208e1587b1acc1eaa086446",
       "selected_graph_sha256": "d17dcb24f8af9982c81334c77a1ae85c40b40375f8cfd4ff197f99e27c487fc7"
+    },
+    {
+      "index": 681,
+      "verdict": "verified",
+      "evidence": "Source Elizabeth was distressed selects overt passive clause_passive, finite AUX-BE was, past participial V distress and THEME(distressed,Elizabeth), with source spans verified. Independent Mary was distressed positive and wrong agreement Mary were distressed contrast pass with selected rank-one and semantic graph assertions; CI 44183471999.",
+      "rank_one_sha256": "8604dd8bb5884f94c0a62f5219fef5eb0cf1f5677e8d70c19d1e7c42837560c6",
+      "selected_graph_sha256": "aef833d3333889dc62ea41d0d1de71f0c5c1890ded2b5530d3dec826454ac9bb"
     },
     {
       "index": 685,
