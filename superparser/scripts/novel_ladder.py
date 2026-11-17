@@ -273,6 +273,23 @@ def load_review(directory, end, cohort, result):
     return review
 
 
+def known_semantic_defects(end):
+    """Unresolved source-selected errors; do not confuse review with coverage."""
+    if end < 700 or not SEMANTIC_DEFECTS.exists():
+        return {}
+    ledger = read_json(SEMANTIC_DEFECTS)
+    if ledger.get("schema") != "seman2-selected-semantic-defect-ledger-v1":
+        raise ValueError("Unrecognized selected semantic defect ledger")
+    defect_map = {}
+    for item in ledger.get("cases", []):
+        index = item["index"]
+        if end - SIZE < index <= end:
+            if index in defect_map or item.get("status") != "needs_fix":
+                raise ValueError(f"Malformed unresolved semantic defect N{index}")
+            defect_map[index] = item
+    return defect_map
+
+
 def accepted_cases(result, cohort, end, review):
     rows = result_cases(result, cohort, end)
     if (any(r["status"] != "complete" for r in rows.values())
@@ -282,20 +299,12 @@ def accepted_cases(result, cohort, end, review):
     # but a known false selected attachment invalidates that certification.
     # Fail closed: changing the tree's hash does NOT automatically clear a
     # recorded fault; remove a defect only after source-backed controls pass.
-    if end >= 700 and SEMANTIC_DEFECTS.exists():
-        ledger = read_json(SEMANTIC_DEFECTS)
-        if ledger.get("schema") != "seman2-selected-semantic-defect-ledger-v1":
-            raise ValueError("Unrecognized selected semantic defect ledger")
-        unresolved = sorted({
-            item["index"] for item in ledger["cases"]
-            if end - SIZE < item["index"] <= end
-            and item.get("status") == "needs_fix"
-        })
-        if unresolved:
-            raise ValueError(
-                f"Novel-{end} semantic acceptance blocked by "
-                f"{len(unresolved)} outstanding selected-tree defects: {unresolved}"
-            )
+    unresolved = sorted(known_semantic_defects(end))
+    if unresolved:
+        raise ValueError(
+            f"Novel-{end} semantic acceptance blocked by "
+            f"{len(unresolved)} outstanding selected-tree defects: {unresolved}"
+        )
     return rows
 
 
@@ -327,10 +336,19 @@ def check(cohorts, directory, out_dir):
 
 
 def print_quality(prefix, rows, review):
-    verified = sum(r["verdict"] == "verified" for r in review.values())
-    needs_fix = len(review) - verified
+    end = int(prefix.rsplit("-", 1)[1])
+    known = known_semantic_defects(end)
+    # Known errors always override a legacy 'verified' entry (N660).
+    verdicts = {
+        index: ("needs_fix" if index in known else
+                review[index]["verdict"] if index in review else "unreviewed")
+        for index in rows
+    }
+    verified = sum(v == "verified" for v in verdicts.values())
+    needs_fix = sum(v == "needs_fix" for v in verdicts.values())
+    unreviewed = sum(v == "unreviewed" for v in verdicts.values())
     print(f"{prefix} quality: {verified}/{len(rows)} verified; {needs_fix} need a fix; "
-          f"{len(rows) - len(review)} unreviewed", flush=True)
+          f"{unreviewed} unreviewed", flush=True)
 
 
 def quality(cohorts, directory):
@@ -357,11 +375,14 @@ def print_queue(cohorts, directory, after):
         reviewed = load_review(directory, end, cohort, reference)
         audit = {int(i): reason for i, reason in reference.get("rank_one_review_queue", {}).items()}
         audit.update({i: r["evidence"] for i, r in reviewed.items() if r["verdict"] == "needs_fix"})
+        known = known_semantic_defects(end)
+        audit.update({i: r["observed_defect"] for i, r in known.items()})
         unreviewed = [r for i, r in rows.items() if i not in reviewed]
         eligible = [r for r in unreviewed if r["status"] != "complete"]
         if not eligible and audit:
             eligible = [r for i, r in rows.items()
-                        if i in audit and reviewed.get(i, {}).get("verdict") != "verified"]
+                        if i in audit and (i in known or
+                        reviewed.get(i, {}).get("verdict") != "verified")]
         if not eligible:
             eligible = unreviewed
         if not eligible:
