@@ -1,4 +1,4 @@
-name: Novel-800 exploratory source freeze and initial baseline
+name: Novel-800 100-case full replay and protected 600/700 regression
 on:
   push:
     branches: [research/novel-ladder-800-exploration]
@@ -50,11 +50,11 @@ jobs:
           PYTHONPATH: superparser
         run: |
           python -m scripts.novel800_exploratory run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/novel800-exploratory
-      - name: Verify strictly additive N800 corrections
+      - name: Verify exactly all 15 recovered N800 rank-one and graph signatures
         env:
           PYTHONPATH: superparser
         run: |
-          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 708 713 718 721 732 735 749 795
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 702 704 705 708 713 718 721 730 732 735 749 763 791 795 797
       - name: Replay and compare protected Novel-600 and Novel-700
         env:
           PYTHONPATH: superparser
