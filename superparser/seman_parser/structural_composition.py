@@ -79,6 +79,7 @@ from .scoped_novel_700 import (
     N672_WISH, plan_n672_wish,
     N660_GERUND_QUESTION, plan_n660_gerund_question,
     N661_DIALECTAL, plan_n661_dialectal,
+    N691_INTERCALATED, plan_n691_intercalated,
 )
 from .scoped_novel_ladder import (
     AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
@@ -3729,6 +3730,7 @@ class QuotedSentenceComposer:
             (plan_n672_wish, N672_WISH),
             (plan_n660_gerund_question, N660_GERUND_QUESTION),
             (plan_n661_dialectal, N661_DIALECTAL),
+            (plan_n691_intercalated, N691_INTERCALATED),
             (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),
