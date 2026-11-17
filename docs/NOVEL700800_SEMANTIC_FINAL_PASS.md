@@ -12,3 +12,7 @@ These failures were identified in the **existing selected** tree/graph outputs; 
 | N676 | MANNER(was,directly) treats directly in She was gone directly as manner of the copula | Directly is a temporal immediately/soon modifier of the departure/state gone, not manner |
 | N754 | He made a short pause has no semantic relation for short despite the overt attributive modifier | Short restricts duration of the pause nominal / event and must be attached |
 | N761 | The perfect HAVE in I have forgot her name is absent from the selected semantic graph | Have is the perfect auxiliary of forgot; the preceding A little woman is a separate discourse fragment or topic and must not silently blend with tense/aspect |
+
+## Additional falsifying independent grammatical contrast
+
+- **N655:** The selected original *She shook her head.* correctly links subject, head object and possessor. However, the independent negative *He shake his head.* was **also** accepted with the same selected `clause_np_vp` construction. This is a concrete agreement/tense overgeneration; it is **not** a certified grammatical rule and remains `needs_fix` until an independent negative control is rejected. It should not be counted as a source semantic graph failure, but it does block full grammatical verification.
