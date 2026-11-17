@@ -74,6 +74,24 @@ Earlier incremental stages independently compared all 85 original complete
 N800 trees, so the full inherited subset is protected. The frozen source
 cohort, original baseline and resource budgets remain unchanged.
 
+### Final legacy and direct-grammar certification
+
+The [final pinned N800 and historical protection run](https://github.com/leye0/seman2/actions/runs/44174605724)
+also completed **successfully** after the final 100/100 pin.
+It confirms:
+
+- **100/100 N800** with all 100 pinned source/tree/graph signatures
+  unchanged, **15/15** recovery reviews present and matching.
+- **100/100 Novel-600 and 100/100 Novel-700** with byte-for-byte identical
+  selected tree and selected graph signatures.
+- **500/500 Novel-500** with the historical selected fingerprint unchanged.
+  The long-standing 16 complete analyses carrying a forest-saturation flag
+  are unchanged; no new failed or timed-out case.
+- **30/30 anchored real-dialogue witnesses** unchanged.
+- **120/120 direct gold syntax/annotations**, all **24/24 grammatical
+  positive contrasts** maintained with no worsened negative acceptance.
+- **33 tests** in the focused Novel-800, ladder and preanalysis suite passed.
+
 ## Quality and promotion boundary
 
 **100/100 complete is not synonymous with 100/100 individually verified
