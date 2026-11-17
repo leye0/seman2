@@ -1,4 +1,4 @@
-name: Novel-800 lexical and construction probe
+name: Novel-800 targeted grammar/semantics validation
 on:
   push:
     branches: [research/novel-ladder-800-exploration]
@@ -40,12 +40,7 @@ jobs:
                   if name.startswith('wordnet/') and leaf in keep:
                       (dst/leaf).write_bytes(archive.read(name))
           PY
-      - name: Inspect grounded phrases at existing 50k and 500k limits
-        env:
-          PYTHONPATH: superparser
-        run: |
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -u -m scripts.probe_novel800
-      - name: Verify four source-grounded rank-one trees and semantic links
+      - name: Verify all 15 recovered rank-one trees, source spans and semantic links
         env:
           PYTHONPATH: superparser
         run: |
