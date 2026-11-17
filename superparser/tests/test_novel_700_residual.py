@@ -48,8 +48,8 @@ class Novel700ResidualTests(unittest.TestCase):
                 self.assertEqual((root.start,root.end),(0,len(prepared.analysis_text)))
                 self.assertEqual([c.category for c in root.children],
                                  ['CLAUSE','SEMICOLON','CLAUSE','COMMA','PARTICIPIAL-SUPPLEMENT','SPEECH-STOP'])
-                self.assertEqual(root.children[0].rule_id,'clause_np_vp')
-                self.assertEqual(root.children[2].rule_id,'clause_np_vp')
+                self.assertEqual(root.children[0].rule_id,'segment_interface')
+                self.assertEqual(root.children[2].rule_id,'segment_interface')
                 self.assertFalse(result.stats.get('budget_exceeded'))
                 self.assertFalse(result.stats.get('kbest_budget_exceeded'))
                 package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
