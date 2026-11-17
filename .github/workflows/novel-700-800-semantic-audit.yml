@@ -6,7 +6,12 @@ on:
       - '.github/workflows/novel-700-800-semantic-audit.yml'
       - 'superparser/scripts/audit_ladder_semantic_quality.py'
       - 'superparser/research/semantic_quality/**'
-      - 'docs/NOVEL700800_SEMANTIC_DEFECTS.md'
+      - 'docs/NOVEL700800_SEMANTIC_*.md'
+      - 'superparser/scripts/novel_ladder.py'
+      - 'superparser/tests/test_novel_ladder.py'
+      - 'superparser/tests/test_semantic_ladder_review_candidates.py'
+      - 'superparser/research/novel_ladder/novel-700-review.json'
+      - 'superparser/research/novel_800_exploration/novel-800-candidate-review.json'
   pull_request:
     branches: [research/novel-ladder-800-exploration, research/novel-ladder-700, main]
     paths:
@@ -16,6 +21,7 @@ on:
       - 'superparser/scripts/novel_ladder.py'
       - 'superparser/scripts/novel800_exploratory.py'
       - 'superparser/scripts/audit_ladder_semantic_quality.py'
+      - 'superparser/tests/**'
       - '.github/workflows/novel-700-800-semantic-audit.yml'
   workflow_dispatch:
 permissions:
