@@ -487,7 +487,7 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             "a0", "adverbial_subordinate_clause", a, b, main,
             "adverbial_modifier", "bounded_finite_temporal_candidate",
         ))
-    elif _INTRO.match(head):
+    elif _INTRO.match(head) and not re.match(r"(?i)^as\s+to\b", head):
         a = source.find(head)
         b = source.find(",", a)
         if 0 < b < len(source)-2:

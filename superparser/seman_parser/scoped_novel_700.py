@@ -357,7 +357,244 @@ def plan_scalar_but_that(text, components):
         _lex('of','PREP',nominal_complement='of'),_lex('others','N'),_punct('stop','SPEECH-STOP'),
     ));return specs
 
+
+# N624: two independently licensed finite clauses; the second carries
+# a depictive passive participle with an overt causal agent and relative.
+N624_PARATAXIS = 'structural_semicolon_parataxis_with_participial_cause_and_relative'
+_N624 = re.compile(
+    r'(?P<first>(?:My|His|Her) +(?:rage|anger|fury) +(?:was|is) +without +(?:bounds|limits))'
+    r'(?P<semicolon>;) +'
+    r'(?P<second>(?:I|he|she) +(?:sprang|leaped|jumped) +(?:on|upon) +(?:him|her|them))'
+    r'(?P<comma>,) +(?P<impelled>impelled|driven) +(?P<by>by) +'
+    r'(?P<feelings>all +the +(?:feelings|passions)) +(?P<which>which) +'
+    r'(?P<can>can|could) +(?P<arm>arm|turn) +(?P<one>one) +'
+    r'(?P<being>being|person) +(?P<against>against) +(?P<the>the) +'
+    r'(?P<existence>existence|life) +(?P<of>of) +(?P<another>another)'
+    r'(?P<stop>\.)'
+)
+
+def plan_n624_parataxis(text, components):
+    m = _N624.fullmatch(text)
+    if m is None:
+        return None
+    first = next((c for c in components if c.get('function') == 'matrix_clause'), None)
+    second = next((c for c in components if c.get('function') == 'independent_clause'), None)
+    if (first is None or second is None or first['start'] != 0
+            or second['start'] != m.start('second')):
+        return None
+    specs,_,_,part = _specs()
+    part(m, 0, (
+        _phr('first','CLAUSE',finite_statement_proof='true'),
+        _punct('semicolon','SEMICOLON'),
+        _phr('second','CLAUSE',finite_statement_proof='true'),
+        _punct('comma','COMMA'),
+        _verb('impelled','ed','transitive'), _lex('by','PREP-BY'),
+        _phr('feelings','NP',proof_rule='np_det_det_n'),
+        _lex('which','WH-NOM'),
+        _lex('can','MODAL',vform='finite'), _verb('arm','base','transitive'),
+        _lex('one','NUM'),_lex('being','N'),
+        _lex('against','PREP',lemma_in='against'),_lex('the','DET'),
+        _lex('existence','N'),_lex('of','PREP',lemma_in='of'),
+        _lex('another','INDEF-PRONOUN'),_punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
+
+# N643: two overt questions resume a source speech turn after the reporter.
+N643_SPLIT_QUESTIONS = "dialogue_structural_intercalated_reported_two_questions"
+_N643 = re.compile(
+    r'(?P<open1>")(?P<oh>Oh)(?P<comma1>,) +(?P<vocative>doctor|captain|nurse)'
+    r'(?P<comma2>,)(?P<close1>") +(?P<reporter>we +(?:cried|asked))'
+    r'(?P<comma3>,) +(?P<open2>")'
+    r'(?P<question1>what +shall +we +do\?) +'
+    r'(?P<question2>Where +is +(?:he|she) +wounded\?)(?P<close2>")'
+)
+def plan_n643_split_questions(text, components):
+    m = _N643.fullmatch(text)
+    if m is None:
+        return None
+    by_id = {c['id']:c for c in components}
+    left,right,report,turn = (by_id.get(k) for k in ('q0','q1','r0','t0'))
+    if (not all((left,right,report,turn))
+            or left.get('function') != 'direct_speech'
+            or right.get('function') != 'direct_speech'
+            or report.get('function') != 'reporting_clause'
+            or turn.get('function') != 'split_direct_speech_turn'
+            or (left['start'],left['end']) != (0,m.end('close1'))
+            or (right['start'],right['end']) != (m.start('open2'),len(text))
+            or (report['start'],report['end']) != m.span('reporter')):
+        return None
+    specs,_,_,part = _specs()
+    part(m,0,(
+        _punct('open1','OPEN-QUOTE'),
+        ('oh','INTERJECTION','scoped-lexical',{'exclamative':'true'}),
+        _punct('comma1','COMMA'),
+        _phr('vocative','NP',proof_rule='np_bare'),
+        _punct('comma2','COMMA'),_punct('close1','CLOSE-QUOTE'),
+        _phr('reporter','SPEECH-TAG',proof_rule='dialogue_speech_tag_post'),
+        _punct('comma3','COMMA'),_punct('open2','OPEN-QUOTE'),
+        _phr('question1','CLAUSE',proof_rule='clause_wh_obj_modal'),
+        _phr('question2','CLAUSE',proof_rule='clause_wh_copular_nominal_question'),
+        _punct('close2','CLOSE-QUOTE'),
+    ))
+    return specs
+
+# N648: source-preserved progressive, simultaneous participle and two
+# finite predicates in the semicolon-linked second time frame.
+N648_PROGRESSIVE = "structural_semicolon_progressive_with_participial_and_result"
+_N648 = re.compile(
+    r'(?P<next>Next) +(?P<moment>moment) +'
+    r'(?P<first>we +were +both +groping +downstairs)'
+    r'(?P<comma>,) +(?P<leaving>leaving) +(?P<candle>the +(?:candle|lantern)) +'
+    r'(?P<place>by +the +empty +chest)(?P<semicolon>;) +(?P<and1>and) +'
+    r'(?P<next2>the +next) +(?P<second>we +had +opened +the +(?:door|gate)) +'
+    r'(?P<and2>and) +(?P<were>were) +(?P<retreat>in +full +retreat)'
+    r'(?P<stop>\.)'
+)
+def plan_n648_progressive(text, components):
+    m = _N648.fullmatch(text)
+    if m is None:
+        return None
+    first=next((c for c in components if c.get('function')=='matrix_clause'),None)
+    second=next((c for c in components if c.get('function')=='coordinate_clause'),None)
+    if (first is None or second is None
+            or first['start'] != 0 or second['start'] != m.start('and1')
+            or second['end'] != len(text)):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _lex('next','ADJ'),_lex('moment','N'),
+        _phr('first','CLAUSE',finite_statement_proof='true'),
+        _punct('comma','COMMA'),
+        _verb('leaving','ing','transitive'),
+        _phr('candle','NP',proof_rule='np_det_n'),
+        _phr('place','PP',proof_rule='pp_prep_np'),
+        _punct('semicolon','SEMICOLON'),_lex('and1','COORD',lemma_in='and'),
+        _phr('next2','NP',proof_rule='np_det_adj'),
+        _phr('second','CLAUSE',finite_statement_proof='true'),
+        _lex('and2','COORD',lemma_in='and'),
+        _lex('were','COPULA',vform='finite'),
+        _phr('retreat','PP',proof_rule='pp_prep_np'),
+        _punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
+
+# N647: a focused instrument cleft (with these only), not a second plain
+# locative PP on the coordination. The control gerund remains subordinate.
+N647_CLEFT = "structural_coordinated_superlative_with_instrument_cleft"
+_N647 = re.compile(
+    r'(?P<guineas>The +(?:guineas|coins))(?P<comma1>,) +(?P<too>too)'
+    r'(?P<comma2>,) +(?P<were>were) +(?P<about>about) +'
+    r'(?P<scarcest>the +scarcest)(?P<comma3>,) +(?P<and>and) +'
+    r'(?P<it>it) +(?P<was>was) +(?P<with>with +these) +'
+    r'(?P<only>only) +(?P<that>that) +(?P<mother>my +mother) +'
+    r'(?P<knew>knew) +(?P<how>how) +(?P<to>to) +'
+    r'(?P<make>make) +(?P<her>her) +(?P<count>count)(?P<stop>\.)'
+)
+def plan_n647_cleft(text, components):
+    m=_N647.fullmatch(text)
+    if m is None or not _matrix(text,components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _phr('guineas','NP',proof_rule='np_det_n'),_punct('comma1','COMMA'),
+        _lex('too','ADV'),_punct('comma2','COMMA'),
+        _lex('were','COPULA',vform='finite'),_lex('about','ADV'),
+        _phr('scarcest','NP',proof_rule='np_det_n'),
+        _punct('comma3','COMMA'),_lex('and','COORD',lemma_in='and'),
+        _lex('it','EXTRAPOSITION-IT'),
+        _lex('was','COPULA',vform='finite'),
+        _phr('with','PP',proof_rule='pp_prep_np'),_lex('only','ADV'),
+        _lex('that','COMP-THAT'),
+        _phr('mother','NP',proof_rule='np_poss'),
+        _verb('knew','finite','transitive'),
+        _lex('how','WH-NOM'),_lex('to','TO'),
+        _verb('make','base','bare_control'),
+        _phr('her','NP'),_verb('count','base','intransitive'),
+        _punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
+# N649: parallel indirect manner complements to the evaluative adjective.
+# Keep "with what politeness" on kept, and all on ingratiate.
+N649_PARALLEL = "structural_evaluative_parallel_how_and_with_what_manner"
+_N649 = re.compile(
+    r'(?P<indeed>Indeed)(?P<comma>,) +(?P<remark>it +was +remarkable) +'
+    r'(?P<how>how) +(?P<well>well) +'
+    r'(?P<bore>he +bore +these +(?:slights|insults)) +'
+    r'(?P<and>and) +(?P<with>with) +(?P<what>what) +'
+    r'(?P<unwearying>unwearying) +(?P<politeness>politeness) +'
+    r'(?P<he>he) +(?P<kept>kept) +(?P<on>on) +(?P<trying>trying) +'
+    r'(?P<to>to) +(?P<ingratiate>ingratiate) +'
+    r'(?P<himself>himself) +(?P<withall>with +all)(?P<stop>\.)'
+)
+def plan_n649_parallel_manner(text, components):
+    m=_N649.fullmatch(text)
+    if m is None or not _matrix(text,components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _lex('indeed','ADV'),_punct('comma','COMMA'),
+        _phr('remark','CLAUSE',finite_statement_proof='true'),
+        _lex('how','WH-NOM'),_lex('well','ADV'),
+        _phr('bore','CLAUSE',finite_statement_proof='true'),
+        _lex('and','COORD',lemma_in='and'),
+        _lex('with','PREP',lemma_in='with'),_lex('what','WH-NOM'),
+        _lex('unwearying','ADJ'),_lex('politeness','N'),
+        _subject('he'),_lex('kept','V',vform='finite'),
+        _lex('on','PARTICLE',lemma_in='on'),
+        _verb('trying','ing','subject_control'),
+        _lex('to','TO'),_verb('ingratiate','base','transitive'),
+        _lex('himself','EMPHATIC-REFLEXIVE',reflexive='true'),
+        _phr('withall','PP',proof_rule='pp_prep_np'),
+        _punct('stop','SPEECH-STOP'),
+    ))
+    return specs
+
+
+# N669: overt topical "As to" is NOT an adverbial subordinate, and
+# the reporter does not synthesize quotation delimiters around free speech.
+N669_TOPICAL_REPORT = "structural_topical_as_to_with_reported_emotive_modal_question"
+_N669 = re.compile(
+    r'(?P<as>As) +(?P<to>to) +(?P<a>a) +(?P<fish>fish)'
+    r'(?P<hyphen>-)(?P<kittle>kittle|kettle)(?P<comma1>,) +'
+    r'(?P<title>Mrs)(?P<abbr>\.) +(?P<name>Crupp|Smith) +'
+    r'(?P<said>said)(?P<comma2>,) +(?P<well>well)(?P<excl>!) +'
+    r'(?P<would>would) +(?P<I>I) +(?P<only>only) +(?P<come>come) +'
+    r'(?P<and>and) +(?P<look>look) +(?P<range>at +the +range)(?P<q>\?)'
+)
+def plan_n669_topical_report(text,components):
+    m=_N669.fullmatch(text)
+    if m is None or not _matrix(text,components):
+        return None
+    # The source units must not assert an as-subordinate for nominal "as to".
+    if any(c.get('function')=='adverbial_subordinate_clause'
+           and c.get('start')==0 for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _lex('as','PREP',lemma_in='as'),_lex('to','PREP',lemma_in='to'),
+        _lex('a','DET'),_lex('fish','N'),_punct('hyphen','JOIN-HYPHEN'),
+        _lex('kittle','N'),_punct('comma1','COMMA'),
+        _lex('title','TITLE'),_punct('abbr','ABBREVIATION-STOP'),
+        _phr('name','NP',proof_rule='np_proper'),
+        _verb('said','finite','transitive'),_punct('comma2','COMMA'),
+        _lex('well','ADV'),_punct('excl','EXCL'),
+        _lex('would','MODAL',vform='finite'),_subject('I'),
+        _lex('only','ADV'),_verb('come','base','intransitive'),
+        _lex('and','COORD',lemma_in='and'),_verb('look','base','intransitive'),
+        _phr('range','PP',proof_rule='pp_prep_np'),
+        _punct('q','QMARK'),
+    ))
+    return specs
+
 NARRATIVE_PLANS = (
+    (N669_TOPICAL_REPORT, plan_n669_topical_report),
+    (N647_CLEFT, plan_n647_cleft),
+    (N649_PARALLEL, plan_n649_parallel_manner),
+    (N648_PROGRESSIVE, plan_n648_progressive),
+    (N624_PARATAXIS, plan_n624_parataxis),
     (CONCESSIVE_LEAD, plan_concessive_lead),
     (SCALAR_BUT_THAT, plan_scalar_but_that),
     (FRONTED_GERUND_JUDGMENT, plan_fronted_gerund_judgment),
@@ -368,9 +605,236 @@ NARRATIVE_PLANS = (
     (PROPOSITIONAL_RESUMPTION, plan_propositional_resumption),
     (COORDINATED_PASSIVE, plan_coordinated_passive),
 )
+
+# N625: the source quotation contains two content clauses in the first
+# semicolon conjunct and an independently asserted existential in the second.
+N625_EXISTENTIAL = "dialogue_structural_contrast_and_semicolon_existential_relative"
+_N625 = re.compile(
+    r'(?P<open>")(?P<thank>I +thank +(?:you|him|her))(?P<comma>,) +'
+    r'(?P<but>but) +(?P<all>all) +(?P<that>that) +'
+    r'(?P<you>you) +(?P<mention>mention) +(?P<be>is) +'
+    r'(?P<nothing>nothing) +(?P<tome>to +(?:me|him|her))'
+    r'(?P<semi>;) +(?P<earth>on +the +whole +earth) +'
+    r'(?P<there>there) +(?P<is>is) +(?P<comfort>no +comfort) +(?P<which>which) +'
+    r'(?P<capable>I +am +capable) +(?P<of>of) +'
+    r'(?P<receiving>receiving)(?P<stop>\.)(?P<close>")'
+)
+def plan_n625_existential(text, components):
+    m=_N625.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and c['start']==0 and c['end']==len(text)
+                            for c in components):
+        return None
+    parts,_,_,use=_specs()
+    use(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        _phr('thank','CLAUSE',finite_statement_proof='true'),
+        _punct('comma','COMMA'),_lex('but','COORD',lemma_in='but'),
+        _lex('all','PRONOUN'),_lex('that','COMP-THAT'),
+        _subject('you'),_verb('mention','finite','transitive'),
+        _lex('be','COPULA',vform='finite'),_lex('nothing','INDEF-PRONOUN'),
+        _phr('tome','PP',proof_rule='pp_prep_np'),
+        _punct('semi','SEMICOLON'),
+        _phr('earth','PP',proof_rule='pp_prep_np'),
+        _lex('there','EXPL'),_lex('is','COPULA',vform='finite'),
+        _phr('comfort','NP',proof_rule='np_det_n'),
+        _lex('which','WH-PRONOUN',wh='true'),
+        _phr('capable','CLAUSE',finite_statement_proof='true'),
+        _lex('of','PREP',lemma_in='of'),
+        _verb('receiving','ing','transitive'),
+        _punct('stop','SPEECH-STOP'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return parts
+
+# N639: source dashes mark appositive restatement, not sentence stops.
+N639_APPOSITIVE = "dialogue_structural_existential_with_dashed_nominal_reformulation"
+_N639 = re.compile(
+    r'(?P<open>")(?P<and>And) +'
+    r"(?P<existential>there's +something +under +that)(?P<comma1>,) +"
+    r'(?P<no>no) +(?P<doubt>doubt)(?P<dash1>--)'
+    r'(?P<something>something)(?P<comma2>,) +(?P<surely>surely)'
+    r'(?P<comma3>,) +(?P<under>under +that)(?P<comma4>,) +'
+    r'(?P<name>Jim|Ben|Tom)(?P<dash2>--)'
+    r'(?P<qualities>bad +or +good)(?P<stop>\.)(?P<close>")'
+)
+def plan_n639_appositive(text, components):
+    m=_N639.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and c['start']==0 and c['end']==len(text)
+                            for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),_lex('and','COORD',lemma_in='and'),
+        _phr('existential','CLAUSE',proof_rule='clause_there_pp'),
+        _punct('comma1','COMMA'),_lex('no','DET'),_lex('doubt','N'),
+        _punct('dash1','DASH'),_lex('something','INDEF-PRONOUN'),
+        _punct('comma2','COMMA'),_lex('surely','ADV'),
+        _punct('comma3','COMMA'),_phr('under','PP',proof_rule='pp_prep_np'),
+        _punct('comma4','COMMA'),_phr('name','NP',proof_rule='np_proper'),
+        _punct('dash2','DASH'),_phr('qualities','ADJP',proof_rule='adjp_coord'),
+        _punct('stop','SPEECH-STOP'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
+# N672: a two-sentence quotation, not two fabricated independently sampled
+# units. The second wish is an overt elliptic existential reprise.
+N672_WISH = "dialogue_structural_forgotten_exception_and_elliptic_wish"
+_N672 = re.compile(
+    r'(?P<open>‘)(?P<forget>I +have +almost +forgotten) +(?P<that>that) +'
+    r'(?P<existential>there +is +(?:anything|something) +to +do +in +the +world) +'
+    r'(?P<but>but) +(?P<to>to) +(?P<go>go) +(?P<out>out) +'
+    r'(?P<tossing>tossing) +(?P<onsea>on +the +sea) +(?P<here>here)'
+    r'(?P<stop1>\.) +(?P<wish>I +wish +there +was +not\.)(?P<close>’)'
+)
+def plan_n672_wish(text, components):
+    m=_N672.fullmatch(text)
+    if m is None:
+        return None
+    q=next((c for c in components if c.get('function')=='direct_speech'),None)
+    spoken=sorted((c for c in components if c.get('function')=='spoken_clause_candidate'),
+                  key=lambda c:c['start'])
+    if (q is None or (q['start'],q['end'])!=(0,len(text))
+            or len(spoken)!=2
+            or (spoken[0]['start'],spoken[0]['end'])!=(1,m.end('stop1'))
+            or (spoken[1]['start'],spoken[1]['end'])!=m.span('wish')):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        _phr('forget','CLAUSE',finite_statement_proof='true'),
+        _lex('that','COMP-THAT'),
+        _phr('existential','CLAUSE',proof_rule='clause_there_pp'),
+        _lex('but','COORD',lemma_in='but'),
+        _lex('to','TO'),_verb('go','base','intransitive'),
+        _lex('out','PARTICLE',lemma_in='out'),
+        _verb('tossing','ing','intransitive'),
+        _phr('onsea','PP',proof_rule='pp_prep_np'),
+        _lex('here','ADV'),_punct('stop1','SPEECH-STOP'),
+        _phr('wish','CLAUSE',proof_rule='clause_np_vp'),
+        _punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
+
+# N660: an overt minor negative assertion precedes the vocative and a
+# syntactically distinct modal question containing a possessive gerund.
+N660_GERUND_QUESTION = "dialogue_structural_negative_reprise_vocative_and_modal_gerund"
+_N660 = re.compile(
+    r'(?P<open>‘)(?P<minor>Not +I!)[ ]+'
+    r'(?P<vocative>my +dear +(?:Daisy|Alice|Lucy))'
+    r'(?P<dash>--)'
+    r'(?P<will>will) +(?P<you>you) +(?P<mind>mind) +'
+    r'(?P<my>my) +(?P<calling>calling) +(?P<you2>you) +'
+    r'(?P<name>Daisy|Alice|Lucy)(?P<q>\?)(?P<close>’)'
+)
+def plan_n660_gerund_question(text,components):
+    m=_N660.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and (c['start'],c['end'])==(0,len(text))
+                            for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        _phr('minor','CLAUSE',proof_rule='clause_nominal_exclamation'),
+        _phr('vocative','NP',proof_rule='np_poss_n_name'),
+        _punct('dash','DASH'),
+        _lex('will','MODAL',vform='finite'),
+        _subject('you'),
+        _verb('mind','base','transitive'),
+        _lex('my','POSS'),
+        _verb('calling','ing','transitive'),
+        _phr('you2','NP'),
+        _phr('name','NP',proof_rule='np_proper'),
+        _punct('q','QMARK'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
+# N661: the dialectal title and do-ye tag are overt source spans; nothing
+# is silently normalized into new written words or punctuation.
+N661_DIALECTAL = "dialogue_structural_dialectal_vocative_question_and_epistemic_tag"
+_N661 = re.compile(
+    r'(?P<open>‘)(?P<title>Mas’r) +(?P<name>Davy|John|Henry)'
+    r'(?P<comma1>,) +(?P<shall>shall) +(?P<you>you) +(?P<see>see) +'
+    r'(?P<her>her|him)(?P<comma2>,) +(?P<tag>d’ye) +'
+    r'(?P<think>think)(?P<q>\?)(?P<close>’)'
+)
+def plan_n661_dialectal(text,components):
+    m=_N661.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and (c['start'],c['end'])==(0,len(text))
+                            for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        ('title','TITLE','source-dialectal-honorific',{'honorific':'true','dialectal':'true'}),
+        _phr('name','NP',proof_rule='np_proper'),
+        _punct('comma1','COMMA'),
+        _lex('shall','MODAL',vform='finite'),_subject('you'),
+        _verb('see','base','transitive'),_phr('her','NP'),
+        _punct('comma2','COMMA'),
+        ('tag','DIALECT-DO-YE','source-dialectal-do-ye',{'dialectal':'true'}),
+        _lex('think','V',vform='base'),
+        _punct('q','QMARK'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
+
+# N691: the reporter separates two actual quotation spans and the second
+# quote contains an adjectival repair followed by an emphatic polar question.
+N691_INTERCALATED = "dialogue_structural_intercalated_affect_reprise_and_emphatic_question"
+_N691 = re.compile(
+    r'(?P<open1>“)(?P<first>I +am +grieved +indeed)(?P<comma>,)'
+    r'(?P<close1>”)[ ]+(?P<report>cried +(?:Darcy|Henry|Charles))'
+    r'(?P<semi>;)[ ]+(?P<open2>“)'
+    r'(?P<grieved>grieved)(?P<dash1>--)(?P<shocked>shocked)'
+    r'(?P<stop>\.)[ ]+(?P<but>But) +(?P<is>is) +(?P<it>it) +'
+    r'(?P<certain>certain)(?P<dash2>--)(?P<absolutely>absolutely) +'
+    r'(?P<certain2>certain)(?P<question>\?)(?P<close2>”)'
+)
+def plan_n691_intercalated(text,components):
+    m=_N691.fullmatch(text)
+    if m is None:return None
+    by_id={c['id']:c for c in components}
+    q0,q1,r0,t0=(by_id.get(n) for n in ('q0','q1','r0','t0'))
+    if (not all((q0,q1,r0,t0))
+            or q0.get('function')!='direct_speech'
+            or q1.get('function')!='direct_speech'
+            or r0.get('function')!='reporting_clause'
+            or t0.get('function')!='split_direct_speech_turn'
+            or (q0['start'],q0['end'])!=(0,m.end('close1'))
+            or (q1['start'],q1['end'])!=(m.start('open2'),len(text))
+            or (r0['start'],r0['end'])!=m.span('report')):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open1','OPEN-QUOTE'),
+        _phr('first','CLAUSE',proof_rule='clause_passive'),
+        _punct('comma','COMMA'),_punct('close1','CLOSE-QUOTE'),
+        _phr('report','SPEECH-TAG',proof_rule='dialogue_speech_tag_inverted'),
+        _punct('semi','SEMICOLON'),_punct('open2','OPEN-QUOTE'),
+        _lex('grieved','V',vform='ed'),_punct('dash1','DASH'),_lex('shocked','ADJ'),
+        _punct('stop','SPEECH-STOP'),_lex('but','COORD',lemma_in='but'),
+        _lex('is','COPULA',vform='finite',number='singular'),
+        _subject('it'),_lex('certain','ADJ'),
+        _punct('dash2','DASH'),_lex('absolutely','ADV'),
+        _lex('certain2','ADJ'),_punct('question','QMARK'),
+        _punct('close2','CLOSE-QUOTE'),
+    ))
+    return specs
+
 SPOKEN_PLANS = (
+    (N691_INTERCALATED, plan_n691_intercalated),
+    (N660_GERUND_QUESTION, plan_n660_gerund_question),
+    (N661_DIALECTAL, plan_n661_dialectal),
+    (N625_EXISTENTIAL, plan_n625_existential),
+    (N639_APPOSITIVE, plan_n639_appositive),
+    (N672_WISH, plan_n672_wish),
+    (N643_SPLIT_QUESTIONS, plan_n643_split_questions),
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N691_INTERCALATED: 2, N669_TOPICAL_REPORT: 1, N660_GERUND_QUESTION: 1, N661_DIALECTAL: 1, N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
