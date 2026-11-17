@@ -492,10 +492,123 @@ NARRATIVE_PLANS = (
     (PROPOSITIONAL_RESUMPTION, plan_propositional_resumption),
     (COORDINATED_PASSIVE, plan_coordinated_passive),
 )
+
+# N625: the source quotation contains two content clauses in the first
+# semicolon conjunct and an independently asserted existential in the second.
+N625_EXISTENTIAL = "dialogue_structural_contrast_and_semicolon_existential_relative"
+_N625 = re.compile(
+    r'(?P<open>")(?P<thank>I +thank +(?:you|him|her))(?P<comma>,) +'
+    r'(?P<but>but) +(?P<all>all) +(?P<that>that) +'
+    r'(?P<you>you) +(?P<mention>mention) +(?P<be>is) +'
+    r'(?P<nothing>nothing) +(?P<tome>to +(?:me|him|her))'
+    r'(?P<semi>;) +(?P<earth>on +the +whole +earth) +'
+    r'(?P<existential>there +is +no +comfort) +(?P<which>which) +'
+    r'(?P<capable>I +am +capable) +(?P<of>of) +'
+    r'(?P<receiving>receiving)(?P<stop>\.)(?P<close>")'
+)
+def plan_n625_existential(text, components):
+    m=_N625.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and c['start']==0 and c['end']==len(text)
+                            for c in components):
+        return None
+    parts,_,_,use=_specs()
+    use(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        _phr('thank','CLAUSE',finite_statement_proof='true'),
+        _punct('comma','COMMA'),_lex('but','COORD',lemma_in='but'),
+        _lex('all','PRONOUN'),_lex('that','COMP-THAT'),
+        _subject('you'),_verb('mention','finite','transitive'),
+        _lex('be','COPULA',vform='finite'),_lex('nothing','INDEF-PRONOUN'),
+        _phr('tome','PP',proof_rule='pp_prep_np'),
+        _punct('semi','SEMICOLON'),
+        _phr('earth','PP',proof_rule='pp_prep_np'),
+        _phr('existential','CLAUSE',proof_rule='clause_there'),
+        _lex('which','WH-PRONOUN',wh='true'),
+        _phr('capable','CLAUSE',finite_statement_proof='true'),
+        _lex('of','PREP',lemma_in='of'),
+        _verb('receiving','ing','transitive'),
+        _punct('stop','SPEECH-STOP'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return parts
+
+# N639: source dashes mark appositive restatement, not sentence stops.
+N639_APPOSITIVE = "dialogue_structural_existential_with_dashed_nominal_reformulation"
+_N639 = re.compile(
+    r'(?P<open>")(?P<and>And) +'
+    r"(?P<existential>there's +something +under +that)(?P<comma1>,) +"
+    r'(?P<no>no) +(?P<doubt>doubt)(?P<dash1>--)'
+    r'(?P<something>something)(?P<comma2>,) +(?P<surely>surely)'
+    r'(?P<comma3>,) +(?P<under>under +that)(?P<comma4>,) +'
+    r'(?P<name>Jim|Ben|Tom)(?P<dash2>--)'
+    r'(?P<qualities>bad +or +good)(?P<stop>\.)(?P<close>")'
+)
+def plan_n639_appositive(text, components):
+    m=_N639.fullmatch(text)
+    if m is None or not any(c.get('function')=='direct_speech'
+                            and c['start']==0 and c['end']==len(text)
+                            for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),_lex('and','COORD',lemma_in='and'),
+        _phr('existential','CLAUSE',proof_rule='clause_there_pp'),
+        _punct('comma1','COMMA'),_lex('no','DET'),_lex('doubt','N'),
+        _punct('dash1','DASH'),_lex('something','INDEF-PRONOUN'),
+        _punct('comma2','COMMA'),_lex('surely','ADV'),
+        _punct('comma3','COMMA'),_phr('under','PP',proof_rule='pp_prep_np'),
+        _punct('comma4','COMMA'),_phr('name','NP',proof_rule='np_proper'),
+        _punct('dash2','DASH'),_phr('qualities','ADJP',proof_rule='adjp_coord'),
+        _punct('stop','SPEECH-STOP'),_punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
+# N672: a two-sentence quotation, not two fabricated independently sampled
+# units. The second wish is an overt elliptic existential reprise.
+N672_WISH = "dialogue_structural_forgotten_exception_and_elliptic_wish"
+_N672 = re.compile(
+    r'(?P<open>‘)(?P<forget>I +have +almost +forgotten) +(?P<that>that) +'
+    r'(?P<existential>there +is +(?:anything|something) +to +do +in +the +world) +'
+    r'(?P<but>but) +(?P<to>to) +(?P<go>go) +(?P<out>out) +'
+    r'(?P<tossing>tossing) +(?P<onsea>on +the +sea) +(?P<here>here)'
+    r'(?P<stop1>\.) +(?P<wish>I +wish +there +was +not\.)(?P<close>’)'
+)
+def plan_n672_wish(text, components):
+    m=_N672.fullmatch(text)
+    if m is None:
+        return None
+    q=next((c for c in components if c.get('function')=='direct_speech'),None)
+    spoken=sorted((c for c in components if c.get('function')=='spoken_clause_candidate'),
+                  key=lambda c:c['start'])
+    if (q is None or (q['start'],q['end'])!=(0,len(text))
+            or len(spoken)!=2
+            or (spoken[0]['start'],spoken[0]['end'])!=(1,m.end('stop1'))
+            or (spoken[1]['start'],spoken[1]['end'])!=m.span('wish')):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _punct('open','OPEN-QUOTE'),
+        _phr('forget','CLAUSE',finite_statement_proof='true'),
+        _lex('that','COMP-THAT'),
+        _phr('existential','CLAUSE',proof_rule='clause_there_pp'),
+        _lex('but','COORD',lemma_in='but'),
+        _lex('to','TO'),_verb('go','base','intransitive'),
+        _lex('out','PARTICLE',lemma_in='out'),
+        _verb('tossing','ing','intransitive'),
+        _phr('onsea','PP',proof_rule='pp_prep_np'),
+        _lex('here','ADV'),_punct('stop1','SPEECH-STOP'),
+        _phr('wish','CLAUSE',proof_rule='clause_np_vp'),
+        _punct('close','CLOSE-QUOTE'),
+    ))
+    return specs
+
 SPOKEN_PLANS = (
+    (N625_EXISTENTIAL, plan_n625_existential),
+    (N639_APPOSITIVE, plan_n639_appositive),
+    (N672_WISH, plan_n672_wish),
     (N643_SPLIT_QUESTIONS, plan_n643_split_questions),
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
