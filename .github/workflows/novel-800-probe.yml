@@ -3,13 +3,8 @@ on:
   push:
     branches: [research/novel-ladder-800-exploration]
     paths:
-      - 'superparser/scripts/probe_novel800.py'
-      - 'superparser/tests/test_novel800_residual.py'
-      - 'superparser/seman_parser/scoped_novel_800.py'
-      - 'superparser/seman_parser/structural_composition.py'
-      - 'superparser/data/dialogue_structural_grammar.jsonl'
-      - 'superparser/data/dialogue_semantic_rules.jsonl'
       - '.github/workflows/novel-800-probe.yml'
+
 permissions:
   contents: read
 jobs:
