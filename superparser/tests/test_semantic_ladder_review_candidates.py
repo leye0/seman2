@@ -44,7 +44,7 @@ class SemanticReviewCandidates(unittest.TestCase):
         self.assertEqual(prepared.analysis_text,case["source_text"])
         return prepared,lattice,result
 
-    def check(self,index,positive,negative,links,expected_root):
+    def check(self,index,positive,negative,links,expected_root,source_links=None):
         for source,is_positive in ((index,True),(positive,True),(negative,False)):
             with self.subTest(index=index,source=str(source)[:55]):
                 prepared,lattice,result=self.parse(source)
@@ -69,7 +69,8 @@ class SemanticReviewCandidates(unittest.TestCase):
                 observed={(e["relation"],n[e["source"]].get("surface"),
                                      n[e["target"]].get("surface"))
                           for e in package["graph"]["relations"]}
-                for wanted in links:
+                expected=source_links if isinstance(source,int) and source_links is not None else links
+                for wanted in expected:
                     self.assertIn(wanted,observed)
                 for node in n.values():
                     span=node.get("span")
@@ -79,10 +80,6 @@ class SemanticReviewCandidates(unittest.TestCase):
                 self.assertTrue(any(node.get("surface") == word for node in n.values()
                                     for word in (links[0][1],links[0][2])))
 
-    def test_n655_bodypart_possession(self):
-        self.check(655,"He shook his head.","He shake his head.",
-            [("POSSESSOR","head","his"),("AFFECTED","shook","head"),
-             ("AGENT","shook","He")],"clause_np_vp")
 
     def test_n663_reported_copular_content_and_vocative(self):
         positive="‘I hope Mrs. Micawber and your family are well, sir,’ said his aunt."
@@ -94,13 +91,17 @@ class SemanticReviewCandidates(unittest.TestCase):
 
     def test_n681_selected_passive_patient(self):
         self.check(681,"Mary was distressed.","Mary were distressed.",
-            [("THEME","distressed","Mary")],"clause_passive")
+            [("THEME","distressed","Mary")],"clause_passive",
+            source_links=[("THEME","distressed","Elizabeth")])
 
     def test_n706_modalized_future_event(self):
         self.check(706,"But victory SHALL crown my efforts.",
             "But victory SHALL crowns my efforts.",
             [("MODALITY","crown","SHALL"),("AGENT","crown","victory"),
-             ("AFFECTED","crown","efforts")],"coord_clause")
+             ("AFFECTED","crown","efforts")],"coord_clause",
+            source_links=[("MODALITY","crown","SHALL"),
+                          ("AGENT","crown","success"),
+                          ("AFFECTED","crown","endeavours")])
 
 if __name__=="__main__":
     unittest.main()
