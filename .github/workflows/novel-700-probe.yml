@@ -3,11 +3,6 @@ on:
   push:
     branches: [research/novel-ladder-700-fix]
     paths:
-      - 'superparser/scripts/probe_novel700_remaining.py'
-      - 'superparser/seman_parser/scoped_novel_700.py'
-      - 'superparser/seman_parser/structural_preanalysis.py'
-      - 'superparser/data/dialogue_structural_grammar.jsonl'
-      - 'superparser/data/dialogue_semantic_rules.jsonl'
       - 'superparser/tests/test_novel_700_residual.py'
       - '.github/workflows/novel-700-probe.yml'
   workflow_dispatch:
