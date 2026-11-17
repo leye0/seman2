@@ -43,6 +43,7 @@ negative, and preserved predecessor signatures are demonstrated.
 | N646 | `at` in `at once` becomes N, and `captain's` is interpreted as COPULA | Temporal PP and source genitive `dead captain's body` |
 | N653 | `Will you be improved?` has no MODALITY link for `Will` | Interrogative modal scope and passive/stative patient `you` |
 | N659 | `Oh` has type PERSON and `Master` is verb with `AFFECTED(Master,Copperfield)` | Interjection + honorific vocative `Master Copperfield`, not mastering Copperfield |
+| N660 | Previously marked verified: `Not I!` has a NEGATION node `Not` with **no incident semantic edge**; the nominal response is represented by an abstract clause node rather than a negated speech act, and `dear` is PERSON rather than ADJ | Negative reply must explicitly scope over `I` or a negative-reprise discourse act, while `my dear Daisy` remains an adjectival vocative; re-open the prior review |
 | N662 | `"A sweet lady, Master Copperfield!" said Uriah Heep` has only AGENT(said,Uriah) | Reported-content relation, nominal exclamation and vocative |
 | N673 | `voice` in `in a low voice` is selected V, governing `REPORTED_CONTENT(voice,Be)` | Reporting predicate is `added`, with manner PP `in a low voice` |
 | N674 | `read` in `the service was read` becomes N, `I` becomes N | Source passive verbal `read`, remembered location relative, and coordinated motion |
