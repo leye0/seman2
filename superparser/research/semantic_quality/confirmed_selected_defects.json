@@ -357,6 +357,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
+      "index": 655,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9203a38298dbe5b2d994f3cb75cf20d572ced6667f4146456c1dc99fbb5b9e09",
+      "selected_graph_sha256": "627179c4efa327a9f780f5220d716f222368c2514d937cca865220dce387f70b",
+      "observed_defect": "Independent grammatical contrast He shake his head. (uninflected finite third-person singular shake) is nevertheless assigned the same selected clause_np_vp construction as He shook his head.; semantic accuracy of the positive does not overcome this morphological overgeneration.",
+      "required_linguistic_correction": "Require the correct lexical tense/person-number agreement in the selected finite clause; preserve the original head POSSESSOR and shake AGENT/PATIENT semantics while rejecting the inflection contrast.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
+    },
+    {
       "index": 656,
       "status": "needs_fix",
       "selected_tree_sha256": "219d79b3a04d587de41fd9dc9175212606739de09d4542bac811b7a1dbec3d7f",
