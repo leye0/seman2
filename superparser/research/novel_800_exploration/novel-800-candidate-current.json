@@ -7,9 +7,7 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 97,
-    "no_structural_root": 1,
-    "roots_without_valid_analysis": 2
+    "complete": 100
   },
   "cases": [
     {
@@ -572,12 +570,12 @@
     },
     {
       "index": 763,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_source_intercalated_polite_request_shared_modal_passive_and_control",
+      "rank_one_sha256": "2c4c55053bdd9b343c48fc5936775e090a0ff26a0db86bc440feeab33dd9f824",
+      "selected_graph_sha256": "615c73066bf588571050cfaf2827fba8adb22eaa2e9ef3b525557319e1dd2946"
     },
     {
       "index": 764,
@@ -824,12 +822,12 @@
     },
     {
       "index": 791,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_source_parenthetical_favourite_semicolon_equative_elliptic_possessive",
+      "rank_one_sha256": "59e93d0cd7e0eb2facd6362e220aced69ff1e75d2a4a73a0ec0c371059454d74",
+      "selected_graph_sha256": "2180ccc0ba8312ca0c1e9b14dde03b7ca9bc6c319842218f1daea149ce3a3e7f"
     },
     {
       "index": 792,
@@ -878,12 +876,12 @@
     },
     {
       "index": 797,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_source_reported_thanks_with_causal_if_and_modal_consequences",
+      "rank_one_sha256": "38d3f96dc9c2df5f1ddc17c2a5cf7c69593b41999aff48a88272180e858e34e1",
+      "selected_graph_sha256": "497a83b11857eedcbeda49380d5da5d22594c439548d3dade80c4269eef4c190"
     },
     {
       "index": 798,
