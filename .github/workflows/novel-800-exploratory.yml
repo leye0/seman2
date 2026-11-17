@@ -4,6 +4,12 @@ on:
     branches: [research/novel-ladder-800-exploration]
     paths:
       - 'superparser/scripts/novel800_exploratory.py'
+      - 'superparser/scripts/check_novel800_progress.py'
+      - 'superparser/seman_parser/scoped_novel_800.py'
+      - 'superparser/seman_parser/structural_composition.py'
+      - 'superparser/data/dialogue_structural_grammar.jsonl'
+      - 'superparser/data/dialogue_semantic_rules.jsonl'
+      - 'superparser/tests/test_novel800_residual.py'
       - '.github/workflows/novel-800-exploratory.yml'
   workflow_dispatch:
 permissions:
@@ -38,11 +44,21 @@ jobs:
                   if entry.startswith('wordnet/') and leaf in keep:
                       (dst/leaf).write_bytes(archive.read(entry))
           PY
+      - name: Verify source-first N800 trees and existing ladder guards
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m unittest -q superparser.tests.test_novel800_residual superparser.tests.test_novel_ladder superparser.tests.test_structural_preanalysis
       - name: Run exact-source N701-N800 selection and full baseline
         env:
           PYTHONPATH: superparser
         run: |
           python -m scripts.novel800_exploratory run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/novel800-exploratory
+      - name: Verify strictly additive N800 corrections
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 702 704 705 730
       - name: Replay and compare protected Novel-600 and Novel-700
         env:
           PYTHONPATH: superparser
