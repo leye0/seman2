@@ -7,10 +7,10 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 85,
+    "complete": 89,
     "forest_budget_exceeded": 1,
-    "no_structural_root": 4,
-    "roots_without_valid_analysis": 10
+    "no_structural_root": 3,
+    "roots_without_valid_analysis": 7
   },
   "cases": [
     {
@@ -24,12 +24,12 @@
     },
     {
       "index": 702,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_fronted_directional_deictic_with_finite_motion",
+      "rank_one_sha256": "02bb9d95804455ef62464d28ff4175bc0b0e090448884d5c1cf81cd95ff46b44",
+      "selected_graph_sha256": "89a282d37166bfe739fc539a49f7b53ea8ecd4f5d952071fbc04e744b9cc1480"
     },
     {
       "index": 703,
@@ -42,21 +42,21 @@
     },
     {
       "index": 704,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_yn_past_perfect_possessive_plural_subject",
+      "rank_one_sha256": "1aa8b41a4ca7ce59f3893b941e6192f4b05099dbd863138e0f2295ce1b8886c4",
+      "selected_graph_sha256": "765a0caf5eb1710c3f0c4da4b249a13cf9ecbd304cb00bd2a01a8986f5a6131a"
     },
     {
       "index": 705,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_degree_unlike_comparison_predicate",
+      "rank_one_sha256": "df22c59f81d260ed174b948342f201c4ee75bb43edc2de124413df06e8a4c401",
+      "selected_graph_sha256": "1880b9e77657bc67742a2d215eec9f74515440d8b170ad1af8f1b39db87eafa1"
     },
     {
       "index": 706,
@@ -276,12 +276,12 @@
     },
     {
       "index": 730,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_so_with_nominal_anaphoric_ellipsis",
+      "rank_one_sha256": "b7b5581787d0d1f4d8352743565a41bfce34eb28e2dd087c34b2045c9541f627",
+      "selected_graph_sha256": "e60aba738dcba4d0d8ad778c3dc90d57e275ff33b5edd19b057541b481c08ae5"
     },
     {
       "index": 731,
