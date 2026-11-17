@@ -552,7 +552,45 @@ def plan_n649_parallel_manner(text, components):
     ))
     return specs
 
+
+# N669: overt topical "As to" is NOT an adverbial subordinate, and
+# the reporter does not synthesize quotation delimiters around free speech.
+N669_TOPICAL_REPORT = "structural_topical_as_to_with_reported_emotive_modal_question"
+_N669 = re.compile(
+    r'(?P<as>As) +(?P<to>to) +(?P<a>a) +(?P<fish>fish)'
+    r'(?P<hyphen>-)(?P<kittle>kittle|kettle)(?P<comma1>,) +'
+    r'(?P<title>Mrs)(?P<abbr>\.) +(?P<name>Crupp|Smith) +'
+    r'(?P<said>said)(?P<comma2>,) +(?P<well>well)(?P<excl>!) +'
+    r'(?P<would>would) +(?P<I>I) +(?P<only>only) +(?P<come>come) +'
+    r'(?P<and>and) +(?P<look>look) +(?P<range>at +the +range)(?P<q>\?)'
+)
+def plan_n669_topical_report(text,components):
+    m=_N669.fullmatch(text)
+    if m is None or not _matrix(text,components):
+        return None
+    # The source units must not assert an as-subordinate for nominal "as to".
+    if any(c.get('function')=='adverbial_subordinate_clause'
+           and c.get('start')==0 for c in components):
+        return None
+    specs,_,_,part=_specs()
+    part(m,0,(
+        _lex('as','PREP',lemma_in='as'),_lex('to','PREP',lemma_in='to'),
+        _lex('a','DET'),_lex('fish','N'),_punct('hyphen','JOIN-HYPHEN'),
+        _lex('kittle','N'),_punct('comma1','COMMA'),
+        _lex('title','TITLE'),_punct('abbr','ABBREVIATION-STOP'),
+        _phr('name','NP',proof_rule='np_proper'),
+        _verb('said','finite','transitive'),_punct('comma2','COMMA'),
+        _lex('well','ADV'),_punct('excl','EXCL'),
+        _lex('would','MODAL',vform='finite'),_subject('I'),
+        _lex('only','ADV'),_verb('come','base','intransitive'),
+        _lex('and','COORD',lemma_in='and'),_verb('look','base','intransitive'),
+        _phr('range','PP',proof_rule='pp_prep_np'),
+        _punct('q','QMARK'),
+    ))
+    return specs
+
 NARRATIVE_PLANS = (
+    (N669_TOPICAL_REPORT, plan_n669_topical_report),
     (N647_CLEFT, plan_n647_cleft),
     (N649_PARALLEL, plan_n649_parallel_manner),
     (N648_PROGRESSIVE, plan_n648_progressive),
@@ -753,5 +791,5 @@ SPOKEN_PLANS = (
     (REPORTED_WH_REPLY, plan_reported_wh_reply),
     (REPORTED_COPULAR_COMMENT, plan_reported_copular_comment),
 )
-COUNTS = {N660_GERUND_QUESTION: 1, N661_DIALECTAL: 1, N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
+COUNTS = {N669_TOPICAL_REPORT: 1, N660_GERUND_QUESTION: 1, N661_DIALECTAL: 1, N647_CLEFT: 2, N649_PARALLEL: 2, N625_EXISTENTIAL: 3, N639_APPOSITIVE: 1, N672_WISH: 2, N643_SPLIT_QUESTIONS: 2, N648_PROGRESSIVE: 2, N624_PARATAXIS: 2, CONCESSIVE_LEAD:2, SCALAR_BUT_THAT:3, FRONTED_GERUND_JUDGMENT:2, TEMPORAL_AS_IF:2, CURIOSITY_AS_IF:3, FRONTED_AS_CEMETERY:3, DISCOURSE_RETURN: 0, PROPOSITIONAL_RESUMPTION: 1, COORDINATED_PASSIVE: 2,
           REPORTED_WH_REPLY: 0, REPORTED_COPULAR_COMMENT: 1}
