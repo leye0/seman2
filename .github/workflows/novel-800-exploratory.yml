@@ -3,13 +3,6 @@ on:
   push:
     branches: [research/novel-ladder-800-exploration]
     paths:
-      - 'superparser/scripts/novel800_exploratory.py'
-      - 'superparser/scripts/check_novel800_progress.py'
-      - 'superparser/seman_parser/scoped_novel_800.py'
-      - 'superparser/seman_parser/structural_composition.py'
-      - 'superparser/data/dialogue_structural_grammar.jsonl'
-      - 'superparser/data/dialogue_semantic_rules.jsonl'
-      - 'superparser/tests/test_novel800_residual.py'
       - '.github/workflows/novel-800-exploratory.yml'
   workflow_dispatch:
 permissions:
