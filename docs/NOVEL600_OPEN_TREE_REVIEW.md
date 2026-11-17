@@ -2,13 +2,15 @@
 
 This is an attachment checklist for the cases still marked `needs_fix` on
 PR #97 at `4add4b6ce47bf62c48eaaed2a9e96f0abef8a16a`. It is **not** a new parser run, a new
-review verdict, or an accepted benchmark. The current result is still
-100 complete selected trees, 45 verified and 55 requiring work.
+review verdict, or an accepted benchmark. At that point the result was
+100 complete selected trees, 45 verified and 55 requiring work. The
+[follow-up attachment pass](NOVEL600_ATTACHMENT_PASS.md) records the
+subsequent replay and the remaining cases.
 
 The SHA-256 of each of the four source editions and all 100 frozen source
 slices was checked against the [cohort manifest](../superparser/research/novel_ladder/novel-600-cohort.json).
 The stored tree and graph digests in the [review ledger](../superparser/research/novel_ladder/novel-600-review.json)
-match the [current signature file](../superparser/research/novel_ladder/novel-600-current.json)
+matched the [current signature file](../superparser/research/novel_ladder/novel-600-current.json)
 for all 100 entries. Those integrity checks do not establish that the
 selected trees are linguistically correct. The checklist below was read
 against the exact source paragraphs. Offsets are half-open Unicode

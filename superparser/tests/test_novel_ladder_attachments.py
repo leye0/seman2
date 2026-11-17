@@ -6,6 +6,7 @@ from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from research.verbnet_lr.gutenberg_novels import Book, extract
 from seman_parser.engine import ParseReport, Parser
 from seman_parser import scoped_novel_ladder as plans
+from seman_parser import scoped_ladder_review as review
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 PROBE = Book(999, "Syntax contrast", "Test", "tests")
@@ -304,6 +305,8 @@ class NovelLadderAttachmentTests(unittest.TestCase):
                 ("RECIPIENT", "payment", "payee"),
                 ("THEME", "payment", "amount"),
                 ("EXTRAPOSED_SUBJECT", "evaluation", "payment"),
+                ("POLITENESS", "evaluation", "courtesy"),
+                ("AGENT", "courtesy", "addressee"),
             ],
         )
 
@@ -387,11 +390,14 @@ class NovelLadderAttachmentTests(unittest.TestCase):
             "Miss Morgan bitterly resented the insult she had suffer, in an argument with her sister for talking such rubbish.",
             [
                 ("RELATIVE", "offense", "received"),
+                ("ASPECT", "received", "auxiliary"),
+                ("EXPERIENCER", "resent", "subject"),
                 ("THEME", "received", "offense"),
                 ("INTERLOCUTOR", "rebuke", "interlocutor"),
                 ("CAUSE", "rebuke", "reason"),
                 ("AGENT", "reason", "interlocutor"),
             ],
+            attested_spans=[("subject", 0, 12, "Miss Bingley"), ("auxiliary", 46, 49, "had")],
         )
 
     def test_novel_595_modal_gerund_contrast(self):
@@ -639,3 +645,913 @@ class NovelLadderAttachmentTests(unittest.TestCase):
              ("ATTRIBUTE", "event", "attribute"), ("NEGATION", "event", "negation"),
              ("DEGREE", "attribute", "degree")],
         )
+
+    # Selected-tree review for the frozen additive cohort.
+    def test_review_510_ridden_means(self):
+        self.assert_family(
+            review.RIDDEN_MEANS,
+            "I performed the first part of my journey on horseback.",
+            "We covered the first stage of our trip on horseback.",
+            "We pushed on toward the pass.",
+            [
+                ("AGENT", "performance", "subject"),
+                ("THEME", "performance", "object"),
+                ("MANNER", "performance", "manner"),
+            ],
+            attested_spans=[
+                ("manner", 41, 53, "on horseback"),
+                ("mount", 44, 53, "horseback"),
+            ],
+        )
+
+    def test_review_514_timed_decision(self):
+        self.assert_family(
+            review.TIMED_DECISION,
+            "We accordingly determined to commence our journey towards the north at the expiration of another month.",
+            "They therefore decided to begin their voyage at dawn.",
+            "They therefore decided to began their voyage at dawn.",
+            [
+                ("COMPLEMENT", "decision", "action"),
+                ("AGENT", "action", "subject"),
+                ("TIME", "action", "time"),
+            ],
+            attested_spans=[
+                ("decision", 15, 25, "determined"),
+                ("action", 29, 37, "commence"),
+                ("time", 75, 85, "expiration"),
+            ],
+        )
+
+    def test_review_517_shared_gaze(self):
+        self.assert_family(
+            review.SHARED_GAZE,
+            "The being finished speaking and fixed his looks upon me in the expectation of a reply.",
+            "She stopped talking and turned her eyes toward him in the hope of an answer.",
+            "She stopped talking and turned her eyes toward him to answer.",
+            [
+                ("AGENT", "ended", "subject"),
+                ("AGENT", "gaze", "subject"),
+                ("AGENT", "speaking", "subject"),
+                ("CIRCUMSTANCE", "gaze", "expectation"),
+            ],
+            attested_spans=[
+                ("expectation", 63, 74, "expectation"),
+                ("direction", 53, 55, "me"),
+            ],
+        )
+
+    def test_review_518_alarm_inversion(self):
+        self.assert_family(
+            review.ALARM_INVERSION,
+            "My haggard and wild appearance awoke intense alarm, but I answered no question, scarcely did I speak.",
+            "Her pale and anxious expression aroused deep fear, but she answered no questions, hardly did she speak.",
+            "Her pale and anxious expression aroused deep fear, but she answered no questions, hardly did she spoke.",
+            [
+                ("CAUSE", "caused", "stimulus"),
+                ("THEME", "caused", "response"),
+                ("THEME", "answered", "question"),
+                ("AGENT", "spoke", "suppressed"),
+            ],
+            attested_spans=[
+                ("stimulus", 20, 30, "appearance"),
+                ("caused", 31, 36, "awoke"),
+                ("response", 45, 50, "alarm"),
+            ],
+        )
+
+    def test_review_519_timed_report(self):
+        self.assert_family(
+            review.TIMED_REPORT,
+            "He then told me that he would commence his narrative the next day when I should be at leisure.",
+            "She later told us that she would finish her work the following week when we would be free.",
+            "She later told us that she would finished her work the following week when we would be free.",
+            [
+                ("RECIPIENT", "telling", "recipient"),
+                ("CONTENT", "telling", "action"),
+                ("TIME", "action", "day"),
+                ("RELATIVE", "day", "availability"),
+                ("TIME", "telling", "then"),
+            ],
+            attested_spans=[
+                ("recipient", 13, 15, "me"),
+                ("day", 62, 65, "day"),
+                ("availability", 80, 82, "be"),
+            ],
+        )
+
+    def test_review_521_topic_relative(self):
+        self.assert_family(
+            review.TOPIC_RELATIVE,
+            "He talked of Geneva, which I should soon visit, of Elizabeth and Ernest; but these words only drew deep groans from me.",
+            "She spoke of London, which she would soon see, of Alice and Charles; but these remarks only drew loud sighs from him.",
+            "She spoke of London, which she would soon saw, of Alice and Charles; but these remarks only drew loud sighs from him.",
+            [
+                ("TOPIC", "talked", "place"),
+                ("THEME", "visit", "place"),
+                ("TOPIC", "talked", "name1"),
+                ("TOPIC", "talked", "name2"),
+                ("CONTRAST", "talked", "elicitation"),
+                ("SOURCE", "elicitation", "source"),
+            ],
+            attested_spans=[
+                ("place", 13, 19, "Geneva"),
+                ("name1", 51, 60, "Elizabeth"),
+                ("name2", 65, 71, "Ernest"),
+            ],
+        )
+
+    def test_review_524_reaction_time(self):
+        self.assert_family(
+            review.REACTION_TIME,
+            "I shuddered when I thought of the possible consequences of my consent, but I felt that there was some justice in his argument.",
+            "She trembled when she thought about the likely effects of her choice, but she believed that there was some merit in his proposal.",
+            "She trembled if she thought about the likely effects of her choice, but she believed that there was some merit in his proposal.",
+            [
+                ("TIME", "reaction", "trigger"),
+                ("CONTENT", "felt", "content"),
+                ("CONTRAST", "reaction", "felt"),
+            ],
+            attested_spans=[
+                ("trigger", 19, 26, "thought"),
+                ("reaction", 2, 11, "shuddered"),
+                ("felt", 77, 81, "felt"),
+            ],
+        )
+
+    def test_review_525_coordinated_sight(self):
+        self.assert_family(
+            review.COORDINATED_SIGHT,
+            "The starry sky, the sea, and every sight afforded by these wonderful regions seem still to have the power of elevating his soul from earth.",
+            "The quiet shore, the hills, and every view provided by these wooded valleys appear still to have the capacity of lifting their spirits from grief.",
+            "The quiet shore, the hills, and every view provided by these wooded valleys appears still to have the capacity of lifting their spirits from grief.",
+            [
+                ("COMPLEMENT", "seem", "possession"),
+                ("ASPECT", "possession", "still"),
+                ("POSSESSOR", "possession", "sight"),
+                ("CONJUNCT", "first", "sight"),
+            ],
+            attested_spans=[
+                ("sight", 35, 40, "sight"),
+                ("seem", 77, 81, "seem"),
+                ("raising", 109, 118, "elevating"),
+            ],
+        )
+
+    def test_review_528_nautical_call(self):
+        self.assert_family(
+            review.NAUTICAL_CALL,
+            "\"Avast, there!\" cried Silver.",
+            "“Avast, now!” shouted Jim.",
+            "“Avast there!” shouted Jim.",
+            [
+                ("REPORTED_CONTENT", "report", "call"),
+                ("ADJUNCT", "call", "particle"),
+                ("AGENT", "report", "speaker"),
+            ],
+            attested_spans=[
+                ("call", 1, 6, "Avast"),
+                ("particle", 8, 13, "there"),
+            ],
+        )
+
+    def test_review_529_certain_negation(self):
+        self.assert_family(
+            review.CERTAIN_NEGATION,
+            "Certainly I did not know her way.",
+            "Surely she did not read the letter.",
+            "Surely she did not read from the letter.",
+            [
+                ("EPISTEMIC_STANCE", "event", "stance"),
+                ("NEGATION", "event", "negation"),
+                ("AUXILIARY", "event", "do"),
+            ],
+            attested_spans=[
+                ("stance", 0, 9, "Certainly"),
+                ("negation", 16, 19, "not"),
+            ],
+        )
+
+    def test_review_531_reaction_degree(self):
+        self.assert_family(
+            review.REACTION_DEGREE,
+            "At Silver's polite salute he somewhat flushed.",
+            "At Anne's sharp question she slightly blushed.",
+            "At Anne's sharp question she slightly blushes.",
+            [
+                ("TIME", "event", "trigger"),
+                ("DEGREE", "event", "degree"),
+                ("AGENT", "trigger", "owner"),
+            ],
+            attested_spans=[
+                ("trigger", 19, 25, "salute"),
+                ("degree", 29, 37, "somewhat"),
+            ],
+        )
+
+    def test_review_532_stirred_attitude(self):
+        self.assert_family(
+            review.STIRRED_ATTITUDE,
+            "But at my last words he perked up into a kind of startled slyness.",
+            "But at his first remarks she perked up into a sort of nervous animation.",
+            "But at his first remarks she perked into a sort of nervous animation.",
+            [
+                ("PARTICLE", "event", "particle"),
+                ("RESULT", "event", "state"),
+                ("CLASSIFICATION", "state", "kind"),
+                ("TIME", "event", "trigger"),
+            ],
+            attested_spans=[
+                ("kind", 41, 45, "kind"),
+                ("state", 58, 65, "slyness"),
+            ],
+        )
+
+    def test_review_533_excepted_sound(self):
+        self.assert_family(
+            review.EXCEPTED_SOUND,
+            "There was not a soul stirring nor a sound beside the noises of the breeze.",
+            "There was not a person moving nor a noise except the rustle of the leaves.",
+            "There was not a person moving nor a noise near the rustle of the leaves.",
+            [
+                ("NEGATION", "exists", "negative"),
+                ("THEME", "exists", "person"),
+                ("THEME", "exists", "sound"),
+                ("EXCEPTION", "sound", "exception"),
+            ],
+            attested_spans=[
+                ("person", 16, 20, "soul"),
+                ("sound", 36, 41, "sound"),
+                ("exception", 53, 59, "noises"),
+            ],
+        )
+
+    def test_review_535_comparative_extraposition(self):
+        self.assert_family(
+            review.COMPARATIVE_EXTRAPOSITION,
+            "It was as good as the play to see them.",
+            "It was as pleasant as the concert to hear her.",
+            "The concert was as pleasant as the play to hear her.",
+            [
+                ("COMPARISON", "attribute", "benchmark"),
+                ("EXTRAPOSED_SUBJECT", "be", "action"),
+                ("THEME", "action", "object"),
+            ],
+            attested_spans=[
+                ("benchmark", 22, 26, "play"),
+                ("action", 30, 33, "see"),
+                ("object", 34, 38, "them"),
+            ],
+        )
+
+    def test_review_536_oath_report(self):
+        self.assert_family(
+            review.OATH_REPORT,
+            "\"Then here goes!\" said Morgan with an oath.",
+            "“Well here goes!” cried Susan with a curse.",
+            "“Well here goes with a curse!” cried Susan.",
+            [
+                ("REPORTED_CONTENT", "report", "goes"),
+                ("MANNER", "report", "oath"),
+                ("AGENT", "report", "speaker"),
+            ],
+            attested_spans=[
+                ("goes", 11, 15, "goes"),
+                ("oath", 38, 42, "oath"),
+                ("speaker", 23, 29, "Morgan"),
+            ],
+        )
+
+    def test_review_537_focused_cleft(self):
+        self.assert_family(
+            review.FOCUSED_CLEFT,
+            "And it was not only we of the cabin party who perceived the danger.",
+            "And it was not only they of the village council who noticed the damage.",
+            "And it was not only they of the village council whom noticed the damage.",
+            [
+                ("FOCUS", "be", "focus"),
+                ("AGENT", "event", "focus"),
+                ("THEME", "event", "object"),
+                ("NEGATION", "only", "negative"),
+            ],
+            attested_spans=[
+                ("focus", 20, 22, "we"),
+                ("negative", 11, 14, "not"),
+                ("group", 36, 41, "party"),
+                ("event", 46, 55, "perceived"),
+            ],
+        )
+
+    def test_review_538_two_minor_acts(self):
+        self.assert_family(
+            review.TWO_MINOR_ACTS,
+            "\"To be sure, boy; quite right,\" said he.",
+            "“To be sure, sir; entirely correct,” replied Nora.",
+            "“To be sure, sir, entirely correct,” replied Nora.",
+            [
+                ("REPORTED_CONTENT", "report", "assurance"),
+                ("REPORTED_CONTENT", "report", "evaluation"),
+                ("VOCATIVE", "assurance", "address"),
+                ("DEGREE", "evaluation", "degree"),
+            ],
+            attested_spans=[
+                ("address", 13, 16, "boy"),
+                ("evaluation", 24, 29, "right"),
+            ],
+        )
+
+    def test_review_539_event_relative(self):
+        self.assert_family(
+            review.EVENT_RELATIVE,
+            "But as things fell out, my poor father died quite suddenly that evening, which put all other matters on one side.",
+            "But as events turned out, my old friend collapsed quite suddenly that morning, which put all other work on one side.",
+            "But as events turned out, my old friend collapsed quite suddenly that morning, who put all other work on one side.",
+            [
+                ("TIME", "event", "time"),
+                ("CAUSE", "put", "event"),
+                ("RESULT", "put", "side"),
+                ("RELATIVE", "event", "put"),
+            ],
+            attested_spans=[
+                ("event", 39, 43, "died"),
+                ("time", 64, 71, "evening"),
+                ("side", 108, 112, "side"),
+            ],
+        )
+
+    def test_review_540_quoted_condition_then_action(self):
+        self.assert_family(
+            review.QUOTED_CONDITION_THEN_ACTION,
+            "\"Now, then, if Jim is agreeable, we'll open the packet\"; and he laid it before him on the table.",
+            "\"Now, then, if Alice is willing, we'll read the letter\"; and she placed it before me on the desk.",
+            "\"Now, then, if Alice is willing, we'll read the letter; and she placed it before me on the desk.\"",
+            [
+                ("CONDITION", "open", "condition"),
+                ("NARRATIVE_FOLLOWS", "open", "laid"),
+                ("THEME", "laid", "theme"),
+                ("RESULT_LOCATION", "laid", "surface"),
+                ("ORIENTATION", "laid", "anchor"),
+            ],
+            attested_spans=[
+                ("will", 35, 38, "'ll"),
+                ("condition", 19, 21, "is"),
+                ("laid", 64, 68, "laid"),
+                ("surface", 90, 95, "table"),
+            ],
+        )
+
+    def test_review_542_reported_coordinate_negation(self):
+        self.assert_family(
+            review.REPORTED_COORDINATE_NEGATION,
+            "\"I'm not strong enough, and I don't like the job; and there he lies, for me,\" said I.",
+            "\"I'm not brave enough, and I don't want the money; and there she sits, for us,\" said Henry.",
+            "\"I'm not brave enough, and I don't want the money; and there she sit, for us,\" said Henry.",
+            [
+                ("NEGATION", "be", "not1"),
+                ("NEGATION", "attitude", "not2"),
+                ("LOCATION", "state3", "there"),
+                ("CIRCUMSTANCE", "state3", "object3"),
+                ("REPORTED_CONTENT", "report", "be"),
+            ],
+            attested_spans=[
+                ("be", 2, 4, "'m"),
+                ("not2", 32, 35, "n't"),
+                ("there", 54, 59, "there"),
+                ("state3", 63, 67, "lies"),
+            ],
+        )
+
+    def test_review_544_triple_passive(self):
+        self.assert_family(
+            review.TRIPLE_PASSIVE,
+            "The sign was newly painted; the windows had neat red curtains; the floor was cleanly sanded.",
+            "The door was freshly varnished; the halls had bright blue rugs; the desk was carefully polished.",
+            "The doors was freshly varnished; the halls had bright blue rugs; the desk was carefully polished.",
+            [
+                ("THEME", "first", "first_theme"),
+                ("MANNER", "first", "first_manner"),
+                ("THEME", "third", "third_theme"),
+                ("MANNER", "third", "third_manner"),
+                ("THEME", "middle", "held"),
+            ],
+            attested_spans=[
+                ("first", 19, 26, "painted"),
+                ("third", 85, 91, "sanded"),
+                ("held", 53, 61, "curtains"),
+            ],
+        )
+
+    def test_review_545_shared_start_control(self):
+        self.assert_family(
+            review.SHARED_START_CONTROL,
+            "Instantly I began to extricate myself and crawl back again, with what speed and silence I could manage, to the more open portion of the wood.",
+            "Immediately she started to free herself and creep back again, with what care and caution she could muster, toward the more sheltered part of the garden.",
+            "Immediately she started to free himself and creep back again, with what care and caution she could muster, toward the more sheltered part of the garden.",
+            [
+                ("COMPLEMENT", "start", "first"),
+                ("COMPLEMENT", "start", "second"),
+                ("AGENT", "second", "actor"),
+                ("MANNER", "second", "manner"),
+                ("DIRECTION", "second", "part"),
+            ],
+            attested_spans=[
+                ("actor", 10, 11, "I"),
+                ("second", 42, 47, "crawl"),
+                ("manner", 60, 102, "with what speed and silence I could manage"),
+            ],
+        )
+
+    def test_review_546_existential_and_remainder(self):
+        self.assert_family(
+            review.EXISTENTIAL_AND_REMAINDER,
+            "But there were all our stores at the bottom, and to make things worse, only two guns out of five remained in a state for service.",
+            "But there were all their supplies at the entrance, and to make matters worse, only three tools out of six remained in a condition for use.",
+            "But there were all their supplies at the entrance, and to make matters worse, only three tool out of six remained in a condition for use.",
+            [
+                ("THEME", "exist", "pivot"),
+                ("DISCOURSE", "remain", "make"),
+                ("FOCUS", "only", "count"),
+                ("PARTITIVE_TOTAL", "count", "total"),
+                ("ATTRIBUTE", "remain", "state"),
+            ],
+            attested_spans=[
+                ("count", 76, 79, "two"),
+                ("total", 92, 96, "five"),
+                ("state", 111, 116, "state"),
+            ],
+        )
+
+    def test_review_549_concessive_negative_observation(self):
+        self.assert_family(
+            review.CONCESSIVE_NEGATIVE_OBSERVATION,
+            "They had never so much as looked at their fallen comrade, though he was not dead, and I could see him trying to crawl away.",
+            "We had never so much as glanced towards our wounded companion, although she was not unconscious, and I could see her attempting to walk away.",
+            "We had never so much as glanced towards our wounded companion, although she was not unconscious, and I could see her attempting to walked away.",
+            [
+                ("ASPECT", "looked", "had"),
+                ("NEGATION", "looked", "never"),
+                ("EMPHASIS", "looked", "minimum"),
+                ("CONCESSION", "looked", "was"),
+                ("COMPLEMENT", "see", "trying"),
+                ("AGENT", "crawl", "object"),
+            ],
+            attested_spans=[
+                ("minimum", 15, 25, "so much as"),
+                ("trying", 102, 108, "trying"),
+                ("crawl", 112, 117, "crawl"),
+            ],
+        )
+
+    def test_review_550_reaction_result(self):
+        self.assert_family(
+            review.REACTION_RESULT,
+            "I was so much startled that I struggled to withdraw, but the blind man pulled me close up to him with a single action of his arm.",
+            "She was so much alarmed that she tried to escape, but the tall woman dragged her close up to her with a sudden movement of her arm.",
+            "She was so much alarmed that she tried to escaped, but the tall woman dragged her close up to her with a sudden movement of her arm.",
+            [
+                ("PASSIVE", "startled", "was"),
+                ("RESULT", "startled", "struggled"),
+                ("AGENT", "withdraw", "actor"),
+                ("RESULT_LOCATION", "pulled", "proximity"),
+                ("MANNER", "pulled", "action"),
+            ],
+            attested_spans=[
+                ("proximity", 81, 96, "close up to him"),
+                ("withdraw", 43, 51, "withdraw"),
+                ("body", 125, 128, "arm"),
+            ],
+        )
+
+    def test_review_554_reported_negative_vocative(self):
+        self.assert_family(
+            review.REPORTED_NEGATIVE_VOCATIVE,
+            "‘No, father,’ Minnie interposed.",
+            "“No, sir,” Alice interposed.",
+            "“No, sir,” Alice interposed a hand.",
+            [
+                ("VOCATIVE", "no", "address"),
+                ("AGENT", "report", "speaker"),
+                ("REPORTED_CONTENT", "report", "no"),
+            ],
+            attested_spans=[
+                ("speaker", 14, 20, "Minnie"),
+                ("no", 1, 3, "No"),
+                ("address", 5, 11, "father"),
+            ],
+        )
+
+    def test_review_555_adjectival_echo(self):
+        self.assert_family(
+            review.ADJECTIVAL_ECHO,
+            "‘Cross, my love?’",
+            "“Angry, my friend?”",
+            "“Cross, my love!”",
+            [
+                ("VOCATIVE", "predicate", "address"),
+                ("QUESTION", "predicate", "predicate"),
+            ],
+            attested_spans=[
+                ("predicate", 1, 6, "Cross"),
+                ("address", 11, 15, "love"),
+            ],
+        )
+
+    def test_review_556_named_court(self):
+        self.assert_family(
+            review.NAMED_COURT,
+            "What was the Arches?",
+            "What was the Consistory?",
+            "What were the arches?",
+            [
+                ("THEME", "copula", "court"),
+                ("QUESTION", "copula", "what"),
+            ],
+            attested_spans=[
+                ("court", 13, 19, "Arches"),
+            ],
+        )
+
+    def test_review_557_reported_sure(self):
+        self.assert_family(
+            review.REPORTED_SURE,
+            "‘I am sure of it,’ said Agnes.",
+            "“We are certain of that,” replied Clara.",
+            "“We is certain of that,” replied Clara.",
+            [
+                ("COMPLEMENT", "attribute", "object"),
+                ("EXPERIENCER", "attribute", "subject"),
+                ("REPORTED_CONTENT", "report", "copula"),
+            ],
+            attested_spans=[
+                ("attribute", 6, 10, "sure"),
+                ("object", 14, 16, "it"),
+            ],
+        )
+
+    def test_review_560_named_vocative(self):
+        self.assert_family(
+            review.NAMED_VOCATIVE,
+            "‘He is a partaker of glory at present, Master Copperfield,’ said Uriah Heep.",
+            "“She was a witness of history at first, Captain Wentworth,” said Clara Finch.",
+            "“She was a witness of history at first, Captain Wentworth,” said the captain.",
+            [
+                ("AGENT", "report", "speaker"),
+                ("VOCATIVE", "copula", "address"),
+                ("ADDRESSEE", "report", "address"),
+                ("TIME", "copula", "time"),
+            ],
+            attested_spans=[
+                ("speaker", 65, 75, "Uriah Heep"),
+                ("address", 39, 57, "Master Copperfield"),
+                ("time", 27, 37, "at present"),
+            ],
+        )
+
+    def test_review_561_belief_vocative(self):
+        self.assert_family(
+            review.BELIEF_VOCATIVE,
+            "‘I believe you, my pet,’ replied Miss Mowcher.",
+            "“We trust him, my friend,” said Doctor Smith.",
+            "“We trust him and my friend,” said Doctor Smith.",
+            [
+                ("THEME", "belief", "object"),
+                ("VOCATIVE", "belief", "address"),
+                ("AGENT", "report", "speaker"),
+                ("REPORTED_CONTENT", "report", "belief"),
+            ],
+            attested_spans=[
+                ("belief", 3, 10, "believe"),
+                ("object", 11, 14, "you"),
+                ("speaker", 33, 45, "Miss Mowcher"),
+            ],
+        )
+
+    def test_review_562_shared_contact(self):
+        self.assert_family(
+            review.SHARED_CONTACT,
+            "Then she kissed me more and more, and clasped me round the neck.",
+            "Then he hugged her more and more, and grasped her around the wrist.",
+            "Then he hugged her more and more, and she grasped him around the wrist.",
+            [
+                ("AGENT", "first", "subject"),
+                ("AGENT", "second", "subject"),
+                ("DEGREE", "first", "degree"),
+                ("BODY_SITE", "second", "site"),
+            ],
+            attested_spans=[
+                ("first", 9, 15, "kissed"),
+                ("second", 38, 45, "clasped"),
+                ("site", 59, 63, "neck"),
+            ],
+        )
+
+    def test_review_563_perception_and_reply(self):
+        self.assert_family(
+            review.PERCEPTION_AND_REPLY,
+            "I thought him looking as villainous as ever, and I replied that I saw no change in him.",
+            "She thought him looking as weary as ever, and she replied that she noticed no difference in him.",
+            "She thought him look as weary as ever, and she replied that she noticed no difference in him.",
+            [
+                ("THEME", "looked", "object"),
+                ("COMPARISON", "attribute", "ever"),
+                ("COMPLEMENT", "thought", "looked"),
+                ("CONTENT", "replied", "saw"),
+                ("DOMAIN", "change", "affected"),
+            ],
+            attested_spans=[
+                ("looked", 14, 21, "looking"),
+                ("replied", 51, 58, "replied"),
+                ("saw", 66, 69, "saw"),
+            ],
+        )
+
+    def test_review_564_negated_misgiving(self):
+        self.assert_family(
+            review.NEGATED_MISGIVING,
+            "I was troubled with no misgiving that it was young in me to respond to her emotions.",
+            "She was troubled with no fear that it was unwise in her to reply to his objections.",
+            "She was troubled with no fear that it was unwise in her to replied to his objections.",
+            [
+                ("QUANTIFIER", "misgiving", "no"),
+                ("CONTENT", "misgiving", "be"),
+                ("EXTRAPOSED_SUBJECT", "be", "action"),
+                ("AGENT", "action", "judge"),
+                ("TARGET", "action", "target"),
+            ],
+            attested_spans=[
+                ("judge", 54, 56, "me"),
+                ("action", 60, 67, "respond"),
+                ("target", 75, 83, "emotions"),
+            ],
+        )
+
+    def test_review_565_reported_nominal_series(self):
+        self.assert_family(
+            review.REPORTED_NOMINAL_SERIES,
+            "I said he was my dearest friend, the protector of my boyhood, and the companion of my prime.",
+            "She said he was his dearest friend, the guardian of his childhood, and the partner of his adulthood.",
+            "She said they was her closest friend, the guardian of her childhood, and the partner of her adulthood.",
+            [
+                ("CONTENT", "said", "be"),
+                ("THEME", "be", "person"),
+                ("ATTRIBUTE", "be", "first"),
+                ("ATTRIBUTE", "be", "role1"),
+                ("ATTRIBUTE", "be", "role2"),
+                ("TIME", "role2", "time2"),
+            ],
+            attested_spans=[
+                ("role1", 37, 46, "protector"),
+                ("role2", 70, 79, "companion"),
+                ("time2", 86, 91, "prime"),
+            ],
+        )
+
+    def test_review_567_scene_location(self):
+        self.assert_family(
+            review.SCENE_LOCATION,
+            "It is a summer evening, down in a green hollow, at the corner of a wall.",
+            "It was a winter morning, up in a lonely valley, at the edge of a forest.",
+            "It was a winter morning, up in a lonely valley, and the edge of a forest.",
+            [
+                ("TIME", "scene", "time"),
+                ("LOCATION", "scene", "place"),
+                ("LOCATION", "scene", "spot"),
+                ("LANDMARK", "spot", "landmark"),
+            ],
+            attested_spans=[
+                ("time", 15, 22, "evening"),
+                ("place", 40, 46, "hollow"),
+                ("spot", 55, 61, "corner"),
+                ("landmark", 67, 71, "wall"),
+            ],
+        )
+
+    def test_review_568_existential_relative_focus(self):
+        self.assert_family(
+            review.EXISTENTIAL_RELATIVE_FOCUS,
+            "There was no other question that I knew of in the world, and only Dora could give the answer to it.",
+            "There was no other problem that she knew of in the town, and only Clara could find the solution to it.",
+            "There was no other problem that she knew in the town, and only Clara could find the solution to it.",
+            [
+                ("RELATIVE", "thing", "knew"),
+                ("CONTENT", "knew", "thing"),
+                ("FOCUS", "only", "actor"),
+                ("COMPLEMENT", "answer", "object"),
+                ("THEME", "give", "answer"),
+            ],
+            attested_spans=[
+                ("thing", 19, 27, "question"),
+                ("actor", 66, 70, "Dora"),
+                ("answer", 86, 92, "answer"),
+            ],
+        )
+
+    def test_review_569_fronted_perception(self):
+        self.assert_family(
+            review.FRONTED_PERCEPTION,
+            "The expression of her face, as they both looked towards me, I felt to be very touching.",
+            "The sound of her voice, as they both turned towards us, I found to be rather familiar.",
+            "The sound of her voice, as they both turned towards us, I found to been rather familiar.",
+            [
+                ("THEME", "felt", "focus"),
+                ("THEME", "be", "focus"),
+                ("TIME", "felt", "look"),
+                ("AGENT", "look", "their"),
+            ],
+            attested_spans=[
+                ("look", 41, 47, "looked"),
+                ("felt", 62, 66, "felt"),
+                ("focus", 4, 14, "expression"),
+            ],
+        )
+
+    def test_review_581_ended_state(self):
+        self.assert_family(
+            review.ENDED_STATE,
+            "It was over at last, however.",
+            "The wait was finished at last, though.",
+            "The wait was under the table, though.",
+            [
+                ("ATTRIBUTE", "event", "state"),
+                ("TIME", "event", "time"),
+                ("DISCOURSE", "event", "stance"),
+            ],
+            attested_spans=[
+                ("state", 7, 11, "over"),
+                ("time", 12, 19, "at last"),
+            ],
+        )
+
+    def test_review_582_modal_restoration(self):
+        self.assert_family(
+            review.MODAL_RESTORATION,
+            "“A little sea-bathing would set me up forever.”",
+            "“Some fresh air could set her up for the day.”",
+            "“Some fresh air could set up her room for the day.”",
+            [
+                ("MODALITY", "event", "modal"),
+                ("PARTICLE", "event", "particle"),
+                ("DURATION", "event", "duration"),
+                ("THEME", "event", "affected"),
+            ],
+            attested_spans=[
+                ("particle", 35, 37, "up"),
+                ("duration", 38, 45, "forever"),
+            ],
+        )
+
+    def test_review_584_conditional_hope(self):
+        self.assert_family(
+            review.CONDITIONAL_HOPE,
+            "“If my children are silly, I must hope to be always sensible of it.”",
+            "“If our friends are wrong, we should hope to be always aware of that.”",
+            "“If our friends are wrong, we should hope to been always aware of that.”",
+            [
+                ("CONDITION", "hope", "be1"),
+                ("COMPLEMENT", "hope", "be2"),
+                ("THEME", "be2", "subject2"),
+                ("COMPLEMENT", "attribute2", "object"),
+                ("FREQUENCY", "be2", "frequency"),
+            ],
+            attested_spans=[
+                ("hope", 34, 38, "hope"),
+                ("attribute2", 52, 60, "sensible"),
+                ("frequency", 45, 51, "always"),
+            ],
+        )
+
+    def test_review_585_possibility_question(self):
+        self.assert_family(
+            review.POSSIBILITY_QUESTION,
+            "“Can it be possible that he will marry her?”",
+            "“Could it be likely that she would visit them?”",
+            "“Could it be likely and she would visit them?”",
+            [
+                ("ATTRIBUTE", "copula", "possible"),
+                ("MODALITY", "copula", "modal"),
+                ("EXTRAPOSITION", "possible", "content"),
+                ("QUESTION", "copula", "possible"),
+            ],
+            attested_spans=[
+                ("possible", 11, 19, "possible"),
+                ("content", 33, 38, "marry"),
+            ],
+        )
+
+    def test_review_586_conditional_evaluation(self):
+        self.assert_family(
+            review.CONDITIONAL_EVALUATION,
+            "“She is a great fool for going away, if she liked him.”",
+            "“He is a real coward for turning away, if he trusted her.”",
+            "“He is a real coward for turn away, if he trusted her.”",
+            [
+                ("AGENT", "action", "subject"),
+                ("GROUND", "characterization", "action"),
+                ("CONDITION", "be", "liked"),
+                ("THEME", "liked", "object"),
+            ],
+            attested_spans=[
+                ("action", 25, 30, "going"),
+                ("away", 31, 35, "away"),
+                ("liked", 44, 49, "liked"),
+            ],
+        )
+
+    def test_review_587_inverted_effect(self):
+        self.assert_family(
+            review.INVERTED_EFFECT,
+            "Widely different was the effect of a second perusal.",
+            "Markedly different was the result of the trial.",
+            "Markedly different were the result of the trial.",
+            [
+                ("PREDICATE", "effect", "predicate"),
+                ("ATTRIBUTE", "event", "predicate"),
+                ("THEME", "event", "effect"),
+            ],
+            attested_spans=[
+                ("effect", 25, 31, "effect"),
+                ("predicate", 7, 16, "different"),
+            ],
+        )
+
+    def test_review_590_two_questions_passive(self):
+        self.assert_family(
+            review.TWO_QUESTIONS_PASSIVE,
+            "“Then, who taught you? who attended to you? Without a governess, you must have been neglected.”",
+            "“Well, who helped her? who listened to her? Without a tutor, she might have been forgotten.”",
+            "“Well, who helped her? who listened to her? Without a tutor, she might had been forgotten.”",
+            [
+                ("AGENT", "taught", "who1"),
+                ("AGENT", "attended", "who2"),
+                ("MODALITY", "neglected", "must"),
+                ("ASPECT", "neglected", "have"),
+                ("PASSIVE", "neglected", "been"),
+            ],
+            attested_spans=[
+                ("taught", 11, 17, "taught"),
+                ("attended", 27, 35, "attended"),
+                ("neglected", 84, 93, "neglected"),
+            ],
+        )
+
+    def test_review_591_partitive_passage(self):
+        self.assert_family(
+            review.PARTITIVE_PASSAGE,
+            "The park paling was still the boundary on one side, and she soon passed one of the gates into the ground.",
+            "The garden wall was still the border on one side, and he quickly crossed one of the doors into the yard.",
+            "The garden wall was still the border on one side, and he quickly crossed one of the door into the yard.",
+            [
+                ("THEME", "be", "fence"),
+                ("ASPECT", "be", "still"),
+                ("PARTITIVE", "one", "gates"),
+                ("THEME", "passed", "one"),
+                ("DIRECTION", "passed", "direction"),
+            ],
+            attested_spans=[
+                ("gates", 83, 88, "gates"),
+                ("direction", 98, 104, "ground"),
+                ("one", 72, 75, "one"),
+            ],
+        )
+
+    def test_review_593_resumed_exclamative(self):
+        self.assert_family(
+            review.RESUMED_EXCLAMATIVE,
+            "The mischief of neglect and mistaken indulgence towards such a girl--oh! how acutely did she now feel it!",
+            "The harm of silence and blind approval towards such a child—oh! how deeply did he now feel it!",
+            "The harm of silence and blind approval towards such a child—oh! how deeply did he now feel it?",
+            [
+                ("DISLOCATED_TOPIC", "feel", "topic"),
+                ("THEME", "feel", "it"),
+                ("COREFERENCE", "it", "topic"),
+                ("DEGREE", "feel", "degree"),
+                ("TIME", "feel", "now"),
+            ],
+            attested_spans=[
+                ("topic", 0, 67, "The mischief of neglect and mistaken indulgence towards such a girl"),
+                ("it", 102, 104, "it"),
+                ("now", 93, 96, "now"),
+            ],
+        )
+
+    def test_review_594_reported_three_acts(self):
+        self.assert_family(
+            review.REPORTED_THREE_ACTS,
+            "“This account then is what he has received from Mr. Darcy. I am satisfied. But what does he say of the living?”",
+            "“This letter then is what she has received from Mr. Smith. I am convinced. But what did she say about the contract?”",
+            "“This letter then is what she has receive from Mr. Smith. I am convinced. But what did she say about the contract?”",
+            [
+                ("THEME", "received", "what"),
+                ("SOURCE", "received", "source"),
+                ("ASPECT", "received", "has"),
+                ("ATTRIBUTE", "am", "attribute"),
+                ("TOPIC", "say", "topic"),
+            ],
+            attested_spans=[
+                ("source", 48, 57, "Mr. Darcy"),
+                ("topic", 103, 109, "living"),
+                ("attribute", 64, 73, "satisfied"),
+            ],
+        )
+
+if __name__ == "__main__":
+    unittest.main()

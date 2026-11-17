@@ -730,7 +730,7 @@ def plan_anticipatory_means(text, components):
 
 EMOTIVE_REBUKE = "structural_emotive_perfect_relative_with_rebuke_reason"
 _REBUKE = re.compile(
-    r"(?P<subject>(?:(?:Miss|Mr\.|Mrs\.|Dr\.) +)?[A-Z][a-z]+) +"
+    r"(?P<subject>(?:(?P<title>Miss|Master|Captain|Doctor) +|(?:Mr\.|Mrs\.|Dr\.) +)?(?P<name>[A-Z][a-z]+)) +"
     r"(?P<manner>warmly|bitterly|deeply|strongly) +(?P<resented>resented|regretted|deplored) +"
     r"(?P<offense>the +(?:indignity|insult|offense|injury)) +(?P<recipient>he|she|they|we|you|I) +"
     r"(?P<had>had) +(?P<received>received|suffered|endured), +(?P<in>in) +"
@@ -746,8 +746,14 @@ def plan_emotive_rebuke(text, components):
     if m is None or not _matrix(text, components):
         return None
     specs, _, mark, part = _specs()
+    if m["title"] is None:
+        part(m, 0, (("subject", "NP", "proper-phrase", {}),))
+    else:
+        part(m, 0, (
+            ("title", "TITLE", "scoped-lexical", {"honorific": "true"}),
+            ("name", "PROPER-NOUN", "lexical", {}),
+        ))
     part(m, 0, (
-        ("subject", "NP", "proper-phrase", {}),
         ("manner", "ADV", "lexical", {}),
         ("resented", "V", "lexical-alternatives", _v("finite", "transitive", nonbase_surface="true")),
         ("offense", "NP", "phrase", {"proof_rule": "np_det_n"}),

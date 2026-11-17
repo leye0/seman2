@@ -185,6 +185,7 @@ def apply_action(
     child_handles: Sequence[Mapping[str, str]],
     child_graphs: Sequence[SemanticGraph],
     aliases: Mapping[str, str] | None = None,
+    matched_span: tuple[int, int] | None = None,
 ) -> SemanticPackage:
     """Apply one generic semantic action.
 
@@ -218,6 +219,7 @@ def apply_action(
         node = graph.add_node(
             kind=str(args.get("kind", "entity")),
             type_name=args.get("type"),
+            span=matched_span if args.get("anchor_to_match") is True else None,
             node_id=graph.fresh_id("e"),
         )
         name = str(args.get("name", "head"))
@@ -395,6 +397,7 @@ class SemanticInterpreter:
                 child_handles=child_handles,
                 child_graphs=child_graphs,
                 aliases=aliases,
+                matched_span=(item.start, item.end),
             )
         return package
 

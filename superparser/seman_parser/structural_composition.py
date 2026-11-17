@@ -72,6 +72,7 @@ from .scoped_literary_quotes import (
     DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
+from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
 from .scoped_novel_ladder import (
     AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
     FRONTED_PRECIPITATION, plan_fronted_precipitation,
@@ -182,6 +183,7 @@ _PROOF_CHECKS = frozenset((
     "emphasis_finite_proof",
 ))
 _LADDER_SPOKEN = (
+    *SPEECH_PLANS,
     (REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative),
     (REPORTED_INTERJECTION, plan_reported_interjection),
     (QUOTED_NEGATIVE_REPRISE, plan_quoted_negative_reprise),
@@ -212,6 +214,7 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    *NARRATIVE_PLANS,
     (FRONTED_PRECIPITATION, plan_fronted_precipitation),
     (COPULAR_COMPARED_RELATIVE, plan_copular_compared_relative),
     (MODAL_PERFECT_CONCESSION, plan_modal_perfect_concession),
@@ -276,9 +279,10 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    **CLAUSE_COUNTS,
     FRONTED_PRECIPITATION: 1,
     COPULAR_COMPARED_RELATIVE: 3, MODAL_PERFECT_CONCESSION: 2, INCISED_EXISTENTIAL_CONTENT: 3, FREQUENCY_CONTRAST: 2, DEPICTIVE_FINITE_PURPOSE: 3,
     EMPHATIC_OBJECT_RELATIVE: 2, EMBEDDED_DURATION_RELATIVE: 2,
@@ -512,7 +516,7 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN)
+            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *SPEECH_SEQUENCE_PLANS)
         })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -3826,6 +3830,16 @@ class QuotedSentenceComposer:
             )
             if result is not None:
                 return result
+        for rule, planner in SPEECH_SEQUENCE_PLANS:
+            specs = planner(text, components)
+            if specs is not None:
+                sequence = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, specs, rule,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if sequence is not None:
+                    return sequence
         # Curly apostrophes inside words are not quote delimiters. Keep
         # existing specialized routes ahead of this narrower mixed-act one.
         plan = self._plan(text, components)
