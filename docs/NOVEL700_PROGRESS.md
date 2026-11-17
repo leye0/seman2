@@ -1,5 +1,8 @@
 # Novel-700 — source-grounded 100/100 and attachment review status
 
+> **Semantic accuracy not certified.** The recorded 100/100 means complete selected syntax trees and generated graphs, **not correct selected roles or attachments**. The full source-and-graph audit in [the semantic defect register](NOVEL700800_SEMANTIC_DEFECTS.md), [second pass](NOVEL700800_SEMANTIC_SECOND_PASS.md), [third pass](NOVEL700800_SEMANTIC_THIRD_PASS.md), and [final pass](NOVEL700800_SEMANTIC_FINAL_PASS.md) documents 158 selected semantic shortcomings across Novel-700/800, including a contradiction of a previous positive review. The semantic acceptance gate is intentionally blocked. Do not use 100/100 as an accuracy claim.
+
+
 The frozen Novel-700 source SHA-256 remains
 `92076729dc1ee5763c9981831b02af84e394f4d0daa7ebe05ad8a1c014660687`.
 The immutable **77/100 initial baseline** is unchanged. The initial correction pass
