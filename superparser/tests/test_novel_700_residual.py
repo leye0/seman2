@@ -60,6 +60,36 @@ class Novel700ResidualTests(unittest.TestCase):
                 self.assertIn(('SUPPLEMENT',handles['second'],handles['depictive']),edges)
 
 
+    def test_n624_relative_quantified_object_and_genitive_nested(self):
+        for source in (624, ('His anger was without bounds; he sprang on her, impelled by '
+                            'all the feelings which can arm one being against the existence of another.')):
+            with self.subTest(source=str(source)[:40]):
+                prepared,lattice,result=self.parse(source)
+                root=result.best()
+                self.assertIsNotNone(root)
+                supplement=root.children[4]
+                self.assertEqual(supplement.category,'PARTICIPIAL-SUPPLEMENT')
+                relative=supplement.children[-1]
+                self.assertEqual(relative.category,'RELATIVE-CLAUSE')
+                self.assertEqual([x.category for x in relative.children],
+                    ['WH-NOM','MODAL','V','QUANTIFIED-NOMINAL','PREP','GENITIVE-NOMINAL'])
+                onebeing=relative.children[3]
+                opposite=relative.children[5]
+                self.assertEqual(prepared.analysis_text[onebeing.start:onebeing.end],'one being')
+                self.assertEqual(prepared.analysis_text[opposite.start:opposite.end],
+                                 'the existence of another')
+                self.assertEqual([c.category for c in onebeing.children],['NUM','N'])
+                self.assertEqual([c.category for c in opposite.children],
+                                 ['DET','N','PREP','INDEF-PRONOUN'])
+                package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
+                h=package['handles']
+                edges={(e['relation'],e['source'],e['target']) for e in package['graph']['relations']}
+                for rel,left,right in (('THEME','arm','onebeing'),
+                                       ('OPPOSITION','arm','otherexistence'),
+                                       ('QUANTITY','being','one'),
+                                       ('POSSESSOR','existence','another')):
+                    self.assertIn((rel,h[left],h[right]),edges)
+
     def test_n643_split_questions_source_and_controls(self):
         from seman_parser.scoped_novel_700 import N643_SPLIT_QUESTIONS
         positive='"Oh, captain," we cried, "what shall we do? Where is she wounded?"'
