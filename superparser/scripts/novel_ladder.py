@@ -21,6 +21,7 @@ from scripts.evaluate_novel_transfer import (
 from seman_parser.engine import Parser, ParserResources
 
 LADDER = ROOT / "research" / "novel_ladder"
+SEMANTIC_DEFECTS = ROOT / "research" / "semantic_quality" / "confirmed_selected_defects.json"
 FIRST = 501
 SIZE = 100
 SCHEMA = "seman2-novel-ladder-cohort-v1"
@@ -277,6 +278,24 @@ def accepted_cases(result, cohort, end, review):
     if (any(r["status"] != "complete" for r in rows.values())
             or {i for i, r in review.items() if r["verdict"] == "verified"} != set(rows)):
         raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
+    # Recognition and an individually written review verdict are necessary,
+    # but a known false selected attachment invalidates that certification.
+    # Fail closed: changing the tree's hash does NOT automatically clear a
+    # recorded fault; remove a defect only after source-backed controls pass.
+    if end >= 700 and SEMANTIC_DEFECTS.exists():
+        ledger = read_json(SEMANTIC_DEFECTS)
+        if ledger.get("schema") != "seman2-selected-semantic-defect-ledger-v1":
+            raise ValueError("Unrecognized selected semantic defect ledger")
+        unresolved = sorted({
+            item["index"] for item in ledger["cases"]
+            if end - SIZE < item["index"] <= end
+            and item.get("status") == "needs_fix"
+        })
+        if unresolved:
+            raise ValueError(
+                f"Novel-{end} semantic acceptance blocked by "
+                f"{len(unresolved)} outstanding selected-tree defects: {unresolved}"
+            )
     return rows
 
 
