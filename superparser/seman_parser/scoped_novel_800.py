@@ -364,10 +364,150 @@ NARRATIVE_PLANS = (
     (UNLIKE_PREDICATE,plan_unlike_predicate),
     (ANAPHORIC_ELLIPSIS,plan_anaphoric_ellipsis),
 )
+
+# N763: a split polite request with an overt reporter. The subordinate
+# "that you will be seated, and allow me to do this" shares the subject
+# and modal; me controls do, not the first passive.
+SPLIT_POLITE_REQUEST = "dialogue_source_intercalated_polite_request_shared_modal_passive_and_control"
+_POLITE = re.compile(
+    r'(?P<open1>‘)(?P<I>I) +(?P<beg>beg)(?P<comma1>,) +'
+    r'(?P<sir>sir)(?P<comma2>,)(?P<close1>’)[ ]+'
+    r'(?P<report>he +returned +respectfully)(?P<comma3>,)[ ]+'
+    r'(?P<open2>‘)(?P<that>that) +(?P<you>you) +'
+    r'(?P<will>will) +(?P<be>be) +(?P<seated>seated)'
+    r'(?P<comma4>,) +(?P<and>and) +(?P<allow>allow) +'
+    r'(?P<me>me) +(?P<to>to) +(?P<do>do) +'
+    r'(?P<this>this)(?P<stop>\.)(?P<close2>’)'
+)
+def plan_split_polite_request(text,parts):
+    m=_POLITE.fullmatch(text)
+    if m is None:return None
+    by={c["id"]:c for c in parts}
+    q0,q1,r0,t0=(by.get(k) for k in ("q0","q1","r0","t0"))
+    if (not all((q0,q1,r0,t0))
+            or q0.get("function")!="direct_speech"
+            or q1.get("function")!="direct_speech"
+            or r0.get("function")!="reporting_clause"
+            or t0.get("function")!="split_direct_speech_turn"
+            or (q0["start"],q0["end"])!=(0,m.end("close1"))
+            or (q1["start"],q1["end"])!=(m.start("open2"),len(text))
+            or (r0["start"],r0["end"])!=m.span("report")):
+        return None
+    specs,_,_,put=_specs()
+    put(m,0,(
+        _punct("open1","OPEN-QUOTE"),
+        _phrase("I","NP"),_lex_alt("beg","V",vform="finite"),
+        _punct("comma1","COMMA"),_lex("sir","TITLE",honorific="true"),
+        _punct("comma2","COMMA"),_punct("close1","CLOSE-QUOTE"),
+        _phrase("report","CLAUSE",finite_statement_proof="true"),
+        _punct("comma3","COMMA"),_punct("open2","OPEN-QUOTE"),
+        _lex("that","COMP-THAT"),_phrase("you","NP"),
+        _lex("will","MODAL",vform="finite"),_lex("be","COPULA",vform="base"),
+        _lex_alt("seated","V",vform="ed"),_punct("comma4","COMMA"),
+        _lex("and","COORD",lemma_in="and"),
+        _lex_alt("allow","V",vform="base",subcat_member="object_control"),
+        _phrase("me","NP"),_lex("to","TO"),
+        _lex_alt("do","V",vform="base"),
+        _phrase("this","NP",proof_rule="np_demonstrative"),
+        _punct("stop","SPEECH-STOP"),_punct("close2","CLOSE-QUOTE"),
+    ))
+    return specs
+
+# N791: an epistemic parenthetical, a semicolon-level contrast and an
+# overt elliptical possessive standard. Jane's does not contain an invented
+# husband token, even though husband is the comparison antecedent.
+EQUATIVE_FAVOURITE = "dialogue_source_parenthetical_favourite_semicolon_equative_elliptic_possessive"
+_FAVOURITE = re.compile(
+    r'(?P<open>“)(?P<wickham>Wickham|Darcy)(?P<comma1>,) +'
+    r'(?P<perhaps>perhaps)(?P<comma2>,) +(?P<is>is) +'
+    r'(?P<favourite>my +favourite)(?P<semi>;) +(?P<but>but) +'
+    r'(?P<I1>I) +(?P<think>think) +(?P<I2>I) +(?P<shall>shall) +'
+    r'(?P<like>like) +(?P<husband>your +husband) +'
+    r'(?P<quite>quite) +(?P<as1>as) +(?P<well>well) +'
+    r"(?P<as2>as) +(?P<jane>[A-Z][a-z]+'s)"
+    r'(?P<stop>\.)(?P<close>”)'
+)
+def plan_equative_favourite(text,parts):
+    m=_FAVOURITE.fullmatch(text)
+    if m is None or not any(c.get("function")=="direct_speech"
+                            and (c["start"],c["end"])==(0,len(text))
+                            for c in parts):
+        return None
+    specs,_,_,put=_specs()
+    put(m,0,(
+        _punct("open","OPEN-QUOTE"),
+        _phrase("wickham","NP",proof_rule="np_proper"),
+        _punct("comma1","COMMA"),_lex("perhaps","ADV"),
+        _punct("comma2","COMMA"),_lex("is","COPULA",vform="finite",number="singular"),
+        _phrase("favourite","NP",proof_rule="np_poss"),
+        _punct("semi","SEMICOLON"),_lex("but","COORD",lemma_in="but"),
+        _phrase("I1","NP"),_lex_alt("think","V",vform="finite",subcat_member="clausal"),
+        _phrase("I2","NP"),_lex("shall","MODAL",vform="finite"),
+        _lex_alt("like","V",vform="base",subcat_member="transitive"),
+        _phrase("husband","NP",proof_rule="np_poss"),
+        _lex("quite","ADV"),_lex("as1","EQUATIVE-AS"),
+        _lex("well","ADV"),_lex("as2","EQUATIVE-AS"),
+        ("jane","POSSESSIVE-ELLIPSIS","source-possessive-ellipsis",{}),
+        _punct("stop","SPEECH-STOP"),_punct("close","CLOSE-QUOTE"),
+    ))
+    return specs
+
+# N797: do-support in the if-clause is genuinely anaphoric and the
+# two consequences use distinct modals. Do not infer an unspoken action.
+SPLIT_CAUSAL_CONDITIONAL = "dialogue_source_reported_thanks_with_causal_if_and_modal_consequences"
+_LYDIA = re.compile(
+    r'(?P<open1>“)(?P<thanks>Thank +you)(?P<comma1>,)(?P<close1>”) +'
+    r'(?P<said>said) +(?P<name>Lydia|Mary)(?P<comma2>,) +'
+    r'(?P<open2>“)(?P<for>for) +(?P<if>if) +(?P<you>you) +'
+    r'(?P<did>did)(?P<comma3>,) +'
+    r'(?P<tell>I +should +certainly +tell +you +all)(?P<comma4>,) +'
+    r'(?P<and>and) +(?P<then>then) +'
+    r'(?P<consequence>Wickham +would +be +angry)'
+    r'(?P<stop>\.)(?P<close2>”)'
+)
+def plan_split_causal_conditional(text,parts):
+    m=_LYDIA.fullmatch(text)
+    if m is None:return None
+    by={c["id"]:c for c in parts}
+    q0,q1,r0,t0=(by.get(k) for k in ("q0","q1","r0","t0"))
+    if (not all((q0,q1,r0,t0))
+            or q0.get("function")!="direct_speech"
+            or q1.get("function")!="direct_speech"
+            or r0.get("function")!="reporting_clause"
+            or t0.get("function")!="split_direct_speech_turn"
+            or (q0["start"],q0["end"])!=(0,m.end("close1"))
+            or (q1["start"],q1["end"])!=(m.start("open2"),len(text))
+            or (r0["start"],r0["end"])!=(
+                m.start("said"),m.end("name"))):
+        return None
+    specs,_,_,put=_specs()
+    put(m,0,(
+        _punct("open1","OPEN-QUOTE"),
+        _phrase("thanks","CLAUSE",proof_rule="clause_imperative"),
+        _punct("comma1","COMMA"),_punct("close1","CLOSE-QUOTE"),
+        _lex_alt("said","V",vform="finite"),
+        _phrase("name","NP",proof_rule="np_proper"),
+        _punct("comma2","COMMA"),_punct("open2","OPEN-QUOTE"),
+        _lex("for","COORD"),_lex("if","CONJ",complementizer="conditional"),
+        _phrase("you","NP"),
+        _lex("did","AUX",vform="finite"),
+        _punct("comma3","COMMA"),
+        _phrase("tell","CLAUSE",finite_statement_proof="true"),
+        _punct("comma4","COMMA"),
+        _lex("and","COORD",lemma_in="and"),
+        _lex("then","ADV"),
+        _phrase("consequence","CLAUSE",finite_statement_proof="true"),
+        _punct("stop","SPEECH-STOP"),_punct("close2","CLOSE-QUOTE"),
+    ))
+    return specs
+
 SPOKEN_PLANS = (
+    (SPLIT_POLITE_REQUEST,plan_split_polite_request),
+    (EQUATIVE_FAVOURITE,plan_equative_favourite),
+    (SPLIT_CAUSAL_CONDITIONAL,plan_split_causal_conditional),
     (LETTER_SIGNOFF,plan_letter_signoff),
     (DOCUMENT_DATELINE,plan_document_dateline),
     (SPOKEN_PLAN_COMMAND,plan_resolution_command),
     (DASH_INTERRUPTED,plan_unfinished_quote),
 )
-COUNTS={STORM_LOCATIVE:2,INVERTED_CONDITIONAL:3,FRONTED_VAIN:3,LETTER_SIGNOFF:1,DOCUMENT_DATELINE:1,SPOKEN_PLAN_COMMAND:1,DASH_INTERRUPTED:1,PARENTHETICAL_CHANCE:1,FRONTED_SOURCE:1,PERFECT_INVERSION:1,UNLIKE_PREDICATE:1,ANAPHORIC_ELLIPSIS:1}
+COUNTS={SPLIT_POLITE_REQUEST:2,EQUATIVE_FAVOURITE:2,SPLIT_CAUSAL_CONDITIONAL:2,STORM_LOCATIVE:2,INVERTED_CONDITIONAL:3,FRONTED_VAIN:3,LETTER_SIGNOFF:1,DOCUMENT_DATELINE:1,SPOKEN_PLAN_COMMAND:1,DASH_INTERRUPTED:1,PARENTHETICAL_CHANCE:1,FRONTED_SOURCE:1,PERFECT_INVERSION:1,UNLIKE_PREDICATE:1,ANAPHORIC_ELLIPSIS:1}
