@@ -69,6 +69,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
+      "index": 611,
+      "status": "needs_fix",
+      "selected_tree_sha256": "87534d416614764f276be7bf21edb824636f58d54f6cb018391bd0a5f4b139cb",
+      "selected_graph_sha256": "8b331b345d93f3032cc9e6ff169d295d437b377d5f1558066696261f33540dd8",
+      "observed_defect": "It-cleft It was in the latter end of September that I quitted assigns AGENT(was,It) and COMPLEMENT(end,quitted)",
+      "required_linguistic_correction": "It is expletive and September-end the cleft focus; quitted is focal finite event, not an object complement of end",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 613,
       "status": "needs_fix",
       "selected_tree_sha256": "fcbc5da47f4a2514b933258caa6f5d5ff199a3bb131131da7fbcb8f75b34d419",
@@ -96,6 +105,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 618,
+      "status": "needs_fix",
+      "selected_tree_sha256": "7375048b2f9f4207adecae7fa9458de3bac774e8ca16feccf2aadea0c212a254",
+      "selected_graph_sha256": "7ab4a43f235a1a5647c139f5c8c5aff6b92edbbe86409f49878d176e2c16b7d8",
+      "observed_defect": "After semicolon he was inquisitive is linked by TOPIC(was,image) across previous I saw the image",
+      "required_linguistic_correction": "The semicolon begins a distinct clause with he subject; image belongs only to saw",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 620,
       "status": "needs_fix",
       "selected_tree_sha256": "3286e19248ae16e59cc9104a35ddaa09ca819343de9489486398779b114e4f0f",
@@ -103,6 +121,15 @@
       "observed_defect": "`in` is selected as PARTICLE in `spent in listless indolence`; `AGENT(spent, days)`",
       "required_linguistic_correction": "Proper locative/manner PP and passive/reduced-relative relation of days spent",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 621,
+      "status": "needs_fix",
+      "selected_tree_sha256": "4b15513ecdb8a12f9a044bb4911dd7e800584782e485938a51bc1cbd8f60c7c2",
+      "selected_graph_sha256": "bb58f2b43fcfc7c5a24f48dbdc7c449a4c071005b1d60ac357e72f2213bb492d",
+      "observed_defect": "RECIPIENT(put,bed) treats into a bed as an indirect recipient of put",
+      "required_linguistic_correction": "The bed is a goal/location for the movement of it, not a recipient",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 622,
@@ -139,6 +166,15 @@
       "observed_defect": "`AGENT(moved, as)`; `never` selected DEGREE without negation scope",
       "required_linguistic_correction": "`the doctor` is agent/subject of `moved`; `never so much as` negates/minimizes event",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 630,
+      "status": "needs_fix",
+      "selected_tree_sha256": "e736c1e63f842551226c8365c56ec227ad5ae1ddb1271dd0176d3bd12a2f4497",
+      "selected_graph_sha256": "f2a055dfb002ee4aff08e6992414f7783430fe288f43089ecc0cfd21fb84418f",
+      "observed_defect": "A week at least selects least as N and only MODIFIER(week,at)",
+      "required_linguistic_correction": "at least is a minimum-degree/quantity construction over week, not at plus a nominal least",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 631,
@@ -402,6 +438,24 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 678,
+      "status": "needs_fix",
+      "selected_tree_sha256": "48a7ff1726618818f1b950f21b2eb76136de5cfa25d6d46051cafff7cd6a154b",
+      "selected_graph_sha256": "4456a91b9ee8e7b68443231887719b8d33297e7d961668f22195d5b776cfe279",
+      "observed_defect": "Such as vanity and pride has only CONJUNCT(vanity,pride), losing the Such as exemplification",
+      "required_linguistic_correction": "Such as introduces an exemplifier relation over the coordinated nominal list",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
+      "index": 679,
+      "status": "needs_fix",
+      "selected_tree_sha256": "f803060d3e6d24fcd65647de120e9f74585eca532d54e99312092d8042be183b",
+      "selected_graph_sha256": "dbffd476f3b019336a59016582e512ad08904868c2e51e5f19e2d5c349c350d8",
+      "observed_defect": "Mr Bennet made no answer has no semantic negative quantification for no answer",
+      "required_linguistic_correction": "The source no contributes zero/negation to the answer object, not an affirmative event of making an unspecified answer",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 680,
       "status": "needs_fix",
       "selected_tree_sha256": "3938431064ab421ed984697184b763c62859f238c57c90a2fd2e67b45088cfe2",
@@ -472,6 +526,15 @@
       "observed_defect": "AFFECTED(joined,drawing-room) treats the room as object instead of party",
       "required_linguistic_correction": "They joined the party at a proper hour in Lady Catherine's drawing-room",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 690,
+      "status": "needs_fix",
+      "selected_tree_sha256": "d3cbcb5e6774cb589471eebc983aa23e8d327038f381accf11cac5925af00519",
+      "selected_graph_sha256": "cae9017fe907edb4bd2a4b43d1eef662291d4989622a677ea9635199685dd9d3",
+      "observed_defect": "which had been so warmly canvassed selects been as V and AGENT(been,which), MANNER(been,warmly)",
+      "required_linguistic_correction": "Warmly modifies canvassed; been is perfect/passive auxiliary and the subject is canvassed",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 692,
@@ -582,6 +645,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 710,
+      "status": "needs_fix",
+      "selected_tree_sha256": "d6d9a83ee75142691a4667d1665832705cc2f786429fd9231a8e9b9c63e06c10",
+      "selected_graph_sha256": "d1bfcb407dc5472d215868ad5df0470ac5f173e5e765b54118678667873378c6",
+      "observed_defect": "how heavily I bore is assigned TOPIC(bore,heavily), not degree of manner",
+      "required_linguistic_correction": "Heavily is manner of bore in an embedded how-interrogative complement",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 711,
       "status": "needs_fix",
       "selected_tree_sha256": "ad697298e54ead3a9e5e251bc6b31f0261997945080308a74a0537b857899b34",
@@ -589,6 +661,15 @@
       "observed_defect": "The second lost event has TOPIC(lost,glory) instead of coordination of utility and glory in the first clause",
       "required_linguistic_correction": "Utility and glory are parallel hope complements; the second I have lost my friend is independent",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 712,
+      "status": "needs_fix",
+      "selected_tree_sha256": "00239cdfe5c9455232e7a315a1d4f494657c685cdb96f49c9e6ff34ef3993604",
+      "selected_graph_sha256": "37e1eef50b8540ef5fa4ba3bb1158a303998e455a147200bfbbb086fb16d7740",
+      "observed_defect": "I walked with a quick pace has no attached instrumental/manner link for with a quick pace",
+      "required_linguistic_correction": "The with-PP modifies manner of walked, not a disconnected phrase",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 714,
@@ -681,6 +762,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
+      "index": 726,
+      "status": "needs_fix",
+      "selected_tree_sha256": "2edd956811ad1d4728e4a13936c7e03a956583f355bcab97dc3dabf7a4f9d3fc",
+      "selected_graph_sha256": "bc37ba593d8e08adf9d7304341342ec7a858449dfd581997b6c4188cea31f013",
+      "observed_defect": "Then he spoke uses TOPIC(spoke,Then) rather than temporal sequencing",
+      "required_linguistic_correction": "Then is temporal adjunct of spoke",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 727,
       "status": "needs_fix",
       "selected_tree_sha256": "572ab244ce53c402d83cfc3f16a17af5ec38edbaf4347cc279c18484514df7b1",
@@ -706,6 +796,15 @@
       "observed_defect": "We ran on deck has only AGENT(ran,We); on deck is disconnected",
       "required_linguistic_correction": "Attach on deck as location/goal of ran",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 731,
+      "status": "needs_fix",
+      "selected_tree_sha256": "0a00cb5fd6d51748541df2c5f7da4fbec593227bf0cc83f7fa9cff5aa51d1467",
+      "selected_graph_sha256": "6eaea45de9770134af49e0734f63c09ed320e3f042819e263b83d754cd00bc9e",
+      "observed_defect": "clean sand is selected as predicative sand without any semantic modifier link for clean",
+      "required_linguistic_correction": "Clean restricts sand, not a semantically invisible adjective",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 733,
@@ -735,6 +834,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
+      "index": 737,
+      "status": "needs_fix",
+      "selected_tree_sha256": "0f29499ec9d777622eb3ecc3162fe601f131673a4ab1f5e55a78a1c5c4f0bb1b",
+      "selected_graph_sha256": "74b10224c05d8fb03369d88076d828df42b8f19763d53658aefc931dc9612fb9",
+      "observed_defect": "Blue! Well I reckon... produces MODIFIER(blue,period) from punctuation",
+      "required_linguistic_correction": "Punctuation is a boundary, not an adjectival modifier of blue",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 738,
       "status": "needs_fix",
       "selected_tree_sha256": "6ef6c0cdf1ff6df7a0c4d869dcfe37347edd81f4b8e3074cc848652066411699",
@@ -742,6 +850,15 @@
       "observed_defect": "Who's the best shot? reported clause has no copular subject or attribute relation for best shot",
       "required_linguistic_correction": "Who is subject or predicand of is, best shot its complement, and asked governs the question",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 739,
+      "status": "needs_fix",
+      "selected_tree_sha256": "be121c8286cbe0ff56f8a5027f58c260b9fd79930925c379f67291760fd2e158",
+      "selected_graph_sha256": "e892ce1dfd1607c857ddc6350a76938fdc90fad87b215586decdb50d647f486a",
+      "observed_defect": "I was near overboard links MANNER(was,overboard) instead of near's spatial complement",
+      "required_linguistic_correction": "Overboard is an approaching spatial state complement of near",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 740,
@@ -870,6 +987,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
+      "index": 756,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ed618b3ec6a304e7df7126a00f56c7ab2a938b49ea25f3ffb7a8123ecd3ff98a",
+      "selected_graph_sha256": "d8cac86adaf0a4982914180bb54dcaba5273e96e0b7b0ac78ed40aa08c50770b",
+      "observed_defect": "So we went on selects So as DEGREE rather than a discourse connective",
+      "required_linguistic_correction": "So is a discourse-adverbial transition modifying went on, not degree on a comparative",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+    },
+    {
       "index": 757,
       "status": "needs_fix",
       "selected_tree_sha256": "ddcfda821224de386d7769f47f20288394bb0097bb0ea2ae78efab5334fc806e",
@@ -877,6 +1003,15 @@
       "observed_defect": "`What are you talking about?` gives `ATTRIBUTE(are,you)` and `MODIFIER(you,talking)`",
       "required_linguistic_correction": "`talking` is the progressive verb of `you`, not a noun phrase modifier",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 758,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ac36cc0750da32fca4d6b7c036f5a8fdb0b42263291d9ed0ebd7bc42ac6ccdea",
+      "selected_graph_sha256": "46e4503c7664f50679e6f1a07aa1a0716e42e92ba280f3a4d834614909eac0be",
+      "observed_defect": "next day is split with ADJUNCT(was,next) while day is unlinked from temporal phrase",
+      "required_linguistic_correction": "next day is a single temporal expression in nearly dinner-time next day",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 759,
@@ -949,6 +1084,15 @@
       "observed_defect": "MANNER(gave,away) incorrectly attaches away from she went away to gave",
       "required_linguistic_correction": "away modifies went, and that she went away is the result clause of such delight",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 769,
+      "status": "needs_fix",
+      "selected_tree_sha256": "816e1597a55257602f4b61dc0f0bbc9b431b706cce6f4b43b5f34203666a937e",
+      "selected_graph_sha256": "b981f79b47ca68eefec63651232850528a5554cea935d9312bc8b5eccd678c81",
+      "observed_defect": "with a grave toss of his head has no relation connecting the PP action to murmured",
+      "required_linguistic_correction": "The PP is a manner adjunct of murmured, with his head as possessor of toss",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 770,
@@ -1039,6 +1183,15 @@
       "observed_defect": "They were hopeless of remedy lacks any semantic relation involving remedy",
       "required_linguistic_correction": "Attach of remedy as argument/content of hopeless",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 780,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9afc3850fd1c19541dfa357299219db6441eab82c8975860209fc6c45dd5d49f",
+      "selected_graph_sha256": "f4a5e91242fa01bfb3a9283666ace986e25280474ece7de2963292d77510f627",
+      "observed_defect": "almost universal has no relation from almost to the universal attribute",
+      "required_linguistic_correction": "almost is a degree modifier of universal, not semantically omitted",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 781,
@@ -1156,6 +1309,15 @@
       "observed_defect": "AGENT(called,by) makes the passive by-preposition the actor instead of the arrival",
       "required_linguistic_correction": "the arrival of Saturday is causal agent of passive called, not lexical by",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+    },
+    {
+      "index": 796,
+      "status": "needs_fix",
+      "selected_tree_sha256": "fb8b3d7bebb54ee82cfb6b6f6717ceecfc1ce5fa1d360516cbf3f7b52cfdec98",
+      "selected_graph_sha256": "77c332964801366985ee91a9ca9a2947f578284b362f7eb594b5765059ee4f33",
+      "observed_defect": "CAUSE(mode,mode) is a self-loop on the same lexical semantic node",
+      "required_linguistic_correction": "as to the mode is a relational frame of curiosity, not mode causing itself",
+      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
     },
     {
       "index": 798,
