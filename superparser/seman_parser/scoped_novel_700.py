@@ -490,7 +490,7 @@ _N647 = re.compile(
     r'(?P<it>it) +(?P<was>was) +(?P<with>with +these) +'
     r'(?P<only>only) +(?P<that>that) +(?P<mother>my +mother) +'
     r'(?P<knew>knew) +(?P<how>how) +(?P<to>to) +'
-    r'(?P<make>make) +(?P<count>her +count)(?P<stop>\.)'
+    r'(?P<make>make) +(?P<her>her) +(?P<count>count)(?P<stop>\.)'
 )
 def plan_n647_cleft(text, components):
     m=_N647.fullmatch(text)
@@ -510,8 +510,8 @@ def plan_n647_cleft(text, components):
         _phr('mother','NP',proof_rule='np_poss'),
         _verb('knew','finite','transitive'),
         _lex('how','WH-NOM'),_lex('to','TO'),
-        _verb('make','base','transitive'),
-        _phr('count','NP',proof_rule='np_poss'),
+        _verb('make','base','bare_control'),
+        _phr('her','NP'),_verb('count','base','intransitive'),
         _punct('stop','SPEECH-STOP'),
     ))
     return specs
