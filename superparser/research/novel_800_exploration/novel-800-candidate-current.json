@@ -233,7 +233,7 @@
       "kbest_budget_exceeded": false,
       "root_rule": "clause_front_np",
       "rank_one_sha256": "c07570c796ed95f29589946a1327f23dce9ea3261068eab15ee1693e5a485d88",
-      "selected_graph_sha256": "2b0dc4ebf24c333b853d76599cc5427abf1e9e76485467ff82a4e01df492f674"
+      "selected_graph_sha256": "2e0451572aefbebe404538c588be6e3a4cadaa2d608e161ea7f7ae7db5b83f31"
     },
     {
       "index": 726,
@@ -746,7 +746,7 @@
       "kbest_budget_exceeded": false,
       "root_rule": "clause_np_vp",
       "rank_one_sha256": "0e39c0eeaf73dfcb1851fa897e3f7da27432bf9a503c1c1bb317269bd2984908",
-      "selected_graph_sha256": "dbf0b012978c5a955c833ab7a05027bd760fe66cade8c043bbc37772d5f4894e"
+      "selected_graph_sha256": "30830db9f09c4a6748f77d3596443bcc965e2ba8060635d7b691f4a8f2e7fd4f"
     },
     {
       "index": 783,
@@ -890,7 +890,7 @@
       "kbest_budget_exceeded": false,
       "root_rule": "dialogue_unattributed",
       "rank_one_sha256": "d00397b6bdf2515d6e633a824991a235f5f6598004bd6d881f2a8325d3aa8715",
-      "selected_graph_sha256": "896ca8d650d4215f826c508c8e1132653ded1e04604c4f4535cf6e73778e5cf3"
+      "selected_graph_sha256": "7ca729b23543eebbf9fd9d8e676159fe7c0ea4babd43962deea14efe8b9ff44b"
     },
     {
       "index": 799,

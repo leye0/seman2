@@ -8,8 +8,8 @@
   "summary": {
     "total": 200,
     "selected_syntax_graph_coverage": 200,
-    "verified": 41,
-    "needs_fix": 159,
+    "verified": 44,
+    "needs_fix": 156,
     "unreviewed": 0,
     "previous_verified_reopened": 1
   },
@@ -17,12 +17,12 @@
     {
       "index": 601,
       "cohort": "Novel-700",
-      "verdict": "needs_fix",
+      "verdict": "verified",
       "root_rule": "clause_np_vp",
       "rank_one_sha256": "4cff89d82824f1f03608aa9c5f89c6e7e603d99f786fd30701211d7b7c39c875",
-      "selected_graph_sha256": "a7082d66097cd1c8d8571c1f4b62d356b75240c2cb9ad4e75fe167340eb3461f",
-      "evidence": "`not` is a NEGATION node without an incident edge; `answer` has AGENT and MODALITY only",
-      "required_correction": "Negation must scope over ability/answering",
+      "selected_graph_sha256": "5a2c3a5ae26b81f0e6ce382c9299a6e7231e14ac2cda536f30fa7b26feae245f",
+      "evidence": "The selected subject I and base predicate answer are unchanged, with ability modal could and the original not both linked to answer. The independent control without not has no NEGATION edge.",
+      "required_correction": null,
       "superseded_prior_verified": false
     },
     {
@@ -666,12 +666,12 @@
     {
       "index": 660,
       "cohort": "Novel-700",
-      "verdict": "needs_fix",
+      "verdict": "verified",
       "root_rule": "dialogue_structural_negative_reprise_vocative_and_modal_gerund",
-      "rank_one_sha256": "205c8f196944807ae201b267236c02fdc1c6cc0066f92e46433e2f34b23532db",
-      "selected_graph_sha256": "f9789a0c8209915a535a33485a4ec3fe19af79cb08d239753b4fd3ca3c9a5a13",
-      "evidence": "Previously verified N660 omits the NEGATION scope of overt Not I!; the selected graph's Not node has no semantic relation, and adjectival dear is typed PERSON.",
-      "required_correction": "Attach the negative minor reply to its discourse semantics, preserve I as its argument and my dear Daisy as adjectival vocative; re-review N660 selected tree and graph.",
+      "rank_one_sha256": "587ccf3ff76eba11bb1098a629aa5a50bd00bd976190f27e5766916268fd083f",
+      "selected_graph_sha256": "4b2c893246e16b2e74ad9eb925825ad3dc62d7467a93d735e123a03b2420bf72",
+      "evidence": "Not I! selects an elliptical negative-reprise act with explicit I focus, no invented antecedent, and its own negation scope. Dear is adjectival with vocative head Daisy, attached to mind, not will. The modal and the possessed gerund retain their own predicate, arguments and exact spans.",
+      "required_correction": null,
       "superseded_prior_verified": true
     },
     {
@@ -790,9 +790,9 @@
       "verdict": "needs_fix",
       "root_rule": "clause_front_adv",
       "rank_one_sha256": "b1f3a79a67911a50ba411c07596ddc26bef7d5eecc4163a1cac6c97d9c11e1d6",
-      "selected_graph_sha256": "6658b811d528b41c0320080140ec4bbb3562c677e5a09993ba63266f1674271f",
-      "evidence": "not in could not be here has no negative polarity relation",
-      "required_correction": "Negate the copular/modal ability clause and attach without-regrets PP appropriately",
+      "selected_graph_sha256": "817d496bb485cab5cb1500feef9650d1a12e8faf72e6a86b8129c46aea101dde",
+      "evidence": "The negator now attaches to be, but here is selected as an adjectival attribute, and the without-regrets PP is a TOPIC of occupied rather than a condition on the speaker's being near Agnes.",
+      "required_correction": "Select locative here and coordinated nearness to Agnes under the modal, with the without-regrets condition attached to that experience and the relative clause modifying regrets.",
       "superseded_prior_verified": false
     },
     {
@@ -886,12 +886,12 @@
     {
       "index": 680,
       "cohort": "Novel-700",
-      "verdict": "needs_fix",
-      "root_rule": "dialogue_unattributed",
-      "rank_one_sha256": "3938431064ab421ed984697184b763c62859f238c57c90a2fd2e67b45088cfe2",
-      "selected_graph_sha256": "4c92900986715301f49505af7ebd7e33d93c75568fd79aef74b913737e285bcd",
-      "evidence": "`I hope not` gives only AGENT(hope,I) and unlinked `not`",
-      "required_correction": "Negative proform / content of hope",
+      "verdict": "verified",
+      "root_rule": "dialogue_structural_standalone_negative_proform",
+      "rank_one_sha256": "51ce7b7eeca84598d2fe58ca7fd32e57182c504019eb396f1e5f64349e691b41",
+      "selected_graph_sha256": "cda0bbf0aba70bf75eb4d330925c7b8bc0a8e158cc9125eae2d8a9aca2e6a84b",
+      "evidence": "The source follow-up is an attitude toward a negative answer to the previous question. The selected finite hope has experiencer I and NEG-typed not as CONTENT_PROFORM, not negation of hoping. Preverbal negation and infinitival not do not select the proform construction.",
+      "required_correction": null,
       "superseded_prior_verified": false
     },
     {
@@ -1021,9 +1021,9 @@
       "verdict": "needs_fix",
       "root_rule": "dialogue_split_tag",
       "rank_one_sha256": "3a1e84686fa62ebcce07884bb9509061d7191376019a5f8d2aafbf5ba55ae70e",
-      "selected_graph_sha256": "d168690cfd758f6612bb77d685b01e0529efc81c0ee882a66f5749ddfc38d0a0",
-      "evidence": "`does not follow` contains an unlinked negation",
-      "required_correction": "Negation scopes over `follow` in second quoted clause",
+      "selected_graph_sha256": "ab077c535eebbb14c0e441fc0b5fc85f215041dd7a80fece1edd746b8f62bd32",
+      "evidence": "NEGATION(follow,not) is restored, but expletive it and copular predicand interruption are both AGENTs. The reporting manner with a smile and emphasis certainly are not linked.",
+      "required_correction": "Treat it as an expletive, interruption as the predicand of be unwelcome, with a smile as report manner, and certainly as a modifier of the first reply.",
       "superseded_prior_verified": false
     },
     {
@@ -1087,9 +1087,9 @@
       "verdict": "needs_fix",
       "root_rule": "clause_np_vp",
       "rank_one_sha256": "fdb08a254f4654190a440d51e0e29bc84a1efb5470831f2a75ece039370c6fc8",
-      "selected_graph_sha256": "f86b01aec4a883b05657ae985fc863209dd41e99ff8c7970be7857a682841066",
-      "evidence": "not is unlinked in had not been of age; had is selected V instead of perfect auxiliary",
-      "required_correction": "Past-perfect negation scopes over been of age and distinct temporal when-clause",
+      "selected_graph_sha256": "9185a4d637e3107c4008edafe1e4a1495786d1b5d079ed45f6badf5b5aa05c06",
+      "evidence": "NEGATION(been,not) is restored, but had is still a participial modifier of Bingley and the when-clause is apposed to years.",
+      "required_correction": "Compose the past perfect had been of age, measure its duration, and attach a separate temporal when-clause.",
       "superseded_prior_verified": false
     },
     {
@@ -1384,9 +1384,9 @@
       "verdict": "needs_fix",
       "root_rule": "clause_front_np",
       "rank_one_sha256": "c07570c796ed95f29589946a1327f23dce9ea3261068eab15ee1693e5a485d88",
-      "selected_graph_sha256": "2b0dc4ebf24c333b853d76599cc5427abf1e9e76485467ff82a4e01df492f674",
-      "evidence": "Negative `did not prepossess` has no negative-scope edge",
-      "required_correction": "`not` negates `prepossess`; `M.` is title, not topical bare noun",
+      "selected_graph_sha256": "2e0451572aefbebe404538c588be6e3a4cadaa2d608e161ea7f7ae7db5b83f31",
+      "evidence": "NEGATION(prepossess,not) is restored, but M. is still a detached nominal topic, teacher an apposition of countenance, and the second predicate an apparent imperative.",
+      "required_correction": "Recognize the title M. Krempe and keep teacher as subject of the second clause with therefore as its discourse modifier.",
       "superseded_prior_verified": false
     },
     {
@@ -2011,9 +2011,9 @@
       "verdict": "needs_fix",
       "root_rule": "clause_np_vp",
       "rank_one_sha256": "0e39c0eeaf73dfcb1851fa897e3f7da27432bf9a503c1c1bb317269bd2984908",
-      "selected_graph_sha256": "dbf0b012978c5a955c833ab7a05027bd760fe66cade8c043bbc37772d5f4894e",
-      "evidence": "`could not be long a secret`: `not` is unlinked",
-      "required_correction": "Negative modal scope over `be ... a secret`",
+      "selected_graph_sha256": "30830db9f09c4a6748f77d3596443bcc965e2ba8060635d7b691f4a8f2e7fd4f",
+      "evidence": "NEGATION(be,not) is restored, but long is ADJ, the article a is N and a secret is not the copular complement.",
+      "required_correction": "Keep long as a duration adverb and a secret as the predicative nominal of be, with situation as predicand.",
       "superseded_prior_verified": false
     },
     {
@@ -2187,9 +2187,9 @@
       "verdict": "needs_fix",
       "root_rule": "dialogue_unattributed",
       "rank_one_sha256": "d00397b6bdf2515d6e633a824991a235f5f6598004bd6d881f2a8325d3aa8715",
-      "selected_graph_sha256": "896ca8d650d4215f826c508c8e1132653ded1e04604c4f4535cf6e73778e5cf3",
-      "evidence": "`discourage his coming here so very often` treats `so` as N object; `should not remind` loses negation",
-      "required_correction": "Possessive gerund subject, `so very often` degree adverb and negative modal scope",
+      "selected_graph_sha256": "7ca729b23543eebbf9fd9d8e676159fe7c0ea4babd43962deea14efe8b9ff44b",
+      "evidence": "NEGATION(remind,not) is restored, but so is still the object of discourage and often attaches to discourage, not coming.",
+      "required_correction": "Compose the possessive gerund with subject his and the frequency phrase so very often as a modifier of coming.",
       "superseded_prior_verified": false
     },
     {

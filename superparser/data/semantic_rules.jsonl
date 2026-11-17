@@ -39,8 +39,8 @@
 {"id":"n_adj_n","semantic":[{"copy":{}}]}
 {"id":"n_adj_n2","semantic":[{"copy":{}}]}
 {"id":"np_of","semantic":[{"compose":{"links":[{"relation":"POSSESSOR","source":"head","target":"possessor"}]}}]}
-{"id":"vp_neg","semantic":[{"copy":{}}]}
-{"id":"vp_neg_bare","semantic":[{"copy":{}}]}
+{"id":"vp_neg","semantic":[{"compose":{"links":[{"relation":"NEGATION","source":"event","target":0}]}}]}
+{"id":"vp_neg_bare","semantic":[{"compose":{"links":[{"relation":"NEGATION","source":"event","target":0}]}}]}
 {"id":"vp_cop_neg_adj","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
 {"id":"vp_modal","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"}]}}]}
 {"id":"vp_modal_bare","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"}]}}]}
@@ -101,7 +101,7 @@
 {"id":"wh_np","semantic":[{"copy":{}}]}
 {"id":"wh_np_det","semantic":[{"copy":{}}]}
 {"id":"wh_np_adj_n","semantic":[{"copy":{}}]}
-{"id":"clause_neg_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
+{"id":"clause_neg_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"},{"relation":"NEGATION","source":"event","target":2}]}}]}
 {"id":"vp_np_that2","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"vp_to_passive","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_to_passive_np","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
@@ -127,7 +127,7 @@
 {"id":"vp_modal_perf","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"event","target":"modal"}]}}]}
 {"id":"clause_passive_ditrans","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"theme"},{"relation":"RECIPIENT","source":"event","target":"recipient"}]}}]}
 {"id":"vp_emphatic","semantic":[{"copy":{}}]}
-{"id":"clause_imp_neg","semantic":[{"copy":{}}]}
+{"id":"clause_imp_neg","semantic":[{"compose":{"links":[{"relation":"NEGATION","source":"event","target":1}]}}]}
 {"id":"np_list_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"},{"relation":"CONJUNCT","source":"a2","target":"a3"}]}}]}
 {"id":"np_list_coord2","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"}]}}]}
 {"id":"vp_obj_ctrl_to","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}

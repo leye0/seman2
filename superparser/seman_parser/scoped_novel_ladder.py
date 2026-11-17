@@ -1580,24 +1580,31 @@ def plan_affirmative_totality(text, components):
 
 
 NEGATIVE_PROPOSITIONAL_REPLY = "dialogue_structural_negative_reply_with_propositional_not"
-_NEGATIVE_PROPOSITIONAL_REPLY = re.compile(
-    r"(?P<no>No), +(?P<subject>I|we|they|you) +(?P<belief>believe|think|suppose|expect|hope) +(?P<not>not)"
+STANDALONE_NEGATIVE_PROFORM = "dialogue_structural_standalone_negative_proform"
+_PROPOSITIONAL_NOT = (
+    r"(?P<subject>I|[Ww]e|[Tt]hey|[Yy]ou) +"
+    r"(?P<belief>believe|think|suppose|expect|hope) +(?P<not>not)"
 )
+_NEGATIVE_PROPOSITIONAL_REPLY = re.compile(r"(?P<no>No), +" + _PROPOSITIONAL_NOT)
+_STANDALONE_NEGATIVE_PROFORM = re.compile(_PROPOSITIONAL_NOT)
 
 
-def plan_negative_propositional_reply(text, components):
-    """Clause-final not stands for a negative answer to preceding content."""
+def _plan_negative_proform(text, components, *, prefaced):
     evidence = _single_spoken_span(text, components)
-    if evidence is None or not any(c.get("function") == "minor_utterance" for c in components):
+    if evidence is None:
+        return None
+    if prefaced and not any(c.get("function") == "minor_utterance" for c in components):
         return None
     stop, _ = evidence
-    m = _NEGATIVE_PROPOSITIONAL_REPLY.fullmatch(text[1:stop])
+    pattern = _NEGATIVE_PROPOSITIONAL_REPLY if prefaced else _STANDALONE_NEGATIVE_PROFORM
+    m = pattern.fullmatch(text[1:stop])
     if m is None or text[stop] not in ".!":
         return None
     specs, _, mark, part = _specs()
     mark("OPEN-QUOTE", 0, 1)
-    part(m, 1, (("no", "RESPONSE", "scoped-lexical", {"polarity": "negative"}),))
-    mark("COMMA", 1 + m.end("no"), 2 + m.end("no"))
+    if prefaced:
+        part(m, 1, (("no", "RESPONSE", "scoped-lexical", {"polarity": "negative"}),))
+        mark("COMMA", 1 + m.end("no"), 2 + m.end("no"))
     part(m, 1, (
         ("subject", "NP", "subject-phrase", {}),
         ("belief", "V", "lexical-alternatives", _v("finite", "clausal")),
@@ -1606,6 +1613,16 @@ def plan_negative_propositional_reply(text, components):
     mark("SPEECH-STOP", stop, stop + 1)
     mark("CLOSE-QUOTE", stop + 1, stop + 2)
     return specs
+
+
+def plan_negative_propositional_reply(text, components):
+    """An answer particle introduces a clause with propositional not."""
+    return _plan_negative_proform(text, components, prefaced=True)
+
+
+def plan_standalone_negative_proform(text, components):
+    """Clause-final not supplies negative content, not negation of belief."""
+    return _plan_negative_proform(text, components, prefaced=False)
 
 
 REPORTED_INTERJECTION = "dialogue_structural_reported_standalone_interjection"

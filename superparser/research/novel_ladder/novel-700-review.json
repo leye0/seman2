@@ -3,6 +3,13 @@
   "cohort_sha256": "92076729dc1ee5763c9981831b02af84e394f4d0daa7ebe05ad8a1c014660687",
   "cases": [
     {
+      "index": 601,
+      "verdict": "verified",
+      "evidence": "The selected subject I and base predicate answer are unchanged, with ability modal could and the original not both linked to answer. The independent control without not has no NEGATION edge.",
+      "rank_one_sha256": "4cff89d82824f1f03608aa9c5f89c6e7e603d99f786fd30701211d7b7c39c875",
+      "selected_graph_sha256": "5a2c3a5ae26b81f0e6ce382c9299a6e7231e14ac2cda536f30fa7b26feae245f"
+    },
+    {
       "index": 603,
       "verdict": "verified",
       "evidence": "Discourse-return is an elliptical infinitival transition; no invented finite subject, with the topic explicitly attached to return.",
@@ -110,9 +117,9 @@
     {
       "index": 660,
       "verdict": "verified",
-      "evidence": "Not I! is a source-bounded minor negative assertion, my dear Daisy is its actual vocative, and will you mind is a modal interrogative governing the possessive gerund my calling you Daisy with object and predicate nominal.",
-      "rank_one_sha256": "205c8f196944807ae201b267236c02fdc1c6cc0066f92e46433e2f34b23532db",
-      "selected_graph_sha256": "f9789a0c8209915a535a33485a4ec3fe19af79cb08d239753b4fd3ca3c9a5a13"
+      "evidence": "Not I! selects an elliptical negative-reprise act with explicit I focus, no invented antecedent, and its own negation scope. Dear is adjectival with vocative head Daisy, attached to mind, not will. The modal and the possessed gerund retain their own predicate, arguments and exact spans.",
+      "rank_one_sha256": "587ccf3ff76eba11bb1098a629aa5a50bd00bd976190f27e5766916268fd083f",
+      "selected_graph_sha256": "4b2c893246e16b2e74ad9eb925825ad3dc62d7467a93d735e123a03b2420bf72"
     },
     {
       "index": 661,
@@ -155,6 +162,13 @@
       "evidence": "The source retains both finite sentences inside one original quotation; forgotten governs the actual existential content and exceptive but-to-go-out-tossing; I wish there was not is an independently proven elliptic reprise, not an invented full proposition.",
       "rank_one_sha256": "648074e4d0563b2f89967ba7035d76e8f3d08d695208e1587b1acc1eaa086446",
       "selected_graph_sha256": "d17dcb24f8af9982c81334c77a1ae85c40b40375f8cfd4ff197f99e27c487fc7"
+    },
+    {
+      "index": 680,
+      "verdict": "verified",
+      "evidence": "The source follow-up is an attitude toward a negative answer to the previous question. The selected finite hope has experiencer I and NEG-typed not as CONTENT_PROFORM, not negation of hoping. Preverbal negation and infinitival not do not select the proform construction.",
+      "rank_one_sha256": "51ce7b7eeca84598d2fe58ca7fd32e57182c504019eb396f1e5f64349e691b41",
+      "selected_graph_sha256": "cda0bbf0aba70bf75eb4d330925c7b8bc0a8e158cc9125eae2d8a9aca2e6a84b"
     },
     {
       "index": 681,
