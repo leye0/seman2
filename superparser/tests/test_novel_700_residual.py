@@ -188,6 +188,24 @@ class Novel700ResidualTests(unittest.TestCase):
         self.verify_new_source_plan(647,positive,negative,N647_CLEFT,
             [('THEME','were','guineas'),('ATTRIBUTE','were','scarcest'),
              ('CONJUNCT','were','cleft')])
+        for source in (647,positive):
+            with self.subTest(source=str(source)[:35],detail='bare-causative'):
+                prepared,lattice,result=self.parse(source)
+                root=result.best()
+                self.assertIsNotNone(root)
+                cleft=next(c for c in root.children if c.category=='FOCUSED-CLEFT')
+                causative=next(c for c in cleft.children if c.category=='BARE-CAUSATIVE')
+                self.assertEqual([c.category for c in causative.children],['V','NP','V'])
+                self.assertEqual([prepared.analysis_text[c.start:c.end]
+                                  for c in causative.children],['make','her','count'])
+                self.assertEqual(causative.children[0].lexical_candidate.lemma,'make')
+                self.assertEqual(causative.children[2].lexical_candidate.lemma,'count')
+                package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
+                h=package['handles']
+                edges={(e['relation'],e['source'],e['target']) for e in package['graph']['relations']}
+                for rel,left,right in (('CAUSATIVE','make','count'),
+                                       ('PATIENT','make','her'),('AGENT','count','her')):
+                    self.assertIn((rel,h[left],h[right]),edges)
 
     def test_n649_parallel_interrogative_manner(self):
         from seman_parser.scoped_novel_700 import N649_PARALLEL
