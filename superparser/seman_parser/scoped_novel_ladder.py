@@ -540,13 +540,17 @@ def plan_apprehensive_gaze(text, components):
 
 
 FACTIVE_GESTURE = "dialogue_structural_negated_knowledge_with_factive_all_and_gesture"
-_FACTIVE = re.compile(
+_FACTIVE_BODY = (
     r"(?P<speaker>I|We) +(?P<do>do)(?P<not>n[’']t) +(?P<know>know|remember) +(?P<all>all) +"
-    r"(?P<actor>I|we|you|they) +(?P<have>have|had) +(?P<done>done|said|written|made), +"
-    r"(?P<circumstance>in +(?:my|our|your|their) +[a-z][a-z-]*)"
+    r"(?P<actor>I|we|you|they) +(?P<have>have|had) +(?P<done>done|said|written|made)"
+)
+_FACTIVE = re.compile(_FACTIVE_BODY + r"(?P<scope_comma>,) +(?P<circumstance>in +(?:my|our|your|their) +[a-z][a-z-]*)")
+_FACTIVE_FRONTED = re.compile(
+    r"(?P<circumstance>In +(?:my|our|your|their) +[a-z][a-z-]*)(?P<scope_comma>,) +" + _FACTIVE_BODY
 )
 _FACTIVE_REPORT = re.compile(
-    r"(?P<report>said|remarked|replied) +(?P<speaker>(?:Mr\.|Mrs\.|Dr\.|Miss) +[A-Z][a-z]+), +"
+    r"(?P<report>said|remarked|replied) +"
+    r"(?P<speaker>(?:(?P<title>Mr|Mrs|Dr)(?P<point>\.)|(?P<title_bare>Miss)) +(?P<name>[A-Z][a-z]+)), +"
     r"(?P<gesture>putting|holding|stretching) +(?P<out>out) +(?P<body>(?P<poss>his|her|their) +(?P<body_n>hands|arms)), +"
     r"(?P<as>as) +(?P<if>if) +(?P<to>to) +(?P<purpose>deprecate|prevent|forestall|avoid) +"
     r"(?P<target>(?:my|your|his|her|our|their|the) +[a-z][a-z-]*)"
@@ -558,7 +562,8 @@ def plan_factive_gesture(text, components):
     if scope is None or text[scope[0]] != ",":
         return None
     stop, reporter = scope
-    speech = _FACTIVE.fullmatch(text[1:stop])
+    spoken = text[1:stop]
+    speech = _FACTIVE.fullmatch(spoken) or _FACTIVE_FRONTED.fullmatch(spoken)
     base = reporter["start"]
     tag = _FACTIVE_REPORT.fullmatch(text[base:reporter["end"]])
     if speech is None or tag is None:
@@ -575,13 +580,15 @@ def plan_factive_gesture(text, components):
         ("have", "HAVE", "lexical", {"vform": "finite"}),
         ("done", "V", "lexical-alternatives", _v("ed", "transitive")),
         ("circumstance", "PP", "phrase", {"proof_rule": "pp_prep_np"}),
+        ("scope_comma", "COMMA", "source-punctuation", {}),
     ))
-    mark("COMMA", 1 + speech.end("done"), 2 + speech.end("done"))
     mark("COMMA", stop, stop + 1)
     mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    title = "title" if tag["title"] else "title_bare"
     part(tag, base, (
         ("report", "V", "lexical-alternatives", _v("finite", "clausal", nonbase_surface="true")),
-        ("speaker", "NP", "proper-phrase", {}),
+        (title, "TITLE", "scoped-lexical", {"honorific": "true"}),
+        ("name", "PROPER-NOUN", "lexical", {}),
         ("gesture", "V", "lexical-alternatives", _v("ing", "transitive", lemma_in="put|hold|stretch")),
         ("out", "PARTICLE", "lexical", {}),
         ("poss", "POSS", "lexical", {}),
@@ -592,6 +599,8 @@ def plan_factive_gesture(text, components):
         ("purpose", "V", "lexical-alternatives", _v("base", "transitive")),
         ("target", "NP", "phrase", {"simple_nominal_proof": "true"}),
     ))
+    if tag["point"]:
+        mark("ABBREVIATION-STOP", base + tag.start("point"), base + tag.end("point"))
     for name in ("speaker", "body"):
         pos = base + tag.end(name)
         mark("COMMA", pos, pos + 1)

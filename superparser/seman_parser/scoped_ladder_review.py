@@ -1558,7 +1558,184 @@ def plan_resumed_exclamative(text, components):
     ))
 
 
+EMBEDDED_FEELING_COMPARISON = "structural_embedded_feeling_with_temporal_perception_and_equative"
+CAUSATIVE_EVIDENTIAL_PURPOSE = "structural_causative_with_evidential_incise_and_depictive_purpose"
+PASSIVE_KNOWLEDGE_EXCEPTION = "structural_domain_fronted_perfect_passive_with_free_relative_exception"
+SPLIT_REPORTED_PLEASURE = "dialogue_structural_split_reported_pleasure_with_control_and_hope"
+
+_FEELING_COMPARISON = re.compile(
+    rf"(?P<subject>{_SUBJECT}) +(?P<modal>may|might|can|could) +"
+    r"(?P<imagine>imagine|guess|understand) +(?P<how>how) +"
+    rf"(?P<feeler>{_LOWER_PRON}) +(?P<felt>felt) +(?P<when>when) +"
+    rf"(?P<hearer>{_LOWER_PRON}) +(?P<heard>heard|saw|watched) +"
+    r"(?P<perceived>(?:this|that|the) +(?:[a-z-]+ +){0,3}[a-z-]+) +"
+    r"(?P<addressing>addressing|greeting|entreating|comforting) +"
+    rf"(?P<addressed>another|me|him|her|them|us|you|{_NOM}) +"
+    r"(?P<in>in) +(?P<the>the) +(?P<very>very) +(?P<same>same) +"
+    r"(?P<words>words|phrases|terms) +(?P<of>of) +(?P<register>[a-z-]+) +"
+    rf"(?P<as>as) +(?P<speaker>{_LOWER_PRON}) +(?P<had>had) +(?P<used>used) +"
+    r"(?P<to>to) +(?P<recipient>me|him|her|us|them|you|myself|yourself|ourselves)"
+    + _STOP
+)
+
+
+def plan_embedded_feeling_comparison(text, components):
+    m = _FEELING_COMPARISON.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    return _parts(m, (
+        _subject("subject"), _a("modal", "MODAL"), _b("imagine", "V", "base", "clausal"),
+        _a("how", "WH-NOM", wh_adverbial="true"), _subject("feeler"),
+        _scoped("felt", "V", **_v("finite", "intransitive", tense="past")),
+        _a("when", "CONJ"), _subject("hearer"), _b("heard", "V", "finite", "transitive"),
+        _p("perceived", simple_nominal_proof="true"),
+        _b("addressing", "V", "ing", "transitive"),
+        (_scoped("addressed", "LADDER-INDEF-PRON", indefinite="true") if m["addressed"] == "another" else _p("addressed")),
+        _a("in", "PREP", lemma_in="in"), _a("the", "DET", number="plural"),
+        _a("very", "DEGREE"), _a("same", "ADJ"), _a("words", "N", number="plural"),
+        _a("of", "PREP", nominal_complement="of"), _a("register", "N"),
+        _a("as", "EQUATIVE-AS", degree="true"), _subject("speaker"),
+        _a("had", "HAVE", vform="finite"), _b("used", "V", "ed", "transitive"),
+        _a("to", "PREP", lemma_in="to"), _p("recipient"), *_marked(),
+    ))
+
+
+_CAUSATIVE_PURPOSE = re.compile(
+    r"(?P<causer>(?:The|A|My|Their) +(?:[a-z-]+ +){0,2}[a-z-]+) +"
+    r"(?P<made>made|let) +(?P<causee>him|her|them|me|us|you) +"
+    r"(?P<say>say|repeat|read) +(?P<whole>all) +(?P<this>this|that)"
+    r"(?P<c1>,) +(?P<knower>I|he|she|we|they) +(?P<knew>knew|believed|suspected)(?P<c2>,) +"
+    r"(?P<to>to) +(?P<exhibit>exhibit|show|present) +(?P<exhibited>him|her|them|me|us|you) +"
+    r"(?P<to2>to) +(?P<recipient>me|him|her|us|them|you) +"
+    r"(?P<in>in) +(?P<light>the +(?>light|manner|guise)) +"
+    rf"(?P<indicater>{_LOWER_PRON}) +(?P<had>had) +(?P<indicated>indicated|described|suggested) +"
+    r"(?P<on>on) +(?P<night>the +(?:night|evening|morning|day)) +"
+    rf"(?P<when>when) +(?P<actor>{_LOWER_PRON}) +(?P<acted>[a-z-]+) +(?P<affected>{_NOM})"
+    + _STOP
+)
+
+
+def plan_causative_evidential_purpose(text, components):
+    m = _CAUSATIVE_PURPOSE.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    return _parts(m, (
+        _p("causer", simple_nominal_proof="true"),
+        _scoped("made", "V", **_v("finite", "object_control", tense="past")),
+        _p("causee"), _b("say", "V", "base", "transitive"),
+        _a("whole", "DET", definiteness="universal"), _p("this"), _punct("c1"), _subject("knower"),
+        _b("knew", "V", "finite", "clausal"), _punct("c2"),
+        _a("to", "TO"), _b("exhibit", "V", "base", "transitive"), _p("exhibited"),
+        _a("to2", "PREP", lemma_in="to"), _p("recipient"), _a("in", "PREP", lemma_in="in"),
+        _p("light", proof_rule="np_det_n"), _subject("indicater"), _a("had", "HAVE", vform="finite"),
+        _b("indicated", "V", "ed", "transitive"), _a("on", "PREP", lemma_in="on"),
+        _p("night", proof_rule="np_det_n"), _a("when", "CONJ"), _subject("actor"),
+        _b("acted", "V", "finite", "transitive", nonbase_surface="true"),
+        _p("affected", grounded_object_proof="true"), *_marked(),
+    ))
+
+
+_KNOWLEDGE_EXCEPTION = re.compile(
+    rf"(?P<of>Of) +(?P<domain>(?:his|her|their|our|your) +(?:former|early|previous|private) +{_NOM}) +"
+    r"(?P<nothing>nothing|little) +(?P<had>had) +(?P<been>been) +(?P<known>known|learned|recorded) +"
+    rf"(?P<in>in) +(?P<place>{_NAME}) +(?P<but>but|except) +(?P<what>what) +"
+    r"(?P<teller>he|she|they) +(?P<told>told|said|mentioned) +(?P<self>himself|herself|themselves)"
+    + _STOP
+)
+
+
+def plan_passive_knowledge_exception(text, components):
+    m = _KNOWLEDGE_EXCEPTION.fullmatch(text)
+    if m is None or not _matrix(text, components):
+        return None
+    if m["self"] != {"he": "himself", "she": "herself", "they": "themselves"}[m["teller"]]:
+        return None
+    return _parts(m, (
+        _a("of", "PREP", lemma_in="of"), _p("domain", proof_rule="np_poss"),
+        _p("nothing"), _a("had", "HAVE", vform="finite"), _a("been", "AUX-BE", vform="ed"),
+        _b("known", "V", "ed", "transitive"), _a("in", "PREP", lemma_in="in"),
+        ("place", "NP", "proper-phrase", {}), _scoped("but", "PREP", exceptive="true"),
+        _a("what", "WH-NOM", free_relative="true"), _subject("teller"),
+        _b("told", "V", "finite", "transitive"),
+        _a("self", "EMPHATIC-REFLEXIVE", reflexive="true"),
+        _a("self", "PRONOUN", reflexive="true"), *_marked(),
+    ))
+
+
+_PLEASURE_FIRST = re.compile(
+    r"(?P<in>In) +(?P<activity>nursing|helping|visiting|comforting) +"
+    rf"(?P<kin>(?:your|his|her|their) +[a-z-]+) +(?P<speaker>I) +(?P<am>am) +"
+    r"(?P<sure>sure|certain|confident) +(?P<pleased>you|he|she|they) +"
+    r"(?P<have>have|has) +(?P<pleasure>pleasure|delight|satisfaction)(?P<comma>,)"
+)
+_PLEASURE_TAG = re.compile(rf"(?P<said>said|replied|added) +(?P<reporter>{_NAME})")
+_PLEASURE_SECOND = re.compile(
+    r"(?P<and>and) +(?P<speaker>I) +(?P<hope>hope|trust) +(?P<it>it) +"
+    r"(?P<modal>will|would|may|might) +(?P<be>be) +(?P<soon>soon|gradually|shortly) +"
+    r"(?P<increased>increased|renewed|restored|doubled) +(?P<by>by) +"
+    r"(?P<seeing>seeing|finding) +(?P<patient>her|him|them|you) +"
+    r"(?P<degree>quite|completely|fully) +(?P<well>well|recovered|content)" + _STOP
+)
+
+
+def plan_split_reported_pleasure(text, components):
+    """Validate original quote/tag adjacency before composing either speech part."""
+    quotes = [c for c in components if c["function"] == "direct_speech"]
+    tags = [c for c in components if c["function"] == "reporting_clause"]
+    turns = [c for c in components if c["function"] == "split_direct_speech_turn"]
+    if len(quotes) != 2 or len(tags) != 1 or len(turns) != 1:
+        return None
+    head, tail = quotes
+    tag, = tags
+    turn, = turns
+    end = head["end"]
+    resume = tail["start"]
+    start_tag, end_tag = tag["start"], tag["end"]
+    if (
+        head["start"] != 0 or tail["end"] != len(text)
+        or head.get("governor") != tag["id"] or tail.get("governor") != head["id"]
+        or tail.get("relation") != "resumption_of_split_speech" or tag.get("governor") != turn["id"]
+        or not (1 < end <= start_tag < end_tag < resume < len(text) - 1)
+        or text[end:start_tag].strip() or text[end_tag:resume].strip() != ";"
+    ):
+        return None
+    first = _PLEASURE_FIRST.fullmatch(text[1:end - 1])
+    report = _PLEASURE_TAG.fullmatch(text[start_tag:end_tag])
+    second = _PLEASURE_SECOND.fullmatch(text[resume + 1:-1])
+    if first is None or report is None or second is None:
+        return None
+    if first["have"] != ("has" if first["pleased"] in {"he", "she"} else "have"):
+        return None
+    specs, _, mark, part = _specs()
+    mark("OPEN-QUOTE", 0, 1)
+    part(first, 1, (
+        _a("in", "PREP", lemma_in="in"), _b("activity", "V", "ing", "transitive"),
+        _p("kin", proof_rule="np_poss"), _subject("speaker"), _a("am", "COPULA", vform="finite"),
+        _a("sure", "ADJ"), _subject("pleased"), _a("have", "HAVE", vform="finite"),
+        _a("pleasure", "N", number="singular"), _punct("comma"),
+    ))
+    mark("CLOSE-QUOTE", end - 1, end)
+    part(report, start_tag, (
+        _b("said", "V", "finite", "clausal"), ("reporter", "NP", "proper-phrase", {}),
+    ))
+    semi = text.index(";", end_tag, resume)
+    mark("SEMICOLON", semi, semi + 1)
+    mark("OPEN-QUOTE", resume, resume + 1)
+    part(second, resume + 1, (
+        _a("and", "COORD", lemma_in="and"), _subject("speaker"), _b("hope", "V", "base", "clausal"),
+        _p("it"), _a("modal", "MODAL"), _scoped("be", "AUX-BE", vform="base", voice="passive"),
+        _a("soon", "ADV"), _b("increased", "V", "ed", "transitive"), _a("by", "PREP-BY"),
+        _b("seeing", "V", "ing", "transitive"), _p("patient"),
+        _a("degree", "ADV"), _scoped("well", "ADJ", depictive_state="true"), *_marked(),
+    ))
+    mark("CLOSE-QUOTE", len(text) - 1, len(text))
+    return specs
+
+
 NARRATIVE_PLANS = (
+    (EMBEDDED_FEELING_COMPARISON, plan_embedded_feeling_comparison),
+    (CAUSATIVE_EVIDENTIAL_PURPOSE, plan_causative_evidential_purpose),
+    (PASSIVE_KNOWLEDGE_EXCEPTION, plan_passive_knowledge_exception),
     (CONCESSIVE_NEGATIVE_OBSERVATION, plan_concessive_negative),
     (RESUMED_EXCLAMATIVE, plan_resumed_exclamative),
     (EXISTENTIAL_AND_REMAINDER, plan_existential_and_remainder),
@@ -1593,6 +1770,7 @@ NARRATIVE_PLANS = (
     (ENDED_STATE, plan_ended_state),
 )
 SPEECH_SEQUENCE_PLANS = (
+    (SPLIT_REPORTED_PLEASURE, plan_split_reported_pleasure),
     (TWO_QUESTIONS_PASSIVE, plan_two_questions_passive),
     (REPORTED_THREE_ACTS, plan_reported_three_acts),
 )
@@ -1613,6 +1791,8 @@ SPEECH_PLANS = (
     (POSSIBILITY_QUESTION, plan_possibility_question),
 )
 CLAUSE_COUNTS = {
+    EMBEDDED_FEELING_COMPARISON: 4, CAUSATIVE_EVIDENTIAL_PURPOSE: 4,
+    PASSIVE_KNOWLEDGE_EXCEPTION: 2, SPLIT_REPORTED_PLEASURE: 4,
     CONCESSIVE_NEGATIVE_OBSERVATION: 3, RESUMED_EXCLAMATIVE: 1,
     EXISTENTIAL_AND_REMAINDER: 2, REACTION_RESULT: 3, NEGATED_MISGIVING: 2, REPORTED_THREE_ACTS: 3,
     SHARED_START_CONTROL: 2, PERCEPTION_AND_REPLY: 3, REPORTED_NOMINAL_SERIES: 2,

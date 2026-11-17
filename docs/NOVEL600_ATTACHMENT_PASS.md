@@ -61,3 +61,24 @@ N575 preserve their existing forest flags. N573 still needs a decision on
 the retrospective versus higher stance attachment and an explicit perfect
 aspect link. N592 and N596 involve a free-relative exception and a split
 reported gerund construction, respectively. The rung is not sealed.
+
+## Closing the rung
+
+The final pass starts from [a77320b](https://github.com/leye0/seman2/commit/a77320b95a2aab7443931b35c92fffc86daec42a).
+It changes exactly the five remaining trees and their exported graphs. The
+95 earlier verified signatures stay identical. The count reaches **100/100
+verified**, with no chart or k-best budget flag in Novel-600. The initial
+78/100 replay, source anchors and per-case budgets are unchanged.
+
+| Case | Selected structure and regression witness |
+| --- | --- |
+| N547 | The hearing times *felt*, the perceived person supplies the subject of *addressing*, and the full same-words phrase modifies the addressing. The comparison standard retains the perfect auxiliary and local recipient. |
+| N573 | *Have done* exports perfect aspect. The selected reading attaches *in my fatuity* to the prior actions, which the surrounding confession supports. An alternative attaches it to *know*, and preposing the PP selects that higher reading. The complete named attribution and gesture are outside the quote. |
+| N575 | *Made* controls the bare saying clause through *him*. *I knew* comments on the causation. The purpose belongs to the causer's action, and the final *when* clause modifies *night* within the description of the light. |
+| N592 | The fronted PP gives the domain of a perfect passive, and the free relative is an exception to what was known. The public-knowledge context favors emphatic *himself*. The self-recipient reading remains available at lower rank. |
+| N596 | The fronted nursing activity is inside the certainty's content as the domain of the addressee's pleasure. The original tag attributes both speech parts. A modal passive increase is hoped for, with *her quite well* as a depictive inside the means. |
+
+The [accepted pin](../superparser/research/novel_ladder/novel-600-accepted.json)
+preserves the selected tree and graph fingerprints for future runs. Novel-500
+keeps all 500 protected entries and passes all 30 anchored dialogues. No
+Novel-700 source was sampled in this pass.

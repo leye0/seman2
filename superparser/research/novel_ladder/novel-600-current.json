@@ -427,11 +427,11 @@
     {
       "index": 547,
       "status": "complete",
-      "forest_budget_exceeded": true,
+      "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_sub",
-      "rank_one_sha256": "bce32386c8bad7ac0fe9f562d3c7d72c89e3a7affab26969416f3914f7febcd8",
-      "selected_graph_sha256": "cc658302eec986c85405d93b3937ae4493f08c0d3b2f2530e75a1eed00e8ad8f"
+      "root_rule": "structural_embedded_feeling_with_temporal_perception_and_equative",
+      "rank_one_sha256": "0003e6cac4f48104d6f305556f1f72f43d057cfdc7b5c6dedc1c3739b8150a3f",
+      "selected_graph_sha256": "4826875fa4a0f79d2548846a466ccdd801c6a753906a1a2f9e9baa7a13438da2"
     },
     {
       "index": 548,
@@ -664,8 +664,8 @@
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
       "root_rule": "dialogue_structural_negated_knowledge_with_factive_all_and_gesture",
-      "rank_one_sha256": "ac7ebc0261bf7ba64dab8e2dbc22f037cf9f3579ec52120b267e26a13ca08c6b",
-      "selected_graph_sha256": "16af3c6d46639a7a3521644fb02c0a052293fd6aa08d2761b71b314d708e5e69"
+      "rank_one_sha256": "a8b4b7ac655a5c4863cf5df5acf04928dc9deeef8df73aa53a85f2d50a1dc518",
+      "selected_graph_sha256": "27add615a03d23b46763806801968b24166f1f1f24db148d381725f626cc7482"
     },
     {
       "index": 574,
@@ -679,11 +679,11 @@
     {
       "index": 575,
       "status": "complete",
-      "forest_budget_exceeded": true,
+      "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_when_post",
-      "rank_one_sha256": "20d17b06522101c8bb6e9aab387a56bd496268b5026a2b2b3b320c1410a1874a",
-      "selected_graph_sha256": "c464953ae12ebba2ceae6d82fcd5111d0eafdc61c725230c0322b936de6576f1"
+      "root_rule": "structural_causative_with_evidential_incise_and_depictive_purpose",
+      "rank_one_sha256": "879f7929c3505a0d4275e0396111381c41f9660c839462e562c2b66b1b6f5589",
+      "selected_graph_sha256": "c10c1064a3112cb4f2e8eb11fa302afacec5a1aff39da2d40b9c688111b945ef"
     },
     {
       "index": 576,
@@ -834,9 +834,9 @@
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "clause_front_pp_nocomma",
-      "rank_one_sha256": "d396f2c0cbba534ab3fc9072c4687366ed843fa2739cd041df85a576224b31ed",
-      "selected_graph_sha256": "8ff0b457368d521732f3dd10b99e45ed2534c7ff6a56892025285e3933a6f254"
+      "root_rule": "structural_domain_fronted_perfect_passive_with_free_relative_exception",
+      "rank_one_sha256": "2926202528df8375ab2ebe2e4e485f6f69025c7d0c0ceb05e6e785b3c1f9db26",
+      "selected_graph_sha256": "967f6d887caaa537b23e2897f7649486ea1b74bf632572dcf6c145b727987c92"
     },
     {
       "index": 593,
@@ -870,9 +870,9 @@
       "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": "dialogue_split_tag",
-      "rank_one_sha256": "c9e5d776ed0f19b892df0757fd6b7f840f7a290604e47226755f5fe7dbdcab18",
-      "selected_graph_sha256": "8019d8c6e813f9242c141e7406058f591755d3318e7347a0086129334d84fedc"
+      "root_rule": "dialogue_structural_split_reported_pleasure_with_control_and_hope",
+      "rank_one_sha256": "a816936b20305faa4f4974319b1e2f504eef5c0a361d455461738a84f5e49bbc",
+      "selected_graph_sha256": "5fffc92c8fda7e4c594257fed9ca777b6b8fb6fdbe896c20d47966cbe566b9bf"
     },
     {
       "index": 597,

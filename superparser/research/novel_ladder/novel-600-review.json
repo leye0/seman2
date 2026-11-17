@@ -326,10 +326,10 @@
     },
     {
       "index": 547,
-      "verdict": "needs_fix",
-      "evidence": "The comparison with the words formerly used is embedded in the description of addressing. The forest flag is not evidence of exactness.",
-      "rank_one_sha256": "bce32386c8bad7ac0fe9f562d3c7d72c89e3a7affab26969416f3914f7febcd8",
-      "selected_graph_sha256": "cc658302eec986c85405d93b3937ae4493f08c0d3b2f2530e75a1eed00e8ad8f"
+      "verdict": "verified",
+      "evidence": "The modal imagine selects how I felt, and hearing times felt. The source rogue is both the object of heard and the understood agent of addressing another. The full in-the-same-words phrase modifies addressing and attaches the perfect standard clause to words. The selected result no longer reaches the forest limit.",
+      "rank_one_sha256": "0003e6cac4f48104d6f305556f1f72f43d057cfdc7b5c6dedc1c3739b8150a3f",
+      "selected_graph_sha256": "4826875fa4a0f79d2548846a466ccdd801c6a753906a1a2f9e9baa7a13438da2"
     },
     {
       "index": 548,
@@ -508,10 +508,10 @@
     },
     {
       "index": 573,
-      "verdict": "needs_fix",
-      "evidence": "The fatuity PP could qualify not knowing or what was done; the prior parse places it only inside the relative. Also check that the perfect auxiliary is exported.",
-      "rank_one_sha256": "ac7ebc0261bf7ba64dab8e2dbc22f037cf9f3579ec52120b267e26a13ca08c6b",
-      "selected_graph_sha256": "16af3c6d46639a7a3521644fb02c0a052293fd6aa08d2761b71b314d708e5e69"
+      "verdict": "verified",
+      "evidence": "Negation governs know and the nested relative exports the perfect auxiliary in have done. The paragraph about the speaker's prior actions supports the preferred lower circumstance on done. A ranked higher reading on know remains available and a preposed control selects that reading. The full speaker name, gesture and apparent purpose remain outside the quote.",
+      "rank_one_sha256": "a8b4b7ac655a5c4863cf5df5acf04928dc9deeef8df73aa53a85f2d50a1dc518",
+      "selected_graph_sha256": "27add615a03d23b46763806801968b24166f1f1f24db148d381725f626cc7482"
     },
     {
       "index": 574,
@@ -522,10 +522,10 @@
     },
     {
       "index": 575,
-      "verdict": "needs_fix",
-      "evidence": "The purpose of making him speak is not attached to the fox’s act. I knew is an evidential incise and the when-relative belongs to night.",
-      "rank_one_sha256": "20d17b06522101c8bb6e9aab387a56bd496268b5026a2b2b3b320c1410a1874a",
-      "selected_graph_sha256": "c464953ae12ebba2ceae6d82fcd5111d0eafdc61c725230c0322b936de6576f1"
+      "verdict": "verified",
+      "evidence": "Made is the causative with the fox as causer and the object him as agent of say. The comma-delimited I knew takes the causation as its content. The exhibit purpose belongs to the causative, and the when-relative modifies night inside the perfect object relative on light. The selected result no longer reaches the forest limit.",
+      "rank_one_sha256": "879f7929c3505a0d4275e0396111381c41f9660c839462e562c2b66b1b6f5589",
+      "selected_graph_sha256": "c10c1064a3112cb4f2e8eb11fa302afacec5a1aff39da2d40b9c688111b945ef"
     },
     {
       "index": 576,
@@ -641,10 +641,10 @@
     },
     {
       "index": 592,
-      "verdict": "needs_fix",
-      "evidence": "The passive known has an overt subject nothing and an exceptive but, not an NP coordination of Hertfordshire with a free relative.",
-      "rank_one_sha256": "d396f2c0cbba534ab3fc9072c4687366ed843fa2739cd041df85a576224b31ed",
-      "selected_graph_sha256": "8ff0b457368d521732f3dd10b99e45ed2534c7ff6a56892025285e3933a6f254"
+      "verdict": "verified",
+      "evidence": "The full fronted of-phrase sets the domain of the perfect passive had been known and nothing is its subject. Hertfordshire is the place of knowledge. The exceptive free relative supplies what he told, and himself emphasizes he as the sole source in the paragraph. The reflexive-recipient reading remains a lower-ranked alternative.",
+      "rank_one_sha256": "2926202528df8375ab2ebe2e4e485f6f69025c7d0c0ceb05e6e785b3c1f9db26",
+      "selected_graph_sha256": "967f6d887caaa537b23e2897f7649486ea1b74bf632572dcf6c145b727987c92"
     },
     {
       "index": 593,
@@ -669,10 +669,10 @@
     },
     {
       "index": 596,
-      "verdict": "needs_fix",
-      "evidence": "In nursing is an adjunct of the pleasure content; the modal passive with by seeing belongs to the reported continuation, not to the reporter.",
-      "rank_one_sha256": "c9e5d776ed0f19b892df0757fd6b7f840f7a290604e47226755f5fe7dbdcab18",
-      "selected_graph_sha256": "8019d8c6e813f9242c141e7406058f591755d3318e7347a0086129334d84fedc"
+      "verdict": "verified",
+      "evidence": "The activity of nursing is the domain of the addressee's pleasure within the certainty content. The reporting clause links both original quote parts to Bingley. The resumed hope embeds the modal passive increase, and the by-gerund supplies its means with well predicated of her, not a manner of seeing.",
+      "rank_one_sha256": "a816936b20305faa4f4974319b1e2f504eef5c0a361d455461738a84f5e49bbc",
+      "selected_graph_sha256": "5fffc92c8fda7e4c594257fed9ca777b6b8fb6fdbe896c20d47966cbe566b9bf"
     },
     {
       "index": 597,

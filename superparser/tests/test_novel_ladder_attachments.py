@@ -348,10 +348,60 @@ class NovelLadderAttachmentTests(unittest.TestCase):
             [
                 ("RELATIVE", "totality", "action"),
                 ("THEME", "action", "totality"),
+                ("ASPECT", "action", "aspect"),
+                ("CIRCUMSTANCE", "action", "circumstance"),
+                ("AGENT", "report", "speaker"),
+                ("SUPPLEMENT", "report", "gesture"),
                 ("REPORTED_CONTENT", "report", "content"),
                 ("APPARENT_PURPOSE", "gesture", "apparent_purpose"),
             ],
+            attested_spans=[
+                ('aspect', 20, 24, 'have'),
+                ('circumstance', 31, 44, 'in my fatuity'),
+                ('speaker', 52, 65, 'Mr. Wickfield'),
+            ],
         )
+
+    def test_factive_gesture_retains_both_circumstance_attachments(self):
+        trailing = (
+            "‘I don’t know all I have done, in my fatuity,’ said Mr. Wickfield, "
+            "putting out his hands, as if to deprecate my condemnation."
+        )
+        fronted = (
+            "“In my confusion, I don’t remember all I have said,” said Mrs. Brown, "
+            "holding out her arms, as if to prevent my departure."
+        )
+
+        def read(source):
+            case, = extract(PROBE, source, length_min=1, length_max=120)[0]
+            _, lattice, result = parse_corpus_case(
+                self.parser, case, diagnostic_k=64,
+                max_items=50_000, kbest_work_limit=500_000,
+            )
+            self.assertEqual(result.best().rule_id, plans.FACTIVE_GESTURE)
+            return result, ParseReport(result, self.parser._quoted_sentence_resources, lattice)
+
+        def has_scope(package, link_source):
+            return any(
+                e["relation"] == "CIRCUMSTANCE" and e["source"] == package["handles"][link_source]
+                and e["target"] == package["handles"]["circumstance"]
+                for e in package["graph"]["relations"]
+            )
+
+        result, report = read(trailing)
+        best = report.best_semantic_graph()
+        self.assertTrue(has_scope(best, "action"))
+        self.assertFalse(has_scope(best, "content"))
+        self.assertTrue(any(
+            has_scope(report.interpret(candidate).as_dict(), "content")
+            for candidate in result.alternatives(limit=16)
+        ))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+
+        _, report = read(fronted)
+        best = report.best_semantic_graph()
+        self.assertTrue(has_scope(best, "content"))
+        self.assertFalse(has_scope(best, "action"))
 
     def test_novel_574_clock_status(self):
         self.assert_family(
@@ -647,6 +697,127 @@ class NovelLadderAttachmentTests(unittest.TestCase):
         )
 
     # Selected-tree review for the frozen additive cohort.
+    def test_novel_547_embedded_feeling_comparison(self):
+        self.assert_family(
+            review.EMBEDDED_FEELING_COMPARISON,
+            "You may imagine how I felt when I heard this abominable old rogue addressing another in the very same words of flattery as he had used to myself.",
+            "You can imagine how she felt when she saw the familiar old sailor greeting him in the very same terms of affection as he had used to her.",
+            "You can imagine how she felt when she saw the familiar old sailor greeted him in the very same terms of affection as he had used to her.",
+            [
+                ("CONTENT", "imagine", "feeling"),
+                ("TIME", "feeling", "hearing"),
+                ("THEME", "hearing", "perceived"),
+                ("AGENT", "addressing", "perceived"),
+                ("MANNER", "addressing", "wording"),
+                ("COMPARISON", "words", "prior_use"),
+                ("ASPECT", "prior_use", "word_aspect"),
+            ],
+            attested_spans=[
+                ("perceived", 60, 65, "rogue"),
+                ("wording", 85, 144, "in the very same words of flattery as he had used to myself"),
+                ("word_aspect", 126, 129, "had"),
+            ],
+        )
+
+    def test_novel_575_causative_evidential_purpose(self):
+        self.assert_family(
+            review.CAUSATIVE_EVIDENTIAL_PURPOSE,
+            "The red fox made him say all this, I knew, to exhibit him to me in the light he had indicated on the night when he poisoned my rest.",
+            "The old nurse made her read all that, I suspected, to present her to us in the manner she had described on the evening when she calmed her friend.",
+            "The old nurse made her to read all that, I suspected, to present her to us in the manner she had described on the evening when she calmed her friend.",
+            [
+                ("CAUSER", "causation", "causer"),
+                ("CAUSEE", "causation", "causee"),
+                ("AGENT", "saying", "causee"),
+                ("EPISTEMIC_STANCE", "causation", "knowing"),
+                ("PURPOSE", "causation", "exhibition"),
+                ("AGENT", "exhibition", "causer"),
+                ("RELATIVE", "night", "night_action"),
+                ("TIME", "indication", "night"),
+                ("THEME", "indication", "light"),
+                ("ASPECT", "indication", "indicated_aspect"),
+            ],
+            attested_spans=[
+                ("causer", 8, 11, "fox"),
+                ("knowing", 37, 41, "knew"),
+                ("exhibition", 46, 53, "exhibit"),
+                ("night", 101, 106, "night"),
+            ],
+        )
+
+    def test_novel_592_passive_knowledge_exception(self):
+        self.assert_family(
+            review.PASSIVE_KNOWLEDGE_EXCEPTION,
+            "Of his former way of life nothing had been known in Hertfordshire but what he told himself.",
+            "Of her early career nothing had been recorded in London except what she said herself.",
+            "Of her early career nothing had been recorded in London except what she said himself.",
+            [
+                ("THEME", "knowledge", "nothing"),
+                ("ASPECT", "knowledge", "perfect"),
+                ("PASSIVE", "knowledge", "passive"),
+                ("DOMAIN", "knowledge", "domain"),
+                ("LOCATION", "knowledge", "place"),
+                ("EXCEPTION", "knowledge", "what"),
+                ("CONTENT", "telling", "what"),
+                ("EMPHASIS", "teller", "self"),
+            ],
+            attested_spans=[
+                ("domain", 0, 25, "Of his former way of life"),
+                ("passive", 38, 42, "been"),
+                ("place", 52, 65, "Hertfordshire"),
+                ("self", 83, 90, "himself"),
+            ],
+        )
+
+    def test_passive_knowledge_exception_preserves_reflexive_recipient_alternative(self):
+        source = "Of his former way of life nothing had been known in Hertfordshire but what he told himself."
+        case, = extract(PROBE, source, length_min=1, length_max=120)[0]
+        _, lattice, result = parse_corpus_case(
+            self.parser, case, diagnostic_k=64, max_items=50_000, kbest_work_limit=500_000,
+        )
+        self.assertEqual(result.best().rule_id, review.PASSIVE_KNOWLEDGE_EXCEPTION)
+        report = ParseReport(result, self.parser._quoted_sentence_resources, lattice)
+
+        def self_roles(package):
+            target = package["handles"]["self"]
+            return {e["relation"] for e in package["graph"]["relations"] if e["target"] == target}
+
+        self.assertEqual(self_roles(report.best_semantic_graph()), {"EMPHASIS"})
+        self.assertTrue(any(
+            "RECIPIENT" in self_roles(report.interpret(candidate).as_dict())
+            for candidate in result.alternatives(limit=16)
+        ))
+        self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+
+    def test_novel_596_split_reported_pleasure(self):
+        self.assert_family(
+            review.SPLIT_REPORTED_PLEASURE,
+            "“In nursing your sister I am sure you have pleasure,” said Bingley; “and I hope it will be soon increased by seeing her quite well.”",
+            "“In helping your brother I am certain you have satisfaction,” said Edward; “and I hope it will be gradually restored by finding him completely well.”",
+            "“In helping your brother I am certain you have satisfaction,” said Edward; “and I hope it will be gradually restored by find him completely well.”",
+            [
+                ("CONTENT", "sure", "possession"),
+                ("DOMAIN", "pleasure", "nursing"),
+                ("AGENT", "nursing", "pleased"),
+                ("AGENT", "report", "reporter"),
+                ("REPORTED_CONTENT", "report", "being_sure"),
+                ("REPORTED_CONTENT", "report", "hoping"),
+                ("CONTENT", "hoping", "increase"),
+                ("MODALITY", "increase", "modal"),
+                ("PASSIVE", "increase", "passive"),
+                ("MEANS", "increase", "seeing"),
+                ("DEPICTIVE", "seeing", "well"),
+                ("THEME", "well", "patient"),
+                ("COREFERENCE", "it", "pleasure"),
+            ],
+            attested_spans=[
+                ("nursing", 4, 11, "nursing"),
+                ("reporter", 59, 66, "Bingley"),
+                ("hoping", 75, 79, "hope"),
+                ("well", 126, 130, "well"),
+            ],
+        )
+
     def test_review_510_ridden_means(self):
         self.assert_family(
             review.RIDDEN_MEANS,
