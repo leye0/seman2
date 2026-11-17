@@ -1,0 +1,504 @@
+{
+  "schema": "seman2-selected-semantic-defect-ledger-v1",
+  "source_corpus_ids": [
+    "novel-700-current",
+    "novel-800-candidate-current"
+  ],
+  "cases": [
+    {
+      "index": 601,
+      "status": "needs_fix",
+      "selected_tree_sha256": "4cff89d82824f1f03608aa9c5f89c6e7e603d99f786fd30701211d7b7c39c875",
+      "selected_graph_sha256": "a7082d66097cd1c8d8571c1f4b62d356b75240c2cb9ad4e75fe167340eb3461f",
+      "observed_defect": "`not` is a NEGATION node without an incident edge; `answer` has AGENT and MODALITY only",
+      "required_linguistic_correction": "Negation must scope over ability/answering",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 605,
+      "status": "needs_fix",
+      "selected_tree_sha256": "4fc414ec908fca343026394b309e9d8449af89d29e01e80182ea05167d74fe2e",
+      "selected_graph_sha256": "8a2646b6dc277ead04654c527ceda84b698d2cf3107589a787cddd83f72961c2",
+      "observed_defect": "`roughly` is attached to auxiliary `do` rather than lexical `answer`",
+      "required_linguistic_correction": "Degree/manner of answering; interrogative reason attached to question predicate",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 607,
+      "status": "needs_fix",
+      "selected_tree_sha256": "4191e93fac135f9d605a957784c71956cbd129a93f10e5bef390a080f5a052fc",
+      "selected_graph_sha256": "50c5ed01e43eff2bf3902184d5547bb1e493a9072b1d9b2bb1a582782fffda3a",
+      "observed_defect": "`RECIPIENT(took, Elizabeth)` from `the hand of Elizabeth`",
+      "required_linguistic_correction": "Elizabeth belongs to the hand's possessor relation, not recipient of taking",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 608,
+      "status": "needs_fix",
+      "selected_tree_sha256": "2de9feb12302bb80c4c723084cd6b4dab5bfc3ea7f5d8da6424648a10762619a",
+      "selected_graph_sha256": "27884060db62571dc5a8b44e68cf79db12142665bcbb0cc0fdb6545d57f06f2a",
+      "observed_defect": "A complete 60-character selected modal-relative question has **zero graph edges**",
+      "required_linguistic_correction": "Subject of `allude`, modal `Could`, object PP and relative/negative `dared not think`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 610,
+      "status": "needs_fix",
+      "selected_tree_sha256": "3282f144d345eed05db98bad92f2f328c0c3e5b1dafdec3ea99511d974c046e2",
+      "selected_graph_sha256": "3f5c3b5543f7fa50df21f3c459fa54d002215dbc90beed3e997594fa8bb12b6c",
+      "observed_defect": "`In this` is read as ADV and `AGENT(find, house)`",
+      "required_linguistic_correction": "`In this house` is a locative PP; `I` is subject of `chanced` and controller of `find`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 613,
+      "status": "needs_fix",
+      "selected_tree_sha256": "fcbc5da47f4a2514b933258caa6f5d5ff199a3bb131131da7fbcb8f75b34d419",
+      "selected_graph_sha256": "b73f441b26ed393c250d04992e79821572e7a63864cdd94678417854cf387542",
+      "observed_defect": "`to reply` is selected with `reply` as N, not infinitival predicate",
+      "required_linguistic_correction": "`unable` governs a verbal infinitive `to reply`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 620,
+      "status": "needs_fix",
+      "selected_tree_sha256": "3286e19248ae16e59cc9104a35ddaa09ca819343de9489486398779b114e4f0f",
+      "selected_graph_sha256": "07272cd2419b82919bb9ccf94d163e5a07ef8bf7f90b5ad1ecda736cba10040b",
+      "observed_defect": "`in` is selected as PARTICLE in `spent in listless indolence`; `AGENT(spent, days)`",
+      "required_linguistic_correction": "Proper locative/manner PP and passive/reduced-relative relation of days spent",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 626,
+      "status": "needs_fix",
+      "selected_tree_sha256": "1b1ca01dcc6c73dec580655c1308d276e84a1fa835519b75772503bcb900e4fc",
+      "selected_graph_sha256": "7a3c35d366f8619cd0e226532ebabc2b36049cddbd4715f5e79e887ea9a25fb3",
+      "observed_defect": "`No` treated as noun in `\"No, sir\"` with `APPOSITION(No, sir)`",
+      "required_linguistic_correction": "Negative reply, vocative sir, actual speech attribution",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 629,
+      "status": "needs_fix",
+      "selected_tree_sha256": "67736d0f5478c52d37d90ef153b88ded61f84f66a722987d6a627e4d9fa6602a",
+      "selected_graph_sha256": "9ceafb0392999dfd6bf4fa52d321a4b851e79cfc89ff54f86facf15e8dfd570e",
+      "observed_defect": "`AGENT(moved, as)`; `never` selected DEGREE without negation scope",
+      "required_linguistic_correction": "`the doctor` is agent/subject of `moved`; `never so much as` negates/minimizes event",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 631,
+      "status": "needs_fix",
+      "selected_tree_sha256": "fa73a36be76e7fb322dd1b8982a33a1142b5dcfe5947a7ae9e316fdc82d52938",
+      "selected_graph_sha256": "848b3e709c71a8efa8fce3d514f8f0b2c2489cfb1c1679e9da96cf7195c37bfc",
+      "observed_defect": "`That was the ship's mystery` has no selected possessor link ship→mystery",
+      "required_linguistic_correction": "`ship's` attaches as genitive modifier of mystery",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 633,
+      "status": "needs_fix",
+      "selected_tree_sha256": "8f6304a9dc776afb9d50bdc1c62dd71653a386422279aaffc22e00cfd0925a42",
+      "selected_graph_sha256": "2d318ec48279bdea708798c53554fb36098514938469725c49c8a9a5f9eb707a",
+      "observed_defect": "`like` in idiomatic `as like as not` is chosen as transitive V with `AGENT(like, knife)`",
+      "required_linguistic_correction": "Parenthetical epistemic likelihood idiom, not a new lexical liking event",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 635,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9316f471f70872c5a538f985d52808daddd96e0eede60328751bfdc2207351ce",
+      "selected_graph_sha256": "7629a67416b775f14b3483757a02c97c1edb263c5aee1e88fc804eef3d2c26ec",
+      "observed_defect": "`cap'n` is split as `cap` V + `'n` N, producing `AFFECTED(cap, n)`",
+      "required_linguistic_correction": "Original dialectal vocative `cap'n`; no cap-verb event",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 636,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ecdfb2d50286331f68f36a68dd9a2954d9c10c338a675f235ec36c2e9e1754d0",
+      "selected_graph_sha256": "4cd479fca27c01fbbdfef049cea361a4d3b9421cb559d03b5474ab0841d000aa",
+      "observed_defect": "`won't` becomes `won` (V, win) + `'t` negation and `AFFECTED(won,you)`",
+      "required_linguistic_correction": "Contracted will-not tag question, not an event of winning",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 637,
+      "status": "needs_fix",
+      "selected_tree_sha256": "e264368b9d9e382fdcc50e071056cb32441489142e16af7793efbd9e0908e603",
+      "selected_graph_sha256": "aeac0b040ca037de7fdfdb337b8ad2551c9a6b482a73257cc0a164a70f6f9799",
+      "observed_defect": "`Here` becomes N, `AGENT(come, Here)`, `AFFECTED(come,gigs)`",
+      "required_linguistic_correction": "Inverted existential/deictic `Here come the gigs`: `gigs` subject, `Here` locative; sir vocative",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 638,
+      "status": "needs_fix",
+      "selected_tree_sha256": "5f5c2a579f0f577d3a63d62060157a7d88355a5d050484ad4ac4c8e838d99614",
+      "selected_graph_sha256": "adff0f022a9a449d487a8b49c6a70341a7da4c1542110736d3398ba54653a316",
+      "observed_defect": "Reported directive `take that, and stand by` has only reporter AGENT and take-object relation",
+      "required_linguistic_correction": "Both imperative predicates, their coordination, and reporter→content link",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 644,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9a4e4c6b36d95d69368c6688b699c7a8fb244de2b9e9b3756addfdf5f766dd86",
+      "selected_graph_sha256": "ef641422b6935662050de55a7e489e4e331dfcdef50befb76e6f10a8828de1e3",
+      "observed_defect": "`stay` is N and `AGENT(exposed,there)` in `we had to stay--my mother ... exposed`",
+      "required_linguistic_correction": "`stay` infinitive of necessity, absolute exposed supplement with mother patient",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 646,
+      "status": "needs_fix",
+      "selected_tree_sha256": "647ed3f9d853a7b631b98440d41ed24d8f7f8a616e099ac27809707c9bddbe2e",
+      "selected_graph_sha256": "7eeb6f11300aa7a9b13964bab15028c8b07a52f72dfd2b9940c3aae9eb6db480",
+      "observed_defect": "`at` in `at once` becomes N, and `captain's` is interpreted as COPULA",
+      "required_linguistic_correction": "Temporal PP and source genitive `dead captain's body`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 653,
+      "status": "needs_fix",
+      "selected_tree_sha256": "3a989fe325c2b8d32c5e2c7d54b311888268b1f97e10c58f6792d54ace9691e4",
+      "selected_graph_sha256": "be7c41a0f59310845937539bd1f09519ea2e07a7ba5a1220a7dbb7e13873537e",
+      "observed_defect": "`Will you be improved?` has no MODALITY link for `Will`",
+      "required_linguistic_correction": "Interrogative modal scope and passive/stative patient `you`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 659,
+      "status": "needs_fix",
+      "selected_tree_sha256": "3a91f8fe76aceda9335764501f7122994608ef9e5939b2958d9bfca95a992cef",
+      "selected_graph_sha256": "da808c28aeabdb91ddd7a741a21309e0bb1fcc135411cc87c8e612d38dd8e4a3",
+      "observed_defect": "`Oh` has type PERSON and `Master` is verb with `AFFECTED(Master,Copperfield)`",
+      "required_linguistic_correction": "Interjection + honorific vocative `Master Copperfield`, not mastering Copperfield",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 662,
+      "status": "needs_fix",
+      "selected_tree_sha256": "7ec614fd987542e9760ef66c1ad4913ea82180483941b79004a372822179e6d7",
+      "selected_graph_sha256": "ab9ce68d2ab535ba1f033cdcc29e5ada12c02d36f82f68f464b8b7c67303441d",
+      "observed_defect": "`\"A sweet lady, Master Copperfield!\" said Uriah Heep` has only AGENT(said,Uriah)",
+      "required_linguistic_correction": "Reported-content relation, nominal exclamation and vocative",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 673,
+      "status": "needs_fix",
+      "selected_tree_sha256": "2a3c98b4cb44363ce7c8db436fbf8c316bc6ef3909fe0ef02c5676e9053ec214",
+      "selected_graph_sha256": "1aa61313ecdf5b1e581c4fa0f885b9c68a9df7ac122acebd7b0cbc3889d2a696",
+      "observed_defect": "`voice` in `in a low voice` is selected V, governing `REPORTED_CONTENT(voice,Be)`",
+      "required_linguistic_correction": "Reporting predicate is `added`, with manner PP `in a low voice`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 674,
+      "status": "needs_fix",
+      "selected_tree_sha256": "fa84bb4005fed456c24fc594100d610e765312de15c30275775e00f34c817e84",
+      "selected_graph_sha256": "54c582a51bf695f8d997e1053d3ee9077428befc6e7176c327b1e6ad106252d7",
+      "observed_defect": "`read` in `the service was read` becomes N, `I` becomes N",
+      "required_linguistic_correction": "Source passive verbal `read`, remembered location relative, and coordinated motion",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 675,
+      "status": "needs_fix",
+      "selected_tree_sha256": "1554d91680ea1eb4be05caacf8b80b5e2a5921c91b0f584b4619293f9af0842a",
+      "selected_graph_sha256": "4bc7f635b5fa134462c8e35f9884a8eb42c35fbd373ca0e5c0e8be244daa899f",
+      "observed_defect": "`had` from `hadn't` is selected as V with `AGENT(said,had)`",
+      "required_linguistic_correction": "Negative perfect auxiliary inversion and subject `I` of `said`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 680,
+      "status": "needs_fix",
+      "selected_tree_sha256": "3938431064ab421ed984697184b763c62859f238c57c90a2fd2e67b45088cfe2",
+      "selected_graph_sha256": "4c92900986715301f49505af7ebd7e33d93c75568fd79aef74b913737e285bcd",
+      "observed_defect": "`I hope not` gives only AGENT(hope,I) and unlinked `not`",
+      "required_linguistic_correction": "Negative proform / content of hope",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 682,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ec57c9c9bf1ac16e054cd3f0844a958426447d3c3c2a25f7017d6e692416266b",
+      "selected_graph_sha256": "f9589b22121094a68be97914b7d379fcf8ffbbc7ee64f761b13ccad45c14f70b",
+      "observed_defect": "`contrast` in `What a contrast between him and his friend!` is selected V",
+      "required_linguistic_correction": "Nominal exclamation with `contrast` as noun",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 687,
+      "status": "needs_fix",
+      "selected_tree_sha256": "f411226bb8a278c81b73970d6ace83ccf0708167fc485dd63fbe8a9b5c2d8d4e",
+      "selected_graph_sha256": "52a9cfec1a8e93daa6782ef32a93fea5e0ae585296abdb67091426fe038bab04",
+      "observed_defect": "`I` in `that I suppose is...` is N; `ATTRIBUTE(suppose,I)`",
+      "required_linguistic_correction": "Speaker parenthetical `I suppose` with overt subject",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 688,
+      "status": "needs_fix",
+      "selected_tree_sha256": "de5febacb10ff1cd7831e0b41de06b6ff4f07a33dd45fe1bdeaa6e486f29ac3d",
+      "selected_graph_sha256": "52259a74b75e70d584f2221361a240ceaffd21cd597739299a66c07d33a5e3b2",
+      "observed_defect": "`it has been` selects `it` as POSS and `has` as N",
+      "required_linguistic_correction": "Finite perfect of `be`, not a possessive NP",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 692,
+      "status": "needs_fix",
+      "selected_tree_sha256": "3a1e84686fa62ebcce07884bb9509061d7191376019a5f8d2aafbf5ba55ae70e",
+      "selected_graph_sha256": "d168690cfd758f6612bb77d685b01e0529efc81c0ee882a66f5749ddfc38d0a0",
+      "observed_defect": "`does not follow` contains an unlinked negation",
+      "required_linguistic_correction": "Negation scopes over `follow` in second quoted clause",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 696,
+      "status": "needs_fix",
+      "selected_tree_sha256": "d6da894bf50036ca55bed387ca6ff2532fee7344002a9cb47d5ba0eda6d94387",
+      "selected_graph_sha256": "e6b8fa396634ded0195836f4e8d6f619b758b9d1267bf01e6c343d88f214b1f6",
+      "observed_defect": "Existent `There` selected N as AGENT of `is`; negative relative clause not scoped",
+      "required_linguistic_correction": "Existential there + correct negated `can overcome`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 697,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9fa1035548d1e1902dc4a22aeb0f5a01c46324610ad75114257d92ff66f1c859",
+      "selected_graph_sha256": "ac2bfe48d6776284a70a673b7c381c5f09c9c198317564b6ba224c40088366dc",
+      "observed_defect": "`blue coat` contains `blue` N and `coat` V with `AGENT(coat,blue)`",
+      "required_linguistic_correction": "Noun `coat` modified by adjective `blue`, object of `wore`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 701,
+      "status": "needs_fix",
+      "selected_tree_sha256": "995aa4a3166fbae5b625e799554e8920c2d7ef1af622d69c1208030ec906a3e0",
+      "selected_graph_sha256": "c57faff6e415d503baec58aa3775a1f3780fb5e6a18b861832770c2af5f65889",
+      "observed_defect": "In `\"Dear, dear Elizabeth!\"`, first `Dear` is N/PERSON and graph has **zero edges**",
+      "required_linguistic_correction": "Exclamative vocative and repeated address, not a person named Dear",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 703,
+      "status": "needs_fix",
+      "selected_tree_sha256": "d377fbc0154b8c6c219beb4483c2293196f53a2338a92cf3cbccbd51c790920f",
+      "selected_graph_sha256": "6d17fb6b952494ac8bbfd2f7deee50230332e19dd5a52a31f89f2d343dbb9be9",
+      "observed_defect": "`O blessed sleep!` has `O` PROPER-NOUN as `AGENT(blessed,O)`",
+      "required_linguistic_correction": "Apostrophe/exclamation addressed to sleep, not an act by a person `O`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 707,
+      "status": "needs_fix",
+      "selected_tree_sha256": "8440179d4bd8daf8fe82b9c43299dc3d9ced255c84e63de48a8e858daa381514",
+      "selected_graph_sha256": "e6af4e0783501591a174a6a9a3a6b808f551414c9c20e03d13fc9b75216ba1ec",
+      "observed_defect": "`You would not if you saw him`: `not` unlinked",
+      "required_linguistic_correction": "Anaphoric negative modal consequent and subordinate if-condition",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 720,
+      "status": "needs_fix",
+      "selected_tree_sha256": "b2172377e4c5bdc53922ee52328071f91219d54160af7ce0dff31b1eeaf05115",
+      "selected_graph_sha256": "32183aa4bf9c19cbfa6ab8a0c58b7d3fa84bac906cb761bf0228c1a0bbbf84ab",
+      "observed_defect": "`a kind of panic` contains `panic` V with `AGENT(panic,kind of)`",
+      "required_linguistic_correction": "`panic` noun as affective state experienced by `I`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 722,
+      "status": "needs_fix",
+      "selected_tree_sha256": "807102d707fe8341b70a8a1992551a5752c622dc30468a25983ec384b18e7891",
+      "selected_graph_sha256": "39242582da7fc6a12076f18ae401f3c558295b686043c83e7776e46074f4ffba",
+      "observed_defect": "`league` V, `rose` ADJ, and `AFFECTED(stood, Montanvert)`",
+      "required_linguistic_correction": "Montanvert belongs to the main copular statement, `rose` is inverted finite verb with Mont Blanc subject",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 725,
+      "status": "needs_fix",
+      "selected_tree_sha256": "c07570c796ed95f29589946a1327f23dce9ea3261068eab15ee1693e5a485d88",
+      "selected_graph_sha256": "2b0dc4ebf24c333b853d76599cc5427abf1e9e76485467ff82a4e01df492f674",
+      "observed_defect": "Negative `did not prepossess` has no negative-scope edge",
+      "required_linguistic_correction": "`not` negates `prepossess`; `M.` is title, not topical bare noun",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 740,
+      "status": "needs_fix",
+      "selected_tree_sha256": "b13204dc8217b23f4074ac34fb1f4b94602a902de326bc3607d67070c64f115c",
+      "selected_graph_sha256": "b4fe743ecd0665893f287e977b017a47dce6997749b2e55a3cd363901d979703",
+      "observed_defect": "`Oh` is a PERSON node in intercalated dialogue",
+      "required_linguistic_correction": "Overt exclamation/interjection, distinct from a person",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 752,
+      "status": "needs_fix",
+      "selected_tree_sha256": "b23e1b690d476d8622973a024225a3053d0ebf082a09be1fd6ba5a4b2afca3da",
+      "selected_graph_sha256": "a94f0170208c35bc69de2b09f67dcd7cda462596c83b8ce9562421cbc5f54d92",
+      "observed_defect": "`cannot` is N, `others` is V, `AGENT(answer,cannot)`",
+      "required_linguistic_correction": "Negative ability auxiliary and `others` object of `for`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 755,
+      "status": "needs_fix",
+      "selected_tree_sha256": "6adfb9d2cf6cfb6d7a539d582b9285f4255f9bae4d9df0d4ee867fc85707521d",
+      "selected_graph_sha256": "25eaf34d714a1f04a0f7d9dc7e253d8cdbe0bf4d846792c2a439dc4dd69bd805",
+      "observed_defect": "`I knew all now` gives `AFFECTED(knew,now)`",
+      "required_linguistic_correction": "`all` is object/content, `now` is temporal modifier",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 757,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ddcfda821224de386d7769f47f20288394bb0097bb0ea2ae78efab5334fc806e",
+      "selected_graph_sha256": "1ab2b32a3b200334220800ad26cd36997af367e69fa76fb30a04408829fd4ab3",
+      "observed_defect": "`What are you talking about?` gives `ATTRIBUTE(are,you)` and `MODIFIER(you,talking)`",
+      "required_linguistic_correction": "`talking` is the progressive verb of `you`, not a noun phrase modifier",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 759,
+      "status": "needs_fix",
+      "selected_tree_sha256": "9a713fee4ffbd6efa249397abf7c5b29705a68f706df7ca203af653fc616a508",
+      "selected_graph_sha256": "e3acad1c8ae03ed6f57aa40740842f192e7f6c7c1c3aff5cf38784e7e61c20ff",
+      "observed_defect": "`Oh` is PERSON and `will` is lexical V in `I really will`",
+      "required_linguistic_correction": "Interjection + elliptical modal verb, with `you know` parenthetical",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 760,
+      "status": "needs_fix",
+      "selected_tree_sha256": "c0588077a1000dcdf40ebcdb5858aa55b897c9d977c396b12f7283535236ecec",
+      "selected_graph_sha256": "50865cc4311962cfd02ee5a2cea2e433137d72de861d78b9841ed67f07577d17",
+      "observed_defect": "`it must have been` selects `it` POSS, `must` N, `have` N",
+      "required_linguistic_correction": "Copular perfect modal chain, not an NP headed by must",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 762,
+      "status": "needs_fix",
+      "selected_tree_sha256": "f76b9da357a303409ebedb6dcd543d68616b4bc430bbbd46a105c4cea1d931d6",
+      "selected_graph_sha256": "929628b8f7f4cc2ed879f09bf0463f314ba636d722f3b388dcd2495cca8011e5",
+      "observed_defect": "`still` is lexical V, `read` N in `had ceased to read, still looking`",
+      "required_linguistic_correction": "Temporal perfect with infinitive `read` and progressive participial adjunct",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 770,
+      "status": "needs_fix",
+      "selected_tree_sha256": "de50c998eb6f29a0b633ea3fef35f7cc95519e5c37356bd9feb81ffcc5c1fc64",
+      "selected_graph_sha256": "ac7e45199739b6c80e4edee12e9fa54200c8b8254e896c3ae7fba4cf741043c7",
+      "observed_defect": "`Oh dear me` opens with `Oh` N and `me` N; source do-support is read V",
+      "required_linguistic_correction": "Exclamation + yes/no question and reported speech, not nominal `Oh`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 772,
+      "status": "needs_fix",
+      "selected_tree_sha256": "ee0757e3f6aa27d1d5c8ecdb19161952f2e5f540e825d4cec48ad2bbc67a1e37",
+      "selected_graph_sha256": "c8e9662fbf2669f3ef45195405a561e0b740779eff4809f27eb71cd68fb7ce18",
+      "observed_defect": "`Master` is V in the resumed source quotation",
+      "required_linguistic_correction": "Vocative `Master Copperfield`, no verb `master`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 774,
+      "status": "needs_fix",
+      "selected_tree_sha256": "6634f92a5c141b730e11963e16fce6a0a35033f76b5854b93bfd3502cb206f59",
+      "selected_graph_sha256": "860324da138990c3e892b1842159746a4caee43861debb5e17d9d4792df58f5a",
+      "observed_defect": "Monetary `six pounds ten per annum` becomes a V `pounds` with `AFFECTED(pounds,annum)`",
+      "required_linguistic_correction": "Numeric salary rate nominal, not a verbal event",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 775,
+      "status": "needs_fix",
+      "selected_tree_sha256": "df9d831f94e8ddab98f43a48fd3fc1065f56976ca7541693ada41dc73b158a5f",
+      "selected_graph_sha256": "5ffda7bde2eec175c25bcd053fc092372119dc46ab7275b0e8a75cf6d50c84bb",
+      "observed_defect": "`corner` in `in a corner` becomes V with an affected relative `where`",
+      "required_linguistic_correction": "Locative PP and an actual existential `there used to be`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 777,
+      "status": "needs_fix",
+      "selected_tree_sha256": "304ed17109cf473c78c320cd32d8a3a549e6647e81395fe9185fa2c73c9164d9",
+      "selected_graph_sha256": "9df4523f2860dec9e23dadc516d2134eee08d9b2581484913ac670a174275c2f",
+      "observed_defect": "`Yes, almost every day` gives `APPOSITION(Yes,day)`",
+      "required_linguistic_correction": "Affirmative minor speech act with temporal frequency, not noun apposition",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 778,
+      "status": "needs_fix",
+      "selected_tree_sha256": "b51fdf8f82484c6befa1a6ca958f02ead4bcd0959a42e0fb0df932c75dabde0b",
+      "selected_graph_sha256": "0be83d4b90081c3b94ebdaf55daff3efe62dbebfbe33547e7d8342357ee5ef14",
+      "observed_defect": "`Is my father in town?` has only POSSESSOR(father,my)",
+      "required_linguistic_correction": "Copular yes/no question with locative predicate",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 782,
+      "status": "needs_fix",
+      "selected_tree_sha256": "0e39c0eeaf73dfcb1851fa897e3f7da27432bf9a503c1c1bb317269bd2984908",
+      "selected_graph_sha256": "dbf0b012978c5a955c833ab7a05027bd760fe66cade8c043bbc37772d5f4894e",
+      "observed_defect": "`could not be long a secret`: `not` is unlinked",
+      "required_linguistic_correction": "Negative modal scope over `be ... a secret`",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 788,
+      "status": "needs_fix",
+      "selected_tree_sha256": "d30f9502cdfb448a3273554b5dc6baf1899ca1615692c1606df930f1d85f8c41",
+      "selected_graph_sha256": "05618753c3f40aec0469fdf1a07a7649cd828661cf2b32517c6189f6d1343546",
+      "observed_defect": "`herself` is selected DEGREE, `at present` contains `present` V",
+      "required_linguistic_correction": "Reflexive object/complement and temporal `at present` PP",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 792,
+      "status": "needs_fix",
+      "selected_tree_sha256": "634ab6bd6c876f79bcc4f35c7b83fabc8c4806cfa4e3ad62fe2367374c091d8f",
+      "selected_graph_sha256": "8511569a53c226f8fc9ad1326d8fa4da9c85f6419c515e82fa626dc967b29833",
+      "observed_defect": "Quoted `“Oh! Mr. Collins!”` includes `Oh` PERSON; entire graph only has AGENT(began,Bennet), TOPIC(began,In)",
+      "required_linguistic_correction": "Source speech content tied to `began the projected conversation`, not discarded",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 793,
+      "status": "needs_fix",
+      "selected_tree_sha256": "f03bffc8c2baa7d982f15e1e21894367199bdd4c0cf6c4d9b05259c828f61572",
+      "selected_graph_sha256": "7e705890ea41854a713588f7ec9b16741fc07078fb0d3aaf0548dc738584fc28",
+      "observed_defect": "`had not mortified` has unlinked `not` and `had` V plus `mortified` ADJ",
+      "required_linguistic_correction": "Negative past-perfect predicate in the if-clause",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 798,
+      "status": "needs_fix",
+      "selected_tree_sha256": "d00397b6bdf2515d6e633a824991a235f5f6598004bd6d881f2a8325d3aa8715",
+      "selected_graph_sha256": "896ca8d650d4215f826c508c8e1132653ded1e04604c4f4535cf6e73778e5cf3",
+      "observed_defect": "`discourage his coming here so very often` treats `so` as N object; `should not remind` loses negation",
+      "required_linguistic_correction": "Possessive gerund subject, `so very often` degree adverb and negative modal scope",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
+      "index": 800,
+      "status": "needs_fix",
+      "selected_tree_sha256": "de4868002376d124b923611b532dfdfd798fb178c253e02b62241c69fb5a4896",
+      "selected_graph_sha256": "8cf795f2dcd28a5b6a9bc6cd08fdda62279a13053848f1932b0efb1a9ad754d4",
+      "observed_defect": "`offer to introduce` is selected with `offer` N, coordinated with `him`",
+      "required_linguistic_correction": "Verb `offer` coordinated with `entreat`, infinitive `to introduce` as its complement",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    }
+  ]
+}
