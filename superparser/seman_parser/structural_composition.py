@@ -74,7 +74,8 @@ from .scoped_literary_quotes import (
 )
 from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
 from .scoped_novel_800 import (
-    NARRATIVE_PLANS as N800_NARRATIVE, COUNTS as N800_COUNTS,
+    NARRATIVE_PLANS as N800_NARRATIVE, SPOKEN_PLANS as N800_SPOKEN,
+    COUNTS as N800_COUNTS, DOCUMENT_DATELINE,
 )
 from .scoped_novel_700 import (
     NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN,
@@ -194,6 +195,7 @@ _PROOF_CHECKS = frozenset((
     "emphasis_finite_proof",
 ))
 _LADDER_SPOKEN = (
+    *N800_SPOKEN,
     *N700_SPOKEN,
     *SPEECH_PLANS,
     (REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative),
@@ -752,6 +754,7 @@ class QuotedSentenceComposer:
             "CLOSE-QUOTE": set('"”’'),
             "COMMA": {","},
             "SEMICOLON": {";"},
+            "COLON": {":"},
             "QMARK": {"?"},
             "EXCL": {"!"},
             "SPEECH-STOP": set(".!?"),
@@ -853,6 +856,36 @@ class QuotedSentenceComposer:
                     category=category, features=FeatureStructure.build({"topic": "true"}),
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
+                ))
+            elif kind in ("source-attested-ordinal", "source-truncated-year"):
+                if expected_rule != DOCUMENT_DATELINE:
+                    return None
+                pieces = [t for t in original_lattice.tokens
+                          if a <= t.start and t.end <= b]
+                if kind == "source-attested-ordinal":
+                    match = re.fullmatch(r"(?P<day>1[234])th", surface)
+                    if (not match or category != "SOURCE-ORDINAL"
+                            or [p.text for p in pieces] != [match["day"], "th"]
+                            or not any(c.category=="NUM" and c.span==(a,a+2)
+                                       for c in original_lattice.candidates)):
+                        return None
+                    features = {"ordinal": "true", "day": match["day"]}
+                else:
+                    match = re.fullmatch(r"(17|18)--", surface)
+                    if (not match or category != "TRUNCATED-YEAR"
+                            or [p.text for p in pieces] != [match[1], "-", "-"]
+                            or not any(c.category=="NUM" and c.span==(a,a+2)
+                                       for c in original_lattice.candidates)):
+                        return None
+                    features = {"year_incomplete": "true", "century_prefix": match[1]}
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface,
+                    lemma=surface, category=category,
+                    features=FeatureStructure.build(features),
+                    source="source-attested-documentary-notation",score=0,
+                    provenance={"original_source_span":[a,b],
+                        "tokens":[[t.text,t.start,t.end] for t in pieces],
+                        "no_implicit_date_completion":True},
                 ))
             elif kind in ("source-dialectal-honorific", "source-dialectal-do-ye"):
                 # Attested Dickens dialectal spelling is a single lexical
