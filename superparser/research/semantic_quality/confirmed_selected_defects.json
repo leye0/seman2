@@ -177,6 +177,15 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
+      "index": 660,
+      "status": "needs_fix",
+      "selected_tree_sha256": "205c8f196944807ae201b267236c02fdc1c6cc0066f92e46433e2f34b23532db",
+      "selected_graph_sha256": "f9789a0c8209915a535a33485a4ec3fe19af79cb08d239753b4fd3ca3c9a5a13",
+      "observed_defect": "Previously verified N660 omits the NEGATION scope of overt Not I!; the selected graph's Not node has no semantic relation, and adjectival dear is typed PERSON.",
+      "required_linguistic_correction": "Attach the negative minor reply to its discourse semantics, preserve I as its argument and my dear Daisy as adjectival vocative; re-review N660 selected tree and graph.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+    },
+    {
       "index": 662,
       "status": "needs_fix",
       "selected_tree_sha256": "7ec614fd987542e9760ef66c1ad4913ea82180483941b79004a372822179e6d7",
