@@ -50,11 +50,11 @@ jobs:
           PYTHONPATH: superparser
         run: |
           python -m scripts.novel800_exploratory run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/novel800-exploratory
-      - name: Verify exactly all 15 recovered N800 rank-one and graph signatures
+      - name: Verify final three recoveries, preserving all 97 previously complete signatures
         env:
           PYTHONPATH: superparser
         run: |
-          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 702 704 705 708 713 718 721 730 732 735 749 763 791 795 797
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new 763 791 797
       - name: Replay and compare protected Novel-600 and Novel-700
         env:
           PYTHONPATH: superparser
