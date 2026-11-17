@@ -73,6 +73,12 @@ from .scoped_literary_quotes import (
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
 from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
+from .scoped_novel_800 import (
+    NARRATIVE_PLANS as N800_NARRATIVE, SPOKEN_PLANS as N800_SPOKEN,
+    COUNTS as N800_COUNTS, DOCUMENT_DATELINE,
+    EQUATIVE_FAVOURITE, SPLIT_POLITE_REQUEST, SPLIT_CAUSAL_CONDITIONAL,
+    plan_equative_favourite, plan_split_polite_request, plan_split_causal_conditional,
+)
 from .scoped_novel_700 import (
     NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN,
     COUNTS as N700_COUNTS,
@@ -191,6 +197,7 @@ _PROOF_CHECKS = frozenset((
     "emphasis_finite_proof",
 ))
 _LADDER_SPOKEN = (
+    *N800_SPOKEN,
     *N700_SPOKEN,
     *SPEECH_PLANS,
     (REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative),
@@ -223,6 +230,7 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    *N800_NARRATIVE,
     *N700_NARRATIVE,
     *NARRATIVE_PLANS,
     (FRONTED_PRECIPITATION, plan_fronted_precipitation),
@@ -292,6 +300,7 @@ _SCOPED_UNSATURATED = frozenset((
     *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    **N800_COUNTS,
     **N700_COUNTS,
     **CLAUSE_COUNTS,
     FRONTED_PRECIPITATION: 1,
@@ -747,6 +756,7 @@ class QuotedSentenceComposer:
             "CLOSE-QUOTE": set('"”’'),
             "COMMA": {","},
             "SEMICOLON": {";"},
+            "COLON": {":"},
             "QMARK": {"?"},
             "EXCL": {"!"},
             "SPEECH-STOP": set(".!?"),
@@ -848,6 +858,63 @@ class QuotedSentenceComposer:
                     category=category, features=FeatureStructure.build({"topic": "true"}),
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "source-possessive-ellipsis":
+                # Keep Jane's, without silently inserting a husband noun.
+                # The overt comparison antecedent is in this same quotation.
+                if expected_rule != EQUATIVE_FAVOURITE or category != "POSSESSIVE-ELLIPSIS":
+                    return None
+                m = re.fullmatch(r"([A-Z][a-z]+)'s", surface)
+                tokens = [t for t in original_lattice.tokens
+                          if a <= t.start and t.end <= b]
+                if (m is None or len(tokens) != 1 or tokens[0].text != surface
+                        or not re.search(r"your\s+husband\s+quite\s+as\s+well\s+as\s*$",
+                                         text[:a], re.I)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a,span_end=b,surface=surface,
+                    lemma=m[1],category=category,
+                    features=FeatureStructure.build({
+                        "source_genitive":"true",
+                        "elliptical_nominal":"true",
+                        "anaphoric_antecedent":"husband",
+                    }),
+                    source="attested-comparative-possessive-ellipsis",score=0,
+                    provenance={
+                        "original_source_span":[a,b],
+                        "original_source_tokens":[[tokens[0].text,tokens[0].start,tokens[0].end]],
+                        "inserted_nominal":False,
+                    },
+                ))
+            elif kind in ("source-attested-ordinal", "source-truncated-year"):
+                if expected_rule != DOCUMENT_DATELINE:
+                    return None
+                pieces = [t for t in original_lattice.tokens
+                          if a <= t.start and t.end <= b]
+                if kind == "source-attested-ordinal":
+                    match = re.fullmatch(r"(?P<day>1[234])th", surface)
+                    if (not match or category != "SOURCE-ORDINAL"
+                            or [p.text for p in pieces] != [match["day"], "th"]
+                            or not any(c.category=="NUM" and c.span==(a,a+2)
+                                       for c in original_lattice.candidates)):
+                        return None
+                    features = {"ordinal": "true", "day": match["day"]}
+                else:
+                    match = re.fullmatch(r"(17|18)--", surface)
+                    if (not match or category != "TRUNCATED-YEAR"
+                            or [p.text for p in pieces] != [match[1], "-", "-"]
+                            or not any(c.category=="NUM" and c.span==(a,a+2)
+                                       for c in original_lattice.candidates)):
+                        return None
+                    features = {"year_incomplete": "true", "century_prefix": match[1]}
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface,
+                    lemma=surface, category=category,
+                    features=FeatureStructure.build(features),
+                    source="source-attested-documentary-notation",score=0,
+                    provenance={"original_source_span":[a,b],
+                        "tokens":[[t.text,t.start,t.end] for t in pieces],
+                        "no_implicit_date_completion":True},
                 ))
             elif kind in ("source-dialectal-honorific", "source-dialectal-do-ye"):
                 # Attested Dickens dialectal spelling is a single lexical
@@ -3769,6 +3836,9 @@ class QuotedSentenceComposer:
             (plan_n660_gerund_question, N660_GERUND_QUESTION),
             (plan_n661_dialectal, N661_DIALECTAL),
             (plan_n691_intercalated, N691_INTERCALATED),
+            (plan_split_polite_request, SPLIT_POLITE_REQUEST),
+            (plan_split_causal_conditional, SPLIT_CAUSAL_CONDITIONAL),
+            (plan_equative_favourite, EQUATIVE_FAVOURITE),
             (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),

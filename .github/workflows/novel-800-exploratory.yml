@@ -1,0 +1,104 @@
+name: Novel-800 final pinned 100/100 + protected 500/600/700
+on:
+  push:
+    branches: [research/novel-ladder-800-exploration]
+    paths:
+      - '.github/workflows/novel-800-exploratory.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: novel800-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source-freeze-and-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare WordNet 3.0
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from zipfile import ZipFile
+          import os
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',headers={'User-Agent':'Seman2-research'}),timeout=90) as response:
+              raw=response.read()
+          dst=Path(os.environ['RUNNER_TEMP'])/'wordnet3'/'dict'
+          dst.mkdir(parents=True,exist_ok=True)
+          keep={'lexnames','index.sense','frames.vrb','sentidx.vrb','sents.vrb','cntlist.rev'}
+          for part in ('noun','verb','adj','adv'):
+              keep.update((f'index.{part}',f'data.{part}',f'{part}.exc'))
+          with ZipFile(BytesIO(raw)) as archive:
+              for entry in archive.namelist():
+                  leaf=Path(entry).name
+                  if entry.startswith('wordnet/') and leaf in keep:
+                      (dst/leaf).write_bytes(archive.read(entry))
+          PY
+      - name: Verify source-first N800 trees and existing ladder guards
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m unittest -q superparser.tests.test_novel800_residual superparser.tests.test_novel_ladder superparser.tests.test_structural_preanalysis
+      - name: Reparse the pinned exact-source N701-N800 candidate
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.novel800_exploratory run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/novel800-exploratory
+      - name: Verify final three recoveries, preserving all 97 previously complete signatures
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.check_novel800_progress --out-dir /tmp/novel800-exploratory --expected-new
+      - name: Replay and compare protected Novel-600 and Novel-700
+        env:
+          PYTHONPATH: superparser
+        run: |
+          python -m scripts.novel_ladder run --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out-dir /tmp/novel800-protected
+          python -m scripts.novel_ladder check --out-dir /tmp/novel800-protected
+          python - <<'PY'
+          from pathlib import Path
+          from scripts import novel_ladder as ladder
+          out=Path('/tmp/novel800-protected')
+          for n in (600,700):
+              expected=ladder.read_json(ladder.LADDER / f'novel-{n}-{ "accepted" if n==600 else "current" }.json')
+              observed=ladder.read_json(out / f'novel-{n}-result.json')
+              if expected != observed:
+                  raise AssertionError(f'Novel-{n} selected tree or graph signatures changed')
+              print(f'N800_PROTECTED_PREFIX Novel-{n}: 100/100 identical')
+          PY
+      - name: Confirm legacy Novel-500 selected fingerprints unchanged
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m scripts.diagnose_novel_parses --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --count 500 --max-items 50000 --kbest-work-limit 500000 --deadline-seconds 10 --out-dir /tmp/novel800-legacy
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.novel_ladder import compare_legacy,read_json,LADDER
+          compare_legacy(Path('/tmp/novel800-legacy/per_sentence.jsonl'),
+              read_json(LADDER/'novel-500-protected.json')['rank_one_run_sha256'])
+          print('N800_LEGACY_500_SELECTED_SIGNATURES_IDENTICAL',flush=True)
+          PY
+      - name: Verify direct syntax and real-dialogue regression suite
+        env:
+          PYTHONPATH: superparser
+        run: |
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m scripts.smoke_layer1
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m scripts.validate_direct_grammar --wordnet-dir "$RUNNER_TEMP/wordnet3/dict" --out /tmp/novel800-direct-quality.json
+          python -m scripts.audit_anchored_dialogue_30 --diagnostics /tmp/novel800-legacy/per_sentence.jsonl --summary /tmp/novel800-legacy/summary.json --out /tmp/novel800-anchored-dialogue.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: novel800-exploratory-initial
+          path: |
+            superparser/research/novel_800_exploration/novel-800-candidate-cohort.json
+            /tmp/novel800-exploratory/
+            /tmp/novel800-protected/novel-600-result.json
+            /tmp/novel800-protected/novel-700-result.json
+          retention-days: 14
+          if-no-files-found: warn

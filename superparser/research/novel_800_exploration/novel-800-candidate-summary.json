@@ -1,0 +1,252 @@
+{
+  "cohort_sha256": "73e1e51a152d3d60cbf94b0b11d4a607ed6f605648bdeb7652714d857581cfaf",
+  "accepted": false,
+  "grammar_validated": false,
+  "source_count": 100,
+  "counts": {
+    "complete": 85,
+    "forest_budget_exceeded": 1,
+    "no_structural_root": 4,
+    "roots_without_valid_analysis": 10
+  },
+  "by_book": {
+    "84": {
+      "complete": 18,
+      "roots_without_valid_analysis": 4,
+      "no_structural_root": 3
+    },
+    "120": {
+      "complete": 21,
+      "roots_without_valid_analysis": 3,
+      "forest_budget_exceeded": 1
+    },
+    "766": {
+      "complete": 24,
+      "roots_without_valid_analysis": 1
+    },
+    "1342": {
+      "complete": 22,
+      "no_structural_root": 1,
+      "roots_without_valid_analysis": 2
+    }
+  },
+  "by_band": {
+    "04-08": {
+      "complete": 21,
+      "roots_without_valid_analysis": 3,
+      "no_structural_root": 1
+    },
+    "09-16": {
+      "no_structural_root": 2,
+      "complete": 21,
+      "roots_without_valid_analysis": 2
+    },
+    "17-24": {
+      "complete": 22,
+      "roots_without_valid_analysis": 2,
+      "no_structural_root": 1
+    },
+    "25-32": {
+      "complete": 21,
+      "roots_without_valid_analysis": 3,
+      "forest_budget_exceeded": 1
+    }
+  },
+  "incomplete": [
+    {
+      "index": 702,
+      "source_text": "From thence we proceeded to Oxford.",
+      "book_id": 84,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 7.97,
+      "source_span": [
+        288966,
+        289001
+      ]
+    },
+    {
+      "index": 704,
+      "source_text": "Had my eyes deceived me?",
+      "book_id": 84,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 11.45,
+      "source_span": [
+        141043,
+        141067
+      ]
+    },
+    {
+      "index": 705,
+      "source_text": "This professor was very unlike his colleague.",
+      "book_id": 84,
+      "status": "no_structural_root",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 9.23,
+      "source_span": [
+        63740,
+        63785
+      ]
+    },
+    {
+      "index": 708,
+      "source_text": "\"Your affectionate and afflicted father, \"Alphonse Frankenstein.",
+      "book_id": 84,
+      "status": "no_structural_root",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 13.47,
+      "source_span": [
+        115522,
+        115586
+      ]
+    },
+    {
+      "index": 713,
+      "source_text": "\"Geneva, May 12th, 17--.\"",
+      "book_id": 84,
+      "status": "no_structural_root",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 7.11,
+      "source_span": [
+        115588,
+        115613
+      ]
+    },
+    {
+      "index": 718,
+      "source_text": "\"To go instantly to Geneva: come with me, Henry, to order the horses.\"",
+      "book_id": 84,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 95.74,
+      "source_span": [
+        116315,
+        116385
+      ]
+    },
+    {
+      "index": 721,
+      "source_text": "The most violent storm hung exactly north of the town, over the part of the lake which lies between the promontory of Belrive and the village of Copet.",
+      "book_id": 84,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 225.69,
+      "source_span": [
+        120988,
+        121139
+      ]
+    },
+    {
+      "index": 730,
+      "source_text": "So with the second.",
+      "book_id": 120,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 5.9,
+      "source_span": [
+        334697,
+        334716
+      ]
+    },
+    {
+      "index": 732,
+      "source_text": "\"I thought perhaps Dr. Livesey--\" I began.",
+      "book_id": 120,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 25.39,
+      "source_span": [
+        54195,
+        54237
+      ]
+    },
+    {
+      "index": 735,
+      "source_text": "In the meantime I had a better chance, as I supposed, before me.",
+      "book_id": 120,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 82.31,
+      "source_span": [
+        232305,
+        232369
+      ]
+    },
+    {
+      "index": 749,
+      "source_text": "Had there been a breath of wind, we should have fallen on the six mutineers who were left aboard with us, slipped our cable, and away to sea.",
+      "book_id": 120,
+      "status": "forest_budget_exceeded",
+      "forest_budget_exceeded": true,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 367.26,
+      "source_span": [
+        155945,
+        156086
+      ]
+    },
+    {
+      "index": 763,
+      "source_text": "‘I beg, sir,’ he returned respectfully, ‘that you will be seated, and allow me to do this.’",
+      "book_id": 766,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 160.18,
+      "source_span": [
+        909551,
+        909642
+      ]
+    },
+    {
+      "index": 791,
+      "source_text": "“Wickham, perhaps, is my favourite; but I think I shall like your husband quite as well as Jane's.”",
+      "book_id": 1342,
+      "status": "no_structural_root",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 304.28,
+      "source_span": [
+        666924,
+        667023
+      ]
+    },
+    {
+      "index": 795,
+      "source_text": "Vain indeed must be all her attentions, vain and useless her affection for his sister and her praise of himself, if he were already self-destined for another.",
+      "book_id": 1342,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 175.15,
+      "source_span": [
+        141895,
+        142053
+      ]
+    },
+    {
+      "index": 797,
+      "source_text": "“Thank you,” said Lydia, “for if you did, I should certainly tell you all, and then Wickham would be angry.”",
+      "book_id": 1342,
+      "status": "roots_without_valid_analysis",
+      "forest_budget_exceeded": false,
+      "kbest_budget_exceeded": false,
+      "wall_ms": 298.17,
+      "source_span": [
+        558878,
+        558986
+      ]
+    }
+  ]
+}
