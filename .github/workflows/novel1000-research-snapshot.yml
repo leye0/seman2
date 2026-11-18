@@ -1,0 +1,37 @@
+name: Novel1000 reproducible offline research snapshot
+on:
+  push:
+    branches: [research/novel-ladder-1000-exploration]
+    paths:
+      - '.github/workflows/novel1000-research-snapshot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Obtain pinned WordNet resources
+        run: |
+          python - <<'PY'
+          from urllib.request import Request,urlopen
+          from pathlib import Path
+          with urlopen(Request('https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',headers={'User-Agent':'Seman2-research'}),timeout=90) as f:
+              Path('wordnet.zip').write_bytes(f.read())
+          PY
+      - name: Package reproducible source and pinned lexicon
+        run: |
+          tar -czf seman2-snapshot.tar.gz superparser docs AGENTS.md pyproject.toml requirements-canonical.txt
+          ls -lh seman2-snapshot.tar.gz wordnet.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: novel1000-local-research-snapshot
+          path: |
+            seman2-snapshot.tar.gz
+            wordnet.zip
+          retention-days: 3
