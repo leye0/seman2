@@ -27,7 +27,7 @@ class SemanticReviewCandidates(unittest.TestCase):
             raise RuntimeError("WordNet 3.0 is required")
         cls.parser=Parser(ParserResources.from_dir(ROOT/"data",wordnet_dict=wordnet),
                           cache_size=0,max_items=50000)
-        sources=ladder.load_sources()
+        sources=ladder.load_pinned_fixture_sources()
         cohort=ladder.read_json(ladder.LADDER/"novel-700-cohort.json")
         cls.cases={r["ladder_index"]:r for r in ladder.resolve(cohort,601,sources)}
         candidate=ladder.read_json(ROOT/"research/novel_800_exploration/novel-800-candidate-cohort.json")

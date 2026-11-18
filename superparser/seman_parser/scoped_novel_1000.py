@@ -1039,6 +1039,55 @@ PLANS = (
      ),
      'documentary'),
 
+    ('structural_fronted_direction_with_finite_motion',
+     re.compile(
+         '(?P<direction>Away|Off|Home) +(?P<subject>we|they|he|she|I|you) +'
+         '(?P<motion>went|ran|rode|walked|hurried)(?P<end>\\.)'
+
+     ),
+     (
+         L('direction', 'ADV'),
+         P('subject', 'NP'),
+         L('motion', 'V', vform='finite'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('dialogue_negative_copular_stance_vocative_tag_with_reporter_adjunct',
+     re.compile(
+         "(?P<open>‘)(?P<subject>You) +(?P<negative_be>an[’']t|aren[’']t|ain[’']t) +"
+         '(?P<state>cross|angry|ready|tired|upset)(?P<comma1>,) +(?P<thinker>I) +'
+         '(?P<stance>suppose|imagine|think)(?P<comma2>,) +(?P<addressee>[A-Z][a-z]+)(?P<comma3>,) +'
+         '(?P<tag>are) +(?P<tag_you>you)(?P<question>\\?)(?P<close>’) +(?P<report>said|asked|inquired) +'
+         '(?P<speaker>I|he|she)(?P<comma4>,) +(?P<after>after) +(?P<position>sitting|standing|waiting) +'
+         '(?P<depictive>quiet|silent|still) +(?P<duration>for +[^,;.!?]{2,30})(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         P('subject', 'NP'),
+         ('negative_be', 'COPULA', "scoped-lexical", {'vform': 'finite', 'negation': 'true'}),
+         L('state', 'ADJ'),
+         M('comma1', 'COMMA'),
+         P('thinker', 'NP'),
+         L('stance', 'V', vform='finite'),
+         M('comma2', 'COMMA'),
+         P('addressee', 'NP', proof_rule='np_proper'),
+         M('comma3', 'COMMA'),
+         L('tag', 'COPULA', vform='finite'),
+         P('tag_you', 'NP'),
+         M('question', 'QMARK'),
+         M('close', 'CLOSE-QUOTE'),
+         L('report', 'V', vform='finite'),
+         P('speaker', 'NP'),
+         M('comma4', 'COMMA'),
+         L('after', 'PREP'),
+         L('position', 'V', vform='ing'),
+         L('depictive', 'ADJ'),
+         P('duration', 'PP', proof_rule='pp_prep_np'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+
 )
 
 

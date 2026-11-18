@@ -6,7 +6,7 @@ from pathlib import Path
 
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from research.verbnet_lr.gutenberg_novels import Book, extract
-from scripts.novel_ladder import LADDER, load_sources, read_ladder
+from scripts.novel_ladder import LADDER, load_pinned_fixture_sources, read_ladder
 from seman_parser.engine import ParseReport, Parser, ParserResources
 
 WORDNET = Path(__import__('os').environ.get('WORDNET_DICT', ''))
@@ -68,7 +68,7 @@ class Novel700StructuralAttachmentTests(unittest.TestCase):
             raise RuntimeError('WORDNET_DICT must identify WordNet 3.0 dictionary')
         cls.parser = Parser(ParserResources.from_dir(ROOT/'data', wordnet_dict=WORDNET), cache_size=0)
         cls.parser.parse('John opened the box.')
-        cohorts, _, _ = read_ladder(LADDER, load_sources())
+        cohorts, _, _ = read_ladder(LADDER, load_pinned_fixture_sources())
         cls.cases = {c['ladder_index']: c for _, rows in cohorts for c in rows}
 
     def parse(self, case):

@@ -285,12 +285,15 @@ class Novel1000GrammarRepairs(unittest.TestCase):
         cls.parser = Parser(ParserResources.from_dir(ROOT / "data", wordnet_dict=wordnet),
                             cache_size=0, max_items=ladder.MAX_ITEMS)
         cls.parser.parse("John opened the box.")
-        sources = ladder.load_sources()
+        sources = ladder.load_pinned_fixture_sources()
         cls.sources = {}
         for end in novel.ENDS:
-            manifest = ladder.read_json(novel.candidate_path(end, "cohort"))
-            cls.sources.update({c["ladder_index"]: c
-                                for c in ladder.resolve(manifest, end - 99, sources)})
+            first = end - 99
+            indexes = {control[0] for control in CONTROLS if first <= control[0] <= end}
+            if indexes:
+                manifest = ladder.read_json(novel.candidate_path(end, "cohort"))
+                cls.sources.update({c["ladder_index"]: c for c in
+                                    ladder.resolve_pinned_fixtures(manifest, first, sources, indexes)})
         handler = signal.signal(signal.SIGALRM, _deadline)
         cls.addClassCleanup(signal.signal, signal.SIGALRM, handler)
 

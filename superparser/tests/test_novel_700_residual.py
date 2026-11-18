@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from research.verbnet_lr.gutenberg_novels import Book,extract
-from scripts.novel_ladder import LADDER,load_sources,read_ladder
+from scripts.novel_ladder import LADDER,load_pinned_fixture_sources,read_ladder
 from seman_parser.engine import Parser,ParserResources,ParseReport
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -18,7 +18,7 @@ class Novel700ResidualTests(unittest.TestCase):
     def setUpClass(cls):
         if not WORDNET.is_dir(): raise RuntimeError('WordNet 3.0 required')
         cls.parser=Parser(ParserResources.from_dir(ROOT/'data',wordnet_dict=WORDNET),cache_size=0)
-        cohorts,_,_=read_ladder(LADDER,load_sources())
+        cohorts,_,_=read_ladder(LADDER,load_pinned_fixture_sources())
         cls.cases={c['ladder_index']:c for _,rows in cohorts for c in rows}
     def parse(self,source):
         if isinstance(source,int):c=self.cases[source]
