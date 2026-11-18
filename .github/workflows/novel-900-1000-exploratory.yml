@@ -1,0 +1,123 @@
+name: Novel-900 / Novel-1000 frozen-source replay
+
+on:
+  push:
+    branches: [research/novel-ladder-1000-exploration]
+    paths:
+      - '.github/workflows/novel-900-1000-exploratory.yml'
+      - 'superparser/scripts/novel1000_exploratory.py'
+      - 'superparser/tests/test_novel1000*.py'
+      - 'superparser/seman_parser/**'
+      - 'superparser/data/**'
+      - 'superparser/research/novel_1000_exploration/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: novel1000-exploratory-baseline
+  cancel-in-progress: true
+
+jobs:
+  baseline:
+    name: N801-N1000 candidate and protected predecessors
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      PYTHONPATH: superparser
+      WORDNET_DICT: /tmp/seman2-wordnet3/dict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download WordNet 3.0 (same lexical resource)
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          with urlopen(Request(
+              'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+              headers={'User-Agent': 'Seman2-research'}
+          ), timeout=90) as f:
+              raw = f.read()
+          target = Path('/tmp/seman2-wordnet3/dict')
+          target.mkdir(parents=True, exist_ok=True)
+          keep = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb',
+                  'sents.vrb', 'cntlist.rev'}
+          for category in ('noun', 'verb', 'adj', 'adv'):
+              keep.update((f'index.{category}', f'data.{category}',
+                           f'{category}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf = Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (target / leaf).write_bytes(z.read(item))
+          PY
+      - name: Check source selection, invariance and production ladder guards
+        run: |
+          python -m unittest -q \
+            superparser.tests.test_novel1000_exploratory \
+            superparser.tests.test_novel1000_grammar_repairs \
+            superparser.tests.test_novel_ladder
+          python -m scripts.novel1000_exploratory stage
+      - name: Replay and check frozen Novel-600 and Novel-700
+        run: |
+          python -m scripts.novel_ladder run \
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-prefix
+          python -m scripts.novel_ladder check --out-dir /tmp/novel1000-prefix
+      - name: Replay Novel-800 and verify every prior semantic review
+        run: |
+          python -m scripts.novel800_exploratory run \
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-prefix800
+          python -m scripts.audit_ladder_semantic_quality \
+            --novel700 /tmp/novel1000-prefix/novel-700-parses.jsonl \
+            --novel800 /tmp/novel1000-prefix800/novel-800-candidate-parses.jsonl \
+            --out /tmp/novel1000-semantic-prefix --gate
+      - name: Replay N801-N1000 and compare source, limits, trees and graphs
+        run: |
+          python -m scripts.novel1000_exploratory run \
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-candidate
+          python -m scripts.novel1000_exploratory check --out-dir /tmp/novel1000-candidate
+      - name: Preserve Novel-500 selected analyses and 30 anchored dialogues
+        run: |
+          python -m scripts.diagnose_novel_parses \
+            --wordnet-dir "$WORDNET_DICT" --count 500 \
+            --max-items 50000 --kbest-work-limit 500000 \
+            --deadline-seconds 10 --out-dir /tmp/novel1000-legacy
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.novel_ladder import compare_legacy, read_json, LADDER
+          compare_legacy(
+              Path('/tmp/novel1000-legacy/per_sentence.jsonl'),
+              read_json(LADDER / 'novel-500-protected.json')['rank_one_run_sha256']
+          )
+          print('NOVEL_500_SELECTED_SIGNATURES_UNCHANGED', flush=True)
+          PY
+          python -m scripts.audit_anchored_dialogue_30 \
+            --diagnostics /tmp/novel1000-legacy/per_sentence.jsonl \
+            --summary /tmp/novel1000-legacy/summary.json \
+            --out /tmp/novel1000-anchored-dialogue.json
+      - name: Direct grammar and negative-control regressions
+        run: |
+          python -m scripts.smoke_layer1
+          python -m scripts.validate_direct_grammar \
+            --wordnet-dir "$WORDNET_DICT" --out /tmp/novel1000-direct-quality.json
+      - name: Archive all new and protected results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: novel900-1000-frozen-source-replay
+          path: |
+            superparser/research/novel_1000_exploration/
+            /tmp/novel1000-candidate/
+            /tmp/novel1000-semantic-prefix/
+            /tmp/novel1000-direct-quality.json
+            /tmp/novel1000-anchored-dialogue.json
+          retention-days: 30
+          if-no-files-found: warn

@@ -131,6 +131,12 @@ def _source_line_breaks(unit: PreanalyzedSentence, original: str) -> tuple[Struc
     return tuple(spans)
 
 
+_NARRATOR_RESUMPTION_DATE = re.compile(
+    r"^(?:January|February|March|April|May|June|July|August|September|October|November|December)"
+    r"\s+[0-9]{1,2}(?:st|nd|rd|th)?,\s+(?:[0-9]{4}|[0-9]{2}--)(?=\s|[.]|$)"
+)
+
+
 def analysis_units(
     core: str, *, balance_sentence_quotes: bool = False,
 ):
@@ -186,6 +192,26 @@ def analysis_units(
                 ),
             )
             exact = source[enriched.core_start:enriched.core_end]
+            # Metadata only. Keep the original unit, offsets, ordinal and
+            # sampling eligibility. Two documentary functions require actual
+            # adjacent source evidence, not a guess from the short unit alone.
+            marker = None
+            postscript = r"(?i)^P\.(?:P\.)?S\.\s*(?:--|—)"
+            following = parts[i + 2].strip() if i + 2 < len(parts) else ""
+            if (re.fullmatch(r"[A-Z]\. +[A-Z]\.", unit.text)
+                    and unit.source_end == len(joined) and unit.source_start > 0
+                    and (re.match(postscript, joined)
+                         or re.match(postscript, following) and following.endswith(unit.text))):
+                marker = ("postscript_signature_candidate", "postscript_terminal_initials")
+            elif (unit.source_start == 0 and unit.source_end == len(joined)
+                    and re.fullmatch(r"[A-Z][a-z]+, +in +continuation\.", joined)
+                    and i + 2 < len(parts)
+                    and _NARRATOR_RESUMPTION_DATE.match(parts[i + 2].strip())):
+                marker = ("dated_narrator_resumption_candidate", "heading_before_attested_dateline")
+            if marker:
+                enriched = replace(enriched, constituents=(*enriched.constituents,
+                    StructuralConstituent("doc-attested", marker[0], 0, len(unit.text),
+                                          "u0", "documentary_attestation", marker[1])))
             line_breaks = _source_line_breaks(enriched, exact)
             if line_breaks:
                 enriched = replace(enriched, constituents=(*enriched.constituents, *line_breaks))
