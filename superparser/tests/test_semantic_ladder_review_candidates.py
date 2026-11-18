@@ -6,6 +6,7 @@ near-miss, a correct selected rule and overt semantic relations must all pass.
 """
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 import unittest
@@ -539,6 +540,89 @@ class SemanticReviewCandidates(unittest.TestCase):
                 for absent in filter(None, forbidden.split(";")):
                     self.assertFalse(any(edge == absent or edge.startswith(absent + "|")
                                          for edge in actual), (bad, absent, actual))
+
+    def test_batch_four_selected_attachment_domains(self):
+        controls = json.loads((ROOT / "tests/data/semantic_batch4_controls.json").read_text())
+
+        def desc(node):
+            return node["surface"] or f'<{node["type"]}>'
+
+        def walk(node):
+            yield node
+            for child in node.children:
+                yield from walk(child)
+
+        def triples(values):
+            return {tuple(value.split("|", 2)) for value in values}
+
+        for record in controls:
+            index = record["index"]
+            for source, key in ((index, "source"), (record["positive"], "positive_edges"),
+                                (record["negative"], None)):
+                with self.subTest(index=index, contrast=key or "negative"):
+                    text, tree, _, edges = self.selected(source)
+                    if key is None:
+                        self.assertFalse(tree and tree.rule_id == record["root"],
+                                         "Contrasting syntax selected the source family")
+                        continue
+                    self.assertIsNotNone(tree)
+                    self.assertEqual(tree.rule_id, record["root"])
+                    self.assertEqual((tree.start, tree.end), (0, len(text)))
+                    have = {(rel, desc(a), desc(b)) for rel, a, b in edges}
+                    self.assertFalse(triples(record[key]) - have, triples(record[key]) - have)
+                    if key == "source":
+                        leaves = {(leaf.category, text[leaf.start:leaf.end]) for leaf in walk(tree)
+                                  if leaf.lexical_candidate is not None}
+                        self.assertFalse({tuple(x.split("|", 1)) for x in record["leaves"]} - leaves)
+                        self.assertFalse(triples(record["blocked"]) & have)
+                    self.assertFalse(any(a["id"] == b["id"] for _, a, b in edges))
+
+    def test_batch_four_shared_and_distinct_source_bindings(self):
+        for index, relation, first, second in (
+            (636, "NEGATION", "wo", "n't"),
+            (711, "ASPECT", "lost", "have"),
+            (667, "COMPARISON_STANDARD", None, "of yore"),
+        ):
+            with self.subTest(index=index):
+                text, tree, _, edges = self.selected(index)
+                self.assertIsNotNone(tree)
+                linked = [(a, b) for rel, a, b in edges
+                          if rel == relation and (first is None or a["surface"] == first)
+                          and b["surface"] == second]
+                if index == 636:
+                    (modal, negator), = linked
+                    self.assertEqual(modal["span"][1], negator["span"][0])
+                    self.assertEqual(text[modal["span"][0]:negator["span"][1]], "won't")
+                elif index == 711:
+                    self.assertEqual(len(linked), 2)
+                    (left_verb, left_aux), (right_verb, right_aux) = linked
+                    semicolon = text.index(";")
+                    self.assertLess(left_aux["span"][1], left_verb["span"][0])
+                    self.assertLess(left_verb["span"][1], semicolon)
+                    self.assertLess(semicolon, right_aux["span"][0])
+                    self.assertLess(right_aux["span"][1], right_verb["span"][0])
+                else:
+                    self.assertEqual({a["surface"] for a, _ in linked}, {"confused", "genteel"})
+                    self.assertEqual(len({b["id"] for _, b in linked}), 1)
+
+        for index, source, expected_type in ((714, "diligences", "PASSENGER_VEHICLE"),
+                                              (743, "Benbow", "VENUE"),
+                                              (796, "intelligence", "INFORMATION")):
+            with self.subTest(index=index):
+                _, _, nodes, _ = self.selected(index)
+                (target,) = [n for n in nodes.values() if n["surface"] == source]
+                self.assertEqual(target["type"], expected_type)
+
+        for index, contrast in (
+            (614, "The storm subsided; but the wind still blew, and the valley were shrouded in a dense mist."),
+            (711, "We has lost our dreams of peace and fame; they had abandoned their plan."),
+            (757, "‘What are he talking about, Clara?’ said Miss Murdstone."),
+        ):
+            with self.subTest(index=index):
+                _, root, _, _ = self.selected(index)
+                _, rejected, _, _ = self.selected(contrast)
+                self.assertTrue(root)
+                self.assertFalse(rejected and rejected.rule_id == root.rule_id)
 
     def test_n663_reported_copular_content_and_vocative(self):
         positive="‘I hope Mrs. Micawber and your family are well, sir,’ said his aunt."
