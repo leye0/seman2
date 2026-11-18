@@ -1,0 +1,85 @@
+name: Novel source reporting revision v3
+
+on:
+  push:
+    branches: [research/novel1000-reporting-v3]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: novel1000-reporting-v3
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    name: Reproduce v3 source boundaries and check all 1,000 parses
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PYTHONPATH: superparser
+      WORDNET_DICT: /tmp/seman2-wordnet3/dict
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download WordNet 3.0 (same lexical resource)
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          with urlopen(Request(
+              'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+              headers={'User-Agent': 'Seman2-research'}
+          ), timeout=90) as f:
+              raw = f.read()
+          target = Path('/tmp/seman2-wordnet3/dict')
+          target.mkdir(parents=True, exist_ok=True)
+          keep = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb',
+                  'sents.vrb', 'cntlist.rev'}
+          for category in ('noun', 'verb', 'adj', 'adv'):
+              keep.update((f'index.{category}', f'data.{category}',
+                           f'{category}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf = Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (target / leaf).write_bytes(z.read(item))
+          PY
+      - name: Source boundaries and rank-one grammar and graph contrasts
+        run: |
+          python -m unittest -q \
+            superparser.tests.test_novel_reporting_v3 \
+            superparser.tests.test_curly_quote_source_v2 \
+            superparser.tests.test_quote_v2_replacement_grammar \
+            superparser.tests.test_novel1000_grammar_repairs \
+            superparser.tests.test_semantic_ladder_review_candidates \
+            superparser.tests.test_novel_700_attachments \
+            superparser.tests.test_novel_700_residual \
+            superparser.tests.test_novel800_residual \
+            superparser.tests.test_novel_ladder
+      - name: Replay all v3 pins and compare the previously passing source anchors
+        run: |
+          python -m scripts.novel_source_reporting_v3 replay --group all \
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel-reporting-v3
+          python -m scripts.novel_source_reporting_v3 check --out-dir /tmp/novel-reporting-v3
+      - name: Direct grammar regression gates
+        run: |
+          python -m scripts.smoke_layer1
+          python -m scripts.validate_direct_grammar --wordnet-dir "$WORDNET_DICT" \
+            --out /tmp/novel-reporting-v3/direct-grammar.json
+      - name: Publish measured v3 source and graph diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: novel-reporting-v3-replay
+          path: |
+            /tmp/novel-reporting-v3/
+            superparser/research/novel_source_reporting_v3/
+          retention-days: 14
+          if-no-files-found: warn

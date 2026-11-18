@@ -1088,6 +1088,347 @@ PLANS = (
      ),
      'quoted'),
 
+
+    ('dialogue_copular_question_with_reporting_participial_supplement',
+     re.compile(
+         '(?P<open>[‘“"])(?P<copula>Am|Are|Is|Was|Were) +(?P<subject>I|you|he|she|we|they) +'
+         '(?P<state>grown|ready|tired|late|wrong|early|all right|safe)(?P<question>\\?)(?P<close>[’”"]) +'
+         '(?P<speaker>I|you|he|she|we|they) +'
+         '(?P<report>said|asked|replied|answered|cried|exclaimed|whispered|added|returned|remarked)'
+         '(?P<comma1>,) +(?P<gerund>[a-z]+ing) +(?P<object>[^,;.!?‘’“”]{2,55}?)(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         L('copula', 'COPULA', vform='finite'),
+         P('subject', 'NP'),
+         L('state', 'ADJ'),
+         M('question', 'QMARK'),
+         M('close', 'CLOSE-QUOTE'),
+         P('speaker', 'NP'),
+         L('report', 'V', vform='finite'),
+         M('comma1', 'COMMA'),
+         L('gerund', 'V', vform='ing'),
+         P('object', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_echo_response_with_manner_pp',
+     re.compile(
+         '(?P<open>[‘“"])(?P<answer>No|Yes)(?P<question>\\?)(?P<close>[’”"]) +(?P<with>with) +'
+         '(?P<manner>[^,;.!?‘’“”]{2,55}?)(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         ('answer', 'INTERJECTION', "scoped-lexical", {'response_particle': 'true'}),
+         M('question', 'QMARK'),
+         M('close', 'CLOSE-QUOTE'),
+         L('with', 'PREP'),
+         P('manner', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_response_particle_with_emphasis_and_report',
+     re.compile(
+         '(?P<open>[‘“"])(?P<answer>No|Yes)(?P<comma1>,) +(?P<emphasis>indeed|certainly|absolutely)'
+         '(?P<comma2>,)(?P<close>[’”"]) +'
+         '(?P<report>said|asked|replied|answered|cried|exclaimed|whispered|added|returned|remarked) +'
+         '(?P<speaker>I|you|he|she|we|they|[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1})(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         ('answer', 'INTERJECTION', "scoped-lexical", {'response_particle': 'true'}),
+         M('comma1', 'COMMA'),
+         L('emphasis', 'ADV'),
+         M('comma2', 'COMMA'),
+         M('close', 'CLOSE-QUOTE'),
+         L('report', 'V', vform='finite'),
+         P('speaker', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_interjection_with_postposed_reporter_supplement',
+     re.compile(
+         '(?P<open>[‘“"])(?P<interjection>Dear me|Oh dear|Good heavens|Goodness me)(?P<excl>!)'
+         '(?P<close>[’”"]) +(?P<speaker>I|you|he|she|we|they|[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}) +'
+         '(?P<report>said|asked|replied|answered|cried|exclaimed|whispered|added|returned|remarked)'
+         '(?P<comma1>,) +(?P<gerund>considering|hesitating|smiling|sighing|frowning|laughing)(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         ('interjection', 'INTERJECTION', "scoped-lexical", {'expressive_interjection': 'true'}),
+         M('excl', 'EXCL'),
+         M('close', 'CLOSE-QUOTE'),
+         P('speaker', 'NP'),
+         L('report', 'V', vform='finite'),
+         M('comma1', 'COMMA'),
+         L('gerund', 'V', vform='ing'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_formulaic_assent_with_report',
+     re.compile(
+         '(?P<open>[‘“"])(?P<answer>Of course|By all means|Certainly|To be sure)(?P<comma1>,)'
+         '(?P<close>[’”"]) +'
+         '(?P<report>said|asked|replied|answered|cried|exclaimed|whispered|added|returned|remarked) +'
+         '(?P<speaker>(?:the|The) +[A-Z]?[a-z]+|I|you|he|she|we|they|[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1})'
+         '(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         ('answer', 'INTERJECTION', "scoped-lexical", {'assent_formula': 'true'}),
+         M('comma1', 'COMMA'),
+         M('close', 'CLOSE-QUOTE'),
+         L('report', 'V', vform='finite'),
+         P('speaker', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_intercalated_subject_control_with_addressee_pp',
+     re.compile(
+         '(?P<open>[‘“"])(?P<subject>[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}|I|you|he|she|we|they) +'
+         '(?P<wants>wants|wished|hopes|hoped|plans|planned|decides|decided|intends|intended)(?P<comma1>,)'
+         '(?P<close>[’”"]) +(?P<speaker>I|you|he|she|we|they) +'
+         '(?P<report>said|asked|replied|answered|cried|exclaimed|whispered|added|returned|remarked) +'
+         '(?P<to_addressee>to) +(?P<addressee>[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}|I|you|he|she|we|they)'
+         '(?P<comma2>,) +(?P<open2>[‘“"])(?P<to>to) +(?P<motion>go|walk|travel|return|run|move|sail) +'
+         '(?P<toward>to|toward|towards|into) +(?P<goal>[^,;.!?‘’“”]{2,55}?)(?P<end>\\.)(?P<close2>[’”"])'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         P('subject', 'NP'),
+         L('wants', 'V', vform='finite'),
+         M('comma1', 'COMMA'),
+         M('close', 'CLOSE-QUOTE'),
+         P('speaker', 'NP'),
+         L('report', 'V', vform='finite'),
+         L('to_addressee', 'PREP'),
+         P('addressee', 'NP'),
+         M('comma2', 'COMMA'),
+         M('open2', 'OPEN-QUOTE'),
+         L('to', 'TO'),
+         L('motion', 'V', vform='base'),
+         L('toward', 'PREP'),
+         P('goal', 'NP'),
+         M('end', 'SPEECH-STOP'),
+         M('close2', 'CLOSE-QUOTE'),
+     ),
+     'quoted'),
+    ('structural_copular_origin_with_semicolon_nominal_apposition',
+     re.compile(
+         '(?P<subject>It|This|That) +(?P<copula>was|is) +(?P<from>from) +(?P<origin>[^,;.!?‘’“”]{2,55}?)'
+         '(?P<semi>;) +(?P<theme>something|anything|nothing|a note|a letter|another letter) +'
+         '(?P<degree>less|more) +'
+         '(?P<property>legible|readable|detailed|formal|friendly|explicit|coherent|clear) +(?P<than>than) +'
+         '(?P<standard>usual|normal|expected)(?P<comma1>,) +(?P<and>and) +'
+         '(?P<quality>brief|short|terse|concise|abrupt|hurried)(?P<end>\\.)'
+
+     ),
+     (
+         P('subject', 'NP'),
+         L('copula', 'COPULA', vform='finite'),
+         L('from', 'PREP'),
+         P('origin', 'NP'),
+         M('semi', 'SEMICOLON'),
+         P('theme', 'NP'),
+         L('degree', 'DEGREE'),
+         L('property', 'ADJ'),
+         L('than', 'PREP'),
+         L('standard', 'ADJ'),
+         M('comma1', 'COMMA'),
+         L('and', 'COORD'),
+         L('quality', 'ADJ'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_attempt_with_coordinated_infinitives_and_result',
+     re.compile(
+         '(?P<subject>I|you|he|she|we|they|[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}) +'
+         '(?P<tried>tried|attempted|endeavoured|endeavored)(?P<comma1>,) +(?P<on>on|at) +'
+         '(?P<request>[^,;.!?‘’“”]{2,55}?)(?P<comma2>,) +(?P<to>to) +'
+         '(?P<action>fix|open|read|find|mend|finish|get|change|save) +(?P<object>[^,;.!?‘’“”]{2,55}?)'
+         '(?P<comma3>,) +(?P<and>and) +(?P<to2>to) +(?P<perception>hear|see|learn|discover|find) +'
+         '(?P<content>something|anything|nothing) +(?P<of>of) +(?P<what>what) +(?P<was>was|is) +'
+         '(?P<progress>going|happening|taking|passing) +(?P<particle>on|place|by) +'
+         '(?P<place>there|here|outside|upstairs)(?P<comma4>,) +(?P<but>but) +'
+         '(?P<quite>quite|entirely|altogether) +(?P<result>in vain)(?P<end>\\.)'
+
+     ),
+     (
+         P('subject', 'NP'),
+         L('tried', 'V', vform='finite'),
+         M('comma1', 'COMMA'),
+         L('on', 'PREP'),
+         P('request', 'NP'),
+         M('comma2', 'COMMA'),
+         L('to', 'TO'),
+         L('action', 'V', vform='base'),
+         P('object', 'NP'),
+         M('comma3', 'COMMA'),
+         L('and', 'COORD'),
+         L('to2', 'TO'),
+         L('perception', 'V', vform='base'),
+         P('content', 'NP'),
+         L('of', 'PREP'),
+         L('what', 'WH-NOM'),
+         L('was', 'COPULA', vform='finite'),
+         L('progress', 'V', vform='ing'),
+         L('particle', 'PARTICLE'),
+         L('place', 'ADV'),
+         M('comma4', 'COMMA'),
+         L('but', 'COORD'),
+         L('quite', 'ADV'),
+         L('result', 'ADV'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_participial_incise_with_interrogative_purpose',
+     re.compile(
+         '(?P<subject>(?:Mr\\.|Mrs\\.|Dr\\.|Ms\\.) +[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}|[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}|I|you|he|she|we|they)'
+         '(?P<comma1>,) +(?P<activity>tapping|knocking|calling|looking|peering|listening) +'
+         '(?P<at>at|on|through|by) +(?P<site>[^,;.!?‘’“”]{2,55}?) +(?P<again>again|twice|once) +(?P<to>to) +'
+         '(?P<know>know|see|learn|check|discover) +(?P<if>if|whether) +(?P<who>[^,;.!?‘’“”]{2,55}?) +'
+         '(?P<were>was|were|is|are) +(?P<ready>ready|prepared|finished|present|awake|asleep|safe)'
+         '(?P<comma2>,) +(?P<broke>broke|brought|cut|summed) +(?P<up>up|off) +(?P<item>[^,;.!?‘’“”]{2,55}?)'
+         '(?P<end>\\.)'
+
+     ),
+     (
+         P('subject', 'NP'),
+         M('comma1', 'COMMA'),
+         L('activity', 'V', vform='ing'),
+         L('at', 'PREP'),
+         P('site', 'NP'),
+         L('again', 'ADV'),
+         L('to', 'TO'),
+         L('know', 'V', vform='base'),
+         L('if', 'CONJ'),
+         P('who', 'NP'),
+         L('were', 'COPULA', vform='finite'),
+         L('ready', 'ADJ'),
+         M('comma2', 'COMMA'),
+         L('broke', 'V', vform='finite'),
+         L('up', 'PARTICLE'),
+         P('item', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('dialogue_optative_with_resumed_vocative_and_two_gesture_supplements',
+     re.compile(
+         '(?P<open>[‘“"])(?P<wish_subject>All good|Good fortune|Every blessing|All joy) +'
+         '(?P<wish>attend|follow|bless|protect) +(?P<target>you)(?P<comma1>,) +'
+         '(?P<vocative>(?:dear|good|kind) +(old +)?(?:woman|man|friend|sister|brother))(?P<comma2>,)'
+         '(?P<close>[’”"]) +(?P<speaker>he|she|I|we|they) +'
+         '(?P<report>said|asked|replied|answered|cried|exclaimed|whispered|added|returned|remarked)'
+         '(?P<comma3>,) +(?P<gesture>embracing|hugging|holding|patting) +'
+         '(?P<recipient>[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1})(?P<comma4>,) +(?P<open2>[‘“"])(?P<and>and) +'
+         "(?P<other>you) +(?P<too>too|also)(?P<comma5>,) +(?P<title>Mas[’']r|Master|Mister|Miss) +"
+         '(?P<addressee>[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1})(?P<excl>!)(?P<close2>[’”"]) +'
+         '(?P<shaking>shaking|clasping|joining) +(?P<hands>hands) +(?P<with>with) +'
+         '(?P<partner>me|him|her|us|them)(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         P('wish_subject', 'NP'),
+         L('wish', 'V', vform='base'),
+         P('target', 'NP'),
+         M('comma1', 'COMMA'),
+         P('vocative', 'NP'),
+         M('comma2', 'COMMA'),
+         M('close', 'CLOSE-QUOTE'),
+         P('speaker', 'NP'),
+         L('report', 'V', vform='finite'),
+         M('comma3', 'COMMA'),
+         L('gesture', 'V', vform='ing'),
+         P('recipient', 'NP'),
+         M('comma4', 'COMMA'),
+         M('open2', 'OPEN-QUOTE'),
+         L('and', 'COORD'),
+         P('other', 'NP'),
+         L('too', 'ADV'),
+         M('comma5', 'COMMA'),
+         ('title', 'TITLE', "scoped-lexical", {}),
+         P('addressee', 'NP'),
+         M('excl', 'EXCL'),
+         M('close2', 'CLOSE-QUOTE'),
+         L('shaking', 'V', vform='ing'),
+         P('hands', 'NP'),
+         L('with', 'PREP'),
+         P('partner', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('structural_shared_agent_particle_predicate_with_passive_temporal_condition',
+     re.compile(
+         '(?P<onset>At length|At last|In the end)(?P<comma1>,) +'
+         '(?P<subject>[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1}|I|you|he|she|we|they) +'
+         '(?P<habit>regularly|usually|often|always) +'
+         '(?P<first_action>muffled|wrapped|bundled|covered|dressed|packed) +(?P<patient>him|her|them|it) +'
+         '(?P<in>in|with) +(?P<cover>[^,;.!?‘’“”]{2,55}?) +(?P<and>and) +'
+         '(?P<second_action>shut|locked|kept|closed) +(?P<patient2>him|her|them|it) +(?P<up>up|in) +'
+         '(?P<location>there|here|upstairs|inside)(?P<comma2>,) +(?P<whenever>when|whenever) +'
+         '(?P<theme>[^,;.!?‘’“”]{2,55}?) +(?P<was>was|were|is|are) +'
+         '(?P<reported>reported|announced|spotted|observed) +(?P<at_gate>at|near|by) +'
+         '(?P<door>[^,;.!?‘’“”]{2,55}?)(?P<end>\\.)'
+
+     ),
+     (
+         L('onset', 'ADV'),
+         M('comma1', 'COMMA'),
+         P('subject', 'NP'),
+         L('habit', 'ADV'),
+         L('first_action', 'V', vform='finite'),
+         P('patient', 'NP'),
+         L('in', 'PREP'),
+         P('cover', 'NP'),
+         L('and', 'COORD'),
+         L('second_action', 'V', vform='finite'),
+         P('patient2', 'NP'),
+         L('up', 'PARTICLE'),
+         L('location', 'ADV'),
+         M('comma2', 'COMMA'),
+         ('whenever', 'CONJ', "scoped-lexical", {'temporal_subordinator': 'true'}),
+         P('theme', 'NP'),
+         L('was', 'AUX-BE', vform='finite'),
+         L('reported', 'V', vform='ed'),
+         L('at_gate', 'PREP'),
+         P('door', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+
+    ('dialogue_nominal_recognition_question_with_reporting_gesture',
+     re.compile(
+         '(?P<open>[‘“"])(?P<identity>(?:(?:Mr\\.|Mrs\\.|Ms\\.|Dr\\.) +)?[A-Z][a-z]+(?: +[A-Z][a-z]+){0,1})'
+         '(?P<comma1>,) +(?P<vocative>sir|madam)(?P<question>\\?)(?P<close>[’”"]) +'
+         '(?P<speaker>I|you|he|she|we|they) +(?P<report>asked|said|inquired|replied)(?P<comma2>,) +'
+         '(?P<gesture>holding|stretching|reaching) +(?P<particle>out|forward) +(?P<object>[^,;.!?]{2,32})'
+         '(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         P('identity', 'NP'),
+         M('comma1', 'COMMA'),
+         L('vocative', 'TITLE'),
+         M('question', 'QMARK'),
+         M('close', 'CLOSE-QUOTE'),
+         P('speaker', 'NP'),
+         L('report', 'V', vform='finite'),
+         M('comma2', 'COMMA'),
+         L('gesture', 'V', vform='ing'),
+         L('particle', 'PARTICLE'),
+         P('object', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+
 )
 
 
