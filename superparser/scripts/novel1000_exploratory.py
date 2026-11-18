@@ -20,6 +20,9 @@ CANDIDATE_DIR = ROOT / "research" / "novel_1000_exploration"
 PREVIOUS_800_DIR = ROOT / "research" / "novel_800_exploration"
 ENDS = (900, 1000)
 SCHEMA = ladder.SCHEMA
+ITEM_LIMIT_STATUSES = frozenset({
+    "forest_budget_exceeded", "kbest_budget_exceeded", "both_budgets_exceeded",
+})
 
 
 def candidate_path(end: int, suffix: str) -> Path:
@@ -127,7 +130,14 @@ def compare_candidate(end, manifest, reference, observed, initial):
     before = ladder.result_cases(reference, manifest, end)
     after = ladder.result_cases(observed, manifest, end)
     baseline = ladder.result_cases(initial, manifest, end)
-    failures = list(ladder.compare_rows(before, after))
+    # A frozen time-limited failure may reach a deterministic item guard
+    # before its wall-clock deadline on a faster runner. It remains open.
+    # Never apply this equivalence to a completed or conclusive parse.
+    alternate_stop = {i for i, row in before.items()
+                      if row["status"] == baseline[i]["status"] == "timeout"
+                      and after[i]["status"] in ITEM_LIMIT_STATUSES}
+    failures = [(i, reason) for i, reason in ladder.compare_rows(before, after)
+                if i not in alternate_stop]
     failures += [(i, "selected graph changed") for i in before
                  if before[i]["status"] == after[i]["status"] == "complete"
                  and before[i]["selected_graph_sha256"] != after[i]["selected_graph_sha256"]]
@@ -137,17 +147,23 @@ def compare_candidate(end, manifest, reference, observed, initial):
     failures += [(i, "new timeout") for i in before
                  if before[i]["status"] != "timeout" and after[i]["status"] == "timeout"]
     failures += [(i, "current reference differs from replay")
-                 for i in before if after[i] != before[i]]
+                 for i in before if after[i] != before[i] and i not in alternate_stop]
     if failures:
         raise ValueError(f"Novel-{end} replay differs: {failures}")
+    return sorted((i, after[i]["status"]) for i in alternate_stop)
 
 
 def check(out_dir: Path):
     for end in ENDS:
         manifest = ladder.read_json(candidate_path(end, "cohort"))
         observed = ladder.read_json(out_dir / f"novel-{end}-candidate-result.json")
-        compare_candidate(end, manifest, ladder.read_json(candidate_path(end, "current")),
-                          observed, ladder.read_json(candidate_path(end, "initial")))
+        alternate = compare_candidate(
+            end, manifest, ladder.read_json(candidate_path(end, "current")),
+            observed, ladder.read_json(candidate_path(end, "initial")),
+        )
+        for index, status in alternate:
+            print(f"N{index} remains incomplete: timeout pin, replay stopped at {status}.",
+                  flush=True)
         print(f"Novel-{end}: source, limits and selected result signatures match.", flush=True)
 
 

@@ -33,3 +33,12 @@ N952 remains a provenance defect documented in batch 1. The current unit
 does not represent the complete source speech. Its boundary should not
 be repaired by inserting synthetic punctuation or changing this cohort's
 immutable identity during a grammar-only replay.
+
+## Replay on runners of different speeds
+
+N820 was already incomplete at the initial and current local deadlines.
+The hosted runner can hit the k-best item guard before hitting the same
+deadline. Both outcomes leave the case unresolved with no selected tree
+or graph. The replay comparison reports both raw outcomes and accepts the
+alternate stop only for cases already pinned as timeouts in both references.
+No complete signature is exempted and no grammar or resource budget is changed.

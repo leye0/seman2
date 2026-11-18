@@ -94,6 +94,22 @@ class Novel1000ExploratoryTests(unittest.TestCase):
             novel1000.compare_candidate(900, manifest, current, result(tampered), before)
         self.assertEqual(before["counts"], {"complete": 99, "no_structural_root": 1})
 
+        # Only cases already pinned as timeouts in both references may hit
+        # a deterministic item stop instead, without being counted complete.
+        times_out = [dict(r) for r in rows]
+        times_out[-1]["status"] = "timeout"
+        reaches_guard = [dict(r) for r in rows]
+        reaches_guard[-1].update(status="kbest_budget_exceeded", kbest_budget_exceeded=True)
+        limited = result(reaches_guard)
+        self.assertEqual(novel1000.compare_candidate(
+            900, manifest, result(times_out), limited, result(times_out),
+        ), [(900, "kbest_budget_exceeded")])
+        with self.assertRaisesRegex(ValueError, "new kbest_budget_exceeded"):
+            novel1000.compare_candidate(900, manifest, before, limited, before)
+        with self.assertRaisesRegex(ValueError, "lost complete parse"):
+            novel1000.compare_candidate(900, manifest, current, limited, before)
+
+
     def test_manifest_source_identity_cannot_be_faked_by_a_new_cohort_sha(self):
         sources = fake_sources()
         paragraphs, texts = set(), set()
