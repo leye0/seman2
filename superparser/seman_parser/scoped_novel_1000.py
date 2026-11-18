@@ -335,6 +335,171 @@ PLANS = (
      ),
      'quoted'),
 
+    ('dialogue_surprise_question_with_negative_partitive',
+     re.compile(
+         '(?P<open>“)(?P<what>What)(?P<comma>,) +(?P<none>none) +(?P<of>of) +'
+         '(?P<set>you|them|us|the +[a-z-]+)(?P<question>\\?)(?P<close>”)'
+     ),
+     (
+         M("open", "OPEN-QUOTE"),
+         L("what", "WH-NOM"),
+         M("comma", "COMMA"),
+         ("none", "PRONOUN", "scoped-lexical", {}),
+         L("of", "PREP"),
+         P("set", "NP"),
+         M("question", "QMARK"),
+         M("close", "CLOSE-QUOTE")
+     ),
+     'quoted'),
+    ('dialogue_assertion_and_fronted_negative_modal_after_dismissal',
+     re.compile(
+         '(?P<open>")(?P<begone>Begone|Away)(?P<excl>!) +(?P<matrix>I +do +[^;!?"]{3,42})'
+         '(?P<semi>;) +(?P<never>never) +(?P<will>will|shall|would) +'
+         '(?P<subject>I|you|she|he|we|they) +(?P<create>create|make|find|see) +'
+         '(?P<another>another) +(?P<like>like) +'
+         '(?P<comparison>yourself|himself|herself|him|her|you)(?P<comma>,) +'
+         '(?P<equal>equal|similar|comparable) +(?P<domain>in +[^,;.!?"]{2,42})(?P<stop>\\.)'
+         '(?P<close>")'
+     ),
+     (
+         M("open", "OPEN-QUOTE"),
+         ("begone", "INTERJECTION", "scoped-lexical", {}),
+         M("excl", "EXCL"),
+         P("matrix", "CLAUSE", finite_statement_proof='true'),
+         M("semi", "SEMICOLON"),
+         L("never", "DEGREE"),
+         L("will", "MODAL", vform='finite'),
+         P("subject", "NP"),
+         L("create", "V", vform='base'),
+         ("another", "PRONOUN", "scoped-lexical", {}),
+         L("like", "PREP"), ("comparison", "PRONOUN", "scoped-lexical", {}),
+         M("comma", "COMMA"),
+         L("equal", "ADJ"),
+         P("domain", "PP"),
+         M("stop", "SPEECH-STOP"),
+         M("close", "CLOSE-QUOTE")
+     ),
+     'quoted'),
+    ('dialogue_perfect_location_duration_and_followup_question',
+     re.compile(
+         '(?P<open>“)(?P<sister>(?:My|Our|Your|His|Her) +(?:[a-z-]+ +)?[a-z-]+) +'
+         '(?P<has>has|have) +(?P<been>been) +(?P<town>in +[^,;.!?“”]{2,30}?) +'
+         '(?P<months>these +(?:two|three|four|five|six|seven|eight|nine) +(?:days|weeks|months|years))'
+         '(?P<stop>\\.) +(?P<have>Have|Has) +(?P<you>you|he|she|they|we) +(?P<never>never) +'
+         '(?P<happened>happened|managed) +(?P<to>to) +(?P<see>see|meet|find) +'
+         '(?P<her>her|him|them|us) +(?P<there>there|here)(?P<question>\\?)(?P<close>”)'
+     ),
+     (
+         M("open", "OPEN-QUOTE"),
+         P("sister", "NP", proof_rule='np_poss'),
+         L("has", "HAVE", vform='finite'),
+         L("been", "COPULA", vform='ed'),
+         P("town", "PP", proof_rule='pp_prep_np'),
+         P("months", "NP", proof_rule='np_det_n'),
+         M("stop", "SPEECH-STOP"),
+         L("have", "HAVE", vform='finite'),
+         P("you", "NP"),
+         L("never", "DEGREE"),
+         L("happened", "V", vform='ed'),
+         L("to", "TO"),
+         L("see", "V", vform='base'),
+         P("her", "NP"),
+         L("there", "ADV"),
+         M("question", "QMARK"),
+         M("close", "CLOSE-QUOTE")
+     ),
+     'quoted'),
+
+    ('dialogue_conditional_copular_ellipsis_and_temporal_comparison',
+     re.compile(
+         '(?P<open>“)(?P<subject>I|We|You) +(?P<should>should|would|could) +(?P<be>be) +'
+         '(?P<feeling>[a-z-]+) +(?P<indeed>indeed)(?P<comma>,) +(?P<if>if) +(?P<it>it|that) +'
+         '(?P<were>were)(?P<stop1>\\.) +(?P<friends_subject>We|You|They) +(?P<past>were) +'
+         '(?P<always>always) +(?P<quality>good|close|dear) +(?P<friends>[a-z-]+)(?P<semi>;) +'
+         '(?P<and>and|but) +(?P<now>now) +(?P<current_subject>we|you|they) +(?P<are>are) +'
+         '(?P<better>better)(?P<stop2>\\.)(?P<close>”)'
+     ),
+     (
+         M("open", "OPEN-QUOTE"),
+         P("subject", "NP"),
+         L("should", "MODAL", vform='finite'),
+         L("be", "COPULA", vform='base'),
+         L("feeling", "ADJ"),
+         L("indeed", "ADV"),
+         M("comma", "COMMA"),
+         L("if", "CONJ"),
+         P("it", "NP"),
+         L("were", "COPULA", vform='finite'),
+         M("stop1", "SPEECH-STOP"),
+         P("friends_subject", "NP"),
+         L("past", "COPULA", vform='finite'),
+         L("always", "ADV"),
+         L("quality", "ADJ"), L("friends", "N", number="plural"),
+         M("semi", "SEMICOLON"),
+         L("and", "COORD"),
+         L("now", "ADV"),
+         P("current_subject", "NP"),
+         L("are", "COPULA", vform='finite'),
+         L("better", "ADJ"),
+         M("stop2", "SPEECH-STOP"),
+         M("close", "CLOSE-QUOTE")
+     ),
+     'quoted'),
+    ('structural_continuative_particle_and_negative_gerund_supplement',
+     re.compile(
+         '(?P<then>Then|Later) +(?P<subject>I|we|you|he|she|they) +(?P<went>went) +(?P<on>on) +'
+         '(?P<manner>softly|calmly|quietly|steadily) +(?P<playing>[a-z-]+ing)(?P<comma>,) +'
+         '(?P<but>but) +(?P<without>without) +(?P<removing>[a-z-]+ing) +(?P<theme>[^,;.!?]{2,24}) +'
+         '(?P<from>from +[^,;.!?]{2,25})(?P<stop>\\.)'
+     ),
+     (
+         L("then", "ADV"),
+         P("subject", "NP"),
+         L("went", "V", vform='finite'),
+         L("on", "PARTICLE"),
+         L("manner", "ADV"),
+         L("playing", "V", vform='ing'),
+         M("comma", "COMMA"),
+         L("but", "COORD"),
+         L("without", "PREP"),
+         L("removing", "V", vform='ing'),
+         P("theme", "NP"),
+         P("from", "PP", proof_rule='pp_prep_np'),
+         M("stop", "SPEECH-STOP")
+     ),
+     'finite'),
+
+    ('structural_temporal_locative_antecedent_and_future_departure',
+     re.compile(
+         '(?P<when>When) +(?P<earlier>[^,;.!?]{4,45})(?P<comma1>,) +(?P<subject>[A-Z][a-z-]+) +'
+         '(?P<return>returned|went) +(?P<companion>with +[^,;!?]{3,40}?) +(?P<to1>to) +'
+         '(?P<destination>[A-Z][a-z-]+)(?P<comma2>,) +(?P<from>from) +(?P<whence>whence) +'
+         '(?P<relative_subject>they|we) +(?P<were>were) +(?P<to2>to) +(?P<set>set) +(?P<out>out) +'
+         '(?P<early>early|late) +(?P<day>the +next +(?:day|morning|evening))(?P<stop>\\.)'
+     ),
+     (
+         L("when", "CONJ"),
+         P("earlier", "CLAUSE", finite_statement_proof='true'),
+         M("comma1", "COMMA"),
+         P("subject", "NP", proof_rule='np_proper'),
+         L("return", "V", vform='finite'),
+         P("companion", "PP", proof_rule='pp_prep_np'),
+         L("to1", "PREP"),
+         P("destination", "NP", proof_rule='np_proper'),
+         M("comma2", "COMMA"),
+         L("from", "PREP"),
+         L("whence", "ADV"),
+         P("relative_subject", "NP"),
+         L("were", "COPULA", vform='finite'),
+         L("to2", "TO"),
+         L("set", "V", vform='base'),
+         L("out", "PARTICLE"),
+         L("early", "ADV"),
+         P("day", "NP", proof_rule='np_det_n'),
+         M("stop", "SPEECH-STOP")
+     ),
+     'finite'),
+
 )
 
 
@@ -358,6 +523,10 @@ def _planner(pattern, layout, kind):
         copula = groups.get("copula")
         if subject and copula and subject.lower() in _COPULA_FOR_PRONOUN:
             if copula.lower() not in _COPULA_FOR_PRONOUN[subject.lower()]:
+                return None
+        if groups.get("happened"):
+            plural = groups["you"].lower() in ("you", "we", "they")
+            if groups["have"].lower() != ("have" if plural else "has"):
                 return None
         quotes = [c for c in parts if c.get("function") == "direct_speech"]
         if kind == "quoted":

@@ -7,10 +7,10 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 89,
+    "complete": 91,
     "forest_budget_exceeded": 1,
     "no_structural_root": 3,
-    "roots_without_valid_analysis": 6,
+    "roots_without_valid_analysis": 4,
     "timeout": 1
   },
   "cases": [
@@ -817,12 +817,12 @@
     },
     {
       "index": 890,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_perfect_location_duration_and_followup_question",
+      "rank_one_sha256": "c97a41aecd421d0a7cc6a488544c829888793a36f59cf212060b0274b7cc4716",
+      "selected_graph_sha256": "d8322185efd168502f43d263a9e689ddfb4c2c1dd207d492bf2ad6d513924ec7"
     },
     {
       "index": 891,
@@ -889,12 +889,12 @@
     },
     {
       "index": 898,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_temporal_locative_antecedent_and_future_departure",
+      "rank_one_sha256": "b180d1ecf60be268b4990cbd45aea47b34db175e2de8a70e3511776a2f33c2ba",
+      "selected_graph_sha256": "9b26df53e38c306b5076af89dc9ef19c77944202add5629175df768126d2aa83"
     },
     {
       "index": 899,

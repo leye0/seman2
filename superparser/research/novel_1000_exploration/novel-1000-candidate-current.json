@@ -7,9 +7,9 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 86,
-    "no_structural_root": 3,
-    "roots_without_valid_analysis": 10,
+    "complete": 90,
+    "no_structural_root": 1,
+    "roots_without_valid_analysis": 8,
     "timeout": 1
   },
   "cases": [
@@ -177,12 +177,12 @@
     },
     {
       "index": 919,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_assertion_and_fronted_negative_modal_after_dismissal",
+      "rank_one_sha256": "627dc4ea4a50c4ef6da8b31ec83820f40c827ec8279d2c1c81f5cfba192f76d9",
+      "selected_graph_sha256": "39cd6c4fc96f057e9e60eff8adda1325b23acbad0bda12afda46d44d086b4885"
     },
     {
       "index": 920,
@@ -555,12 +555,12 @@
     },
     {
       "index": 961,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_continuative_particle_and_negative_gerund_supplement",
+      "rank_one_sha256": "f2c2bc6bdfb32062850c734c032a61b9ce57e180557c043b3357505fa0ca9f6e",
+      "selected_graph_sha256": "193f00fef1a94441adeac50c929cad9bb71c6f5e57762a859e69f227f337faf1"
     },
     {
       "index": 962,
@@ -735,12 +735,12 @@
     },
     {
       "index": 981,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_surprise_question_with_negative_partitive",
+      "rank_one_sha256": "e2f5a7dbea07a0523376d3d10bf733bde8e21904bc7785c123652caa5d152d30",
+      "selected_graph_sha256": "dd78cd091e75d3c27ef726560457d649ffce1d81dddaf3382a3e1abe35d260e7"
     },
     {
       "index": 982,
@@ -843,12 +843,12 @@
     },
     {
       "index": 993,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_conditional_copular_ellipsis_and_temporal_comparison",
+      "rank_one_sha256": "6e5d6c9744f11154774d2c40200c7b38d10ab57170bfec1c670f64af5b062c50",
+      "selected_graph_sha256": "caede1dfc8fcd6080f97d3ce241b9abf67e5e650c233c73fc1eb4ef6ff431d4a"
     },
     {
       "index": 994,

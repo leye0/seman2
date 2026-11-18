@@ -33,7 +33,8 @@ The frozen initial measurements and source manifests are in
 diagnostics, never the initial or current pins. The replay check verifies
 the current candidate against the measured tree and graph signatures,
 and independently preserves the 160 originally complete signatures.
-See [the first grammar repair batch](NOVEL1000_REPAIR_BATCH1.md).
+See the [first](NOVEL1000_REPAIR_BATCH1.md) and
+[second](NOVEL1000_REPAIR_BATCH2.md) grammar repair batches.
 
 ## Running locally
 
