@@ -126,6 +126,15 @@ def prepare(*, inventory=None):
     return source_manifest, groups
 
 
+def replay(groups, wordnet_dir, out_dir):
+    # Dynamic WordNet entries populate a lexicon's surface and morphology
+    # indexes on lookup. Reusing one parser across groups can therefore
+    # change selected lexical entries compared to a standalone group.
+    # Freeze the same fresh-parser boundary for both invocation modes.
+    for group in groups.values():
+        ladder.run([group], wordnet_dir, out_dir)
+
+
 def checked_observation(end, group, out_dir):
     cohort, cases = group
     result = ladder.read_json(out_dir / f"novel-{end}-result.json")
@@ -249,7 +258,7 @@ def main():
         return
     selected = groups if args.group is None else {args.group: groups[args.group]}
     if args.action == "replay":
-        ladder.run(selected.values(), args.wordnet_dir, args.out_dir)
+        replay(selected, args.wordnet_dir, args.out_dir)
         return
     for end, group in selected.items():
         result, _ = checked_observation(end, group, args.out_dir)

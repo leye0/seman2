@@ -2,6 +2,7 @@
 from collections import Counter
 from copy import deepcopy
 import unittest
+from unittest.mock import call, patch
 
 from scripts import novel1500_exploratory as novel
 from scripts import novel_ladder as ladder
@@ -67,6 +68,13 @@ class Novel1500Sources(unittest.TestCase):
 
 
 class Novel1500Replay(unittest.TestCase):
+    def test_each_group_uses_a_fresh_parser(self):
+        a, b = object(), object()
+        with patch.object(ladder, "run") as run:
+            novel.replay({1100: a, 1200: b}, "wordnet", "out")
+        self.assertEqual(run.call_args_list,
+                         [call([a], "wordnet", "out"), call([b], "wordnet", "out")])
+
     def setUp(self):
         self.end = 1100
         self.cohort = {"cohort_sha256": "fixed-test-cohort"}

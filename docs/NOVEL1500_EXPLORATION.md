@@ -68,6 +68,11 @@ to display an exact contiguous source paragraph and the pinned signature.
 With a replay directory, inspection also returns the full rank-one tree
 and graph when available. Run without a replay directory for source-only
 triage. The JSONL outputs remain separate from the immutable initial pins.
+Replay starts a fresh parser per group in either mode. Reusing a parser
+across groups can carry WordNet insertions into a later group's mutable
+lexical indexes and change a selected sense, even without a change in
+coverage. We pin the standalone-group initialization and require exact
+tree and graph signatures within it.
 
 Every replay uses `parse_corpus_case`, WordNet 3.0, 50,000 chart items,
 500,000 k-best work units and a 10-second case deadline. A later grammar
