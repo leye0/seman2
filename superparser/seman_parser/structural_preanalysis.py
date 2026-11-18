@@ -12,6 +12,7 @@ import re
 
 from seman_parser.sentence_boundaries import _abbreviation_at
 from seman_parser.structural_units import review_semicolon_boundaries, skeleton
+from seman_parser.quote_orthography import clipped_participle_apostrophe
 from seman_parser.discourse_roles import POSTSCRIPT_FRAME, classify_discourse
 from seman_parser.quoted_discourse import analyze_dialogue
 from seman_parser.finite_temporal_scope import finite_temporal_span
@@ -126,7 +127,10 @@ def quote_scan(text: str) -> tuple[list[int], list[tuple[int, int]], int]:
         lexical = (ch in ("'", "’") and prev.isalnum() and nxt.isalnum())
         clipped = (ch in ("'", "’") and prev.isalnum()
                    and (not stack or stack[-1][0] not in ("'", "‘")))
-        if lexical or clipped:
+        if (lexical or clipped or (
+                ch == "’" and stack and stack[-1][0] == "‘"
+                and clipped_participle_apostrophe(text, i)
+        )):
             depth.append(len(stack))
             continue
         if ch in ("“", "‘"):

@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 
 from .features import FeatureStructure
+from .quote_orthography import clipped_participle_apostrophe
 from .segmentation import LexicalCandidate, LexicalLattice
 
 
@@ -52,6 +53,8 @@ def quotation_boundaries(text: str) -> tuple[QuoteBoundary, ...]:
         if char == '’' and 0 < pos < len(text)-1:
             if text[pos-1].isalnum() and text[pos+1].isalnum():
                 continue  # don't, I've, John’s — lexical apostrophe
+            if stack and stack[-1][0] == "‘" and clipped_participle_apostrophe(text, pos):
+                continue
         if char in {'“', '‘'}:
             stack.append((char, pos))
             boundaries.append(QuoteBoundary(pos, pos+1, "open", char))

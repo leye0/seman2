@@ -24,7 +24,7 @@ class Novel800ResidualTests(unittest.TestCase):
             raise RuntimeError("Pinned WordNet 3.0 dictionary required")
         cls.parser=Parser(ParserResources.from_dir(ROOT/"data",wordnet_dict=wordnet),
                           cache_size=0,max_items=50000)
-        sources=ladder.load_sources()
+        sources=ladder.load_pinned_fixture_sources()
         cohort=ladder.read_json(ROOT/"research"/"novel_800_exploration"/"novel-800-candidate-cohort.json")
         cls.cases={c["ladder_index"]:c for c in ladder.resolve(cohort,701,sources)}
         cls.parser.parse("John opened the box.")
