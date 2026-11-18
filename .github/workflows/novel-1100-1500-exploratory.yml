@@ -1,0 +1,72 @@
+name: Novel 1100–1500 exploratory replay
+
+on:
+  push:
+    branches: [research/novel-1500]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: novel-1100-1500-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    name: Reproduce 1,530 sources and selected analyses
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PYTHONPATH: superparser
+      WORDNET_DICT: /tmp/seman2-wordnet3/wordnet
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Obtain the same WordNet 3.0 dictionary
+        run: |
+          python - <<'PY'
+          from hashlib import sha256
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          with urlopen(Request(
+              'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+              headers={'User-Agent': 'Seman2-research'}
+          ), timeout=90) as f:
+              raw = f.read()
+          if sha256(raw).hexdigest() != 'cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59':
+              raise ValueError('Unexpected WordNet archive')
+          with ZipFile(BytesIO(raw)) as archive:
+              archive.extractall(Path('/tmp/seman2-wordnet3'))
+          PY
+      - name: Source selection, replay contract and rank-one controls
+        run: |
+          python -m unittest -q \
+            superparser.tests.test_novel1500_exploratory \
+            superparser.tests.test_novel_reporting_v3 \
+            superparser.tests.test_novel1000_grammar_repairs \
+            superparser.tests.test_novel_ladder
+      - name: Verify all Novel-1000 v3 trees, graphs and exact dialogue witnesses
+        run: |
+          python -m scripts.novel_source_reporting_v3 replay --group all \
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-parent
+          python -m scripts.novel_source_reporting_v3 check --out-dir /tmp/novel1000-parent
+      - name: Replay the frozen 500 new sources through the canonical parser
+        run: |
+          python -m scripts.novel1500_exploratory replay \
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1500-replay
+          python -m scripts.novel1500_exploratory check --out-dir /tmp/novel1500-replay
+      - name: Publish candidate replay for source, syntax and semantic review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: novel-1500-candidate-replay
+          path: /tmp/novel1500-replay/
+          retention-days: 14
+          if-no-files-found: warn
