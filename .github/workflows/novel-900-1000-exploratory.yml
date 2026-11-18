@@ -125,5 +125,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git commit -m 'Freeze Novel-900 and Novel-1000 exploratory source and first-pass results'
+            git fetch origin research/novel-ladder-1000-exploration
+            git rebase origin/research/novel-ladder-1000-exploration
             git push origin HEAD:research/novel-ladder-1000-exploration
           fi
