@@ -136,11 +136,25 @@
       "selected_graph_sha256": "4f87baf63b08196fc76ad6533cc4f94d40023b423c3374247d05637c8b88ad0d"
     },
     {
+      "index": 620,
+      "verdict": "verified",
+      "evidence": "Days is the theme of spent and the temporal antecedent of during which. Strasbourg is the arrival destination and the antecedent of where, with Clerval awaited.",
+      "rank_one_sha256": "6db856da3414c50082b374ca1eb1f2102a6a98771a458221ace91bdfe2402ce5",
+      "selected_graph_sha256": "4efd7f1a154f0fa223e748aa481a0275067a27cd230a9b6fa065e2c6afca7d7d"
+    },
+    {
       "index": 621,
       "verdict": "verified",
       "evidence": "Put and rubbed share They. Daniel's distinct motion predicate has town as destination and apothecary as the purpose of his errand. Life is the predicand of quite gone.",
       "rank_one_sha256": "57b1f49a31ee79e5e230fbc66616af9c9ff7af54a92afbc0d09e7aebf9bdfd3f",
       "selected_graph_sha256": "eac48386aa73c9126a30daf5917dfaaa9b96cbcbf3769d3c0e5c017216bc5c03"
+    },
+    {
+      "index": 622,
+      "verdict": "verified",
+      "evidence": "Who governs conceive and horrors is its object. Dabbled and tortured share the subordinate subject I. The purpose of torture is to animate the clay.",
+      "rank_one_sha256": "4e68c611c02c9588b8aef15ed9f39d3b8e244388863e81c8bba69549511d4d65",
+      "selected_graph_sha256": "aa9127e1992aa2b52b52db5cbb9c32b8a2eb744b7902b00f35a92d728afc5e4f"
     },
     {
       "index": 623,
@@ -304,6 +318,13 @@
       "selected_graph_sha256": "56ba0461215aac70a73ddccaaa49e432d3bbd6cc23eea7a12d080e6200479ae3"
     },
     {
+      "index": 646,
+      "verdict": "verified",
+      "evidence": "At once belongs to slipping the bolt. We controls the second pair; the duration and the dark modify panted. The captain possesses the body in the attendant circumstance.",
+      "rank_one_sha256": "ac5e0c3ad16e252f35f89d271f7a809129a9bbdf108854e6da7da797f42e67a5",
+      "selected_graph_sha256": "67ba99904301fe72b6e36fe28f4c1403b8226c94a3bcdfe2901ebafbc7cb7859"
+    },
+    {
       "index": 647,
       "verdict": "verified",
       "evidence": "The guineas is plural subject of were, with these only is the instrument-cleft focus, and causative make her count is proven as make(V)-her(NP object)-count(bare V) with her the embedded agent; rejects her count as possessive noun phrase.",
@@ -323,6 +344,13 @@
       "evidence": "The extraposed evaluation it was remarkable takes parallel how-well-he-bore and with-what-politeness-he-kept-on-trying manners; the second scopes to kept; with all is a complement of ingratiate, not of politeness.",
       "rank_one_sha256": "a5d27907be524e962650e45c135b8fb99bfb194c92ec87c52e2ff6beff231baf",
       "selected_graph_sha256": "d9d5bc362cb9990db3f19383b910dc608b6cf12d2d3e3e9d262e2cf3a42bd230"
+    },
+    {
+      "index": 650,
+      "verdict": "verified",
+      "evidence": "The addressed negative reply excludes its self-subject. The perfect reporting event precedes the embedded agreement, whose subject is we and whose quantifier is all.",
+      "rank_one_sha256": "ffadb46ebdde55645abe9ee0f5158385da6b2be87a7d0380b326dba8769adbb2",
+      "selected_graph_sha256": "e90353da13a1714ce0d4a20d77e9fb22d9ccf6b7d783e92c171080361514212e"
     },
     {
       "index": 651,
@@ -351,6 +379,13 @@
       "evidence": "Which is a retrospective propositional anaphor with an unresolved discourse antecedent, not an invented antecedent inside the sentence; enough grades true.",
       "rank_one_sha256": "8a882197bac4977bba318ae32533f5e0fbbb7bfdbdf0e0787eeab52cdb443647",
       "selected_graph_sha256": "4a8d53f4e0abbb460e4c864f83c05b1872cd9c098154d6211252c315325d6b73"
+    },
+    {
+      "index": 655,
+      "verdict": "verified",
+      "evidence": "The selected past shook keeps She as actor and the possessed head as theme. The original separate bare-stem third-person contrast now has no complete parse, while shakes, shook, plural shake, modal shake and invariant past cut remain valid. The source case itself keeps its previous selected tree and graph signatures.",
+      "rank_one_sha256": "9203a38298dbe5b2d994f3cb75cf20d572ced6667f4146456c1dc99fbb5b9e09",
+      "selected_graph_sha256": "627179c4efa327a9f780f5220d716f222368c2514d937cca865220dce387f70b"
     },
     {
       "index": 656,
@@ -409,6 +444,13 @@
       "selected_graph_sha256": "408971254ab7dab649e6893102dd8bf298e2060b8ae96991f0b99716b353de75"
     },
     {
+      "index": 664,
+      "verdict": "verified",
+      "evidence": "The intervals attach to speaking, not the addressee me. Tried controls she, and the passive temporal relative belongs to intervals with we as its theme.",
+      "rank_one_sha256": "3ff7deceef5ad9bd05f2957545a4019642846e8b1252965b285bca136cd18e1a",
+      "selected_graph_sha256": "b9d45a89ba7a9922ddb843bed3b38cac1a2c5a071442a467c20500133a86f360"
+    },
+    {
       "index": 665,
       "verdict": "verified",
       "evidence": "Regarding is the overt topic preposition for curious. The as-if is counterfactual, the first time is the comparison, and final it refers to cottage.",
@@ -444,11 +486,46 @@
       "selected_graph_sha256": "074bdf459a168bf4cc4a904f6f39c7a8de71efd141e8d29e6470cc7885d5c242"
     },
     {
+      "index": 670,
+      "verdict": "verified",
+      "evidence": "The basket is located on Peggotty's knee and is the antecedent of lasted, not the knee. The modal perfect lasting is conditional on the past-perfect progressive travel.",
+      "rank_one_sha256": "7b76b0dbd987c3a6c948e05ebc7ff6e7a70cd45066e166880fe7af079bc63c08",
+      "selected_graph_sha256": "31463baced8e224b9045aa7794f3d7217d2c3380d5eb1f9ac88e5da2eb73ff38"
+    },
+    {
+      "index": 671,
+      "verdict": "verified",
+      "evidence": "Here and near Agnes both predicate the subject under could not. The without-phrase sets the revival condition, and regrets is the antecedent of the pied-piped relative.",
+      "rank_one_sha256": "7f349ae0027be5187ddffe6922fc33e0658571fafdfc2f9ff8dbcd0d083bbb20",
+      "selected_graph_sha256": "66cf723986c5bcf9e8be031481ad4849c539c4d44a4396a05fa6b7acf7c7e150"
+    },
+    {
       "index": 672,
       "verdict": "verified",
       "evidence": "The source retains both finite sentences inside one original quotation; forgotten governs the actual existential content and exceptive but-to-go-out-tossing; I wish there was not is an independently proven elliptic reprise, not an invented full proposition.",
       "rank_one_sha256": "648074e4d0563b2f89967ba7035d76e8f3d08d695208e1587b1acc1eaa086446",
       "selected_graph_sha256": "d17dcb24f8af9982c81334c77a1ae85c40b40375f8cfd4ff197f99e27c487fc7"
+    },
+    {
+      "index": 673,
+      "verdict": "verified",
+      "evidence": "The inspection precedes the giving. The same subject adds the direct request. Low voice is manner of added, and sir is the vocative within the request.",
+      "rank_one_sha256": "8ce4501a6ad986079c6e8d7c813252fb63805033a81fbc5276d4a1fb0ca4975d",
+      "selected_graph_sha256": "cb2da15c72de4fb9e9009e7a9ae438c6d5c14149ae0bef935ade55b96832567a"
+    },
+    {
+      "index": 674,
+      "verdict": "verified",
+      "evidence": "The same overt We governs alighted and followed. Corner is the remembered place and locates the passive reading. The consignment is a nonfinite supplement with it as theme.",
+      "rank_one_sha256": "2b8a20fed6a87d0661e605f7a80567213c92ed9b003c208175e5b461e0d9a0b4",
+      "selected_graph_sha256": "dd48c4194a6d54a4c59378d4f54d92a6bd31e98dcfa2ab31434effe46458f167"
+    },
+    {
+      "index": 675,
+      "verdict": "verified",
+      "evidence": "Hadn't is the negative perfect auxiliary of said in this inversion. I remains its overt subject. The day is a temporal incise, and rather not keeps an unresolved predicate in the report.",
+      "rank_one_sha256": "e9da1e11ab6fea0de3bf78c3672ba8cde1627c8ff17e84d35b51a1e7989ac78b",
+      "selected_graph_sha256": "0abb08f8befae2710cf112726ecf1edf9745dfff4e86847fb61775ead7d6e83f"
     },
     {
       "index": 676,
@@ -575,6 +652,48 @@
       "evidence": "The first clause keeps its own simultaneous speech event. Neither and nor bind the two candidate causes under one negative subject scope on awakened.",
       "rank_one_sha256": "0e89b93b0da0a47d9ccf2b473c7a6f7d3a54d9f47fdba1320485dd42b8190d49",
       "selected_graph_sha256": "1a0c5a18ed1d5bb8a0ad9e73ec324021b960c2a33280708a921e472748b3baa9"
+    },
+    {
+      "index": 694,
+      "verdict": "verified",
+      "evidence": "The custom parenthetical characterizes Bennet's retirement after tea. Mary's distinct stairs motion has its own destination.",
+      "rank_one_sha256": "2098702a622e65c4bd0f31ed89a2f955fe23350961fbc168193124ad70c23fa8",
+      "selected_graph_sha256": "2a748ae5d1536c962b681e38f787fef4adaaff9dee1ed1daad7205ac70c8bbcb"
+    },
+    {
+      "index": 695,
+      "verdict": "verified",
+      "evidence": "Post describes hired relay horses. The second copular predication has a coordinated negative subject. The servant is the subject of preceded and possessor of the livery.",
+      "rank_one_sha256": "ce4c970fc34d66736f126f6958ce38871a7f91c513ca21c2e8bc25a49033f14e",
+      "selected_graph_sha256": "d0f196e35d47eaf0774ab82aecc2f38375e3368d10e28acfa1d8c3088837e1d6"
+    },
+    {
+      "index": 696,
+      "verdict": "verified",
+      "evidence": "There is existential. I believe is an epistemic incise. The natural defect is the object of overcome, with education and the scalar negative scope under can.",
+      "rank_one_sha256": "fac641fadb2335cfcbcfddbd4f71aa73a85ba31172c3d0ad40026187bafd871f",
+      "selected_graph_sha256": "e5d5f5fd59158e2746244eef73589fc14774494ebe36c8ef22aa9f0912aeafa9"
+    },
+    {
+      "index": 697,
+      "verdict": "verified",
+      "evidence": "The gain in fortune is explained by the ascertainment. The window frames the observing, and he wears a blue coat and rides a black horse in the embedded clause.",
+      "rank_one_sha256": "5b2828aa034f31b895a5c466703cbf6f955c2af1957e7a7265156b2df98bdc23",
+      "selected_graph_sha256": "a965cc1be80acfd5cdf4ce3b9508d36f69b6992bc2fd2d7ebd48841c65709abe"
+    },
+    {
+      "index": 698,
+      "verdict": "verified",
+      "evidence": "Had been of age is a negative perfect with two years as its measured duration. The linked when-clause has a passive temptation and a separately controlled looking complement.",
+      "rank_one_sha256": "46c4fa5404ca87ffaffc8b183fa52830282b651f0d4a6127532b40d5c33416ba",
+      "selected_graph_sha256": "3731bc9a2137d3662af41344aa32debfed80a9245ffb862b9e96a181ee0fe175"
+    },
+    {
+      "index": 699,
+      "verdict": "verified",
+      "evidence": "Exercise gives the brilliancy to the complexion in an overt perfect relative. The second nominal contains occasion's justifying and its own lower possessive gerund her coming.",
+      "rank_one_sha256": "f130debbd1ab7137b1762829faaf2282764f4d209f69b618631ff13144ebf8f8",
+      "selected_graph_sha256": "8131f5dc52486db5848ccddf3b472311b1532efe9af93d2f454062a41ef73f95"
     },
     {
       "index": 700,

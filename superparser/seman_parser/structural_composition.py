@@ -76,6 +76,10 @@ from .scoped_attachment_domains import (
     COUNTS as ATTACHMENT_COUNTS, NARRATIVE as ATTACHMENT_NARRATIVE,
     SPOKEN as ATTACHMENT_SPOKEN, SEQUENCES as ATTACHMENT_SEQUENCES,
 )
+from .scoped_attachment_residuals import (
+    COUNTS as RESIDUAL_COUNTS, NARRATIVE as RESIDUAL_NARRATIVE,
+    SPOKEN as RESIDUAL_SPOKEN, SEQUENCES as RESIDUAL_SEQUENCES,
+)
 from .scoped_quality_followup import (
     SPOKEN as FOLLOWUP_SPOKEN, NARRATIVE as FOLLOWUP_NARRATIVE,
     COUNTS as FOLLOWUP_COUNTS, DEGREE_ECHO, FUSED_NEGATIVE, MINOR_AND_PERFECT, RESUMED_PERMISSION,
@@ -244,6 +248,7 @@ _SPOKEN_SINGLE = (
     *QUALITY_SPOKEN,
     *FOLLOWUP_SPOKEN,
     *ATTACHMENT_SPOKEN,
+    *RESIDUAL_SPOKEN,
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
@@ -311,6 +316,7 @@ _UNQUOTED_SCOPED = (
     *QUALITY_NARRATIVE,
     # Prove richer complement structures before the more general motion
     # frames. In particular, to + an infinitive cannot be a goal NP.
+    *RESIDUAL_NARRATIVE,
     *ATTACHMENT_NARRATIVE,
     *FOLLOWUP_NARRATIVE,
 )
@@ -320,10 +326,11 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *RESIDUAL_COUNTS, *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
     **ATTACHMENT_COUNTS,
+    **RESIDUAL_COUNTS,
     **N800_COUNTS,
     **N700_COUNTS,
     **CLAUSE_COUNTS,
@@ -563,7 +570,7 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES)
+            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
         })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -3990,7 +3997,7 @@ class QuotedSentenceComposer:
             (rule, planner) for rule, planner in FOLLOWUP_SPOKEN
             if rule in (DEGREE_ECHO, MINOR_AND_PERFECT, RESUMED_PERMISSION)
         )
-        for rule, planner in (*SPEECH_SEQUENCE_PLANS, *followup_sequences, *ATTACHMENT_SEQUENCES):
+        for rule, planner in (*SPEECH_SEQUENCE_PLANS, *followup_sequences, *ATTACHMENT_SEQUENCES, *RESIDUAL_SEQUENCES):
             specs = planner(text, components)
             if specs is not None:
                 sequence = self._compose_verified_dialogue_pattern(

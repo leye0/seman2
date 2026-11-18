@@ -102,16 +102,20 @@ def _source_evidence(text, parts, specs, *, speech):
     separators = [s for s in specs if s[0] == "SEMICOLON"]
     if not separators:
         return _matrix(text, parts)
-    if len(separators) != 1 or any(p.get("function") == "direct_speech" for p in parts):
+    if any(p.get("function") == "direct_speech" for p in parts):
         return False
-    _, a, b, _, _ = separators[0]
-    start = b + len(text[b:]) - len(text[b:].lstrip())
-    return (
-        any(p.get("function") == "matrix_clause" and (p["start"], p["end"]) == (0, a)
-            for p in parts)
-        and any(p.get("function") in ("independent_clause", "coordinate_clause")
-                and (p["start"], p["end"]) == (start, len(text)) for p in parts)
-    )
+    starts = [0]
+    ends = []
+    for _, a, b, _, _ in separators:
+        ends.append(a)
+        starts.append(b + len(text[b:]) - len(text[b:].lstrip()))
+    ends.append(len(text))
+    for i, (a, b) in enumerate(zip(starts, ends, strict=True)):
+        functions = ("matrix_clause",) if i == 0 else ("independent_clause", "coordinate_clause")
+        if not any(p.get("function") in functions and (p["start"], p["end"]) == (a, b)
+                   for p in parts):
+            return False
+    return True
 
 
 NARRATIVE = []
@@ -120,7 +124,7 @@ SEQUENCES = []
 COUNTS = {}
 
 
-def family(rule, count, *layout, speech=False, sequence=False):
+def family(rule, count, *layout, speech=False, sequence=False, registry=None):
     """A literal space separates constituents, not lexemes inside phrases."""
     spans = tuple(piece for piece in layout if isinstance(piece, Span))
     regex = re.compile("".join(
@@ -131,7 +135,8 @@ def family(rule, count, *layout, speech=False, sequence=False):
 
     if regex.groups != len(spans):
         raise ValueError(f"Use noncapturing groups within source spans for {rule}")
-    if rule in COUNTS or (sequence and not speech):
+    narrative, spoken, sequences, counts = registry if registry is not None else (NARRATIVE, SPOKEN, SEQUENCES, COUNTS)
+    if rule in counts or (sequence and not speech):
         raise ValueError(f"Duplicate or invalid attachment family {rule}")
 
     def plan(text, parts):
@@ -142,8 +147,8 @@ def family(rule, count, *layout, speech=False, sequence=False):
                  for i, piece in enumerate(spans, 1)]
         return specs if _source_evidence(text, parts, specs, speech=speech) else None
 
-    (SEQUENCES if sequence else SPOKEN if speech else NARRATIVE).append((rule, plan))
-    COUNTS[rule] = count
+    (sequences if sequence else spoken if speech else narrative).append((rule, plan))
+    counts[rule] = count
 
 
 SENSATION = "structural_sensation_come_across_with_time"

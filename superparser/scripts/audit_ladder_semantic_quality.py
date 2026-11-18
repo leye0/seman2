@@ -222,7 +222,6 @@ def run(args):
     # graph, and each 'verified' requires an independent prior review entry.
     quality=ladder.read_json(VERDICTS)
     if (quality.get("schema")!="seman2-selected-semantic-verdicts-v1"
-            or quality.get("acceptance_status")!="blocked"
             or len(quality.get("cases",[]))!=200):
         raise AssertionError("Missing/invalid complete semantic verdict register")
     by_quality={e["index"]:e for e in quality["cases"]}
@@ -241,7 +240,12 @@ def run(args):
     flags=Counter(issue for entry in entries for issue in entry["automatic_issues"])
     warnings=Counter(issue for entry in entries for issue in entry["automatic_warnings"])
     counts=Counter(entry["quality_state"] for entry in entries)
+    certified = counts["verified"] == 200 and not known_defects and not flags
+    acceptance_status = "verified" if certified else "blocked"
+    if quality.get("acceptance_status") != acceptance_status:
+        raise AssertionError("Saved certification status conflicts with the replay and defect ledger")
     synopsis={
+        "acceptance_status": acceptance_status,
         "cohorts":{"Novel-700":CURRENT700.name,"Novel-800":CURRENT800.name},
         "total_cases":200,"complete_selected_trees":200,
         "individual_reviewed":counts["verified"],
@@ -267,7 +271,8 @@ def run(args):
                   key=lambda e:(e["quality_state"] not in ("needs_fix","review_conflict"),
                                 -len(e["automatic_issues"]),e["index"]))
     lines=[
-        "# Semantic fidelity: **not certified**",
+        "# Semantic fidelity: **certified on these cohorts**" if certified
+        else "# Semantic fidelity: **not certified**",
         "",
         "Automated inspection of exact source, selected syntax tree, graph nodes,",
         "graph edges and saved review digests across all 200 cases.",
@@ -306,7 +311,7 @@ def run(args):
             "index":e["index"],"source":e["source"][:155],
             "status":e["quality_state"],"issues":e["automatic_issues"],"confirmed":bool(e["confirmed_defect"])
         },ensure_ascii=False),flush=True)
-    if args.gate and (counts["unreviewed"] or counts["needs_fix"] or counts["review_conflict"] or counts["changed_since_defect_requires_independent_recheck"] or ranked):
+    if args.gate and not certified:
         raise SystemExit(
             "Semantic acceptance blocked: unreviewed analyses and/or flagged defects remain"
         )

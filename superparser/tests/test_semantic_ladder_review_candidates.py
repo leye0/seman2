@@ -542,7 +542,13 @@ class SemanticReviewCandidates(unittest.TestCase):
                                          for edge in actual), (bad, absent, actual))
 
     def test_batch_four_selected_attachment_domains(self):
-        controls = json.loads((ROOT / "tests/data/semantic_batch4_controls.json").read_text())
+        self.check_batch_attachment_domains("semantic_batch4_controls.json")
+
+    def test_batch_five_selected_attachment_domains(self):
+        self.check_batch_attachment_domains("semantic_batch5_controls.json")
+
+    def check_batch_attachment_domains(self, fixture):
+        controls = json.loads((ROOT / "tests/data" / fixture).read_text())
 
         def desc(node):
             return node["surface"] or f'<{node["type"]}>'
@@ -573,8 +579,8 @@ class SemanticReviewCandidates(unittest.TestCase):
                     if key == "source":
                         leaves = {(leaf.category, text[leaf.start:leaf.end]) for leaf in walk(tree)
                                   if leaf.lexical_candidate is not None}
-                        self.assertFalse({tuple(x.split("|", 1)) for x in record["leaves"]} - leaves)
-                        self.assertFalse(triples(record["blocked"]) & have)
+                        self.assertFalse({tuple(x.split("|", 1)) for x in record.get("leaves", ())} - leaves)
+                        self.assertFalse(triples(record.get("blocked", ())) & have)
                     self.assertFalse(any(a["id"] == b["id"] for _, a, b in edges))
 
     def test_batch_four_shared_and_distinct_source_bindings(self):
@@ -623,6 +629,29 @@ class SemanticReviewCandidates(unittest.TestCase):
                 _, rejected, _, _ = self.selected(contrast)
                 self.assertTrue(root)
                 self.assertFalse(rejected and rejected.rule_id == root.rule_id)
+
+    def test_n655_documented_nonpast_stem_cannot_fake_singular_inflection(self):
+        for source, verb, subject, body in (
+            (655, "shook", "She", "head"),
+            ("He shakes his head.", "shakes", "He", "head"),
+            ("He shook his head.", "shook", "He", "head"),
+            ("They shake their heads.", "shake", "They", "heads"),
+            ("He cut his hand.", "cut", "He", "hand"),
+            ("She can shake her head.", "shake", "She", "head"),
+        ):
+            with self.subTest(source=source):
+                _, tree, _, edges = self.selected(source)
+                self.assertIsNotNone(tree)
+                observed = {(rel, a["surface"], b["surface"]) for rel, a, b in edges}
+                self.assertIn(("AGENT", verb, subject), observed)
+                self.assertIn(("AFFECTED", verb, body), observed)
+        for source in ("He shake his head.", "She take the box."):
+            with self.subTest(negative=source):
+                _, lattice, result = self.parse(source)
+                self.assertFalse(result.completed)
+                self.assertFalse(result.stats.get("budget_exceeded"))
+                self.assertFalse(result.stats.get("kbest_budget_exceeded"))
+                self.assertTrue(any(c.excludes_third_singular for c in lattice.candidates))
 
     def test_n663_reported_copular_content_and_vocative(self):
         positive="‘I hope Mrs. Micawber and your family are well, sir,’ said his aunt."

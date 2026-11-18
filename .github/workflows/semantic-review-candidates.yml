@@ -5,6 +5,7 @@ on:
     paths:
       - 'superparser/tests/test_semantic_ladder_review_candidates.py'
       - 'superparser/tests/data/semantic_batch4_controls.json'
+      - 'superparser/tests/data/semantic_batch5_controls.json'
       - 'superparser/tests/test_novel_ladder.py'
       - 'superparser/tests/test_novel_700_residual.py'
       - 'superparser/scripts/novel_ladder.py'

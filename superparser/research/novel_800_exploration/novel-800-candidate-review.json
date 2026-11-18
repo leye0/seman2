@@ -115,11 +115,32 @@
       "selected_graph_sha256": "3b4125f7f67e005f95825c89125c01b35563246d5424d491a294d6a0974e7987"
     },
     {
+      "index": 717,
+      "verdict": "verified",
+      "evidence": "The promise governs coordinated watching and giving with shared someone and should. The if-clause conditions both actions.",
+      "rank_one_sha256": "6db18fa017c458b350e1fa0c258fb83aa2b5ca914be32c5bfdb0158a4d7a8392",
+      "selected_graph_sha256": "2c61db2cfcbd154e9b820fa49563715af795fcbad77f08964cb6b5353ed1c21d"
+    },
+    {
       "index": 718,
       "verdict": "verified",
       "evidence": "The overt colon separates the infinitival resolution from a separate imperative Come with me, which has a genuine vocative Henry and purpose to order the horses. Goal, discourse plan, vocative, purpose and object graph relations are tested; a semicolon contrast is rejected.",
       "rank_one_sha256": "c53353fd070a53c47e0c551b9aa0caab07594d1ba8ea137c9f91317d02618155",
       "selected_graph_sha256": "ff4eca991c53dcb5bfe0cb0f014bae41b359f3e927a5f9ddd1bb39e85ad384d4"
+    },
+    {
+      "index": 719,
+      "verdict": "verified",
+      "evidence": "Seeing you supplies the cause of the delight. In the imperative's embedded how-clause, how modifies left and father, brothers and Elizabeth are its coordinated objects.",
+      "rank_one_sha256": "c3c87b4c45ac1cad5cdb035ca164664fc69a8b70adbd5936e8763ff9c7b905d4",
+      "selected_graph_sha256": "01619a98484cc97e94dc69f3a13a646189e6447be70d04fc4d997d6940348536"
+    },
+    {
+      "index": 720,
+      "verdict": "verified",
+      "evidence": "The windows are the theme of the anterior passive. Panic is the felt affect; the lower visual predicate takes light as the overt subject of illuminate.",
+      "rank_one_sha256": "a22eff2ebb6368df270937a82310611ae6ef1ce23e92d7daad3760b7c602745e",
+      "selected_graph_sha256": "4f4584c2d2e5a0f50ab3e346fb5a96f4d905fc60050372e14d256cc7d1a19ced"
     },
     {
       "index": 721,
@@ -129,11 +150,32 @@
       "selected_graph_sha256": "b3ef8bc82d2d1db2c3863dd0b0e17508c7ca32b48b12f4404e2bd7daa117dd09"
     },
     {
+      "index": 722,
+      "verdict": "verified",
+      "evidence": "The source side is the locus of the where-relative. Montanvert is the predicand of opposite, and the postverbal Mont Blanc is the subject of inverted rose.",
+      "rank_one_sha256": "df1211845d51fc677c3c2751f7fa276d9aa4d123fc1676644ca807ec753a52d8",
+      "selected_graph_sha256": "c307df6587500b129074c650492867b49cc8b344488db2f2f59fbc80d21244ac"
+    },
+    {
       "index": 723,
       "verdict": "verified",
       "evidence": "Led and forced share the passive auxiliary and its patient. I controls each infinitive. Decay belongs to the coordinated cause and progress, and the two locations belong to spend.",
       "rank_one_sha256": "0177355b4c61aa83006fa2cff9dd26b52ec72b053e178310307c30c2364496a9",
       "selected_graph_sha256": "980925ffc2c28e0570a2fdd2e2312cd812a77360746d3e9af8f29957918a63b8"
+    },
+    {
+      "index": 724,
+      "verdict": "verified",
+      "evidence": "Disappeared is relative to the spot, while boats are the means of following. Nets are the patient of the independent passive; in vain describes its failure.",
+      "rank_one_sha256": "bfed1912ccbc65ca6d1166d64e8e3f94d4bbf41d5b52ac7a295656080317dc28",
+      "selected_graph_sha256": "84be167d35f0c6371e17b115d5fed8581bc93e2c1af2fab7ff87af74e75f447d"
+    },
+    {
+      "index": 725,
+      "verdict": "verified",
+      "evidence": "M. is the honorific on Krempe. The second clause has its own overt teacher and scopes therefore and not over prepossess.",
+      "rank_one_sha256": "5a4dcebc8396b594c95580a54876ad9dd5baba6ff3e515f23580f0576b0e3041",
+      "selected_graph_sha256": "75d82ed28795cd62b59d043d0b426464ff75a63083e12dd07f0707562a6d6004"
     },
     {
       "index": 726,
@@ -234,6 +276,20 @@
       "selected_graph_sha256": "a6c0c0dbf4c4b52f85344c38ba82feb9b2857e4d6f3a8261d6e2a2c4aa3df391"
     },
     {
+      "index": 740,
+      "verdict": "verified",
+      "evidence": "Oh is the initial reported interjection. The next utterance has a separate identification and a directive whose or-clause presents the threatened alternative.",
+      "rank_one_sha256": "791004730a4cc107b082069dbb1affc491f23d5d31da4356d5dc45f4841d3ec3",
+      "selected_graph_sha256": "cae4796596db0a5900f8ef1314275be5d375cc018b1975826966e86c6b73ac14"
+    },
+    {
+      "index": 741,
+      "verdict": "verified",
+      "evidence": "The second had scopes both shoved off and given way. Its subject we is distinct from the two boarding participants in the first perfect.",
+      "rank_one_sha256": "167a0b75d96cae597bedf84ab1663119c070a03e591ccd9d06f3c3c80e2049c5",
+      "selected_graph_sha256": "7f043230064476b11cbff6e0add8355d94e0415d607a2e029dafe126a7cdb015"
+    },
+    {
       "index": 742,
       "verdict": "verified",
       "evidence": "The question has a positive echo tag, not a coordinated attribute. The report added has he as actor. The same actor controls the distinct pipe-returning participle and its goal.",
@@ -255,11 +311,46 @@
       "selected_graph_sha256": "1a5ead7ef57473fa2d92c7ab46ce7503f0cb7494d1e5917bf541d15ab9b8393f"
     },
     {
+      "index": 745,
+      "verdict": "verified",
+      "evidence": "The negative existential has two coordinated exceptions, the sound of waves and the chirp. Mounting describes the distant breakers and in the brush locates the insects.",
+      "rank_one_sha256": "d87100145987aa5ab63f0ff8ffc88976793c3cb4f645912fbf217fe340b77644",
+      "selected_graph_sha256": "bde5801a2dfa7b1b42609a4c8908864dbb834307cc87dbe2cc4a7c64d287ef5d"
+    },
+    {
+      "index": 746,
+      "verdict": "verified",
+      "evidence": "The retreat and drop share Redruth. The boat is the goal and the object of the supplementary relative. The ship possesses the counter and handier predicates the boat in the purpose.",
+      "rank_one_sha256": "b8af6175ca7dc5c84109d36640769db2a9069c14ab6881dfead3730594887b59",
+      "selected_graph_sha256": "2c15295293724ef50e81b2bfd6f0a6e26650a1d57c99ee47362251ffad0a0447"
+    },
+    {
+      "index": 747,
+      "verdict": "verified",
+      "evidence": "Asking is progressive and has an object gap linked to thing. The dash resumes its overt he and adds the buccaneer and ringleader appositions.",
+      "rank_one_sha256": "96a0519ddc26ff0d5f93e18117143b29a1683cb982abc2cdc50e3c5536e1fd7a",
+      "selected_graph_sha256": "042bd384045b40afad6739e647e3447082a51032910c9dfac9c319b31bd31756"
+    },
+    {
+      "index": 748,
+      "verdict": "verified",
+      "evidence": "Morgan reports two speech stretches. Did resumes owed rather than introducing a new lexical action. He also controls took, with knife as theme and ashore as goal.",
+      "rank_one_sha256": "2a3c6a6189d891e12e5511034cc722feae3f1703dbb65df98d9cdc8d7c720d63",
+      "selected_graph_sha256": "547e161f3627d646f298d5d098bdd82f6d5518694cea832c9506de0221183498"
+    },
+    {
       "index": 749,
       "verdict": "verified",
       "evidence": "Inverted Had there been a breath of wind is the explicit counterfactual condition; should-have-fallen heads the modal consequence, the six mutineers contains its source-backed relative who were left aboard, slipped our cable inherits the shared modal, and away to sea is overt directional ellipsis without a fabricated went/gone. The directional shore and ungrammatical fall controls establish the selection.",
       "rank_one_sha256": "d50f4d222686197b91e04a132ffe4204149b3517518ec653db38995ad139b042",
       "selected_graph_sha256": "3764ca04b1eaca9017ddcb4687858d2fc810b56416fe3295f05899a380e24d8b"
+    },
+    {
+      "index": 750,
+      "verdict": "verified",
+      "evidence": "The coldest morning is the temporal description and the antecedent of stranded in. Abroad predicates the relative subject, and the dash introduces the marrow-piercing chill as an elaboration.",
+      "rank_one_sha256": "50549f672c1356961e79a15df6a39efdfe1dcf548d83601c7b481d5c68f0c296",
+      "selected_graph_sha256": "cd6fb673de46856b80d80e20b43059c9396f668d02bf570442e5347dcc98c8e0"
     },
     {
       "index": 751,
@@ -325,6 +416,13 @@
       "selected_graph_sha256": "ba878b28f001bca37bbd335e3174c6f3a9e5f6b0be32b01af2f52d4580427fcc"
     },
     {
+      "index": 760,
+      "verdict": "verified",
+      "evidence": "The inner copula is modal perfect, with it as predicand. As much as and seven feet measure high. Should belongs to the matrix epistemic predicate.",
+      "rank_one_sha256": "b0a4ea0822afdb7de6b66522a3ba40ffed14fd135a2edf721a0fdc9805722425",
+      "selected_graph_sha256": "92611700990ff3f96cdb114f5808b182b55bf5e5592b80056c7fcd44e35c812d"
+    },
+    {
       "index": 761,
       "verdict": "verified",
       "evidence": "The nominal minor reply is followed by a separate declarative-form perfect question. Woman no longer becomes the topic of forget, and the source participle forgot is retained.",
@@ -353,6 +451,13 @@
       "selected_graph_sha256": "1d9f21b8b3e3f48ae8002bd4cf4422c589a7ee8d7f2eaca9f2f8c19edd317fc2"
     },
     {
+      "index": 765,
+      "verdict": "verified",
+      "evidence": "Shiver is the reported fragment. The reporter controls the two participles. His teeth are both the causee of making and the subject of bare chatter.",
+      "rank_one_sha256": "5709a4ff538eb4f7f7b715f6c2163672240d202f4734b9f5d1043999a6148492",
+      "selected_graph_sha256": "ac8cdd92ecdf64ddb21ad9f08ed0fbc0e04693abb3c9bd61d4034239e868f3cc"
+    },
+    {
       "index": 766,
       "verdict": "verified",
       "evidence": "The aunt controls being sent for and is the passive patient, not the sender. She is the actor of both presenting herself and welcoming, and the cordiality goes with the welcome.",
@@ -367,11 +472,60 @@
       "selected_graph_sha256": "8f5b3c6f20afa41ad279a54f104685022929f7557343521f0494bab441602d49"
     },
     {
+      "index": 768,
+      "verdict": "verified",
+      "evidence": "Nobody else scopes the modal touch. The second clause states the degree-result relation between delight and going away. Away belongs to went.",
+      "rank_one_sha256": "d6edd32b620c69d4617d9c0ba16bc5e6ea6a0da91f21c7440ce9f6c216c8011a",
+      "selected_graph_sha256": "e3987577a37ca9a111f311c858c107e2337ab06e58a406b724dae76599529b5d"
+    },
+    {
       "index": 769,
       "verdict": "verified",
       "evidence": "The existential friend is reported by murmured. A grave toss of his head accompanies the reporting event, with head as the body part involved and his as the possessor.",
       "rank_one_sha256": "6ec5ccaae8f5d8a98fcfc9596d97c9c9216fc4feb0e9b052585d9f9d32789d39",
       "selected_graph_sha256": "a147131bd76eb9d3e939c6ef3853adedaa22469361c2b2d498e94086acda245e"
+    },
+    {
+      "index": 770,
+      "verdict": "verified",
+      "evidence": "Oh and the repeated dear me precede a do-supported question. The content has a distinct lexical do with good as effect, and the helpless manner belongs to cried.",
+      "rank_one_sha256": "6249796377d4baf6ccd0a36b28a3c3286f27f3c1600587ee3af844bc9052483d",
+      "selected_graph_sha256": "a185013a10a9064da6b38df872583031d852cbd36bac1d1a40ee7e12c2e443c8"
+    },
+    {
+      "index": 771,
+      "verdict": "verified",
+      "evidence": "The progressive posture has two accompanying absolutes, one locative and one participial. One and the other select members of the same hand set.",
+      "rank_one_sha256": "dabe80b34ec4ed67c1bf3a184c928403f2e94485d1f2076cc4d00913d962389d",
+      "selected_graph_sha256": "558244b1565c249acf75e1dd7de6e1d4166b9e632c84663025b7fcd64a7b418d"
+    },
+    {
+      "index": 772,
+      "verdict": "verified",
+      "evidence": "Both title-name occurrences are vocatives in their own utterances. The reporting phrase controls the putting-away gesture, while stop has its own location and duration.",
+      "rank_one_sha256": "aedb30bc6cd5a025a4297fc14ee027e3d3826e2d05b54daee52ce3026d92f29c",
+      "selected_graph_sha256": "772cc4b7f748cd67d2f1ffa5afefed21b27a7dc0b4eb95ae9ed321893e04a653"
+    },
+    {
+      "index": 773,
+      "verdict": "verified",
+      "evidence": "Had attaches to put in the first predication. Was is the progressive of going, which shares I and is interrupted by the other subject's call.",
+      "rank_one_sha256": "0a776c1cc05d6647ef8f5691dc1b890fccd048705cb9e73c866175fa5b20dfb9",
+      "selected_graph_sha256": "b4b8779cc0e80d0fe9bd497f2683f3dda6b5b5b0c944671f83c7cb2081f7e920"
+    },
+    {
+      "index": 774,
+      "verdict": "verified",
+      "evidence": "Page denotes the hired attendant, not a document. The supplement encodes a predecimal rate, with the source ten as the implied shilling amount. The main copula introduces the source of trouble.",
+      "rank_one_sha256": "2e114016ef53c2aeb2055b55a8231e605897dd2faddeddc28dfc549c6c942ff9",
+      "selected_graph_sha256": "fe5b36830d9d05e22aed43ee6418f5a8f2338a9596d3190f62ef9af5ed783b66"
+    },
+    {
+      "index": 775,
+      "verdict": "verified",
+      "evidence": "The copula identifies an infinitival plan. The wall has its own location, while the corner locates lying and heads the past habitual existential relative.",
+      "rank_one_sha256": "a9912ea8a1ea48d98afb00bf35a5334ba62043697323b737ac742b41e689c604",
+      "selected_graph_sha256": "83a59233ff082f0b632e8509aeb18a69a7d7792e5106a6fbd82b9eff0b90f792"
     },
     {
       "index": 776,
@@ -458,6 +612,20 @@
       "selected_graph_sha256": "23e429f38979cd62d001fa31a11074d2e234fc852c5b57e6047682d0a727a292"
     },
     {
+      "index": 788,
+      "verdict": "verified",
+      "evidence": "Herself is the reflexive object and predicand of object of attention. The audience is quantified under to tens and scores, with at present anchoring their unknown status.",
+      "rank_one_sha256": "a30c0fd222c169a3be6f98df1f8148de7249b3b42cb40d6d49e55fe91f9edff9",
+      "selected_graph_sha256": "6805e4868e5d86351458c792e1e1d91ba5f5e286eab9c00ef145892f53e4cf0f"
+    },
+    {
+      "index": 789,
+      "verdict": "verified",
+      "evidence": "The first prediction has unresolved verb ellipsis. In the next clause the genitive names the height benchmark, and or rather taller corrects that comparison rather than apposing a noun.",
+      "rank_one_sha256": "3c9801106c900b7cfab4d6aa85544d2f7040853e09aec3b2b3947d14fc701e90",
+      "selected_graph_sha256": "b471343d6f32ab9c0ff3b61e5a4d32e10070667e892caca445195d15a3755c3c"
+    },
+    {
       "index": 790,
       "verdict": "verified",
       "evidence": "Open is a result predicated of the patient door, not a recipient of thrown. The previous voice passive keeps its genitive and location; the final motion has its own subject and destination.",
@@ -512,6 +680,20 @@
       "evidence": "Split source quotations retain Thank you as the overt imperative formula and said Lydia as reporter. Causal for introduces anaphoric if you did; the first modal consequent is I should certainly tell you all, coordinated with then Wickham would be angry. The graph keeps condition, source reporter, two outcomes and temporal order, without inventing the action omitted after did. Lydia/Mary positive and tense contrast pass.",
       "rank_one_sha256": "38d3f96dc9c2df5f1ddc17c2a5cf7c69593b41999aff48a88272180e858e34e1",
       "selected_graph_sha256": "497a83b11857eedcbeda49380d5da5d22594c439548d3dade80c4269eef4c190"
+    },
+    {
+      "index": 798,
+      "verdict": "verified",
+      "evidence": "The possessive gerund his coming is the object of discourage, with here and the degree-frequency expression inside it. Should not scopes remind in the separate utterance.",
+      "rank_one_sha256": "e84fb3b9868412c388afb7c28b4c9db7950827b06b30ef9317ace0866af93373",
+      "selected_graph_sha256": "cb3ad45864014b429493f51ae93e3a35d595cdf340f1cfb680e89b343a8827ed"
+    },
+    {
+      "index": 799,
+      "verdict": "verified",
+      "evidence": "Had attaches to been in the embedded content. Bingley is the predicand and the patient of the reduced guided supplement. Elizabeth controls observe and the final self-restraint.",
+      "rank_one_sha256": "3b5938a684884ea3521923e6a08c43acd20c843c48fb7568dfa416977ef96db1",
+      "selected_graph_sha256": "571e44ceb5ba7a634bcee558091f5b466c5bfeb73b967609e2605e6dabc2f14a"
     },
     {
       "index": 800,
