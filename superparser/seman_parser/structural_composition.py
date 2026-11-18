@@ -72,6 +72,22 @@ from .scoped_literary_quotes import (
     DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
+from .scoped_attachment_domains import (
+    COUNTS as ATTACHMENT_COUNTS, NARRATIVE as ATTACHMENT_NARRATIVE,
+    SPOKEN as ATTACHMENT_SPOKEN, SEQUENCES as ATTACHMENT_SEQUENCES,
+)
+from .scoped_attachment_residuals import (
+    COUNTS as RESIDUAL_COUNTS, NARRATIVE as RESIDUAL_NARRATIVE,
+    SPOKEN as RESIDUAL_SPOKEN, SEQUENCES as RESIDUAL_SEQUENCES,
+)
+from .scoped_quality_followup import (
+    SPOKEN as FOLLOWUP_SPOKEN, NARRATIVE as FOLLOWUP_NARRATIVE,
+    COUNTS as FOLLOWUP_COUNTS, DEGREE_ECHO, FUSED_NEGATIVE, MINOR_AND_PERFECT, RESUMED_PERMISSION,
+)
+from .scoped_quality_repairs import (
+    SPOKEN as QUALITY_SPOKEN, NARRATIVE as QUALITY_NARRATIVE,
+    CLAUSE_COUNTS as QUALITY_CLAUSE_COUNTS,
+)
 from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
 from .scoped_novel_800 import (
     NARRATIVE_PLANS as N800_NARRATIVE, SPOKEN_PLANS as N800_SPOKEN,
@@ -103,6 +119,7 @@ from .scoped_novel_ladder import (
     REPORT_COPULAR_ELLIPSIS, plan_report_copular_ellipsis,
     AFFIRMATIVE_TOTALITY, plan_affirmative_totality,
     NEGATIVE_PROPOSITIONAL_REPLY, plan_negative_propositional_reply,
+    STANDALONE_NEGATIVE_PROFORM, plan_standalone_negative_proform,
     REPORTED_INTERJECTION, plan_reported_interjection,
     NEGATED_GRADED_RESPONSE, plan_negated_graded_response,
     PHONATION_PASSIVE_CAUSE, plan_passive_phonation,
@@ -206,6 +223,7 @@ _LADDER_SPOKEN = (
     (REPORTED_MODAL_CONFIRMATION, plan_reported_modal_confirmation),
     (AFFIRMATIVE_TOTALITY, plan_affirmative_totality),
     (NEGATIVE_PROPOSITIONAL_REPLY, plan_negative_propositional_reply),
+    (STANDALONE_NEGATIVE_PROFORM, plan_standalone_negative_proform),
 )
 _SPOKEN_SINGLE = (
     *_LADDER_SPOKEN,
@@ -227,6 +245,10 @@ _SPOKEN_SINGLE = (
     (REPORTED_INVERTED_CONTROL, plan_reported_inverted_control),
     (REPORTED_REGRET, plan_reported_regret),
     (DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective),
+    *QUALITY_SPOKEN,
+    *FOLLOWUP_SPOKEN,
+    *ATTACHMENT_SPOKEN,
+    *RESIDUAL_SPOKEN,
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
@@ -291,24 +313,36 @@ _UNQUOTED_SCOPED = (
     (RIGHT_INITIAL_PP, plan_coordination_with_initial_pp),
     (NEGATIVE_POSSESSION, plan_negative_possession_with_exception),
     (POINTING_INSTRUMENT, plan_pointing_instrument),
+    *QUALITY_NARRATIVE,
+    # Prove richer complement structures before the more general motion
+    # frames. In particular, to + an infinitive cannot be a goal NP.
+    *RESIDUAL_NARRATIVE,
+    *ATTACHMENT_NARRATIVE,
+    *FOLLOWUP_NARRATIVE,
 )
 _SHARED_SOURCE_PLANS = {
+    STANDALONE_NEGATIVE_PROFORM: NEGATIVE_PROPOSITIONAL_REPLY,
     NARRATIVE_REPORT: REPORT_PLAN,
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *RESIDUAL_COUNTS, *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    **ATTACHMENT_COUNTS,
+    **RESIDUAL_COUNTS,
     **N800_COUNTS,
     **N700_COUNTS,
     **CLAUSE_COUNTS,
+    **QUALITY_CLAUSE_COUNTS,
+    **FOLLOWUP_COUNTS,
     FRONTED_PRECIPITATION: 1,
     COPULAR_COMPARED_RELATIVE: 3, MODAL_PERFECT_CONCESSION: 2, INCISED_EXISTENTIAL_CONTENT: 3, FREQUENCY_CONTRAST: 2, DEPICTIVE_FINITE_PURPOSE: 3,
     EMPHATIC_OBJECT_RELATIVE: 2, EMBEDDED_DURATION_RELATIVE: 2,
     REPORTED_EXCLAMATION_VOCATIVE: 0, QUOTED_NEGATIVE_REPRISE: 0, REPORTED_MODAL_CONFIRMATION: 1,
     REPORTED_INTERJECTION: 0, NEGATED_GRADED_RESPONSE: 1, PHONATION_PASSIVE_CAUSE: 1,
     REPORT_COPULAR_ELLIPSIS: 2, AFFIRMATIVE_TOTALITY: 0, NEGATIVE_PROPOSITIONAL_REPLY: 1,
+    STANDALONE_NEGATIVE_PROFORM: 1,
     PERFECT_LOCATED_MOTION: 1, INTERPOSED_MANNER: 2, TEMPORAL_SHARED_MODAL: 2,
     RECALL_PROGRESSIVE: 2, PURPOSE_THEN: 2, POSTPOS_QUALITY: 1, FRAMED_RESULT: 2,
     NEGATIVE_EQUATIVE: 1, VOCATIVE_COMPARISON: 1, BARE_PASSIVE_RECIPIENT: 2, MOTION_SPEECH: 1,
@@ -536,7 +570,7 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *SPEECH_SEQUENCE_PLANS)
+            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
         })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -788,7 +822,7 @@ class QuotedSentenceComposer:
                 # Only recover the existing can/not senses at their overt
                 # sub-token offsets in this source-scoped contrast.
                 sides = {"MODAL": ("can", 0), "NEG": ("not", 3)}
-                if expected_rule != EMPHATIC_MODAL_CONTRAST or category not in sides:
+                if expected_rule not in (EMPHATIC_MODAL_CONTRAST, FUSED_NEGATIVE) or category not in sides:
                     return None
                 spelling, offset = sides[category]
                 start = a - offset
@@ -1133,6 +1167,10 @@ class QuotedSentenceComposer:
                                if isinstance(c.features.as_dict().get("subcat"), (list, tuple))
                                else (c.features.as_dict().get("subcat"),)))
                         if k == "subcat_member"
+                        else bool(c.sense_ids) and c.source not in {"unknown", "proper-noun"}
+                        if k == "attested_reading"
+                        else c.surface.casefold() == c.lemma.casefold()
+                        if k == "base_surface"
                         else (c.surface.casefold() != c.lemma.casefold()
                               or c.features.as_dict().get("tense") == "past")
                         if k == "nonbase_surface"
@@ -3955,7 +3993,11 @@ class QuotedSentenceComposer:
             )
             if result is not None:
                 return result
-        for rule, planner in SPEECH_SEQUENCE_PLANS:
+        followup_sequences = tuple(
+            (rule, planner) for rule, planner in FOLLOWUP_SPOKEN
+            if rule in (DEGREE_ECHO, MINOR_AND_PERFECT, RESUMED_PERMISSION)
+        )
+        for rule, planner in (*SPEECH_SEQUENCE_PLANS, *followup_sequences, *ATTACHMENT_SEQUENCES, *RESIDUAL_SEQUENCES):
             specs = planner(text, components)
             if specs is not None:
                 sequence = self._compose_verified_dialogue_pattern(

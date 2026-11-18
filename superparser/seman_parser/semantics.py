@@ -6,7 +6,7 @@ Nodes and relations are generic containers. Labels such as ``AGENT`` or
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Iterable, Mapping, Sequence
 
 from .semantic_rules import SemanticAction
@@ -186,11 +186,12 @@ def apply_action(
     child_graphs: Sequence[SemanticGraph],
     aliases: Mapping[str, str] | None = None,
     matched_span: tuple[int, int] | None = None,
+    syntax_children: Sequence[Any] = (),
 ) -> SemanticPackage:
     """Apply one generic semantic action.
 
     Supported kinds are data-driven verbs of composition, not linguistic
-    phenomena: ``link``, ``introduce``, ``copy``, ``compose``.
+    phenomena: ``link``, ``introduce``, ``bind``, ``classify``, ``copy``, ``compose``.
 
     ``aliases`` carries rule-level names (``subject``, ``object``, ``event``)
     resolved while matching RHS symbols.
@@ -226,28 +227,78 @@ def apply_action(
         handles[name] = node.node_id
         return SemanticPackage(graph=graph, handles=handles)
 
-    if action.kind == "link":
-        relation = str(args.get("relation", args.get("role", "REL")))
-        source_ref = args.get("source", "event")
-        target_ref = args.get("target", "referent")
-        source = _resolve_ref(source_ref, handles, child_handles)
-        target = _resolve_ref(target_ref, handles, child_handles)
-        if source is not None and target is not None:
-            graph.add_relation(relation, source, target)
+    if action.kind == "bind":
+        for handle, ref in args.items():
+            resolved = _resolve_ref(ref, handles, child_handles)
+            if resolved is not None:
+                handles[handle] = resolved
         return SemanticPackage(graph=graph, handles=handles)
 
-    if action.kind == "compose":
-        for link in args.get("links", ()):
-            relation = str(link.get("relation", "REL"))
-            source = _resolve_ref(link.get("source"), handles, child_handles)
-            target = _resolve_ref(link.get("target"), handles, child_handles)
+    if action.kind == "classify":
+        # Refine the graph's contextual type without changing the selected
+        # lexical sense, its source span, or any original lattice alternative.
+        if _matches_choice(args, graph, handles, child_handles, syntax_children):
+            target = _resolve_ref(args.get("target"), handles, child_handles)
+            type_name = args.get("type")
+            if target in graph.nodes and isinstance(type_name, str):
+                graph.nodes[target] = replace(graph.nodes[target], type_name=type_name)
+        return SemanticPackage(graph=graph, handles=handles)
+
+    if action.kind in {"link", "compose"}:
+        links = (args,) if action.kind == "link" else args.get("links", ())
+        for link in links:
+            relation = link.get("relation", link.get("role", "REL"))
+            for choice in link.get("choices", ()):
+                if _matches_choice(choice, graph, handles, child_handles, syntax_children):
+                    relation = choice["relation"]
+                    break
+            if relation is None:
+                continue
+            source = _resolve_ref(link.get("source", "event" if action.kind == "link" else None), handles, child_handles)
+            target = _resolve_ref(link.get("target", "referent" if action.kind == "link" else None), handles, child_handles)
             if source is not None and target is not None:
-                graph.add_relation(relation, source, target)
+                graph.add_relation(str(relation), source, target)
         return SemanticPackage(graph=graph, handles=handles)
 
     # Unknown action: keep merged children. Data may add new action kinds
     # without engine changes beyond this generic fallback.
     return SemanticPackage(graph=graph, handles=handles)
+
+
+def _matches_choice(
+    choice: Mapping[str, Any],
+    graph: SemanticGraph,
+    handles: Mapping[str, str],
+    child_handles: Sequence[Mapping[str, str]],
+    syntax_children: Sequence[Any],
+) -> bool:
+    """Match rank-one rule paths or selected lexical nodes, not corpus identity.
+
+    A dotted child path refers to zero-based RHS positions. A form
+    condition checks the written inflection of a selected lexical node.
+    The first matching choice wins.
+    """
+    for path, expected in choice.get("child_rules", {}).items():
+        children = syntax_children
+        node = None
+        for segment in path.split("."):
+            i = int(segment)
+            if not 0 <= i < len(children):
+                return False
+            node = children[i]
+            children = node.children
+        if node is None or node.rule_id not in expected:
+            return False
+    for field in ("lemmas", "forms"):
+        for condition in choice.get(field, ()):
+            node_id = _resolve_ref(condition["ref"], handles, child_handles)
+            node = graph.nodes.get(node_id) if node_id is not None else None
+            if node is None:
+                return False
+            value = node.surface if field == "forms" else node.attributes.get("lemma")
+            if not isinstance(value, str) or value.casefold() not in condition["in"]:
+                return False
+    return True
 
 
 def _resolve_ref(
@@ -256,6 +307,12 @@ def _resolve_ref(
     child_handles: Sequence[Mapping[str, str]],
 ) -> str | None:
     if ref is None:
+        return None
+    if isinstance(ref, Mapping):
+        i = ref.get("child")
+        key = ref.get("handle")
+        if isinstance(i, int) and 0 <= i < len(child_handles) and isinstance(key, str):
+            return child_handles[i].get(key)
         return None
     if isinstance(ref, int):
         if 0 <= ref < len(child_handles):
@@ -398,6 +455,7 @@ class SemanticInterpreter:
                 child_graphs=child_graphs,
                 aliases=aliases,
                 matched_span=(item.start, item.end),
+                syntax_children=item.children,
             )
         return package
 

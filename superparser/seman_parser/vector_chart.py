@@ -1303,6 +1303,9 @@ class _LazyMaterializer:
                             )
                         continue
                     merged, env = result
+                    if not candidate.supports_context(merged):
+                        self.unification_rejections += 1
+                        continue
                     heappush(state.heap, (
                         -candidate.score, next(self._serial), "lexical", (candidate, merged, env),
                     ))
@@ -2092,6 +2095,25 @@ def _reported_discourse_embedding(root: ChartItem) -> int:
     return total
 
 
+def _bare_finite_root_conflict(item: ChartItem) -> bool:
+    """Do not let a root-only VP-NP fallback supply missing inflection.
+
+    This check is limited to direct subject–predicate root analyses. Bare
+    infinitives under auxiliaries and genuinely embedded subjunctives are not
+    constrained here.
+    """
+    if item.rule_id not in {"clause_np_vp", "clause_np_coord_aux_adv"} or len(item.children) != 2:
+        return False
+    subject, predicate = item.children
+    if not predicate.children or subject.category != "NP":
+        return False
+    head = predicate.children[0].lexical_candidate
+    if head is None or not head.excludes_third_singular:
+        return False
+    features = subject.features.as_dict()
+    return (features.get("number"), features.get("person")) == ("singular", "3")
+
+
 class _LazyRoots:
     def __init__(
         self,
@@ -2148,6 +2170,10 @@ class _LazyRoots:
             self.pending_nodes.discard(analysis.node_id)
             self.yielded_nodes.add(analysis.node_id)
             item = self.materializer.item(analysis)
+            if _bare_finite_root_conflict(item):
+                self.stats["invalid_bare_finite_roots"] = self.stats.get("invalid_bare_finite_roots", 0) + 1
+                self._schedule_following(analysis.node_id)
+                continue
             self.items.append(item)
             self.pack(item)
             if len(self.items) < amount:
