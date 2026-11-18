@@ -15,6 +15,7 @@ from scripts.evaluate_novel_transfer import ROOT, verify_source
 DIRECTORY = ROOT / "research" / "novel_1500_exploration"
 SCHEMA = "seman2-novel1500-exploration-v1"
 ENDS = (1100, 1200, 1300, 1400, 1500)
+REPAIR_SCHEMA = "seman2-novel1500-verified-repairs-v1"
 CENSORED_STATUSES = frozenset({"timeout", "forest_budget_exceeded",
                                "kbest_budget_exceeded", "both_budgets_exceeded"})
 
@@ -187,6 +188,57 @@ def repair_queue(source_manifest, groups, out_dir):
             "unresolved": unresolved}
 
 
+def read_repairs(source_manifest):
+    data = ladder.read_json(DIRECTORY / "verified-repairs.json")
+    if (data["schema"] != REPAIR_SCHEMA
+            or data["manifest_sha256"] != ladder.digest(source_manifest)
+            or data["limits"] != ladder.LIMITS):
+        raise ValueError("Repairs do not refer to the frozen sources and limits")
+    repairs = {}
+    for entry in data["repairs"]:
+        index = entry["before"]["index"]
+        after = entry["after"]
+        if (index in repairs or not 1001 <= index <= ENDS[-1] or after["index"] != index
+                or after["status"] != "complete" or after["forest_budget_exceeded"]
+                or after["kbest_budget_exceeded"] or not after["root_rule"]
+                or not after["rank_one_sha256"] or not after["selected_graph_sha256"]
+                or entry["before"] == after):
+            raise ValueError(f"Unproved or invalid correction registration at N{index}")
+        repairs[index] = entry
+    return repairs
+
+
+def expected_result(end, cohort, repairs):
+    initial = ladder.read_json(DIRECTORY / f"novel-{end}-initial.json")
+    by_index = ladder.result_cases(initial, cohort, end)
+    for index in by_index.keys() & repairs.keys():
+        entry = repairs[index]
+        if by_index[index] != entry["before"]:
+            raise ValueError(f"Initial signature drift at N{index}")
+        source_sha = cohort["anchors"][index - cohort["first_index"]][-1]
+        if entry["source_sha256"] != source_sha:
+            raise ValueError(f"Repair refers to a different source at N{index}")
+        by_index[index] = entry["after"]
+    current = {**initial, "cases": list(by_index.values()),
+               "counts": dict(Counter(row["status"] for row in by_index.values()))}
+    ladder.result_cases(current, cohort, end)
+    return current
+
+
+def current_queue(source_manifest, repairs):
+    queue = ladder.read_json(DIRECTORY / "repair-queue.json")
+    if queue["manifest_sha256"] != ladder.digest(source_manifest):
+        raise ValueError("Initial queue does not refer to frozen sources")
+    original = queue["unresolved"]
+    for row in original:
+        repair = repairs.get(row["index"])
+        if repair and (repair["before"]["status"] != row["status"]
+                       or repair["source_sha256"] != row["source_sha256"]):
+            raise ValueError(f"Unable to reconcile repaired N{row['index']} with its source")
+    pending = [row for row in original if row["index"] not in repairs]
+    return {**queue, "coverage_repairs": len(original) - len(pending), "unresolved": pending}
+
+
 def inspect_case(index, groups, bodies, replay_dir=None):
     end = ((index + ladder.SIZE - 1) // ladder.SIZE) * ladder.SIZE
     group = groups[end]
@@ -220,7 +272,7 @@ def inspect_case(index, groups, bodies, replay_dir=None):
 
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
-    cli.add_argument("action", choices=("plan", "replay", "check", "snapshot", "inspect"))
+    cli.add_argument("action", choices=("plan", "replay", "check", "snapshot", "inspect", "queue"))
     cli.add_argument("--wordnet-dir", type=Path)
     cli.add_argument("--out-dir", type=Path, help="Replay directory, optional for inspect")
     cli.add_argument("--group", choices=ENDS, type=int)
@@ -230,27 +282,32 @@ def main():
         cli.error("--group requires replay or check")
     if args.index is not None and (args.action != "inspect" or not 1001 <= args.index <= ENDS[-1]):
         cli.error("--index requires inspect and an index from 1001 to 1500")
-    if args.action != "inspect" and args.out_dir is None:
-        cli.error("--out-dir is required except for inspect")
+    if args.action not in {"inspect", "queue"} and args.out_dir is None:
+        cli.error("--out-dir is required except for inspect and queue")
     if args.action == "replay" and args.wordnet_dir is None:
         cli.error("replay requires --wordnet-dir")
     inventory = ladder.load_source_inventory()
     manifest, groups = prepare(inventory=inventory)
     pin = DIRECTORY / "source-manifest.json"
-    if (pin.exists() or args.action in {"check", "inspect"}) and ladder.read_json(pin) != manifest:
+    if (pin.exists() or args.action in {"check", "inspect", "queue"}) and ladder.read_json(pin) != manifest:
         raise ValueError("Novel-1500 source selection drifted from its frozen anchors")
+    if args.action in {"inspect", "queue", "check"}:
+        repairs = read_repairs(manifest)
+    if args.action == "queue":
+        print(json.dumps(current_queue(manifest, repairs), ensure_ascii=False, indent=2))
+        return
     if args.action == "inspect":
         index = args.index
         if index is None:
-            queue = ladder.read_json(DIRECTORY / "repair-queue.json")
-            if queue["manifest_sha256"] != ladder.digest(manifest):
-                raise ValueError("The repair queue terms do not match the frozen sources")
+            queue = current_queue(manifest, repairs)
             if not queue["unresolved"]:
                 print("No incomplete candidates.")
                 return
             index = queue["unresolved"][0]["index"]
-        print(json.dumps(inspect_case(index, groups, inventory[1], args.out_dir),
-                         ensure_ascii=False, indent=2))
+        description = inspect_case(index, groups, inventory[1], args.out_dir)
+        if index in repairs:
+            description["verified_signature"] = repairs[index]["after"]
+        print(json.dumps(description, ensure_ascii=False, indent=2))
         return
     args.out_dir.mkdir(parents=True, exist_ok=True)
     if args.action == "plan":
@@ -264,7 +321,7 @@ def main():
         result, _ = checked_observation(end, group, args.out_dir)
         filename = f"novel-{end}-initial.json"
         if args.action == "check":
-            check_result(end, group[0], ladder.read_json(DIRECTORY / filename), result)
+            check_result(end, group[0], expected_result(end, group[0], repairs), result)
         else:
             ladder.write_json(args.out_dir / filename, result)
         print(f"Novel-{end}: {result['counts']} (parse coverage, not semantic review)")

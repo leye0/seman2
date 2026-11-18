@@ -49,6 +49,7 @@ jobs:
         run: |
           python -m unittest -q \
             superparser.tests.test_novel1500_exploratory \
+            superparser.tests.test_novel1500_grammar_repairs \
             superparser.tests.test_novel_reporting_v3 \
             superparser.tests.test_novel1000_grammar_repairs \
             superparser.tests.test_novel_ladder
@@ -62,6 +63,11 @@ jobs:
           python -m scripts.novel1500_exploratory replay \
             --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1500-replay
           python -m scripts.novel1500_exploratory check --out-dir /tmp/novel1500-replay
+      - name: Check direct Layer 1 grammar and recorded negative controls
+        run: |
+          python -m scripts.smoke_layer1
+          python -m scripts.validate_direct_grammar --wordnet-dir "$WORDNET_DICT" \
+            --out /tmp/novel1500-replay/direct-grammar.json
       - name: Publish candidate replay for source, syntax and semantic review
         if: always()
         uses: actions/upload-artifact@v4

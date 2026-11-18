@@ -1,5 +1,8 @@
 # Novel-1500 exploratory baseline
 
+This document records the immutable **initial** measurements. For the current
+results, see [the first repair batch](NOVEL1500_REPAIR_BATCH1.md).
+
 Novel-1500 extends [Novel-1000 v3][v3] with N1001–N1500, in five
 additive groups of 100. All 1,000 inherited source anchors are unchanged.
 The parent and its 30 dialogue witnesses are tested against the v3
