@@ -118,8 +118,8 @@ class Novel700ResidualTests(unittest.TestCase):
 
     def test_n648_progressive_source_and_controls(self):
         from seman_parser.scoped_novel_700 import N648_PROGRESSIVE
-        positive=('Next moment we were both groping downstairs, leaving the lantern '
-                  'by the empty chest; and the next we had opened the gate and were in full retreat.')
+        positive=('Next moment they were both creeping upstairs, leaving the lantern '
+                  'by the empty chest; and the next they had opened the gate and were in full retreat.')
         negative=('Next moment we were both groping downstairs, leaving the lantern '
                   'by the empty chest; and the next we has opened the gate and were in full retreat.')
         for text,must in ((648,True),(positive,True),(negative,False)):
@@ -136,12 +136,18 @@ class Novel700ResidualTests(unittest.TestCase):
                 self.assertEqual([c.category for c in root.children],
                     ['ADJ','N','CLAUSE','COMMA','V','NP','PP','SEMICOLON','COORD',
                      'NP','CLAUSE','COORD','COPULA','PP','SPEECH-STOP'])
+                self.assertEqual(root.children[2].rule_id, 'structural_n648_overt_finite_progressive')
+                self.assertEqual([c.category for c in root.children[2].children],
+                                 ['NP', 'AUX-BE', 'DET', 'V', 'ADV'])
                 self.assertFalse(result.stats.get('budget_exceeded'))
                 package=ParseReport(result,self.parser._quoted_sentence_resources,lattice).best_semantic_graph()
                 self.assertIsNotNone(package)
                 handles=package['handles']
                 edges={(e['relation'],e['source'],e['target']) for e in package['graph']['relations']}
                 for relation,left,right in (
+                    ('PROGRESSIVE','first','progressive_aux'),
+                    ('AGENT','first','progressive_subject'),
+                    ('DIRECTION','first','direction'),('AGENT','leaving','progressive_subject'),
                     ('SUPPLEMENT','first','leaving'),('THEME','leaving','candle'),
                     ('PARATAXIS','first','second'),('STATE','were','retreat')):
                     self.assertIn((relation,handles[left],handles[right]),edges)

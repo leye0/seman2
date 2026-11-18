@@ -6,57 +6,12 @@
   ],
   "cases": [
     {
-      "index": 602,
-      "status": "needs_fix",
-      "selected_tree_sha256": "88ea198aeafedb866eeaf2ccf0c90d1906d9026e408f9092bac36e792ba7baee",
-      "selected_graph_sha256": "8d9fe953ed9710a5b24568ca49aa761fadf5e1172737bbe31ce6258a3fb95ba1",
-      "observed_defect": "RECIPIENT(expressed,answer) from in my answer mislabels a manner/location PP as the recipient of expression",
-      "required_linguistic_correction": "Bind in my answer as medium/context of expressing, not a recipient",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 604,
-      "status": "needs_fix",
-      "selected_tree_sha256": "9b300a2080b92a718a9dfac71aa6290ed3c1e29b4b137819aa4d5df09b4bdc86",
-      "selected_graph_sha256": "8899e346cc9ba8e0ba3520b2d4dfde436773243ea40702004e044c03f104ae0f",
-      "observed_defect": "AGENT(troubled,speech) treats an informational speech as a volitional agent and AFFECTED(troubled,me) only as physical affectedness",
-      "required_linguistic_correction": "The speech is a STIMULUS/CAUSE of distress; me is EXPERIENCER of being troubled, not agent and physical patient",
-      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
-    },
-    {
-      "index": 605,
-      "status": "needs_fix",
-      "selected_tree_sha256": "4fc414ec908fca343026394b309e9d8449af89d29e01e80182ea05167d74fe2e",
-      "selected_graph_sha256": "8a2646b6dc277ead04654c527ceda84b698d2cf3107589a787cddd83f72961c2",
-      "observed_defect": "`roughly` is attached to auxiliary `do` rather than lexical `answer`",
-      "required_linguistic_correction": "Degree/manner of answering; interrogative reason attached to question predicate",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
-      "index": 606,
-      "status": "needs_fix",
-      "selected_tree_sha256": "0d34c599d50f22a136a825aabca90114f801f87a515061a5bd954173a3d80068",
-      "selected_graph_sha256": "ccc29ad93f1047969ff5756aa333c503d48c681ae4766b79c6fc3b72a16922e9",
-      "observed_defect": "AGENT(was,letter) attributes agency to letter in My letter was calm and affectionate",
-      "required_linguistic_correction": "The copular subject letter is THEME/PREDICAND and calm/affectionate are two predicative attributes",
-      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
-    },
-    {
       "index": 607,
       "status": "needs_fix",
       "selected_tree_sha256": "4191e93fac135f9d605a957784c71956cbd129a93f10e5bef390a080f5a052fc",
       "selected_graph_sha256": "50c5ed01e43eff2bf3902184d5547bb1e493a9072b1d9b2bb1a582782fffda3a",
       "observed_defect": "`RECIPIENT(took, Elizabeth)` from `the hand of Elizabeth`",
       "required_linguistic_correction": "Elizabeth belongs to the hand's possessor relation, not recipient of taking",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
-      "index": 608,
-      "status": "needs_fix",
-      "selected_tree_sha256": "2de9feb12302bb80c4c723084cd6b4dab5bfc3ea7f5d8da6424648a10762619a",
-      "selected_graph_sha256": "27884060db62571dc5a8b44e68cf79db12142665bcbb0cc0fdb6545d57f06f2a",
-      "observed_defect": "A complete 60-character selected modal-relative question has **zero graph edges**",
-      "required_linguistic_correction": "Subject of `allude`, modal `Could`, object PP and relative/negative `dared not think`",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
@@ -135,19 +90,19 @@
       "index": 620,
       "status": "needs_fix",
       "selected_tree_sha256": "3286e19248ae16e59cc9104a35ddaa09ca819343de9489486398779b114e4f0f",
-      "selected_graph_sha256": "07272cd2419b82919bb9ccf94d163e5a07ef8bf7f90b5ad1ecda736cba10040b",
-      "observed_defect": "`in` is selected as PARTICLE in `spent in listless indolence`; `AGENT(spent, days)`",
+      "selected_graph_sha256": "3d92a317c9616408731eebd13773026d67a33e35f7743d5e16dd28633db708d6",
+      "observed_defect": "The relative's preposition and the arrival goal are now linked. The participle spent still treats days as agent and in as a particle.",
       "required_linguistic_correction": "Proper locative/manner PP and passive/reduced-relative relation of days spent",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 621,
       "status": "needs_fix",
       "selected_tree_sha256": "4b15513ecdb8a12f9a044bb4911dd7e800584782e485938a51bc1cbd8f60c7c2",
-      "selected_graph_sha256": "bb58f2b43fcfc7c5a24f48dbdc7c449a4c071005b1d60ac357e72f2213bb492d",
-      "observed_defect": "RECIPIENT(put,bed) treats into a bed as an indirect recipient of put",
-      "required_linguistic_correction": "The bed is a goal/location for the movement of it, not a recipient",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+      "selected_graph_sha256": "f98ba3b8fa247b102cd3da2f28ea855955d6524d8f0be01fdeab33e2f57e4a1d",
+      "observed_defect": "Both directional goals now attach, including into a bed. For an apothecary is still a modifier of town rather than purpose of going, and life is mislabeled agent of a copular state.",
+      "required_linguistic_correction": "Attach for an apothecary as purpose of Daniel's going and preserve correct copular predicand and scalar scope in life was quite gone.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 622,
@@ -159,15 +114,6 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
-      "index": 626,
-      "status": "needs_fix",
-      "selected_tree_sha256": "1b1ca01dcc6c73dec580655c1308d276e84a1fa835519b75772503bcb900e4fc",
-      "selected_graph_sha256": "7a3c35d366f8619cd0e226532ebabc2b36049cddbd4715f5e79e887ea9a25fb3",
-      "observed_defect": "`No` treated as noun in `\"No, sir\"` with `APPOSITION(No, sir)`",
-      "required_linguistic_correction": "Negative reply, vocative sir, actual speech attribution",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
       "index": 627,
       "status": "needs_fix",
       "selected_tree_sha256": "b6e0d07ed36a63611b953dbc490c84f7aaf26e3e5fd01cb9501b72570a5c1fcc",
@@ -175,24 +121,6 @@
       "observed_defect": "In I took a step nearer, the light-verb take+a-step construction is reduced to AFFECTED(took,step) and MANNER(took,nearer); the selected graph does not represent the locomotion event and directional goal correctly.",
       "required_linguistic_correction": "Treat take a step as an eventive locomotion predicate with agent I and step as the action nominal, and nearer as DIRECTION/PROXIMITY rather than a simple manner adverb.",
       "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
-    },
-    {
-      "index": 628,
-      "status": "needs_fix",
-      "selected_tree_sha256": "8e0628bf8ed51b5cfc70e08a9fb01b6acf5dfaa29d0965645b5ed9a550337fd8",
-      "selected_graph_sha256": "11939836323a692810d4057cdb26681dc15054801b17cc23825a3490ae8ee446",
-      "observed_defect": "Fronted Of Silver is reduced to TOPIC(heard,Of) with no Silver referent; no more object treated as AFFECTED",
-      "required_linguistic_correction": "Connect Silver as topic of hearing and preserve negative quantifier no more",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 629,
-      "status": "needs_fix",
-      "selected_tree_sha256": "67736d0f5478c52d37d90ef153b88ded61f84f66a722987d6a627e4d9fa6602a",
-      "selected_graph_sha256": "9ceafb0392999dfd6bf4fa52d321a4b851e79cfc89ff54f86facf15e8dfd570e",
-      "observed_defect": "`AGENT(moved, as)`; `never` selected DEGREE without negation scope",
-      "required_linguistic_correction": "`the doctor` is agent/subject of `moved`; `never so much as` negates/minimizes event",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
       "index": 630,
@@ -297,10 +225,10 @@
       "index": 644,
       "status": "needs_fix",
       "selected_tree_sha256": "9a4e4c6b36d95d69368c6688b699c7a8fb244de2b9e9b3756addfdf5f766dd86",
-      "selected_graph_sha256": "ef641422b6935662050de55a7e489e4e331dfcdef50befb76e6f10a8828de1e3",
-      "observed_defect": "`stay` is N and `AGENT(exposed,there)` in `we had to stay--my mother ... exposed`",
+      "selected_graph_sha256": "900a52247ee920bf2079c899a5a6875ce87ae3b68bb9f69b9242708e8068a0a0",
+      "observed_defect": "PARTITIVE(both,us) replaces a self-loop. Stay is still a noun and the tableau's exposed predicate still has a false agent.",
       "required_linguistic_correction": "`stay` infinitive of necessity, absolute exposed supplement with mother patient",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 645,
@@ -324,28 +252,10 @@
       "index": 650,
       "status": "needs_fix",
       "selected_tree_sha256": "61f7e3be7b90bc0743f3fb194196911a4a7a2b0a207a9e738bd39ef26af60eb3",
-      "selected_graph_sha256": "98c0f38cad11379013f4c3887a1cc90e3ccef841667245111f5ea4a86e9ac5a6",
-      "observed_defect": "not in No sir not I has no negative-scope relation; AGENT(agreed,all) obscures we",
+      "selected_graph_sha256": "8fb539856a6c304ce9c44f35af1dba02151e51a7adaad0b9afa6c021fb2b9852",
+      "observed_defect": "The affirmative report now records its perfect auxiliary. The negated reply and the plural subject of agreed are still wrong.",
       "required_linguistic_correction": "Preserve negative minor response and we all as the subject of agreed",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 651,
-      "status": "needs_fix",
-      "selected_tree_sha256": "a0677f15d801f906cba3808180a30d18c2a16792f0d61d4b73f9781bff85d255",
-      "selected_graph_sha256": "ef971773cfc3819b95271ae74d85207416df99053e188068ca496b25508b5121",
-      "observed_defect": "The perfect auxiliary has in The boy has got the baby is absent from all semantic relations",
-      "required_linguistic_correction": "The HAVE auxiliary expresses perfect aspect of got; full source quote and exclamatory illocution need correctly scoped representation",
-      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
-    },
-    {
-      "index": 653,
-      "status": "needs_fix",
-      "selected_tree_sha256": "3a989fe325c2b8d32c5e2c7d54b311888268b1f97e10c58f6792d54ace9691e4",
-      "selected_graph_sha256": "be7c41a0f59310845937539bd1f09519ea2e07a7ba5a1220a7dbb7e13873537e",
-      "observed_defect": "`Will you be improved?` has no MODALITY link for `Will`",
-      "required_linguistic_correction": "Interrogative modal scope and passive/stative patient `you`",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 655,
@@ -369,10 +279,10 @@
       "index": 657,
       "status": "needs_fix",
       "selected_tree_sha256": "21052bd9d69a3d63cadf072146ad336fcc5c09e34890295ba090aae5159ce65d",
-      "selected_graph_sha256": "6baf9ff38169edb85fddd2cf0d88e36ef0ac4ddc2139c6203393605a821040d3",
-      "observed_defect": "go in see the phantoms ... go by me is typed ADJ, not bare verbal predicate",
+      "selected_graph_sha256": "7c1a631f326d2fb7775e05f3fe7a19477dfd2fe20ffd5891f6b24fc8c671338a",
+      "observed_defect": "The perfect auxiliary is recorded, but aside is still nominal and go is adjectival instead of the lower bare predicate.",
       "required_linguistic_correction": "see selects an object-control/bare-infinitive motion predicate go",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 658,
@@ -405,10 +315,10 @@
       "index": 664,
       "status": "needs_fix",
       "selected_tree_sha256": "e5ee89b6d1b0de83f47cc63d40f4524373af898dba2dfd9227fafe4b8978b0a5",
-      "selected_graph_sha256": "9fc0cc7efbf93c9a8004c6577a4ef761c634e75c90ea0820f9cb5439120297b9",
-      "observed_defect": "in in in intervals is typed ADJ, producing APPOSITION(me,intervals)",
+      "selected_graph_sha256": "fde5f70857e875ffb3984e6eef40434accc1d3733d06e49fced08bad9c649fe0",
+      "observed_defect": "The copular predicate identifies we as its predicand. The PP in intervals remains misanalysed as a nominal apposition.",
       "required_linguistic_correction": "Intervals when left alone is a locative-temporal adjunct, not apposition of me",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 667,
@@ -468,46 +378,10 @@
       "index": 675,
       "status": "needs_fix",
       "selected_tree_sha256": "1554d91680ea1eb4be05caacf8b80b5e2a5921c91b0f584b4619293f9af0842a",
-      "selected_graph_sha256": "4bc7f635b5fa134462c8e35f9884a8eb42c35fbd373ca0e5c0e8be244daa899f",
-      "observed_defect": "`had` from `hadn't` is selected as V with `AGENT(said,had)`",
+      "selected_graph_sha256": "e1fcc2c62304c0e5f8503767c3f3e0d2e39ce4c1ce96a3db99a8fe1b15a94a9a",
+      "observed_defect": "Church is now the goal of went. The matrix negative perfect still selects had as a lexical verb and a false subject.",
       "required_linguistic_correction": "Negative perfect auxiliary inversion and subject `I` of `said`",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
-      "index": 676,
-      "status": "needs_fix",
-      "selected_tree_sha256": "56e2868e4374f53c9b48619e0b5650371673d0dea1b47c8c082e65c6ee550417",
-      "selected_graph_sha256": "0fd68ed8bac574a853744f5b31f7d383eba52c9c4d8403f1756e4907b38956d5",
-      "observed_defect": "MANNER(was,directly) treats directly in She was gone directly as manner of the copula",
-      "required_linguistic_correction": "Directly is a temporal immediately/soon modifier of the departure/state gone, not manner",
-      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
-    },
-    {
-      "index": 677,
-      "status": "needs_fix",
-      "selected_tree_sha256": "73a121c3ddae2ebc838ee108c6b006f3f1654c8fd4f2899fd11306ad5a07c2b2",
-      "selected_graph_sha256": "4c779b422a09e0e2fcdc4c4e3767b3a5984a6b03bcafb6b16631c9a90d893417",
-      "observed_defect": "ATTRIBUTE(write,uncommonly) incorrectly makes degree adverb the attribute of writing",
-      "required_linguistic_correction": "uncommonly modifies fast, and fast is manner of write",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 678,
-      "status": "needs_fix",
-      "selected_tree_sha256": "48a7ff1726618818f1b950f21b2eb76136de5cfa25d6d46051cafff7cd6a154b",
-      "selected_graph_sha256": "4456a91b9ee8e7b68443231887719b8d33297e7d961668f22195d5b776cfe279",
-      "observed_defect": "Such as vanity and pride has only CONJUNCT(vanity,pride), losing the Such as exemplification",
-      "required_linguistic_correction": "Such as introduces an exemplifier relation over the coordinated nominal list",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
-    },
-    {
-      "index": 679,
-      "status": "needs_fix",
-      "selected_tree_sha256": "f803060d3e6d24fcd65647de120e9f74585eca532d54e99312092d8042be183b",
-      "selected_graph_sha256": "dbffd476f3b019336a59016582e512ad08904868c2e51e5f19e2d5c349c350d8",
-      "observed_defect": "Mr Bennet made no answer has no semantic negative quantification for no answer",
-      "required_linguistic_correction": "The source no contributes zero/negation to the answer object, not an affirmative event of making an unspecified answer",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 682,
@@ -567,19 +441,19 @@
       "index": 689,
       "status": "needs_fix",
       "selected_tree_sha256": "b3e5759d3e0e11b1299b52f69eb4d32ae8f2c994f79cdf5925d5dca2fdc3cfef",
-      "selected_graph_sha256": "6667b9f87d9e646a200a32dad2d36557975becd5b71160b10367da08e3e50d66",
-      "observed_defect": "AFFECTED(joined,drawing-room) treats the room as object instead of party",
+      "selected_graph_sha256": "397cfba1ab848b73c474dd7864dc4b4759ac26b9b05dd29f707031814862f75e",
+      "observed_defect": "The invitation is no longer volitional agent of the copula. Joined still selects the drawing-room rather than the party as its object.",
       "required_linguistic_correction": "They joined the party at a proper hour in Lady Catherine's drawing-room",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 690,
       "status": "needs_fix",
       "selected_tree_sha256": "d3cbcb5e6774cb589471eebc983aa23e8d327038f381accf11cac5925af00519",
-      "selected_graph_sha256": "cae9017fe907edb4bd2a4b43d1eef662291d4989622a677ea9635199685dd9d3",
-      "observed_defect": "which had been so warmly canvassed selects been as V and AGENT(been,which), MANNER(been,warmly)",
+      "selected_graph_sha256": "6fa77a86f6af1fd16f4388f29e3d287cf0d9b1c89d7cda0b58240471bae30abd",
+      "observed_defect": "Brought is now the head of the second passive, with was and temporal now attached. The perfect relative containing canvassed still has a wrong head/attachment.",
       "required_linguistic_correction": "Warmly modifies canvassed; been is perfect/passive auxiliary and the subject is canvassed",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 692,
@@ -663,15 +537,6 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
-      "index": 703,
-      "status": "needs_fix",
-      "selected_tree_sha256": "d377fbc0154b8c6c219beb4483c2293196f53a2338a92cf3cbccbd51c790920f",
-      "selected_graph_sha256": "6d17fb6b952494ac8bbfd2f7deee50230332e19dd5a52a31f89f2d343dbb9be9",
-      "observed_defect": "`O blessed sleep!` has `O` PROPER-NOUN as `AGENT(blessed,O)`",
-      "required_linguistic_correction": "Apostrophe/exclamation addressed to sleep, not an act by a person `O`",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
       "index": 707,
       "status": "needs_fix",
       "selected_tree_sha256": "8440179d4bd8daf8fe82b9c43299dc3d9ced255c84e63de48a8e858daa381514",
@@ -693,28 +558,19 @@
       "index": 710,
       "status": "needs_fix",
       "selected_tree_sha256": "d6d9a83ee75142691a4667d1665832705cc2f786429fd9231a8e9b9c63e06c10",
-      "selected_graph_sha256": "d1bfcb407dc5472d215868ad5df0470ac5f173e5e765b54118678667873378c6",
-      "observed_defect": "how heavily I bore is assigned TOPIC(bore,heavily), not degree of manner",
+      "selected_graph_sha256": "90ae6fe2a57070ba4c9d66f334c16bf744ce1358c9a356c3c72f57358cbac77c",
+      "observed_defect": "The passive adjective-participle and subject now bind under acquainted. The embedded how heavily relation still treats heavily as a topic rather than interrogative manner and degree.",
       "required_linguistic_correction": "Heavily is manner of bore in an embedded how-interrogative complement",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 711,
       "status": "needs_fix",
       "selected_tree_sha256": "ad697298e54ead3a9e5e251bc6b31f0261997945080308a74a0537b857899b34",
-      "selected_graph_sha256": "0ffde74105d9ea09fb4fb821d7327c70480b47802a9b7c762473d424f0aac547",
-      "observed_defect": "The second lost event has TOPIC(lost,glory) instead of coordination of utility and glory in the first clause",
+      "selected_graph_sha256": "ecafc6c6f5960c92b61c80368c782e8cae679d0933514cc5b7329d64b37e34cc",
+      "observed_defect": "Both perfect auxiliaries are explicit. The conjunction joining utility and glory and the boundary between two clauses are still wrong.",
       "required_linguistic_correction": "Utility and glory are parallel hope complements; the second I have lost my friend is independent",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 712,
-      "status": "needs_fix",
-      "selected_tree_sha256": "00239cdfe5c9455232e7a315a1d4f494657c685cdb96f49c9e6ff34ef3993604",
-      "selected_graph_sha256": "37e1eef50b8540ef5fa4ba3bb1158a303998e455a147200bfbbb086fb16d7740",
-      "observed_defect": "I walked with a quick pace has no attached instrumental/manner link for with a quick pace",
-      "required_linguistic_correction": "The with-PP modifies manner of walked, not a disconnected phrase",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 714,
@@ -774,10 +630,10 @@
       "index": 722,
       "status": "needs_fix",
       "selected_tree_sha256": "807102d707fe8341b70a8a1992551a5752c622dc30468a25983ec384b18e7891",
-      "selected_graph_sha256": "39242582da7fc6a12076f18ae401f3c558295b686043c83e7776e46074f4ffba",
-      "observed_defect": "`league` V, `rose` ADJ, and `AFFECTED(stood, Montanvert)`",
+      "selected_graph_sha256": "3f0db69a1b86d0bafd6cae37445ea8ab2c568bfff51bff2bb662a5d29ce91435",
+      "observed_defect": "Now modifies stood temporally, but the inversion, reference point and league remain misanalysed.",
       "required_linguistic_correction": "Montanvert belongs to the main copular statement, `rose` is inverted finite verb with Mont Blanc subject",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 723,
@@ -807,39 +663,12 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_NEGATION_REPAIR.md"
     },
     {
-      "index": 726,
-      "status": "needs_fix",
-      "selected_tree_sha256": "2edd956811ad1d4728e4a13936c7e03a956583f355bcab97dc3dabf7a4f9d3fc",
-      "selected_graph_sha256": "bc37ba593d8e08adf9d7304341342ec7a858449dfd581997b6c4188cea31f013",
-      "observed_defect": "Then he spoke uses TOPIC(spoke,Then) rather than temporal sequencing",
-      "required_linguistic_correction": "Then is temporal adjunct of spoke",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
-    },
-    {
-      "index": 727,
-      "status": "needs_fix",
-      "selected_tree_sha256": "572ab244ce53c402d83cfc3f16a17af5ec38edbaf4347cc279c18484514df7b1",
-      "selected_graph_sha256": "bd7bf67f222fb14ae18a7c0577a13ed3afa0286b74fd28bce02a6e763b33917c",
-      "observed_defect": "Ready in quoted Ready! is selected N rather than an adjectival state",
-      "required_linguistic_correction": "Represent adjectival readiness minor speech act with overt cried reporter",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
       "index": 728,
       "status": "needs_fix",
       "selected_tree_sha256": "2c8c6c92ec47ad345cf2321c0a82ae51b3c2fe398ce35e6413ea8262418e6859",
       "selected_graph_sha256": "79c82ea9e88564f287c2ef4133e45e293d590151e6986699ed5455e9f70f51c4",
       "observed_defect": "That in That fixes it! is selected DET as a stand-alone subject",
       "required_linguistic_correction": "The demonstrative is a pronominal subject of fixes, not a determiner without a noun",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 729,
-      "status": "needs_fix",
-      "selected_tree_sha256": "37229988129d7dceb9fd59502388e185d17c009fb37a2b8b0a7e1a29cc53f005",
-      "selected_graph_sha256": "b6aab85089194589eb14ce92471de1068a9d49a81405a85e781c7f7aced1ef20",
-      "observed_defect": "We ran on deck has only AGENT(ran,We); on deck is disconnected",
-      "required_linguistic_correction": "Attach on deck as location/goal of ran",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {
@@ -855,19 +684,10 @@
       "index": 733,
       "status": "needs_fix",
       "selected_tree_sha256": "2dec9bbb84fdac24cd24774dd07831ff2af6fe26a20bcd056e281d398f8932e5",
-      "selected_graph_sha256": "3f140ad8a6bf6a99642c4a970ec4508eba28dd3bc928269933aed07d6c74c72e",
-      "observed_defect": "different from any of the others only gives ATTRIBUTE(was,different) with no comparison standard",
-      "required_linguistic_correction": "The standard from any of the others must attach to different",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 734,
-      "status": "needs_fix",
-      "selected_tree_sha256": "1f9a6c6a7d7211ca4ce551a7d232a3f6505f02ee16d5b3ad71e0aacd389f4c2f",
-      "selected_graph_sha256": "89b7423b40a48f9c258ea0bafa31a1e8d56f7fbf2e562b2f286ea0c6bf05fa72",
-      "observed_defect": "Prophetic in quoted Prophetic! is selected PROPER-NOUN",
-      "required_linguistic_correction": "Prophetic is adjective elliptical predication reported by said the doctor",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "selected_graph_sha256": "c361aba95f8bfde3f380208cd0ad45440326745e2f89ecfa416e48dd589111c7",
+      "observed_defect": "Different now has a comparison standard and any of the others is not a self-loop. Quite and the ordinal fifth still lack roles, and trip is wrongly the agent of was.",
+      "required_linguistic_correction": "Attach the scalar quite to different, the ordinal fifth to trip, and use trip as copular predicand while preserving the comparison to the partitive standard.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 736,
@@ -900,10 +720,10 @@
       "index": 739,
       "status": "needs_fix",
       "selected_tree_sha256": "be121c8286cbe0ff56f8a5027f58c260b9fd79930925c379f67291760fd2e158",
-      "selected_graph_sha256": "e892ce1dfd1607c857ddc6350a76938fdc90fad87b215586decdb50d647f486a",
-      "observed_defect": "I was near overboard links MANNER(was,overboard) instead of near's spatial complement",
+      "selected_graph_sha256": "4933de283e6dff57324922b608e4a6c83251d81447f0cc5e59a353905e28e1ae",
+      "observed_defect": "I now functions as the copular predicand, but overboard remains manner of was rather than part of the spatial predicate.",
       "required_linguistic_correction": "Overboard is an approaching spatial state complement of near",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 740,
@@ -954,19 +774,19 @@
       "index": 745,
       "status": "needs_fix",
       "selected_tree_sha256": "ff7cd644ad5aa70e72610122af84737c5aaa8eaac7362d873284b9fb953f5c21",
-      "selected_graph_sha256": "1bb7357cc4f05aedd856e4bb4feb8a92f16ee738b5b72e1c881a50d8e71a8753",
-      "observed_defect": "There was no sound but that of ... has no existential/polarity relation for no sound",
+      "selected_graph_sha256": "4f1f4ef5af0dbe1a08fa06cff96c29d59badb4b919921f5142dba5e0b8b8bf55",
+      "observed_defect": "The partitive demonstrative no longer points to itself. The existential negation and its two exceptions are still not composed correctly.",
       "required_linguistic_correction": "There existential introduces absent sound; but that denotes exception and following gerund belongs to breakers",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 746,
       "status": "needs_fix",
       "selected_tree_sha256": "1049844163b68ad82dcb4f8a1cdb30255c2e0ac0c0a7ee598b0cf07ac26fb9cb",
-      "selected_graph_sha256": "4be8686f38606ad6555b6a5705996e01e05d083ac3ca1e35d994050ab920c218",
-      "observed_defect": "ship's counter includes possessive ’s typed COPULA; relative boat which we brought has wrong possessor",
+      "selected_graph_sha256": "c5cf192bad31232c760fc9fb2b6dfb4fe75a552d90f3672b09bd84bc1df88cad",
+      "observed_defect": "Then now marks temporal order of brought. The possessive ship's counter and relative's nominal attachment remain wrong.",
       "required_linguistic_correction": "Preserve ship genitive and attach boat-relative, with dropped as Redruth's shared-subject verb",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 747,
@@ -1012,24 +832,6 @@
       "observed_defect": "`cannot` is N, `others` is V, `AGENT(answer,cannot)`",
       "required_linguistic_correction": "Negative ability auxiliary and `others` object of `for`",
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
-      "index": 753,
-      "status": "needs_fix",
-      "selected_tree_sha256": "9b98632181a8c55a9a432133624ad462350c72a8226df13eb0866c887a3ac12f",
-      "selected_graph_sha256": "4732300a625c04f4656307b65480b44903c3f0f0ccdf561de8fcf8f1b485a89d",
-      "observed_defect": "was greatly altered has only THEME(was,She) and no link to the altered participle",
-      "required_linguistic_correction": "altered is passive/resultative predicate with She its patient and greatly its modifier",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 754,
-      "status": "needs_fix",
-      "selected_tree_sha256": "fee8acd3fdd820beb6aa03e6e48ddb7b0779fbdfa79faea98de3da78aaf29b23",
-      "selected_graph_sha256": "bf71505c571649149e0e6032a5d909b38f368796c8c9f8b1638281c968cd5760",
-      "observed_defect": "He made a short pause has no semantic relation for short despite the overt attributive modifier",
-      "required_linguistic_correction": "Short restricts duration of the pause nominal / event and must be attached",
-      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
     },
     {
       "index": 755,
@@ -1089,10 +891,10 @@
       "index": 761,
       "status": "needs_fix",
       "selected_tree_sha256": "ae18ce60c1713035bd98d289afb76ba8c22f6b8e954f82b9638328c5125fef10",
-      "selected_graph_sha256": "556c76520645358c3d0b5b4a64215cec9507ce959f17b29e320b9ac7c0015eba",
-      "observed_defect": "The perfect HAVE in I have forgot her name is absent from the selected semantic graph",
-      "required_linguistic_correction": "Have is the perfect auxiliary of forgot; the preceding A little woman is a separate discourse fragment or topic and must not silently blend with tense/aspect",
-      "evidence": "docs/NOVEL700800_SEMANTIC_FINAL_PASS.md"
+      "selected_graph_sha256": "5e8b5563909b76fa5c8275728b2054177e0d6b99d0bd7f1c574eda150d4565df",
+      "observed_defect": "The perfect auxiliary have now scopes over forgot. The separate minor utterance A little woman is still conflated with the subsequent question as its topic.",
+      "required_linguistic_correction": "Compose the minor nominal utterance and the subsequent perfect question as separate successive acts without topicalizing woman.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 762,
@@ -1107,19 +909,19 @@
       "index": 764,
       "status": "needs_fix",
       "selected_tree_sha256": "bccad254da46fd887c83692af230713076c19ba176bb42adc3d1f2cd39dc69de",
-      "selected_graph_sha256": "8bc9d8830574be668b7c75dc177d1776c5d06ad1511bb96f2c06844a2e33a1a7",
-      "observed_defect": "and looked frightened has no selected coordination event/attribute in the semantic graph",
-      "required_linguistic_correction": "My aunt is common subject of accelerated and looked frightened in the found that content",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "selected_graph_sha256": "dc876f966c6ded83185f9e3fb93c1f9ef3f50aa514f25f2653ef427618cad511",
+      "observed_defect": "Frightened now predicates a state via looked. Looked is still missing shared subject and coordination with accelerated; the matrix progressive also requires repair.",
+      "required_linguistic_correction": "Coordinate looked with accelerated under the same aunt subject, and retain the matrix progressive with its verbal head and destination.",
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 765,
       "status": "needs_fix",
       "selected_tree_sha256": "7c1b5c8f37426e813c2c0cf0d94abe93d316a0998a0cfced0418a581022919a1",
-      "selected_graph_sha256": "e5c51a203e6ed477e58a2686669ff888ddf52cfb416ded0f13f53a2aa2fbd671",
-      "observed_defect": "AGENT(chatter,making) makes the causative verb the actor of teeth chatter",
+      "selected_graph_sha256": "ab3f31d669dc9309cef74f8023fc820891ea9b9ce277c585c07887384bad03b4",
+      "observed_defect": "All of a shiver is represented without a partitive self-loop. The causative chatter still assigns its actor to making instead of teeth.",
       "required_linguistic_correction": "teeth is actual subject of chatter; making expresses causation by Mr Dick",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 766,
@@ -1212,51 +1014,6 @@
       "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
     },
     {
-      "index": 776,
-      "status": "needs_fix",
-      "selected_tree_sha256": "35a82ee7e5eaaeafbbb49446586d2eba62b3dfffbec021f7f3e7397d4b241d43",
-      "selected_graph_sha256": "588ddfceca9612fda1016ac1d19dccb821576d4c706225e89ffbd2e31dc1a2b0",
-      "observed_defect": "Lady Catherine seemed pleased has only AGENT(seemed,Catherine), omitting pleased predicate",
-      "required_linguistic_correction": "pleased is predicative complement of seemed and Catherine experiencer",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 777,
-      "status": "needs_fix",
-      "selected_tree_sha256": "304ed17109cf473c78c320cd32d8a3a549e6647e81395fe9185fa2c73c9164d9",
-      "selected_graph_sha256": "9df4523f2860dec9e23dadc516d2134eee08d9b2581484913ac670a174275c2f",
-      "observed_defect": "`Yes, almost every day` gives `APPOSITION(Yes,day)`",
-      "required_linguistic_correction": "Affirmative minor speech act with temporal frequency, not noun apposition",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
-      "index": 778,
-      "status": "needs_fix",
-      "selected_tree_sha256": "b51fdf8f82484c6befa1a6ca958f02ead4bcd0959a42e0fb0df932c75dabde0b",
-      "selected_graph_sha256": "0be83d4b90081c3b94ebdaf55daff3efe62dbebfbe33547e7d8342357ee5ef14",
-      "observed_defect": "`Is my father in town?` has only POSSESSOR(father,my)",
-      "required_linguistic_correction": "Copular yes/no question with locative predicate",
-      "evidence": "docs/NOVEL700800_SEMANTIC_DEFECTS.md"
-    },
-    {
-      "index": 779,
-      "status": "needs_fix",
-      "selected_tree_sha256": "cf006c79a5853c26b376e48e545405842e5db8f0d41845d71301a5f7bf921063",
-      "selected_graph_sha256": "5f8f3f378f98b342a44da9e5b2b05fd7cfd706c60fbcfc5823a8f22505e56cf8",
-      "observed_defect": "They were hopeless of remedy lacks any semantic relation involving remedy",
-      "required_linguistic_correction": "Attach of remedy as argument/content of hopeless",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 780,
-      "status": "needs_fix",
-      "selected_tree_sha256": "9afc3850fd1c19541dfa357299219db6441eab82c8975860209fc6c45dd5d49f",
-      "selected_graph_sha256": "f4a5e91242fa01bfb3a9283666ace986e25280474ece7de2963292d77510f627",
-      "observed_defect": "almost universal has no relation from almost to the universal attribute",
-      "required_linguistic_correction": "almost is a degree modifier of universal, not semantically omitted",
-      "evidence": "docs/NOVEL700800_SEMANTIC_THIRD_PASS.md"
-    },
-    {
       "index": 781,
       "status": "needs_fix",
       "selected_tree_sha256": "4f4396a7e3aa42d9cf11e4c5891632313d8b1f086e0624b73aadad3d7379208e",
@@ -1278,10 +1035,10 @@
       "index": 783,
       "status": "needs_fix",
       "selected_tree_sha256": "d13a467a601d67981ccbf0825e76624c8193ee8d33800ffbb2fe01555c4a64a7",
-      "selected_graph_sha256": "e73dfb55a2de3d9b4cf1eff1466c3379b59a461a36adbe1aa1996af43394fbe0",
-      "observed_defect": "to look at a picture is only MODIFIER(her,look) in called her to look",
+      "selected_graph_sha256": "cb8f704b51d15f090c83c930d6633ad01d880421796bd1ca864bf738609e521a",
+      "observed_defect": "Now modifies called temporally, but the infinitive remains a noun-phrase modifier rather than selected object control.",
       "required_linguistic_correction": "her is object of called and controlled subject of look; picture object of look",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
+      "evidence": "docs/NOVEL700800_SEMANTIC_BATCH2.md"
     },
     {
       "index": 784,
@@ -1299,15 +1056,6 @@
       "selected_graph_sha256": "c430ff77073352ace964e8aca87d00a9965d040b34a833eecedd2bf0f39fdcb7",
       "observed_defect": "POSSESSOR(praise,sister) misattaches of his sister's proficiency",
       "required_linguistic_correction": "Sister is possessor of proficiency; proficiency is content of affectionate praise",
-      "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
-    },
-    {
-      "index": 786,
-      "status": "needs_fix",
-      "selected_tree_sha256": "3f1e577490021203b1cd4b4acf10e1b981313625d98b7c85add149c93fc4a5c1",
-      "selected_graph_sha256": "1fe77bec573dd43d09ef19b52365f43487d8aa4274093e78177d6ba570f8d674",
-      "observed_defect": "RECIPIENT(thanked,goodness) treats goodness as recipient of thanked",
-      "required_linguistic_correction": "him is recipient/addressee of thanked; for his goodness gives reason",
       "evidence": "docs/NOVEL700800_SEMANTIC_SECOND_PASS.md"
     },
     {

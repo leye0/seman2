@@ -10,6 +10,13 @@
       "selected_graph_sha256": "89a282d37166bfe739fc539a49f7b53ea8ecd4f5d952071fbc04e744b9cc1480"
     },
     {
+      "index": 703,
+      "verdict": "verified",
+      "evidence": "O is an apostrophe marker, not a name or agent. Sleep is what is addressed and blessed is its adjectival epithet.",
+      "rank_one_sha256": "0c99529d420a3c189ec1160140e964ef24f51578c1f5d8154c2558d61204c039",
+      "selected_graph_sha256": "a9c469e22280d1d834e61bfb49f3f89d9b428f06424efffb28206b4f78f0bed2"
+    },
+    {
       "index": 704,
       "verdict": "verified",
       "evidence": "Had is overt finite perfect auxiliary, my eyes is a nested possessive plural NP built from lexical eye/plural instead of the misleading singular homograph, deceived is a past participle selecting accusative me. Perfect aspect, agent, patient and possession relations are source-verified, including an independent his/him control.",
@@ -38,6 +45,13 @@
       "selected_graph_sha256": "416ca8935f0aaaeb7ab56b826c7e015a085c0fb7000458e5aede045c1fb7294b"
     },
     {
+      "index": 712,
+      "verdict": "verified",
+      "evidence": "The walk has I as its subject and quick pace as manner. The second finite event has we as its subject, my college as its destination and soon as its temporal modifier.",
+      "rank_one_sha256": "00239cdfe5c9455232e7a315a1d4f494657c685cdb96f49c9e6ff34ef3993604",
+      "selected_graph_sha256": "0c83c1834c1155733a2d172dbe82a17cbaf7838efe55892d2292500127da0128"
+    },
+    {
       "index": 713,
       "verdict": "verified",
       "evidence": "Source-preserved quotation encloses a dateline with overt named location, calendar month, source-attested ordinal and an incomplete year 17--; the graph records the missing year digits as unknown, never manufactures a date. Independent Oxford 13th and completed-year negative controls pass.",
@@ -59,6 +73,27 @@
       "selected_graph_sha256": "b3ef8bc82d2d1db2c3863dd0b0e17508c7ca32b48b12f4404e2bd7daa117dd09"
     },
     {
+      "index": 726,
+      "verdict": "verified",
+      "evidence": "Initial Then establishes the temporal sequence of spoke, which continues to have he as agent. It no longer creates a topic.",
+      "rank_one_sha256": "2edd956811ad1d4728e4a13936c7e03a956583f355bcab97dc3dabf7a4f9d3fc",
+      "selected_graph_sha256": "e87a094d262502142144e14d85e7fc7610d426cf38f2462db6708c045aa94a58"
+    },
+    {
+      "index": 727,
+      "verdict": "verified",
+      "evidence": "Ready is the adjectival content of the exclamation and the squire is the overt reporter. No unstated subject is fabricated for the adjective.",
+      "rank_one_sha256": "3e9addfa2864e2dda3c5543e0325cfe9f8fc54c0df66d1b82244d515f05c7cea",
+      "selected_graph_sha256": "5a01542ee4566493b043b0aeba122491890e6780fa7526d9d1197a79e59d3aec"
+    },
+    {
+      "index": 729,
+      "verdict": "verified",
+      "evidence": "On deck is the destination of ran in context. The overt plural subject We stays the agent and deck is not left disconnected.",
+      "rank_one_sha256": "37229988129d7dceb9fd59502388e185d17c009fb37a2b8b0a7e1a29cc53f005",
+      "selected_graph_sha256": "631a25c3d7ae1ae8ab83f6ce046d70fc0049e2b1bf0eaa315bd72e1c5b429240"
+    },
+    {
       "index": 730,
       "verdict": "verified",
       "evidence": "So with the second is licensed as conventional anaphoric minor predication with overt so ADV, full with-the-second PP and source stop; the tree deliberately does not invent an unspoken finite verb. The third is a positive independent control, without is an unsuitable contrast.",
@@ -71,6 +106,13 @@
       "evidence": "Original double dash signals abandoned quoted content rather than an invented predicate. The overt I thought...Dr. Livesey spans the interrupted content, while I began is an independently proven external reporting clause. Abbreviation, honorific, selected reporter relation, exact punctuation and an em-dash contrast are checked.",
       "rank_one_sha256": "248f4910ee54dc6360f08d877d6965fe67e5d146359433e120f0d17531a5fd63",
       "selected_graph_sha256": "9348bedb19588fcfd66f748e6f8ead0a5b347b4e52d241581dad9b67c10489dd"
+    },
+    {
+      "index": 734,
+      "verdict": "verified",
+      "evidence": "Prophetic is the adjectival reported content. The doctor controls both said and touching. Picture and finger are respectively the participle's object and instrument, with his retained.",
+      "rank_one_sha256": "3f98168146c18f8f8245d75c7a41338051f07f5ee065fb9d15969acaa4f86de9",
+      "selected_graph_sha256": "af40c2b4ee521eeb6498f28f42cd22217851f286a8130ab13554dcfed2c073a7"
     },
     {
       "index": 735,
@@ -87,11 +129,67 @@
       "selected_graph_sha256": "3764ca04b1eaca9017ddcb4687858d2fc810b56416fe3295f05899a380e24d8b"
     },
     {
+      "index": 753,
+      "verdict": "verified",
+      "evidence": "The lexical participle altered is the head event, was is its passive auxiliary, greatly is degree, and She is the patient theme.",
+      "rank_one_sha256": "9b98632181a8c55a9a432133624ad462350c72a8226df13eb0866c887a3ac12f",
+      "selected_graph_sha256": "ebc76a85bcd1b7ac271b39de1e320782efaea06ac14ca6d8a44e30f7b4e5b3f9"
+    },
+    {
+      "index": 754,
+      "verdict": "verified",
+      "evidence": "Pause is the event-denoting complement of light made. Short measures the pause's duration rather than modifying the subject.",
+      "rank_one_sha256": "fee8acd3fdd820beb6aa03e6e48ddb7b0779fbdfa79faea98de3da78aaf29b23",
+      "selected_graph_sha256": "1df705a9f69d742654b47e08e95590dafeaa87b16eb494d34c2d57a99e0223e7"
+    },
+    {
       "index": 763,
       "verdict": "verified",
       "evidence": "Source split quotation has a real reporting clause he returned respectfully, a source vocative sir, and a resumed that-clause whose shared modal will scopes passive be seated and allow me to do this; me is agent of do under allow's control, not an argument of seated. Original and independent demonstrative positive plus passive-near-miss negative pass.",
       "rank_one_sha256": "2c4c55053bdd9b343c48fc5936775e090a0ff26a0db86bc440feeab33dd9f824",
       "selected_graph_sha256": "615c73066bf588571050cfaf2827fba8adb22eaa2e9ef3b525557319e1dd2946"
+    },
+    {
+      "index": 776,
+      "verdict": "verified",
+      "evidence": "Catherine is the predicand of seemed, pleased its adjectival complement, and Lady remains her prenominal title in the selected tree.",
+      "rank_one_sha256": "35a82ee7e5eaaeafbbb49446586d2eba62b3dfffbec021f7f3e7397d4b241d43",
+      "selected_graph_sha256": "2389732b21d8fa275993463d4e8c021ccbfd493796b5ea4d20ee3f599d736e6e"
+    },
+    {
+      "index": 777,
+      "verdict": "verified",
+      "evidence": "Yes is an affirmative response. The temporal frequency almost every day quantifies day by every and approximates that universal, not an apposition.",
+      "rank_one_sha256": "1a7ae44c8835729273d0bd6e2c7f69ed3197e7216eff8c184d95a6145da64f0e",
+      "selected_graph_sha256": "d33fc21be6686b56f6690191e901a2b21b36edd879ca26a54719f3816454bcb6"
+    },
+    {
+      "index": 778,
+      "verdict": "verified",
+      "evidence": "The copular question predicates location in town of father. In remains the overt relation marker, and my is preserved as possessor.",
+      "rank_one_sha256": "b51fdf8f82484c6befa1a6ca958f02ead4bcd0959a42e0fb0df932c75dabde0b",
+      "selected_graph_sha256": "65896cd7b7a289c7e5f0ed96871923f63f324efacbe994709e78cf4e7d24ab2e"
+    },
+    {
+      "index": 779,
+      "verdict": "verified",
+      "evidence": "They is the predicand and hopeless is the adjective. Of remedy is the adjective's content complement rather than a detached or missing noun.",
+      "rank_one_sha256": "cf006c79a5853c26b376e48e545405842e5db8f0d41845d71301a5f7bf921063",
+      "selected_graph_sha256": "fa9cb73a554acf96fda98fcf1d15d6ace515b8a08e92ca5fe4762b9e1b31a4ed"
+    },
+    {
+      "index": 780,
+      "verdict": "verified",
+      "evidence": "The scalar degree almost modifies universal, and dejection is the predicand of the resulting adjective.",
+      "rank_one_sha256": "9afc3850fd1c19541dfa357299219db6441eab82c8975860209fc6c45dd5d49f",
+      "selected_graph_sha256": "4949ad50c72892a0e37337550992481e65590f391a6192f55f70ff08d0f3ada8"
+    },
+    {
+      "index": 786,
+      "verdict": "verified",
+      "evidence": "The three finite predicates share Jane. Instantly modifies the motion to him, the embrace keeps its own object, and gratitude distinguishes the addressee him from its grounds goodness.",
+      "rank_one_sha256": "3f1e577490021203b1cd4b4acf10e1b981313625d98b7c85add149c93fc4a5c1",
+      "selected_graph_sha256": "c5d324949b4586648bea9cd3c451e6d5e67df4746e3a96b6bec641d647553bec"
     },
     {
       "index": 791,

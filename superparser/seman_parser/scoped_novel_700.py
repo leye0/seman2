@@ -444,10 +444,11 @@ def plan_n643_split_questions(text, components):
 N648_PROGRESSIVE = "structural_semicolon_progressive_with_participial_and_result"
 _N648 = re.compile(
     r'(?P<next>Next) +(?P<moment>moment) +'
-    r'(?P<first>we +were +both +groping +downstairs)'
+    r'(?P<actor>we|they) +(?P<progressive>were) +(?P<both>both) +'
+    r'(?P<motion>groping|creeping|feeling) +(?P<direction>downstairs|upstairs)'
     r'(?P<comma>,) +(?P<leaving>leaving) +(?P<candle>the +(?:candle|lantern)) +'
     r'(?P<place>by +the +empty +chest)(?P<semicolon>;) +(?P<and1>and) +'
-    r'(?P<next2>the +next) +(?P<second>we +had +opened +the +(?:door|gate)) +'
+    r'(?P<next2>the +next) +(?P<second>(?P=actor) +had +opened +the +(?:door|gate)) +'
     r'(?P<and2>and) +(?P<were>were) +(?P<retreat>in +full +retreat)'
     r'(?P<stop>\.)'
 )
@@ -464,7 +465,10 @@ def plan_n648_progressive(text, components):
     specs,_,_,part=_specs()
     part(m,0,(
         _lex('next','ADJ'),_lex('moment','N'),
-        _phr('first','CLAUSE',finite_statement_proof='true'),
+        _subject('actor'),
+        _lex('progressive','AUX-BE',vform='finite',number='plural'),
+        _lex('both','DET',quantifier='both'),
+        _verb('motion','ing','intransitive'), _lex('direction','ADV'),
         _punct('comma','COMMA'),
         _verb('leaving','ing','transitive'),
         _phr('candle','NP',proof_rule='np_det_n'),

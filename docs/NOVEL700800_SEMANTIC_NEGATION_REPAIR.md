@@ -1,5 +1,7 @@
 # Novel-700 / 800 — first semantic repair pass
 
+See the [second pass](NOVEL700800_SEMANTIC_BATCH2.md) for the current count.
+
 Starting point: `a40c4054c0c2b412ed584a5255c35787929b2a3f` and the
 [full audit](NOVEL700800_SEMANTIC_FULL_AUDIT.md). The selected source units,
 their quoted spans and their immediately preceding context were checked

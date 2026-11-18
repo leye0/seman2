@@ -5,6 +5,7 @@ on:
     paths:
       - 'superparser/tests/test_semantic_ladder_review_candidates.py'
       - 'superparser/tests/test_novel_ladder.py'
+      - 'superparser/tests/test_novel_700_residual.py'
       - 'superparser/scripts/novel_ladder.py'
       - '.github/workflows/semantic-review-candidates.yml'
   workflow_dispatch:
@@ -44,4 +45,7 @@ jobs:
         env:
           PYTHONPATH: superparser
         run: |
-          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m unittest -v superparser.tests.test_semantic_ladder_review_candidates superparser.tests.test_novel_ladder
+          WORDNET_DICT="$RUNNER_TEMP/wordnet3/dict" python -m unittest -v \
+            superparser.tests.test_semantic_ladder_review_candidates \
+            superparser.tests.test_novel_700_residual \
+            superparser.tests.test_novel_ladder
