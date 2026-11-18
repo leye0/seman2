@@ -3,6 +3,13 @@
   "cohort_sha256": "73e1e51a152d3d60cbf94b0b11d4a607ed6f605648bdeb7652714d857581cfaf",
   "cases": [
     {
+      "index": 701,
+      "verdict": "verified",
+      "evidence": "The two dear adjectives are separate source spans in an emphatic vocative addressed to Elizabeth, without a phantom person called Dear.",
+      "rank_one_sha256": "60fa1c8744d8b96f01a8dcbe9f8908c0a867f7cfb1d3b55fe0f297b17acf4e21",
+      "selected_graph_sha256": "eeb19308e8adbd1ecc4180ee8169c352a56e6bfad3af43b86ff889edd2bd65a1"
+    },
+    {
       "index": 702,
       "verdict": "verified",
       "evidence": "Original From thence is a PREP+ADV source adjunct, not a fabricated PP; the complete clause we proceeded to Oxford is independently parsed and linked as source of motion. A separate grammatical From there control passes and an omitted-subject near-miss does not use this construction.",
@@ -36,6 +43,13 @@
       "evidence": "Source But success SHALL crown my endeavours selects coord_clause with success subject, finite modal SHALL, lexical crown base, endeavours NP with my possessor, and semantic AGENT(crown,success), MODALITY(crown,SHALL), AFFECTED(crown,endeavours). Independent But victory SHALL crown my efforts positive, ungrammatical modal + crowns near-miss negative, source/selected graph assertions, CI 44183471999.",
       "rank_one_sha256": "62055f37c7e2f9869be0829137464589f32f21ddebb0015f91a134ed7632ad63",
       "selected_graph_sha256": "7cdfeeff2afed391210ac8be74a9311e7fe91dff0638fe2f911f999c4921f518"
+    },
+    {
+      "index": 707,
+      "verdict": "verified",
+      "evidence": "Would and not operate over an explicitly unresolved predicate with subject You. If you saw him is its condition, with its own overt subject and object.",
+      "rank_one_sha256": "8440179d4bd8daf8fe82b9c43299dc3d9ced255c84e63de48a8e858daa381514",
+      "selected_graph_sha256": "45def2c00e7372546ff4021ed542257ed466c9e682466d766fa0f9119dda705b"
     },
     {
       "index": 708,
@@ -101,11 +115,25 @@
       "selected_graph_sha256": "e60aba738dcba4d0d8ad778c3dc90d57e275ff33b5edd19b057541b481c08ae5"
     },
     {
+      "index": 731,
+      "verdict": "verified",
+      "evidence": "Clean modifies sand, and the bottom is the predicand of the nominal property sand rather than a volitional agent.",
+      "rank_one_sha256": "0a00cb5fd6d51748541df2c5f7da4fbec593227bf0cc83f7fa9cff5aa51d1467",
+      "selected_graph_sha256": "bb27acb4a463c87ba14f576783b92ba3be5619c378fd5acc44662b1ff17eb450"
+    },
+    {
       "index": 732,
       "verdict": "verified",
       "evidence": "Original double dash signals abandoned quoted content rather than an invented predicate. The overt I thought...Dr. Livesey spans the interrupted content, while I began is an independently proven external reporting clause. Abbreviation, honorific, selected reporter relation, exact punctuation and an em-dash contrast are checked.",
       "rank_one_sha256": "248f4910ee54dc6360f08d877d6965fe67e5d146359433e120f0d17531a5fd63",
       "selected_graph_sha256": "9348bedb19588fcfd66f748e6f8ead0a5b347b4e52d241581dad9b67c10489dd"
+    },
+    {
+      "index": 733,
+      "verdict": "verified",
+      "evidence": "Fifth orders trip, quite grades different, and any of the others is the partitive comparison standard. Trip is the predicand of the copula.",
+      "rank_one_sha256": "2dec9bbb84fdac24cd24774dd07831ff2af6fe26a20bcd056e281d398f8932e5",
+      "selected_graph_sha256": "9a5c16e8b65293bb47301ef5097a3179d3ce5cf5efe4501855676b27c1545ce5"
     },
     {
       "index": 734,
@@ -122,11 +150,39 @@
       "selected_graph_sha256": "cacc4fc17597d714e13cd63b1f82ebe2719cfc15d66a54a769424bbcc3e7d19b"
     },
     {
+      "index": 736,
+      "verdict": "verified",
+      "evidence": "Good is an acknowledgment. The resumed speech is a permission question whose action is go, with temporal now, may, and its own overt subject.",
+      "rank_one_sha256": "f3069f01ca915891b39148eb3057689a4414e55f8bcdd0dab904966514c3a412",
+      "selected_graph_sha256": "fc161b86dde1260ca84bc3a6e543b8bc45e786ac6178e5be3c003dcd45f66452"
+    },
+    {
+      "index": 738,
+      "verdict": "verified",
+      "evidence": "Who is the interrogative predicand and best shot is a superlative human role, not a shooting event. Asked reports that precise question.",
+      "rank_one_sha256": "6ef6c0cdf1ff6df7a0c4d869dcfe37347edd81f4b8e3074cc848652066411699",
+      "selected_graph_sha256": "cdb23936863129530e1331cc33d8be99874fcb4d7f8eb69b31d320a18e387a5f"
+    },
+    {
       "index": 749,
       "verdict": "verified",
       "evidence": "Inverted Had there been a breath of wind is the explicit counterfactual condition; should-have-fallen heads the modal consequence, the six mutineers contains its source-backed relative who were left aboard, slipped our cable inherits the shared modal, and away to sea is overt directional ellipsis without a fabricated went/gone. The directional shore and ungrammatical fall controls establish the selection.",
       "rank_one_sha256": "d50f4d222686197b91e04a132ffe4204149b3517518ec653db38995ad139b042",
       "selected_graph_sha256": "3764ca04b1eaca9017ddcb4687858d2fc810b56416fe3295f05899a380e24d8b"
+    },
+    {
+      "index": 751,
+      "verdict": "verified",
+      "evidence": "The two degree fragments form successive replies and the second is an emphatic reprise of the first. Neither the missing predicate nor an antecedent is fabricated.",
+      "rank_one_sha256": "b12a09596da98295634d2eae154394ceebc2ec3bc844638e4d567d991876383e",
+      "selected_graph_sha256": "aabdbc2b77348c39c29dd2f7ba226735a61a6f3c6bccdde9b64971516a1d7f4b"
+    },
+    {
+      "index": 752,
+      "verdict": "verified",
+      "evidence": "Can and not occupy adjacent exact subspans of cannot. They attach to answer, with He as agent and others as the object of for.",
+      "rank_one_sha256": "ecdb2807b713e4e887c7ad555b4d83dc0032d31af5947e13281a9648d3d8e930",
+      "selected_graph_sha256": "d96bd4f8be74708607552f39e928f015569505fd39942c26e4268721bda88e0f"
     },
     {
       "index": 753,
@@ -141,6 +197,27 @@
       "evidence": "Pause is the event-denoting complement of light made. Short measures the pause's duration rather than modifying the subject.",
       "rank_one_sha256": "fee8acd3fdd820beb6aa03e6e48ddb7b0779fbdfa79faea98de3da78aaf29b23",
       "selected_graph_sha256": "1df705a9f69d742654b47e08e95590dafeaa87b16eb494d34c2d57a99e0223e7"
+    },
+    {
+      "index": 755,
+      "verdict": "verified",
+      "evidence": "All is the pronominal content of knew, whereas now locates the knowing in time. I remains experiencer.",
+      "rank_one_sha256": "8b78283582c99e4c8c40f5363e9d1574cadb80dd40bd7fa5fa7171522810e6ad",
+      "selected_graph_sha256": "956883bf59641cd3cdbca2ca2a717c0a34740b88dbde8d838b70605b1b502825"
+    },
+    {
+      "index": 756,
+      "verdict": "verified",
+      "evidence": "So marks the discourse transition, we is the subject of went, and on is its continuative particle.",
+      "rank_one_sha256": "5a8eda0d3aa24fbcd531a1969d9b6554662f4a0d5579a45b83b9227648b72292",
+      "selected_graph_sha256": "7eb659c142d184d530595b4a5627253e43a2a1a2316f15e16350618b7cce00b2"
+    },
+    {
+      "index": 761,
+      "verdict": "verified",
+      "evidence": "The nominal minor reply is followed by a separate declarative-form perfect question. Woman no longer becomes the topic of forget, and the source participle forgot is retained.",
+      "rank_one_sha256": "2154570fa90d9a14d6c081b45263e264de0519db36efa0f5229c0717fdb82385",
+      "selected_graph_sha256": "891675555fcfc063cc6c4973488785dfe7a2127a5458d484c7e2e6fd26c6d8a9"
     },
     {
       "index": 763,
@@ -183,6 +260,27 @@
       "evidence": "The scalar degree almost modifies universal, and dejection is the predicand of the resulting adjective.",
       "rank_one_sha256": "9afc3850fd1c19541dfa357299219db6441eab82c8975860209fc6c45dd5d49f",
       "selected_graph_sha256": "4949ad50c72892a0e37337550992481e65590f391a6192f55f70ff08d0f3ada8"
+    },
+    {
+      "index": 781,
+      "verdict": "verified",
+      "evidence": "The overt genitive links eyes to the titled name Mrs. Bennet. Eyes remains the grammatical subject of the sparkle predicate.",
+      "rank_one_sha256": "4f4396a7e3aa42d9cf11e4c5891632313d8b1f086e0624b73aadad3d7379208e",
+      "selected_graph_sha256": "d139c5df1e286edcdd937d7b93a7f582296a9148469cb911db0e4e4a466f13e9"
+    },
+    {
+      "index": 783,
+      "verdict": "verified",
+      "evidence": "Her is the addressee of called and the controlled subject of look. At has picture as object, and now modifies called rather than the infinitive.",
+      "rank_one_sha256": "4d831486661f2d5ca2f82ec6f8fe251d73e9c1cb9cab64002e98ba745795bdd9",
+      "selected_graph_sha256": "790f216febb72655e8a4a0e2fb13db01211699c9cdd65640021901e392d4b0a7"
+    },
+    {
+      "index": 784,
+      "verdict": "verified",
+      "evidence": "Had is past perfect of walked, away is direction, and another part of the room is the goal with the room as the whole of the part.",
+      "rank_one_sha256": "41e5e3fa7bc5ec97b27cb3cc1e73a05c15620ef82a43b256da9b07714ec38a7d",
+      "selected_graph_sha256": "05e834991934d9d121e25167b544ecebc55cdac84b2fd7516c4fd816e7779d43"
     },
     {
       "index": 786,

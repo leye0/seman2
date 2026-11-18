@@ -1,8 +1,8 @@
 # Complete selected-tree semantic review — Novel-700 and Novel-800
 
 **Historical baseline of the first full audit.** The
-[second repair pass](NOVEL700800_SEMANTIC_BATCH2.md) brings the live count
-to 72 verified and 128 open defects. The original review and figures are
+[third repair pass](NOVEL700800_SEMANTIC_BATCH3.md) brings the live count
+to 98 verified and 102 open defects. The original review and figures are
 preserved below.
 
 The two pinned cohorts still have 100/100 **completed selected parse trees

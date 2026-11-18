@@ -45,6 +45,13 @@
       "selected_graph_sha256": "f6ff3263526bc9bc17071712c428dbb277fa94ffe9961123df7d1ac9201bc96a"
     },
     {
+      "index": 607,
+      "verdict": "verified",
+      "evidence": "The direct object is the complete hand-of-Elizabeth noun phrase. Elizabeth is the hand's possessor and no longer the recipient of took.",
+      "rank_one_sha256": "166522fee471e472ea2a8c7debc8d9ad0e38807f62483d99d0759e432ee50965",
+      "selected_graph_sha256": "f40396cfc27b4c5a0c907b0d201c62bc8532ae3644aeed34c4af47a8a975e7f5"
+    },
+    {
       "index": 608,
       "verdict": "verified",
       "evidence": "The matrix modal, agent and allude-to complement are connected. The headed relative links whom back to object, with I as experiencer of think under dared, not and even, independently of the matrix modal.",
@@ -52,11 +59,25 @@
       "selected_graph_sha256": "0212b4530040f3ca12ece79496963b3282bd5e32991c1bd9e8f14731cddbb092"
     },
     {
+      "index": 610,
+      "verdict": "verified",
+      "evidence": "In this house locates find. I controls the infinitival subject, a book volume is the object, and the works are explicitly attributed to Cornelius Agrippa.",
+      "rank_one_sha256": "c1d358aebb81df0883cf312fbc4482a1de578dd9d64cb1a12546bd02abb3c429",
+      "selected_graph_sha256": "0ff00637f27f8136ffe08369b1f62c1ac58e563882eb917ad4aa54db9c6e6e84"
+    },
+    {
       "index": 612,
       "verdict": "verified",
       "evidence": "The selected verbal lemma for overt saw is SEE, not the unrelated sawing sense; the source has two coordinated visual/travel predicates and beautiful towns is the object of see.",
       "rank_one_sha256": "54bc33db0be4f4cb1cefa9d3f852643b11583874c3498f9c396fac00df2ce10c",
       "selected_graph_sha256": "021c79702affea2b5245ef4a0b403d63fb0da61ecc80c4cb0abb58c3be842caa"
+    },
+    {
+      "index": 613,
+      "verdict": "verified",
+      "evidence": "The reciprocal phrase fills the first verb's prepositional object and refers to the same plural group that controls the verbal complement of unable.",
+      "rank_one_sha256": "a6749b66e66e4448710d4c96890fae4ea928d7513822ade64cf4e8162a0525a1",
+      "selected_graph_sha256": "690091e2580a8105b736c488e24637f6fd6f04097352666cec655a5c442083c2"
     },
     {
       "index": 615,
@@ -101,6 +122,13 @@
       "selected_graph_sha256": "8fc413dcd8e76f18145ede60025a1491b1af4b366da833f6b2d28acd3242b097"
     },
     {
+      "index": 627,
+      "verdict": "verified",
+      "evidence": "The light-verb construction takes the action nominal step and the comparative nearer supplies direction, with I retained as the actor.",
+      "rank_one_sha256": "b6e0d07ed36a63611b953dbc490c84f7aaf26e3e5fd01cb9501b72570a5c1fcc",
+      "selected_graph_sha256": "dfe788417547403fc88b6c7629763f5ef385ebd73f2ceeb445a60e7d20535662"
+    },
+    {
       "index": 628,
       "verdict": "verified",
       "evidence": "Fronted of Silver supplies the topic of hearing. The perfect auxiliary, first-person plural subject and negatively quantified further content remain separate.",
@@ -113,6 +141,27 @@
       "evidence": "Doctor is the full subject and moved is the finite intransitive predicate. Never negates it and so much as is its scalar minimizer, with no false NP headed by as.",
       "rank_one_sha256": "9d2424aa739cbf8d1b0fe7324e77ef0ce72a718bb267b3853e835401732aaaf7",
       "selected_graph_sha256": "4d52d77eb41e947811dfd5746cfc2d89019dd9f90ca1ac59d19d54e4fecf8a90"
+    },
+    {
+      "index": 630,
+      "verdict": "verified",
+      "evidence": "A week remains the reported duration and at least is its lower bound. The final inverted I is the reporter's subject.",
+      "rank_one_sha256": "bc22c51820a1f151b97f86aa335d4c367a304aa413cb02d6d957860920514760",
+      "selected_graph_sha256": "945656e3eae67426df2210cb049d5cd4dfe850c1e2c2a3d8206db09c80554cef"
+    },
+    {
+      "index": 631,
+      "verdict": "verified",
+      "evidence": "The selected genitive links mystery to its ship possessor. The demonstrative is a referential predicand, rather than agent of the copula.",
+      "rank_one_sha256": "fa73a36be76e7fb322dd1b8982a33a1142b5dcfe5947a7ae9e316fdc82d52938",
+      "selected_graph_sha256": "df74c982d1cd146965641ea855a9e5a599a96bc5a63d7fdec14d222b407661bf"
+    },
+    {
+      "index": 637,
+      "verdict": "verified",
+      "evidence": "Here is the deixis of come, the gigs is the overt postposed plural subject, sir is address, and I is agent of said.",
+      "rank_one_sha256": "d0bb0b11b560a12089ab9e0b4011d3e0c60bc3165dbc415de507430a87c14c42",
+      "selected_graph_sha256": "cab942b3fd8eaad675f748bbf7aa585ab51056f0a736fded7b93369bdbe22ffa"
     },
     {
       "index": 639,
@@ -185,6 +234,20 @@
       "selected_graph_sha256": "4a8d53f4e0abbb460e4c864f83c05b1872cd9c098154d6211252c315325d6b73"
     },
     {
+      "index": 656,
+      "verdict": "verified",
+      "evidence": "Shook hands selects the reciprocal greeting reading. Hands is a body-part object, we is the participant group and heartily is manner.",
+      "rank_one_sha256": "e762eb34aafbda67af221868344d50cd28f4659bf1c7b7773515b248247fc3a7",
+      "selected_graph_sha256": "9ee886faa6bb5b96735be0469dee0469d4f721624cecd3114278b4089cd71410"
+    },
+    {
+      "index": 659,
+      "verdict": "verified",
+      "evidence": "Oh is an interjection with indeed as emphasis. Master is an honorific attached to the vocative Copperfield, not a verb. Said reports the interjection.",
+      "rank_one_sha256": "48c17a61d143c949fd4adadcc1007045ec42770a347945ad7ab33ccb92880980",
+      "selected_graph_sha256": "1197cc71d354bc69d70c403377d017cc281cadf6f596aced5d2dd97d6b4311c1"
+    },
+    {
       "index": 660,
       "verdict": "verified",
       "evidence": "Not I! selects an elliptical negative-reprise act with explicit I focus, no invented antecedent, and its own negation scope. Dear is adjectival with vocative head Daisy, attached to mind, not will. The modal and the possessed gerund retain their own predicate, arguments and exact spans.",
@@ -197,6 +260,13 @@
       "evidence": "Original Mas’r and d’ye are independently represented as source-attested dialectal morphology without inserted letters; shall-you-see-her is the overt question and d’ye think is the attached epistemic tag, with the original source token spans retained.",
       "rank_one_sha256": "9a4e0eff43e8c99610c91a7cea598f2164238b58551ade069c8af94a54ab324f",
       "selected_graph_sha256": "e868595ca02ea81712bc2af66be8a283d1117751800d69456853910d2789ea77"
+    },
+    {
+      "index": 662,
+      "verdict": "verified",
+      "evidence": "The nominal exclamation has a sweet lady as its adjectivally modified content, Master as honorific of the vocative Copperfield, and the full Uriah Heep NP as reporting subject.",
+      "rank_one_sha256": "6f3e68195d8b2c33422adb89681fa83d2fe88a625a6feb3ca5f7ad1d695a8844",
+      "selected_graph_sha256": "42b79d9a424d9b072853b12162ffe9cec9aea51f0cd4439b76da1e8a6b7cd012"
     },
     {
       "index": 663,
@@ -274,6 +344,20 @@
       "evidence": "Source Elizabeth was distressed selects overt passive clause_passive, finite AUX-BE was, past participial V distress and THEME(distressed,Elizabeth), with source spans verified. Independent Mary was distressed positive and wrong agreement Mary were distressed contrast pass with selected rank-one and semantic graph assertions; CI 44183471999.",
       "rank_one_sha256": "8604dd8bb5884f94c0a62f5219fef5eb0cf1f5677e8d70c19d1e7c42837560c6",
       "selected_graph_sha256": "aef833d3333889dc62ea41d0d1de71f0c5c1890ded2b5530d3dec826454ac9bb"
+    },
+    {
+      "index": 682,
+      "verdict": "verified",
+      "evidence": "Contrast is the head noun of an exclamative, with distinct comparative terms him and his friend under between.",
+      "rank_one_sha256": "d8fc790c9ff4430281d5bf6eb3595127380d03176a6a0f7162f38f8b962e40e0",
+      "selected_graph_sha256": "c6074c3b174b0e974e9e255d5a776d0caf9758aebc9d63209b9b81b11bc3807c"
+    },
+    {
+      "index": 683,
+      "verdict": "verified",
+      "evidence": "The copula predicates an interpersonal state with the Gardiners as counterpart. Always quantifies the state in time, and most grades intimate, which modifies terms.",
+      "rank_one_sha256": "cb267af920058b8850770b7faf121794b8a9a53695ef6521569bcd4546e9b1c3",
+      "selected_graph_sha256": "0e85d59ec19fabb99e4a416ce39450e2753f5df3cbb9097b9796ff27938a03fb"
     },
     {
       "index": 685,

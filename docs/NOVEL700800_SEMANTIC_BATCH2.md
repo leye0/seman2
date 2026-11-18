@@ -1,5 +1,7 @@
 # Novel-700 / 800 — second semantic repair pass
 
+See the [third pass](NOVEL700800_SEMANTIC_BATCH3.md) for the current count.
+
 The starting point was `1cbeb826787c143ddf95b00ed4cefe6deba5d7ca`
 ([first repair pass](NOVEL700800_SEMANTIC_NEGATION_REPAIR.md)).
 The second pass groups failures by construction and checks the exact selected

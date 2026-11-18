@@ -72,6 +72,10 @@ from .scoped_literary_quotes import (
     DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
+from .scoped_quality_followup import (
+    SPOKEN as FOLLOWUP_SPOKEN, NARRATIVE as FOLLOWUP_NARRATIVE,
+    COUNTS as FOLLOWUP_COUNTS, DEGREE_ECHO, FUSED_NEGATIVE, MINOR_AND_PERFECT, RESUMED_PERMISSION,
+)
 from .scoped_quality_repairs import (
     SPOKEN as QUALITY_SPOKEN, NARRATIVE as QUALITY_NARRATIVE,
     CLAUSE_COUNTS as QUALITY_CLAUSE_COUNTS,
@@ -234,6 +238,7 @@ _SPOKEN_SINGLE = (
     (REPORTED_REGRET, plan_reported_regret),
     (DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective),
     *QUALITY_SPOKEN,
+    *FOLLOWUP_SPOKEN,
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
@@ -299,6 +304,7 @@ _UNQUOTED_SCOPED = (
     (NEGATIVE_POSSESSION, plan_negative_possession_with_exception),
     (POINTING_INSTRUMENT, plan_pointing_instrument),
     *QUALITY_NARRATIVE,
+    *FOLLOWUP_NARRATIVE,
 )
 _SHARED_SOURCE_PLANS = {
     STANDALONE_NEGATIVE_PROFORM: NEGATIVE_PROPOSITIONAL_REPLY,
@@ -313,6 +319,7 @@ _SCOPED_COUNTS = {
     **N700_COUNTS,
     **CLAUSE_COUNTS,
     **QUALITY_CLAUSE_COUNTS,
+    **FOLLOWUP_COUNTS,
     FRONTED_PRECIPITATION: 1,
     COPULAR_COMPARED_RELATIVE: 3, MODAL_PERFECT_CONCESSION: 2, INCISED_EXISTENTIAL_CONTENT: 3, FREQUENCY_CONTRAST: 2, DEPICTIVE_FINITE_PURPOSE: 3,
     EMPHATIC_OBJECT_RELATIVE: 2, EMBEDDED_DURATION_RELATIVE: 2,
@@ -547,7 +554,7 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *SPEECH_SEQUENCE_PLANS)
+            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS)
         })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -799,7 +806,7 @@ class QuotedSentenceComposer:
                 # Only recover the existing can/not senses at their overt
                 # sub-token offsets in this source-scoped contrast.
                 sides = {"MODAL": ("can", 0), "NEG": ("not", 3)}
-                if expected_rule != EMPHATIC_MODAL_CONTRAST or category not in sides:
+                if expected_rule not in (EMPHATIC_MODAL_CONTRAST, FUSED_NEGATIVE) or category not in sides:
                     return None
                 spelling, offset = sides[category]
                 start = a - offset
@@ -3970,7 +3977,11 @@ class QuotedSentenceComposer:
             )
             if result is not None:
                 return result
-        for rule, planner in SPEECH_SEQUENCE_PLANS:
+        followup_sequences = tuple(
+            (rule, planner) for rule, planner in FOLLOWUP_SPOKEN
+            if rule in (DEGREE_ECHO, MINOR_AND_PERFECT, RESUMED_PERMISSION)
+        )
+        for rule, planner in (*SPEECH_SEQUENCE_PLANS, *followup_sequences):
             specs = planner(text, components)
             if specs is not None:
                 sequence = self._compose_verified_dialogue_pattern(

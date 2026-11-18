@@ -6,7 +6,7 @@ Nodes and relations are generic containers. Labels such as ``AGENT`` or
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Iterable, Mapping, Sequence
 
 from .semantic_rules import SemanticAction
@@ -191,7 +191,7 @@ def apply_action(
     """Apply one generic semantic action.
 
     Supported kinds are data-driven verbs of composition, not linguistic
-    phenomena: ``link``, ``introduce``, ``bind``, ``copy``, ``compose``.
+    phenomena: ``link``, ``introduce``, ``bind``, ``classify``, ``copy``, ``compose``.
 
     ``aliases`` carries rule-level names (``subject``, ``object``, ``event``)
     resolved while matching RHS symbols.
@@ -232,6 +232,16 @@ def apply_action(
             resolved = _resolve_ref(ref, handles, child_handles)
             if resolved is not None:
                 handles[handle] = resolved
+        return SemanticPackage(graph=graph, handles=handles)
+
+    if action.kind == "classify":
+        # Refine the graph's contextual type without changing the selected
+        # lexical sense, its source span, or any original lattice alternative.
+        if _matches_choice(args, graph, handles, child_handles, syntax_children):
+            target = _resolve_ref(args.get("target"), handles, child_handles)
+            type_name = args.get("type")
+            if target in graph.nodes and isinstance(type_name, str):
+                graph.nodes[target] = replace(graph.nodes[target], type_name=type_name)
         return SemanticPackage(graph=graph, handles=handles)
 
     if action.kind in {"link", "compose"}:

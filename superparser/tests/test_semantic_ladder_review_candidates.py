@@ -364,6 +364,182 @@ class SemanticReviewCandidates(unittest.TestCase):
                     self.assertFalse(any(edge == relation or edge.startswith(relation + "|")
                                          for edge in actual), (bad, relation, actual))
 
+    def test_batch_three_selected_source_structures_and_contrasts(self):
+        from seman_parser import scoped_quality_followup as plan
+
+        rows = (
+            (607, plan.BODY_PART, "structural_body_part_of_genitive",
+             "POSSESSOR|hand|Elizabeth;GENITIVE_MARKER|hand|of;AFFECTED|took|hand;AGENT|took|I",
+             "He grasped the wrist of Mary.", "POSSESSOR|wrist|Mary;AFFECTED|grasped|wrist",
+             "He grasped the portrait of Mary.", ""),
+            (610, plan.LOCATIVE_CONTROL, "np_det_n_of",
+             "LOCATION|find|house;SUBJECT|chanced|I;AGENT|find|I;CONTROL_COMPLEMENT|chanced|find;"
+             "AFFECTED|find|volume;PARTITIVE|volume|works;AUTHOR|works|Cornelius",
+             "In that room we happened to find a key.", "LOCATION|find|room;CONTROL_COMPLEMENT|happened|find;AGENT|find|we",
+             "In that room he happened to finds a key.", ""),
+            (613, plan.RECIPROCAL_AND_CONTROL, plan.RECIPROCAL_AND_CONTROL,
+             "AGENT|looked|They;COMPLEMENT|at|one another;RECIPROCAL_GROUP|one another|They;CONJUNCT|looked|were;"
+             "PREDICAND|were|They;ATTRIBUTE|were|unable;COMPLEMENT|unable|reply;CONTROLLER|reply|They",
+             "They glanced at each other and were unable to speak.",
+             "RECIPROCAL_GROUP|each other|They;COMPLEMENT|unable|speak;CONTROLLER|speak|They",
+             "They glanced at each other and were unable to spoke.", ""),
+            (627, None, "vp_adv",
+             "LIGHT_VERB_COMPLEMENT|took|step;DIRECTION|took|nearer;AGENT|took|I",
+             "We took a step closer.", "LIGHT_VERB_COMPLEMENT|took|step;DIRECTION|took|closer",
+             "We took a book from her.", "LIGHT_VERB_COMPLEMENT"),
+            (630, plan.MINIMUM_REPORT, "structural_duration_with_minimum",
+             "LOWER_BOUND|week|at least;AGENT|said|I;REPORTED_CONTENT|said|week",
+             "“An hour at least,” said she.", "LOWER_BOUND|hour|at least;REPORTED_CONTENT|said|hour",
+             "“An hour at most,” said she.", "LOWER_BOUND"),
+            (631, None, "np_genitive",
+             "ATTRIBUTE|was|mystery;POSSESSOR|mystery|ship;PREDICAND|was|That",
+             "That was the captain’s secret.", "POSSESSOR|secret|captain;PREDICAND|was|That",
+             "That was a mystery.", "POSSESSOR"),
+            (637, plan.INVERTED_REPORT, "structural_postposed_plural_motion_subject",
+             "AGENT|come|gigs;DEIXIS|come|Here;VOCATIVE|come|sir;AGENT|said|I;REPORTED_CONTENT|said|come",
+             "“Here come the boats, madam,” cried James.", "AGENT|come|boats;VOCATIVE|come|madam;REPORTED_CONTENT|cried|come",
+             "“Here comes the boats, madam,” cried James.", ""),
+            (656, plan.HANDSHAKE, plan.HANDSHAKE,
+             "RECIPROCAL_PARTICIPANTS|shook|We;BODY_PART|shook|hands;MANNER|shook|heartily",
+             "They shook hands warmly.", "RECIPROCAL_PARTICIPANTS|shook|They;BODY_PART|shook|hands",
+             "They shook the chairs firmly.", "BODY_PART;RECIPROCAL_PARTICIPANTS"),
+            (659, plan.TITLED_REPORT, "structural_reportable_emphatic_interjection",
+             "HONORIFIC|Copperfield|Master;VOCATIVE|Oh|Copperfield;EMPHASIS|Oh|indeed;"
+             "AGENT|said|Uriah;REPORTED_CONTENT|said|Oh",
+             "“Oh, truly, Doctor Watson,” said Mary.", "HONORIFIC|Watson|Doctor;VOCATIVE|Oh|Watson;EMPHASIS|Oh|truly",
+             "“Oh, truly, beautiful Mary,” said James.", ""),
+            (662, plan.TITLED_REPORT, "structural_reportable_nominal_exclamation",
+             "HONORIFIC|Copperfield|Master;VOCATIVE|lady|Copperfield;MODIFIER|lady|sweet;AGENT|said|Uriah;REPORTED_CONTENT|said|lady",
+             "“A kind gentleman, Captain Nemo!” said Mary Jane.",
+             "HONORIFIC|Nemo|Captain;VOCATIVE|gentleman|Nemo;MODIFIER|gentleman|kind;REPORTED_CONTENT|said|gentleman",
+             "“A kind gentleman!” said Mary Jane.", "VOCATIVE"),
+            (682, plan.CONTRAST, plan.CONTRAST,
+             "EXCLAMATIVE|contrast|What;FIRST_TERM|contrast|him;SECOND_TERM|contrast|friend;POSSESSOR|friend|his",
+             "What a distinction between us and our neighbours!",
+             "EXCLAMATIVE|distinction|What;FIRST_TERM|distinction|us;SECOND_TERM|distinction|neighbours",
+             "What a distinction between us!", "SECOND_TERM"),
+            (683, None, "vp_cop_pp",
+             "MODIFIER|terms|intimate;DEGREE|intimate|most;PREDICATIVE_RELATION|were|terms;FREQUENCY|were|always;"
+             "PREDICAND|were|they;COUNTERPART|terms|Gardiners",
+             "With the neighbours, we were often on the most cordial terms.",
+             "FREQUENCY|were|often;COUNTERPART|terms|neighbours;PREDICAND|were|we",
+             "With the neighbours, we played outdoors.", "FREQUENCY;PREDICATIVE_RELATION"),
+            (701, plan.DEAR_ADDRESS, plan.DEAR_ADDRESS,
+             "VOCATIVE|Dear|Elizabeth;EMPHATIC_REPRISE|dear|Dear;MODIFIER|Elizabeth|dear",
+             "“Dear, dear Margaret!”", "VOCATIVE|Dear|Margaret;MODIFIER|Margaret|dear",
+             "“Dear Margaret!”", "EMPHATIC_REPRISE"),
+            (707, None, "clause_negative_modal_ellipsis",
+             "SUBJECT|ELLIPTIC_PREDICATE|You;MODALITY|ELLIPTIC_PREDICATE|would;NEGATION|ELLIPTIC_PREDICATE|not;"
+             "CONDITION|ELLIPTIC_PREDICATE|saw;AGENT|saw|you;AFFECTED|saw|him",
+             "I would not if you asked me.",
+             "MODALITY|ELLIPTIC_PREDICATE|would;NEGATION|ELLIPTIC_PREDICATE|not;CONDITION|ELLIPTIC_PREDICATE|asked",
+             "I would leave if you asked me.", "SUBJECT|ELLIPTIC_PREDICATE;NEGATION|ELLIPTIC_PREDICATE"),
+            (731, None, "vp_cop_np",
+             "MODIFIER|sand|clean;ATTRIBUTE|was|sand;PREDICAND|was|bottom",
+             "The surface was dry clay.", "MODIFIER|clay|dry;ATTRIBUTE|was|clay;PREDICAND|was|surface",
+             "The surface was clay.", "MODIFIER"),
+            (733, None, "adjp_adj_pp",
+             "ORDINAL|trip|fifth;DEGREE|different|quite;PARTITIVE|any|others;COMPARISON|different|any;"
+             "ATTRIBUTE|was|different;PREDICAND|was|trip",
+             "This third visit was quite different from any of the others.", "ORDINAL|visit|third;DEGREE|different|quite;PREDICAND|was|visit",
+             "This visit was different from any of the others.", "ORDINAL;DEGREE"),
+            (736, plan.RESUMED_PERMISSION, plan.RESUMED_PERMISSION,
+             "AGENT|said|I;REPORTED_CONTENT|said|Good;REPORTED_CONTENT|said|go;CONTINUED_SPEECH|Good|go;"
+             "AGENT|go|I;TEMPORAL|go|now;MODALITY|go|may",
+             "“Fine,” said she, “and now may I leave?”", "CONTINUED_SPEECH|Fine|leave;MODALITY|leave|may;REPORTED_CONTENT|said|leave",
+             "“Fine,” said she, “and now may I leaves?”", ""),
+            (738, None, "clause_wh_copular_nominal_question",
+             "SUPERLATIVE|shot|best;INTERROGATIVE_PREDICAND|'s|Who;ATTRIBUTE|'s|shot;REPORTED_CONTENT|asked|'s;AGENT|asked|captain",
+             "“Who’s the best swimmer?” asked the teacher.",
+             "SUPERLATIVE|swimmer|best;INTERROGATIVE_PREDICAND|’s|Who;ATTRIBUTE|’s|swimmer",
+             "“Where is the swimmer?” asked the teacher.", "INTERROGATIVE_PREDICAND"),
+            (751, plan.DEGREE_ECHO, plan.DEGREE_ECHO,
+             "DEGREE_REPRISE|Very|Very;DISCOURSE_SEQUENCE|Very|Very",
+             "‘Extremely! Extremely!’", "DEGREE_REPRISE|Extremely|Extremely",
+             "‘Very! No!’", "DEGREE_REPRISE"),
+            (752, plan.FUSED_NEGATIVE, plan.FUSED_NEGATIVE,
+             "AGENT|answer|He;MODALITY|answer|can;NEGATION|answer|not;OBLIQUE|answer|for;COMPLEMENT|for|others",
+             "“We cannot speak for them.”", "MODALITY|speak|can;NEGATION|speak|not;COMPLEMENT|for|them",
+             "“We can speak for them.”", "NEGATION"),
+            (755, plan.UNIVERSAL_OBJECT, plan.UNIVERSAL_OBJECT,
+             "EXPERIENCER|knew|I;CONTENT|knew|all;TEMPORAL|knew|now",
+             "We understood all then.", "CONTENT|understood|all;TEMPORAL|understood|then",
+             "We understood all the problems.", "CONTENT|understood|all"),
+            (756, plan.CONTINUATION, plan.CONTINUATION,
+             "DISCOURSE_TRANSITION|went|So;AGENT|went|we;CONTINUATIVE|went|on",
+             "So they carried on.", "DISCOURSE_TRANSITION|carried|So;CONTINUATIVE|carried|on",
+             "They carried it on their shoulders.", "DISCOURSE_TRANSITION"),
+            (761, plan.MINOR_AND_PERFECT, "structural_perfect_declarative_question",
+             "MODIFIER|woman|little;POSSESSOR|name|her;ASPECT|forgot|have;EXPERIENCER|forgot|I;"
+             "CONTENT|forgot|name;DISCOURSE_SEQUENCE|woman|forgot",
+             "“A tall man. I have forgotten his address?”",
+             "MODIFIER|man|tall;ASPECT|forgotten|have;DISCOURSE_SEQUENCE|man|forgotten",
+             "“A tall man. I has forgotten his address?”", ""),
+            (781, None, "np_genitive",
+             "AGENT|sparkled|eyes;POSSESSOR|eyes|Bennet",
+             "Alice’s fingers trembled.", "AGENT|trembled|fingers;POSSESSOR|fingers|Alice",
+             "Alice and her fingers trembled.", "POSSESSOR|fingers|Alice"),
+            (783, plan.OBJECT_CONTROL, "structural_prepositional_controlled_infinitive",
+             "AGENT|called|aunt;TEMPORAL|called|now;ADDRESSEE|called|her;CONTROL_COMPLEMENT|called|look;"
+             "AGENT|look|her;OBLIQUE|look|at;COMPLEMENT|at|picture",
+             "The teacher now asked him to speak to the doctor.",
+             "CONTROL_COMPLEMENT|asked|speak;AGENT|speak|him;COMPLEMENT|to|doctor",
+             "The teacher now asked he to speak to the doctor.", ""),
+            (784, plan.MOTION_PERFECT, "np_of",
+             "AGENT|walked|Darcy;ASPECT|walked|had;DIRECTION|walked|away;GOAL|walked|part;"
+             "PART_OF|part|room;DISTINCT_ALTERNATIVE|part|another",
+             "Mary had hurried back to the garden.", "ASPECT|hurried|had;DIRECTION|hurried|back;GOAL|hurried|garden",
+             "Mary had hurry back to the garden.", ""),
+        )
+
+        def descendants(tree):
+            if tree is not None:
+                yield tree
+                for child in tree.children:
+                    yield from descendants(child)
+
+        def keys(edges):
+            return {"|".join((role, a["surface"] or a["type"] or "", b["surface"] or b["type"] or ""))
+                    for role, a, b in edges}
+
+        for index, root, witness, required, good, good_edges, bad, forbidden in rows:
+            with self.subTest(index=index, kind="frozen source"):
+                text, tree, nodes, edges = self.selected(index)
+                self.assertIsNotNone(tree)
+                if root is not None:
+                    self.assertEqual(tree.rule_id, root)
+                self.assertIn(witness, {n.rule_id for n in descendants(tree)})
+                self.assertEqual(tree.start, 0)
+                self.assertIn(text[tree.end:], ("", ".", "!", "?"))
+                self.assertLessEqual(set(required.split(";")), keys(edges))
+                typed = {610: ("volume", "BOOK_VOLUME"), 656: ("hands", "BODY_PART"),
+                         738: ("shot", "PERSON")}
+                if index in typed:
+                    self.assertIn(typed[index], {(n["surface"], n["type"]) for n in nodes.values()})
+                if index == 751:
+                    second, first = next((a, b) for rel, a, b in edges if rel == "DEGREE_REPRISE")
+                    self.assertLess(first["span"][1], second["span"][0])
+                    self.assertNotEqual(first["id"], second["id"])
+                if index == 752:
+                    _, modal = next((a, b) for rel, a, b in edges if rel == "MODALITY")
+                    _, negator = next((a, b) for rel, a, b in edges if rel == "NEGATION")
+                    self.assertEqual(modal["span"][1], negator["span"][0])
+                    self.assertEqual(text[modal["span"][0]:negator["span"][1]], "cannot")
+            with self.subTest(index=index, kind="independent positive"):
+                _, tree, _, edges = self.selected(good)
+                self.assertIsNotNone(tree)
+                if root is not None:
+                    self.assertEqual(tree.rule_id, root)
+                self.assertLessEqual(set(good_edges.split(";")), keys(edges))
+            with self.subTest(index=index, kind="contrast"):
+                _, tree, _, edges = self.selected(bad)
+                if root is not None:
+                    self.assertFalse(tree and tree.rule_id == root)
+                actual = keys(edges)
+                for absent in filter(None, forbidden.split(";")):
+                    self.assertFalse(any(edge == absent or edge.startswith(absent + "|")
+                                         for edge in actual), (bad, absent, actual))
+
     def test_n663_reported_copular_content_and_vocative(self):
         positive="‘I hope Mrs. Micawber and your family are well, sir,’ said his aunt."
         negative="‘I hope Mrs. Micawber and your family are well, sir,’ said his."
