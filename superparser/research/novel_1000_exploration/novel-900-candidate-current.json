@@ -7,10 +7,10 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 84,
-    "forest_budget_exceeded": 2,
+    "complete": 89,
+    "forest_budget_exceeded": 1,
     "no_structural_root": 3,
-    "roots_without_valid_analysis": 10,
+    "roots_without_valid_analysis": 6,
     "timeout": 1
   },
   "cases": [
@@ -124,21 +124,21 @@
     },
     {
       "index": 813,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_reported_copular_inversion_with_vocative",
+      "rank_one_sha256": "4194646ab313fa235a8671ee1d08c4593525157be1c7932eb4a8515251a5458b",
+      "selected_graph_sha256": "15b5c5320b24478f716b25b1de4959e3340d8eebf96eba1ff57aac47c76cd467"
     },
     {
       "index": 814,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_split_imperative_report_and_modal_passive_purpose",
+      "rank_one_sha256": "2628807403c8bd1b3a27c953de0d329479d3fb8a940396ac37cb95159ba64aac",
+      "selected_graph_sha256": "031f6dd65114858452edb71a37766b0420183aba3d35ddcc6d1dd039721c653a"
     },
     {
       "index": 815,
@@ -250,12 +250,12 @@
     },
     {
       "index": 827,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_no_sooner_than_passive_participial_ellipsis",
+      "rank_one_sha256": "3bfce9ab42257046157a817175f998ec97c8973a5acbb092850e4799da2bc2eb",
+      "selected_graph_sha256": "d62b4229a823bc3852a2029aa655b12088aae06021ada7940e8235c60997919e"
     },
     {
       "index": 828,
@@ -655,12 +655,12 @@
     },
     {
       "index": 872,
-      "status": "forest_budget_exceeded",
-      "forest_budget_exceeded": true,
+      "status": "complete",
+      "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_four_sentence_report_with_elliptical_final_nominal",
+      "rank_one_sha256": "72732bac8623bd182ca3f77c272975217e8ce4f8cbcf13c4d7f5cea66625649d",
+      "selected_graph_sha256": "fef2799e13ed09ed9718d26ebb299bfe93dc1f24e14b5c2e847e35dbebb03d7d"
     },
     {
       "index": 873,
@@ -772,12 +772,12 @@
     },
     {
       "index": 885,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_fin_clause_with_passive_adjective_supplement",
+      "rank_one_sha256": "7698ff62c0fcc268fd6b46f69062dda76a6733da19da11369e2d45e079f448a9",
+      "selected_graph_sha256": "ba6a14933c0dd20915490d31d35edc4f29e33c1e1a2b5f9a8802dc4428feb91c"
     },
     {
       "index": 886,

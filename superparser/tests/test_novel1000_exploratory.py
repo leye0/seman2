@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 from collections import Counter
-from pathlib import Path
-from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
@@ -68,14 +66,33 @@ class Novel1000ExploratoryTests(unittest.TestCase):
         self.assertNotIn(ladder.source_id(existing),
                          {ladder.source_id(c) for c in cases900})
 
-    def test_initial_result_pin_is_immutable(self):
-        with TemporaryDirectory() as temp:
-            path = Path(temp) / "initial.json"
-            novel1000.preserve_initial(path, {"status": "complete"})
-            novel1000.preserve_initial(path, {"status": "complete"})
-            with self.assertRaisesRegex(ValueError, "Initial baseline"):
-                novel1000.preserve_initial(path, {"status": "incomplete"})
-            self.assertEqual(ladder.read_json(path), {"status": "complete"})
+    def test_candidate_replay_keeps_initial_complete_signatures_and_current_pin(self):
+        src = fake_sources()
+        with patch.object(ladder, "resolve", side_effect=fake_resolve):
+            manifest, _ = novel1000.build_manifest(src, set(), set(), 801)
+        def result(rows):
+            return {"schema": "seman2-novel-ladder-result-v1",
+                    "cohort_sha256": manifest["cohort_sha256"],
+                    "limits": ladder.LIMITS,
+                    "counts": dict(Counter(r["status"] for r in rows)), "cases": rows}
+        rows = [dict(index=i, status="complete" if i != 900 else "no_structural_root",
+                     rank_one_sha256=f"tree-{i}" if i != 900 else None,
+                     selected_graph_sha256=f"graph-{i}" if i != 900 else None,
+                     forest_budget_exceeded=False, kbest_budget_exceeded=False)
+                for i in range(801, 901)]
+        before = result(rows)
+        changed = [dict(r) for r in rows]
+        changed[-1].update(status="complete", rank_one_sha256="new-tree",
+                           selected_graph_sha256="new-graph")
+        current = result(changed)
+        novel1000.compare_candidate(900, manifest, current, current, before)
+        with self.assertRaisesRegex(ValueError, "current reference differs"):
+            novel1000.compare_candidate(900, manifest, before, current, before)
+        tampered = [dict(r) for r in changed]
+        tampered[0]["selected_graph_sha256"] = "changed graph"
+        with self.assertRaisesRegex(ValueError, "selected graph changed"):
+            novel1000.compare_candidate(900, manifest, current, result(tampered), before)
+        self.assertEqual(before["counts"], {"complete": 99, "no_structural_root": 1})
 
     def test_manifest_source_identity_cannot_be_faked_by_a_new_cohort_sha(self):
         sources = fake_sources()

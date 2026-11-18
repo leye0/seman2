@@ -1,4 +1,4 @@
-name: Novel-900 / Novel-1000 exploratory frozen-source baseline
+name: Novel-900 / Novel-1000 frozen-source replay
 
 on:
   push:
@@ -6,11 +6,14 @@ on:
     paths:
       - '.github/workflows/novel-900-1000-exploratory.yml'
       - 'superparser/scripts/novel1000_exploratory.py'
-      - 'superparser/tests/test_novel1000_exploratory.py'
+      - 'superparser/tests/test_novel1000*.py'
+      - 'superparser/seman_parser/**'
+      - 'superparser/data/**'
+      - 'superparser/research/novel_1000_exploration/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: novel1000-exploratory-baseline
@@ -18,7 +21,7 @@ concurrency:
 
 jobs:
   baseline:
-    name: N801-N1000 source, baseline and protected predecessors
+    name: N801-N1000 candidate and protected predecessors
     runs-on: ubuntu-latest
     timeout-minutes: 55
     env:
@@ -27,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -60,6 +63,7 @@ jobs:
         run: |
           python -m unittest -q \
             superparser.tests.test_novel1000_exploratory \
+            superparser.tests.test_novel1000_grammar_repairs \
             superparser.tests.test_novel_ladder
           python -m scripts.novel1000_exploratory stage
       - name: Replay and check frozen Novel-600 and Novel-700
@@ -75,10 +79,11 @@ jobs:
             --novel700 /tmp/novel1000-prefix/novel-700-parses.jsonl \
             --novel800 /tmp/novel1000-prefix800/novel-800-candidate-parses.jsonl \
             --out /tmp/novel1000-semantic-prefix --gate
-      - name: Measure exact-source N801-N1000 before any grammar fixes
+      - name: Replay N801-N1000 and compare source, limits, trees and graphs
         run: |
           python -m scripts.novel1000_exploratory run \
-            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-baseline
+            --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-candidate
+          python -m scripts.novel1000_exploratory check --out-dir /tmp/novel1000-candidate
       - name: Preserve Novel-500 selected analyses and 30 anchored dialogues
         run: |
           python -m scripts.diagnose_novel_parses \
@@ -107,25 +112,12 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: novel900-1000-frozen-source-baseline
+          name: novel900-1000-frozen-source-replay
           path: |
             superparser/research/novel_1000_exploration/
-            /tmp/novel1000-baseline/
+            /tmp/novel1000-candidate/
             /tmp/novel1000-semantic-prefix/
             /tmp/novel1000-direct-quality.json
             /tmp/novel1000-anchored-dialogue.json
           retention-days: 30
           if-no-files-found: warn
-      - name: Commit the immutable candidate manifests and first-pass baselines
-        run: |
-          git add superparser/research/novel_1000_exploration/
-          if git diff --cached --quiet; then
-            echo "Already staged; no baseline changes"
-          else
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m 'Freeze Novel-900 and Novel-1000 exploratory source and first-pass results'
-            git fetch origin research/novel-ladder-1000-exploration
-            git rebase origin/research/novel-ladder-1000-exploration
-            git push origin HEAD:research/novel-ladder-1000-exploration
-          fi

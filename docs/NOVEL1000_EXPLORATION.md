@@ -28,35 +28,40 @@ not accuracy claims.
   existing parser and measure routine. WordNet 3.0, 50,000 chart items,
   500,000 k-best work units and 10 seconds per case are unchanged.
 
-The hosted workflow writes N900/N1000 candidate cohort manifests and
-initial parse results to
-superparser/research/novel_1000_exploration/.
-It rejects changed source manifests or initial selected-result
-fingerprints on reruns. Source-backed review files begin empty.
+The frozen initial measurements and source manifests are in
+`superparser/research/novel_1000_exploration/`. Replays write separate
+diagnostics, never the initial or current pins. The replay check verifies
+the current candidate against the measured tree and graph signatures,
+and independently preserves the 160 originally complete signatures.
+See [the first grammar repair batch](NOVEL1000_REPAIR_BATCH1.md).
 
 ## Running locally
 
 From repository root:
 
     export PYTHONPATH=superparser
-    python -m unittest -q superparser.tests.test_novel1000_exploratory
+    python -m unittest -q superparser.tests.test_novel1000_exploratory \
+      superparser.tests.test_novel1000_grammar_repairs
     python -m scripts.novel1000_exploratory stage
     python -m scripts.novel1000_exploratory run \
-      --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-baseline
+      --wordnet-dir "$WORDNET_DICT" --out-dir /tmp/novel1000-candidate
+    python -m scripts.novel1000_exploratory check --out-dir /tmp/novel1000-candidate
 
 Stage checks the predecessor N600/N700 evidence and all 100
 source-bound N800 reviews, then freezes both new candidate source sets.
 Run emits per-case JSONL, selected tree/semantic graph hashes, real
-coverage counts and the diagnostic baseline. No review is fabricated.
+coverage counts and diagnostics. Check verifies the committed current
+candidate pins and the coverage signature of every initially complete case.
+Candidate updates are intentional reviewed edits, never side effects of CI.
 
 ## Hosted regression contract
 
 The workflow .github/workflows/novel-900-1000-exploratory.yml
 runs selection invariants, earlier N600/N700/N800 replays, the
-complete N700/N800 semantic gate, the N900/N1000 initial passes,
+complete N700/N800 semantic gate, exact N900/N1000 candidate replay,
 the N500 fingerprint and 30 real dialogues, and direct grammar
-positive/negative controls. It saves an artifact and commits the
-new source pins and baseline only after all gates pass.
+positive/negative controls. It saves an artifact and has read-only
+repository permission.
 
 **Neither new cohort is advertised as 100/100 correct semantics.**
 

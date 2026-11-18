@@ -122,13 +122,33 @@ def stage(sources):
     return cohorts
 
 
-def preserve_initial(path, value):
-    """Never silently replace an immutable initial measurement."""
-    if path.exists():
-        if ladder.read_json(path) != value:
-            raise ValueError(f"Initial baseline or selected result changed: {path}")
-    else:
-        ladder.write_json(path, value)
+def compare_candidate(end, manifest, reference, observed, initial):
+    """Enforce protected signatures without conflating completion and review."""
+    before = ladder.result_cases(reference, manifest, end)
+    after = ladder.result_cases(observed, manifest, end)
+    baseline = ladder.result_cases(initial, manifest, end)
+    failures = list(ladder.compare_rows(before, after))
+    failures += [(i, "selected graph changed") for i in before
+                 if before[i]["status"] == after[i]["status"] == "complete"
+                 and before[i]["selected_graph_sha256"] != after[i]["selected_graph_sha256"]]
+    failures += [(i, "initial complete signature changed")
+                 for i, row in baseline.items()
+                 if row["status"] == "complete" and after[i] != row]
+    failures += [(i, "new timeout") for i in before
+                 if before[i]["status"] != "timeout" and after[i]["status"] == "timeout"]
+    failures += [(i, "current reference differs from replay")
+                 for i in before if after[i] != before[i]]
+    if failures:
+        raise ValueError(f"Novel-{end} replay differs: {failures}")
+
+
+def check(out_dir: Path):
+    for end in ENDS:
+        manifest = ladder.read_json(candidate_path(end, "cohort"))
+        observed = ladder.read_json(out_dir / f"novel-{end}-candidate-result.json")
+        compare_candidate(end, manifest, ladder.read_json(candidate_path(end, "current")),
+                          observed, ladder.read_json(candidate_path(end, "initial")))
+        print(f"Novel-{end}: source, limits and selected result signatures match.", flush=True)
 
 
 def run(wordnet_dir: Path, out_dir: Path):
@@ -186,28 +206,23 @@ def run(wordnet_dir: Path, out_dir: Path):
             }
             ladder.write_json(out_dir / f"novel-{end}-candidate-result.json", result)
             ladder.write_json(out_dir / f"novel-{end}-candidate-summary.json", summary)
-            preserve_initial(candidate_path(end, "initial"), result)
-            preserve_initial(candidate_path(end, "current"), result)
-            review_path = candidate_path(end, "review")
-            empty_review = {"schema": ladder.REVIEW_SCHEMA,
-                            "cohort_sha256": manifest["cohort_sha256"], "cases": []}
-            if not review_path.exists():
-                ladder.write_json(review_path, empty_review)
-            elif ladder.read_json(review_path)["cohort_sha256"] != manifest["cohort_sha256"]:
-                raise ValueError(f"Novel-{end} review source drift")
-            print(f"Novel-{end}: {counts}; independently reviewed: 0/100", flush=True)
+            print(f"Novel-{end}: {counts}; exploratory, not certified.", flush=True)
     finally:
         signal.signal(signal.SIGALRM, previous)
 
 
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
-    cli.add_argument("action", choices=("stage", "run"))
+    cli.add_argument("action", choices=("stage", "run", "check"))
     cli.add_argument("--wordnet-dir", type=Path)
     cli.add_argument("--out-dir", type=Path)
     args = cli.parse_args()
     if args.action == "stage":
         stage(ladder.load_sources())
+    elif args.action == "check":
+        if args.out_dir is None:
+            cli.error("check requires --out-dir")
+        check(args.out_dir)
     else:
         if args.wordnet_dir is None or args.out_dir is None:
             cli.error("run requires --wordnet-dir and --out-dir")

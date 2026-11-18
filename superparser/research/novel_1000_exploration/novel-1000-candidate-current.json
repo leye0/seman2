@@ -7,10 +7,9 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 76,
-    "forest_budget_exceeded": 1,
-    "no_structural_root": 6,
-    "roots_without_valid_analysis": 16,
+    "complete": 86,
+    "no_structural_root": 3,
+    "roots_without_valid_analysis": 10,
     "timeout": 1
   },
   "cases": [
@@ -106,12 +105,12 @@
     },
     {
       "index": 911,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_initial_conjunction_copular_adjective_infinitive",
+      "rank_one_sha256": "2c1ce968a94992e14c8b3cbd286561119b0502f64f6b00622f625de035de73c6",
+      "selected_graph_sha256": "80a386433607e14a4ed02fd6bc37ceeed5e62f2504b94355a5d08889084e8dba"
     },
     {
       "index": 912,
@@ -340,12 +339,12 @@
     },
     {
       "index": 937,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_shared_subject_motion_with_coordinated_depictives",
+      "rank_one_sha256": "28cb0ae820a9c022348979d73b84727d7c416ded4815a495dc2374fa33f967ff",
+      "selected_graph_sha256": "9a325b81789935f7e1eaff5a612a02cde8d4b27676faf7acec84b946f6a5284f"
     },
     {
       "index": 938,
@@ -457,12 +456,12 @@
     },
     {
       "index": 950,
-      "status": "forest_budget_exceeded",
-      "forest_budget_exceeded": true,
+      "status": "complete",
+      "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_parallel_motion_to_locative_relative_with_depictives",
+      "rank_one_sha256": "b148bd2c7fb70f7cf870cd8df74b0c068cb93bcd523f6f6f74d8637d4ad25553",
+      "selected_graph_sha256": "1500c5d241352bf8beb27f0f4131967609edf3ed3c47e65a53aa407a7f9da406"
     },
     {
       "index": 951,
@@ -547,12 +546,12 @@
     },
     {
       "index": 960,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_reported_gerund_elliptic_question",
+      "rank_one_sha256": "c3e7a2ece32e5b36b81e5060e1e15b1bdd6b2a7ce58fd1462fbabc9c67552678",
+      "selected_graph_sha256": "81610fcabc24fbcbe6291bc5ca0c65593634c64dd65326cc54973847b41972c0"
     },
     {
       "index": 961,
@@ -592,12 +591,12 @@
     },
     {
       "index": 965,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_intercalated_permission_with_elliptical_condition",
+      "rank_one_sha256": "b5d5e1532302c0c2cf4de1f58e3a48285c55b30a75ab3b46bcd63d111bbf104e",
+      "selected_graph_sha256": "b95354908cb5eb7f33a343644f7edfdb62b7c3f620cdd1107d44fbcc33f5ce85"
     },
     {
       "index": 966,
@@ -637,12 +636,12 @@
     },
     {
       "index": 970,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_negative_coordination_with_shared_perception",
+      "rank_one_sha256": "3d9dd5f2ee54773228bd1c07a1ade5a36f0c5638c53b4e4084fde78f7198f48f",
+      "selected_graph_sha256": "63975ee932f2ca5594a298ca42bf941e061e494792326fe7e8aac814970abb5c"
     },
     {
       "index": 971,
@@ -763,12 +762,12 @@
     },
     {
       "index": 984,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_quoted_epistemic_incise_with_ditransitive_result",
+      "rank_one_sha256": "f14a4da73551959f5930cda302f9a907d9ab7733e59316877ceade98626fb2e6",
+      "selected_graph_sha256": "8b850f06fbcb7423dcd2cd449caec657f934970ba9600e5707497ecb2f19de0d"
     },
     {
       "index": 985,
@@ -817,12 +816,12 @@
     },
     {
       "index": 990,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_semicolon_modal_negative_and_passive_nominal",
+      "rank_one_sha256": "43c028026985b3f43f113d97d4e584a258547389e33936f82325f2a8fd45f8f7",
+      "selected_graph_sha256": "4c432c2ea71debdaa5aebbc47f859019bd87c2e4a088a4a58d5fef0e2c54a830"
     },
     {
       "index": 991,
@@ -835,12 +834,12 @@
     },
     {
       "index": 992,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_intercalated_copular_comma_adjectives_and_coordinated_nominals",
+      "rank_one_sha256": "1e8fd5517b43ea5c8670c9061ca6adc447b12461b194d5919298b677a0db0fde",
+      "selected_graph_sha256": "79f298c6231ec6066ab61813b5e463f8dd2f3d88de72f1a8abce99cfa4487fe2"
     },
     {
       "index": 993,
@@ -871,12 +870,12 @@
     },
     {
       "index": 996,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_split_contrast_with_independent_gerund_negation",
+      "rank_one_sha256": "c690cd2bafb0cb4fdf2e8c3192c38a2dd60303111ae60cf9cf08a9f5201ad1b4",
+      "selected_graph_sha256": "b0815e86cf04830bcf4c524ae88dbfe300402f3a1d45ff791673252f1a1a1536"
     },
     {
       "index": 997,
