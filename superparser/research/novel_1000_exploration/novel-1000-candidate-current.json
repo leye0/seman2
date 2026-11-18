@@ -7,10 +7,8 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 90,
-    "no_structural_root": 1,
-    "roots_without_valid_analysis": 8,
-    "timeout": 1
+    "complete": 99,
+    "roots_without_valid_analysis": 1
   },
   "cases": [
     {
@@ -69,12 +67,12 @@
     },
     {
       "index": 907,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "documentary_narrator_resumption_before_date",
+      "rank_one_sha256": "8f7be0f801fdfa5150dbeb7f6b73b2c321b5cdb826ba20012db4c4ecfe53484c",
+      "selected_graph_sha256": "7866c3b1b8225a831de47ddabe27ee571921879a3b25726ff558b636a293471a"
     },
     {
       "index": 908,
@@ -168,12 +166,12 @@
     },
     {
       "index": 918,
-      "status": "timeout",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_locative_coordination_with_active_and_passive_relatives",
+      "rank_one_sha256": "07e13d6066b272a7f287559151dc7f55ed21959aaab7ec27cd8b5ab0ec2895d5",
+      "selected_graph_sha256": "c7c18ee7d2b7f0aadac9471fdbfa894955e8cc4f5089a45b187f8c6ed6909cf6"
     },
     {
       "index": 919,
@@ -393,21 +391,21 @@
     },
     {
       "index": 943,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_dialectal_identity_reprise_with_negative_perfect",
+      "rank_one_sha256": "0e2b54879eac91067be684ca6801a858f81db9db60715414d477e73c6b6da9be",
+      "selected_graph_sha256": "6ee7caabc3f40311511528c32c54bcd3de8a26d31210ef812a1063ea12621921"
     },
     {
       "index": 944,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_fronted_comparison_set_with_predicative_superlative",
+      "rank_one_sha256": "c9d5a2dd53a27fc57088e020cda585f58fb056bec455f522f02ffa5d10c3a9a5",
+      "selected_graph_sha256": "cdcf5acabfd28c007467b88e53436780917ac0e2a97297dbbd9c631147ca72c2"
     },
     {
       "index": 945,
@@ -420,12 +418,12 @@
     },
     {
       "index": 946,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_reported_polite_instruction_with_elliptic_target",
+      "rank_one_sha256": "1f08ef23f8a5494d4d23bc92a926e8d0329eacae468f7ac1f2fa590c24e85fa7",
+      "selected_graph_sha256": "9fc696c3ab1e02d3064486d13ce7dbc2b5ed263d42992a4020f834f884944efc"
     },
     {
       "index": 947,
@@ -564,12 +562,12 @@
     },
     {
       "index": 962,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_epistemic_modal_content_with_titled_vocative",
+      "rank_one_sha256": "ec47cda3125499675f3056f2b46376003631a2afafd881b95d117c4e29bb141f",
+      "selected_graph_sha256": "8666a228591d755d9c689ac7ee961d8b98e213cccba0acbb6f41b50b4580d1ed"
     },
     {
       "index": 963,
@@ -582,12 +580,12 @@
     },
     {
       "index": 964,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_shared_subject_order_with_genitive_shop_and_intensifier",
+      "rank_one_sha256": "2f5c176ecda5076f9f480f2e2b14ae2d01a2cc23a2304318f9480502092be429",
+      "selected_graph_sha256": "4391254fd3899acd67b3415db896ca3103e732087ae23221581fc88c54e2a847"
     },
     {
       "index": 965,
@@ -672,12 +670,12 @@
     },
     {
       "index": 974,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_elliptic_genitive_location_and_emphatic_simile",
+      "rank_one_sha256": "33e9f0f6ae61c46c6ab2a1efcdeb7ab2ecc552513151d6a01319972a3fb29d4a",
+      "selected_graph_sha256": "a73e4fec629ca08226e2cabee4804cc506580cc25c720c31282fedf9fbef4b58"
     },
     {
       "index": 975,
@@ -906,12 +904,12 @@
     },
     {
       "index": 1000,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_perspective_with_coordinated_relatives_and_stranded_gap",
+      "rank_one_sha256": "5e40ca7e496066e818fb76d6647517887072bde9d638f4d11625d10868c17364",
+      "selected_graph_sha256": "aa903863ad5c91add8945cb7c4991e9484dfbd606e65043aec42da730aa0d815"
     }
   ]
 }

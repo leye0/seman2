@@ -825,11 +825,26 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
+            elif kind == "source-document-initial":
+                if (expected_rule != "documentary_postscript_initials_signature"
+                        or category != "PROPER-NOUN"
+                        or re.fullmatch(r"[A-Z]", surface) is None
+                        or not any(t.start == a and t.end == b for t in original_lattice.tokens)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=surface,
+                    category=category, features=FeatureStructure.empty(),
+                    source="overt-documentary-initial", score=0,
+                    provenance={"original_source_span": [a, b], "documentary_role": "signature"},
+                ))
             elif kind == "source-fused-modal":
                 # Only recover the existing can/not senses at their overt
                 # sub-token offsets in this source-scoped contrast.
                 sides = {"MODAL": ("can", 0), "NEG": ("not", 3)}
-                if expected_rule not in (EMPHATIC_MODAL_CONTRAST, FUSED_NEGATIVE) or category not in sides:
+                if expected_rule not in (
+                    EMPHATIC_MODAL_CONTRAST, FUSED_NEGATIVE,
+                    "dialogue_fused_modal_stance_and_passive_negative_tag",
+                ) or category not in sides:
                     return None
                 spelling, offset = sides[category]
                 start = a - offset

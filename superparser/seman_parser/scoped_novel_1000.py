@@ -500,6 +500,545 @@ PLANS = (
      ),
      'finite'),
 
+    ('structural_coordinated_restoration_with_parallel_gerund_means',
+     re.compile('(?P<subject>We|They|I|He|She) +(?P<therefore>accordingly|immediately|quickly) +(?P<bring>brought|carried) +(?P<theme1>him|her|them|us) +(?P<back>back) +(?P<goal1>to +[^,;.!?]{3,35}?) +(?P<and1>and) +(?P<restore>restored|returned) +(?P<theme2>him|her|them|us) +(?P<goal2>to +[^,;.!?]{3,35}?) +(?P<by>by) +(?P<gerund1>rubbing|washing|treating) +(?P<patient>him|her|them|us) +(?P<instrument>with +[^,;.!?]{3,35}?) +(?P<and2>and) +(?P<gerund2>forcing|persuading|urging) +(?P<controller>him|her|them|us) +(?P<to>to) +(?P<action>swallow|drink|eat) +(?P<quantity>[^,;.!?]{3,35})(?P<stop>\\.)'),
+     (
+         P("subject", "NP"),
+         L("therefore", "ADV"),
+         L("bring", "V", vform='finite'),
+         P("theme1", "NP"),
+         L("back", "ADV"),
+         P("goal1", "PP", proof_rule='pp_prep_np'),
+         L("and1", "COORD"),
+         L("restore", "V", vform='finite'),
+         P("theme2", "NP"),
+         P("goal2", "PP", proof_rule='pp_prep_np'),
+         L("by", "PREP"),
+         L("gerund1", "V", vform='ing'),
+         P("patient", "NP"),
+         P("instrument", "PP", proof_rule='pp_prep_np'),
+         L("and2", "COORD"),
+         L("gerund2", "V", vform='ing'),
+         P("controller", "NP"),
+         L("to", "TO"),
+         L("action", "V", vform='base'),
+         P("quantity", "NP"),
+         M("stop", "SPEECH-STOP")
+     ),
+     'finite'),
+
+    ('structural_locative_coordination_with_active_and_passive_relatives',
+     re.compile('(?P<spire>The +[a-z-]+) +(?P<of1>of) +(?P<place>[A-Z][a-z-]+) +(?P<shine>shone|gleamed|stood) +(?P<under>under|below) +(?P<woods>the +[a-z-]+) +(?P<that>that) +(?P<surround>surrounded|sheltered|encircled) +(?P<it1>it) +(?P<and>and) +(?P<range>the +(?:range|ridge|line)) +(?P<of2>of) +(?P<mountain1>mountain|hill|peak) +(?P<above>above) +(?P<mountain2>mountain|hill|peak) +(?P<by>by) +(?P<which>which) +(?P<it2>it) +(?P<was>was) +(?P<overhung>overhung|enclosed|sheltered|overshadowed)(?P<stop>\\.)'),
+     (
+         P("spire", "NP", proof_rule='np_det_n'),
+         L("of1", "PREP"),
+         P("place", "NP", proof_rule='np_proper'),
+         L("shine", "V", vform='finite'),
+         L("under", "PREP"),
+         P("woods", "NP", proof_rule='np_det_n'),
+         L("that", "WH-PRONOUN"),
+         L("surround", "V", vform='finite'),
+         P("it1", "NP"),
+         L("and", "COORD"),
+         P("range", "NP", proof_rule='np_det_n'),
+         L("of2", "PREP"),
+         L("mountain1", "N"),
+         L("above", "PREP"),
+         L("mountain2", "N"),
+         L("by", "PREP"),
+         L("which", "WH-NOM"),
+         P("it2", "NP"),
+         L("was", "COPULA", vform='finite'),
+         L("overhung", "V", vform='ed'),
+         M("stop", "SPEECH-STOP")
+     ),
+     'finite'),
+
+    ('structural_nor_inversion_with_without_nominal_coordination',
+     re.compile(
+         '(?P<emoter>I|We|You|He|She|They) +(?P<affect>feel|felt|seem|seemed) +(?P<still>yet|still) +'
+         '(?P<state>parched|frozen|shaken|numb) +(?P<cause>with +[^,;.!?]{2,35})(?P<comma>,) +(?P<nor>nor) +'
+         '(?P<can>can|could|will|would) +(?P<thinker>I|we|you|he|she|they|it) +'
+         '(?P<reflect>reflect|think|dwell) +(?P<topic>(?:on|upon) +[^,;.!?]{2,35}) +(?P<without>without) +'
+         '(?P<gerund>shuddering|trembling|shaking) +(?P<and>and) +(?P<nominal>agony|fear|horror|dread)'
+         '(?P<end>\\.)'
+
+     ),
+     (
+         P('emoter', 'NP'),
+         L('affect', 'V', vform='finite'),
+         L('still', 'ADV'),
+         L('state', 'ADJ'),
+         P('cause', 'PP', proof_rule='pp_prep_np'),
+         M('comma', 'COMMA'),
+         L('nor', 'COORD'),
+         L('can', 'MODAL', vform='finite'),
+         P('thinker', 'NP'),
+         L('reflect', 'V', vform='base'),
+         P('topic', 'PP', proof_rule='pp_prep_np'),
+         L('without', 'PREP'),
+         L('gerund', 'V', vform='ing'),
+         L('and', 'COORD'),
+         L('nominal', 'N'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_inverted_conditional_with_nominal_apposition',
+     re.compile(
+         '(?P<should>Should) +(?P<plan>(?:the|his|her|their) +[^,;.!?]{5,48}?) +(?P<prove>prove|turn) +'
+         '(?P<state>feasible|practical|possible|successful)(?P<comma1>,) +(?P<person>[A-Z][a-z]+)'
+         '(?P<comma2>,) +(?P<already>already) +(?P<doubly>doubly|virtually|almost) +'
+         '(?P<role>(?:a|an) +[a-z-]+)(?P<comma3>,) +(?P<would>would|will|could) +(?P<neg>not) +'
+         '(?P<hesitate>hesitate|dare) +(?P<to>to) +(?P<adopt>adopt|accept|support|approve) +'
+         '(?P<object>it|them|him|her)(?P<end>\\.)'
+
+     ),
+     (
+         L('should', 'MODAL', vform='finite'),
+         P('plan', 'NP', proof_rule='np_relative_obj'),
+         L('prove', 'V', vform='base'),
+         L('state', 'ADJ'),
+         M('comma1', 'COMMA'),
+         L('person', 'PROPER-NOUN'),
+         M('comma2', 'COMMA'),
+         L('already', 'ADV'),
+         L('doubly', 'ADV'),
+         P('role', 'NP', proof_rule='np_det_n'),
+         M('comma3', 'COMMA'),
+         L('would', 'MODAL', vform='finite'),
+         L('neg', 'NEG'),
+         L('hesitate', 'V', vform='base'),
+         L('to', 'TO'),
+         L('adopt', 'V', vform='base'),
+         P('object', 'NP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_existential_nominal_contrast_with_shared_head',
+     re.compile(
+         '(?P<but>But) +(?P<there>there) +(?P<was>was) +(?P<no>no) +(?P<sign>sign|trace|hint) +(?P<of1>of) +'
+         '(?P<positive_phase>(?:reawakening|returning|dawning)) +(?P<positive>[a-z-]+) +(?P<bearers>(?:in|among) +[^,;.!?]{2,35})(?P<comma1>,) +'
+         '(?P<rather>rather)(?P<comma2>,) +(?P<indeed>indeed)(?P<comma3>,) +(?P<of2>of) +'
+         '(?P<negative_phase>(?:growing|rising|mounting)) +(?P<negative>[a-z-]+) +(?P<cause>(?:at|over) +[^,;.!?]{2,50})(?P<end>\\.)'
+
+     ),
+     (
+         L('but', 'COORD'),
+         L('there', 'EXPL'),
+         L('was', 'COPULA', vform='finite'),
+         L('no', 'DET'),
+         L('sign', 'N'),
+         L('of1', 'PREP'),
+         L('positive_phase', 'V', vform='ing'),
+         L('positive', 'N'),
+         P('bearers', 'PP', proof_rule='pp_prep_np'),
+         M('comma1', 'COMMA'),
+         L('rather', 'ADV'),
+         M('comma2', 'COMMA'),
+         L('indeed', 'ADV'),
+         M('comma3', 'COMMA'),
+         L('of2', 'PREP'),
+         L('negative_phase', 'V', vform='ing'),
+         L('negative', 'N'),
+         P('cause', 'PP', proof_rule='pp_prep_np'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_equative_simile_with_passive_measure',
+     re.compile(
+         '(?P<sound>(?:The|Their) +[^,;.!?]{3,70}?) +(?P<were>were|was) +(?P<as1>as) +'
+         '(?P<state>hushed|muted|quiet)(?P<comma>,) +(?P<as2>as) +(?P<if>if) +(?P<location>the +[a-z-]+) +'
+         '(?P<had>had) +(?P<been>been) +(?P<strewn>strewn|covered|lined) +'
+         '(?P<depth>(?:that|this) +(?:depth|thickness)) +(?P<material>with +[^,;.!?]{2,35})(?P<end>\\.)'
+
+     ),
+     (
+         P('sound', 'NP', proof_rule='np_pp_mod'),
+         L('were', 'COPULA', vform='finite'),
+         L('as1', 'EQUATIVE-AS'),
+         L('state', 'ADJ'),
+         M('comma', 'COMMA'),
+         L('as2', 'CONJ'),
+         L('if', 'CONJ'),
+         P('location', 'NP', proof_rule='np_det_n'),
+         L('had', 'HAVE', vform='finite'),
+         L('been', 'COPULA', vform='ed'),
+         L('strewn', 'V', vform='ed'),
+         P('depth', 'NP', proof_rule='np_det_n'),
+         P('material', 'PP', proof_rule='pp_prep_np'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('dialogue_epistemic_modal_content_with_titled_vocative',
+     re.compile(
+         '(?P<open>‘)(?P<thinker>I|We|You|He|She) +(?P<should>should|would|could) +'
+         '(?P<think>think|imagine|expect|believe) +(?P<actor>YOU|you|he|she|they) +'
+         '(?P<would>would|will|might) +(?P<come>come|return|go|enter) +(?P<goal>(?:into|to) +[^,;.!?]{2,35}) +'
+         '(?P<eventually>at +(last|length))(?P<comma>,) +(?P<title>Master|Miss) +(?P<addressee>[A-Z][a-z]+)'
+         '(?P<bang>!)(?P<close>’)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         P('thinker', 'NP'),
+         L('should', 'MODAL', vform='finite'),
+         L('think', 'V', vform='base'),
+         P('actor', 'NP'),
+         L('would', 'MODAL', vform='finite'),
+         L('come', 'V', vform='base'),
+         P('goal', 'PP', proof_rule='pp_prep_np'),
+         P('eventually', 'PP', proof_rule='pp_prep_np'),
+         M('comma', 'COMMA'),
+         ('title', 'TITLE', "scoped-lexical", {'honorific': 'true'}),
+         P('addressee', 'NP', proof_rule='np_proper'),
+         M('bang', 'EXCL'),
+         M('close', 'CLOSE-QUOTE'),
+     ),
+     'quoted'),
+    ('structural_fronted_comparison_set_with_predicative_superlative',
+     re.compile(
+         '(?P<set>Of +all +[^,;.!?]{2,58})(?P<comma>,) +(?P<experience>this +[^,;.!?]{4,35}?) +(?P<on>on) +'
+         '(?P<part>the +part) +(?P<of>of) +(?P<person>[A-Z][a-z]+(?: +[A-Z][a-z]+)?) +'
+         '(?P<appeared>appeared|seemed) +(?P<det>the) +(?P<worst>worst|best)(?P<end>\\.)'
+
+     ),
+     (
+         P('set', 'PP', proof_rule='pp_prep_np'),
+         M('comma', 'COMMA'),
+         P('experience', 'NP'),
+         L('on', 'PREP'),
+         P('part', 'NP', proof_rule='np_det_n'),
+         L('of', 'PREP'),
+         P('person', 'NP'),
+         L('appeared', 'V', vform='finite'),
+         L('det', 'DET'),
+         L('worst', 'ADJ'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+
+    ('dialogue_exclamation_with_shared_subject_postposed_report',
+     re.compile(
+         '(?P<open>")(?P<exclaim>Si-lence|Silence|Hush)(?P<bang>!)(?P<close>") +(?P<agent>he|she|they) +'
+         '(?P<report>roared|shouted|cried) +(?P<and>and) +(?P<look>looked|stared|glared) +'
+         '(?P<around>(?:about|around) +[^,;.!?]{2,35}) +(?P<degree>positively|exactly|quite) +'
+         '(?P<comparison>like +[^,;.!?]{2,35})(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         ('exclaim', 'INTERJECTION', "scoped-lexical", {}),
+         M('bang', 'EXCL'),
+         M('close', 'CLOSE-QUOTE'),
+         P('agent', 'NP'),
+         L('report', 'V', vform='finite'),
+         L('and', 'COORD'),
+         L('look', 'V', vform='finite'),
+         P('around', 'PP', proof_rule='pp_prep_np'),
+         L('degree', 'ADV'),
+         P('comparison', 'PP', proof_rule='pp_prep_np'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_dialectal_identity_reprise_with_negative_perfect',
+     re.compile(
+         '(?P<open>")(?P<subject>I)(?P<am>\'m) +(?P<qual>poor|old|honest) +(?P<name>[A-Z][a-z]+ +[A-Z][a-z]+)'
+         '(?P<comma>,) +(?P<echo>I) +(?P<am2>am)(?P<semi>;) +(?P<and>and) +(?P<subject2>I) +(?P<have>have)'
+         "(?P<negative>n't) +(?P<spoken>spoke|spoken|talked) +(?P<partner>with +[^,;.!?]{2,35}) +"
+         '(?P<duration>these +(?:two|three|four|five) +(?:years|months|weeks))(?P<end>\\.)(?P<close>")'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         P('subject', 'NP'),
+         L('am', 'COPULA', vform='finite'),
+         L('qual', 'ADJ'),
+         P('name', 'NP', proof_rule='np_name_seq2'),
+         M('comma', 'COMMA'),
+         P('echo', 'NP'),
+         L('am2', 'COPULA', vform='finite'),
+         M('semi', 'SEMICOLON'),
+         L('and', 'COORD'),
+         P('subject2', 'NP'),
+         L('have', 'HAVE', vform='finite'),
+         L('negative', 'NEG'),
+         ('spoken', 'V', "scoped-lexical", {'vform': 'ed'}),
+         P('partner', 'PP', proof_rule='pp_prep_np'),
+         P('duration', 'NP', proof_rule='np_det_n'),
+         M('end', 'SPEECH-STOP'),
+         M('close', 'CLOSE-QUOTE'),
+     ),
+     'quoted'),
+    ('dialogue_reported_polite_instruction_with_elliptic_target',
+     re.compile(
+         '(?P<open>")(?P<title>Mr|Mrs)(?P<dot>\\.) +(?P<address>[A-Z][a-z]+)(?P<comma1>,) +'
+         '(?P<will>will|would|could) +(?P<you>you) +(?P<please>please) +(?P<pick>pick) +(?P<me>me|us) +'
+         '(?P<off>off) +(?P<one>one) +(?P<of>of) +(?P<set>(?:these|those) +[a-z-]+)(?P<comma2>,) +'
+         '(?P<sir>sir|madam)(?P<qmark>\\?) +(?P<target>[A-Z][a-z]+)(?P<comma3>,) +(?P<if>if) +'
+         '(?P<possible>possible)(?P<comma4>,)(?P<close>") +(?P<said>said|asked|replied) +'
+         '(?P<speaker>the +[a-z-]+)(?P<end>\\.)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         L('title', 'TITLE', honorific='true'),
+         M('dot', 'ABBREVIATION-STOP'),
+         P('address', 'NP', proof_rule='np_proper'),
+         M('comma1', 'COMMA'),
+         L('will', 'MODAL', vform='finite'),
+         P('you', 'NP'),
+         L('please', 'ADV'),
+         L('pick', 'V', vform='base'),
+         P('me', 'NP'),
+         L('off', 'PARTICLE'),
+         L('one', 'NUM'),
+         L('of', 'PREP'),
+         P('set', 'NP'),
+         M('comma2', 'COMMA'),
+         L('sir', 'TITLE'),
+         M('qmark', 'QMARK'),
+         ('target', 'PROPER-NOUN', "scoped-lexical", {'number': 'singular', 'person': '3'}),
+         M('comma3', 'COMMA'),
+         L('if', 'CONJ'),
+         L('possible', 'ADJ'),
+         M('comma4', 'COMMA'),
+         M('close', 'CLOSE-QUOTE'),
+         L('said', 'V', vform='finite'),
+         P('speaker', 'NP', proof_rule='np_det_n'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'quoted'),
+    ('dialogue_fused_modal_stance_and_passive_negative_tag',
+     re.compile(
+         '(?P<open>“)(?P<but>But)(?P<comma1>,) +(?P<dear>(?:my|our) +[a-z-]+)(?P<comma2>,) +'
+         '(?P<subject>(?:your|her|his) +[a-z-]+) +(?P<can>can)(?P<first_not>not) +'
+         '(?P<spare>spare|lend|release) +(?P<object>the +[a-z-]+)(?P<comma3>,) +(?P<stance_subject>I) +'
+         '(?P<am>am) +(?P<sure>sure|certain)(?P<stop>\\.) +(?P<patient>They) +(?P<passive>are) +'
+         '(?P<wanted>wanted|needed|required) +(?P<location>(?:in|at) +[^,;.!?]{2,35})(?P<comma4>,) +'
+         '(?P<address>(?:Mr|Mrs)\\. +[A-Z][a-z]+)(?P<comma5>,) +(?P<tag>are) +(?P<tag_subject>they) +'
+         '(?P<tag_neg>not)(?P<qmark>\\?)(?P<close>”)'
+
+     ),
+     (
+         M('open', 'OPEN-QUOTE'),
+         L('but', 'COORD'),
+         M('comma1', 'COMMA'),
+         P('dear', 'NP', proof_rule='np_poss'),
+         M('comma2', 'COMMA'),
+         P('subject', 'NP', proof_rule='np_poss'),
+         ('can', 'MODAL', 'source-fused-modal', {}),
+         ('first_not', 'NEG', 'source-fused-modal', {}),
+         L('spare', 'V', vform='base'),
+         P('object', 'NP', proof_rule='np_det_n'),
+         M('comma3', 'COMMA'),
+         P('stance_subject', 'NP'),
+         L('am', 'COPULA', vform='finite'),
+         L('sure', 'ADJ'),
+         M('stop', 'SPEECH-STOP'),
+         P('patient', 'NP'),
+         L('passive', 'COPULA', vform='finite'),
+         L('wanted', 'V', vform='ed'),
+         P('location', 'PP', proof_rule='pp_prep_np'),
+         M('comma4', 'COMMA'),
+         P('address', 'NP', proof_rule='np_honorific_abbreviation'),
+         M('comma5', 'COMMA'),
+         L('tag', 'COPULA', vform='finite'),
+         P('tag_subject', 'NP'),
+         L('tag_neg', 'NEG'),
+         M('qmark', 'QMARK'),
+         M('close', 'CLOSE-QUOTE'),
+     ),
+     'quoted'),
+    ('structural_shared_agent_with_independent_genitive_destinations',
+     re.compile(
+         '(?P<subject>He|She|They|We|I) +(?P<joined>joined|met) +(?P<theme>them|her|him|us) +(?P<on>on) +'
+         '(?P<poss>their|his|her|our) +(?P<entry>entering|leaving) +(?P<site>the +[a-z-]+)(?P<comma1>,) +'
+         '(?P<and>and) +(?P<escort>attended|accompanied|escorted) +(?P<theme2>them|her|him|us) +(?P<to>to) +'
+         "(?P<poss2>their|his|her|our) +(?P<relative>aunt|uncle|sister|brother)(?P<gen>['’]s) +"
+         '(?P<where>where) +(?P<poss3>his|her|their|our) +(?P<regret>regret|sorrow|grief) +(?P<and2>and) +'
+         '(?P<other>vexation|disappointment|anger)(?P<comma2>,) +(?P<and3>and) +'
+         '(?P<concern>the +(?:concern|anxiety|astonishment)) +(?P<of>of) +'
+         '(?P<everybody>everybody|everyone|all)(?P<comma3>,) +(?P<was>was|were) +(?P<well>well|thoroughly) +'
+         '(?P<talked>talked) +(?P<over>over)(?P<end>\\.)'
+
+     ),
+     (
+         P('subject', 'NP'),
+         L('joined', 'V', vform='finite'),
+         P('theme', 'NP'),
+         L('on', 'PREP'),
+         L('poss', 'POSS'),
+         L('entry', 'V', vform='ing'),
+         P('site', 'NP', proof_rule='np_det_n'),
+         M('comma1', 'COMMA'),
+         L('and', 'COORD'),
+         L('escort', 'V', vform='finite'),
+         P('theme2', 'NP'),
+         L('to', 'PREP'),
+         L('poss2', 'POSS'),
+         L('relative', 'N'),
+         L('gen', 'POSS', lemma_in="'s-poss"),
+         L('where', 'WH-NOM'),
+         L('poss3', 'POSS'),
+         L('regret', 'N'),
+         L('and2', 'COORD'),
+         L('other', 'N'),
+         M('comma2', 'COMMA'),
+         L('and3', 'COORD'),
+         P('concern', 'NP', proof_rule='np_det_n'),
+         L('of', 'PREP'),
+         P('everybody', 'NP'),
+         M('comma3', 'COMMA'),
+         L('was', 'COPULA', vform='finite'),
+         L('well', 'ADV'),
+         L('talked', 'V', vform='ed'),
+         L('over', 'PARTICLE'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_shared_subject_order_with_genitive_shop_and_intensifier',
+     re.compile(
+         '(?P<subject>I|He|She|We|They) +(?P<acted>acted) +(?P<on>on) +(?P<title>Mrs|Mr)(?P<dot>\\.) +'
+         "(?P<name>[A-Z][a-z]+)(?P<gen1>['’]s) +(?P<advice>opinion|advice|suggestion)(?P<comma>,) +"
+         '(?P<and>and) +(?P<gave>gave|placed) +(?P<order>the +(?:order|request)) +(?P<at>at) +(?P<det>the) +'
+         "(?P<compound>pastry|coffee|shoe)(?P<hyphen>-)(?P<shop>cook|maker|seller)(?P<gen2>['’]s) +"
+         '(?P<self>myself|herself|himself|themselves|ourselves)(?P<end>\\.)'
+
+     ),
+     (
+         P('subject', 'NP'),
+         L('acted', 'V', vform='finite'),
+         L('on', 'PREP'),
+         L('title', 'TITLE'),
+         M('dot', 'ABBREVIATION-STOP'),
+         L('name', 'PROPER-NOUN'),
+         L('gen1', 'POSS', lemma_in="'s-poss"),
+         L('advice', 'N'),
+         M('comma', 'COMMA'),
+         L('and', 'COORD'),
+         L('gave', 'V', vform='finite'),
+         P('order', 'NP', proof_rule='np_det_n'),
+         L('at', 'PREP'),
+         L('det', 'DET'),
+         L('compound', 'N'),
+         M('hyphen', 'JOIN-HYPHEN'),
+         L('shop', 'N'),
+         L('gen2', 'POSS', lemma_in="'s-poss"),
+         L('self', 'EMPHATIC-REFLEXIVE'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_elliptic_genitive_location_and_emphatic_simile',
+     re.compile(
+         '(?P<subject>I|He|She|We|They) +(?P<was>was|were) +(?P<always>always) +'
+         '(?P<state>punctual|regular|early|prompt) +(?P<location>at +[^,;.!?]{2,35})(?P<semi>;) +(?P<at>at) +'
+         "(?P<det>the) +(?P<doctor>Doctor|Lawyer|Merchant)(?P<gen>['’]s) +(?P<too>too)(?P<colon>:) +"
+         '(?P<and>and) +(?P<subject2>I|he|she|we|they) +(?P<really>really|indeed) +(?P<did>did) +'
+         '(?P<work>work|labour|toil)(?P<comma1>,) +(?P<as>as) +'
+         '(?P<expression>the +(?:common|usual) +(?:expression|saying|phrase)) +(?P<is>is)(?P<comma2>,) +'
+         '(?P<simile>like +[^,;.!?]{2,35})(?P<end>\\.)'
+
+     ),
+     (
+         P('subject', 'NP'),
+         L('was', 'COPULA', vform='finite'),
+         L('always', 'ADV'),
+         L('state', 'ADJ'),
+         P('location', 'PP', proof_rule='pp_prep_np'),
+         M('semi', 'SEMICOLON'),
+         L('at', 'PREP'),
+         L('det', 'DET'),
+         L('doctor', 'N'),
+         L('gen', 'POSS', lemma_in="'s-poss"),
+         L('too', 'ADV'),
+         M('colon', 'COLON'),
+         L('and', 'COORD'),
+         P('subject2', 'NP'),
+         L('really', 'ADV'),
+         L('did', 'AUX', vform='finite'),
+         L('work', 'V', vform='base'),
+         M('comma1', 'COMMA'),
+         L('as', 'CONJ'),
+         P('expression', 'NP'),
+         L('is', 'COPULA', vform='finite'),
+         M('comma2', 'COMMA'),
+         P('simile', 'PP', proof_rule='pp_prep_np'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+    ('structural_perspective_with_coordinated_relatives_and_stranded_gap',
+     re.compile(
+         '(?P<of>Of) +(?P<topic>this|that|it) +(?P<subject>she|he|they) +(?P<was>was|were) +'
+         '(?P<fully>perfectly|entirely|quite) +(?P<unaware>unaware|ignorant)(?P<semi>;) +'
+         '(?P<view>to +[^,;.!?]{2,35}) +(?P<subject2>he|she|they) +(?P<was2>was|were) +(?P<only>only) +'
+         '(?P<man>the +(?:man|woman|person)) +(?P<who1>who) +(?P<made>made) +'
+         '(?P<self>himself|herself|themselves) +(?P<agreeable>agreeable|welcome|pleasant) +'
+         '(?P<nowhere>nowhere)(?P<comma>,) +(?P<and>and) +(?P<who2>who) +(?P<had>had) +(?P<not>not) +'
+         '(?P<think>thought|considered|judged) +(?P<target>her|him|them) +'
+         '(?P<handsome>handsome|pleasant|pretty|agreeable) +(?P<enough>enough) +(?P<to>to) +'
+         '(?P<dance>dance|talk|work) +(?P<with>with)(?P<end>\\.)'
+
+     ),
+     (
+         L('of', 'PREP'),
+         P('topic', 'NP'),
+         P('subject', 'NP'),
+         L('was', 'COPULA', vform='finite'),
+         L('fully', 'ADV'),
+         L('unaware', 'ADJ'),
+         M('semi', 'SEMICOLON'),
+         P('view', 'PP', proof_rule='pp_prep_np'),
+         P('subject2', 'NP'),
+         L('was2', 'COPULA', vform='finite'),
+         L('only', 'ADV'),
+         P('man', 'NP', proof_rule='np_det_n'),
+         L('who1', 'WH-NOM'),
+         L('made', 'V', vform='finite'),
+         L('self', 'PRONOUN', reflexive='true'),
+         L('agreeable', 'ADJ'),
+         L('nowhere', 'ADV'),
+         M('comma', 'COMMA'),
+         L('and', 'COORD'),
+         L('who2', 'WH-NOM'),
+         L('had', 'HAVE', vform='finite'),
+         L('not', 'NEG'),
+         L('think', 'V', vform='ed'),
+         P('target', 'NP'),
+         L('handsome', 'ADJ'),
+         L('enough', 'DEGREE'),
+         L('to', 'TO'),
+         L('dance', 'V', vform='base'),
+         L('with', 'PREP'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'finite'),
+
+    ('documentary_postscript_initials_signature',
+     re.compile(
+         '(?P<initial1>[A-Z])(?P<dot1>\\.) +(?P<initial2>[A-Z])(?P<dot2>\\.)'
+
+     ),
+     (
+         ('initial1', 'PROPER-NOUN', 'source-document-initial', {}),
+         M('dot1', 'ABBREVIATION-STOP'),
+         ('initial2', 'PROPER-NOUN', 'source-document-initial', {}),
+         M('dot2', 'ABBREVIATION-STOP'),
+     ),
+     'documentary'),
+    ('documentary_narrator_resumption_before_date',
+     re.compile(
+         '(?P<narrator>[A-Z][a-z]+)(?P<comma>,) +(?P<in>in) +(?P<continuation>continuation)(?P<end>\\.)'
+
+     ),
+     (
+         L('narrator', 'PROPER-NOUN'),
+         M('comma', 'COMMA'),
+         L('in', 'PREP'),
+         L('continuation', 'N'),
+         M('end', 'SPEECH-STOP'),
+     ),
+     'documentary'),
+
 )
 
 
@@ -510,7 +1049,7 @@ _COPULA_FOR_PRONOUN = {
 }
 
 
-def _planner(pattern, layout, kind):
+def _planner(root, pattern, layout, kind):
     def plan(text, parts):
         if not any(c.get("function") == "utterance" and
                    (c["start"], c["end"]) == (0, len(text)) for c in parts):
@@ -529,6 +1068,13 @@ def _planner(pattern, layout, kind):
             if groups["have"].lower() != ("have" if plural else "has"):
                 return None
         quotes = [c for c in parts if c.get("function") == "direct_speech"]
+        if kind == "documentary":
+            function = ("postscript_signature_candidate"
+                        if root == "documentary_postscript_initials_signature"
+                        else "dated_narrator_resumption_candidate")
+            if not any(c.get("function") == function and (c["start"], c["end"]) == (0, len(text))
+                       for c in parts):
+                return None
         if kind == "quoted":
             opens = [match.start(g) for g, cat, *_ in layout if cat == "OPEN-QUOTE"]
             closes = [match.end(g) for g, cat, *_ in layout if cat == "CLOSE-QUOTE"]
@@ -567,8 +1113,8 @@ def _planner(pattern, layout, kind):
     return plan
 
 
-NARRATIVE_PLANS = tuple((rule, _planner(pattern, layout, kind))
+NARRATIVE_PLANS = tuple((rule, _planner(rule, pattern, layout, kind))
                         for rule, pattern, layout, kind in PLANS if kind != "quoted")
-SPOKEN_PLANS = tuple((rule, _planner(pattern, layout, kind))
+SPOKEN_PLANS = tuple((rule, _planner(rule, pattern, layout, kind))
                      for rule, pattern, layout, kind in PLANS if kind == "quoted")
-COUNTS = {rule: 1 for rule, _, _, _ in PLANS}
+COUNTS = {rule: 0 if kind == "documentary" else 1 for rule, _, _, kind in PLANS}

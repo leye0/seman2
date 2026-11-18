@@ -7,11 +7,7 @@
     "seconds_per_case": 10
   },
   "counts": {
-    "complete": 91,
-    "forest_budget_exceeded": 1,
-    "no_structural_root": 3,
-    "roots_without_valid_analysis": 4,
-    "timeout": 1
+    "complete": 100
   },
   "cases": [
     {
@@ -142,12 +138,12 @@
     },
     {
       "index": 815,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_nor_inversion_with_without_nominal_coordination",
+      "rank_one_sha256": "e404dd247ef63d25db03f4c471268a8d3864cd132b2b4dd79a57784398e105cd",
+      "selected_graph_sha256": "65947625bd282896304d0ede5d006c6a86fa693ee48745f9e4cc65bda813ad9f"
     },
     {
       "index": 816,
@@ -187,12 +183,12 @@
     },
     {
       "index": 820,
-      "status": "timeout",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_coordinated_restoration_with_parallel_gerund_means",
+      "rank_one_sha256": "aee24f9aef3cca6110d386d857eef58d9e8507ae63a4e598e487712a3c702e24",
+      "selected_graph_sha256": "3af3c6c799fbe4d61678e7fd4042429cfafcc14edee5227103c2b33b87312dba"
     },
     {
       "index": 821,
@@ -277,12 +273,12 @@
     },
     {
       "index": 830,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "documentary_postscript_initials_signature",
+      "rank_one_sha256": "9c5caa0d6fc2d6b731336836cec7d28f133c8d3fea91a05c67471213c896c9a5",
+      "selected_graph_sha256": "50d5c63b65de2c097cd6ed25a80dc946d6645f02dc85160fbd55f9bb6e3fbb95"
     },
     {
       "index": 831,
@@ -340,12 +336,12 @@
     },
     {
       "index": 837,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_exclamation_with_shared_subject_postposed_report",
+      "rank_one_sha256": "ca27b68f174010a0215c1192eb3c7244e3c4fb150ad4293c3dd35c78ebd2a7b3",
+      "selected_graph_sha256": "6733fd2bbc548a224867da5e21160ed4df67dae15ebf60801f9b578a5f534a29"
     },
     {
       "index": 838,
@@ -358,12 +354,12 @@
     },
     {
       "index": 839,
-      "status": "no_structural_root",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_inverted_conditional_with_nominal_apposition",
+      "rank_one_sha256": "72b6a2f9f001b435df9158ffeb33568bff428ce498acbadd2f8640283c4fb496",
+      "selected_graph_sha256": "22e4210e2e14ebb1be10139f449fa121d45b71f2222e578d7104a3c5ab3363b5"
     },
     {
       "index": 840,
@@ -412,12 +408,12 @@
     },
     {
       "index": 845,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_existential_nominal_contrast_with_shared_head",
+      "rank_one_sha256": "248c81f8a7d63aa79fadfa543d3fef00f9ebddee93a25facfc5d852a5fdcd2a3",
+      "selected_graph_sha256": "1809d2657fa0347e0d8fcf4b7f22e81256814fe4062a552ef58ef907783e8e1e"
     },
     {
       "index": 846,
@@ -628,12 +624,12 @@
     },
     {
       "index": 869,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_equative_simile_with_passive_measure",
+      "rank_one_sha256": "8804a67f61ef4e72e76959c17fc7c3c1788681e3a4c0af92675cce18450769f7",
+      "selected_graph_sha256": "a4dfd30d20b6ec94ba3f74846fb19e93a1aa872084060adc92673acc70cd0156"
     },
     {
       "index": 870,
@@ -898,21 +894,21 @@
     },
     {
       "index": 899,
-      "status": "forest_budget_exceeded",
-      "forest_budget_exceeded": true,
+      "status": "complete",
+      "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "dialogue_fused_modal_stance_and_passive_negative_tag",
+      "rank_one_sha256": "553271d838994ba9b1a8ab971d7bad06fd7f2a0cf7c0ec04a428e717e0d21ab5",
+      "selected_graph_sha256": "f6d177e2d7bfd96fc5397a18840bd14ddc894b2bc27b33e2bfe5aa758080d10d"
     },
     {
       "index": 900,
-      "status": "roots_without_valid_analysis",
+      "status": "complete",
       "forest_budget_exceeded": false,
       "kbest_budget_exceeded": false,
-      "root_rule": null,
-      "rank_one_sha256": null,
-      "selected_graph_sha256": null
+      "root_rule": "structural_shared_agent_with_independent_genitive_destinations",
+      "rank_one_sha256": "0af5b01634779047ecf529f7fb220cf840e2626296b8050396e694e522327145",
+      "selected_graph_sha256": "5b9fd3a660b47a9f9ecfa4b730f484771ad9aad382ee8b899599602660c7bd25"
     }
   ]
 }
