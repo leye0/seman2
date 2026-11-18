@@ -1,0 +1,263 @@
+{
+  "schema": "seman2-novel1500-verified-repairs-v1",
+  "manifest_sha256": "c2e6f3ad0369d1d8cee5bf3153b39fbbe2aabebf99eabf3a5b43f71f16058079",
+  "limits": {
+    "chart_items": 50000,
+    "kbest_work": 500000,
+    "seconds_per_case": 10
+  },
+  "repairs": [
+    {
+      "source_sha256": "1da3e1ebc5a737eb6db2e81c87831f424ae78b2b794c7fc907d64f955b16d708",
+      "before": {
+        "index": 1006,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "coord_clause",
+        "rank_one_sha256": "57189850b64ef9ba39f9c8df8ae65b8108ef944c5d64db736c4669c8858616d7",
+        "selected_graph_sha256": "57184eadeebe458f0e6cc19a63dd90fd80b55a91c6d30b324cb8986be0cde763"
+      },
+      "after": {
+        "index": 1006,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_modal_question_with_parallel_object_gaps",
+        "rank_one_sha256": "95690f335f73b655011e08d8f67055c4d6fedad205de4e23ce72d7d2c85bcbb1",
+        "selected_graph_sha256": "7d33e885f2f9a41d1da34b377ca1a216c631233e32bbec717c42c7ba233023ea"
+      }
+    },
+    {
+      "source_sha256": "03cf82bc5e4fce9811d654cadb4b994005a1fd264d44cde775a99d34160cde4d",
+      "before": {
+        "index": 1010,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1010,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_interval_with_nominal_destination_and_relative",
+        "rank_one_sha256": "8a42f5ae25b28b86567fe7a3f631a68d3e6e79c5aff756c0c40078b29c93ab85",
+        "selected_graph_sha256": "13851dd1d223c5b080cb8818f40878fffd56742dfa7af1403db0cf498ee5c22e"
+      }
+    },
+    {
+      "source_sha256": "5cee0d0a861dca20a78226e51bccde1d54f64c4d270cf754707715046c0f40d4",
+      "before": {
+        "index": 1012,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "clause_np_vp",
+        "rank_one_sha256": "7b375355dd7d81ac4378d0977c4154f430564c5fbfd62c1ee0dd70eaab829b2a",
+        "selected_graph_sha256": "0f7d23a8ec188386c4f499a2347acc73b8cdbfcfa5fb98657aae9253d8bf5e3c"
+      },
+      "after": {
+        "index": 1012,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_perception_location_and_shared_agent_gesture",
+        "rank_one_sha256": "de615606cce6e45e28fb8d4d5f27b73418f3c18864dda2267233e7ac9fd0470f",
+        "selected_graph_sha256": "58d9bf9cfdbd55011be121896d9dc545da733e2645d1b24cdaff77cece6bf7b0"
+      }
+    },
+    {
+      "source_sha256": "41c568944e98bc29285a5b7bc9551344c89d9628cf9e45e3f599d31b09b02e53",
+      "before": {
+        "index": 1013,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1013,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_parallel_emphatic_do_with_vocative",
+        "rank_one_sha256": "96043a2001d8a5efd9f79b326ea8c8d33f446274f26b66bda6b0d92c1e554ae1",
+        "selected_graph_sha256": "f7fc28148d8f86cbfcb254f7e3b35a8974130b37ae641dcd9b91f97d1bd234ea"
+      }
+    },
+    {
+      "source_sha256": "117f05316edde6f6a22c74ca5ad9032d4e6190ee8b4904387266c9910e8f0bc4",
+      "before": {
+        "index": 1014,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1014,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_coordinated_report_with_temporal_imperative",
+        "rank_one_sha256": "6e9f76a73bf54a84cc696402c88423a8d5b1ff83d1d9c8f8dd1556c67585f6cb",
+        "selected_graph_sha256": "240002b2c25ec73562d1974e233b44f9049f37672b07c52e8510661809552a02"
+      }
+    },
+    {
+      "source_sha256": "44872a5a916052e5f2f74083405bde17fb55d279da0f653c056f6af071ac01eb",
+      "before": {
+        "index": 1015,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1015,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_recovery_relative_with_nested_object_gap",
+        "rank_one_sha256": "70d06bc33827f7a03d768ecaf311d8afa7dcf550f05cde58c629e95e5d8b024d",
+        "selected_graph_sha256": "bfbbfb2e228748213d67c43ba6ecd96323979e38b4fe1a9e5d25d8cd59bd3fd6"
+      }
+    },
+    {
+      "source_sha256": "e85dc710a638c54a70c882863f00ccc27f24377b8c020915532d660bc42dfac8",
+      "before": {
+        "index": 1021,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1021,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_vocative_perfect_and_negative_perception_question",
+        "rank_one_sha256": "83c612518ba7d58dbaad5d29254cd2974f8d61ebf0de0016ceed7c021fb19fa9",
+        "selected_graph_sha256": "4710ba270d1bc0113ea510347c06d63709cf2032734b6e5f4c417804fa296173"
+      }
+    },
+    {
+      "source_sha256": "2d555776adbcb233faaaaf2a3754a2f7b68ef5b591d21ca28230456c8689204b",
+      "before": {
+        "index": 1024,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1024,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_shared_agent_creation_and_possessive_relative",
+        "rank_one_sha256": "cebd4e9a10db16f4473328eee30253a7764d5346caa3fd92813c9043350121f8",
+        "selected_graph_sha256": "64423cb1b18a2503e571bfaa23ccc5e4442425bc3bf95ebcc75544b47b57293a"
+      }
+    },
+    {
+      "source_sha256": "a026a0a135bc9b3f8caa4b758c17b5b73863a893524c35cbb387b78cf098f7dc",
+      "before": {
+        "index": 1025,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1025,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_coordinated_copular_affect_and_perception_with_context",
+        "rank_one_sha256": "df4f668f48e1f09b9b77226698ee5c2fb7d719569468ccdac3d22746e610bd02",
+        "selected_graph_sha256": "e8afd70095b0e3ba4826c27d96a2420c40f3d3ec44934704a4d48b90910371ec"
+      }
+    },
+    {
+      "source_sha256": "6a791f4173ab842c999b4f4505c69ac2911f351654800a31bd9211fb5d8111e9",
+      "before": {
+        "index": 1037,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1037,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_split_interjection_and_gerundial_cause",
+        "rank_one_sha256": "6a9b259c7325dc89c623a7ed955a7004200e6a9e9094411a105d8545bea00d7b",
+        "selected_graph_sha256": "33442ed1fa6cdad6a9972123449be9d78d0e4f0fff0b026d4e5f683f01dad959"
+      }
+    },
+    {
+      "source_sha256": "248d87a9d42e35ad409dea7abfe3a50b525980fae215fe367ad2d3b8ca8031c6",
+      "before": {
+        "index": 1039,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1039,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_split_negative_response_and_do_ellipsis",
+        "rank_one_sha256": "bab51b2d91c07a51a8acd94d154e6b738fe321f3dde9d3053294036aff98576d",
+        "selected_graph_sha256": "ce6649fc2213f200699b998b6a18a127e810fa329fb5344eb0c097abe9108d7d"
+      }
+    },
+    {
+      "source_sha256": "944d04b28fbbbfb86bee42c24f6e936c771b4c78e50654d1a9b4d8a0c8fb7510",
+      "before": {
+        "index": 1041,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1041,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "structural_shared_subject_motion_and_admission_with_gerund",
+        "rank_one_sha256": "c37125299bc4acaf300f7dda2208856cd8a1611f024a2da73dbd79e9ff22766e",
+        "selected_graph_sha256": "567fb7a564adfc816515b3fe2f4b4e31b056ee5f9d9630e0f77f6647daca6039"
+      }
+    }
+  ]
+}

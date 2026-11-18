@@ -14,7 +14,7 @@ DIRECTORY = ROOT / "research" / "novel_source_reporting_v3"
 SCHEMA = "seman2-novel-source-reporting-v3"
 
 
-def prepare():
+def prepare(*, inventory=None):
     reference = ladder.read_json(DIRECTORY / "v2-reference.json")
     old_manifest = ladder.read_json(v2.DIRECTORY / "source-manifest.json")
     old_baseline = ladder.read_json(v2.DIRECTORY / "baseline.json")
@@ -23,7 +23,8 @@ def prepare():
             or old_baseline["manifest_sha256"] != reference["manifest_sha256"]
             or reference["repair_targets"] != [r["transfer_id"] for r in old_queue["unresolved"]]):
         raise ValueError("Wrong v2 source manifest or repair queue")
-    inventory, bodies, editions = ladder.load_source_inventory()
+    inventory, bodies, editions = (ladder.load_source_inventory()
+                                   if inventory is None else inventory)
     if editions != old_manifest["editions"]:
         raise ValueError("Source editions changed")
     candidates = {v2.key(c): c for rows in inventory.values() for c in rows}

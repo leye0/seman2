@@ -93,6 +93,10 @@ from .scoped_novel_1000 import (
     NARRATIVE_PLANS as N1000_NARRATIVE, SPOKEN_PLANS as N1000_SPOKEN,
     COUNTS as N1000_COUNTS,
 )
+from .scoped_novel_1500 import (
+    NARRATIVE_PLANS as N1500_NARRATIVE, SPOKEN_PLANS as N1500_SPOKEN,
+    COUNTS as N1500_COUNTS,
+)
 from .scoped_novel_800 import (
     NARRATIVE_PLANS as N800_NARRATIVE, SPOKEN_PLANS as N800_SPOKEN,
     COUNTS as N800_COUNTS, DOCUMENT_DATELINE,
@@ -256,6 +260,7 @@ _SPOKEN_SINGLE = (
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    *N1500_NARRATIVE,
     *N1000_NARRATIVE,
     *N800_NARRATIVE,
     *N700_NARRATIVE,
@@ -331,7 +336,7 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *N1000_COUNTS,
+    *N1000_COUNTS, *N1500_COUNTS,
     *RESIDUAL_COUNTS, *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
@@ -339,6 +344,7 @@ _SCOPED_COUNTS = {
     **RESIDUAL_COUNTS,
     **N800_COUNTS,
     **N1000_COUNTS,
+    **N1500_COUNTS,
     **N700_COUNTS,
     **CLAUSE_COUNTS,
     **QUALITY_CLAUSE_COUNTS,
@@ -577,7 +583,7 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in (*_UNQUOTED_SCOPED, *N1000_SPOKEN, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
+            for plan, _ in (*_UNQUOTED_SCOPED, *N1500_SPOKEN, *N1000_SPOKEN, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
         })
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
@@ -3892,6 +3898,7 @@ class QuotedSentenceComposer:
         # Complete-source mixed acts can contain more than one speech sentence.
         # Validate their overt spans here before the finite-only quote sequence.
         for planner, rule in (
+            *((plan, rule) for rule, plan in N1500_SPOKEN),
             *((plan, rule) for rule, plan in N1000_SPOKEN),
             (plan_n672_wish, N672_WISH),
             (plan_n660_gerund_question, N660_GERUND_QUESTION),
