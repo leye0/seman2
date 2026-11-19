@@ -19,7 +19,7 @@ jobs:
     env:
       BASELINE_COMMIT: 6bec2b3b1982f20af3d72330c6432042fdd577f7
       PYTHONPATH: superparser
-      WORDNET_DICT: ${{ runner.temp }}/wordnet3/wordnet
+      WORDNET_DICT: /tmp/seman2-wordnet3/wordnet
     steps:
       - uses: actions/checkout@v4
         with:
