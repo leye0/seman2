@@ -43,3 +43,5 @@ context, run:
 PYTHONPATH=superparser python -m scripts.novel1500_exploratory queue
 PYTHONPATH=superparser python -m scripts.novel1500_exploratory inspect
 ```
+
+For the follow-up on generalization, see the [scoped-grammar reuse audit](SCOPED_GRAMMAR_REUSE_AUDIT.md).

@@ -212,6 +212,11 @@ from .paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT, paired_s
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
+from .reported_fragments import ROOT as REPORTED_FRAGMENT, plan_reported_fragment
+from .addressed_speech import (
+    ROOT as REPORTED_ADDRESS, UNATTRIBUTED as UNATTRIBUTED_ADDRESS,
+    plan_reported_addressed_turn, plan_unattributed_addressed_turn,
+)
 
 
 _PROOF_CHECKS = frozenset((
@@ -219,7 +224,7 @@ _PROOF_CHECKS = frozenset((
     "finite_statement_proof", "bare_predicate_proof", "predicative_nominal_proof",
     "imperative_predicate_proof", "comparative_pp_proof", "perfect_predicate_proof",
     "grounded_object_proof", "demonstrated_full_nominal_proof", "appositive_nominal_proof",
-    "emphasis_finite_proof",
+    "emphasis_finite_proof", "simple_reporting_tag_proof",
 ))
 _LADDER_SPOKEN = (
     *N800_SPOKEN,
@@ -336,7 +341,7 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *N1000_COUNTS, *N1500_COUNTS,
+    *N1000_COUNTS, *N1500_COUNTS, REPORTED_FRAGMENT, REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS,
     *RESIDUAL_COUNTS, *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
@@ -585,6 +590,20 @@ class QuotedSentenceComposer:
             )
             for plan, _ in (*_UNQUOTED_SCOPED, *N1500_SPOKEN, *N1000_SPOKEN, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
         })
+        self._additional_source_vectors[REPORTED_FRAGMENT] = VectorGrammar(
+            Grammar(rule for rule in rules if rule.provenance.get("source_plan") == REPORTED_FRAGMENT),
+            preserve_quote_delimiters=True,
+        )
+        addressed_turns = VectorGrammar(
+            Grammar(rule for rule in rules
+                    if rule.provenance.get("source_plan") == REPORTED_ADDRESS
+                    or (rule.provenance.get("source_plan") == NEGATIVE_PROPOSITIONAL_REPLY
+                        and rule.lhs.category == "LADDER-PROFORM-BELIEF")),
+            preserve_quote_delimiters=True,
+        )
+        self._additional_source_vectors.update(
+            dict.fromkeys((REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS), addressed_turns),
+        )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -1278,6 +1297,14 @@ class QuotedSentenceComposer:
                     or selected.children[1].features.as_dict().get("vform") != "finite"
                 ):
                     return None
+                if required.get("simple_reporting_tag_proof") == "true":
+                    if (selected.rule_id not in {"dialogue_speech_tag_inverted", "dialogue_speech_tag_post"}
+                            or not {"report", "speaker"} <= selected.syntax.anchors.keys()):
+                        return None
+                    nominal = next((c for c in selected.children if c.category == "NP"), None)
+                    if nominal is None or any(c.features.as_dict().get("case") == "accusative"
+                                              for c in nominal.children if c.category == "PRONOUN"):
+                        return None
                 if expected_rule in _SCOPED_UNSATURATED and (
                     proof.stats.get("budget_exceeded") or proof.stats.get("kbest_budget_exceeded")
                 ):
@@ -1702,6 +1729,9 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     _SCOPED_COUNTS[expected_rule] if expected_rule in _SCOPED_COUNTS else
+                    int(selected.features.as_dict().get("stype") == "declarative"
+                        or selected.children[1].children[0].features.as_dict().get("aspect") == "perfect")
+                    if expected_rule in (REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS) else
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT, QUESTION_ABILITY_ROOT, GERUND_EFFECT_ROOT) else
                     2 if expected_rule in (
                         CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT, MODAL_CONTEXT_ROOT, EXCLAMATIVE_CONTRAST_ROOT, CAUSAL_POSTURE_ROOT, PASSIVE_EXTRAPOSITION_ROOT,
@@ -4174,6 +4204,19 @@ class QuotedSentenceComposer:
             )
             if finite_modal is not None:
                 return finite_modal
+            for rule, planner in ((REPORTED_FRAGMENT, plan_reported_fragment),
+                                  (REPORTED_ADDRESS, plan_reported_addressed_turn),
+                                  (UNATTRIBUTED_ADDRESS, plan_unattributed_addressed_turn)):
+                specs = planner(text, components, original_lattice)
+                if specs is None:
+                    continue
+                proved = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, specs, rule,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if proved is not None:
+                    return proved
             return self._compose_modal_ellipsis_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,

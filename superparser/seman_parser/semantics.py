@@ -11,6 +11,10 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .semantic_rules import SemanticAction
 from .lexicon import LexicalSense, SenseFrame
+from .argument_groups import (
+    ArgumentGroup, argument_edges, export_argument_group, finite_carrier_surfaces,
+    matches_referent,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,6 +150,9 @@ class SemanticPackage:
     graph: SemanticGraph
     # Named handles available to parent rules: role/export name -> node id.
     handles: Mapping[str, str] = field(default_factory=dict)
+    # An explicit local interface. It is not a graph edge or an inherited
+    # default, and is not part of the serialized graph contract.
+    argument_groups: tuple[ArgumentGroup, ...] = field(default=(), compare=False, repr=False)
 
     def as_dict(self) -> dict[str, Any]:
         return {"graph": self.graph.as_dict(), "handles": dict(self.handles)}
@@ -358,6 +365,7 @@ class SemanticInterpreter:
         self.grammar = grammar
         self.actions = actions or {}
         self.lexicon = lexicon
+        self._finite_carrier_surfaces: frozenset[str] | None = None
 
     def interpret(
         self,
@@ -447,7 +455,23 @@ class SemanticInterpreter:
                     handles.setdefault(key, value)
             return SemanticPackage(graph, handles)
         package = SemanticPackage(graph, dict(aliases))
+        argument_groups = []
         for action in actions:
+            if action.kind == "export_argument_group":
+                ambiguous_heads = frozenset()
+                if action.args.get("unambiguous_single_head"):
+                    if self._finite_carrier_surfaces is None:
+                        self._finite_carrier_surfaces = finite_carrier_surfaces(self.lexicon)
+                    ambiguous_heads = self._finite_carrier_surfaces
+                group = export_argument_group(
+                    item, aliases, graph.nodes, action.args, ambiguous_finite_heads=ambiguous_heads,
+                )
+                if group is not None:
+                    argument_groups.append(group)
+                continue
+            if action.kind == "bind_argument_group":
+                self._bind_argument_group(action.args, item, children, package)
+                continue
             package = apply_action(
                 action,
                 package=package,
@@ -457,7 +481,26 @@ class SemanticInterpreter:
                 matched_span=(item.start, item.end),
                 syntax_children=item.children,
             )
-        return package
+        return replace(package, argument_groups=tuple(argument_groups)) if argument_groups else package
+
+    @staticmethod
+    def _bind_argument_group(args, item, children, package):
+        domain = children[args["domain_child"]]
+        if not domain.argument_groups:
+            return
+        filler_index = args["filler_child"]
+        referent = children[filler_index].handles.get(args["filler"])
+        if referent is None:
+            return
+        graph = package.graph
+        filler = item.children[filler_index]
+        if not matches_referent(filler, graph.nodes.get(referent)):
+            return
+        seen = {(e.relation, e.source, e.target) for e in graph.relations}
+        for edge in argument_edges(args, domain.argument_groups, filler, referent):
+            if edge not in seen:
+                graph.add_relation(*edge)
+                seen.add(edge)
 
     def _resolve_sense(self, reference: Any) -> Any | None:
         if self.lexicon is None or reference.sense_id is None:
