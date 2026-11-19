@@ -17,8 +17,41 @@ _ENDEARMENT = re.compile(r"(?i)\bmy\s+(?:dear|darling|dearest)\Z")
 _NAME = re.compile(r"[^\W\d_]+(?:[-’'][^\W\d_]+)*")
 _FORMAL_ADDRESS = frozenset({"sir", "madam"})
 
+_COORDINATED_ECHO = re.compile(r"(?P<coord>and|or|but)\s+(?P<state>[^\s]+)", re.I)
+_PERFECT_WH_REPRISE = re.compile(
+    r"(?P<aux>have|has|had)\s+(?P<subject>\S+(?:\s+\S+){0,3}?)\s+"
+    r"(?P<verb>[^\s]+)\s+(?P<wh>how|when|where|why)", re.I,
+)
+# Intransitive and ordinary propositional predicates do not necessarily
+# license an interrogative complement. Require both an attested frame
+# and an independently licensed selector of questions.
+_WH_SELECTORS = "consider|decide|forget|learn|remember|think"
 
-def _addressed_payload(text, stop, lattice, *, proform_only=False):
+
+def _question_head(text, start, end):
+    specs, _, _, part = _specs()
+    echo = _COORDINATED_ECHO.fullmatch(text, start, end)
+    if echo:
+        part(echo, 0, (
+            ("coord", "COORD", "lexical", {"nominal_coordination": "true"}),
+            ("state", "ADJ", "lexical-alternatives", {"attested_reading": "true"}),
+        ))
+        return specs
+    reprise = _PERFECT_WH_REPRISE.fullmatch(text, start, end)
+    if reprise is None:
+        return None
+    part(reprise, 0, (
+        ("aux", "HAVE", "lexical-alternatives", {"vform": "finite"}),
+        ("subject", "NP", "subject-phrase", {}),
+        ("verb", "V", "lexical-alternatives", {
+            "vform": "ed", "subcat_member": "clausal", "lemma_in": _WH_SELECTORS,
+        }),
+        ("wh", "WH-NOM", "lexical", {"wh": "true", "wh_adverbial": "true"}),
+    ))
+    return specs
+
+
+def _addressed_payload(text, stop, lattice, *, reported=False):
     comma = text.find(",", 1, stop)
     if comma <= 1 or text.find(",", comma + 1, stop) >= 0:
         return None
@@ -40,16 +73,21 @@ def _addressed_payload(text, stop, lattice, *, proform_only=False):
         return None
 
     specs, add, punct, _ = _specs()
-    proform = negative_proform_specs(text, 1, comma)
-    if proform:
-        specs.extend(proform)
-    elif proform_only:
-        return None
-    elif any(c.category == "ADV" and c.features.as_dict().get("discourse_transition") == "true"
-             for c in lattice.covering(1, comma)):
-        add("ADV", 1, comma, discourse_transition="true")
+    if text[stop] == "?":
+        if not (question := _question_head(text, 1, comma)):
+            return None
+        specs.extend(question)
     else:
-        add("VP-NP", 1, comma, "phrase", imperative_predicate_proof="true")
+        proform = negative_proform_specs(text, 1, comma)
+        if proform:
+            specs.extend(proform)
+        elif not reported:
+            return None
+        elif any(c.category == "ADV" and c.features.as_dict().get("discourse_transition") == "true"
+                 for c in lattice.covering(1, comma)):
+            add("ADV", 1, comma, discourse_transition="true")
+        else:
+            add("VP-NP", 1, comma, "phrase", imperative_predicate_proof="true")
     punct("COMMA", comma, comma + 1)
     if formal:
         add("N", a, stop, "lexical-alternatives",
@@ -67,17 +105,17 @@ def plan_reported_addressed_turn(text, components, lattice):
     if found is None or text[-1] != ".":
         return None
     stop, opening, closing = found
-    payload = _addressed_payload(text, stop, lattice)
+    payload = _addressed_payload(text, stop, lattice, reported=True)
     return [*opening, *payload, *closing] if payload else None
 
 
 def plan_unattributed_addressed_turn(text, components, lattice):
-    """A propositional reply can address someone without an overt reporter."""
+    """A propositional reply or an elliptical question with no proved reporter."""
     found = _single_spoken_span(text, components)
-    if found is None or text[found[0]] not in ".!":
+    if found is None or text[found[0]] not in ".!?":
         return None
     stop, _ = found
-    payload = _addressed_payload(text, stop, lattice, proform_only=True)
+    payload = _addressed_payload(text, stop, lattice)
     if payload is None:
         return None
     specs, _, mark, _ = _specs()

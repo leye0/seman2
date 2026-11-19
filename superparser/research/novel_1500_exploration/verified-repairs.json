@@ -390,6 +390,50 @@
         "selected_graph_sha256": "1688dbb7704c61d30697d66240f66f3ce26d7bc5c4c23eaf324ad08f1a8513bb"
       },
       "review_pass": "addressed-spoken-turns"
+    },
+    {
+      "source_sha256": "d27e9d93f9afb9304ce652960b7c1325451e20d40af9a7bec3207e3744827385",
+      "before": {
+        "index": 1152,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1152,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_unattributed_addressed_turn",
+        "rank_one_sha256": "ded0b5aa24853889d72b0c17a04e7512dd652d85170d244f19255da0677b0582",
+        "selected_graph_sha256": "7c70036e2738399b4e574d3dd7b8affaa31301af72e810adcab9db84b277e369"
+      },
+      "review_pass": "addressed-elliptical-questions"
+    },
+    {
+      "source_sha256": "aa552a49e089f3a53d02db84e2139c72e9243f43e8d25ce924f325056ae06962",
+      "before": {
+        "index": 1456,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1456,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_unattributed_addressed_turn",
+        "rank_one_sha256": "a5b379afadf2a3f4454c0496f0739041af7c9aa7fdf1a9580d255dbe5cf30e56",
+        "selected_graph_sha256": "0bb44d7b643b6b9895e414a100dbf3590640b6999087444abd3c3959e1076ae0"
+      },
+      "review_pass": "addressed-elliptical-questions"
     }
   ]
 }

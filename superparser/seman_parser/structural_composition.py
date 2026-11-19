@@ -1729,7 +1729,8 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     _SCOPED_COUNTS[expected_rule] if expected_rule in _SCOPED_COUNTS else
-                    int(selected.features.as_dict().get("stype") == "declarative")
+                    int(selected.features.as_dict().get("stype") == "declarative"
+                        or selected.children[1].children[0].features.as_dict().get("aspect") == "perfect")
                     if expected_rule in (REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS) else
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT, QUESTION_ABILITY_ROOT, GERUND_EFFECT_ROOT) else
                     2 if expected_rule in (

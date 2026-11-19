@@ -162,6 +162,25 @@ CONTRASTS = (
      (("SPEAKER", "said", "Thomas"), ("REPORTED_CONTENT", "said", "strange"),
       ("DEGREE", "strange", "Mighty")),
      (("MANNER", "pretty", "Mighty"), ("REPORTED_CONTENT", "said", "Mighty"))),
+    (1152, UNREPORTED_ADDRESS,
+     '"But nervous, Lucy?"',
+     '"And walked, Lucy?"',
+     (("QUESTION", "patient", "patient"), ("DISCOURSE_MARKER", "patient", "And"),
+      ("ADDRESSEE", "patient", "Agnes")),
+     (("QUESTION", "nervous", "nervous"), ("DISCOURSE_MARKER", "nervous", "But"),
+      ("ADDRESSEE", "nervous", "Lucy")),
+     (("SPEAKER", "patient", "Agnes"), ("SUBJECT", "patient", "Agnes"))),
+    (1456, UNREPORTED_ADDRESS,
+     '"Have you decided where, Madam?"',
+     '"Have you danced how, George?"',
+     (("QUESTION", "thought", "thought"), ("PERFECT_ASPECT", "thought", "Have"),
+      ("EXPERIENCER", "thought", "you"), ("CONTENT_PROFORM", "thought", "how"),
+      ("ADDRESSEE", "thought", "Agnes")),
+     (("QUESTION", "decided", "decided"), ("PERFECT_ASPECT", "decided", "Have"),
+      ("EXPERIENCER", "decided", "you"), ("CONTENT_PROFORM", "decided", "where"),
+      ("ADDRESSEE", "decided", "Madam")),
+     (("MANNER", "thought", "how"), ("ADDRESSEE", "how", "Agnes"),
+      ("EXPERIENCER", "thought", "Agnes"))),
     (1329, UNREPORTED_ADDRESS,
      '"I think not, madam!"',
      '"I do not think, madam."',
@@ -211,6 +230,8 @@ SOURCE_CONSTITUENTS = {
     1178: ("structural_spoken_negated_adverbial", "Not yet"),
     1253: ("structural_spoken_degree_predicate", "Very unpromising"),
     1333: ("structural_spoken_degree_predicate", "Mighty pretty"),
+    1152: ("structural_spoken_coordinated_adjective_echo", "And patient"),
+    1456: ("structural_spoken_perfect_with_interrogative_proform", "Have you thought how"),
     1329: ("structural_ladder_belief_with_negative_proform", "I believe not"),
     1330: ("vp_np_particle", "Go on"),
     1461: ("structural_vocative_name_with_endearment", "Clara my dear"),
@@ -342,6 +363,34 @@ class Novel1500GrammarRepairs(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertNotIn(measure(self.parser, self.synthetic(text))["root_rule"],
                                  (REPORTED_ADDRESS, UNREPORTED_ADDRESS))
+
+    def test_addressed_question_keeps_inversion_and_embedded_scope(self):
+        for text, aux, experiencer, verb, wh, address in (
+            ('"Has she remembered when, Nora?"', "Has", "she", "remembered", "when", "Nora"),
+            ('"Had Alice considered why, Peter?"', "Had", "Alice", "considered", "why", "Peter"),
+        ):
+            with self.subTest(text=text):
+                edges = self.assert_selected(self.synthetic(text), UNREPORTED_ADDRESS)
+                self.assertEqual(edges, {
+                    ("QUESTION", verb, verb), ("PERFECT_ASPECT", verb, aux),
+                    ("EXPERIENCER", verb, experiencer), ("CONTENT_PROFORM", verb, wh),
+                    ("ADDRESSEE", verb, address),
+                })
+        edges = self.assert_selected(self.synthetic('"Or tired, Sir?"'), UNREPORTED_ADDRESS)
+        self.assertEqual(edges, {
+            ("QUESTION", "tired", "tired"), ("DISCOURSE_MARKER", "tired", "Or"),
+            ("ADDRESSEE", "tired", "Sir"),
+        })
+        for text in (
+            '"Have she considered why, Peter?"',
+            '"Has him considered why, Peter?"',
+            '"Have you decided where to go, Peter?"',
+            '"And patient, obviously?"',
+            '"And patient, Lucy."',
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual(measure(self.parser, self.synthetic(text))["root_rule"],
+                                    UNREPORTED_ADDRESS)
 
 
 if __name__ == "__main__":

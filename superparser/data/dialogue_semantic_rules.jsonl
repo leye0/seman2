@@ -1325,3 +1325,5 @@
 {"id":"structural_vocative_name_with_endearment","semantic":[{"compose":{"links":[{"relation":"APPOSITION","source":"head","target":"endearment"}]}}]}
 {"id":"structural_spoken_turn_with_vocative","semantic":[{"compose":{"links":[{"relation":"ADDRESSEE","source":"speech","target":"addressee"}]}}]}
 {"id":"dialogue_structural_reported_addressed_turn","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"speech"},{"relation":"SPEAKER","source":"report","target":"speaker"}]}}]}
+{"id":"structural_spoken_coordinated_adjective_echo","semantic":[{"compose":{"links":[{"relation":"QUESTION","source":"head","target":"head"},{"relation":"DISCOURSE_MARKER","source":"head","target":"continuation"}]}}]}
+{"id":"structural_spoken_perfect_with_interrogative_proform","semantic":[{"compose":{"links":[{"relation":"QUESTION","source":"head","target":"head"},{"relation":"PERFECT_ASPECT","source":"head","target":"perfect_auxiliary"},{"relation":"EXPERIENCER","source":"head","target":"experiencer"},{"relation":"CONTENT_PROFORM","source":"head","target":"interrogative_proform"}]}}]}
