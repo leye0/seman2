@@ -50,6 +50,7 @@ jobs:
         run: |
           python -m unittest -q \
             superparser.tests.test_grammar_generalization_contract \
+            superparser.tests.test_composition_interface_contract \
             superparser.tests.test_shared_argument_groups \
             superparser.tests.test_audit_novel1000_patterns \
             superparser.tests.test_audit_scoped_rule_reuse \

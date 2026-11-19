@@ -40,6 +40,9 @@ Parser(resources, complexity_policy=ComplexityPolicy(...))
 
 Le score de risque est une **pression des débuts de règles grammaticales** à partir des catégories possibles de chaque token. C'est une heuristique de coût, **pas un verdict grammatical**, ni une probabilité de correction. Les seuils et bandes de longueurs doivent être fournis explicitement; aucun cutoff de production n'est recommandé aujourd'hui.
 
+La composition de constituants et la question du transfert entre corpus
+sont traitées dans [Composer les règles sans réécrire la phrase](COMPOSITION_FOUNDATION.md).
+
 Le trie est préparé par `shared_trie_forest.py`, qui ne définit **pas** une variante exécutable distincte. `lazy_trie_forest.py` reconnaît les préfixes communs par groupe/catégorie/span, conserve les variantes de règles, et ne construit les objets de partials originaux que si le `k-best` les demande. La matérialisation utilise toujours les contraintes `features`, `requires`, variables et actions des règles originales.
 
 ## Dialogues
