@@ -8,7 +8,7 @@
 {"id":"vp_unknown_intransitive","semantic":[{"copy":{}}]}
 {"id":"vp_unknown_transitive","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
 {"id":"vp_copula_adj","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
-{"id":"clause_np_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject","choices":[{"relation":"PREDICAND","child_rules":{"1":["vp_linking_adj","vp_cop_adj_adv"]}},{"relation":"PREDICAND","lemmas":[{"ref":{"child":1,"handle":"attr"},"in":["hopeless","doubtful","afraid","fond","aware","certain"]}],"child_rules":{"1":["vp_cop_adjp"]}},{"relation":"STIMULUS","lemmas":[{"ref":"event","in":["trouble","alarm","frighten","upset","distress","worry"]}],"child_rules":{"1":["vp_transitive"]}},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_adjp"],"1.1":["adjp_coord"]}},{"relation":"PREDICAND","lemmas":[{"ref":{"child":1,"handle":"attribute"},"in":["universal","unanimous","complete","total","perfect","certain","impossible","empty","full","exact","equal"]}],"child_rules":{"1":["vp_copula_adj"],"1.1":["adj_degree"]}},{"relation":"POSSESSOR","lemmas":[{"ref":"event","in":["get"]}],"forms":[{"ref":"event","in":["got"]},{"ref":{"child":1,"handle":"perfect_auxiliary"},"in":["has","have"]}],"child_rules":{"1":["vp_perfect_trans"]}},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_np"]}},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_adjp"],"1.1":["adjp_adj_pp"]},"lemmas":[{"ref":{"child":1,"handle":"attr"},"in":["different","distinct"]}]},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_pp"],"1.1":["pp_adv_prep"]},"lemmas":[{"ref":{"child":1,"handle":"object"},"in":["terms","term"]}]}]},{"relation":null,"source":"subject","target":{"child":1,"handle":"object"},"choices":[{"relation":"POSSESSES","lemmas":[{"ref":"event","in":["get"]}],"forms":[{"ref":"event","in":["got"]},{"ref":{"child":1,"handle":"perfect_auxiliary"},"in":["has","have"]}],"child_rules":{"1":["vp_perfect_trans"]}}]},{"relation":null,"source":{"child":1,"handle":"v2"},"target":"subject","choices":[{"relation":"AGENT","child_rules":{"1":["vp_list3"]}}]},{"relation":null,"source":{"child":1,"handle":"v3"},"target":"subject","choices":[{"relation":"AGENT","child_rules":{"1":["vp_list3"]}}]},{"relation":null,"source":"subject","target":{"child":0,"handle":"possessor"},"choices":[{"relation":"POSSESSOR","child_rules":{"0":["np_genitive"]}}]}]}}]}
+{"id":"clause_np_vp","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject","choices":[{"relation":"PREDICAND","child_rules":{"1":["vp_linking_adj","vp_cop_adj_adv"]}},{"relation":"PREDICAND","lemmas":[{"ref":{"child":1,"handle":"attr"},"in":["hopeless","doubtful","afraid","fond","aware","certain"]}],"child_rules":{"1":["vp_cop_adjp"]}},{"relation":"STIMULUS","lemmas":[{"ref":"event","in":["trouble","alarm","frighten","upset","distress","worry"]}],"child_rules":{"1":["vp_transitive"]}},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_adjp"],"1.1":["adjp_coord"]}},{"relation":"PREDICAND","lemmas":[{"ref":{"child":1,"handle":"attribute"},"in":["universal","unanimous","complete","total","perfect","certain","impossible","empty","full","exact","equal"]}],"child_rules":{"1":["vp_copula_adj"],"1.1":["adj_degree"]}},{"relation":"POSSESSOR","lemmas":[{"ref":"event","in":["get"]}],"forms":[{"ref":"event","in":["got"]},{"ref":{"child":1,"handle":"perfect_auxiliary"},"in":["has","have"]}],"child_rules":{"1":["vp_perfect_trans"]}},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_np"]}},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_adjp"],"1.1":["adjp_adj_pp"]},"lemmas":[{"ref":{"child":1,"handle":"attr"},"in":["different","distinct"]}]},{"relation":"PREDICAND","child_rules":{"1":["vp_cop_pp"],"1.1":["pp_adv_prep"]},"lemmas":[{"ref":{"child":1,"handle":"object"},"in":["terms","term"]}]}]},{"relation":null,"source":"subject","target":{"child":1,"handle":"object"},"choices":[{"relation":"POSSESSES","lemmas":[{"ref":"event","in":["get"]}],"forms":[{"ref":"event","in":["got"]},{"ref":{"child":1,"handle":"perfect_auxiliary"},"in":["has","have"]}],"child_rules":{"1":["vp_perfect_trans"]}}]},{"relation":null,"sources":[{"child":1,"handle":"v2"},{"child":1,"handle":"v3"}],"target":"subject","choices":[{"relation":"AGENT","child_rules":{"1":["vp_list3"]}}]},{"relation":null,"source":"subject","target":{"child":0,"handle":"possessor"},"choices":[{"relation":"POSSESSOR","child_rules":{"0":["np_genitive"]}}]}]}},{"bind_argument_group":{"slot":"subject","domain_child":1,"filler_child":0,"filler":"referent","filler_proof":"simple_overt_nominal","relation":"SUBJECT","join_relation":"CONJUNCT"}}]}
 {"id":"adjp_adj","semantic":[{"copy":{}}]}
 {"id":"vp_np_adjp","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
 {"id":"vp_pp","semantic":[{"link":{"relation":"ADJUNCT","source":"event","target":"adjunct"}}]}
@@ -19,8 +19,8 @@
 {"id":"clause_passive","semantic":[{"compose":{"links":[{"relation":"THEME","source":"event","target":"theme"}]}}]}
 {"id":"np_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"vp_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
-{"id":"np_relative_subj","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"relative"}]}}]}
-{"id":"wh_subj_clause","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
+{"id":"np_relative_subj","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"relative"}]}},{"bind_argument_group":{"slot":"subject","domain_child":1,"filler_child":0,"filler":"referent","filler_proof":"plain_relative_head","relation":"SUBJECT","marker_relation":"RELATIVE_REF"}}]}
+{"id":"wh_subj_clause","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}},{"export_argument_group":{"slot":"subject","owners":["event"],"proof":"restrictive_subject_relative","unambiguous_single_head":true,"marker":"subject","marker_forms":["who","which","that"]}}]}
 {"id":"np_relative_obj","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"relative"}]}}]}
 {"id":"wh_obj_clause","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
 {"id":"vp_gap_transitive","semantic":[{"copy":{}}]}
@@ -72,11 +72,10 @@
 {"id":"vp_perfect_adv","semantic":[{"copy":{}}]}
 {"id":"vp_np_resultative","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"theme"},{"relation":"RESULT","source":"event","target":"result"}]}}]}
 {"id":"vp_np_particle","semantic":[{"copy":{}}]}
-{"id":"vp_coord_finite","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
+{"id":"vp_coord_finite","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}},{"export_argument_group":{"slot":"subject","owners":["left","right"],"proof":"independent_finite_vps"}}]}
 {"id":"vp_obj_control_bare","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_perfect_trans","semantic":[{"bind":{"perfect_auxiliary":0}},{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object","choices":[{"relation":"POSSESSED","lemmas":[{"ref":"event","in":["get"]}],"forms":[{"ref":"event","in":["got"]},{"ref":0,"in":["has","have"]}]},{"relation":"CONTENT","lemmas":[{"ref":"event","in":["hear","learn","read"]}]}]},{"relation":"ASPECT","source":"event","target":0}]}}]}
 {"id":"vp_perfect_adv_trans","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
-{"id":"vp_perfect_intrans","semantic":[{"copy":{}}]}
 {"id":"vp_passive_by_flat","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"agent"}]}}]}
 {"id":"np_part_ing","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"},{"relation":"AFFECTED","source":"event","target":"object"}]}}]}
 {"id":"np_part_ing_intrans","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
@@ -158,7 +157,7 @@
 {"id":"wh_adj_small","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"subject","target":"attr"}]}}]}
 {"id":"wh_adj_small_inf","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"subject","target":"attr"},{"relation":"COMPLEMENT","source":"attr","target":"inf"}]}}]}
 {"id":"vp_ing_wh","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
-{"id":"pp_degree","semantic":[{"compose":{"links":[{"relation":null,"source":0,"target":{"child":1,"handle":"a1"},"choices":[{"relation":"EXAMPLE","lemmas":[{"ref":0,"in":["such"]},{"ref":1,"in":["as"]}],"child_rules":{"1":["pp_np_coord"]}}]},{"relation":null,"source":0,"target":{"child":1,"handle":"a2"},"choices":[{"relation":"EXAMPLE","lemmas":[{"ref":0,"in":["such"]},{"ref":1,"in":["as"]}],"child_rules":{"1":["pp_np_coord"]}}]}]}}]}
+{"id":"pp_degree","semantic":[{"compose":{"links":[{"relation":null,"source":0,"targets":[{"child":1,"handle":"a1"},{"child":1,"handle":"a2"}],"choices":[{"relation":"EXAMPLE","lemmas":[{"ref":0,"in":["such"]},{"ref":1,"in":["as"]}],"child_rules":{"1":["pp_np_coord"]}}]}]}}]}
 {"id":"pp_adv_prep","semantic":[{"copy":{}}]}
 {"id":"adjp_adv_adj","semantic":[{"compose":{"links":[{"relation":"MANNER","source":"attr","target":"mod"}]}}]}
 {"id":"vp_cop_neg_adjp","semantic":[{"link":{"relation":"ATTRIBUTE","source":"event","target":"attribute"}}]}
@@ -241,7 +240,6 @@
 {"id":"vp_passive_inf","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"vp_prog_passive","semantic":[{"copy":{}}]}
 {"id":"clause_there_raising","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
-{"id":"vp_raising_passive","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"inf"}]}}]}
 {"id":"np_rel_pp_strand","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"comp"}]}}]}
 {"id":"clause_ellipsis_degree","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"subject"}]}}]}
 {"id":"vp_cop_to_be_adj","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"event","target":"attr"}]}}]}
@@ -272,7 +270,6 @@
 {"id":"np_part_ed_name","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
 {"id":"vp_np_whclause","semantic":[{"compose":{"links":[{"relation":"AFFECTED","source":"event","target":"object"},{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"n_part_ed_name","semantic":[{"compose":{"links":[{"relation":"MODIFIER","source":"head","target":"event"}]}}]}
-{"id":"vp_cop_np_neg","semantic":[{"compose":{"links":[{"relation":"ATTRIBUTE","source":"event","target":"attr"}]}}]}
 {"id":"wh_clause_coord","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"left","target":"right"}]}}]}
 {"id":"vp_wh_list","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"advp_conj_to_list","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"a1","target":"a2"},{"relation":"CONJUNCT","source":"a2","target":"a3"}]}}]}
@@ -321,8 +318,6 @@
 {"id":"vp_that_npcoord_vp_adv","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"vp_aux_adv","semantic":[{"copy":{}}]}
 {"id":"clause_np_coord_aux_adv","semantic":[{"compose":{"links":[{"relation":"AGENT","source":"event","target":"subject"}]}}]}
-{"id":"vp_that_np_vp_adv","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
-{"id":"vp_that_modal_vp_adv","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"clause_np_aux_adv","semantic":[{"compose":{"links":[{"relation":"MODALITY","source":"subject","target":"aux"}]}}]}
 {"id":"vp_colon_question","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"vp_if_clause","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
@@ -344,7 +339,6 @@
 {"id":"np_coord_deg","semantic":[{"copy":{}}]}
 {"id":"np_adv_np","semantic":[{"copy":{}}]}
 {"id":"np_coord_adv","semantic":[{"copy":{}}]}
-{"id":"vp_comma_clause","semantic":[{"compose":{"links":[{"relation":"COMPLEMENT","source":"event","target":"comp"}]}}]}
 {"id":"clause_list4","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"c1","target":"c2"},{"relation":"CONJUNCT","source":"c2","target":"c3"},{"relation":"CONJUNCT","source":"c3","target":"c4"}]}}]}
 {"id":"np_det_post","semantic":[{"copy":{}}]}
 {"id":"np_n_det_post","semantic":[{"copy":{}}]}
@@ -375,6 +369,7 @@
 {"id":"clause_yn_cop_pp","semantic":[{"compose":{"links":[{"relation":"PREDICAND","source":"event","target":"subject"},{"relation":"PREDICATE_PP","source":"event","target":{"child":2,"handle":"object"},"choices":[{"relation":"LOCATION","lemmas":[{"ref":"predicate","in":["in","on","at","near","inside","outside","upon","by","beside","above","below","under"]}]}]},{"relation":"RELATION_MARKER","source":"event","target":"predicate"}]}}]}
 {"id":"adjp_adj_pp","semantic":[{"compose":{"links":[{"relation":null,"source":"head","target":{"child":1,"handle":"object"},"choices":[{"relation":"CONTENT","lemmas":[{"ref":"head","in":["hopeless","doubtful","afraid","fond","aware","certain"]},{"ref":"modifier","in":["of"]}]},{"relation":"COMPARISON","lemmas":[{"ref":"head","in":["different","distinct"]},{"ref":"modifier","in":["from"]}]}]}]}}]}
 {"id":"vp_prepositional","semantic":[{"compose":{"links":[{"relation":null,"source":"event","target":{"child":1,"handle":"object"},"choices":[{"relation":"GOAL","lemmas":[{"ref":"event","in":["run","rush","hurry","go","come","scramble","clamber"]},{"ref":"complement","in":["on"]},{"ref":{"child":1,"handle":"object"},"in":["deck"]}]},{"relation":"MANNER","lemmas":[{"ref":"event","in":["walk","run","stride","move","march"]},{"ref":"complement","in":["with"]},{"ref":{"child":1,"handle":"object"},"in":["pace","gait","step"]}]},{"relation":"GOAL","lemmas":[{"ref":"event","in":["arrive","land","reach"]},{"ref":"complement","in":["at","in"]}]},{"relation":"GOAL","lemmas":[{"ref":"event","in":["go","run","walk","come","rush","march","travel"]},{"ref":"complement","in":["to"]}]}]}]}}]}
-{"id":"vp_list3","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"v1","target":"v2"},{"relation":"CONJUNCT","source":"v1","target":"v3"}]}}]}
+{"id":"vp_list3","semantic":[{"compose":{"links":[{"relation":"CONJUNCT","source":"v1","targets":["v2","v3"]}]}},{"export_argument_group":{"slot":"subject","owners":["v1","v2","v3"],"proof":"independent_finite_vps"}}]}
 {"id":"clause_negative_modal_ellipsis","semantic":[{"introduce":{"name":"event","kind":"event","type":"ELLIPTIC_PREDICATE","anchor_to_match":true}},{"compose":{"links":[{"relation":"SUBJECT","source":"event","target":"subject"},{"relation":"MODALITY","source":"event","target":"modal"},{"relation":"NEGATION","source":"event","target":2}]}}]}
 {"id":"clause_wh_copular_nominal_question","semantic":[{"compose":{"links":[{"relation":null,"source":"event","target":"wh","choices":[{"relation":"INTERROGATIVE_PREDICAND","forms":[{"ref":"wh","in":["who","what"]}]}]},{"relation":null,"source":"event","target":"predicate","choices":[{"relation":"ATTRIBUTE","forms":[{"ref":"wh","in":["who","what"]}]}]}]}},{"classify":{"target":"predicate","type":"PERSON","forms":[{"ref":"wh","in":["who"]}],"lemmas":[{"ref":"predicate","in":["shot"]}],"child_rules":{"2":["np_det_n"],"2.1":["n_adj_n"]}}}]}
+{"id":"vp_finite_comma_coord_shared_subject","semantic":[{"copy":{}},{"export_argument_group":{"slot":"subject","owners":["left","right"],"proof":"independent_finite_vps"}}]}

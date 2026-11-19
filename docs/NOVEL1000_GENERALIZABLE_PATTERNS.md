@@ -1,5 +1,9 @@
 # Novel-1000 — motifs de composition à factoriser
 
+Cet inventaire fige les observations avant implémentation.
+Voir [la première factorisation](NOVEL1000_GENERALIZATION_PASS.md)
+pour le contrat partagé et les changements de graphe relus.
+
 Cet audit prend Novel-1000 v3 comme corpus de travail. Il analyse le rejeu
 canonique de **1 000 passages**, chacun avec son arbre de rang 1 et son graphe.
 Les groupes, les sources, les signatures et les budgets doivent correspondre

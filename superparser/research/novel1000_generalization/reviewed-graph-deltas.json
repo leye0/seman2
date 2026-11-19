@@ -1,0 +1,548 @@
+{
+  "schema": "seman2-novel1000-reviewed-graph-deltas-v1",
+  "manifest_sha256": "93bb915a30a956fef8c465a7dd684e57cfd2b2866f225409c9fd4686d0b2e5af",
+  "compared": {
+    "benchmark_passages": 1000,
+    "dialogue_witnesses": 30
+  },
+  "cases": {
+    "Q3-56": {
+      "source_sha256": "b59042aeb433ae413ef044ccea2d397f53c66b22b80494e3e9e127c55065f3ee",
+      "selected_graph_sha256": "385a3e4e37e6cff9e9f5052ca2070746e091a5d8feee72a5e0994d2ced2596ef",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            3,
+            10
+          ],
+          "target_span": [
+            0,
+            2
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            27,
+            33
+          ],
+          "target_span": [
+            0,
+            2
+          ]
+        },
+        {
+          "relation": "CONJUNCT",
+          "source_span": [
+            3,
+            10
+          ],
+          "target_span": [
+            27,
+            33
+          ]
+        }
+      ],
+      "review": "He is the subject of changed and wetted; again stays inside the first VP."
+    },
+    "Q3-84": {
+      "source_sha256": "94eee3c6c1fa06ac437c72a4b70d2fdc8ddba348d9ff53db7d3f586367f95330",
+      "selected_graph_sha256": "1bb624a81c4c2e2f3f8c09d4407f9e2f35d6771b9a09d7e8f23c3ace17239ed2",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            2,
+            8
+          ],
+          "target_span": [
+            0,
+            1
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            43,
+            47
+          ],
+          "target_span": [
+            0,
+            1
+          ]
+        },
+        {
+          "relation": "CONJUNCT",
+          "source_span": [
+            2,
+            8
+          ],
+          "target_span": [
+            43,
+            47
+          ]
+        }
+      ],
+      "review": "Both turned and held have the overt I, not their repeated object him or the later it."
+    },
+    "Q3-129": {
+      "source_sha256": "8bef0ee2cca3af80af5d124d131a5cbfedee17cccd526d51f483ef83053e6cec",
+      "selected_graph_sha256": "767ef0894147b8e085ec14d009a731134b87993a6b561d49146e8ac80160dd95",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            10,
+            16
+          ],
+          "target_span": [
+            0,
+            9
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            29,
+            35
+          ],
+          "target_span": [
+            0,
+            9
+          ]
+        },
+        {
+          "relation": "CONJUNCT",
+          "source_span": [
+            10,
+            16
+          ],
+          "target_span": [
+            29,
+            35
+          ]
+        }
+      ],
+      "review": "Elizabeth is the subject of looked and turned; away stays inside the second VP."
+    },
+    "Q3-333": {
+      "source_sha256": "fdc270dc37d3cd7bbda56935717f8d8a12ddf1289736dfa38dc64ccdb817ce56",
+      "selected_graph_sha256": "d6538e6238fb641413b49288e4231e6f62c03ba2979c461056b727c644ef22fa",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            35,
+            43
+          ],
+          "target_span": [
+            29,
+            34
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            57,
+            65
+          ],
+          "target_span": [
+            29,
+            34
+          ]
+        }
+      ],
+      "review": "The embedded subject fiend governs followed and expedite; might is only the finite carrier."
+    },
+    "Q3-356": {
+      "source_sha256": "cc175843798bc782bcd6923d4b8559d2276765448f23bcd15269e061ec30df94",
+      "selected_graph_sha256": "aa3481a6fbd3559c668492074b513b9926648cf648c2e96b956b199e110bac26",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            79,
+            88
+          ],
+          "target_span": [
+            75,
+            78
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            104,
+            109
+          ],
+          "target_span": [
+            75,
+            78
+          ]
+        }
+      ],
+      "review": "The second occurrence of she (after the when-clause) governs collected and spoke."
+    },
+    "Q3-357": {
+      "source_sha256": "2b26d5d69bb760510135d2fed9c8cc92a1032d0f4d25e33e08a5f83b29c2edf7",
+      "selected_graph_sha256": "3c84f8e36cc3b3f89001b8b57c1c79d461a3ff9791afb50cf2416c2f789b2d7a",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            11,
+            19
+          ],
+          "target_span": [
+            9,
+            10
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            43,
+            48
+          ],
+          "target_span": [
+            9,
+            10
+          ]
+        }
+      ],
+      "review": "I belongs to the when-clause and governs received and heard, not matrix died."
+    },
+    "Q3-485": {
+      "source_sha256": "d94ab48b64321ca16398f91f6e7412d719bace0599840faa723f90e69bd5d7a3",
+      "selected_graph_sha256": "015945ec86466e30de4641d98b6e56c46b304e310257f42a1bdb4d505995753a",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            69,
+            72
+          ],
+          "target_span": [
+            66,
+            68
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            101,
+            106
+          ],
+          "target_span": [
+            66,
+            68
+          ]
+        }
+      ],
+      "review": "The he in the till-clause governs got and hoist; could is only the carrier."
+    },
+    "Q3-498": {
+      "source_sha256": "59131e87612a3665b4dfe516cbd6ff0789e11cbd40ac7f4b3f48a738c79e5225",
+      "selected_graph_sha256": "25bb946d32a56f1c1ad5d3dcb4c28caec5cb5b3c9ddd7958e96b14e77b549630",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            33,
+            42
+          ],
+          "target_span": [
+            19,
+            23
+          ]
+        },
+        {
+          "relation": "RELATIVE_REF",
+          "source_span": [
+            24,
+            28
+          ],
+          "target_span": [
+            19,
+            23
+          ]
+        }
+      ],
+      "review": "Size is the focused antecedent and subject of impressed; that marks the link."
+    },
+    "Q3-612": {
+      "source_sha256": "e6e471094dbfc5c9248b1a22ded26d4100ceedeaf689bac5e756c35cbf31c084",
+      "selected_graph_sha256": "e35fac96d7aa229b595aeec59180973ed87e89786a6d0fe03d934f1a952bc7ae",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            22,
+            28
+          ],
+          "target_span": [
+            19,
+            21
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            54,
+            57
+          ],
+          "target_span": [
+            19,
+            21
+          ]
+        }
+      ],
+      "review": "We governs both passed and saw; the leading during-PP has no subject slot in the pair."
+    },
+    "Q3-786": {
+      "source_sha256": "905420ade124e349018d4e56b8d8fddb7c7bd56851bb072254c54d77873b9f21",
+      "selected_graph_sha256": "80397312afdbce5f034d5074a4220c0c0791dc8a3908a2e0b1766b2cd17cb1c4",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            5,
+            9
+          ],
+          "target_span": [
+            0,
+            4
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            28,
+            34
+          ],
+          "target_span": [
+            0,
+            4
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            44,
+            51
+          ],
+          "target_span": [
+            0,
+            4
+          ]
+        }
+      ],
+      "review": "Jane governs the ordered three-member VP series; existing conjunct topology stays unchanged."
+    },
+    "Q3-809": {
+      "source_sha256": "5c44657e3d677a88d77723fa4efad08153c78752d6705c16394ba99055724e0c",
+      "selected_graph_sha256": "2af71cafdd4edd988084ddc059d008e8bf2d2d8a942695c5aa5357ab8f49629c",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            4,
+            10
+          ],
+          "target_span": [
+            0,
+            3
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            32,
+            39
+          ],
+          "target_span": [
+            0,
+            3
+          ]
+        }
+      ],
+      "review": "She governs looked and assumed; the NP conjunction courage and zeal is not a VP domain."
+    },
+    "Q3-818": {
+      "source_sha256": "d34bc1e63b477b92f01cbdd83bc946edcc92453ad28d8d33dfa5169eccce5207",
+      "selected_graph_sha256": "e5addd2fdaee53c6d23ea53e87007f021451cfed81619b072d0b18557123117b",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            104,
+            111
+          ],
+          "target_span": [
+            94,
+            98
+          ]
+        },
+        {
+          "relation": "RELATIVE_REF",
+          "source_span": [
+            99,
+            103
+          ],
+          "target_span": [
+            94,
+            98
+          ]
+        }
+      ],
+      "review": "The object nominal load is also the subject of weighed in its own relative."
+    },
+    "Q3-825": {
+      "source_sha256": "e032ad2fd691b89ab6919f8b04d71a185a4b5007e965510b8be39865fa8aa794",
+      "selected_graph_sha256": "91bc0d655c7824d9c49dfb4ad04cb6c985e269442262b3f53fb80f88b4d962af",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            36,
+            41
+          ],
+          "target_span": [
+            19,
+            23
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            46,
+            51
+          ],
+          "target_span": [
+            19,
+            23
+          ]
+        }
+      ],
+      "review": "The head disk of the subject NP governs arose and shone, not moon or the following he."
+    },
+    "Q3-833": {
+      "source_sha256": "979f3e3a18bbda4a3b1665d13f829626ee8a181d0f0946928e8e77e50ed8fbe5",
+      "selected_graph_sha256": "218521c77715324847cfc7d8bc9b3966393cec80d4b342783188dcc42581ca52",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            5,
+            8
+          ],
+          "target_span": [
+            0,
+            4
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            31,
+            38
+          ],
+          "target_span": [
+            0,
+            4
+          ]
+        }
+      ],
+      "review": "Dick possesses his Bible and prays; praying, not was, owns the subject in the progressive clause."
+    },
+    "Q3-846": {
+      "source_sha256": "f88ae022c12c898daa7a1f2a569a260c05269b9f8157a81c84ce67dd187711b8",
+      "selected_graph_sha256": "239be750fdce127d6c280ced7ec99b14b73b106ffb3c9a3400c0d3fe73287366",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            57,
+            63
+          ],
+          "target_span": [
+            48,
+            56
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            95,
+            102
+          ],
+          "target_span": [
+            48,
+            56
+          ]
+        }
+      ],
+      "review": "Coxswain governs loosed and plunged; the earlier they belongs to the separate finite clause."
+    },
+    "Q3-847": {
+      "source_sha256": "e454f6b14f321c796daed43efa5a49b8dcd4a93df103c8e1adc46036a904ac5e",
+      "selected_graph_sha256": "9f9575ae5817a1cc97fbad9cd1e11fcf77f5785191c1364d2e20f17e10d65b0a",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            83,
+            87
+          ],
+          "target_span": [
+            72,
+            82
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            112,
+            119
+          ],
+          "target_span": [
+            72,
+            82
+          ]
+        }
+      ],
+      "review": "Rifle ball governs sang and knocked; the separately coordinated passive belongs to fire."
+    },
+    "Q3-921": {
+      "source_sha256": "ba08439e69b4b2a4eeb358e15690a73573fb53f7b66529f4f82b58a2b3517470",
+      "selected_graph_sha256": "85bcce8c87715af83ba2ada8dd5246fc2a56594982bb8013597c3ba76d5a49ed",
+      "additions": [
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            6,
+            11
+          ],
+          "target_span": [
+            0,
+            1
+          ]
+        },
+        {
+          "relation": "SUBJECT",
+          "source_span": [
+            48,
+            56
+          ],
+          "target_span": [
+            0,
+            1
+          ]
+        }
+      ],
+      "review": "The initial I governs begun and thirsted; the inner modal coordination receives no new projected edge."
+    }
+  },
+  "reference_commit": "6bec2b3b1982f20af3d72330c6432042fdd577f7"
+}
