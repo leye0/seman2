@@ -92,6 +92,24 @@ def _single_spoken_span(text: str, components: Sequence[Mapping[str, Any]], *, r
     return end - 2, reporter
 
 
+def postposed_comma_envelope(text, components):
+    """Give a quoted payload the same punctuation and simple tag proof."""
+    found = _single_spoken_span(text, components, reported=True)
+    if found is None:
+        return None
+    stop, reporter = found
+    start, end = reporter["start"], reporter["end"]
+    if text[stop] != "," or not text[stop + 2:start].isspace():
+        return None
+    opening = [("OPEN-QUOTE", 0, 1, "source-punctuation", {})]
+    closing, add, mark, _ = _specs()
+    mark("COMMA", stop, stop + 1)
+    mark("CLOSE-QUOTE", stop + 1, stop + 2)
+    add("SPEECH-TAG", start, end, "phrase", simple_reporting_tag_proof="true")
+    mark("SPEECH-STOP", end, len(text))
+    return stop, opening, closing
+
+
 def negative_modal_question_plan(text: str, components: Sequence[Mapping[str, Any]]):
     span = _single_spoken_span(text, components)
     if span is None or text[span[0]] != "?":

@@ -9,6 +9,7 @@ import unittest
 from research.verbnet_lr.gutenberg_novels import Book, extract
 from scripts import novel1500_exploratory as novel
 from scripts.evaluate_novel_transfer import ROOT, _deadline, measure
+from seman_parser.addressed_speech import ROOT as REPORTED_ADDRESS, UNATTRIBUTED as UNREPORTED_ADDRESS
 from seman_parser.engine import Parser, ParserResources
 from seman_parser import scoped_novel_1500 as rules
 from seman_parser.reported_fragments import ROOT as REPORTED_FRAGMENT
@@ -161,6 +162,32 @@ CONTRASTS = (
      (("SPEAKER", "said", "Thomas"), ("REPORTED_CONTENT", "said", "strange"),
       ("DEGREE", "strange", "Mighty")),
      (("MANNER", "pretty", "Mighty"), ("REPORTED_CONTENT", "said", "Mighty"))),
+    (1329, UNREPORTED_ADDRESS,
+     '"I think not, madam!"',
+     '"I do not think, madam."',
+     (("CONTENT_PROFORM", "believe", "not"), ("EXPERIENCER", "believe", "I"),
+      ("ADDRESSEE", "believe", "sir")),
+     (("CONTENT_PROFORM", "think", "not"), ("EXPERIENCER", "think", "I"),
+      ("ADDRESSEE", "think", "madam")),
+     (("NEGATION", "believe", "not"), ("SPEAKER", "believe", "sir"))),
+    (1330, REPORTED_ADDRESS,
+     '"Come in, Ruth," whispered Nora.',
+     '"They waited, Ruth," whispered Nora.',
+     (("SPEAKER", "said", "Morgan"), ("REPORTED_CONTENT", "said", "Go"),
+      ("ADDRESSEE", "Go", "John")),
+     (("SPEAKER", "whispered", "Nora"), ("REPORTED_CONTENT", "whispered", "Come"),
+      ("ADDRESSEE", "Come", "Ruth")),
+     (("SPEAKER", "said", "John"), ("AGENT", "Go", "Morgan"),
+      ("REPORTED_CONTENT", "said", "John"))),
+    (1461, REPORTED_ADDRESS,
+     '"Now, Emma my darling," she replied.',
+     '"Now, Emma my book," she replied.',
+     (("SPEAKER", "said", "Murdstone"), ("REPORTED_CONTENT", "said", "Now"),
+      ("ADDRESSEE", "Now", "Clara"), ("APPOSITION", "Clara", "dear")),
+     (("SPEAKER", "replied", "she"), ("REPORTED_CONTENT", "replied", "Now"),
+      ("ADDRESSEE", "Now", "Emma"), ("APPOSITION", "Emma", "darling")),
+     (("SPEAKER", "said", "Clara"), ("ADDRESSEE", "Now", "dear"),
+      ("MANNER", "said", "Now"), ("TIME", "said", "Now"))),
 )
 
 
@@ -184,6 +211,9 @@ SOURCE_CONSTITUENTS = {
     1178: ("structural_spoken_negated_adverbial", "Not yet"),
     1253: ("structural_spoken_degree_predicate", "Very unpromising"),
     1333: ("structural_spoken_degree_predicate", "Mighty pretty"),
+    1329: ("structural_ladder_belief_with_negative_proform", "I believe not"),
+    1330: ("vp_np_particle", "Go on"),
+    1461: ("structural_vocative_name_with_endearment", "Clara my dear"),
 }
 
 
@@ -234,6 +264,12 @@ class Novel1500GrammarRepairs(unittest.TestCase):
             self.assertFalse(text[previous:start].strip())
             previous = stop
         self.assertFalse(text[previous:].strip())
+        if root in (REPORTED_ADDRESS, UNREPORTED_ADDRESS):
+            turn = row["tree"]["children"][1]
+            self.assertEqual(turn["rule_id"], "structural_spoken_turn_with_vocative")
+            self.assertEqual([child["category"] for child in turn["children"]],
+                             ["ADDRESSED-HEAD", "COMMA", "SOURCE-VOCATIVE"])
+            self.assertEqual(turn["features"]["stype"], row["tree"]["features"]["stype"])
         if source_index is not None:
             segment_rule, expected = SOURCE_CONSTITUENTS[source_index]
             segment, = [c for c in descendants(row["tree"]) if c["rule_id"] == segment_rule]
@@ -269,6 +305,43 @@ class Novel1500GrammarRepairs(unittest.TestCase):
         self.assertIn(("REPORTED_CONTENT", "replied", "calm"), edges)
         self.assertNotEqual(measure(self.parser, self.synthetic('"Very calm," said him.'))["root_rule"],
                             REPORTED_FRAGMENT)
+
+    def test_addressed_turn_keeps_head_address_and_reporting_independent(self):
+        # Cross the two reported head types with both forms of address. This checks
+        # composition rather than two fixes that happen to share a rule ID.
+        for text, speech, name, reporter, speaker, endearment in (
+            ('"Now, Victor," whispered Nora.', "Now", "Victor", "whispered", "Nora", None),
+            ('"Wait, Alice my dear," said Charles.', "Wait", "Alice", "said", "Charles", "dear"),
+        ):
+            with self.subTest(text=text):
+                edges = self.assert_selected(self.synthetic(text), REPORTED_ADDRESS)
+                self.assertIn(("SPEAKER", reporter, speaker), edges)
+                self.assertIn(("ADDRESSEE", speech, name), edges)
+                self.assertIn(("REPORTED_CONTENT", reporter, speech), edges)
+                if endearment:
+                    self.assertIn(("APPOSITION", name, endearment), edges)
+                else:
+                    self.assertFalse(any(rel == "APPOSITION" for rel, _, _ in edges))
+        unreported = self.assert_selected(self.synthetic('"I think not, madam."'), UNREPORTED_ADDRESS)
+        reported = self.assert_selected(self.synthetic('"I think not, madam," she whispered.'),
+                                        REPORTED_ADDRESS)
+        self.assertEqual(reported - unreported, {
+            ("AGENT", "whispered", "she"), ("SPEAKER", "whispered", "she"),
+            ("REPORTED_CONTENT", "whispered", "think"),
+        })
+        self.assertLessEqual(unreported, reported)
+        self.assertFalse({rel for rel, _, _ in unreported} & {"SPEAKER", "REPORTED_CONTENT"})
+        for text in (
+            '"Now, Emma my dear," pushed George.',
+            '"Now, Emma my dear," said him.',
+            '"Now, Emma my dear."',
+            '"Wait, Ruth. Sit down," whispered Nora.',
+            '"Wait, Ruth," she said, "until we are ready."',
+            '"I think not, these people."',
+        ):
+            with self.subTest(text=text):
+                self.assertNotIn(measure(self.parser, self.synthetic(text))["root_rule"],
+                                 (REPORTED_ADDRESS, UNREPORTED_ADDRESS))
 
 
 if __name__ == "__main__":

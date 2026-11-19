@@ -18,7 +18,7 @@ jobs:
     timeout-minutes: 35
     env:
       BASELINE_COMMIT: 6bec2b3b1982f20af3d72330c6432042fdd577f7
-      TRANSFER_BASELINE_COMMIT: 39c06dc01d0983e5ce4ccf9fcaf895a63b2a769e
+      TRANSFER_BASELINE_COMMIT: b314abaf6c9f5fe6e904df429976290cdc7558f3
       PYTHONPATH: superparser
       WORDNET_DICT: /tmp/seman2-wordnet3/wordnet
     steps:
@@ -80,5 +80,5 @@ jobs:
           python -m scripts.novel1500_exploratory replay \
             --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/novel1500-after"
           python -m scripts.novel1500_exploratory check-transfer \
-            --review-pass reported-modified-fragments --baseline-dir "$RUNNER_TEMP/novel1500-before" \
+            --review-pass addressed-spoken-turns --baseline-dir "$RUNNER_TEMP/novel1500-before" \
             --out-dir "$RUNNER_TEMP/novel1500-after"

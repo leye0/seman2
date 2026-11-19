@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-from .additional_spoken_acts import _single_spoken_span
+from .additional_spoken_acts import postposed_comma_envelope
 
 ROOT = "dialogue_structural_reported_modified_fragment"
 
@@ -14,12 +14,10 @@ def plan_reported_fragment(text, components, lattice):
     Both are verb-free spoken acts. The source layer identifies the
     reporter, but the existing speech-tag grammar must still prove it.
     """
-    found = _single_spoken_span(text, components, reported=True)
+    found = postposed_comma_envelope(text, components)
     if found is None:
         return None
-    stop, reporter = found
-    if text[stop] != "," or not text[stop + 2:reporter["start"]].isspace():
-        return None
+    stop, opening, closing = found
     words = list(re.finditer(r"[^\s]+", text[1:stop]))
     if len(words) != 2 or words[0].start() != 0 or words[1].end() + 1 != stop:
         return None
@@ -27,16 +25,10 @@ def plan_reported_fragment(text, components, lattice):
     negated = any(c.category == "NEG" and c.features.as_dict().get("negation") == "true"
                   for c in lattice.covering(*first))
 
-    def literal(category, p):
-        return category, p, p + 1, "source-punctuation", {}
-
     checked = {"attested_reading": "true"}
     return [
-        literal("OPEN-QUOTE", 0),
+        *opening,
         ("NEG" if negated else "DEGREE", *first, "scoped-lexical", checked),
         ("ADV" if negated else "ADJ", *second, "lexical-alternatives", checked),
-        literal("COMMA", stop), literal("CLOSE-QUOTE", stop + 1),
-        ("SPEECH-TAG", reporter["start"], reporter["end"], "phrase",
-         {"simple_reporting_tag_proof": "true"}),
-        literal("SPEECH-STOP", reporter["end"]),
+        *closing,
     ]

@@ -324,6 +324,72 @@
         "selected_graph_sha256": "c1d5deb142948801fc0d24c2e15cb4862a23413cd126850243429a29a3568515"
       },
       "review_pass": "reported-modified-fragments"
+    },
+    {
+      "source_sha256": "954844fada31b8e3db1130b5195b97f8d141a2389fc710efcd52a2c41ec34b77",
+      "before": {
+        "index": 1329,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1329,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_unattributed_addressed_turn",
+        "rank_one_sha256": "c247fc2a60851255596b5e43f8990fe8e757c16ae910a77d6ab3bb65b0bd3e04",
+        "selected_graph_sha256": "03956fb9393803a986793bb914cbc4e892773b844c0994e5c6a89b40a6efe39d"
+      },
+      "review_pass": "addressed-spoken-turns"
+    },
+    {
+      "source_sha256": "692142937458f8427a2a0cc6871f2809736bf6e7247ebe55f27bc180dd732dc2",
+      "before": {
+        "index": 1330,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1330,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_reported_addressed_turn",
+        "rank_one_sha256": "d1d52333053d7d5a407e8c8c36675d2e197a6539045fba9a8dc5f9942e4ee7c7",
+        "selected_graph_sha256": "db0c3b9f4f33565ab449f7cf2942f7ae273cef3b22e8ccfc780d37c7ab45fde2"
+      },
+      "review_pass": "addressed-spoken-turns"
+    },
+    {
+      "source_sha256": "ad8ffe7b8214a36b4fa42fea8244a84c26aaca0a16d61559946248244ca40fa1",
+      "before": {
+        "index": 1461,
+        "status": "roots_without_valid_analysis",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1461,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_reported_addressed_turn",
+        "rank_one_sha256": "c5b664d5a82c5479b5d9e8179ed593d92c70957c975df8172dcf5335cb3152a5",
+        "selected_graph_sha256": "1688dbb7704c61d30697d66240f66f3ce26d7bc5c4c23eaf324ad08f1a8513bb"
+      },
+      "review_pass": "addressed-spoken-turns"
     }
   ]
 }

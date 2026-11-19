@@ -1589,6 +1589,24 @@ _NEGATIVE_PROPOSITIONAL_REPLY = re.compile(r"(?P<no>No), +" + _PROPOSITIONAL_NOT
 _STANDALONE_NEGATIVE_PROFORM = re.compile(_PROPOSITIONAL_NOT)
 
 
+def _add_negative_proform(match, offset, part):
+    part(match, offset, (
+        ("subject", "NP", "subject-phrase", {}),
+        ("belief", "V", "lexical-alternatives", _v("finite", "clausal")),
+        ("not", "NEG", "lexical", {"negation": "true"}),
+    ))
+
+
+def negative_proform_specs(text, start, end):
+    """Prove only the spoken attitude and its negative content, not its wrapper."""
+    match = _STANDALONE_NEGATIVE_PROFORM.fullmatch(text, start, end)
+    if match is None:
+        return None
+    specs, _, _, part = _specs()
+    _add_negative_proform(match, 0, part)
+    return specs
+
+
 def _plan_negative_proform(text, components, *, prefaced):
     evidence = _single_spoken_span(text, components)
     if evidence is None:
@@ -1605,11 +1623,7 @@ def _plan_negative_proform(text, components, *, prefaced):
     if prefaced:
         part(m, 1, (("no", "RESPONSE", "scoped-lexical", {"polarity": "negative"}),))
         mark("COMMA", 1 + m.end("no"), 2 + m.end("no"))
-    part(m, 1, (
-        ("subject", "NP", "subject-phrase", {}),
-        ("belief", "V", "lexical-alternatives", _v("finite", "clausal")),
-        ("not", "NEG", "lexical", {"negation": "true"}),
-    ))
+    _add_negative_proform(m, 1, part)
     mark("SPEECH-STOP", stop, stop + 1)
     mark("CLOSE-QUOTE", stop + 1, stop + 2)
     return specs

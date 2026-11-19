@@ -1322,3 +1322,6 @@
 {"id":"structural_spoken_degree_predicate","semantic":[{"compose":{"links":[{"relation":"DEGREE","source":"head","target":"modifier"}]}}]}
 {"id":"structural_spoken_negated_adverbial","semantic":[{"compose":{"links":[{"relation":"NEGATION","source":"head","target":"modifier"}]}}]}
 {"id":"dialogue_structural_reported_modified_fragment","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"speech"},{"relation":"SPEAKER","source":"report","target":"speaker"}]}}]}
+{"id":"structural_vocative_name_with_endearment","semantic":[{"compose":{"links":[{"relation":"APPOSITION","source":"head","target":"endearment"}]}}]}
+{"id":"structural_spoken_turn_with_vocative","semantic":[{"compose":{"links":[{"relation":"ADDRESSEE","source":"speech","target":"addressee"}]}}]}
+{"id":"dialogue_structural_reported_addressed_turn","semantic":[{"compose":{"links":[{"relation":"REPORTED_CONTENT","source":"report","target":"speech"},{"relation":"SPEAKER","source":"report","target":"speaker"}]}}]}
