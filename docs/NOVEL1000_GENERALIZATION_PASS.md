@@ -1,5 +1,8 @@
 # Novel-1000 — première factorisation des règles
 
+Un [premier transfert vers les cas incomplets de Novel-1500](NOVEL1500_REPORTED_FRAGMENT_TRANSFER.md)
+mesure séparément le réemploi qui produit de nouveaux rangs 1 complets.
+
 Base de comparaison strictement épinglée : `6bec2b3`. La conception et
 les contrastes viennent de [l'inventaire Novel-1000](NOVEL1000_GENERALIZABLE_PATTERNS.md).
 La recherche, le classement, les éditions des livres, le découpage et

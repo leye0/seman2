@@ -212,6 +212,7 @@ from .paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT, paired_s
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
+from .reported_fragments import ROOT as REPORTED_FRAGMENT, plan_reported_fragment
 
 
 _PROOF_CHECKS = frozenset((
@@ -219,7 +220,7 @@ _PROOF_CHECKS = frozenset((
     "finite_statement_proof", "bare_predicate_proof", "predicative_nominal_proof",
     "imperative_predicate_proof", "comparative_pp_proof", "perfect_predicate_proof",
     "grounded_object_proof", "demonstrated_full_nominal_proof", "appositive_nominal_proof",
-    "emphasis_finite_proof",
+    "emphasis_finite_proof", "simple_reporting_tag_proof",
 ))
 _LADDER_SPOKEN = (
     *N800_SPOKEN,
@@ -336,7 +337,7 @@ _SHARED_SOURCE_PLANS = {
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *N1000_COUNTS, *N1500_COUNTS,
+    *N1000_COUNTS, *N1500_COUNTS, REPORTED_FRAGMENT,
     *RESIDUAL_COUNTS, *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
@@ -585,6 +586,10 @@ class QuotedSentenceComposer:
             )
             for plan, _ in (*_UNQUOTED_SCOPED, *N1500_SPOKEN, *N1000_SPOKEN, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
         })
+        self._additional_source_vectors[REPORTED_FRAGMENT] = VectorGrammar(
+            Grammar(rule for rule in rules if rule.provenance.get("source_plan") == REPORTED_FRAGMENT),
+            preserve_quote_delimiters=True,
+        )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -1278,6 +1283,14 @@ class QuotedSentenceComposer:
                     or selected.children[1].features.as_dict().get("vform") != "finite"
                 ):
                     return None
+                if required.get("simple_reporting_tag_proof") == "true":
+                    if (selected.rule_id not in {"dialogue_speech_tag_inverted", "dialogue_speech_tag_post"}
+                            or not {"report", "speaker"} <= selected.syntax.anchors.keys()):
+                        return None
+                    nominal = next((c for c in selected.children if c.category == "NP"), None)
+                    if nominal is None or any(c.features.as_dict().get("case") == "accusative"
+                                              for c in nominal.children if c.category == "PRONOUN"):
+                        return None
                 if expected_rule in _SCOPED_UNSATURATED and (
                     proof.stats.get("budget_exceeded") or proof.stats.get("kbest_budget_exceeded")
                 ):
@@ -4174,6 +4187,15 @@ class QuotedSentenceComposer:
             )
             if finite_modal is not None:
                 return finite_modal
+            fragment = plan_reported_fragment(text, components, original_lattice)
+            if fragment is not None:
+                proved = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, fragment, REPORTED_FRAGMENT,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if proved is not None:
+                    return proved
             return self._compose_modal_ellipsis_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,

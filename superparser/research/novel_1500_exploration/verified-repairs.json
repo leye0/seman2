@@ -258,6 +258,72 @@
         "rank_one_sha256": "c37125299bc4acaf300f7dda2208856cd8a1611f024a2da73dbd79e9ff22766e",
         "selected_graph_sha256": "567fb7a564adfc816515b3fe2f4b4e31b056ee5f9d9630e0f77f6647daca6039"
       }
+    },
+    {
+      "source_sha256": "079a597018a330220d45fc12fe420a8e01d48a2d97e59843da802d9b92da869b",
+      "before": {
+        "index": 1178,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1178,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_reported_modified_fragment",
+        "rank_one_sha256": "933eded78f11967d2ee7d4465f04849aa438300180e055ea9194e1be9ee3df3c",
+        "selected_graph_sha256": "b7520b3ab8fa13da1d61b9bdbb9418d5896426564b9efd62be7b9ff806edec8e"
+      },
+      "review_pass": "reported-modified-fragments"
+    },
+    {
+      "source_sha256": "a39ff97189747609057a2bfe9a7491af0fe4b3f98d2e22a8d3fd598faa2afac4",
+      "before": {
+        "index": 1253,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1253,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_reported_modified_fragment",
+        "rank_one_sha256": "b5f8a354b1d0f870cf8653c166d4940cbd76ff1f72402d1ac6490f1783dd188d",
+        "selected_graph_sha256": "5a97d0f249e61fa0a5ab5b4972854af4e508e720285850679856229951ec6bc7"
+      },
+      "review_pass": "reported-modified-fragments"
+    },
+    {
+      "source_sha256": "3c48296f05fcadf0f29796cdafdc73ad84b064338cc1a397f9890b6311e04e82",
+      "before": {
+        "index": 1333,
+        "status": "no_structural_root",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": null,
+        "rank_one_sha256": null,
+        "selected_graph_sha256": null
+      },
+      "after": {
+        "index": 1333,
+        "status": "complete",
+        "forest_budget_exceeded": false,
+        "kbest_budget_exceeded": false,
+        "root_rule": "dialogue_structural_reported_modified_fragment",
+        "rank_one_sha256": "8e9030e3daa8ae5ebb92a714e63217e8c6511b69c5891861219244620b452fa3",
+        "selected_graph_sha256": "c1d5deb142948801fc0d24c2e15cb4862a23413cd126850243429a29a3568515"
+      },
+      "review_pass": "reported-modified-fragments"
     }
   ]
 }

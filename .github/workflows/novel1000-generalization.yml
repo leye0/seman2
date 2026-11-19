@@ -18,6 +18,7 @@ jobs:
     timeout-minutes: 35
     env:
       BASELINE_COMMIT: 6bec2b3b1982f20af3d72330c6432042fdd577f7
+      TRANSFER_BASELINE_COMMIT: 39c06dc01d0983e5ce4ccf9fcaf895a63b2a769e
       PYTHONPATH: superparser
       WORDNET_DICT: /tmp/seman2-wordnet3/wordnet
     steps:
@@ -67,3 +68,17 @@ jobs:
             --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/novel1000-after"
           python -m scripts.compare_novel1000_semantic_replay \
             --baseline "$RUNNER_TEMP/novel1000-before" --candidate "$RUNNER_TEMP/novel1000-after"
+      - name: Replay the 500 Novel-1500 sources on the pre-transfer revision
+        run: |
+          mkdir -p "$RUNNER_TEMP/novel1500-base"
+          git archive "$TRANSFER_BASELINE_COMMIT" superparser docs | tar -x -C "$RUNNER_TEMP/novel1500-base"
+          cd "$RUNNER_TEMP/novel1500-base"
+          python -m scripts.novel1500_exploratory replay \
+            --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/novel1500-before"
+      - name: Check the reviewed coverage transfers and preserve the previous analyses
+        run: |
+          python -m scripts.novel1500_exploratory replay \
+            --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/novel1500-after"
+          python -m scripts.novel1500_exploratory check-transfer \
+            --review-pass reported-modified-fragments --baseline-dir "$RUNNER_TEMP/novel1500-before" \
+            --out-dir "$RUNNER_TEMP/novel1500-after"

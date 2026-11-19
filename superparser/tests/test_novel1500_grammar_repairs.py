@@ -11,6 +11,7 @@ from scripts import novel1500_exploratory as novel
 from scripts.evaluate_novel_transfer import ROOT, _deadline, measure
 from seman_parser.engine import Parser, ParserResources
 from seman_parser import scoped_novel_1500 as rules
+from seman_parser.reported_fragments import ROOT as REPORTED_FRAGMENT
 
 BOOK = Book(99001, "Independent literary attachment controls", "Audit", "syntax")
 # Each construction must recover an authentic source and a different lexical
@@ -136,6 +137,30 @@ CONTRASTS = (
      (("AGENT", "bringing", "Allen"), ("PATIENT", "ushered", "Allen"),
       ("ENABLING_CUE", "ushered", "nod"), ("DESTINATION", "ushered", "hall")),
      (("AGENT", "admitted", "Dance"),)),
+    (1178, REPORTED_FRAGMENT,
+     '"Not today," answered Helen.',
+     '"Not, today," answered Helen.',
+     (("SPEAKER", "replied", "Jane"), ("REPORTED_CONTENT", "replied", "yet"),
+      ("NEGATION", "yet", "Not")),
+     (("SPEAKER", "answered", "Helen"), ("REPORTED_CONTENT", "answered", "today"),
+      ("NEGATION", "today", "Not")),
+     (("NEGATION", "replied", "Not"), ("REPORTED_CONTENT", "replied", "Not"))),
+    (1253, REPORTED_FRAGMENT,
+     '"Quite dangerous," replied Laura.',
+     '"Very quickly," replied Laura.',
+     (("SPEAKER", "said", "Jorkins"), ("REPORTED_CONTENT", "said", "unpromising"),
+      ("DEGREE", "unpromising", "Very")),
+     (("SPEAKER", "replied", "Laura"), ("REPORTED_CONTENT", "replied", "dangerous"),
+      ("DEGREE", "dangerous", "Quite")),
+     (("DEGREE", "said", "Very"), ("REPORTED_CONTENT", "said", "Very"))),
+    (1333, REPORTED_FRAGMENT,
+     '"Mighty strange," said Thomas.',
+     '"Mighty quiet," pushed George.',
+     (("SPEAKER", "said", "George"), ("REPORTED_CONTENT", "said", "pretty"),
+      ("DEGREE", "pretty", "Mighty")),
+     (("SPEAKER", "said", "Thomas"), ("REPORTED_CONTENT", "said", "strange"),
+      ("DEGREE", "strange", "Mighty")),
+     (("MANNER", "pretty", "Mighty"), ("REPORTED_CONTENT", "said", "Mighty"))),
 )
 
 
@@ -156,6 +181,9 @@ SOURCE_CONSTITUENTS = {
     1037: ("structural_causal_gerund_reprise", '"that comed of sp\'iling Bibles."'),
     1039: ("structural_do_with_unresolved_predicate_ellipsis", '"I don\'t."'),
     1041: ("structural_admission_passive_with_cue_and_destination", "was admitted at a word into the house"),
+    1178: ("structural_spoken_negated_adverbial", "Not yet"),
+    1253: ("structural_spoken_degree_predicate", "Very unpromising"),
+    1333: ("structural_spoken_degree_predicate", "Mighty pretty"),
 }
 
 
@@ -234,6 +262,13 @@ class Novel1500GrammarRepairs(unittest.TestCase):
                     self.assertLessEqual(set(expected), edges)
                     if mode == "source":
                         self.assertFalse(set(forbidden) & edges)
+
+    def test_fragment_reuses_postposed_tag_and_respects_report_boundary(self):
+        edges = self.assert_selected(self.synthetic('"Very calm," she replied.'), REPORTED_FRAGMENT)
+        self.assertIn(("SPEAKER", "replied", "she"), edges)
+        self.assertIn(("REPORTED_CONTENT", "replied", "calm"), edges)
+        self.assertNotEqual(measure(self.parser, self.synthetic('"Very calm," said him.'))["root_rule"],
+                            REPORTED_FRAGMENT)
 
 
 if __name__ == "__main__":

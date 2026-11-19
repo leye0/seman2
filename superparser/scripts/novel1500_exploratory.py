@@ -171,6 +171,47 @@ def check_result(end, manifest, expected, observed):
         raise ValueError(f"Novel-{end} replay changed pinned results: {changed}")
 
 
+def check_transfer(groups, repairs, review_pass, baseline_dir, candidate_dir):
+    """Check a repair batch on top of an intervening, already audited revision.
+
+    The historical pins still establish which exact sources were complete and
+    which trees were selected. The intervening revision can have reviewed
+    graph changes of its own. Freeze those graphs from its fresh replay
+    instead of repinning, weakening or discarding their signatures.
+    """
+    new = {index: row for index, row in repairs.items() if row.get("review_pass") == review_pass}
+    if not new:
+        raise ValueError(f"No registered repairs for {review_pass}")
+    previous = {index: row for index, row in repairs.items() if index not in new}
+    counts = Counter()
+    for end, group in groups.items():
+        header, _ = group
+        before, _ = checked_observation(end, group, baseline_dir)
+        after, _ = checked_observation(end, group, candidate_dir)
+        recorded = ladder.result_cases(expected_result(end, header, previous), header, end)
+        observed = ladder.result_cases(before, header, end)
+        expected = dict(observed)
+        for index, row in observed.items():
+            prior = recorded[index]
+            if (row["status"] == "complete") != (prior["status"] == "complete") or any(
+                row[key] != prior[key] for key in ("root_rule", "rank_one_sha256")
+            ):
+                raise ValueError(f"Baseline complete status or selected tree drifted at N{index}")
+            if index in new:
+                if row != new[index]["before"] or row["status"] == "complete":
+                    raise ValueError(f"Transfer target was not the expected failure at N{index}")
+                expected[index] = new[index]["after"]
+        pinned = {**before, "cases": list(expected.values()),
+                  "counts": dict(Counter(row["status"] for row in expected.values()))}
+        check_result(end, header, pinned, after)
+        counts["sources"] += len(expected)
+        counts["complete_before"] += before["counts"].get("complete", 0)
+        counts["complete_after"] += after["counts"].get("complete", 0)
+    if counts["complete_after"] - counts["complete_before"] != len(new):
+        raise ValueError("A registered transfer repair was not verified")
+    return {**counts, "recovered": sorted(new)}
+
+
 def repair_queue(source_manifest, groups, out_dir):
     unresolved = []
     for end, group in groups.items():
@@ -272,9 +313,11 @@ def inspect_case(index, groups, bodies, replay_dir=None):
 
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
-    cli.add_argument("action", choices=("plan", "replay", "check", "snapshot", "inspect", "queue"))
+    cli.add_argument("action", choices=("plan", "replay", "check", "check-transfer", "snapshot", "inspect", "queue"))
     cli.add_argument("--wordnet-dir", type=Path)
     cli.add_argument("--out-dir", type=Path, help="Replay directory, optional for inspect")
+    cli.add_argument("--baseline-dir", type=Path, help="Before replay for check-transfer")
+    cli.add_argument("--review-pass", help="Registered repair pass for check-transfer")
     cli.add_argument("--group", choices=ENDS, type=int)
     cli.add_argument("--index", type=int, help="Frozen case index for inspect, defaults to first open case")
     args = cli.parse_args()
@@ -286,13 +329,19 @@ def main():
         cli.error("--out-dir is required except for inspect and queue")
     if args.action == "replay" and args.wordnet_dir is None:
         cli.error("replay requires --wordnet-dir")
+    if args.action == "check-transfer" and (args.baseline_dir is None or args.review_pass is None):
+        cli.error("check-transfer requires --baseline-dir and --review-pass")
     inventory = ladder.load_source_inventory()
     manifest, groups = prepare(inventory=inventory)
     pin = DIRECTORY / "source-manifest.json"
     if (pin.exists() or args.action in {"check", "inspect", "queue"}) and ladder.read_json(pin) != manifest:
         raise ValueError("Novel-1500 source selection drifted from its frozen anchors")
-    if args.action in {"inspect", "queue", "check"}:
+    if args.action in {"inspect", "queue", "check", "check-transfer"}:
         repairs = read_repairs(manifest)
+    if args.action == "check-transfer":
+        result = check_transfer(groups, repairs, args.review_pass, args.baseline_dir, args.out_dir)
+        print("NOVEL1500_TRANSFER", json.dumps(result, ensure_ascii=False), flush=True)
+        return
     if args.action == "queue":
         print(json.dumps(current_queue(manifest, repairs), ensure_ascii=False, indent=2))
         return
