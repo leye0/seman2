@@ -1,0 +1,69 @@
+name: Novel-1000 grammar generalization
+
+on:
+  push:
+    branches: [research/scoped-grammar-reuse]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: novel1000-generalization-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      BASELINE_COMMIT: 6bec2b3b1982f20af3d72330c6432042fdd577f7
+      PYTHONPATH: superparser
+      WORDNET_DICT: ${{ runner.temp }}/wordnet3/wordnet
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the pinned WordNet 3.0 data
+        run: |
+          python - <<'PY'
+          import os
+          from hashlib import sha256
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          source = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(source, headers={'User-Agent': 'Seman2-research'}), timeout=90) as stream:
+              raw = stream.read()
+          if sha256(raw).hexdigest() != 'cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59':
+              raise ValueError('Unexpected WordNet archive')
+          with ZipFile(BytesIO(raw)) as archive:
+              archive.extractall(Path(os.environ['WORDNET_DICT']).parent)
+          PY
+      - name: Run argument, recipe and source regression controls
+        run: |
+          python -m unittest -q \
+            superparser.tests.test_grammar_generalization_contract \
+            superparser.tests.test_shared_argument_groups \
+            superparser.tests.test_audit_novel1000_patterns \
+            superparser.tests.test_audit_scoped_rule_reuse \
+            superparser.tests.test_novel_reporting_v3 \
+            superparser.tests.test_novel1500_grammar_repairs
+      - name: Reproduce the historical v3 baseline without repinning it
+        run: |
+          mkdir -p "$RUNNER_TEMP/novel1000-base"
+          git archive "$BASELINE_COMMIT" superparser docs | tar -x -C "$RUNNER_TEMP/novel1000-base"
+          cd "$RUNNER_TEMP/novel1000-base"
+          python -m scripts.novel_source_reporting_v3 replay --group all \
+            --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/novel1000-before"
+      - name: Check all selected trees and only the reviewed graph additions
+        run: |
+          python -m scripts.novel_source_reporting_v3 replay --group all \
+            --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/novel1000-after"
+          python -m scripts.compare_novel1000_semantic_replay \
+            --baseline "$RUNNER_TEMP/novel1000-before" --candidate "$RUNNER_TEMP/novel1000-after"
