@@ -1,5 +1,9 @@
 # Audit de réutilisation des règles de composition
 
+Suite de cette recherche, limitée aux 1 000 passages v3 et séparant
+les traces du parseur des rattachements relus dans la source.
+Voir [Novel-1000 — motifs de composition à factoriser](NOVEL1000_GENERALIZABLE_PATTERNS.md).
+
 Base observée : [`91d942c`][base], après le lot 1 de Novel-1500. Le présent
 audit ne modifie ni le parseur, ni la grammaire, ni les corpus. Il distingue
 **répétition de forme**, **répétition d'opération grammaticale** et
