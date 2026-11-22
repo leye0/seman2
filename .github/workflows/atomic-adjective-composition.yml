@@ -1,0 +1,44 @@
+name: Atomic adjective composition experiment
+on:
+  push:
+    branches: [research/atomic-adjective-composition]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      PYTHONPATH: superparser
+      WORDNET_DICT: /tmp/seman2-wordnet3/wordnet
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned WordNet
+        run: |
+          python - <<'PY'
+          import os
+          from hashlib import sha256
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          url = 'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip'
+          with urlopen(Request(url, headers={'User-Agent': 'Seman2-research'}), timeout=90) as r:
+              raw = r.read()
+          expected = 'cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59'
+          if sha256(raw).hexdigest() != expected:
+              raise ValueError('WordNet archive hash mismatch')
+          with ZipFile(BytesIO(raw)) as z:
+              z.extractall(Path(os.environ['WORDNET_DICT']).parent)
+          PY
+      - name: Probe independent adjective phrase composition and authentic N1306
+        run: python -m scripts.probe_atomic_adjp_transfer
+      - name: Run grammar and composition regression controls
+        run: |
+          python -m unittest -q             superparser.tests.test_composition_interface_contract             superparser.tests.test_grammar_generalization_contract             superparser.tests.test_novel1500_grammar_repairs
