@@ -40,12 +40,12 @@ def main() -> None:
     case = groups[1400][1][5]
     assert case["transfer_id"] == "N1306", case.get("transfer_id")
     parser = Parser(ParserResources.from_dir(DATA, wordnet_dict=WORDNET))
-    _, _, report = parse_corpus_case(parser, case)
-    top = report.result.best()
+    _, _, result = parse_corpus_case(parser, case)
+    top = result.best()
     results.append({"text": case["text"], "case": "N1306",
-                    "complete": report.result.completed,
+                    "complete": result.completed,
                     "best_rule": top.rule_id if top else None,
-                    "stats": {k: report.result.stats.get(k) for k in
+                    "stats": {k: result.stats.get(k) for k in
                         ("kbest_budget_exceeded","budget_exceeded","root_count")}})
     print(json.dumps(results, indent=2, ensure_ascii=False))
     if not results[0]["complete"]:
