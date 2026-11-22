@@ -40,13 +40,16 @@ def main() -> None:
     case = groups[1400][1][5]
     assert case["transfer_id"] == "N1306", case.get("transfer_id")
     parser = Parser(ParserResources.from_dir(DATA, wordnet_dict=WORDNET))
-    _, _, result = parse_corpus_case(parser, case)
+    prepared, _, result = parse_corpus_case(parser, case)
     top = result.best()
     results.append({"text": case["text"], "case": "N1306",
                     "complete": result.completed,
                     "best_rule": top.rule_id if top else None,
                     "stats": {k: result.stats.get(k) for k in
                         ("kbest_budget_exceeded","budget_exceeded","root_count")}})
+    parsed_again = parser.parse(prepared.analysis_text, structural_constituents=prepared.structural_constituents, **LIMITS)
+    graph = parsed_again.best_semantic_graph()
+    print("N1306_SEMANTIC_GRAPH", json.dumps(graph, ensure_ascii=False)[:12000])
     print(json.dumps(results, indent=2, ensure_ascii=False))
     if not results[0]["complete"]:
         raise SystemExit("No general adjective phrase composition")
