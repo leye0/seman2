@@ -42,3 +42,30 @@ jobs:
       - name: Run grammar and composition regression controls
         run: |
           python -m unittest -q             superparser.tests.test_composition_interface_contract             superparser.tests.test_grammar_generalization_contract             superparser.tests.test_novel1500_grammar_repairs
+      - name: Replay the authentic N1301-N1400 rung before and after
+        run: |
+          mkdir -p "$RUNNER_TEMP/base"
+          git archive 6cbdcd4fbc2326ffba6cd00e19a53dcbe03f99b9 superparser docs | tar -x -C "$RUNNER_TEMP/base"
+          (cd "$RUNNER_TEMP/base" && python -m scripts.novel1500_exploratory replay --group 1400 --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/atomic-before")
+          python -m scripts.novel1500_exploratory replay --group 1400 --wordnet-dir "$WORDNET_DICT" --out-dir "$RUNNER_TEMP/atomic-after"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          def cases(suffix):
+              p = root / ('atomic-' + suffix) / 'novel-1400-result.json'
+              return {r['index']: r for r in json.loads(p.read_text())['cases']}
+          before, after = cases('before'), cases('after')
+          gains = [i for i in before if before[i]['status'] != 'complete' and after[i]['status'] == 'complete']
+          losses = [i for i in before if before[i]['status'] == 'complete' and after[i]['status'] != 'complete']
+          changes = [i for i in before if before[i]['status'] == 'complete' and after[i]['status'] == 'complete'
+                     and (before[i]['rank_one_sha256'], before[i]['selected_graph_sha256'])
+                     != (after[i]['rank_one_sha256'], after[i]['selected_graph_sha256'])]
+          print(json.dumps({'gains':gains,'losses':losses,'changed_existing':changes,
+                            'before_complete':sum(x['status']=='complete' for x in before.values()),
+                            'after_complete':sum(x['status']=='complete' for x in after.values())}))
+          if 1306 not in gains:
+              raise SystemExit('Expected authentic N1306 transfer not found')
+          if losses:
+              raise SystemExit('Existing coverage loss on the held-out rung')
+          PY
