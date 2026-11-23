@@ -133,7 +133,7 @@ def main() -> None:
                 "text": expected.text,
                 "gold": [asdict(w) for w in expected.tokens],
                 "predicted": [asdict(w) for w in predicted],
-            }, ensure_ascii=False) + "\\n")
+            }, ensure_ascii=False) + "\n")
     report = compare_to_gold(gold, predictions)
     # A second held-out measurement deliberately withholds gold tokenization
     # and sentence boundaries, matching deployment on raw Novel prose.
