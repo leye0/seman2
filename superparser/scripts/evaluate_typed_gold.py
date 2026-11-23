@@ -79,6 +79,7 @@ def main() -> None:
             for key in ("gold","original_correct","original_predicted","proposed",
                         "proposed_correct","new_correct","new_false",
                         "supported_new_correct","supported_new_false",
+                        "admissible_new_correct","admissible_new_false",
                         "gold_missing_in_all_candidates"):
                 alternatives_totals[key] += edge_score[key]
             alternatives_totals["sentences_with_new_proposals"] += (
@@ -202,6 +203,16 @@ def main() -> None:
                 alternatives_totals["supported_new_false"]),6)
             if (alternatives_totals["supported_new_correct"]+
                 alternatives_totals["supported_new_false"]) else None),
+        "admissible_new_candidate_precision": (
+            round(alternatives_totals["admissible_new_correct"] / (
+                alternatives_totals["admissible_new_correct"]+
+                alternatives_totals["admissible_new_false"]),6)
+            if (alternatives_totals["admissible_new_correct"]+
+                alternatives_totals["admissible_new_false"]) else None),
+        "admissible_oracle_recall": (
+            round((alternatives_totals["original_correct"]+
+                   alternatives_totals["admissible_new_correct"])/alternatives_totals["gold"],6)
+            if alternatives_totals["gold"] else None),
         "witnesses": alternatives_witnesses,
         "not_a_selected_parse_score": True,
         "unlicensed_candidates_count_as_candidates": True,
