@@ -78,3 +78,35 @@ Les corpus externes et les modèles ne sont pas copiés dans la branche, mais t�
 5. Supprimer progressivement une famille de patrons spécialisés seulement lorsqu'une règle générique correctement évaluée la remplace.
 
 **Critère de réussite du projet :** réduire la nécessité d'ajouter des patrons lors du passage à un nouveau corpus, tout en augmentant la justesse des rattachements et sans confondre absence de preuve et preuve négative.
+
+## Premier résultat empirique sur une vérité terrain indépendante
+
+La passe UD English EWT **TEST** compare les dépendances Stanza à 2 077 arbres
+de référence. Le modèle reçoit les frontières des mots (pas les dépendances ni
+les POS). Le premier passage a mesuré **UAS 90,7627 %**, **LAS 88,3478 %**,
+**UPOS 96,7721 %** sur tous les tokens, avec alignement complet.
+Les opérations adjectivales (correspondance exacte tête/dépendant) :
+
+| Opération | Gold | Prévu | Correct | P | R |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ADV qui modifie ADJ | 256 | 232 | 213 | 91,81 % | 83,20 % |
+| PP `to` candidat | 18 | 15 | 15 | 100 % | 83,33 % |
+| Infinitif `to` candidat | 20 | 32 | 19 | 59,38 % | 95 % |
+
+**Attention :** ceci mesure d'abord Stanza, pas un gain obtenu par le POC.
+Les petits effectifs PP et infinitifs limitent fortement la portée de leurs
+pourcentages. Aucune conclusion n'est possible sur la vraie sélection
+lexicale contre l'adjonction; elle n'est pas annotée par ce test.
+
+Pour éviter de surestimer la qualité, une seconde mesure sur **200 phrases
+déterministiquement échantillonnées par SHA-256 d'identifiant** doit fournir le
+texte brut, sans frontières de mots, et compter chaque échec d'alignement comme
+une erreur. Le rapport enregistre les résultats bruts et ceux avec frontières
+de référence *sur les mêmes phrases*. Les échecs de rattachement explicites
+seront exportés pour faire une revue linguistique, sans les recycler comme
+de nouvelles règles sur mesure.
+
+Le premier exécutable de la mesure a obtenu les chiffres mais échoué en fin
+de CI à cause d'un `KeyError` sur un compteur absent à zéro. Correction dans
+cette branche : lecture `get("unaligned_sentences", 0)`. Ne pas appeler la
+validation complète verte avant le second rejeu.

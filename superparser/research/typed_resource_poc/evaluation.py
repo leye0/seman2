@@ -79,6 +79,9 @@ def compare_to_gold(gold: Sequence[GoldSentence], predictions: Sequence[Sequence
     counts = Counter()
     per_kind: dict[str, Counter] = {}
     failures: list[dict[str, Any]] = []
+    incorrect_examples: list[dict[str, Any]] = []
+    adjective_errors: list[dict[str, Any]] = []
+    label_confusions: Counter[str] = Counter()
     for expected, predicted in zip(gold, predictions):
         g = list(expected.tokens)
         p = list(predicted)
@@ -98,6 +101,18 @@ def compare_to_gold(gold: Sequence[GoldSentence], predictions: Sequence[Sequence
         # Gold syntactic relations contribute to recall even for unaligned input.
         gold_keys = observation_keys(g)
         predicted_keys = observation_keys(p) if aligned else set()
+        for key in sorted(gold_keys - predicted_keys):
+            if len(adjective_errors) < 40:
+                adjective_errors.append({"sent_id": expected.sent_id,
+                                         "error": "gold_relation_missing",
+                                         "kind": key[0], "head_id": key[1],
+                                         "dependent_id": key[2]})
+        for key in sorted(predicted_keys - gold_keys):
+            if len(adjective_errors) < 40:
+                adjective_errors.append({"sent_id": expected.sent_id,
+                                         "error": "predicted_relation_not_in_gold",
+                                         "kind": key[0], "head_id": key[1],
+                                         "dependent_id": key[2]})
         for kind in sorted(set(k for k,_,_ in gold_keys | predicted_keys)):
             stats = per_kind.setdefault(kind, Counter())
             gset = {x for x in gold_keys if x[0] == kind}
@@ -113,6 +128,18 @@ def compare_to_gold(gold: Sequence[GoldSentence], predictions: Sequence[Sequence
                 counts["upos_correct"] += 1
             counts["uas_correct"] += int(gw.head == pw.head)
             counts["las_correct"] += int(gw.head == pw.head and gw.deprel == pw.deprel)
+            if gw.head != pw.head or gw.deprel != pw.deprel:
+                label_confusions[f"{gw.deprel} => {pw.deprel}"] += 1
+                if len(incorrect_examples) < 45:
+                    g_by_id = {item.id:item for item in g}
+                    p_by_id = {item.id:item for item in p}
+                    incorrect_examples.append({
+                        "sent_id": expected.sent_id, "token":gw.text, "token_id":gw.id,
+                        "gold_head":g_by_id.get(gw.head).text if gw.head in g_by_id else "ROOT",
+                        "predicted_head":p_by_id.get(pw.head).text if pw.head in p_by_id else "ROOT",
+                        "gold_relation":gw.deprel, "predicted_relation":pw.deprel,
+                        "gold_upos":gw.upos, "predicted_upos":pw.upos,
+                    })
             if gw.upos != "PUNCT":
                 counts["uas_nonpunct_correct"] += int(gw.head == pw.head)
                 counts["las_nonpunct_correct"] += int(gw.head == pw.head and gw.deprel == pw.deprel)
@@ -140,6 +167,9 @@ def compare_to_gold(gold: Sequence[GoldSentence], predictions: Sequence[Sequence
             for kind,c in sorted(per_kind.items())
         },
         "alignment_failures": failures,
+        "example_incorrect_attachments": incorrect_examples,
+        "example_adjectival_relation_errors": adjective_errors,
+        "top_relation_label_confusions": dict(label_confusions.most_common(25)),
         "conditions": {
             "gold_tokens_supplied": True,
             "gold_pos_supplied": False,

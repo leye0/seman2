@@ -99,6 +99,53 @@ def main() -> None:
         if i % 250 == 0:
             print("GOLD_PROGRESS", i, "of", len(gold), "alignment_errors", len(unexpected), flush=True)
     report = compare_to_gold(gold, predictions)
+    # A second held-out measurement deliberately withholds gold tokenization
+    # and sentence boundaries, matching deployment on raw Novel prose.
+    # Sample is chosen by stable sent_id hash, never by the model outcomes.
+    from hashlib import sha256
+    indices = sorted(range(len(gold)),
+                     key=lambda i: sha256(gold[i].sent_id.encode("utf-8")).hexdigest())
+    indices = indices[:min(len(gold), 200 if args.limit is None else 10)]
+    raw_gold = [gold[i] for i in indices]
+    raw_parser = stanza.Pipeline("en", processors="tokenize,pos,lemma,depparse",
+                                dir=str(args.cache_dir / "stanza"), use_gpu=False,
+                                tokenize_pretokenized=False, verbose=False)
+    raw_predictions = []
+    raw_failed = []
+    for g in raw_gold:
+        try:
+            doc = raw_parser(g.text)
+            if len(doc.sentences) != 1:
+                raise ValueError(f"raw parser split into {len(doc.sentences)} sentences")
+            pw = tuple(Word(id=int(w.id), text=w.text,
+                            lemma=(w.lemma or w.text).lower(), upos=w.upos or "X",
+                            head=int(w.head), deprel=w.deprel or "dep",
+                            features=w.feats or "") for w in doc.sentences[0].words)
+        except Exception as exc:
+            pw = ()
+            raw_failed.append({"sent_id":g.sent_id, "error":str(exc)[:250]})
+        raw_predictions.append(pw)
+    raw_report = compare_to_gold(raw_gold, raw_predictions)
+    token_gold_report = compare_to_gold(raw_gold, [predictions[i] for i in indices])
+    report["raw_input_evaluation"] = {
+        "selection": "200 stable SHA256(sent_id) samples from UD-EWT TEST",
+        "n_sentences": len(raw_gold),
+        "metrics": raw_report["metrics"],
+        "counts": raw_report["counts"],
+        "adjectival_relations": raw_report["adjectival_relations"],
+        "reference_tokenization_on_same_subset": token_gold_report["metrics"],
+        "raw_sample_source_ids_sha256": sha256(
+            "\\n".join(g.sent_id for g in raw_gold).encode("utf-8")).hexdigest(),
+        "errors": raw_failed[:20],
+        "gold_tokens_supplied": False,
+        "gold_sentence_boundaries_supplied": False,
+        "unmatched_sentences_in_denominator": True,
+    }
+    print("RAW_INPUT_EVALUATION", json.dumps({
+        "n":len(raw_gold), "raw_metrics":raw_report["metrics"],
+        "gold_token_metrics_same_cases":token_gold_report["metrics"],
+        "unaligned":raw_report["counts"].get("unaligned_sentences",0),
+    }), flush=True)
     report["schema"] = "seman2-independent-ud-ewt-heldout-gold-v1"
     report["gold_dataset"] = "UD_English-EWT_test"
     report["gold_revision"] = UD_COMMIT
@@ -128,7 +175,7 @@ def main() -> None:
         "composition": report["typed_composition"],
     }), flush=True)
     if args.limit is None and (
-        report["counts"]["unaligned_sentences"] > 50 or
+        report["counts"].get("unaligned_sentences", 0) > 50 or
         report["counts"]["gold_sentences"] != expected_count
     ):
         raise SystemExit("Gold evaluation misalignment exceeds accepted diagnostic threshold")
