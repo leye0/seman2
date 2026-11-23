@@ -176,10 +176,22 @@ def controls(nlp, evidence: dict, wn) -> list[dict]:
         "The child who we met arrived.",
         "The extremely happy child arrived.",
     )
-    return [{"text": text,
-             "observations": parse_independent(text, nlp, evidence, wn)
-                 ["analysis"]["observed_grammatical_relations"]}
-            for text in examples]
+    controls = []
+    for text in examples:
+        report = parse_independent(text, nlp, evidence, wn)
+        controls.append({
+            "text": text,
+            "observations": report["analysis"]["observed_grammatical_relations"],
+            "proposed_grammar_alternatives": [
+                a for sentence in report["analysis"]["sentences"]
+                for a in sentence["typed_independent_alternatives"]
+            ],
+            "new_alternatives_not_in_stanza_tree": [
+                a for sentence in report["analysis"]["sentences"]
+                for a in sentence["typed_new_alternatives"]
+            ],
+        })
+    return controls
 
 
 def main():
