@@ -20,6 +20,7 @@ from research.typed_resource_poc.core import (
 )
 from research.typed_resource_poc.resources import export_inventory, load_wordnet
 from research.typed_resource_poc.composition import compose_adjective_projections
+from research.typed_resource_poc.alternatives import propose_alternative_attachments
 from research.verbnet_lr.corpus_pipeline import prepare_corpus_input
 from scripts import novel_source_reporting_v3 as novel
 from scripts import novel_ladder as ladder
@@ -99,6 +100,24 @@ def parse_independent(text: str, nlp, evidence: dict, wordnet) -> dict:
                 totals["hypotheses_with_ud_train_evidence"] += 1
         projections = compose_adjective_projections(
             words, evidence["ud"], evidence["erg"]["lexemes"])
+        alternatives = propose_alternative_attachments(
+            words, evidence["ud"], evidence["erg"]["lexemes"])
+        existing_relations = {
+            (obs["kind"], obs["head_id"], obs["dependent_id"])
+            for obs in grammatical_observations(words)
+        }
+        novel_alternatives = [
+            a for a in alternatives
+            if (a.kind,a.head,a.dependent) not in existing_relations
+        ]
+        totals["typed_alternative_candidates"] += len(alternatives)
+        totals["typed_alternatives_missing_from_original_tree"] += len(novel_alternatives)
+        totals["typed_new_alternatives_with_external_evidence"] += sum(
+            a.status != "unlicensed_structural_candidate"
+            for a in novel_alternatives)
+        totals["typed_new_alternatives_without_external_evidence"] += sum(
+            a.status == "unlicensed_structural_candidate"
+            for a in novel_alternatives)
         totals["typed_adjective_projections"] += len(projections)
         totals["typed_projections_with_multiple_operations"] += sum(
             len(p.operations) >= 2 for p in projections)
@@ -114,6 +133,12 @@ def parse_independent(text: str, nlp, evidence: dict, wordnet) -> dict:
                               "words": traces,
                               "typed_adjective_projections": [
                                   p.as_dict() for p in projections
+                              ],
+                              "typed_independent_alternatives": [
+                                  a.as_dict() for a in alternatives
+                              ],
+                              "typed_new_alternatives": [
+                                  a.as_dict() for a in novel_alternatives
                               ]})
         for token in sentence.tokens:
             if token.start_char is not None and token.end_char is not None:
@@ -258,6 +283,9 @@ def main():
         "adjective_to_infinitive_candidates": totals["adjective_to_infinitive_candidate"],
         "adjective_adverb_modification": totals["adjective_adverb_modification"],
         "typed_adjective_projections": totals["typed_adjective_projections"],
+        "new_independent_alternatives": totals["typed_alternatives_missing_from_original_tree"],
+        "new_alternatives_with_external_evidence": totals["typed_new_alternatives_with_external_evidence"],
+        "new_alternatives_without_external_evidence": totals["typed_new_alternatives_without_external_evidence"],
         "typed_projections_with_multiple_operations": totals["typed_projections_with_multiple_operations"],
         "typed_projections_modifier_and_complement": totals["typed_projections_modifier_and_complement"],
         "hypotheses_with_ud_train_evidence": totals["hypotheses_with_ud_train_evidence"],
