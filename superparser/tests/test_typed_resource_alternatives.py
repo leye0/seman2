@@ -73,6 +73,46 @@ class AlternativeSearchTests(unittest.TestCase):
             with self.subTest(text=" ".join(w.text for w in words)):
                 self.assertEqual(propose_alternative_attachments(words),())
 
+    def test_np_head_is_not_first_noun_in_compound(self):
+        words=(w(1,"prone","ADJ"),w(2,"to","ADP"),
+               w(3,"calcium","NOUN"),w(4,"deficiency","NOUN"))
+        a,=propose_alternative_attachments(words)
+        self.assertEqual(a.dependent,4)
+
+    def test_possessive_pronoun_does_not_steal_np_head(self):
+        words=(w(1,"useful","ADJ"),w(2,"to","ADP"),
+               w(3,"my","PRON",feats="Poss=Yes|PronType=Prs"),
+               w(4,"fellow","ADJ"),w(5,"beings","NOUN"))
+        a,=propose_alternative_attachments(words)
+        self.assertEqual(a.dependent,5)
+
+    def test_to_personal_pronoun_is_a_full_pp(self):
+        words=(w(1,"closer","ADJ"),w(2,"to","ADP"),
+               w(3,"me","PRON",feats="Case=Acc|PronType=Prs"))
+        a,=propose_alternative_attachments(words)
+        self.assertEqual(a.dependent,3)
+
+    def test_extraposed_infinitival_subject_not_xcomp(self):
+        words=(w(1,"It","PRON",feats="Case=Nom|Gender=Neut|Number=Sing|Person=3|PronType=Prs"),
+               w(2,"was","AUX",feats="VerbForm=Fin"),
+               w(3,"difficult","ADJ"),
+               w(4,"to","PART"),
+               w(5,"believe","VERB",feats="VerbForm=Inf"))
+        a,=propose_alternative_attachments(words)
+        self.assertEqual(a.kind,"adjective_extraposed_subject_candidate")
+        self.assertEqual(a.relation,"csubj")
+        self.assertNotIn("category",a.unsatisfied_valence)
+        self.assertFalse(a.as_dict()["selected_complement_proven"])
+
+    def test_referential_subject_not_automatically_expletive(self):
+        words=(w(1,"She","PRON",feats="Case=Nom|Gender=Fem|Number=Sing|PronType=Prs"),
+               w(2,"was","AUX",feats="VerbForm=Fin"),
+               w(3,"happy","ADJ"),
+               w(4,"to","PART"),
+               w(5,"help","VERB",feats="VerbForm=Inf"))
+        a,=propose_alternative_attachments(words)
+        self.assertEqual(a.kind,"adjective_to_infinitive_candidate")
+
     def test_valid_recovery_is_counted_and_false_attempt_is_visible(self):
         gold=(w(1,"averse","ADJ",0,"root"),
               w(2,"to","ADP",3,"case"),
