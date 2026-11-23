@@ -39,6 +39,12 @@ jobs:
       - name: Evaluate independent gold UD-EWT TEST
         run: |
           python -m scripts.evaluate_typed_gold --out-dir "$RUNNER_TEMP/typed-gold-full"
+      - name: Verify deterministic fast replay on frozen gold dependencies
+        run: |
+          python -m scripts.replay_typed_alternatives \
+            --pairs "$RUNNER_TEMP/typed-gold-full/frozen-gold-prediction-pairs.jsonl" \
+            --expected-gold-report "$RUNNER_TEMP/typed-gold-full/gold-evaluation.json" \
+            --out-dir "$RUNNER_TEMP/typed-fast-replay"
       - name: Evaluate the 1000 frozen Novel-v3 sources
         run: |
           python -m scripts.typed_resource_poc --out-dir "$RUNNER_TEMP/typed-full"
@@ -55,5 +61,6 @@ jobs:
             ${{ runner.temp }}/typed-gold-smoke/gold-evaluation.json
             ${{ runner.temp }}/typed-gold-full/gold-evaluation.json
             ${{ runner.temp }}/typed-gold-full/frozen-gold-prediction-pairs.jsonl
+            ${{ runner.temp }}/typed-fast-replay/fast-alternative-replay.json
           if-no-files-found: warn
           retention-days: 30
