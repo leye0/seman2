@@ -54,5 +54,6 @@ jobs:
             ${{ runner.temp }}/typed-full/cases.jsonl
             ${{ runner.temp }}/typed-gold-smoke/gold-evaluation.json
             ${{ runner.temp }}/typed-gold-full/gold-evaluation.json
+            ${{ runner.temp }}/typed-gold-full/frozen-gold-prediction-pairs.jsonl
           if-no-files-found: warn
           retention-days: 30
