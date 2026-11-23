@@ -87,7 +87,7 @@ def parse_independent(text: str, nlp, evidence: dict, wordnet) -> dict:
             elif obs["kind"] == "adjective_to_infinitive_candidate":
                 o["type_hypothesis"] = "adjective-with-to-infinitive"
             elif obs["kind"] == "adjective_adverb_modification":
-                o["type_hypothesis"] = "degree-adverb"  # candidate only, not asserted
+                o["type_hypothesis"] = "adjective-modifying-adverb"  # degree not established
             o["grammatical_features"] = TYPES.effective(o["type_hypothesis"])
             o["ud_train_evidence"] = classify_attestation(
                 obs["head"], obs["kind"], evidence["ud"])
