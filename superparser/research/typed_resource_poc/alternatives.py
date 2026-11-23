@@ -191,7 +191,18 @@ def propose_alternative_attachments(
         erg_types = _erg_compatible(erg.get(adj.lemma.casefold(), ()), category)
         # This is a lexical *candidate*. An attested UD dependency is evidence
         # of compatible surface realization, not proof of argument selection.
-        if evidence["attestation_count"]:
+        # Cross-resource admissibility is stricter than either source alone.
+        # An ERG aj_cp_* type is NOT necessarily an infinitival VP complement:
+        # extraposed subject clauses and other CP types cannot be counted
+        # as the same operation as a selected aj_vp_* infinitive.
+        erg_valence_supported = bool(
+            category == "PP" and any(t.startswith("aj_pp_") for t in erg_types)
+            or category == "INFINITIVE" and not extraposed_subject
+            and any(t.startswith("aj_vp_") for t in erg_types)
+        )
+        if evidence["attestation_count"] and erg_valence_supported:
+            status = "cross_resource_admissible_candidate"
+        elif evidence["attestation_count"]:
             status = "externally_attested_candidate"
         elif erg_types:
             status = "erg_category_compatible_candidate"
@@ -247,10 +258,14 @@ def evaluate_alternatives(
     proposed_keys = {(c.kind,c.head,c.dependent) for c in candidates}
     attested = {(c.kind,c.head,c.dependent) for c in candidates
                 if c.status != "unlicensed_structural_candidate"}
+    admissible = {(c.kind,c.head,c.dependent) for c in candidates
+                  if c.status == "cross_resource_admissible_candidate"}
     recovered = (proposed_keys - original_keys) & gold_keys
     false_additions = (proposed_keys - original_keys) - gold_keys
     supported_recovered = (attested - original_keys) & gold_keys
     supported_false = (attested - original_keys) - gold_keys
+    admissible_recovered = (admissible - original_keys) & gold_keys
+    admissible_false = (admissible - original_keys) - gold_keys
     return {
         "gold": len(gold_keys),
         "original_correct": len(original_keys & gold_keys),
@@ -261,6 +276,12 @@ def evaluate_alternatives(
         "new_false": len(false_additions),
         "supported_new_correct": len(supported_recovered),
         "supported_new_false": len(supported_false),
+        "admissible_new_correct": len(admissible_recovered),
+        "admissible_new_false": len(admissible_false),
+        "admissible_new_candidate_precision": (
+            round(len(admissible_recovered) /
+                  (len(admissible_recovered) + len(admissible_false)), 6)
+            if (admissible_recovered or admissible_false) else None),
         "gold_missing_in_all_candidates": len(gold_keys - (original_keys | proposed_keys)),
         "gold_recoveries": [list(x) for x in sorted(recovered)],
         "false_additions": [list(x) for x in sorted(false_additions)[:12]],
