@@ -71,8 +71,10 @@ TYPES = TypeHierarchy([
             {"VALENCE": {"preposition": "to"}}),
     TypeDef("adjective-with-to-infinitive", ("adjective",),
             {"VALENCE": {"category": "INFINITIVE", "marker": "to"}}),
-    TypeDef("degree-adverb", ("lexical-head",), {"HEAD": {"pos": "ADV"},
-                                                 "MODIFIES": "ADJ"}),
+    TypeDef("adjective-modifying-adverb", ("lexical-head",),
+            {"HEAD": {"pos": "ADV"}, "MODIFIES": "ADJ"}),
+    TypeDef("degree-adverb", ("adjective-modifying-adverb",),
+            {"DEGREE": True}),
 ])
 
 
