@@ -110,7 +110,9 @@ def load_verbnet(compiled: Path) -> dict:
     with gzip.open(compiled, "rt", encoding="utf-8") as source:
         root = json.load(source)
     matches = defaultdict(set)
-    inventory = {"top_level_type": type(root).__name__,
+    frame_data = root.get("frames", []) if isinstance(root, dict) else []
+    sample = (frame_data[:1] if isinstance(frame_data, list) else list(frame_data.items())[:1])
+    inventory = {"frame_example": str(sample)[:1500], "top_level_type": type(root).__name__,
                  "top_level_keys": list(root)[:12] if isinstance(root, dict) else []}
 
     def walk(obj, classname: str | None = None, depth: int = 0):
