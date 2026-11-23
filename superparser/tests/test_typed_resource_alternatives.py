@@ -45,8 +45,32 @@ class AlternativeSearchTests(unittest.TestCase):
                 "adjective_to_pp_candidate":{"prone":3}}},
             {"prone":["aj_pp_i-obl_le","aj_cp_i_le"]})
         self.assertEqual(a.external_attestation_count,3)
-        self.assertEqual(a.status,"externally_attested_candidate")
+        self.assertEqual(a.status,"cross_resource_admissible_candidate")
         self.assertEqual(a.erg_compatible_types,("aj_pp_i-obl_le",))
+        self.assertFalse(a.as_dict()["selected_complement_proven"])
+
+    def test_two_independent_grammar_sources_are_required_to_admit(self):
+        words=(w(1,"ready","ADJ"),w(2,"to","PART"),
+               w(3,"mail","VERB",feats="VerbForm=Inf"))
+        independent_erg={"ready":["aj_vp_i-prty_le","aj_cp_i-it_le"]}
+        empty_ud={"source":"UD_EWT_train","patterns":{}}
+        structural,=propose_alternative_attachments(words,empty_ud,independent_erg)
+        self.assertNotEqual(structural.status,"cross_resource_admissible_candidate")
+        attested={"source":"UD_EWT_train","patterns":{
+            "adjective_to_infinitive_candidate":{"ready":15}}}
+        combined,=propose_alternative_attachments(words,attested,independent_erg)
+        self.assertEqual(combined.status,"cross_resource_admissible_candidate")
+        self.assertFalse(combined.as_dict()["selected_complement_proven"])
+        only_clausal,=propose_alternative_attachments(
+            words,attested,{"ready":["aj_cp_i-it_le"]})
+        self.assertNotEqual(only_clausal.status,"cross_resource_admissible_candidate")
+
+    def test_ud_occurrence_alone_is_not_a_lexical_valence_license(self):
+        words=(w(1,"averse","ADJ"),w(2,"to","ADP"),w(3,"delay","NOUN"))
+        ud={"source":"UD_EWT_train","patterns":{
+            "adjective_to_pp_candidate":{"averse":8}}}
+        a,=propose_alternative_attachments(words,ud,{})
+        self.assertEqual(a.status,"externally_attested_candidate")
         self.assertFalse(a.as_dict()["selected_complement_proven"])
 
     def test_infinitive_and_pp_are_distinct_grammatical_candidates(self):
