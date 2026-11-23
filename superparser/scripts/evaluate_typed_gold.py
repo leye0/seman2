@@ -122,6 +122,18 @@ def main() -> None:
                 })
         if i % 250 == 0:
             print("GOLD_PROGRESS", i, "of", len(gold), "alignment_errors", len(unexpected), flush=True)
+    # Freeze both gold and predicted token/edge data for deterministic, rapid
+    # offline grammar experiments. Later changes must not retrain on TEST.
+    from dataclasses import asdict
+    with (args.out_dir / "frozen-gold-prediction-pairs.jsonl").open(
+            "w", encoding="utf-8") as stream:
+        for expected, predicted in zip(gold, predictions):
+            stream.write(json.dumps({
+                "sent_id": expected.sent_id,
+                "text": expected.text,
+                "gold": [asdict(w) for w in expected.tokens],
+                "predicted": [asdict(w) for w in predicted],
+            }, ensure_ascii=False) + "\\n")
     report = compare_to_gold(gold, predictions)
     # A second held-out measurement deliberately withholds gold tokenization
     # and sentence boundaries, matching deployment on raw Novel prose.
