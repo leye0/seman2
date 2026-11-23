@@ -14,6 +14,9 @@ from pathlib import Path
 from research.typed_resource_poc.core import Word
 from research.typed_resource_poc.evaluation import compare_to_gold, read_conllu
 from research.typed_resource_poc.composition import compose_adjective_projections
+from research.typed_resource_poc.alternatives import (
+    evaluate_alternatives, propose_alternative_attachments
+)
 from research.typed_resource_poc.resources import UD_COMMIT, download, load_erg
 from research.typed_resource_poc.core import induce_evidence
 
@@ -46,6 +49,8 @@ def main() -> None:
                              tokenize_pretokenized=True, verbose=False)
     predictions = []
     composition_counts = Counter()
+    alternatives_totals = Counter()
+    alternatives_witnesses = []
     unexpected = []
     case_examples = []
     for i, expected in enumerate(gold, 1):
@@ -67,6 +72,24 @@ def main() -> None:
             (g.id, g.text) == (p.id, p.text)
             for g,p in zip(expected.tokens, words)
         ):
+            independent_alternatives = propose_alternative_attachments(
+                words, train_evidence, erg["lexemes"])
+            edge_score = evaluate_alternatives(
+                expected.tokens, words, independent_alternatives)
+            for key in ("gold","original_correct","original_predicted","proposed",
+                        "proposed_correct","new_correct","new_false",
+                        "supported_new_correct","supported_new_false",
+                        "gold_missing_in_all_candidates"):
+                alternatives_totals[key] += edge_score[key]
+            alternatives_totals["sentences_with_new_proposals"] += (
+                edge_score["new_correct"] + edge_score["new_false"] > 0)
+            if len(alternatives_witnesses) < 40 and (
+                edge_score["new_correct"] or edge_score["supported_new_false"]):
+                alternatives_witnesses.append({
+                    "sent_id": expected.sent_id, "text": expected.text,
+                    "score": edge_score,
+                    "candidates": [a.as_dict() for a in independent_alternatives],
+                })
             projections = compose_adjective_projections(
                 words, train_evidence, erg["lexemes"])
             composition_counts["sentences_with_composition"] += bool(projections)
@@ -154,6 +177,36 @@ def main() -> None:
     report["full_test_evaluated"] = len(gold) == expected_count
     report["stanza_version"] = stanza.__version__
     report["typed_composition"] = dict(composition_counts)
+    report["independent_attachment_alternatives"] = {
+        **dict(alternatives_totals),
+        "source": "Typed constituent generation independent of selected Stanza edges",
+        "baseline_recall": (
+            round(alternatives_totals["original_correct"]/alternatives_totals["gold"],6)
+            if alternatives_totals["gold"] else None),
+        "oracle_recall_with_candidates": (
+            round((alternatives_totals["original_correct"]+
+                   alternatives_totals["new_correct"])/alternatives_totals["gold"],6)
+            if alternatives_totals["gold"] else None),
+        "proposed_precision": (
+            round(alternatives_totals["proposed_correct"]/alternatives_totals["proposed"],6)
+            if alternatives_totals["proposed"] else None),
+        "new_candidate_precision": (
+            round(alternatives_totals["new_correct"] / (
+                alternatives_totals["new_correct"]+
+                alternatives_totals["new_false"]),6)
+            if (alternatives_totals["new_correct"]+
+                alternatives_totals["new_false"]) else None),
+        "supported_new_candidate_precision": (
+            round(alternatives_totals["supported_new_correct"] / (
+                alternatives_totals["supported_new_correct"]+
+                alternatives_totals["supported_new_false"]),6)
+            if (alternatives_totals["supported_new_correct"]+
+                alternatives_totals["supported_new_false"]) else None),
+        "witnesses": alternatives_witnesses,
+        "not_a_selected_parse_score": True,
+        "unlicensed_candidates_count_as_candidates": True,
+        "claims": "UD-head candidates only, not validated lexical selection",
+    }
     report["compositional_examples"] = case_examples
     report["exceptions"] = unexpected[:30]
     report["conclusions"] = {
@@ -173,6 +226,9 @@ def main() -> None:
         "alignment": report["metrics"]["alignment_rate"],
         "adjective_relations": report["adjectival_relations"],
         "composition": report["typed_composition"],
+        "alternative_search": {k:v for k,v in
+            report["independent_attachment_alternatives"].items()
+            if k not in {"witnesses","claims","source"}},
     }), flush=True)
     if args.limit is None and (
         report["counts"].get("unaligned_sentences", 0) > 50 or
