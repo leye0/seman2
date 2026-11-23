@@ -56,29 +56,79 @@ class AttachmentCandidate:
 
 
 def _phrase_head(words: Sequence[Word], start: int) -> tuple[str, int] | None:
-    """Only identify a minimal NP or infinitival VP by its grammatical POS.
+    """Find a minimal constituent head by phrase structure, not by first noun.
 
-    A delimiter or unsupported phrase structure terminates the attempt.
-    Crucially, dependency links are not inspected here.
+    Within a NP, a possessive pronoun is not the nominal head and a nominal
+    compound (credit review, calcium deficiency) is headed by its final
+    common noun. This deliberately excludes discontinuous constituents and
+    full clausal parses; no dependency edge is consulted.
     """
     if start >= len(words):
         return None
     i = start
+    nominal_head: int | None = None
+    nominal_kind: str | None = None
     while i < len(words):
         w = words[i]
         if w.upos in _BREAK:
-            return None
-        if w.upos in _NP_HEAD:
-            return "PP", w.id
-        if w.upos in _VERBAL_HEAD:
-            # Do not promote a finite verb to an infinitival complement.
+            break
+        if w.upos in {"VERB", "AUX"}:
+            if nominal_head is not None:
+                break
             if "VerbForm=Fin" in w.features or "Mood=Ind" in w.features:
                 return None
             return "INFINITIVE", w.id
-        if w.upos not in _NP_PREFIX | _VERBAL_PREFIX:
-            return None
-        i += 1
-    return None
+        if w.upos == "PRON":
+            if "Poss=Yes" in w.features or "Case=Gen" in w.features:
+                # Possessive pronoun is a determiner of a following noun.
+                i += 1
+                continue
+            if nominal_head is None:
+                return "PP", w.id
+            break
+        if w.upos in {"NOUN", "PROPN"}:
+            if nominal_kind == "PROPN" and w.upos == "PROPN":
+                # UD often analyzes proper-name sequences as a flat unit
+                # headed by the first token rather than the last.
+                pass
+            else:
+                nominal_head, nominal_kind = w.id, w.upos
+            i += 1
+            continue
+        if w.upos == "NUM":
+            if nominal_head is None:
+                nominal_head, nominal_kind = w.id, "NUM"
+            i += 1
+            continue
+        if w.upos in {"DET","ADJ","ADV","PART"}:
+            if nominal_head is not None:
+                break
+            i += 1
+            continue
+        break
+    return ("PP", nominal_head) if nominal_head is not None else None
+
+
+def _extraposed_infinitival_subject_context(words: Sequence[Word], adjective_index: int) -> bool:
+    """Conservative morphological cue for expletive-subject extraposition.
+
+    A neuter third-person personal pronoun plus a preceding copula is evidence
+    for a possible *it is ADJ to ...* construction, not proof of csubj.
+    Neither dependency heads nor an adjective lemma is inspected.
+    """
+    window = []
+    for word in reversed(words[max(0, adjective_index-5):adjective_index]):
+        if word.upos in _BREAK:
+            break
+        window.append(word)
+    window.reverse()
+    copula = any(w.upos == "AUX" and w.lemma == "be" for w in window)
+    expletive_like = any(
+        w.upos == "PRON" and "Gender=Neut" in w.features
+        and "PronType=Prs" in w.features and "Number=Sing" in w.features
+        for w in window
+    )
+    return copula and expletive_like
 
 
 def _erg_compatible(type_names: Sequence[str], category: str) -> tuple[str, ...]:
@@ -125,10 +175,17 @@ def propose_alternative_attachments(
         if result is None:
             continue
         category, dependent = result
-        # This subtype choice uses grammatical syntax, NOT the head lexeme.
-        type_name = ("adjective-with-to-pp" if category == "PP"
+        # In an extraposed-subject construction the infinitival clause
+        # is a syntactic subject (csubj), NOT a lexical xcomp argument.
+        extraposed_subject = (category == "INFINITIVE" and
+                              _extraposed_infinitival_subject_context(words, i))
+        type_name = ("adjective-with-extraposed-infinitival-subject"
+                     if extraposed_subject else
+                     "adjective-with-to-pp" if category == "PP"
                      else "adjective-with-to-infinitive")
-        kind = ("adjective_to_pp_candidate" if category == "PP"
+        kind = ("adjective_extraposed_subject_candidate"
+                if extraposed_subject else
+                "adjective_to_pp_candidate" if category == "PP"
                 else "adjective_to_infinitive_candidate")
         evidence = classify_attestation(adj.lemma, kind, ud)
         erg_types = _erg_compatible(erg.get(adj.lemma.casefold(), ()), category)
@@ -148,7 +205,7 @@ def propose_alternative_attachments(
             head=adj.id,
             dependent=dependent,
             marker=marker.id,
-            relation="obl_or_nmod" if category == "PP" else "xcomp",
+            relation="csubj" if extraposed_subject else ("obl_or_nmod" if category == "PP" else "xcomp"),
             lexical_head_lemma=adj.lemma.casefold(),
             head_features=head_features,
             unsatisfied_valence=signature["VALENCE"],
@@ -156,7 +213,8 @@ def propose_alternative_attachments(
             erg_compatible_types=erg_types,
             status=status,
             rationale=(
-                "typed_head_complement_schema",
+                ("typed_extraposed_subject_schema" if extraposed_subject
+                 else "typed_head_complement_schema"),
                 "independent_POS_constituent_recognition",
                 "overt_to_marker",
                 "HEAD_preserved",
