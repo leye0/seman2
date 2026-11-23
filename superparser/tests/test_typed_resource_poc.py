@@ -1,6 +1,11 @@
 """Independent grammatical contracts for the multi-resource POC."""
 import unittest
+import gzip
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
+from research.typed_resource_poc.resources import load_verbnet
 from research.typed_resource_poc.core import (
     TYPES, TypeConflict, TypeDef, TypeHierarchy, Word, classify_attestation,
     grammatical_observations, induce_evidence, nonwhitespace_coverage,
@@ -14,6 +19,28 @@ class FeatureSystemTests(unittest.TestCase):
         self.assertEqual(typ["HEAD"]["pos"], "ADJ")
         self.assertEqual(typ["VALENCE"], {"category": "PP", "preposition": "to"})
         self.assertNotEqual(typ["VALENCE"], TYPES.effective("adjective-with-to-infinitive")["VALENCE"])
+
+    def test_general_adjective_modifier_is_not_necessarily_degree(self):
+        general = TYPES.effective("adjective-modifying-adverb")
+        self.assertEqual(general["MODIFIES"], "ADJ")
+        self.assertNotIn("DEGREE", general)
+        self.assertTrue(TYPES.effective("degree-adverb")["DEGREE"])
+
+    def test_compiled_verbnet_frames_provide_lexical_class_candidates(self):
+        sample = {"schema": "test", "frames": [
+            {"lemma": "abandon", "class": "leave-51.2", "symbols": [["NP"]], "roles": ["Source"]},
+            {"lemma": "abandon", "class": "leave-51.2", "symbols": [["NP", "NP"]], "roles": ["Source"]},
+            {"lemma": "leave", "class": "escape-51.1", "symbols": [], "roles": []},
+        ]}
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / "verbnet.json.gz"
+            with gzip.open(path, "wt", encoding="utf-8") as out:
+                json.dump(sample, out)
+            loaded = load_verbnet(path)
+        self.assertEqual(loaded["frame_count"], 3)
+        self.assertEqual(loaded["lemma_count"], 2)
+        self.assertEqual(loaded["lemmas"]["abandon"], ["leave-51.2"])
+        self.assertEqual(loaded["lemmas"]["leave"], ["escape-51.1"])
 
     def test_unification_rejects_incompatible_claims(self):
         with self.assertRaises(TypeConflict):
