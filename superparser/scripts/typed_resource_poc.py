@@ -164,8 +164,8 @@ def main():
         "framenet_lexical_units": evidence["framenet"]["lexical_units"],
         "framenet_keys": evidence["framenet"]["entries"],
         "verbnet_lemmas": evidence["verbnet"]["lemma_count"],
+        "verbnet_frames": evidence["verbnet"]["frame_count"],
         "verbnet_structure": evidence["verbnet"]["top_level_keys"],
-        "verbnet_frame_sample": evidence["verbnet"]["frame_example"],
         "ud_patterns": evidence["ud"]["counts"]
     }), flush=True)
 
