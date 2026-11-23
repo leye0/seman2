@@ -19,6 +19,7 @@ from research.typed_resource_poc.core import (
     nonwhitespace_coverage, source_sha, validate_dependency_tree,
 )
 from research.typed_resource_poc.resources import export_inventory, load_wordnet
+from research.typed_resource_poc.composition import compose_adjective_projections
 from research.verbnet_lr.corpus_pipeline import prepare_corpus_input
 from scripts import novel_source_reporting_v3 as novel
 from scripts import novel_ladder as ladder
@@ -96,8 +97,24 @@ def parse_independent(text: str, nlp, evidence: dict, wordnet) -> dict:
             totals[obs["kind"]] += 1
             if o["ud_train_evidence"]["attestation_count"]:
                 totals["hypotheses_with_ud_train_evidence"] += 1
+        projections = compose_adjective_projections(
+            words, evidence["ud"], evidence["erg"]["lexemes"])
+        totals["typed_adjective_projections"] += len(projections)
+        totals["typed_projections_with_multiple_operations"] += sum(
+            len(p.operations) >= 2 for p in projections)
+        totals["typed_projections_modifier_and_complement"] += sum(
+            any(op.kind == "head_modifier" for op in p.operations)
+            and any(op.kind != "head_modifier" for op in p.operations)
+            for p in projections)
+        totals["typed_projection_heads_preserved"] += sum(
+            p.features["HEAD"]["pos"] == "ADJ"
+            and p.lexical_head_id in {w.id for w in words if w.upos == "ADJ"}
+            for p in projections)
         sentence_rows.append({"valid_tree": valid, "reason": reason,
-                              "words": traces})
+                              "words": traces,
+                              "typed_adjective_projections": [
+                                  p.as_dict() for p in projections
+                              ]})
         for token in sentence.tokens:
             if token.start_char is not None and token.end_char is not None:
                 coverage_spans.append((int(token.start_char), int(token.end_char)))
@@ -240,6 +257,9 @@ def main():
         "adjective_to_pp_candidates": totals["adjective_to_pp_candidate"],
         "adjective_to_infinitive_candidates": totals["adjective_to_infinitive_candidate"],
         "adjective_adverb_modification": totals["adjective_adverb_modification"],
+        "typed_adjective_projections": totals["typed_adjective_projections"],
+        "typed_projections_with_multiple_operations": totals["typed_projections_with_multiple_operations"],
+        "typed_projections_modifier_and_complement": totals["typed_projections_modifier_and_complement"],
         "hypotheses_with_ud_train_evidence": totals["hypotheses_with_ud_train_evidence"],
         "tokens_with_erg_class": totals["tokens_with_erg_class"],
         "tokens_with_framenet_candidates": totals["tokens_with_framenet_candidates"],
