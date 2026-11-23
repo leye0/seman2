@@ -106,40 +106,35 @@ def load_framenet(base: Path) -> dict:
 
 
 def load_verbnet(compiled: Path) -> dict:
-    """Index verb lemmas and class provenance from the existing compiled asset."""
+    """Index the existing VerbNet 3.4 compilation by lemma and class ID.
+
+    The packaged schema is `{"frames": [{"lemma": ..., "class": ...,
+    "symbols": ..., "roles": ...}, ...]}`. Do not interpret its frames as
+    nested VerbNet XML members or invent class names when evidence is absent.
+    """
     with gzip.open(compiled, "rt", encoding="utf-8") as source:
         root = json.load(source)
-    matches = defaultdict(set)
-    frame_data = root.get("frames", []) if isinstance(root, dict) else []
-    sample = (frame_data[:1] if isinstance(frame_data, list) else list(frame_data.items())[:1])
-    inventory = {"frame_example": str(sample)[:1500], "top_level_type": type(root).__name__,
-                 "top_level_keys": list(root)[:12] if isinstance(root, dict) else []}
-
-    def walk(obj, classname: str | None = None, depth: int = 0):
-        if depth > 18:
-            return
-        if isinstance(obj, dict):
-            this_class = obj.get("class_id", obj.get("vnclass", obj.get("ID", obj.get("id", classname))))
-            if not isinstance(this_class, str):
-                this_class = classname
-            for k,v in obj.items():
-                if k.lower() in {"members","member"}:
-                    items = v if isinstance(v, list) else [v]
-                    for x in items:
-                        if isinstance(x,str):
-                            matches[x.casefold()].add(this_class or "class_unspecified")
-                        elif isinstance(x,dict):
-                            lemma = x.get("name",x.get("lemma"))
-                            if isinstance(lemma,str):
-                                matches[lemma.casefold()].add(this_class or "class_unspecified")
-                walk(v, this_class, depth+1)
-        elif isinstance(obj,list):
-            for v in obj:
-                walk(v, classname, depth+1)
-
-    walk(root)
-    return {**inventory, "lemma_count": len(matches),
-            "lemmas": {key: sorted(value) for key,value in matches.items()}}
+    if not isinstance(root, dict) or not isinstance(root.get("frames"), list):
+        raise ValueError("Unexpected compiled VerbNet frame schema")
+    matches: dict[str, set[str]] = defaultdict(set)
+    valid_frames = 0
+    for row in root["frames"]:
+        if not isinstance(row, dict):
+            raise ValueError("Non-object in compiled VerbNet frames")
+        lemma, class_id = row.get("lemma"), row.get("class")
+        if not isinstance(lemma, str) or not lemma.strip():
+            raise ValueError("VerbNet frame without lexical lemma")
+        if not isinstance(class_id, str) or not class_id.strip():
+            raise ValueError("VerbNet frame without grammatical class")
+        matches[lemma.casefold()].add(class_id)
+        valid_frames += 1
+    return {
+        "top_level_type": type(root).__name__,
+        "top_level_keys": list(root)[:12],
+        "frame_count": valid_frames,
+        "lemma_count": len(matches),
+        "lemmas": {lemma: sorted(classes) for lemma, classes in matches.items()},
+    }
 
 
 def load_wordnet(base: Path) -> object:
