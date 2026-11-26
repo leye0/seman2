@@ -1,0 +1,85 @@
+name: Native ERG versus Seman2 external UD-EWT
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/native-erg-external.yml'
+      - 'superparser/scripts/evaluate_native_erg_external.py'
+permissions:
+  contents: read
+concurrency:
+  group: native-erg-external
+  cancel-in-progress: true
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned native tooling
+        run: |
+          set -euo pipefail
+          python -m pip install 'pydelphin==1.11.0' 'nltk==3.9.1'
+          mkdir -p "$RUNNER_TEMP/erg"
+          cd "$RUNNER_TEMP/erg"
+          curl --fail --location --retry 3 https://sweaglesw.org/linguistics/ace/download/ace-0.9.34-x86-64.tar.gz -o ace.tar.gz
+          tar -xzf ace.tar.gz
+          find . -type f -name ace -executable -print
+          ACE_BIN="$(find "$PWD" -type f -name ace -executable -print -quit)"
+          test -n "$ACE_BIN"
+          "$ACE_BIN" -V
+          echo "ACE_BIN=$ACE_BIN" >> "$GITHUB_ENV"
+          curl --fail --location --retry 3 https://github.com/delph-in/erg/releases/download/2025/erg-2025-x86-64-0.9.34.dat.bz2 -o erg.dat.bz2
+          bunzip2 erg.dat.bz2
+          echo "ERG_GRAMMAR=$PWD/erg.dat" >> "$GITHUB_ENV"
+          sha256sum "$ACE_BIN" erg.dat
+      - name: Download WordNet 3.0 (same lexical resource)
+        run: |
+          python - <<'PY'
+          from io import BytesIO
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          from zipfile import ZipFile
+          with urlopen(Request(
+              'https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip',
+              headers={'User-Agent': 'Seman2-research'}
+          ), timeout=90) as f:
+              raw = f.read()
+          target = Path('/tmp/seman2-wordnet3/dict')
+          target.mkdir(parents=True, exist_ok=True)
+          keep = {'lexnames', 'index.sense', 'frames.vrb', 'sentidx.vrb',
+                  'sents.vrb', 'cntlist.rev'}
+          for category in ('noun', 'verb', 'adj', 'adv'):
+              keep.update((f'index.{category}', f'data.{category}',
+                           f'{category}.exc'))
+          with ZipFile(BytesIO(raw)) as z:
+              for item in z.namelist():
+                  leaf = Path(item).name
+                  if item.startswith('wordnet/') and leaf in keep:
+                      (target / leaf).write_bytes(z.read(item))
+          PY
+      - name: Paired external smoke
+        run: |
+          python -m scripts.evaluate_native_erg_external --ace "$ACE_BIN" --grammar "$ERG_GRAMMAR" --wordnet-dir /tmp/seman2-wordnet3/dict --limit 10 --out-dir "$RUNNER_TEMP/external-smoke"
+      - name: Paired external gold evaluation
+        run: |
+          python -m scripts.evaluate_native_erg_external --ace "$ACE_BIN" --grammar "$ERG_GRAMMAR" --wordnet-dir /tmp/seman2-wordnet3/dict --limit 200 --out-dir "$RUNNER_TEMP/external-full"
+      - name: Publish gold targets and both native predictions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-erg-external
+          path: |
+            ${{ runner.temp }}/external-smoke/
+            ${{ runner.temp }}/external-full/
+          if-no-files-found: warn
+          retention-days: 30
