@@ -1,0 +1,706 @@
+{
+  "schema": "seman2-novel-ladder-review-v1",
+  "cohort_sha256": "92076729dc1ee5763c9981831b02af84e394f4d0daa7ebe05ad8a1c014660687",
+  "cases": [
+    {
+      "index": 601,
+      "verdict": "verified",
+      "evidence": "The selected subject I and base predicate answer are unchanged, with ability modal could and the original not both linked to answer. The independent control without not has no NEGATION edge.",
+      "rank_one_sha256": "4cff89d82824f1f03608aa9c5f89c6e7e603d99f786fd30701211d7b7c39c875",
+      "selected_graph_sha256": "5a2c3a5ae26b81f0e6ce382c9299a6e7231e14ac2cda536f30fa7b26feae245f"
+    },
+    {
+      "index": 602,
+      "verdict": "verified",
+      "evidence": "The medium is the possessive answer NP, selected under in. The feelings remain the theme and the speaker remains the agent, distinct from a true recipient PP.",
+      "rank_one_sha256": "88ea198aeafedb866eeaf2ccf0c90d1906d9026e408f9092bac36e792ba7baee",
+      "selected_graph_sha256": "6c4b23addcaf2d569bdaa7c05aef3cbd5fa3e55bded9a490be558e1a5651e569"
+    },
+    {
+      "index": 603,
+      "verdict": "verified",
+      "evidence": "Discourse-return is an elliptical infinitival transition; no invented finite subject, with the topic explicitly attached to return.",
+      "rank_one_sha256": "f2868dff3e1d08dbd025a0880adc69ac2d4934cc65170345da36d7b4871a8066",
+      "selected_graph_sha256": "8e96428ecedac06323b1e1914020be141029ce6028ebcec43b1dec9ec9cc4f76"
+    },
+    {
+      "index": 604,
+      "verdict": "verified",
+      "evidence": "The information-denoting subject speech is the stimulus of the psychological predicate troubled. Its object me is the experiencer, not a physical patient.",
+      "rank_one_sha256": "9b300a2080b92a718a9dfac71aa6290ed3c1e29b4b137819aa4d5df09b4bdc86",
+      "selected_graph_sha256": "d9d306bcb263e19163b02922e1e2e33486138f70903e4838c826d61eee69370d"
+    },
+    {
+      "index": 605,
+      "verdict": "verified",
+      "evidence": "The quoted question selects do-support and a bare transitive answer. Why interrogates that predicate, roughly modifies it, and so grades roughly. Me is its direct argument.",
+      "rank_one_sha256": "7e52f57fcc397030e618363cea8551099decc38b7487ba115a213e5befdff7ec",
+      "selected_graph_sha256": "87df14db1a78c762788252a82b8a1de108f63a858421b21450620c33b80d791a"
+    },
+    {
+      "index": 606,
+      "verdict": "verified",
+      "evidence": "The copula is predicated of letter, not an agent. Both coordinated adjectives calm and affectionate are attributes, and the first-person possessive is retained.",
+      "rank_one_sha256": "0d34c599d50f22a136a825aabca90114f801f87a515061a5bd954173a3d80068",
+      "selected_graph_sha256": "f6ff3263526bc9bc17071712c428dbb277fa94ffe9961123df7d1ac9201bc96a"
+    },
+    {
+      "index": 607,
+      "verdict": "verified",
+      "evidence": "The direct object is the complete hand-of-Elizabeth noun phrase. Elizabeth is the hand's possessor and no longer the recipient of took.",
+      "rank_one_sha256": "166522fee471e472ea2a8c7debc8d9ad0e38807f62483d99d0759e432ee50965",
+      "selected_graph_sha256": "f40396cfc27b4c5a0c907b0d201c62bc8532ae3644aeed34c4af47a8a975e7f5"
+    },
+    {
+      "index": 608,
+      "verdict": "verified",
+      "evidence": "The matrix modal, agent and allude-to complement are connected. The headed relative links whom back to object, with I as experiencer of think under dared, not and even, independently of the matrix modal.",
+      "rank_one_sha256": "2de9feb12302bb80c4c723084cd6b4dab5bfc3ea7f5d8da6424648a10762619a",
+      "selected_graph_sha256": "0212b4530040f3ca12ece79496963b3282bd5e32991c1bd9e8f14731cddbb092"
+    },
+    {
+      "index": 609,
+      "verdict": "verified",
+      "evidence": "During this journey locates the arrival of the sensation in time, not the pronoun me. Me experiences the feeling, pleasure is its content, and often gives the frequency.",
+      "rank_one_sha256": "ae9328bc8ea60b2a508acced5aa9167aff1c214ed291dfdd1dc927a995948fb6",
+      "selected_graph_sha256": "3c8c5f9cade725cf2f70e3d19bfa9960f3b56cdf23f3e33ccc610d38dea2b838"
+    },
+    {
+      "index": 610,
+      "verdict": "verified",
+      "evidence": "In this house locates find. I controls the infinitival subject, a book volume is the object, and the works are explicitly attributed to Cornelius Agrippa.",
+      "rank_one_sha256": "c1d358aebb81df0883cf312fbc4482a1de578dd9d64cb1a12546bd02abb3c429",
+      "selected_graph_sha256": "0ff00637f27f8136ffe08369b1f62c1ac58e563882eb917ad4aa54db9c6e6e84"
+    },
+    {
+      "index": 611,
+      "verdict": "verified",
+      "evidence": "The original temporal cleft has a dummy It, a calendar focus at the latter end of September and a finite focal departure. The that-clause is not a complement of the noun end.",
+      "rank_one_sha256": "f9654589a84e85207a62fe4e33025c3c25ab75288b881a6bba7ae23a82c88090",
+      "selected_graph_sha256": "0896969dd117009ceb41bd23fcb42887daed9002a8f057683830233613c855cb"
+    },
+    {
+      "index": 612,
+      "verdict": "verified",
+      "evidence": "The selected verbal lemma for overt saw is SEE, not the unrelated sawing sense; the source has two coordinated visual/travel predicates and beautiful towns is the object of see.",
+      "rank_one_sha256": "54bc33db0be4f4cb1cefa9d3f852643b11583874c3498f9c396fac00df2ce10c",
+      "selected_graph_sha256": "021c79702affea2b5245ef4a0b403d63fb0da61ecc80c4cb0abb58c3be842caa"
+    },
+    {
+      "index": 613,
+      "verdict": "verified",
+      "evidence": "The reciprocal phrase fills the first verb's prepositional object and refers to the same plural group that controls the verbal complement of unable.",
+      "rank_one_sha256": "a6749b66e66e4448710d4c96890fae4ea928d7513822ade64cf4e8162a0525a1",
+      "selected_graph_sha256": "690091e2580a8105b736c488e24637f6fd6f04097352666cec655a5c442083c2"
+    },
+    {
+      "index": 614,
+      "verdict": "verified",
+      "evidence": "The thunder-ceasing and rain-continuing clauses contrast. Still marks persistence of continued. The third clause is a passive whose theme is scene and whose circumstance is impenetrable darkness.",
+      "rank_one_sha256": "d0ebb4df6fd589e9763e6019ec0bc76c9602fc76c1f7a9caa15e15e55535fed7",
+      "selected_graph_sha256": "f3e57e9f8adcac24824cb14ac888a59afa57c7e1dbdc13b7fdc1377cb65eb61c"
+    },
+    {
+      "index": 615,
+      "verdict": "verified",
+      "evidence": "A single overt modal and negation govern lead on; the as-clause is a subject-oriented concession and the two outcome nominals remain local results.",
+      "rank_one_sha256": "cf0b26b0689b00a957150cc49a2ac9ef2d54d079d7fc4ba15aeb6b8b40ce0641",
+      "selected_graph_sha256": "151f7fc4fbc7c11b16cf1263106d1fd167e79320f7037679758411eab4190470"
+    },
+    {
+      "index": 616,
+      "verdict": "verified",
+      "evidence": "Matlock is both the goal of proceeded and the antecedent and predicand of the supplementary place-of-rest relative. Oxford is the departure source and regret is accompanying affect, not a recipient.",
+      "rank_one_sha256": "ebabcc8bb7618033b30f9e8043f7a5d242f20bf3ea2db725092f1eb6e7a360d3",
+      "selected_graph_sha256": "a81c8758a767af8f0588d1b474615fd696d64b3bb1a98cc1294ec8f9507f2011"
+    },
+    {
+      "index": 617,
+      "verdict": "verified",
+      "evidence": "The movement through the isle is distinct from the simile. Within the depictive of the spectre, all has a zero object relative with overt it as subject of loved, which is a verb rather than an adjective.",
+      "rank_one_sha256": "92bd955047928f3f96123b4c69d867a839d49444daacdf33b2e5a072e881263f",
+      "selected_graph_sha256": "0314238fd349f9a7312742db39a11154346b750230452421b086ec62a4983aed"
+    },
+    {
+      "index": 618,
+      "verdict": "verified",
+      "evidence": "The image is the object of saw and is discerned in Clerval. The semicolon introduces an independent subject he. Both predicates describe him, and he controls gain with both nominal objects.",
+      "rank_one_sha256": "ace3b1758bab604bdc25a7e2e501d7ac75399e5b572901f6d5d66864216e01fd",
+      "selected_graph_sha256": "6880dedec173b6bb1faef3f32ff2646f1d65492c4c22181a1c75585c7e7705eb"
+    },
+    {
+      "index": 619,
+      "verdict": "verified",
+      "evidence": "The temporal As-night clause dates finding, with a locative relative belonging to cemetery and the three conjoined people as agents of repose; myself refers to I.",
+      "rank_one_sha256": "9778d1cfaa69c7644e0097f0b1c3c2defeaee279278096affaa526edd4f02ad9",
+      "selected_graph_sha256": "4f87baf63b08196fc76ad6533cc4f94d40023b423c3374247d05637c8b88ad0d"
+    },
+    {
+      "index": 620,
+      "verdict": "verified",
+      "evidence": "Days is the theme of spent and the temporal antecedent of during which. Strasbourg is the arrival destination and the antecedent of where, with Clerval awaited.",
+      "rank_one_sha256": "6db856da3414c50082b374ca1eb1f2102a6a98771a458221ace91bdfe2402ce5",
+      "selected_graph_sha256": "4efd7f1a154f0fa223e748aa481a0275067a27cd230a9b6fa065e2c6afca7d7d"
+    },
+    {
+      "index": 621,
+      "verdict": "verified",
+      "evidence": "Put and rubbed share They. Daniel's distinct motion predicate has town as destination and apothecary as the purpose of his errand. Life is the predicand of quite gone.",
+      "rank_one_sha256": "57b1f49a31ee79e5e230fbc66616af9c9ff7af54a92afbc0d09e7aebf9bdfd3f",
+      "selected_graph_sha256": "eac48386aa73c9126a30daf5917dfaaa9b96cbcbf3769d3c0e5c017216bc5c03"
+    },
+    {
+      "index": 622,
+      "verdict": "verified",
+      "evidence": "Who governs conceive and horrors is its object. Dabbled and tortured share the subordinate subject I. The purpose of torture is to animate the clay.",
+      "rank_one_sha256": "4e68c611c02c9588b8aef15ed9f39d3b8e244388863e81c8bba69549511d4d65",
+      "selected_graph_sha256": "aa9127e1992aa2b52b52db5cbb9c32b8a2eb744b7902b00f35a92d728afc5e4f"
+    },
+    {
+      "index": 623,
+      "verdict": "verified",
+      "evidence": "The scalar negative passive scopes to occupied, with but-that limiting it; himself is reflexive to the subordinate he, whose projects are the topic.",
+      "rank_one_sha256": "439d56231323bb36bbf19483df1a00c340f5e7ca7481403bd8714f69cb2031c7",
+      "selected_graph_sha256": "4f8d5cbe17c035ff5a75c24739832fd54f7615f98808012c4520ff0071b3a7a7"
+    },
+    {
+      "index": 624,
+      "verdict": "verified",
+      "evidence": "Two source-proven independent semicolon clauses; impelled is a depictive supplement of sprang, with by-feelings as its cause, a feelings-relative, a quantified one-being object and the nested genitive existence-of-another.",
+      "rank_one_sha256": "ea71a9087c9379f5b09b23c4f73307df93d55c152ffaa1ff46fca519bbea6280",
+      "selected_graph_sha256": "8bebe8d8bebaa91f9f37b333b4b215961d34a225a60710a3e28f7e4922a7f363"
+    },
+    {
+      "index": 625,
+      "verdict": "verified",
+      "evidence": "The quoted thank clause contrasts with all-that-you-mention copular evaluation; semicolon introduces distinct locative existential comfort; which-receiving is relative to comfort and capable scopes the infinitival complement. The prior semicolon and relative attachments are retained. The overt negative determiner now quantifies comfort within the existential, with the original relative still modifying comfort.",
+      "rank_one_sha256": "2bccbc154339dfc3950f8583c82a15676f00b3e745792a653b0a2713e625696c",
+      "selected_graph_sha256": "165f4210a4b3da06fd1e504b2dbf62749147a78a9bd5a93ebcabe3a77a4a3a16"
+    },
+    {
+      "index": 626,
+      "verdict": "verified",
+      "evidence": "The overt No is a negative answer act and sir addresses its hearer. The inverted reporting subject I stays the agent of said, with the answer as reported content.",
+      "rank_one_sha256": "acbb01943e5cc1fa5b7aca21a3c4c6c1aa4f56ea54b2cd019ae2b9417f734b35",
+      "selected_graph_sha256": "8fc413dcd8e76f18145ede60025a1491b1af4b366da833f6b2d28acd3242b097"
+    },
+    {
+      "index": 627,
+      "verdict": "verified",
+      "evidence": "The light-verb construction takes the action nominal step and the comparative nearer supplies direction, with I retained as the actor.",
+      "rank_one_sha256": "b6e0d07ed36a63611b953dbc490c84f7aaf26e3e5fd01cb9501b72570a5c1fcc",
+      "selected_graph_sha256": "dfe788417547403fc88b6c7629763f5ef385ebd73f2ceeb445a60e7d20535662"
+    },
+    {
+      "index": 628,
+      "verdict": "verified",
+      "evidence": "Fronted of Silver supplies the topic of hearing. The perfect auxiliary, first-person plural subject and negatively quantified further content remain separate.",
+      "rank_one_sha256": "8e0628bf8ed51b5cfc70e08a9fb01b6acf5dfaa29d0965645b5ed9a550337fd8",
+      "selected_graph_sha256": "a82147a8accd4a694a2aeccc0e551bc049d26ba55615843c712d2d5a16e7d30e"
+    },
+    {
+      "index": 629,
+      "verdict": "verified",
+      "evidence": "Doctor is the full subject and moved is the finite intransitive predicate. Never negates it and so much as is its scalar minimizer, with no false NP headed by as.",
+      "rank_one_sha256": "9d2424aa739cbf8d1b0fe7324e77ef0ce72a718bb267b3853e835401732aaaf7",
+      "selected_graph_sha256": "4d52d77eb41e947811dfd5746cfc2d89019dd9f90ca1ac59d19d54e4fecf8a90"
+    },
+    {
+      "index": 630,
+      "verdict": "verified",
+      "evidence": "A week remains the reported duration and at least is its lower bound. The final inverted I is the reporter's subject.",
+      "rank_one_sha256": "bc22c51820a1f151b97f86aa335d4c367a304aa413cb02d6d957860920514760",
+      "selected_graph_sha256": "945656e3eae67426df2210cb049d5cd4dfe850c1e2c2a3d8206db09c80554cef"
+    },
+    {
+      "index": 631,
+      "verdict": "verified",
+      "evidence": "The selected genitive links mystery to its ship possessor. The demonstrative is a referential predicand, rather than agent of the copula.",
+      "rank_one_sha256": "fa73a36be76e7fb322dd1b8982a33a1142b5dcfe5947a7ae9e316fdc82d52938",
+      "selected_graph_sha256": "df74c982d1cd146965641ea855a9e5a599a96bc5a63d7fdec14d222b407661bf"
+    },
+    {
+      "index": 632,
+      "verdict": "verified",
+      "evidence": "The pistol-in-hand supplement describes the speaker's attendant armed circumstance, not a means of speaking. In either hand belongs to the pistol and Then locates addressed.",
+      "rank_one_sha256": "b1785c944d68d6703232b13bd3ba3480762b69653f3950812bea144b91969445",
+      "selected_graph_sha256": "58155c372f9b96bbf2be8abc18fe1a2e0c067aff9da05cee6f4314cc05272ef7"
+    },
+    {
+      "index": 633,
+      "verdict": "verified",
+      "evidence": "The recap is a nominal fragment with a locative and an overt epistemic likelihood idiom. It does not assert a lexical event of liking or invent a predicate for the omitted context.",
+      "rank_one_sha256": "d07cdd739a8b57d5e0fbcd52a254334b35c09edcba6d496a3b35efbb68eb7924",
+      "selected_graph_sha256": "8b1f028d6e91ecec044998b9d32d5c19cf33fc8a0f236c99517a9480157ba7ae"
+    },
+    {
+      "index": 634,
+      "verdict": "verified",
+      "evidence": "The clause asserts the existence of some sense in this. The as-incise is a stance supplement with me as experiencer and dummy it. Well is discourse framing.",
+      "rank_one_sha256": "55072144fe0e9a22df033aaac01466cc3b97fd4f951e5570320f82bf650fec5e",
+      "selected_graph_sha256": "3e5dbbb4b8e536487921e446d8c37e3abf09ed65d173a9eb52fd7bbf60a4c26d"
+    },
+    {
+      "index": 635,
+      "verdict": "verified",
+      "evidence": "The original dialectal prospective and negative auxiliary scope the permission predicate let. Cap'n is an address title, not a verb, and the overt Long John report remains attached.",
+      "rank_one_sha256": "c14f203c263d3376ed5cd927a7f3f633c91594f6ab6b16f153ff368304dd6b61",
+      "selected_graph_sha256": "19707ef4b5cdf134f07254defe6863cced9004a316ec4027ec653de9edcbe483"
+    },
+    {
+      "index": 636,
+      "verdict": "verified",
+      "evidence": "Tom is the addressee, not the subject of an assertion. The complement of the directive say is you forgive me. The negative confirmation tag is will-not over the addressee, with contiguous source spans rather than a phantom win.",
+      "rank_one_sha256": "19c25e70dcd143fde1626fe873b63b4b99305dd989e766a0e307bb1490626436",
+      "selected_graph_sha256": "0737926a126b1d6a50c44b339e932f61e39f3025cabe23821d1993a2f267e1c5"
+    },
+    {
+      "index": 637,
+      "verdict": "verified",
+      "evidence": "Here is the deixis of come, the gigs is the overt postposed plural subject, sir is address, and I is agent of said.",
+      "rank_one_sha256": "d0bb0b11b560a12089ab9e0b4011d3e0c60bc3165dbc415de507430a87c14c42",
+      "selected_graph_sha256": "cab942b3fd8eaad675f748bbf7aa585ab51056f0a736fded7b93369bdbe22ffa"
+    },
+    {
+      "index": 638,
+      "verdict": "verified",
+      "evidence": "The interrupted speech is a vocative followed by two coordinated imperatives. Jim is the understood actor of both, and for trouble complements stand by.",
+      "rank_one_sha256": "57b4377cadf3253e50b11306c23a68c53586a8b7f2ada0ff8460195d953ec24c",
+      "selected_graph_sha256": "bafd39e5feccee5ae2813422292fd0d2b180afec5d1fdf1d8968133774419f26"
+    },
+    {
+      "index": 639,
+      "verdict": "verified",
+      "evidence": "The source dashes delimit a nominal reformulation of an overt existential, no doubt and surely are distinct stance markers, Jim is vocative, and bad-or-good predicates the appositive something.",
+      "rank_one_sha256": "4dc17447bef23d5c9dcf32d8b95f16287a8e90b10f9c447ce92efc20cf702a79",
+      "selected_graph_sha256": "a9150d458bac6fa86a5e81d927ebdb01df828389889cac15120be060d6d9323c"
+    },
+    {
+      "index": 640,
+      "verdict": "verified",
+      "evidence": "But restricts the short duration of Dick's absence, with while as a time noun. Israel heads the separate speech clause, during his absence frames it, and the cook possesses the target ear.",
+      "rank_one_sha256": "77c6cf1eedd4e5e83512f4db46ac4ae371c9c8af4fcf934237c4b82893ab0892",
+      "selected_graph_sha256": "9dcb55be478bbafeac68c07cc9b85f9983cfb7096e4d4454d904d3b6809a9532"
+    },
+    {
+      "index": 641,
+      "verdict": "verified",
+      "evidence": "Sometimes and by-quivering independently modify appeared; as-if introduces a hypothetical attempt, not a true assertion of rising.",
+      "rank_one_sha256": "af2b08941dbf68976054f78b4d8421f6f12ba8e8f79f25ea6b8405ba31e7821f",
+      "selected_graph_sha256": "8158575cf4ccfb27b7fafdc50d7d09d569d40579005a43d5843e1211f2779279"
+    },
+    {
+      "index": 642,
+      "verdict": "verified",
+      "evidence": "The source incise as he spoke is simultaneous with giving. The wrench is the theme of gave and the causer of the relative made me cry out. Me is the subject of the lower bare infinitive.",
+      "rank_one_sha256": "30f39f96ff18cb7dc0897439525f07a27dfc0c16902711f4af26b3855dba8c36",
+      "selected_graph_sha256": "2ab0d92b96046b554bfe0472b27ff517808fb6e3f0842baa55b538559cec4587"
+    },
+    {
+      "index": 643,
+      "verdict": "verified",
+      "evidence": "The original two direct-speech spans and intervening we-cried reporter compose a vocative opening and two independently proven wh questions, with distinct reported-content edges and ordered questions.",
+      "rank_one_sha256": "c413719924ef964d8e451b8d994ecaa94702804e5477c0e3f6e15ff137ace297",
+      "selected_graph_sha256": "0cb29e81c5c64e66a8d3bb90f8c7f03c3610967d8a9cbd421ccb3810545c9040"
+    },
+    {
+      "index": 644,
+      "verdict": "verified",
+      "evidence": "Had to stay is a necessity predication. Mother is the patient of the reduced passive absolute. Both of us forms the subject of the separate locative absolute; earshot is measured from the inn.",
+      "rank_one_sha256": "9a24bfb2c789ed1858d5c35c366522ca722d3609e552fa99aa333c3b5f1b5bab",
+      "selected_graph_sha256": "171fbc51f5ac79a51ca3fa243105335b2e979b7033bba7953e32ee5c85d41254"
+    },
+    {
+      "index": 645,
+      "verdict": "verified",
+      "evidence": "Joyce and I jointly exit through the stern-port. In the second clause made for expresses motion toward shore. The comparative standard is the separate modal transport event with oars as means.",
+      "rank_one_sha256": "f42f2a22e3b89c703ab65a733f99d1ee2e1319e2fb8d0dbe83d3126238b6f4c7",
+      "selected_graph_sha256": "56ba0461215aac70a73ddccaaa49e432d3bbd6cc23eea7a12d080e6200479ae3"
+    },
+    {
+      "index": 646,
+      "verdict": "verified",
+      "evidence": "At once belongs to slipping the bolt. We controls the second pair; the duration and the dark modify panted. The captain possesses the body in the attendant circumstance.",
+      "rank_one_sha256": "ac5e0c3ad16e252f35f89d271f7a809129a9bbdf108854e6da7da797f42e67a5",
+      "selected_graph_sha256": "67ba99904301fe72b6e36fe28f4c1403b8226c94a3bcdfe2901ebafbc7cb7859"
+    },
+    {
+      "index": 647,
+      "verdict": "verified",
+      "evidence": "The guineas is plural subject of were, with these only is the instrument-cleft focus, and causative make her count is proven as make(V)-her(NP object)-count(bare V) with her the embedded agent; rejects her count as possessive noun phrase.",
+      "rank_one_sha256": "c7b3ae51ffdb0cec50f911d41366b96a75be1e0970d42ccfcc8c1ef4c2fa6ed0",
+      "selected_graph_sha256": "d29b41ab9e4c69163d29b64488bcd1571c9980eac9216d1f356059eb48c86aac"
+    },
+    {
+      "index": 648,
+      "verdict": "verified",
+      "evidence": "Next moment modifies the first progressive event; leaving the candle by the empty chest is its independent depictive supplement; and-the-next introduces the second perfect event and coordinated were-in-retreat state. The existing progressive/participle/semicolon composition is retained, but the first clause now proves finite were, the floating quantifier both and verbal groping. The actor controls leaving and the perfect and retreat predicates remain separate.",
+      "rank_one_sha256": "ff74081923736af57176e566eca7d6e21d346efaf306eeb7a7c2c1537c022232",
+      "selected_graph_sha256": "574bbee71111ae9374c6a8e95d43974fdefd7c0dff2b3583c2d36a31b7d7353f"
+    },
+    {
+      "index": 649,
+      "verdict": "verified",
+      "evidence": "The extraposed evaluation it was remarkable takes parallel how-well-he-bore and with-what-politeness-he-kept-on-trying manners; the second scopes to kept; with all is a complement of ingratiate, not of politeness.",
+      "rank_one_sha256": "a5d27907be524e962650e45c135b8fb99bfb194c92ec87c52e2ff6beff231baf",
+      "selected_graph_sha256": "d9d5bc362cb9990db3f19383b910dc608b6cf12d2d3e3e9d262e2cf3a42bd230"
+    },
+    {
+      "index": 650,
+      "verdict": "verified",
+      "evidence": "The addressed negative reply excludes its self-subject. The perfect reporting event precedes the embedded agreement, whose subject is we and whose quantifier is all.",
+      "rank_one_sha256": "ffadb46ebdde55645abe9ee0f5158385da6b2be87a7d0380b326dba8769adbb2",
+      "selected_graph_sha256": "e90353da13a1714ce0d4a20d77e9fb22d9ccf6b7d783e92c171080361514212e"
+    },
+    {
+      "index": 651,
+      "verdict": "verified",
+      "evidence": "The current possession has got links boy with baby, with the overt HAVE auxiliary present. The past-perfect contrast is not read by this construction as a present possession.",
+      "rank_one_sha256": "a0677f15d801f906cba3808180a30d18c2a16792f0d61d4b73f9781bff85d255",
+      "selected_graph_sha256": "6de3efc18c7d790510c5e2030ba0d59850c2a7958c51c3793d92624695b95adc"
+    },
+    {
+      "index": 652,
+      "verdict": "verified",
+      "evidence": "What is a minimal wh question with no fabricated predicate, and Agnes is the explicit postposed reporter.",
+      "rank_one_sha256": "da68fba0e42783f8b79908ab7782afb71d14427f632e9274587a92fbe53d636f",
+      "selected_graph_sha256": "59e284d228df79d11d90d36a0d378649378a1145d4f29bb11123dc0117e5a2a4"
+    },
+    {
+      "index": 653,
+      "verdict": "verified",
+      "evidence": "The quoted inversion selects modal Will, bare passive be and verbal participle improved. You is the patient of improved, not the agent or an adjective's grammatical filler.",
+      "rank_one_sha256": "fa2ccd11857d8a19222c2a807c0be95cc3acfcc0fd5061c2a7177fc8d2dc1a13",
+      "selected_graph_sha256": "b33c63900731c6a599008acb37e47e3014afb9dfed0d9ffef800b79d6e83c7a9"
+    },
+    {
+      "index": 654,
+      "verdict": "verified",
+      "evidence": "Which is a retrospective propositional anaphor with an unresolved discourse antecedent, not an invented antecedent inside the sentence; enough grades true.",
+      "rank_one_sha256": "8a882197bac4977bba318ae32533f5e0fbbb7bfdbdf0e0787eeab52cdb443647",
+      "selected_graph_sha256": "4a8d53f4e0abbb460e4c864f83c05b1872cd9c098154d6211252c315325d6b73"
+    },
+    {
+      "index": 655,
+      "verdict": "verified",
+      "evidence": "The selected past shook keeps She as actor and the possessed head as theme. The original separate bare-stem third-person contrast now has no complete parse, while shakes, shook, plural shake, modal shake and invariant past cut remain valid. The source case itself keeps its previous selected tree and graph signatures.",
+      "rank_one_sha256": "9203a38298dbe5b2d994f3cb75cf20d572ced6667f4146456c1dc99fbb5b9e09",
+      "selected_graph_sha256": "627179c4efa327a9f780f5220d716f222368c2514d937cca865220dce387f70b"
+    },
+    {
+      "index": 656,
+      "verdict": "verified",
+      "evidence": "Shook hands selects the reciprocal greeting reading. Hands is a body-part object, we is the participant group and heartily is manner.",
+      "rank_one_sha256": "e762eb34aafbda67af221868344d50cd28f4659bf1c7b7773515b248247fc3a7",
+      "selected_graph_sha256": "9ee886faa6bb5b96735be0469dee0469d4f721624cecd3114278b4089cd71410"
+    },
+    {
+      "index": 657,
+      "verdict": "verified",
+      "evidence": "Stood is the main perfect intransitive, aside locates it, and the perceiving clause gives its purpose. Phantoms are the overt subject of the bare go complement, with by me as path.",
+      "rank_one_sha256": "fd61f55ee49a286ad56bc7d24b710cce5661a39009f0a653dd3dedd49cc69e94",
+      "selected_graph_sha256": "554d2276b80f4c477e261f5df6879093bd2f815b930e304b23fb56882f76c3b0"
+    },
+    {
+      "index": 658,
+      "verdict": "verified",
+      "evidence": "She is the actor of both petted and made. The first-person modal speaking clause is a metalinguistic incise. The most of them belongs to the light-verb expression, not to that incise.",
+      "rank_one_sha256": "58b5288dc772284e7e1663a0510908d006fb7e984041e1df62c54cd4b4ba2fb2",
+      "selected_graph_sha256": "bcf0b210ded6f129f14508de79b83170b0e00937c17c1d55485feb755da9afac"
+    },
+    {
+      "index": 659,
+      "verdict": "verified",
+      "evidence": "Oh is an interjection with indeed as emphasis. Master is an honorific attached to the vocative Copperfield, not a verb. Said reports the interjection.",
+      "rank_one_sha256": "48c17a61d143c949fd4adadcc1007045ec42770a347945ad7ab33ccb92880980",
+      "selected_graph_sha256": "1197cc71d354bc69d70c403377d017cc281cadf6f596aced5d2dd97d6b4311c1"
+    },
+    {
+      "index": 660,
+      "verdict": "verified",
+      "evidence": "Not I! selects an elliptical negative-reprise act with explicit I focus, no invented antecedent, and its own negation scope. Dear is adjectival with vocative head Daisy, attached to mind, not will. The modal and the possessed gerund retain their own predicate, arguments and exact spans.",
+      "rank_one_sha256": "587ccf3ff76eba11bb1098a629aa5a50bd00bd976190f27e5766916268fd083f",
+      "selected_graph_sha256": "4b2c893246e16b2e74ad9eb925825ad3dc62d7467a93d735e123a03b2420bf72"
+    },
+    {
+      "index": 661,
+      "verdict": "verified",
+      "evidence": "Original Mas’r and d’ye are independently represented as source-attested dialectal morphology without inserted letters; shall-you-see-her is the overt question and d’ye think is the attached epistemic tag, with the original source token spans retained.",
+      "rank_one_sha256": "9a4e0eff43e8c99610c91a7cea598f2164238b58551ade069c8af94a54ab324f",
+      "selected_graph_sha256": "e868595ca02ea81712bc2af66be8a283d1117751800d69456853910d2789ea77"
+    },
+    {
+      "index": 662,
+      "verdict": "verified",
+      "evidence": "The nominal exclamation has a sweet lady as its adjectivally modified content, Master as honorific of the vocative Copperfield, and the full Uriah Heep NP as reporting subject.",
+      "rank_one_sha256": "6f3e68195d8b2c33422adb89681fa83d2fe88a625a6feb3ca5f7ad1d695a8844",
+      "selected_graph_sha256": "42b79d9a424d9b072853b12162ffe9cec9aea51f0cd4439b76da1e8a6b7cd012"
+    },
+    {
+      "index": 663,
+      "verdict": "verified",
+      "evidence": "Selected source ‘I hope Mrs. Micawber and your family are well, sir,’ said my aunt is tested at original source offsets: the overt I→hope subject, hope→are embedded complement, are→well predication, coordinated Micawber and family, postposed my aunt reporter, and said→hope reported content plus sir addressee. Independent positive with his aunt and nonmatching grammatical negative have been run under WordNet 3.0 and unchanged limits; see test_semantic_ladder_review_candidates.py and CI 44183471999.",
+      "rank_one_sha256": "9fd31ecd44c26a306454ecb0ee39d2d66cb06110fa125cd62e506aa042f5c523",
+      "selected_graph_sha256": "408971254ab7dab649e6893102dd8bf298e2060b8ae96991f0b99716b353de75"
+    },
+    {
+      "index": 664,
+      "verdict": "verified",
+      "evidence": "The intervals attach to speaking, not the addressee me. Tried controls she, and the passive temporal relative belongs to intervals with we as its theme.",
+      "rank_one_sha256": "3ff7deceef5ad9bd05f2957545a4019642846e8b1252965b285bca136cd18e1a",
+      "selected_graph_sha256": "b9d45a89ba7a9922ddb843bed3b38cac1a2c5a071442a467c20500133a86f360"
+    },
+    {
+      "index": 665,
+      "verdict": "verified",
+      "evidence": "Regarding is the overt topic preposition for curious. The as-if is counterfactual, the first time is the comparison, and final it refers to cottage.",
+      "rank_one_sha256": "53ba9f19e7a03ac569856cfa46c4a021732fb96a2463e5f3b14f501e267f16db",
+      "selected_graph_sha256": "5c4f1772025c5c64260fb023ca4ac92fb65b575dff2c28cc5b15a28357afd002"
+    },
+    {
+      "index": 666,
+      "verdict": "verified",
+      "evidence": "The semicolon separates comes from a distinct passive blotted out; for a time scopes the passive and of my remembrance is its source.",
+      "rank_one_sha256": "569f889dde299e8606277a34142a8d60129c81073a3bc95b324d304eb3eafa1f",
+      "selected_graph_sha256": "a07a0510ded3375f339190514b1e9ab7d19cf536e761a9e40903883bb1e6320a"
+    },
+    {
+      "index": 667,
+      "verdict": "verified",
+      "evidence": "Both graded properties describe manner. More and less have their own original degree and mitigator spans, share of yore as a comparison standard, and are temporally framed by accosted.",
+      "rank_one_sha256": "70646740ca25a34d0e2408c3067e74ee30bb371b258f653c95eade692cef7ecc",
+      "selected_graph_sha256": "27579cdd5d7da0abf479aaf5a6eb73911f304cd0457cdc93e9066959c1775e65"
+    },
+    {
+      "index": 668,
+      "verdict": "verified",
+      "evidence": "The subject of desire also receives the communication and controls send. Word is the message noun, parting modifies it, and me and lover are the intermediary and recipient respectively.",
+      "rank_one_sha256": "0b9079b039aa4ab6d7564a077df6e0ea81bba6245d3f12802ca6c22f3282a4e1",
+      "selected_graph_sha256": "8485ab07196f681937ce934c3c9f9fe455162dbd1808a59fcdebf6c025d03226"
+    },
+    {
+      "index": 669,
+      "verdict": "verified",
+      "evidence": "As to a fish-kittle is an overt nominal topic, not a fronted finite subordinate; Mrs. Crupp is the reporting subject, well! remains independent exclamatory preamble, and would-I-come-and-look is the reported modal question.",
+      "rank_one_sha256": "e3d33c536e157f7526df76a8cb4340332d2f756791fc81bea4e5e3c3e09453fd",
+      "selected_graph_sha256": "074bdf459a168bf4cc4a904f6f39c7a8de71efd141e8d29e6470cc7885d5c242"
+    },
+    {
+      "index": 670,
+      "verdict": "verified",
+      "evidence": "The basket is located on Peggotty's knee and is the antecedent of lasted, not the knee. The modal perfect lasting is conditional on the past-perfect progressive travel.",
+      "rank_one_sha256": "7b76b0dbd987c3a6c948e05ebc7ff6e7a70cd45066e166880fe7af079bc63c08",
+      "selected_graph_sha256": "31463baced8e224b9045aa7794f3d7217d2c3380d5eb1f9ac88e5da2eb73ff38"
+    },
+    {
+      "index": 671,
+      "verdict": "verified",
+      "evidence": "Here and near Agnes both predicate the subject under could not. The without-phrase sets the revival condition, and regrets is the antecedent of the pied-piped relative.",
+      "rank_one_sha256": "7f349ae0027be5187ddffe6922fc33e0658571fafdfc2f9ff8dbcd0d083bbb20",
+      "selected_graph_sha256": "66cf723986c5bcf9e8be031481ad4849c539c4d44a4396a05fa6b7acf7c7e150"
+    },
+    {
+      "index": 672,
+      "verdict": "verified",
+      "evidence": "The source retains both finite sentences inside one original quotation; forgotten governs the actual existential content and exceptive but-to-go-out-tossing; I wish there was not is an independently proven elliptic reprise, not an invented full proposition.",
+      "rank_one_sha256": "648074e4d0563b2f89967ba7035d76e8f3d08d695208e1587b1acc1eaa086446",
+      "selected_graph_sha256": "d17dcb24f8af9982c81334c77a1ae85c40b40375f8cfd4ff197f99e27c487fc7"
+    },
+    {
+      "index": 673,
+      "verdict": "verified",
+      "evidence": "The inspection precedes the giving. The same subject adds the direct request. Low voice is manner of added, and sir is the vocative within the request.",
+      "rank_one_sha256": "8ce4501a6ad986079c6e8d7c813252fb63805033a81fbc5276d4a1fb0ca4975d",
+      "selected_graph_sha256": "cb2da15c72de4fb9e9009e7a9ae438c6d5c14149ae0bef935ade55b96832567a"
+    },
+    {
+      "index": 674,
+      "verdict": "verified",
+      "evidence": "The same overt We governs alighted and followed. Corner is the remembered place and locates the passive reading. The consignment is a nonfinite supplement with it as theme.",
+      "rank_one_sha256": "2b8a20fed6a87d0661e605f7a80567213c92ed9b003c208175e5b461e0d9a0b4",
+      "selected_graph_sha256": "dd48c4194a6d54a4c59378d4f54d92a6bd31e98dcfa2ab31434effe46458f167"
+    },
+    {
+      "index": 675,
+      "verdict": "verified",
+      "evidence": "Hadn't is the negative perfect auxiliary of said in this inversion. I remains its overt subject. The day is a temporal incise, and rather not keeps an unresolved predicate in the report.",
+      "rank_one_sha256": "e9da1e11ab6fea0de3bf78c3672ba8cde1627c8ff17e84d35b51a1e7989ac78b",
+      "selected_graph_sha256": "0abb08f8befae2710cf112726ecf1edf9745dfff4e86847fb61775ead7d6e83f"
+    },
+    {
+      "index": 676,
+      "verdict": "verified",
+      "evidence": "Gone is the copular state of She. Directly supplies immediate temporal location, not manner.",
+      "rank_one_sha256": "56e2868e4374f53c9b48619e0b5650371673d0dea1b47c8c082e65c6ee550417",
+      "selected_graph_sha256": "b7adad220803d1a678e69cbfc118552605f7c59fc7c3cc6af803bcb97b7637d1"
+    },
+    {
+      "index": 677,
+      "verdict": "verified",
+      "evidence": "The quoted finite predicate is write. Fast is its manner adverb, and uncommonly grades fast rather than becoming an attribute of writing.",
+      "rank_one_sha256": "53c315cb8d19be14f43be05e4e00fc3dcaba17ad0ad4877580f56bff017e7f59",
+      "selected_graph_sha256": "2396f06457756282aec14df9bd29fa0ed60d880cfd15c8ee7f8a420f8778a181"
+    },
+    {
+      "index": 678,
+      "verdict": "verified",
+      "evidence": "Such as introduces two coordinated examples, vanity and pride. No antecedent absent from the utterance is fabricated.",
+      "rank_one_sha256": "48a7ff1726618818f1b950f21b2eb76136de5cfa25d6d46051cafff7cd6a154b",
+      "selected_graph_sha256": "7d763f7c79bd2ff0fd7006591b049b9db454cbc2590a59a6ae03a386ceedea4f"
+    },
+    {
+      "index": 679,
+      "verdict": "verified",
+      "evidence": "No quantifies answer negatively. The answer is a result of the light make construction, with Mr Bennet as the responding subject rather than a physical patient.",
+      "rank_one_sha256": "f803060d3e6d24fcd65647de120e9f74585eca532d54e99312092d8042be183b",
+      "selected_graph_sha256": "18ec9b6efb44bf17e277e9141f06e4452432c3c75cf8f68496e9c207936503f2"
+    },
+    {
+      "index": 680,
+      "verdict": "verified",
+      "evidence": "The source follow-up is an attitude toward a negative answer to the previous question. The selected finite hope has experiencer I and NEG-typed not as CONTENT_PROFORM, not negation of hoping. Preverbal negation and infinitival not do not select the proform construction.",
+      "rank_one_sha256": "51ce7b7eeca84598d2fe58ca7fd32e57182c504019eb396f1e5f64349e691b41",
+      "selected_graph_sha256": "cda0bbf0aba70bf75eb4d330925c7b8bc0a8e158cc9125eae2d8a9aca2e6a84b"
+    },
+    {
+      "index": 681,
+      "verdict": "verified",
+      "evidence": "Source Elizabeth was distressed selects overt passive clause_passive, finite AUX-BE was, past participial V distress and THEME(distressed,Elizabeth), with source spans verified. Independent Mary was distressed positive and wrong agreement Mary were distressed contrast pass with selected rank-one and semantic graph assertions; CI 44183471999.",
+      "rank_one_sha256": "8604dd8bb5884f94c0a62f5219fef5eb0cf1f5677e8d70c19d1e7c42837560c6",
+      "selected_graph_sha256": "aef833d3333889dc62ea41d0d1de71f0c5c1890ded2b5530d3dec826454ac9bb"
+    },
+    {
+      "index": 682,
+      "verdict": "verified",
+      "evidence": "Contrast is the head noun of an exclamative, with distinct comparative terms him and his friend under between.",
+      "rank_one_sha256": "d8fc790c9ff4430281d5bf6eb3595127380d03176a6a0f7162f38f8b962e40e0",
+      "selected_graph_sha256": "c6074c3b174b0e974e9e255d5a776d0caf9758aebc9d63209b9b81b11bc3807c"
+    },
+    {
+      "index": 683,
+      "verdict": "verified",
+      "evidence": "The copula predicates an interpersonal state with the Gardiners as counterpart. Always quantifies the state in time, and most grades intimate, which modifies terms.",
+      "rank_one_sha256": "cb267af920058b8850770b7faf121794b8a9a53695ef6521569bcd4546e9b1c3",
+      "selected_graph_sha256": "0e85d59ec19fabb99e4a416ce39450e2753f5df3cbb9097b9796ff27938a03fb"
+    },
+    {
+      "index": 684,
+      "verdict": "verified",
+      "evidence": "The extraposed subject relative modifies the negative proform Nothing. Them belongs to the between-phrase associated with occurrence, not the relative. Justify has hopes as its overt object.",
+      "rank_one_sha256": "89cfcb68d721b7648456bd252baa0983bf64cfcfacd1d92832579f45a0a7a545",
+      "selected_graph_sha256": "e3eaf1fc83169c37d47eae89be11e970b88867b8adf3cb7c6164126b7b44f47f"
+    },
+    {
+      "index": 685,
+      "verdict": "verified",
+      "evidence": "The quoted demonstrative copula has with-him as the way companion, and she added reports that quoted predication.",
+      "rank_one_sha256": "f7962dd19d23aadf59df647a38eedbd173020da8122396dd3e0ee1341ed2c15d",
+      "selected_graph_sha256": "be6e888ffeaeed35d0454d3fcc66838ab916526a070e93633173c7b8376c710a"
+    },
+    {
+      "index": 686,
+      "verdict": "verified",
+      "evidence": "Never scopes the modal perfect said. The unmarked clausal content starts with the one titled name Mrs. Collins. The settled result state is located near her family.",
+      "rank_one_sha256": "5f9914b4e2658656682b44e92359d7ea32313c6c7b41f58d5ffaf056f0eeba08",
+      "selected_graph_sha256": "8e161fc6ddd20bb00b35ffb1a6c0aaed581ea7f674dc851a8bfcd40afed3ee98"
+    },
+    {
+      "index": 687,
+      "verdict": "verified",
+      "evidence": "The deictic that is the main predicand, one of your sisters is its partitive attribute, and I suppose is an epistemic incise with I as thinker.",
+      "rank_one_sha256": "1992c9765bd8822c8e3c583aeab28a8657b7d64c36abdff1c41d89444597b0ff",
+      "selected_graph_sha256": "581c2b94d2daecd10597aae6457cdac29f9c95835f82bb88a14db83cf6f09ba7"
+    },
+    {
+      "index": 688,
+      "verdict": "verified",
+      "evidence": "The two reported clauses contain an ought-to adjectival copula and an overt present-perfect copula. Has is auxiliary to been and the generations produced the work.",
+      "rank_one_sha256": "728599292412f67dab61fc1596fadb09191526ef3db835d8a298e25d8acbacf4",
+      "selected_graph_sha256": "4b42a6530777147048f2cc180733c8409e773d380dc97a051b84d952692beb45"
+    },
+    {
+      "index": 689,
+      "verdict": "verified",
+      "evidence": "Accepted is passive, and of course comments on that event. The party is the object of joined. The hour and the possessed drawing-room anchor that joining in time and location.",
+      "rank_one_sha256": "6734565a8f524d8ace4e9f549a1398de448e325c88b91d95c93717aeb9836756",
+      "selected_graph_sha256": "da872e9aadcb296a4e71fedfc5794166f506f83b0426bb42f9a347af267160e2"
+    },
+    {
+      "index": 690,
+      "verdict": "verified",
+      "evidence": "The subject is theme of the pluperfect passive canvassed and the finite passive brought forward. Warmly, the participants, and the past time all modify canvassed rather than the auxiliary or parents.",
+      "rank_one_sha256": "bbbcdf6014a1bb32d2b52054aff660fbb8ca78bf60a174d862cb3841c8e81c30",
+      "selected_graph_sha256": "d0a2fd0e2cac3cb9b863a51bb7c3b0d13d94e40b413247823080006a035f1961"
+    },
+    {
+      "index": 691,
+      "verdict": "verified",
+      "evidence": "Two source quote spans are separated by the explicit cried-Darcy tag; grieved--shocked is a local participial/adjectival reformulation; But-is-it-certain--absolutely-certain is a polar question with local emphatic-degree scope.",
+      "rank_one_sha256": "998626da921cb3e51874619f6834c15d58eb46e894aa78195c79c33250f4d15d",
+      "selected_graph_sha256": "81bd917bc63ae56681a446d554dee6b2ddbc57b2d827fa61fca508e6a32733bd"
+    },
+    {
+      "index": 692,
+      "verdict": "verified",
+      "evidence": "Do in the first speech resumes an unresolved predicate with the overt emphasis certainly. The speaker's smile accompanies replied. Dummy it introduces the separate negative inference whose extraposed clause contains the predicand interruption.",
+      "rank_one_sha256": "fbfe4404e727ebe78ae9cf1b6f066f8e2acedd912d1e8a43faf963e821c7570d",
+      "selected_graph_sha256": "1a043553f7bf4ac985ff00050c853b85a60a812451fdcf6fd538743a1d3b1b11"
+    },
+    {
+      "index": 693,
+      "verdict": "verified",
+      "evidence": "The first clause keeps its own simultaneous speech event. Neither and nor bind the two candidate causes under one negative subject scope on awakened.",
+      "rank_one_sha256": "0e89b93b0da0a47d9ccf2b473c7a6f7d3a54d9f47fdba1320485dd42b8190d49",
+      "selected_graph_sha256": "1a0c5a18ed1d5bb8a0ad9e73ec324021b960c2a33280708a921e472748b3baa9"
+    },
+    {
+      "index": 694,
+      "verdict": "verified",
+      "evidence": "The custom parenthetical characterizes Bennet's retirement after tea. Mary's distinct stairs motion has its own destination.",
+      "rank_one_sha256": "2098702a622e65c4bd0f31ed89a2f955fe23350961fbc168193124ad70c23fa8",
+      "selected_graph_sha256": "2a748ae5d1536c962b681e38f787fef4adaaff9dee1ed1daad7205ac70c8bbcb"
+    },
+    {
+      "index": 695,
+      "verdict": "verified",
+      "evidence": "Post describes hired relay horses. The second copular predication has a coordinated negative subject. The servant is the subject of preceded and possessor of the livery.",
+      "rank_one_sha256": "ce4c970fc34d66736f126f6958ce38871a7f91c513ca21c2e8bc25a49033f14e",
+      "selected_graph_sha256": "d0f196e35d47eaf0774ab82aecc2f38375e3368d10e28acfa1d8c3088837e1d6"
+    },
+    {
+      "index": 696,
+      "verdict": "verified",
+      "evidence": "There is existential. I believe is an epistemic incise. The natural defect is the object of overcome, with education and the scalar negative scope under can.",
+      "rank_one_sha256": "fac641fadb2335cfcbcfddbd4f71aa73a85ba31172c3d0ad40026187bafd871f",
+      "selected_graph_sha256": "e5d5f5fd59158e2746244eef73589fc14774494ebe36c8ef22aa9f0912aeafa9"
+    },
+    {
+      "index": 697,
+      "verdict": "verified",
+      "evidence": "The gain in fortune is explained by the ascertainment. The window frames the observing, and he wears a blue coat and rides a black horse in the embedded clause.",
+      "rank_one_sha256": "5b2828aa034f31b895a5c466703cbf6f955c2af1957e7a7265156b2df98bdc23",
+      "selected_graph_sha256": "a965cc1be80acfd5cdf4ce3b9508d36f69b6992bc2fd2d7ebd48841c65709abe"
+    },
+    {
+      "index": 698,
+      "verdict": "verified",
+      "evidence": "Had been of age is a negative perfect with two years as its measured duration. The linked when-clause has a passive temptation and a separately controlled looking complement.",
+      "rank_one_sha256": "46c4fa5404ca87ffaffc8b183fa52830282b651f0d4a6127532b40d5c33416ba",
+      "selected_graph_sha256": "3731bc9a2137d3662af41344aa32debfed80a9245ffb862b9e96a181ee0fe175"
+    },
+    {
+      "index": 699,
+      "verdict": "verified",
+      "evidence": "Exercise gives the brilliancy to the complexion in an overt perfect relative. The second nominal contains occasion's justifying and its own lower possessive gerund her coming.",
+      "rank_one_sha256": "f130debbd1ab7137b1762829faaf2282764f4d209f69b618631ff13144ebf8f8",
+      "selected_graph_sha256": "8131f5dc52486db5848ccddf3b472311b1532efe9af93d2f454062a41ef73f95"
+    },
+    {
+      "index": 700,
+      "verdict": "verified",
+      "evidence": "The fronted of-having gerund is the subject matter of thought; the two with-phrases independently carry certainty and pleasure, with though-not-equal local to pleasure.",
+      "rank_one_sha256": "325062ea8857a2f8fe1637edc1cb46b73a57e6d714b0a2613a0ee68cb621ea01",
+      "selected_graph_sha256": "cbd35425e37518a35621f7060d8e3fb6d0a839fb11fd9b20a04d714e61d0e686"
+    }
+  ]
+}

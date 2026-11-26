@@ -21,6 +21,7 @@ from scripts.evaluate_novel_transfer import (
 from seman_parser.engine import Parser, ParserResources
 
 LADDER = ROOT / "research" / "novel_ladder"
+SEMANTIC_DEFECTS = ROOT / "research" / "semantic_quality" / "confirmed_selected_defects.json"
 FIRST = 501
 SIZE = 100
 SCHEMA = "seman2-novel-ladder-cohort-v1"
@@ -95,10 +96,8 @@ def pick(rows_by_book, excluded_paragraphs, excluded_texts, first):
     return chosen
 
 
-def load_sources():
-    cases, _ = select_cases(500)
-    if fingerprint(cases) != EXPECTED_500_COHORT_SHA256:
-        raise ValueError("The inherited Novel-500 source identity changed")
+def load_source_inventory():
+    """Extract and attest eligible source anchors without selecting a cohort."""
     books = {book.ebook_id: book for book in TRAIN_BOOKS}
     rows, bodies, editions = {}, {}, []
     for record in sorted(read_manifest()["books"], key=lambda item: item["ebook_id"]):
@@ -107,7 +106,23 @@ def load_sources():
         bodies[book.ebook_id] = body
         rows[book.ebook_id], _ = extract(book, body, length_min=4, length_max=32)
         editions.append({"book_id": book.ebook_id, "sha256": info["sha256"]})
-    return cases, rows, bodies, editions
+    return rows, bodies, editions
+
+
+def load_sources():
+    cases, _ = select_cases(500)
+    if fingerprint(cases) != EXPECTED_500_COHORT_SHA256:
+        raise ValueError("The inherited Novel-500 source identity changed")
+    return cases, *load_source_inventory()
+
+
+def load_pinned_fixture_sources():
+    """Resolve exact archival test anchors independently of resampling.
+
+    This is a source inventory, not a validated legacy cohort or an
+    alternative extractor. Cohort gates must continue to use load_sources().
+    """
+    return [], *load_source_inventory()
 
 
 def anchor(index, band, case):
@@ -116,6 +131,18 @@ def anchor(index, band, case):
 
 
 def resolve(manifest, first, sources):
+    return _resolve_anchors(manifest, first, sources, indexes=None)
+
+
+def resolve_pinned_fixtures(manifest, first, sources, indexes):
+    """Resolve only anchors named by a grammar test, not an entire cohort."""
+    indexes = frozenset(indexes)
+    if not indexes <= set(range(first, first + SIZE)):
+        raise ValueError("Requested grammar fixtures outside the pinned cohort")
+    return _resolve_anchors(manifest, first, sources, indexes)
+
+
+def _resolve_anchors(manifest, first, sources, indexes):
     _, rows, bodies, editions = sources
     if (manifest.get("schema") != SCHEMA or manifest.get("first_index") != first
             or manifest.get("legacy_cohort_sha256") != EXPECTED_500_COHORT_SHA256
@@ -129,6 +156,8 @@ def resolve(manifest, first, sources):
                for book_id, group in rows.items() for c in group}
     result = []
     for index, book_id, paragraph, start, stop, band, expected in anchors:
+        if indexes is not None and index not in indexes:
+            continue
         case = by_span.get((book_id, start, stop))
         expected_band = next((b for b, lo, hi in BANDS if case and lo <= case["tokens"] <= hi), None)
         if (case is None or case_hash(case) != expected or source_id(case) != (book_id, paragraph)
@@ -272,11 +301,38 @@ def load_review(directory, end, cohort, result):
     return review
 
 
+def known_semantic_defects(end):
+    """Unresolved source-selected errors; do not confuse review with coverage."""
+    if end < 700 or not SEMANTIC_DEFECTS.exists():
+        return {}
+    ledger = read_json(SEMANTIC_DEFECTS)
+    if ledger.get("schema") != "seman2-selected-semantic-defect-ledger-v1":
+        raise ValueError("Unrecognized selected semantic defect ledger")
+    defect_map = {}
+    for item in ledger.get("cases", []):
+        index = item["index"]
+        if end - SIZE < index <= end:
+            if index in defect_map or item.get("status") != "needs_fix":
+                raise ValueError(f"Malformed unresolved semantic defect N{index}")
+            defect_map[index] = item
+    return defect_map
+
+
 def accepted_cases(result, cohort, end, review):
     rows = result_cases(result, cohort, end)
     if (any(r["status"] != "complete" for r in rows.values())
             or {i for i, r in review.items() if r["verdict"] == "verified"} != set(rows)):
         raise ValueError(f"Novel-{end} must be complete and reviewed before expanding")
+    # Recognition and an individually written review verdict are necessary,
+    # but a known false selected attachment invalidates that certification.
+    # Fail closed: changing the tree's hash does NOT automatically clear a
+    # recorded fault; remove a defect only after source-backed controls pass.
+    unresolved = sorted(known_semantic_defects(end))
+    if unresolved:
+        raise ValueError(
+            f"Novel-{end} semantic acceptance blocked by "
+            f"{len(unresolved)} outstanding selected-tree defects: {unresolved}"
+        )
     return rows
 
 
@@ -308,10 +364,19 @@ def check(cohorts, directory, out_dir):
 
 
 def print_quality(prefix, rows, review):
-    verified = sum(r["verdict"] == "verified" for r in review.values())
-    needs_fix = len(review) - verified
+    end = int(prefix.rsplit("-", 1)[1])
+    known = known_semantic_defects(end)
+    # Known errors always override a legacy 'verified' entry (N660).
+    verdicts = {
+        index: ("needs_fix" if index in known else
+                review[index]["verdict"] if index in review else "unreviewed")
+        for index in rows
+    }
+    verified = sum(v == "verified" for v in verdicts.values())
+    needs_fix = sum(v == "needs_fix" for v in verdicts.values())
+    unreviewed = sum(v == "unreviewed" for v in verdicts.values())
     print(f"{prefix} quality: {verified}/{len(rows)} verified; {needs_fix} need a fix; "
-          f"{len(rows) - len(review)} unreviewed", flush=True)
+          f"{unreviewed} unreviewed", flush=True)
 
 
 def quality(cohorts, directory):
@@ -338,11 +403,14 @@ def print_queue(cohorts, directory, after):
         reviewed = load_review(directory, end, cohort, reference)
         audit = {int(i): reason for i, reason in reference.get("rank_one_review_queue", {}).items()}
         audit.update({i: r["evidence"] for i, r in reviewed.items() if r["verdict"] == "needs_fix"})
+        known = known_semantic_defects(end)
+        audit.update({i: r["observed_defect"] for i, r in known.items()})
         unreviewed = [r for i, r in rows.items() if i not in reviewed]
         eligible = [r for r in unreviewed if r["status"] != "complete"]
         if not eligible and audit:
             eligible = [r for i, r in rows.items()
-                        if i in audit and reviewed.get(i, {}).get("verdict") != "verified"]
+                        if i in audit and (i in known or
+                        reviewed.get(i, {}).get("verdict") != "verified")]
         if not eligible:
             eligible = unreviewed
         if not eligible:

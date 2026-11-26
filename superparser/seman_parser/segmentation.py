@@ -102,6 +102,15 @@ class LexicalCandidate:
     # lexical candidates leave it empty; a clause interface points at the
     # clause's existing lazy ParseResult instead of copying its derivations.
     interface: Any | None = field(default=None, repr=False, compare=False)
+    # Open number/person unification cannot turn a known present-only bare
+    # stem (shake) into a past (shook) or inflected present (shakes).
+    excludes_third_singular: bool = False
+
+    def supports_context(self, features: FeatureStructure) -> bool:
+        if not self.excludes_third_singular:
+            return True
+        values = features.as_dict()
+        return (values.get("vform"), values.get("number"), values.get("person")) != ("finite", "singular", "3")
 
     @property
     def span(self) -> tuple[int, int]:
@@ -143,6 +152,7 @@ class LexicalCandidate:
             self.normalized,
             self.syntactic_constraints,
             id(self.interface) if self.interface is not None else None,
+            self.excludes_third_singular,
         )
 
 
@@ -957,6 +967,14 @@ def build_lattice(
         else candidate
         for candidate in kept
     ]
+    # Attach the documented stem constraint after all sense and frame
+    # projections, so a projected WordNet/VerbNet reading cannot lose it.
+    kept = [
+        replace(c, excludes_third_singular=True)
+        if c.category == "V" and lexicon.finite_bare_stem_excludes_third_singular(c.surface, c.lemma)
+        else c
+        for c in kept
+    ]
     if deduplicate:
         kept = deduplicate_syntactic_candidates(kept)
     return LexicalLattice(
@@ -1301,6 +1319,7 @@ def deduplicate_syntactic_candidates(
             syntactic_constraints=previous.syntactic_constraints,
             interpretations=options,
             interface=previous.interface,
+            excludes_third_singular=previous.excludes_third_singular,
         )
     return [grouped[key] for key in order]
 

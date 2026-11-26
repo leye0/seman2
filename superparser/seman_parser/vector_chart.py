@@ -90,22 +90,36 @@ class AnalysisUse:
 
 @dataclass(slots=True)
 class SegmentInterface:
-    """Lazy grammatical view of one independently recognized clause."""
+    """Lazy grammatical view of an independently recognized constituent."""
 
     result: ParseResult
     offset: int
     start: int
     end: int
     _items: dict[int, ChartItem] = field(default_factory=dict, repr=False)
+    _possible_evidence: dict[frozenset[int], bool] = field(default_factory=dict, repr=False)
+
+    def may_prove(self, required: frozenset[int]) -> bool:
+        """Rule support can disprove a request without ranking the child."""
+        if not required or not isinstance(self.result.roots, LazyRootSequence):
+            return True
+        if required not in self._possible_evidence:
+            self._possible_evidence[required] = self.result.roots.may_prove(required)
+        return self._possible_evidence[required]
 
     def get(self, rank: int) -> ChartItem | None:
         cached = self._items.get(rank)
         if cached is not None:
             return cached
-        alternatives = self.result.alternatives(limit=rank + 1)
-        if rank >= len(alternatives):
+        roots = self.result.roots
+        if isinstance(roots, LazyRootSequence):
+            item = roots.for_composition(rank)
+        else:
+            alternatives = self.result.alternatives(limit=rank + 1)
+            item = alternatives[rank] if rank < len(alternatives) else None
+        if item is None:
             return None
-        shifted = _shift_chart_item(alternatives[rank], self.offset)
+        shifted = _shift_chart_item(item, self.offset)
         if shifted.category == "CLAUSE" and "event" not in shifted.syntax.anchors:
             handles = dict(shifted.syntax.anchors)
             event_id = next((handles[name] for name in ("main", "predicate", "sub") if name in handles), None)
@@ -1138,25 +1152,21 @@ class _LazyMaterializer:
                 if signature in state.seen_results:
                     continue
                 state.seen_results.add(signature)
-                interface = candidate.interface
-                assert isinstance(interface, SegmentInterface)
-                following = interface.get(interface_rank + 1)
-                if following is not None:
-                    self.unification_attempts += 1
-                    following_result = unify(state.constraint, following.features, state.bindings)
-                    if following_result is not None:
-                        following_features, following_env = following_result
-                        heappush(state.heap, (
-                            -following.score, next(self._serial), "interface",
-                            (candidate, interface_rank + 1, following, following_features, following_env),
-                        ))
-                    else:
-                        self.unification_rejections += 1
+                # A lower local choice cannot outrank this one. Defer looking
+                # for it until the parent actually needs another result.
+                heappush(state.heap, (
+                    -interface_item.score, next(self._serial), "interface_resume",
+                    (candidate, interface_rank + 1),
+                ))
                 analysis = CompactAnalysis(
                     next(self._analysis_ids), node_id, merged,
                     interface_item.score, env, _feature_evidence(interface_item.features), candidate=candidate,
                     interface_item=interface_item,
                 )
+            elif kind == "interface_resume":
+                candidate, interface_rank = payload
+                self._offer_interface(self.forest.nodes[node_id], state, candidate, interface_rank)
+                continue
             elif kind in {"rule_seed", "rule_retry"}:
                 derivation_index, path_rank, ranks = payload
                 state.scheduled_rules.discard((derivation_index, path_rank, ranks))
@@ -1243,6 +1253,52 @@ class _LazyMaterializer:
             return None
         return state.results[rank]
 
+    def _offer_interface(
+        self, node: ForestNode, state: _NodeState, candidate: LexicalCandidate,
+        rank: int,
+    ) -> None:
+        """Expose one rank so a rejected interface cannot starve another derivation."""
+        interface = candidate.interface
+        assert isinstance(interface, SegmentInterface)
+        required = frozenset(state.required_features)
+        if not interface.may_prove(required):
+            return
+        item = interface.get(rank)
+        if item is None:
+            return
+        evidence = _feature_evidence(item.features)
+        if not required.issubset(evidence):
+            if self.rejection_trace is not None:
+                self.rejection_trace.record(
+                    "positive_evidence_interface_missing", node,
+                    required_positive=state.required_features,
+                    witnessed_positive=evidence,
+                    evidence_basis="interface_intrinsic",
+                    surface=candidate.surface,
+                )
+        else:
+            self.unification_attempts += 1
+            result = unify(state.constraint, item.features, state.bindings)
+            if result is not None:
+                merged, env = result
+                if (item.lexical_candidate is None
+                        or item.lexical_candidate.supports_context(merged)):
+                    heappush(state.heap, (
+                        -item.score, next(self._serial), "interface",
+                        (candidate, rank, item, merged, env),
+                    ))
+                    return
+            self.unification_rejections += 1
+            if result is None and self.rejection_trace is not None:
+                self.rejection_trace.record(
+                    "interface_unification", node,
+                    expected=state.constraint, offered=item.features,
+                    bindings=state.bindings, surface=candidate.surface,
+                )
+        heappush(state.heap, (
+            -item.score, next(self._serial), "interface_resume", (candidate, rank + 1),
+        ))
+
     def _initialize_node(self, node_id: int, state: _NodeState) -> None:
         if state.initializing:
             return
@@ -1254,39 +1310,9 @@ class _LazyMaterializer:
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
                     if isinstance(candidate.interface, SegmentInterface):
-                        interface_item = candidate.interface.get(0)
-                        if interface_item is None:
-                            continue
-                        if not set(state.required_features).issubset(
-                            _feature_evidence(interface_item.features)
-                        ):
-                            if self.rejection_trace is not None:
-                                self.rejection_trace.record(
-                                    "positive_evidence_interface_missing", node,
-                                    required_positive=state.required_features,
-                                    witnessed_positive=_feature_evidence(
-                                        interface_item.features),
-                                    evidence_basis="interface_intrinsic",
-                                    surface=candidate.surface,
-                                )
-                            continue
-                        self.unification_attempts += 1
-                        result = unify(state.constraint, interface_item.features, state.bindings)
-                        if result is None:
-                            self.unification_rejections += 1
-                            if self.rejection_trace is not None:
-                                self.rejection_trace.record(
-                                    "interface_unification", node,
-                                    expected=state.constraint,
-                                    offered=interface_item.features,
-                                    bindings=state.bindings,
-                                    surface=candidate.surface,
-                                )
-                            continue
-                        merged, env = result
                         heappush(state.heap, (
-                            -interface_item.score, next(self._serial), "interface",
-                            (candidate, 0, interface_item, merged, env),
+                            -candidate.score, next(self._serial), "interface_resume",
+                            (candidate, 0),
                         ))
                         continue
                     self.unification_attempts += 1
@@ -1303,6 +1329,9 @@ class _LazyMaterializer:
                             )
                         continue
                     merged, env = result
+                    if not candidate.supports_context(merged):
+                        self.unification_rejections += 1
+                        continue
                     heappush(state.heap, (
                         -candidate.score, next(self._serial), "lexical", (candidate, merged, env),
                     ))
@@ -1650,7 +1679,7 @@ class _LazyMaterializer:
         required_features: Sequence[str | int] = (),
     ) -> float:
         required_ids = _required_feature_ids(required_features)
-        required_set = set(required_ids)
+        required_set = frozenset(required_ids)
         key = (node_id, _feature_key(constraint), required_ids)
         cached = self._constrained_node_hints.get(key)
         if cached is not None:
@@ -1663,12 +1692,21 @@ class _LazyMaterializer:
             self._charge()
             if isinstance(derivation, LexicalDerivation):
                 for candidate in derivation.candidates:
-                    if (
-                        not isinstance(candidate.interface, SegmentInterface)
-                        and not required_set.issubset(
-                            _feature_evidence(candidate.features)
-                        )
-                    ):
+                    if isinstance(candidate.interface, SegmentInterface):
+                        # The score bounds the stream. The representative's
+                        # features only describe its first local derivation.
+                        if candidate.interface.may_prove(required_set):
+                            best = max(best, candidate.score)
+                        elif self.rejection_trace is not None:
+                            self.rejection_trace.record(
+                                "positive_evidence_interface_impossible",
+                                self.forest.nodes[node_id],
+                                required_positive=required_ids,
+                                evidence_basis="interface_root_rule_support",
+                                surface=candidate.surface,
+                            )
+                        continue
+                    if not required_set.issubset(_feature_evidence(candidate.features)):
                         if self.rejection_trace is not None:
                             self.rejection_trace.record(
                                 "positive_evidence_lexical_hint_missing",
@@ -2092,6 +2130,25 @@ def _reported_discourse_embedding(root: ChartItem) -> int:
     return total
 
 
+def _bare_finite_root_conflict(item: ChartItem) -> bool:
+    """Do not let a root-only VP-NP fallback supply missing inflection.
+
+    This check is limited to direct subject–predicate root analyses. Bare
+    infinitives under auxiliaries and genuinely embedded subjunctives are not
+    constrained here.
+    """
+    if item.rule_id not in {"clause_np_vp", "clause_np_coord_aux_adv"} or len(item.children) != 2:
+        return False
+    subject, predicate = item.children
+    if not predicate.children or subject.category != "NP":
+        return False
+    head = predicate.children[0].lexical_candidate
+    if head is None or not head.excludes_third_singular:
+        return False
+    features = subject.features.as_dict()
+    return (features.get("number"), features.get("person")) == ("singular", "3")
+
+
 class _LazyRoots:
     def __init__(
         self,
@@ -2148,6 +2205,10 @@ class _LazyRoots:
             self.pending_nodes.discard(analysis.node_id)
             self.yielded_nodes.add(analysis.node_id)
             item = self.materializer.item(analysis)
+            if _bare_finite_root_conflict(item):
+                self.stats["invalid_bare_finite_roots"] = self.stats.get("invalid_bare_finite_roots", 0) + 1
+                self._schedule_following(analysis.node_id)
+                continue
             self.items.append(item)
             self.pack(item)
             if len(self.items) < amount:
@@ -2232,28 +2293,54 @@ class LazyRootSequence(Sequence[ChartItem]):
     def take(self, limit: int) -> tuple[ChartItem, ...]:
         if limit <= 0:
             return ()
-        self.provider.ensure(min(limit, self.provider.requested_k))
+        limit = min(limit, self.provider.requested_k)
+        self.provider.ensure(limit)
         return tuple(self.provider.items[:limit])
+
+    def for_composition(self, rank: int) -> ChartItem | None:
+        """Use the existing work-limited forest, not the public view's k."""
+        self.provider.ensure(rank + 1)
+        return self.provider.items[rank] if rank < len(self.provider.items) else None
+
+    def may_prove(self, required: frozenset[int]) -> bool:
+        materializer = self.provider.materializer
+        for node in self.provider.root_nodes:
+            for derivation in node.derivations:
+                if isinstance(derivation, LexicalDerivation):
+                    if any(c.interface is not None or required.issubset(_feature_evidence(c.features))
+                           for c in derivation.candidates):
+                        return True
+                else:
+                    rule = materializer.compiled.rules[derivation.rule_index].rule
+                    if _rule_may_provide_evidence(rule, required):
+                        return True
+        return False
 
     def __len__(self) -> int:
         self.provider.ensure(self.provider.requested_k)
-        return len(self.provider.items)
+        return min(len(self.provider.items), self.provider.requested_k)
 
     def __getitem__(self, index: int | slice) -> ChartItem | Sequence[ChartItem]:
         if isinstance(index, slice):
-            stop = index.stop
-            amount = self.provider.requested_k if stop is None or stop < 0 else stop
-            self.provider.ensure(min(amount, self.provider.requested_k))
-            return self.provider.items[index]
+            size = self.provider.requested_k
+            start, stop, step = index.indices(size)
+            selected = range(start, stop, step)
+            # For negative bounds or backward slices the actual available
+            # length (which may be smaller than k) determines the result.
+            if (step < 0 or any(x is not None and x < 0 for x in (index.start, index.stop))):
+                amount = size
+            else:
+                amount = selected[-1] + 1 if selected else 0
+            self.provider.ensure(amount)
+            return self.provider.items[:size][index]
         if index < 0:
-            self.provider.ensure(self.provider.requested_k)
-        else:
-            self.provider.ensure(min(index + 1, self.provider.requested_k))
-        return self.provider.items[index]
+            return self.take(self.provider.requested_k)[index]
+        if index >= self.provider.requested_k:
+            raise IndexError(index)
+        return self.take(index + 1)[index]
 
     def __iter__(self) -> Iterator[ChartItem]:
-        self.provider.ensure(self.provider.requested_k)
-        return iter(self.provider.items)
+        return iter(self.take(self.provider.requested_k))
 
 
 __all__ = ["LazyRootSequence", "VectorGrammar"]

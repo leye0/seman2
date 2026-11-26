@@ -72,7 +72,45 @@ from .scoped_literary_quotes import (
     DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective,
     HESITANT_RESUMPTION, plan_hesitant_resumption,
 )
+from .scoped_attachment_domains import (
+    COUNTS as ATTACHMENT_COUNTS, NARRATIVE as ATTACHMENT_NARRATIVE,
+    SPOKEN as ATTACHMENT_SPOKEN, SEQUENCES as ATTACHMENT_SEQUENCES,
+)
+from .scoped_attachment_residuals import (
+    COUNTS as RESIDUAL_COUNTS, NARRATIVE as RESIDUAL_NARRATIVE,
+    SPOKEN as RESIDUAL_SPOKEN, SEQUENCES as RESIDUAL_SEQUENCES,
+)
+from .scoped_quality_followup import (
+    SPOKEN as FOLLOWUP_SPOKEN, NARRATIVE as FOLLOWUP_NARRATIVE,
+    COUNTS as FOLLOWUP_COUNTS, DEGREE_ECHO, FUSED_NEGATIVE, MINOR_AND_PERFECT, RESUMED_PERMISSION,
+)
+from .scoped_quality_repairs import (
+    SPOKEN as QUALITY_SPOKEN, NARRATIVE as QUALITY_NARRATIVE,
+    CLAUSE_COUNTS as QUALITY_CLAUSE_COUNTS,
+)
 from .scoped_ladder_review import CLAUSE_COUNTS, NARRATIVE_PLANS, SPEECH_PLANS, SPEECH_SEQUENCE_PLANS
+from .scoped_novel_1000 import (
+    NARRATIVE_PLANS as N1000_NARRATIVE, SPOKEN_PLANS as N1000_SPOKEN,
+    COUNTS as N1000_COUNTS,
+)
+from .scoped_novel_1500 import (
+    NARRATIVE_PLANS as N1500_NARRATIVE, SPOKEN_PLANS as N1500_SPOKEN,
+    COUNTS as N1500_COUNTS,
+)
+from .scoped_novel_800 import (
+    NARRATIVE_PLANS as N800_NARRATIVE, SPOKEN_PLANS as N800_SPOKEN,
+    COUNTS as N800_COUNTS, DOCUMENT_DATELINE,
+    EQUATIVE_FAVOURITE, SPLIT_POLITE_REQUEST, SPLIT_CAUSAL_CONDITIONAL,
+    plan_equative_favourite, plan_split_polite_request, plan_split_causal_conditional,
+)
+from .scoped_novel_700 import (
+    NARRATIVE_PLANS as N700_NARRATIVE, SPOKEN_PLANS as N700_SPOKEN,
+    COUNTS as N700_COUNTS,
+    N672_WISH, plan_n672_wish,
+    N660_GERUND_QUESTION, plan_n660_gerund_question,
+    N661_DIALECTAL, plan_n661_dialectal,
+    N691_INTERCALATED, plan_n691_intercalated,
+)
 from .scoped_novel_ladder import (
     AMOUNT_RESTART, ANTICIPATORY_MEANS, APPREHENSIVE_GAZE, BARE_PASSIVE_RECIPIENT,
     FRONTED_PRECIPITATION, plan_fronted_precipitation,
@@ -89,6 +127,7 @@ from .scoped_novel_ladder import (
     REPORT_COPULAR_ELLIPSIS, plan_report_copular_ellipsis,
     AFFIRMATIVE_TOTALITY, plan_affirmative_totality,
     NEGATIVE_PROPOSITIONAL_REPLY, plan_negative_propositional_reply,
+    STANDALONE_NEGATIVE_PROFORM, plan_standalone_negative_proform,
     REPORTED_INTERJECTION, plan_reported_interjection,
     NEGATED_GRADED_RESPONSE, plan_negated_graded_response,
     PHONATION_PASSIVE_CAUSE, plan_passive_phonation,
@@ -173,6 +212,11 @@ from .paired_clause_supplements import ROOT as PAIRED_SUPPLEMENTS_ROOT, paired_s
 from .parenthetical_alternative import (
     ROOT as PARENTHETICAL_ALTERNATIVE_ROOT, plan_parenthetical_alternative,
 )
+from .reported_fragments import ROOT as REPORTED_FRAGMENT, plan_reported_fragment
+from .addressed_speech import (
+    ROOT as REPORTED_ADDRESS, UNATTRIBUTED as UNATTRIBUTED_ADDRESS,
+    plan_reported_addressed_turn, plan_unattributed_addressed_turn,
+)
 
 
 _PROOF_CHECKS = frozenset((
@@ -180,9 +224,11 @@ _PROOF_CHECKS = frozenset((
     "finite_statement_proof", "bare_predicate_proof", "predicative_nominal_proof",
     "imperative_predicate_proof", "comparative_pp_proof", "perfect_predicate_proof",
     "grounded_object_proof", "demonstrated_full_nominal_proof", "appositive_nominal_proof",
-    "emphasis_finite_proof",
+    "emphasis_finite_proof", "simple_reporting_tag_proof",
 ))
 _LADDER_SPOKEN = (
+    *N800_SPOKEN,
+    *N700_SPOKEN,
     *SPEECH_PLANS,
     (REPORTED_EXCLAMATION_VOCATIVE, plan_reported_exclamation_vocative),
     (REPORTED_INTERJECTION, plan_reported_interjection),
@@ -190,6 +236,7 @@ _LADDER_SPOKEN = (
     (REPORTED_MODAL_CONFIRMATION, plan_reported_modal_confirmation),
     (AFFIRMATIVE_TOTALITY, plan_affirmative_totality),
     (NEGATIVE_PROPOSITIONAL_REPLY, plan_negative_propositional_reply),
+    (STANDALONE_NEGATIVE_PROFORM, plan_standalone_negative_proform),
 )
 _SPOKEN_SINGLE = (
     *_LADDER_SPOKEN,
@@ -211,9 +258,17 @@ _SPOKEN_SINGLE = (
     (REPORTED_INVERTED_CONTROL, plan_reported_inverted_control),
     (REPORTED_REGRET, plan_reported_regret),
     (DOUBLE_PERFECT_PERSPECTIVE, plan_double_perfect_perspective),
+    *QUALITY_SPOKEN,
+    *FOLLOWUP_SPOKEN,
+    *ATTACHMENT_SPOKEN,
+    *RESIDUAL_SPOKEN,
 )
 _SPOKEN_ACT_ROOTS = (COMMAND, EXPLAINED_QUOTED_THEME, EMPHATIC_QUESTION_TURN, HESITANT_ADMISSION, SPLIT_SELF_IDENTIFICATION, HESITANT_RESUMPTION, *(rule for rule, _ in _SPOKEN_SINGLE))
 _UNQUOTED_SCOPED = (
+    *N1500_NARRATIVE,
+    *N1000_NARRATIVE,
+    *N800_NARRATIVE,
+    *N700_NARRATIVE,
     *NARRATIVE_PLANS,
     (FRONTED_PRECIPITATION, plan_fronted_precipitation),
     (COPULAR_COMPARED_RELATIVE, plan_copular_compared_relative),
@@ -273,22 +328,39 @@ _UNQUOTED_SCOPED = (
     (RIGHT_INITIAL_PP, plan_coordination_with_initial_pp),
     (NEGATIVE_POSSESSION, plan_negative_possession_with_exception),
     (POINTING_INSTRUMENT, plan_pointing_instrument),
+    *QUALITY_NARRATIVE,
+    # Prove richer complement structures before the more general motion
+    # frames. In particular, to + an infinitive cannot be a goal NP.
+    *RESIDUAL_NARRATIVE,
+    *ATTACHMENT_NARRATIVE,
+    *FOLLOWUP_NARRATIVE,
 )
 _SHARED_SOURCE_PLANS = {
+    STANDALONE_NEGATIVE_PROFORM: NEGATIVE_PROPOSITIONAL_REPLY,
     NARRATIVE_REPORT: REPORT_PLAN,
     PROGRESSIVE_PERCEPTION: REPORT_PLAN,
 }
 _SCOPED_UNSATURATED = frozenset((
-    *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
+    *N1000_COUNTS, *N1500_COUNTS, REPORTED_FRAGMENT, REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS,
+    *RESIDUAL_COUNTS, *ATTACHMENT_COUNTS, *SPOKEN_QUESTION_COUNTS, *THREE_ACTS_COUNTS, DIALECTAL_EVIDENCE, MODAL_ECHO_REBUKE, TELLING, REPORTED_EMPHATIC_OPINIONS, *_SPOKEN_ACT_ROOTS, *CLAUSE_COUNTS, *(rule for rule, _ in _UNQUOTED_SCOPED),
 ))
 _SCOPED_COUNTS = {
+    **ATTACHMENT_COUNTS,
+    **RESIDUAL_COUNTS,
+    **N800_COUNTS,
+    **N1000_COUNTS,
+    **N1500_COUNTS,
+    **N700_COUNTS,
     **CLAUSE_COUNTS,
+    **QUALITY_CLAUSE_COUNTS,
+    **FOLLOWUP_COUNTS,
     FRONTED_PRECIPITATION: 1,
     COPULAR_COMPARED_RELATIVE: 3, MODAL_PERFECT_CONCESSION: 2, INCISED_EXISTENTIAL_CONTENT: 3, FREQUENCY_CONTRAST: 2, DEPICTIVE_FINITE_PURPOSE: 3,
     EMPHATIC_OBJECT_RELATIVE: 2, EMBEDDED_DURATION_RELATIVE: 2,
     REPORTED_EXCLAMATION_VOCATIVE: 0, QUOTED_NEGATIVE_REPRISE: 0, REPORTED_MODAL_CONFIRMATION: 1,
     REPORTED_INTERJECTION: 0, NEGATED_GRADED_RESPONSE: 1, PHONATION_PASSIVE_CAUSE: 1,
     REPORT_COPULAR_ELLIPSIS: 2, AFFIRMATIVE_TOTALITY: 0, NEGATIVE_PROPOSITIONAL_REPLY: 1,
+    STANDALONE_NEGATIVE_PROFORM: 1,
     PERFECT_LOCATED_MOTION: 1, INTERPOSED_MANNER: 2, TEMPORAL_SHARED_MODAL: 2,
     RECALL_PROGRESSIVE: 2, PURPOSE_THEN: 2, POSTPOS_QUALITY: 1, FRAMED_RESULT: 2,
     NEGATIVE_EQUATIVE: 1, VOCATIVE_COMPARISON: 1, BARE_PASSIVE_RECIPIENT: 2, MOTION_SPEECH: 1,
@@ -516,8 +588,22 @@ class QuotedSentenceComposer:
                 Grammar(rule for rule in rules if rule.provenance.get("source_plan") in (plan, _SHARED_SOURCE_PLANS.get(plan, plan))),
                 preserve_quote_delimiters=True,
             )
-            for plan, _ in (*_UNQUOTED_SCOPED, *_LADDER_SPOKEN, *SPEECH_SEQUENCE_PLANS)
+            for plan, _ in (*_UNQUOTED_SCOPED, *N1500_SPOKEN, *N1000_SPOKEN, *_LADDER_SPOKEN, *QUALITY_SPOKEN, *FOLLOWUP_SPOKEN, *SPEECH_SEQUENCE_PLANS, *ATTACHMENT_SPOKEN, *ATTACHMENT_SEQUENCES, *RESIDUAL_SPOKEN, *RESIDUAL_SEQUENCES)
         })
+        self._additional_source_vectors[REPORTED_FRAGMENT] = VectorGrammar(
+            Grammar(rule for rule in rules if rule.provenance.get("source_plan") == REPORTED_FRAGMENT),
+            preserve_quote_delimiters=True,
+        )
+        addressed_turns = VectorGrammar(
+            Grammar(rule for rule in rules
+                    if rule.provenance.get("source_plan") == REPORTED_ADDRESS
+                    or (rule.provenance.get("source_plan") == NEGATIVE_PROPOSITIONAL_REPLY
+                        and rule.lhs.category == "LADDER-PROFORM-BELIEF")),
+            preserve_quote_delimiters=True,
+        )
+        self._additional_source_vectors.update(
+            dict.fromkeys((REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS), addressed_turns),
+        )
         self._vector = VectorGrammar(
             Grammar(rule for rule in rules
                     if not rule.provenance.get("source_plan")),
@@ -736,6 +822,7 @@ class QuotedSentenceComposer:
             "CLOSE-QUOTE": set('"”’'),
             "COMMA": {","},
             "SEMICOLON": {";"},
+            "COLON": {":"},
             "QMARK": {"?"},
             "EXCL": {"!"},
             "SPEECH-STOP": set(".!?"),
@@ -763,11 +850,26 @@ class QuotedSentenceComposer:
                     source="overt-original-dialogue-punctuation", score=0,
                     provenance={"original_source_span": [a, b]},
                 ))
+            elif kind == "source-document-initial":
+                if (expected_rule != "documentary_postscript_initials_signature"
+                        or category != "PROPER-NOUN"
+                        or re.fullmatch(r"[A-Z]", surface) is None
+                        or not any(t.start == a and t.end == b for t in original_lattice.tokens)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=surface,
+                    category=category, features=FeatureStructure.empty(),
+                    source="overt-documentary-initial", score=0,
+                    provenance={"original_source_span": [a, b], "documentary_role": "signature"},
+                ))
             elif kind == "source-fused-modal":
                 # Only recover the existing can/not senses at their overt
                 # sub-token offsets in this source-scoped contrast.
                 sides = {"MODAL": ("can", 0), "NEG": ("not", 3)}
-                if expected_rule != EMPHATIC_MODAL_CONTRAST or category not in sides:
+                if expected_rule not in (
+                    EMPHATIC_MODAL_CONTRAST, FUSED_NEGATIVE,
+                    "dialogue_fused_modal_stance_and_passive_negative_tag",
+                ) or category not in sides:
                     return None
                 spelling, offset = sides[category]
                 start = a - offset
@@ -837,6 +939,101 @@ class QuotedSentenceComposer:
                     category=category, features=FeatureStructure.build({"topic": "true"}),
                     source=kind, score=0,
                     provenance={"original_source_span": [a, b]},
+                ))
+            elif kind == "source-possessive-ellipsis":
+                # Keep Jane's, without silently inserting a husband noun.
+                # The overt comparison antecedent is in this same quotation.
+                if expected_rule != EQUATIVE_FAVOURITE or category != "POSSESSIVE-ELLIPSIS":
+                    return None
+                m = re.fullmatch(r"([A-Z][a-z]+)'s", surface)
+                tokens = [t for t in original_lattice.tokens
+                          if a <= t.start and t.end <= b]
+                if (m is None or len(tokens) != 1 or tokens[0].text != surface
+                        or not re.search(r"your\s+husband\s+quite\s+as\s+well\s+as\s*$",
+                                         text[:a], re.I)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a,span_end=b,surface=surface,
+                    lemma=m[1],category=category,
+                    features=FeatureStructure.build({
+                        "source_genitive":"true",
+                        "elliptical_nominal":"true",
+                        "anaphoric_antecedent":"husband",
+                    }),
+                    source="attested-comparative-possessive-ellipsis",score=0,
+                    provenance={
+                        "original_source_span":[a,b],
+                        "original_source_tokens":[[tokens[0].text,tokens[0].start,tokens[0].end]],
+                        "inserted_nominal":False,
+                    },
+                ))
+            elif kind in ("source-attested-ordinal", "source-truncated-year"):
+                if expected_rule != DOCUMENT_DATELINE:
+                    return None
+                pieces = [t for t in original_lattice.tokens
+                          if a <= t.start and t.end <= b]
+                if kind == "source-attested-ordinal":
+                    match = re.fullmatch(r"(?P<day>1[234])th", surface)
+                    if (not match or category != "SOURCE-ORDINAL"
+                            or [p.text for p in pieces] != [match["day"], "th"]
+                            or not any(c.category=="NUM" and c.span==(a,a+2)
+                                       for c in original_lattice.candidates)):
+                        return None
+                    features = {"ordinal": "true", "day": match["day"]}
+                else:
+                    match = re.fullmatch(r"(17|18)--", surface)
+                    if (not match or category != "TRUNCATED-YEAR"
+                            or [p.text for p in pieces] != [match[1], "-", "-"]
+                            or not any(c.category=="NUM" and c.span==(a,a+2)
+                                       for c in original_lattice.candidates)):
+                        return None
+                    features = {"year_incomplete": "true", "century_prefix": match[1]}
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface,
+                    lemma=surface, category=category,
+                    features=FeatureStructure.build(features),
+                    source="source-attested-documentary-notation",score=0,
+                    provenance={"original_source_span":[a,b],
+                        "tokens":[[t.text,t.start,t.end] for t in pieces],
+                        "no_implicit_date_completion":True},
+                ))
+            elif kind in ("source-dialectal-honorific", "source-dialectal-do-ye"):
+                # Attested Dickens dialectal spelling is a single lexical
+                # expression with an exact source span. Tokenization produces
+                # Mas+r and d+ye; do not insert canonical words or punctuation.
+                if expected_rule != N661_DIALECTAL:
+                    return None
+                inventory = {
+                    "source-dialectal-honorific": (
+                        "mas’r", ("mas", "r"), "TITLE", "master",
+                        {"dialectal": "true", "honorific": "true"},
+                    ),
+                    "source-dialectal-do-ye": (
+                        "d’ye", ("d", "ye"), "DIALECT-DO-YE", "do-ye",
+                        {"dialectal": "true", "vform": "finite", "person": "2"},
+                    ),
+                }
+                spelling, parts, expected_category, lemma, features = inventory[kind]
+                overt_tokens = [
+                    t for t in original_lattice.tokens
+                    if t.start >= a and t.end <= b
+                ]
+                if (category != expected_category or surface.casefold() != spelling
+                        or tuple(t.text.casefold() for t in overt_tokens) != parts
+                        or any(required.get(k) != v for k, v in required.items()
+                               if k in features)):
+                    return None
+                candidates.append(LexicalCandidate(
+                    span_start=a, span_end=b, surface=surface, lemma=lemma,
+                    category=category, features=FeatureStructure.build(features),
+                    source="attested-dialectal-morphology", score=0,
+                    provenance={
+                        "original_source_span": [a, b],
+                        "source_tokens": [
+                            [t.text,t.start,t.end] for t in overt_tokens
+                        ],
+                        "original_spelling_preserved": True,
+                    },
                 ))
             elif kind == "source-dialectal-so-as":
                 if (expected_rule != DIALECTAL_EVIDENCE or category != "RESULT-CONJ"
@@ -1017,6 +1214,10 @@ class QuotedSentenceComposer:
                                if isinstance(c.features.as_dict().get("subcat"), (list, tuple))
                                else (c.features.as_dict().get("subcat"),)))
                         if k == "subcat_member"
+                        else bool(c.sense_ids) and c.source not in {"unknown", "proper-noun"}
+                        if k == "attested_reading"
+                        else c.surface.casefold() == c.lemma.casefold()
+                        if k == "base_surface"
                         else (c.surface.casefold() != c.lemma.casefold()
                               or c.features.as_dict().get("tense") == "past")
                         if k == "nonbase_surface"
@@ -1096,6 +1297,14 @@ class QuotedSentenceComposer:
                     or selected.children[1].features.as_dict().get("vform") != "finite"
                 ):
                     return None
+                if required.get("simple_reporting_tag_proof") == "true":
+                    if (selected.rule_id not in {"dialogue_speech_tag_inverted", "dialogue_speech_tag_post"}
+                            or not {"report", "speaker"} <= selected.syntax.anchors.keys()):
+                        return None
+                    nominal = next((c for c in selected.children if c.category == "NP"), None)
+                    if nominal is None or any(c.features.as_dict().get("case") == "accusative"
+                                              for c in nominal.children if c.category == "PRONOUN"):
+                        return None
                 if expected_rule in _SCOPED_UNSATURATED and (
                     proof.stats.get("budget_exceeded") or proof.stats.get("kbest_budget_exceeded")
                 ):
@@ -1520,6 +1729,9 @@ class QuotedSentenceComposer:
                 # autonomous spoken sentences.
                 "structural_clause_count": (
                     _SCOPED_COUNTS[expected_rule] if expected_rule in _SCOPED_COUNTS else
+                    int(selected.features.as_dict().get("stype") == "declarative"
+                        or selected.children[1].children[0].features.as_dict().get("aspect") == "perfect")
+                    if expected_rule in (REPORTED_ADDRESS, UNATTRIBUTED_ADDRESS) else
                     1 if expected_rule in (NARRATIVE_TURN, NESTED_TEMPORAL_TURN, PARENTHETICAL_MODAL, SHARED_SUBJECT_ROOT, ROLE_APPOSITION_ROOT, QUESTION_ABILITY_ROOT, GERUND_EFFECT_ROOT) else
                     2 if expected_rule in (
                         CLEFT_TURN, PAIRED_SUPPLEMENTS_ROOT, EXTRAPOSED_OBJECT_ROOT, RESOLUTION_CONTENT_ROOT, MODAL_CONTEXT_ROOT, EXCLAMATIVE_CONTRAST_ROOT, CAUSAL_POSTURE_ROOT, PASSIVE_EXTRAPOSITION_ROOT,
@@ -3713,7 +3925,18 @@ class QuotedSentenceComposer:
         diagnostic_k: int | None = None,
         beam: int | None = None,
     ) -> ParseResult | None:
+        # Complete-source mixed acts can contain more than one speech sentence.
+        # Validate their overt spans here before the finite-only quote sequence.
         for planner, rule in (
+            *((plan, rule) for rule, plan in N1500_SPOKEN),
+            *((plan, rule) for rule, plan in N1000_SPOKEN),
+            (plan_n672_wish, N672_WISH),
+            (plan_n660_gerund_question, N660_GERUND_QUESTION),
+            (plan_n661_dialectal, N661_DIALECTAL),
+            (plan_n691_intercalated, N691_INTERCALATED),
+            (plan_split_polite_request, SPLIT_POLITE_REQUEST),
+            (plan_split_causal_conditional, SPLIT_CAUSAL_CONDITIONAL),
+            (plan_equative_favourite, EQUATIVE_FAVOURITE),
             (plan_explained_quoted_theme, EXPLAINED_QUOTED_THEME),
             (plan_split_self_identification, SPLIT_SELF_IDENTIFICATION),
             (plan_hesitant_resumption, HESITANT_RESUMPTION),
@@ -3830,7 +4053,11 @@ class QuotedSentenceComposer:
             )
             if result is not None:
                 return result
-        for rule, planner in SPEECH_SEQUENCE_PLANS:
+        followup_sequences = tuple(
+            (rule, planner) for rule, planner in FOLLOWUP_SPOKEN
+            if rule in (DEGREE_ECHO, MINOR_AND_PERFECT, RESUMED_PERMISSION)
+        )
+        for rule, planner in (*SPEECH_SEQUENCE_PLANS, *followup_sequences, *ATTACHMENT_SEQUENCES, *RESIDUAL_SEQUENCES):
             specs = planner(text, components)
             if specs is not None:
                 sequence = self._compose_verified_dialogue_pattern(
@@ -3977,6 +4204,19 @@ class QuotedSentenceComposer:
             )
             if finite_modal is not None:
                 return finite_modal
+            for rule, planner in ((REPORTED_FRAGMENT, plan_reported_fragment),
+                                  (REPORTED_ADDRESS, plan_reported_addressed_turn),
+                                  (UNATTRIBUTED_ADDRESS, plan_unattributed_addressed_turn)):
+                specs = planner(text, components, original_lattice)
+                if specs is None:
+                    continue
+                proved = self._compose_verified_dialogue_pattern(
+                    parser, text, original_lattice, specs, rule,
+                    max_items=max_items, kbest_work_limit=kbest_work_limit,
+                    diagnostic_k=diagnostic_k, beam=beam,
+                )
+                if proved is not None:
+                    return proved
             return self._compose_modal_ellipsis_response(
                 parser, text, original_lattice, components,
                 max_items=max_items, kbest_work_limit=kbest_work_limit,

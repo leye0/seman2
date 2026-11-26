@@ -1,0 +1,74 @@
+{
+  "schema": "seman2-novel-source-reporting-v3",
+  "manifest_sha256": "93bb915a30a956fef8c465a7dd684e57cfd2b2866f225409c9fd4686d0b2e5af",
+  "limits": {
+    "chart_items": 50000,
+    "kbest_work": 500000,
+    "seconds_per_case": 10
+  },
+  "cohorts": {
+    "500": {
+      "counts": {
+        "complete": 500
+      },
+      "cohort_sha256": "cf3c5182d68e528fb3545f3f1626b907a0f12cd84137b4c032e3cc225931880c",
+      "ordered_signatures_sha256": "8bf75687e43926093b3efd7082cea33584a0a7928aa4bcad989573b5bf1df3a2",
+      "protected": 488,
+      "inherited_search_limit_flags": 12
+    },
+    "600": {
+      "counts": {
+        "complete": 100
+      },
+      "cohort_sha256": "4fdf08930589754a2a7374598b09d2124974b60e723d92ac596fb930de911b15",
+      "ordered_signatures_sha256": "5ef8040781e486c1e570207d27611294bf23e6fe892cafea8e944d114fa91fa3",
+      "protected": 100,
+      "inherited_search_limit_flags": 0
+    },
+    "700": {
+      "counts": {
+        "complete": 100
+      },
+      "cohort_sha256": "8a235aa72968fb410204590960bb7e59fd0b91ea19083d160438a763228357a3",
+      "ordered_signatures_sha256": "f2708e8e25e58382f5565e73ddb1356d45740518adfaa27257e35f023ffeea35",
+      "protected": 100,
+      "inherited_search_limit_flags": 0
+    },
+    "800": {
+      "counts": {
+        "complete": 100
+      },
+      "cohort_sha256": "34c859a0c6cf9ff1a33589b7c67fc51aec745c642b85339ef66f16c796d748d3",
+      "ordered_signatures_sha256": "93d08b562583319a172cde0f21748dbc261226e6d52e2f90bec736a6c84a8c0b",
+      "protected": 100,
+      "inherited_search_limit_flags": 0
+    },
+    "900": {
+      "counts": {
+        "complete": 100
+      },
+      "cohort_sha256": "4f4595e6d5633ad6eac2d6b623850969304f9f5c47a5a4e276e226e8655a1dea",
+      "ordered_signatures_sha256": "691eec70bcf3dc694a80dbb2b308db732acdd9e87ee7835ec522cb3197f2e7bb",
+      "protected": 100,
+      "inherited_search_limit_flags": 3
+    },
+    "1000": {
+      "counts": {
+        "complete": 100
+      },
+      "cohort_sha256": "d40fa514e0d22ba0bf0c3dee66e7a96d9a130b2bdc3e16de12e13327666e4de8",
+      "ordered_signatures_sha256": "3c2dbeca8ce363d5d11158aafd4ed35f7be0aa5cc6e017a870a45bd9c7eaf01f",
+      "protected": 100,
+      "inherited_search_limit_flags": 2
+    },
+    "witnesses": {
+      "counts": {
+        "complete": 30
+      },
+      "cohort_sha256": "895e740a10614f5bd08d42d98620c940e25bba1c7a9b04d0e0d4c96355446395",
+      "ordered_signatures_sha256": "211d8d6b1f23734ab6b4e3784a9d63c60c7ee0ecc0135e38eff173e8797aa927",
+      "protected": 30,
+      "inherited_search_limit_flags": 0
+    }
+  }
+}

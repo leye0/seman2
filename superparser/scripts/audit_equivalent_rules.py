@@ -1,8 +1,9 @@
-"""Paired audit of *semantically identical* duplicate grammar productions.
+"""Inventory and ablate candidate duplicates without editing production data.
 
-No production grammar edit. Two Parser.parse instances receive identical
-lexical lattices and budgets. Do not collapse rules with different semantic
-recipes even if their symbol sequences are identical.
+Compared productions agree after renaming rule-local variables. They must
+also have the same typed interfaces, source scope and lowered semantics.
+The inventory is a review queue, not permission to remove a rule id that
+another construction needs.
 """
 from __future__ import annotations
 import argparse,json,signal
@@ -10,7 +11,8 @@ from collections import Counter,defaultdict
 from pathlib import Path
 from time import perf_counter
 from seman_parser.engine import Parser,ParserResources
-from seman_parser.grammar import Grammar
+from seman_parser.grammar import Grammar, load_grammar
+from seman_parser.semantic_rules import load_semantic_rules
 from research.verbnet_lr.corpus_pipeline import parse_corpus_case
 from scripts.diagnose_novel_parses import select_cases,classify
 
@@ -18,43 +20,52 @@ ROOT=Path(__file__).resolve().parents[1]
 class Deadline(Exception):pass
 def alarm(_a,_b):raise Deadline()
 
-def canonicalize(resources):
-    semantics={
-        x["id"]:x.get("semantic")
-        for raw in (ROOT/"data"/"semantic_rules.jsonl").read_text(
-            encoding="utf8").splitlines() if raw.strip()
-        for x in [json.loads(raw)]
+def equivalent_groups(grammar, semantics):
+    indexed = defaultdict(list)
+    for order, rule in enumerate(grammar):
+        variables = {}
+
+        def normalized(symbol):
+            raw = symbol.as_dict()
+            for key, value in sorted(raw["features"].items()):
+                if isinstance(value, str) and value.startswith("?"):
+                    raw["features"][key] = variables.setdefault(value, f"?{len(variables)}")
+            # Requirements are a conjunction, not another source of order.
+            raw["requires"].sort()
+            return raw
+
+        signature = {
+            "rhs": [normalized(s) for s in rule.rhs],
+            "lhs": normalized(rule.lhs),
+            "semantic": [a.as_dict() for a in semantics.get(rule.rule_id, ())],
+            "scope": {key: rule.provenance.get(key)
+                      for key in ("source_plan", "usage_deviation")},
+        }
+        indexed[json.dumps(signature, sort_keys=True)].append((order, rule))
+    groups = []
+    for equal in indexed.values():
+        if len(equal) < 2:
+            continue
+        _, kept = min(equal, key=lambda row: (-row[1].score, row[0]))
+        groups.append({"keep": kept.rule_id, "score": kept.score,
+                       "remove": [r.rule_id for _, r in equal if r.rule_id != kept.rule_id]})
+    return groups
+
+
+def inventory():
+    data = ROOT / "data"
+    pairs = {
+        "grammar": "semantic_rules", "dialogue_grammar": "dialogue_semantic_rules",
+        "dialogue_structural_grammar": "dialogue_semantic_rules",
     }
-    indexed=defaultdict(list)
-    for order,rule in enumerate(resources.grammar):
-        # Fully capture RHS features, positive requirements and semantic
-        # handle exports. IDs and scores do not constitute new structures.
-        syntax=json.dumps({
-            "lhs":rule.lhs.as_dict(),
-            "rhs":[s.as_dict() for s in rule.rhs],
-        },sort_keys=True)
-        indexed[syntax].append((order,rule))
-    omit=set()
-    groups=[]
-    for members in indexed.values():
-        partitions=defaultdict(list)
-        for order,rule in members:
-            sem=json.dumps(semantics.get(rule.rule_id),
-                           sort_keys=True)
-            partitions[sem].append((order,rule))
-        for equal in partitions.values():
-            if len(equal)<2:continue
-            # Higher scoring rule already dominates an otherwise identical
-            # derivation. For ties, keep the oldest stable original ID.
-            kept_order,kept_rule=min(equal,key=lambda x:(-x[1].score,x[0]))
-            removed=[r.rule_id for _,r in equal if r.rule_id!=kept_rule.rule_id]
-            omit.update(removed)
-            groups.append({
-                "keep":kept_rule.rule_id,"score":kept_rule.score,
-                "remove":removed,
-            })
-    assert len(groups)>=15,(len(groups),groups)
-    assert "clause_front_np" not in omit or "clause_front_np_comma" not in omit
+    return {grammar: equivalent_groups(load_grammar(data / f"{grammar}.jsonl"),
+                                       load_semantic_rules(data / f"{semantics}.jsonl"))
+            for grammar, semantics in pairs.items()}
+
+
+def canonicalize(resources):
+    groups = equivalent_groups(resources.grammar, resources.semantic_rules())
+    omit = {rule for group in groups for rule in group["remove"]}
     filtered=[r for r in resources.grammar if r.rule_id not in omit]
     assert len(filtered)==len(resources.grammar)-len(omit)
     return ParserResources(
@@ -99,11 +110,17 @@ def parse(parser,case,seconds):
 
 def main():
     ap=argparse.ArgumentParser()
-    ap.add_argument("--wordnet-dir",required=True)
-    ap.add_argument("--output",type=Path,required=True)
+    ap.add_argument("--wordnet-dir")
+    ap.add_argument("--output",type=Path)
+    ap.add_argument("--inventory-only", action="store_true")
     ap.add_argument("--count",type=int,default=105)
     ap.add_argument("--seconds",type=float,default=10.0)
     opt=ap.parse_args()
+    if opt.inventory_only:
+        print(json.dumps(inventory(), ensure_ascii=False, indent=2))
+        return
+    if opt.wordnet_dir is None or opt.output is None:
+        ap.error("paired ablation requires --wordnet-dir and --output")
     cases,_=select_cases(500)
     source=ParserResources.from_dir(ROOT/"data",wordnet_dict=opt.wordnet_dir)
     filtered,groups=canonicalize(source)

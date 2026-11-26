@@ -153,7 +153,7 @@ class Lexicon:
     words) live in the static table. Both sources merge transparently.
     """
 
-    __slots__ = ("entries", "_by_surface", "_by_lemma", "_by_morph", "_wordnet", "_cache", "_max_senses", "_irregular_vforms")
+    __slots__ = ("entries", "_by_surface", "_by_lemma", "_by_morph", "_wordnet", "_cache", "_max_senses", "_irregular_vforms", "_nonpast_stems")
 
     def __init__(
         self,
@@ -174,6 +174,10 @@ class Lexicon:
         # exceptions identify lemmas but not past vs past participle.
         # A documented paradigm may constrain this ambiguity for that form.
         self._irregular_vforms: dict[tuple[str, str], set[str]] = {}
+        self._nonpast_stems = frozenset(
+            entry.lemma.casefold() for entry in self.entries
+            if entry.provenance.get("uninflected_stem_no_past") is True
+        )
         for entry in self.entries:
             for form, surfaces in entry.provenance.get("irregular_verb_forms", {}).items():
                 if form not in {"finite", "ed"}:
@@ -182,7 +186,15 @@ class Lexicon:
                     self._irregular_vforms.setdefault(
                         (surface.casefold(), entry.lemma.casefold()), set()
                     ).add(form)
+            # Paradigm evidence without spelling entries must not shadow
+            # the actual WordNet entry in normal lexical lookup.
+            if (entry.provenance.get("uninflected_stem_no_past") is True
+                    and not (entry.senses or entry.surfaces or entry.morphology)):
+                continue
             self._index(entry)
+
+    def finite_bare_stem_excludes_third_singular(self, surface: str, lemma: str) -> bool:
+        return surface.casefold() == lemma.casefold() and lemma.casefold() in self._nonpast_stems
 
     def _index(self, entry: LexicalEntry) -> None:
         self._by_lemma.setdefault(entry.lemma, []).append(entry)

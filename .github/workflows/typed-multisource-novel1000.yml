@@ -1,0 +1,66 @@
+name: Novel-1000 independent typed resource POC
+
+on:
+  push:
+    branches: [research/typed-multisource-poc]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: typed-multisource-poc-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install model and corpus interfaces
+        run: python -m pip install --disable-pip-version-check "stanza==1.10.1" "nltk==3.9.1"
+      - name: Verify the standalone feature constraints
+        run: python -m unittest -q superparser.tests.test_typed_resource_poc superparser.tests.test_typed_resource_poc_gold
+      - name: Small real-source smoke
+        run: |
+          python -m scripts.typed_resource_poc --limit 10 --out-dir "$RUNNER_TEMP/typed-smoke"
+      - name: Verify the independent held-out gold evaluation interfaces
+        run: |
+          python -m scripts.evaluate_typed_gold --limit 25 --out-dir "$RUNNER_TEMP/typed-gold-smoke"
+      - name: Evaluate independent gold UD-EWT TEST
+        run: |
+          python -m scripts.evaluate_typed_gold --out-dir "$RUNNER_TEMP/typed-gold-full"
+      - name: Verify deterministic fast replay on frozen gold dependencies
+        run: |
+          python -m scripts.replay_typed_alternatives \
+            --pairs "$RUNNER_TEMP/typed-gold-full/frozen-gold-prediction-pairs.jsonl" \
+            --expected-gold-report "$RUNNER_TEMP/typed-gold-full/gold-evaluation.json" \
+            --out-dir "$RUNNER_TEMP/typed-fast-replay"
+      - name: Evaluate the 1000 frozen Novel-v3 sources
+        run: |
+          python -m scripts.typed_resource_poc --out-dir "$RUNNER_TEMP/typed-full"
+          cat "$RUNNER_TEMP/typed-full/summary.json" | python -c             'import json,sys; s=json.load(sys.stdin); print("MANIFEST",s["manifest_sha256"]); print("METRICS",json.dumps(s["totals"],sort_keys=True))'
+      - name: Publish source-level analyses and honest diagnostic summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typed-multisource-novel1000
+          path: |
+            ${{ runner.temp }}/typed-smoke/summary.json
+            ${{ runner.temp }}/typed-full/summary.json
+            ${{ runner.temp }}/typed-full/cases.jsonl
+            ${{ runner.temp }}/typed-gold-smoke/gold-evaluation.json
+            ${{ runner.temp }}/typed-gold-full/gold-evaluation.json
+            ${{ runner.temp }}/typed-gold-full/frozen-gold-prediction-pairs.jsonl
+            ${{ runner.temp }}/typed-fast-replay/fast-alternative-replay.json
+          if-no-files-found: warn
+          retention-days: 30

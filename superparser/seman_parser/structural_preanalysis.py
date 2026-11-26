@@ -12,6 +12,7 @@ import re
 
 from seman_parser.sentence_boundaries import _abbreviation_at
 from seman_parser.structural_units import review_semicolon_boundaries, skeleton
+from seman_parser.quote_orthography import clipped_participle_apostrophe
 from seman_parser.discourse_roles import POSTSCRIPT_FRAME, classify_discourse
 from seman_parser.quoted_discourse import analyze_dialogue
 from seman_parser.finite_temporal_scope import finite_temporal_span
@@ -46,6 +47,14 @@ _INTRO = re.compile(r"(?i)^(?:because|although|though|unless|until|while|"
 _REPORT = re.compile(r"(?i)\b(?:said|replied|asked|cried|muttered|whispered|"
                      r"exclaimed|returned|answered|observed|continued|"
                      r"added|remarked|declared|called|shouted)\b")
+# A quote-final question or exclamation can be followed by an overt
+# first-person quotative tag. Capital I alone is not a sentence boundary.
+# Require a bare speech predicate and a comma-marked nonfinite supplement,
+# so independent clauses such as "I said nothing" remain independent.
+_POST_QUOTE_I_TAG = re.compile(
+    r"I\s+(?:said|asked|replied|answered|cried|exclaimed|whispered|added),"
+    r"\s+[a-z-]+ing\b[^.!?;“”‘]{0,115}\."
+)
 _PARTICIPLE = re.compile(r"(?i)^(?:merely\s+|simply\s+)?[a-z-]+ing\b")
 _INFINITIVE = re.compile(r"(?i)^(?:(?:and|or)\s+)?to\s+[a-z-]+\b")
 _PP = re.compile(r"(?i)^(?:(?:and|or)\s+)?(?:in|on|at|with|from|under|"
@@ -126,7 +135,10 @@ def quote_scan(text: str) -> tuple[list[int], list[tuple[int, int]], int]:
         lexical = (ch in ("'", "’") and prev.isalnum() and nxt.isalnum())
         clipped = (ch in ("'", "’") and prev.isalnum()
                    and (not stack or stack[-1][0] not in ("'", "‘")))
-        if lexical or clipped:
+        if (lexical or clipped or (
+                ch == "’" and stack and stack[-1][0] == "‘"
+                and clipped_participle_apostrophe(text, i)
+        )):
             depth.append(len(stack))
             continue
         if ch in ("“", "‘"):
@@ -158,7 +170,8 @@ def sentence_spans(paragraph: str) -> tuple[tuple[int, int], ...]:
     """
     if not paragraph.strip():
         return ()
-    depth, _, _ = quote_scan(paragraph)
+    depth, pairs, _ = quote_scan(paragraph)
+    outer_closes = {b for a, b in pairs if depth[a] == 1}
     n = len(paragraph)
     start = 0
     spans: list[tuple[int, int]] = []
@@ -216,6 +229,10 @@ def sentence_spans(paragraph: str) -> tuple[tuple[int, int], ...]:
         # An inner sentence inside one continuous quoted speech act does
         # not become a broken standalone quotation.
         if depth[end-1]:
+            i += 1
+            continue
+        if (mark in "?!" and end in outer_closes
+                and _POST_QUOTE_I_TAG.match(paragraph, nxt)):
             i += 1
             continue
         a = start
@@ -487,7 +504,7 @@ def constituency(source: str, quotation_spans: list[tuple[int, int]]
             "a0", "adverbial_subordinate_clause", a, b, main,
             "adverbial_modifier", "bounded_finite_temporal_candidate",
         ))
-    elif _INTRO.match(head):
+    elif _INTRO.match(head) and not re.match(r"(?i)^as\s+to\b", head):
         a = source.find(head)
         b = source.find(",", a)
         if 0 < b < len(source)-2:

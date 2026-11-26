@@ -24,6 +24,27 @@ class ParagraphPreanalysisTests(unittest.TestCase):
                 self.assertEqual(units[0].quotation_status, "balanced")
                 self.assertTrue(all(c.start < c.end for c in units[0].constituents))
 
+    def test_as_to_nominal_topic_is_not_finite_subordination(self):
+        cases = (
+            "As to a fish-kittle, Mrs. Crupp said, well! would I only come and look at the range?",
+            "As to the garden, she had no objections.",
+        )
+        for source in cases:
+            with self.subTest(source=source):
+                unit, = analyze_paragraph(source)
+                self.assertEqual(unit.source_text, source)
+                self.assertFalse(any(
+                    c.function == "adverbial_subordinate_clause" and
+                    c.evidence == "subordinator_preposed_comma"
+                    for c in unit.constituents
+                ))
+        # Real as-subordinates retain the fronted-clause evidence.
+        unit, = analyze_paragraph("As she grew tired, she returned.")
+        self.assertTrue(any(
+            c.function == "adverbial_subordinate_clause"
+            for c in unit.constituents
+        ))
+
     def test_independent_quoted_reporting_utterances_remain_separate(self):
         source = '“Hello!” she cried. “Come back,” he said.'
         units = analyze_paragraph(source)
