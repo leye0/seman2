@@ -142,3 +142,12 @@ root alone is not a successful grammatical correction.
 Old case-index-specific research or 26-residual studies may be consulted
 historically but MUST NOT enter the current cohort gate. Merge only
 validated changes; close abandoned research PRs.
+
+**Repository workflow (owner instruction, 2026-11-25):** work directly on main;
+do not leave open pull requests or stack research branches. Keep experimental
+code isolated in research/scripts and label its evidence accurately; direct
+commits do not imply promotion into the production parser. Run focused tests
+and applicable CI, and document any unvalidated experimental changes.
+The ERG/ACE benchmark is an external diagnostic only: use the frozen Novel-1000
+v3 manifest and canonical prepared source text, preserve native analyses and
+failures, do not change grammar rules or silently segment/rewrite input.
