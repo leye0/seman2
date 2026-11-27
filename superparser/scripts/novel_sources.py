@@ -2,7 +2,7 @@
 from hashlib import sha256
 import json
 from pathlib import Path
-from research.verbnet_lr.clean_novel_corpus import load_cleaned
+from research.verbnet_lr.clean_novel_corpus import load_cleaned, read_manifest
 from research.verbnet_lr.gutenberg_novels import TRAIN_BOOKS, extract
 from research.verbnet_lr.corpus_pipeline import prepare_corpus_input
 
@@ -17,7 +17,14 @@ def pinned_novel_sources():
         raise ValueError("Novel manifest changed")
     anchors=json.loads((DIRECTORY/"anchors.json").read_text())
     bodies,rows,editions={}, {}, []
-    for book in sorted(TRAIN_BOOKS,key=lambda x:x.ebook_id):
+    books = {book.ebook_id: book for book in TRAIN_BOOKS}
+    # The training registry also lists books not in the cleaned corpus.
+    # Reproduce the historical inventory from its exact four pinned editions.
+    records = sorted(read_manifest()["books"], key=lambda x: x["ebook_id"])
+    if [r["ebook_id"] for r in records] != [e["book_id"] for e in manifest["editions"]]:
+        raise ValueError("Cleaned corpus book IDs differ from frozen Novel-1000 editions")
+    for record in records:
+        book = books[record["ebook_id"]]
         body,info=load_cleaned(book)
         bodies[book.ebook_id]=body
         editions.append({"book_id":book.ebook_id,"sha256":info["sha256"]})
