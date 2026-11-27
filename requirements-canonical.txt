@@ -1,1 +1,1 @@
-duckdb==1.5.5
+pydelphin==1.11.0

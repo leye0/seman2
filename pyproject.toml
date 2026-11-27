@@ -4,14 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seman2"
-version = "0.1.0"
-description = "Layer 1 symbolic grammar parser with adaptive shared-prefix recognition"
+version = "0.2.0"
+description = "Source-faithful dialogue and native ERG semantic analysis"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["pydelphin==1.11.0"]
 
 [tool.setuptools]
 package-dir = {"" = "superparser"}
 
 [tool.setuptools.packages.find]
 where = ["superparser"]
-

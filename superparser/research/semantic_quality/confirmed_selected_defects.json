@@ -1,8 +1,0 @@
-{
-  "schema": "seman2-selected-semantic-defect-ledger-v1",
-  "source_corpus_ids": [
-    "novel-700-current",
-    "novel-800-candidate-current"
-  ],
-  "cases": []
-}

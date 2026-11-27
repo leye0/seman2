@@ -1,9 +1,0 @@
-{
-  "schema": "seman2-grammar-case-queue-v2",
-  "cohort_sha256": "d3283e7769d1ab73ea04279fc448aca9c64ec2213afb6164c90aa1c5de78380f",
-  "validated_commit": "a9e25ef6dabdb6424fdc5194418a9dc7c236d016",
-  "completed_count": 500,
-  "last_attempted_index": 358,
-  "unresolved": [],
-  "validated_ci_run": "https://github.com/leye0/seman2/actions/runs/43742890529"
-}

@@ -1,1 +1,0 @@
-2026-10-21 test general adjective to-inf complement and ADV DEGREE ADJP composition, with explicit false positives; research only.

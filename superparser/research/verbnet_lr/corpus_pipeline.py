@@ -210,50 +210,8 @@ def prepare_corpus_input(
         **common,
     )
 
-def parse_corpus_case(
-    parser: Any,
-    case: Mapping[str, Any],
-    *,
-    mode: CorpusParseMode = CorpusParseMode.QUOTE_BALANCED,
-    max_items: int | None = None,
-    kbest_work_limit: int | None = None,
-    diagnostic_k: int | None = None,
-    allow_marked_deviations: bool = False,
-    rejection_trace_limit: int = 0,
-    preflight_diagnostics: bool = False,
-):
-    """One canonical way to parse a novel case, including quotation context.
-
-    Returns (PreparedCorpusInput, LexicalLattice, ParseResult). A new caller
-    automatically analyzes the balanced text. Explicit historical mode keeps
-    legacy 500-case measurements comparable without changing their SHA.
-    """
-    prepared = prepare_corpus_input(case, mode=mode)
-    options = {"max_items": max_items, "kbest_work_limit": kbest_work_limit}
-    # This is the canonical bridge from source-level grammatical constituents
-    # to the actual public parser. The parser may compose ONLY fully proven
-    # clause interfaces; a provisional source label never counts as a tree.
-    if prepared.structural_constituents:
-        options["structural_constituents"] = prepared.structural_constituents
-    if diagnostic_k is not None:
-        if not 1 <= diagnostic_k <= 64:
-            raise ValueError("diagnostic_k must be 1..64 in corpus research")
-        options["diagnostic_k"] = diagnostic_k
-    if allow_marked_deviations:
-        options["allow_marked_deviations"] = True
-    if rejection_trace_limit:
-        options["rejection_trace_limit"] = rejection_trace_limit
-    if preflight_diagnostics:
-        options["preflight_diagnostics"] = True
-    report = parser.parse(prepared.analysis_text, **options)
-    # The diagnostic sees EXACTLY the lexical lattice used by the parser,
-    # not a separately rebuilt or differently configured approximation.
-    lattice = report.lattice
-    if lattice is None:
-        raise AssertionError("Parser.parse did not expose its lexical lattice")
-    if lattice.text != prepared.analysis_text or report.result.text != prepared.analysis_text:
-        raise AssertionError(
-            "Public parser changed corpus analysis text: quote context "
-            "and source spans must never be silently stripped or replaced"
-        )
-    return prepared, lattice, report.result
+def parse_corpus_case(parser, case, *, parse_components=True):
+    """Validate original source and invoke ERG; no competing grammar."""
+    prepared = prepare_corpus_input(case)
+    return prepared, parser.parse_unit(prepared.analysis_text,
+        prepared.structural_constituents, parse_components=parse_components)
