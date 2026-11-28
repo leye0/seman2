@@ -3,6 +3,15 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths:
+      - 'superparser/seman_parser/**'
+      - 'superparser/research/**'
+      - 'superparser/scripts/novel_sources.py'
+      - 'superparser/scripts/benchmark_native_erg.py'
+      - 'superparser/tests/**'
+      - '.github/workflows/native-erg-novel1000.yml'
+      - 'pyproject.toml'
+      - 'requirements-canonical.txt'
 permissions:
   contents: read
 concurrency:

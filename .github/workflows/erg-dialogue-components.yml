@@ -1,0 +1,60 @@
+name: ERG dialogue component audit
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_run:
+        description: Successful unchanged whole-only Novel-1000 run
+        required: true
+        default: '46081223911'
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/scripts/audit_erg_dialogue_components.py'
+      - '.github/workflows/erg-dialogue-components.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-erg-novel1000
+          run-id: ${{ inputs.baseline_run || '46081223911' }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/baseline
+      - name: Install identical native tooling
+        run: |
+          set -euo pipefail
+          python -m pip install 'pydelphin==1.11.0'
+          mkdir -p "$RUNNER_TEMP/erg"
+          cd "$RUNNER_TEMP/erg"
+          curl --fail --location --retry 3 https://sweaglesw.org/linguistics/ace/download/ace-0.9.34-x86-64.tar.gz -o ace.tar.gz
+          tar -xzf ace.tar.gz
+          ACE_BIN="$(find "$PWD" -type f -name ace -executable -print -quit)"
+          test -n "$ACE_BIN"
+          echo "ACE_BIN=$ACE_BIN" >> "$GITHUB_ENV"
+          curl --fail --location --retry 3 https://github.com/delph-in/erg/releases/download/2025/erg-2025-x86-64-0.9.34.dat.bz2 -o erg.dat.bz2
+          bunzip2 erg.dat.bz2
+          echo "ERG_GRAMMAR=$PWD/erg.dat" >> "$GITHUB_ENV"
+      - name: Evaluate all exact dialogue components
+        run: |
+          python -m scripts.audit_erg_dialogue_components --baseline "$RUNNER_TEMP/baseline/erg-full" --ace "$ACE_BIN" --grammar "$ERG_GRAMMAR" --out-dir "$RUNNER_TEMP/dialogue-audit"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: erg-dialogue-component-audit
+          path: ${{ runner.temp }}/dialogue-audit/
+          if-no-files-found: warn
+          retention-days: 30
