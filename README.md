@@ -34,3 +34,7 @@ See [the source-linked MRS dialogue graph](docs/DIALOGUE_GRAPH.md). The default 
 ## Optional external linguistic knowledge
 
 See [independent knowledge providers](docs/EXTERNAL_KNOWLEDGE.md). WordNet, VerbNet, FrameNet, spaCy and explicitly requested Wiktionary data are exposed alongside ERG, with provenance and no new grammatical decisions.
+
+### Contextual WSD
+
+Optional [GlossBERT provider](docs/WSD.md), using WordNet and native upstream neural scores, not hand-written disambiguation rules.

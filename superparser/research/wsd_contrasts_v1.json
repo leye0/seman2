@@ -1,0 +1,387 @@
+[
+  {
+    "id": "WSD-001",
+    "family": "reply",
+    "text": "‘What?’ returned Agnes.",
+    "target": "returned",
+    "lemma": "return",
+    "pos": "v",
+    "accepted_synsets": [
+      "retort.v.01"
+    ],
+    "accepted_lexnames": [
+      "verb.communication"
+    ]
+  },
+  {
+    "id": "WSD-002",
+    "family": "reply",
+    "text": "‘I beg, sir,’ he returned respectfully, ‘that you will be seated, and allow me to do this.’",
+    "target": "returned",
+    "lemma": "return",
+    "pos": "v",
+    "accepted_synsets": [
+      "retort.v.01"
+    ],
+    "accepted_lexnames": [
+      "verb.communication"
+    ]
+  },
+  {
+    "id": "WSD-003",
+    "family": "movement",
+    "text": "After three weeks abroad, Agnes returned to her village.",
+    "target": "returned",
+    "lemma": "return",
+    "pos": "v",
+    "accepted_synsets": [
+      "return.v.01"
+    ],
+    "accepted_lexnames": [
+      "verb.motion"
+    ]
+  },
+  {
+    "id": "WSD-004",
+    "family": "restitution",
+    "text": "Agnes returned the borrowed book to its owner.",
+    "target": "returned",
+    "lemma": "return",
+    "pos": "v",
+    "accepted_synsets": [
+      "render.v.07"
+    ],
+    "accepted_lexnames": [
+      "verb.possession"
+    ]
+  },
+  {
+    "id": "WSD-005",
+    "family": "adverb",
+    "text": "‘Clara!’ said Mr. Murdstone sternly.",
+    "target": "sternly",
+    "lemma": "sternly",
+    "pos": "r",
+    "accepted_synsets": [
+      "sternly.r.01"
+    ],
+    "accepted_lexnames": [
+      "adv.all"
+    ]
+  },
+  {
+    "id": "WSD-006",
+    "family": "title",
+    "text": "‘How very nice!’ exclaimed Miss Dartle.",
+    "target": "Miss",
+    "lemma": "miss",
+    "pos": "n",
+    "accepted_synsets": [
+      "miss.n.03"
+    ],
+    "accepted_lexnames": [
+      "noun.communication"
+    ]
+  },
+  {
+    "id": "WSD-007",
+    "family": "miss_perception",
+    "text": "I missed the faint sound in the next room.",
+    "target": "missed",
+    "lemma": "miss",
+    "pos": "v",
+    "accepted_synsets": [
+      "miss.v.01"
+    ],
+    "accepted_lexnames": [
+      "verb.perception"
+    ]
+  },
+  {
+    "id": "WSD-008",
+    "family": "miss_emotion",
+    "text": "She missed her brother terribly after he moved away.",
+    "target": "missed",
+    "lemma": "miss",
+    "pos": "v",
+    "accepted_synsets": [
+      "miss.v.02"
+    ],
+    "accepted_lexnames": [
+      "verb.emotion"
+    ]
+  },
+  {
+    "id": "WSD-009",
+    "family": "murmur",
+    "text": "‘Please stay,’ Nora murmured under her breath.",
+    "target": "murmured",
+    "lemma": "murmur",
+    "pos": "v",
+    "accepted_synsets": [
+      "murmur.v.01"
+    ],
+    "accepted_lexnames": [
+      "verb.communication"
+    ]
+  },
+  {
+    "id": "WSD-010",
+    "family": "bank_river",
+    "text": "They sat on the bank of the river and watched the water.",
+    "target": "bank",
+    "lemma": "bank",
+    "pos": "n",
+    "accepted_synsets": [
+      "bank.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.object"
+    ]
+  },
+  {
+    "id": "WSD-011",
+    "family": "bank_finance",
+    "text": "He deposited his salary at the bank.",
+    "target": "bank",
+    "lemma": "bank",
+    "pos": "n",
+    "accepted_synsets": [
+      "depository_financial_institution.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.group"
+    ]
+  },
+  {
+    "id": "WSD-012",
+    "family": "plant",
+    "text": "The factory used to employ hundreds of workers at its main plant.",
+    "target": "plant",
+    "lemma": "plant",
+    "pos": "n",
+    "accepted_synsets": [
+      "plant.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.artifact"
+    ]
+  },
+  {
+    "id": "WSD-013",
+    "family": "plant",
+    "text": "She watered the plant growing in the flowerpot.",
+    "target": "plant",
+    "lemma": "plant",
+    "pos": "n",
+    "accepted_synsets": [
+      "plant.n.02"
+    ],
+    "accepted_lexnames": [
+      "noun.plant"
+    ]
+  },
+  {
+    "id": "WSD-014",
+    "family": "bat",
+    "text": "A bat flew out of the cave at dusk.",
+    "target": "bat",
+    "lemma": "bat",
+    "pos": "n",
+    "accepted_synsets": [
+      "bat.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.animal"
+    ]
+  },
+  {
+    "id": "WSD-015",
+    "family": "bat",
+    "text": "The player swung the bat and hit the ball.",
+    "target": "bat",
+    "lemma": "bat",
+    "pos": "n",
+    "accepted_synsets": [
+      "bat.n.05"
+    ],
+    "accepted_lexnames": [
+      "noun.artifact"
+    ]
+  },
+  {
+    "id": "WSD-016",
+    "family": "crane",
+    "text": "The crane lifted a steel beam onto the roof.",
+    "target": "crane",
+    "lemma": "crane",
+    "pos": "n",
+    "accepted_synsets": [
+      "crane.n.04"
+    ],
+    "accepted_lexnames": [
+      "noun.artifact"
+    ]
+  },
+  {
+    "id": "WSD-017",
+    "family": "crane",
+    "text": "A crane stood in the marsh on its long legs.",
+    "target": "crane",
+    "lemma": "crane",
+    "pos": "n",
+    "accepted_synsets": [
+      "crane.n.05"
+    ],
+    "accepted_lexnames": [
+      "noun.animal"
+    ]
+  },
+  {
+    "id": "WSD-018",
+    "family": "seal",
+    "text": "A seal swam beside the boat and dove for fish.",
+    "target": "seal",
+    "lemma": "seal",
+    "pos": "n",
+    "accepted_synsets": [
+      "seal.n.09"
+    ],
+    "accepted_lexnames": [
+      "noun.animal"
+    ]
+  },
+  {
+    "id": "WSD-019",
+    "family": "seal",
+    "text": "The official pressed a seal into the hot wax.",
+    "target": "seal",
+    "lemma": "seal",
+    "pos": "n",
+    "accepted_synsets": [],
+    "accepted_lexnames": [
+      "noun.artifact",
+      "noun.communication"
+    ]
+  },
+  {
+    "id": "WSD-020",
+    "family": "spring",
+    "text": "In spring the flowers begin to bloom.",
+    "target": "spring",
+    "lemma": "spring",
+    "pos": "n",
+    "accepted_synsets": [
+      "spring.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.time"
+    ]
+  },
+  {
+    "id": "WSD-021",
+    "family": "spring",
+    "text": "The metal spring compressed under the weight.",
+    "target": "spring",
+    "lemma": "spring",
+    "pos": "n",
+    "accepted_synsets": [
+      "spring.n.02"
+    ],
+    "accepted_lexnames": [
+      "noun.artifact"
+    ]
+  },
+  {
+    "id": "WSD-022",
+    "family": "spring",
+    "text": "Fresh water flowed from the spring in the hills.",
+    "target": "spring",
+    "lemma": "spring",
+    "pos": "n",
+    "accepted_synsets": [
+      "spring.n.03"
+    ],
+    "accepted_lexnames": [
+      "noun.object"
+    ]
+  },
+  {
+    "id": "WSD-023",
+    "family": "bark",
+    "text": "The rough bark protected the trunk of the old oak.",
+    "target": "bark",
+    "lemma": "bark",
+    "pos": "n",
+    "accepted_synsets": [
+      "bark.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.plant"
+    ]
+  },
+  {
+    "id": "WSD-024",
+    "family": "bark",
+    "text": "The dog began to bark at the stranger.",
+    "target": "bark",
+    "lemma": "bark",
+    "pos": "v",
+    "accepted_synsets": [
+      "bark.v.01"
+    ],
+    "accepted_lexnames": [
+      "verb.communication"
+    ]
+  },
+  {
+    "id": "WSD-025",
+    "family": "charge",
+    "text": "The officer charged the suspect with theft.",
+    "target": "charged",
+    "lemma": "charge",
+    "pos": "v",
+    "accepted_synsets": [],
+    "accepted_lexnames": [
+      "verb.communication"
+    ]
+  },
+  {
+    "id": "WSD-026",
+    "family": "charge",
+    "text": "The bull charged toward the fence.",
+    "target": "charged",
+    "lemma": "charge",
+    "pos": "v",
+    "accepted_synsets": [],
+    "accepted_lexnames": [
+      "verb.motion"
+    ]
+  },
+  {
+    "id": "WSD-027",
+    "family": "fine",
+    "text": "The court imposed a fine of fifty dollars.",
+    "target": "fine",
+    "lemma": "fine",
+    "pos": "n",
+    "accepted_synsets": [
+      "fine.n.01"
+    ],
+    "accepted_lexnames": [
+      "noun.possession"
+    ]
+  },
+  {
+    "id": "WSD-028",
+    "family": "fine",
+    "text": "The artist used a fine brush to paint tiny details.",
+    "target": "fine",
+    "lemma": "fine",
+    "pos": "a",
+    "accepted_synsets": [],
+    "accepted_lexnames": [
+      "adj.all"
+    ]
+  }
+]

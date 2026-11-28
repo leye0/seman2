@@ -1,0 +1,48 @@
+name: Contextual WSD provider audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/seman_parser/wsd.py'
+      - 'superparser/scripts/audit_wsd.py'
+      - 'superparser/research/wsd_contrasts_v1.json'
+      - 'superparser/tests/test_wsd.py'
+      - 'requirements-wsd.txt'
+      - '.github/workflows/wsd.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install upstream WSD engine and CPU runtime
+        run: |
+          echo "NLTK_DATA=$RUNNER_TEMP/nltk_data" >> "$GITHUB_ENV"
+          export NLTK_DATA="$RUNNER_TEMP/nltk_data"
+          python -m pip install 'torch==2.8.0' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements-wsd.txt -r requirements-canonical.txt
+          python -m nltk.downloader -d "$NLTK_DATA" wordnet
+      - name: Adapter contract tests
+        run: python -m unittest discover -s superparser/tests -p test_wsd.py
+      - name: Run contextual WSD contrasts
+        run: python -m scripts.audit_wsd --out-dir "$RUNNER_TEMP/wsd"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contextual-wsd-audit
+          path: ${{ runner.temp }}/wsd/
+          if-no-files-found: warn
+          retention-days: 30
