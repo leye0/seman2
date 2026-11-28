@@ -18,7 +18,10 @@ from xml.etree import ElementTree
 class Knowledge:
     def __init__(self, model="en_core_web_sm"):
         import spacy
-        from nltk.corpus import wordnet, verbnet3, framenet
+        from nltk.corpus import wordnet, framenet
+        from nltk.corpus.reader import VerbnetCorpusReader
+        from nltk.corpus.util import LazyCorpusLoader
+        verbnet3=LazyCorpusLoader('verbnet3', VerbnetCorpusReader, r'(?!\.).*\.xml')
         self.nlp=spacy.load(model)
         self.wn=wordnet
         self.vn=verbnet3
