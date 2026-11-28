@@ -9,6 +9,7 @@ from seman_parser import Parser
 from seman_parser.dialogue_graph import compose_dialogue
 from scripts.novel_sources import EXPECTED_MANIFEST
 from scripts.benchmark_native_erg import hash_file
+from scripts.evaluate_dialogue_gold import gold_evaluate
 
 ACE_SHA="4e3726a9e017d1e3eaa99fb89b873dfeaac3c0c0bd1989927cef6c42421f57ca"
 ERG_SHA="2968621bf88d50cffa9ec52c5edead7b16aabff573421f2f97c113e056ff5c82"
@@ -36,6 +37,7 @@ def main():
     totals=Counter()
     witnesses=[]
     seen=set()
+    gold_rows={}
     with (args.out_dir/"ace.stderr.log").open("w") as err, Parser(args.grammar,executable=args.ace,stderr=err) as parser, (args.baseline/"dialogues.jsonl").open() as f, (args.out_dir/"graphs.jsonl").open("w") as out:
         for line in f:
             row=json.loads(line)
@@ -58,6 +60,9 @@ def main():
                 totals["speaker_basis_"+a["preferred_basis"]]+=1
             totals["first_person_candidate_edges"]+=sum(e["relation"]=="first_person_speaker_candidate" for e in g["edges"])
             resumed=[v for v in g["views"] if v["kind"]=="resumed_speech"]
+            is_split=any(p["function"]=="split_direct_speech_turn" for p in parts)
+            totals["source_split_dialogues"]+=is_split
+            if is_split and not resumed: totals["split_views_abstained"]+=1
             if resumed:
                 totals["split_dialogues"]+=1
                 totals["resumed_views"]+=len(resumed)
@@ -78,11 +83,19 @@ def main():
                     examples=[{"reading_id":e["reading_id"],"signature":e["signature"]} for e in new[:8]]
                     witnesses.append({"case_id":cid,"source_text":text,"whole_stratum":row["whole_stratum"],
                                       "resumed_texts":[v["text"] for v in resumed],"new_native_links":examples})
-            out.write(json.dumps({"case_id":cid,"source_text":text,"whole_stratum":row["whole_stratum"],"graph":g},ensure_ascii=False,default=str)+"\n")
+            record={"case_id":cid,"source_text":text,"whole_stratum":row["whole_stratum"],"graph":g}
+            # Keep compact gold projection in memory; native derivations are streamed to artifact.
+            gold_rows[cid]={"source_text":text,"graph":{k:g[k] for k in ("source_nodes","attributions","native_cross_quote_links")}}
+            gold_rows[cid]["graph"]["readings"]=[{"id":x["id"],"quality_flags":x["quality_flags"]} for x in g["readings"]]
+            gold_rows[cid]["graph"]["views"]=[{"kind":x["kind"]} for x in g["views"]]
+            out.write(json.dumps(record,ensure_ascii=False,default=str)+"\n")
             if totals["dialogues"]%50==0: print("GRAPH_PROGRESS",dict(totals),flush=True)
-    if totals["dialogues"]!=327 or totals["split_dialogues"]!=49:
+    if totals["dialogues"]!=327 or totals["source_split_dialogues"]!=49:
         raise ValueError("Dialogue inventory changed")
-    summary={"manifest_sha256":manifest,"totals":dict(totals),"witnesses":witnesses,
+    gold=gold_evaluate(gold_rows)
+    (args.out_dir/"gold-results.json").write_text(json.dumps(gold,ensure_ascii=False,indent=2))
+    print("DIALOGUE_GOLD",json.dumps(gold["counts"]),flush=True)
+    summary={"gold_counts":gold["counts"],"manifest_sha256":manifest,"totals":dict(totals),"witnesses":witnesses,
              "interpretation":"Native links in alternative views and source-grounded candidates, not full semantic correctness."}
     (args.out_dir/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2))
     print("GRAPH_FINAL",json.dumps({"totals":dict(totals),"witnesses":witnesses[:3]},ensure_ascii=False),flush=True)

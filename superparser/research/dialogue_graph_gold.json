@@ -1,0 +1,172 @@
+{
+  "protocol": "speaker-gold-v1: first 20 reporting-clause cases by SHA256('speaker-gold-v1:'+case_id), annotated on source text before graph results; exact NP mention and head. Split dependency targets are selected diagnostic examples, not random.",
+  "speaker_cases": [
+    [
+      "Q3-426",
+      "asked the captain",
+      "the captain",
+      "captain"
+    ],
+    [
+      "Q3-763",
+      "he returned respectfully",
+      "he",
+      "he"
+    ],
+    [
+      "Q3-234",
+      "said Colonel Fitzwilliam",
+      "Colonel Fitzwilliam",
+      "Fitzwilliam"
+    ],
+    [
+      "Q3-953",
+      "Again I answered",
+      "I",
+      "I"
+    ],
+    [
+      "Q3-491",
+      "he replied",
+      "he",
+      "he"
+    ],
+    [
+      "Q3-996",
+      "said Miss Lucas",
+      "Miss Lucas",
+      "Lucas"
+    ],
+    [
+      "Q3-929",
+      "he asked",
+      "he",
+      "he"
+    ],
+    [
+      "Q3-926",
+      "replied the squire",
+      "the squire",
+      "squire"
+    ],
+    [
+      "Q3-804",
+      "said he",
+      "he",
+      "he"
+    ],
+    [
+      "Q3-11",
+      "exclaimed Miss Dartle",
+      "Miss Dartle",
+      "Dartle"
+    ],
+    [
+      "Q3-796",
+      "cried Mrs. Gardiner, whose curiosity as to the mode of her intelligence was all alive",
+      "Mrs. Gardiner",
+      "Gardiner"
+    ],
+    [
+      "Q3-643",
+      "we cried",
+      "we",
+      "we"
+    ],
+    [
+      "Q3-626",
+      "said I",
+      "I",
+      "I"
+    ],
+    [
+      "Q3-743",
+      "said I",
+      "I",
+      "I"
+    ],
+    [
+      "Q3-965",
+      "said Dora, in her coaxing way",
+      "Dora",
+      "Dora"
+    ],
+    [
+      "Q3-393",
+      "he cried",
+      "he",
+      "he"
+    ],
+    [
+      "Q3-949",
+      "said he",
+      "he",
+      "he"
+    ],
+    [
+      "Q3-968",
+      "said I",
+      "I",
+      "I"
+    ],
+    [
+      "Q3-238",
+      "said she",
+      "she",
+      "she"
+    ],
+    [
+      "Q3-652",
+      "returned Agnes",
+      "Agnes",
+      "Agnes"
+    ]
+  ],
+  "split_dependencies": [
+    [
+      "Q3-44",
+      "wants",
+      "go",
+      "want selects infinitival content"
+    ],
+    [
+      "Q3-44",
+      "Martha",
+      "go",
+      "Martha is understood subject of go"
+    ],
+    [
+      "Q3-223",
+      "afraid",
+      "affected",
+      "that-clause content of afraid"
+    ],
+    [
+      "Q3-312",
+      "shout",
+      "because",
+      "causal subordinate clause modifies shouting"
+    ],
+    [
+      "Q3-188",
+      "While",
+      "return",
+      "temporal subordinate clause modifies return"
+    ],
+    [
+      "Q3-763",
+      "beg",
+      "seated",
+      "beg selects clausal content"
+    ],
+    [
+      "Q3-965",
+      "let",
+      "if",
+      "conditional on request"
+    ]
+  ],
+  "terminal_negative": [
+    "Q3-857"
+  ]
+}

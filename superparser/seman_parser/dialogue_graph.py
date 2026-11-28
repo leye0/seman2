@@ -43,6 +43,20 @@ def remap(mapping, start, end):
     return result
 
 
+def interruption_boundary(text, previous, following):
+    """Do not reconnect speech across a source sentence-final reporter.
+    A semicolon is weaker than a comma; retain punctuation in its view.
+    """
+    gap=text[previous["end"]:following["start"]].rstrip()
+    if gap.endswith((".", "!", "?")):
+        return "terminal"
+    if gap.endswith(";"):
+        return "semicolon"
+    if gap.endswith(",") or gap.endswith("--") or gap.endswith("—"):
+        return "intercalated"
+    return "uncertain"
+
+
 def resumed_views(text, parts):
     """Quote interiors in source order; preserve a comma or explicitly omit
     an intercalation-final comma. Never add a word, punctuation or whitespace.
@@ -71,7 +85,12 @@ def resumed_views(text, parts):
             chain.append(follow[0])
         if len(chain)<2:
             continue
+        boundaries=[interruption_boundary(text,chain[i-1],chain[i]) for i in range(1,len(chain))]
+        if any(b in {"terminal","uncertain"} for b in boundaries):
+            continue
         for drop in (False,True):
+            if drop and any(b!="intercalated" for b in boundaries):
+                continue
             spans=[]
             omitted=[]
             valid=True
@@ -97,6 +116,7 @@ def resumed_views(text, parts):
             yield {"id":turn["id"]+(":without_intercalation_comma" if drop else ":punctuation_preserved"),
                    "kind":"resumed_speech", "source_id":turn["id"],
                    "quote_ids":[q["id"] for q in chain],
+                   "interruption_boundaries":boundaries,
                    "omitted_intercalation_commas":omitted,**view}
 
 
@@ -242,6 +262,8 @@ def compose_dialogue(text, parts, whole, components, parse=None):
         while current["relation"]=="resumption_of_split_speech" and current.get("governor") in byid:
             nxt=byid[current["governor"]]
             if nxt["id"] in chain: raise ValueError("Cyclic resumption")
+            if interruption_boundary(text,nxt,current) in {"terminal","uncertain"}:
+                break
             chain.append(nxt["id"]); current=nxt
         tag=byid.get(current.get("governor"))
         if current["relation"]!="reported_content" or not tag or tag["function"]!="reporting_clause":

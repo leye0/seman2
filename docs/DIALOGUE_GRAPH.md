@@ -30,3 +30,6 @@ diagnostics, not semantic accuracy; manual speaker/dependency gold checks
 remain required. No reported success can change whole-unit coverage.
 
 Run: [dialogue graph workflow](../.github/workflows/erg-dialogue-graph.yml).
+
+
+A source sentence-final reporter blocks a resumed view or inherited speaker. Semicolon gaps permit only the punctuation-preserving view. A 20-case source-only speaker sample (fixed hash ordering) and seven selected split dependencies are recorded in `superparser/research/dialogue_graph_gold.json`; they measure correct, ambiguous and unresolved overt speaker candidates, plus native dependency endpoint recovery. These are small exploratory annotations, not an independent comprehensive semantic evaluation.

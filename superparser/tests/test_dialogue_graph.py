@@ -39,3 +39,19 @@ class DialogueGraphTests(unittest.TestCase):
         g=compose_dialogue(text,[p.to_dict() for p in unit.constituents],empty(text),[])
         self.assertEqual(g["attributions"],[])
         self.assertEqual(list(resumed_views(text,g["source_nodes"])),[])
+
+    def test_source_terminal_tag_does_not_join_quotes_or_propagate_speaker(self):
+        text="‘And now they are partners,’ said I. ‘Confound him!’"
+        unit,=analyze_paragraph(text)
+        ps=[p.to_dict() for p in unit.constituents]
+        self.assertEqual(list(resumed_views(text,ps)),[])
+        g=compose_dialogue(text,ps,empty(text),[],parse=empty)
+        self.assertEqual([a["quote_id"] for a in g["attributions"]],["q0"])
+
+    def test_semicolon_has_no_comma_deletion_view(self):
+        text='"Nay, mate," said he; "marooned."'
+        unit,=analyze_paragraph(text)
+        views=list(resumed_views(text,[p.to_dict() for p in unit.constituents]))
+        self.assertEqual(len(views),1)
+        self.assertEqual(views[0]["interruption_boundaries"],["semicolon"])
+        self.assertEqual(views[0]["omitted_intercalation_commas"],[])

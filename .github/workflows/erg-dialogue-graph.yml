@@ -10,6 +10,8 @@ on:
     branches: [main]
     paths:
       - 'superparser/scripts/audit_dialogue_graph.py'
+      - 'superparser/scripts/evaluate_dialogue_gold.py'
+      - 'superparser/research/dialogue_graph_gold.json'
       - 'superparser/seman_parser/dialogue_graph.py'
       - 'superparser/tests/test_dialogue_graph.py'
       - '.github/workflows/erg-dialogue-graph.yml'
