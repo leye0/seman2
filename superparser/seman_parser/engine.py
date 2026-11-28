@@ -5,6 +5,7 @@ from hashlib import sha256
 from pathlib import Path
 from time import perf_counter
 from .structural_preanalysis import analyze_paragraph
+from .dialogue_graph import compose_dialogue
 
 class Parser:
     """Own one ACE subprocess; use as a context manager.
@@ -98,9 +99,12 @@ class Parser:
                 a,b = part["start"],part["end"]
                 components.append({"component_id":part["id"],"unit_span":[a,b],
                                    "analysis":self.parse(text[a:b])})
-        return {"source_text":text,"source_constituents":list(constituents),
-                "whole":whole,"component_analyses":components,
-                "component_policy":"independent exact substrings, not a combined parse"}
+        report = {"source_text":text,"source_constituents":list(constituents),
+                  "whole":whole,"component_analyses":components,
+                  "component_policy":"independent exact substrings, not a combined parse"}
+        if parse_components:
+            report["dialogue_graph"] = compose_dialogue(text, constituents, whole, components, parse=self.parse)
+        return report
 
     def parse_paragraph(self, paragraph: str, *, parse_components=True):
         units = []

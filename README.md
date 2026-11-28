@@ -26,3 +26,7 @@ PYTHONPATH=superparser python -m scripts.benchmark_native_erg --ace /path/to/ace
 ```
 
 The exact Novel-1000 v3 source anchors and original cleaned editions are retained. See [migration audit](docs/ERG_MIGRATION.md) and [paired historical evaluation](docs/NATIVE_ERG_COMPARATIVE_AUDIT.md). The old parser, rules, recipes and obsolete experiments are recoverable at [pre-migration commit](https://github.com/leye0/seman2/tree/99595036d49d3756d080b9e798d94640d73aae4c), not active code. Future work is independent validation, robust discourse exposure and semantic enrichment, not rebuilding grammar rules.
+
+## Dialogue graph
+
+See [the source-linked MRS dialogue graph](docs/DIALOGUE_GRAPH.md). The default paragraph API exposes alternative native analyses, exact source maps, reporting and resumption links and additional ERG views of interrupted speech.
