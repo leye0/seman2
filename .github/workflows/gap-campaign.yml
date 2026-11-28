@@ -1,0 +1,140 @@
+name: Frozen 2000-unit gap discovery campaign
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/scripts/gap_campaign*.py'
+      - '.github/workflows/gap-campaign.yml'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gap-campaign-v1
+  cancel-in-progress: true
+env:
+  PYTHONPATH: superparser
+  PYTHONUNBUFFERED: '1'
+  OMP_NUM_THREADS: '2'
+  MKL_NUM_THREADS: '2'
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-erg-novel1000
+          run-id: '46152217691'
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/baseline
+      - name: Freeze sources
+        run: |
+          python -m pip install -r requirements-canonical.txt
+          python -m scripts.gap_campaign_sources --native "$RUNNER_TEMP/baseline/erg-full" --out "$RUNNER_TEMP/campaign"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gap-campaign-input
+          path: ${{ runner.temp }}/campaign/
+          retention-days: 30
+  providers:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [erg, hanlp, allen, lexical]
+    runs-on: ${{ matrix.mode == 'allen' && 'ubuntu-22.04' || 'ubuntu-latest' }}
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.mode == 'allen' && '3.10' || '3.12' }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: gap-campaign-input
+          path: ${{ runner.temp }}/campaign
+      - uses: actions/download-artifact@v4
+        if: matrix.mode == 'erg'
+        with:
+          name: native-erg-novel1000
+          run-id: '46152217691'
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/baseline
+      - name: Install native ERG
+        if: matrix.mode == 'erg'
+        run: |
+          python -m pip install -r requirements-canonical.txt
+          mkdir -p "$RUNNER_TEMP/erg"
+          cd "$RUNNER_TEMP/erg"
+          curl -fsSL --retry 3 https://sweaglesw.org/linguistics/ace/download/ace-0.9.34-x86-64.tar.gz -o ace.tar.gz
+          tar -xzf ace.tar.gz
+          echo "ACE_BIN=$(find "$PWD" -type f -name ace -executable -print -quit)" >> "$GITHUB_ENV"
+          curl -fsSL --retry 3 https://github.com/delph-in/erg/releases/download/2025/erg-2025-x86-64-0.9.34.dat.bz2 -o erg.dat.bz2
+          bunzip2 erg.dat.bz2
+          echo "ERG_GRAMMAR=$PWD/erg.dat" >> "$GITHUB_ENV"
+      - name: Install HanLP
+        if: matrix.mode == 'hanlp'
+        run: |
+          python -m pip install 'torch==2.8.0' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements-srl.txt -r requirements-canonical.txt
+      - name: Install isolated AllenNLP comparator
+        if: matrix.mode == 'allen'
+        run: |
+          python -m pip install 'pip<24.1'
+          python -m pip install 'torch==1.12.1+cpu' 'torchvision==0.13.1+cpu' --extra-index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'numpy<2' 'allennlp==2.10.1' 'allennlp-models==2.10.1' 'transformers==4.20.1' 'overrides==7.3.1' 'protobuf<4'
+          python -m pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.3.0/en_core_web_sm-3.3.0-py3-none-any.whl
+      - name: Install lexical and WSD runtime
+        if: matrix.mode == 'lexical'
+        run: |
+          echo "NLTK_DATA=$RUNNER_TEMP/nltk_data" >> "$GITHUB_ENV"
+          export NLTK_DATA="$RUNNER_TEMP/nltk_data"
+          python -m pip install 'torch==2.8.0' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements-wsd.txt -r requirements-canonical.txt 'spacy==3.8.7'
+          python -m pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+          python -m nltk.downloader -d "$NLTK_DATA" wordnet
+          python -m scripts.install_role_resources "$RUNNER_TEMP/role-data"
+      - name: Run provider
+        run: |
+          python -m scripts.gap_campaign_run --mode "${{ matrix.mode }}" --campaign "$RUNNER_TEMP/campaign" --out "$RUNNER_TEMP/result" --native "$RUNNER_TEMP/baseline/erg-full" --ace "${ACE_BIN:-/dev/null}" --grammar "${ERG_GRAMMAR:-/dev/null}" --role-data "$RUNNER_TEMP/role-data"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gap-${{ matrix.mode }}
+          path: ${{ runner.temp }}/result/
+          if-no-files-found: warn
+          retention-days: 30
+  report:
+    needs: providers
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: gap-campaign-input
+          path: ${{ runner.temp }}/campaign
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: gap-*
+          path: ${{ runner.temp }}/results
+      - run: python -m scripts.gap_campaign_report --campaign "$RUNNER_TEMP/campaign" --results "$RUNNER_TEMP/results" --out "$RUNNER_TEMP/report"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gap-campaign-report
+          path: ${{ runner.temp }}/report/
+          retention-days: 30
