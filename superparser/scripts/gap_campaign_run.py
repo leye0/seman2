@@ -4,7 +4,6 @@ import argparse,json,resource
 from collections import Counter,defaultdict
 from pathlib import Path
 from time import perf_counter
-from hashlib import file_digest
 from scripts.gap_campaign_sources import load_campaign,read_jsonl,write_jsonl,digest
 
 def write_summary(out,manifest,mode,rows,init,elapsed,extra):
@@ -18,6 +17,7 @@ def write_summary(out,manifest,mode,rows,init,elapsed,extra):
 def envelope(c,**payload):return {"id":c["id"],"cohort":c["cohort"],"source_sha256":c["source_sha256"],**payload}
 def native(a,cases,m):
     from seman_parser import Parser
+    from hashlib import file_digest
     old={x["case_id"]:x for x in read_jsonl(a.native/"cases.jsonl")}
     for path,expected in [(a.ace,"4e3726a9e017d1e3eaa99fb89b873dfeaac3c0c0bd1989927cef6c42421f57ca"),
         (a.grammar,"2968621bf88d50cffa9ec52c5edead7b16aabff573421f2f97c113e056ff5c82")]:
