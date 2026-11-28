@@ -14,7 +14,9 @@ def main():
     p.add_argument("--wiktionary-word",action="append",default=[],help="Explicit online Wiktionary lookup; repeat for more words")
     p.add_argument("--wsd",action="store_true",help="Run upstream contextual WSD on content-word tokens (requires local knowledge and WSD dependencies)")
     p.add_argument('--srl',action='store_true',help='Attach independent neural semantic role labels')
+    p.add_argument('--role-resources',metavar='DIRECTORY',help='Optional pinned VerbAtlas/SemLink local tables; requires --wsd')
     args=p.parse_args()
+    if args.role_resources and not args.wsd: p.error('--role-resources requires --wsd')
     text=args.text if args.text is not None else sys.stdin.read().rstrip("\r\n")
     with Parser(args.grammar,executable=args.ace) as parser:
         result=parser.parse_paragraph(text,parse_components=not args.whole_only)
@@ -24,6 +26,9 @@ def main():
     if args.wsd:
         from .wsd import WSD
         result["wsd"]=WSD().inspect(text,result["external_knowledge"]["tokens"])
+    if args.role_resources:
+        from .role_resources import RoleResources
+        result['role_resources']=RoleResources(args.role_resources).inspect_wsd(result['wsd'])
     if args.srl:
         from .srl import SRL
         result['srl']=SRL().inspect(text)

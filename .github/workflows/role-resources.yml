@@ -1,0 +1,42 @@
+name: Lightweight role resource audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/seman_parser/role_resources*'
+      - 'superparser/scripts/*role_resources.py'
+      - 'superparser/tests/test_role_resources.py'
+      - '.github/workflows/role-resources.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: contextual-wsd-audit
+          run-id: '46146508286'
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/wsd
+      - run: python -m unittest discover -s superparser/tests -p test_role_resources.py
+      - run: python -m scripts.install_role_resources "$RUNNER_TEMP/role-data"
+      - run: python -m scripts.audit_role_resources --data "$RUNNER_TEMP/role-data" --wsd "$RUNNER_TEMP/wsd" --out "$RUNNER_TEMP/role-audit"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lightweight-role-resource-audit
+          path: ${{ runner.temp }}/role-audit/
+          if-no-files-found: warn

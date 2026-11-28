@@ -1,0 +1,90 @@
+[
+  {
+    "name": "bn2wn.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/bn2wn.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "a898e17e7ee1e2abaa91ef7b5791c7906ed9eaa0",
+    "bytes": 358024
+  },
+  {
+    "name": "VA_bn2va.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_bn2va.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "cc8c6415c9d8ed47adbb0337af48c131bea3875d",
+    "bytes": 302954
+  },
+  {
+    "name": "VA_frame_info.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_frame_info.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "2be7c328e885c72f41f0a79ce94d4a44a5a88047",
+    "bytes": 69736
+  },
+  {
+    "name": "VA_frame_pas.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_frame_pas.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "30061e0ab48e9550d80f60c835fbe0883a7ca976",
+    "bytes": 18550
+  },
+  {
+    "name": "VA_bn2implicit.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_bn2implicit.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "b618ab694f98675d8583bee4bbd0c931a239e407",
+    "bytes": 33593
+  },
+  {
+    "name": "VA_bn2shadow.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_bn2shadow.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "3a363e56136b0816fb69d3f986cb61e7a2f3813f",
+    "bytes": 106252
+  },
+  {
+    "name": "pb2va.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/pb2va.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "46a40b22f1e0697de0741a4fe8a6482a948c25c5",
+    "bytes": 245113
+  },
+  {
+    "name": "VA_va2sp.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_va2sp.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "05072d3ed13660b9ac722146baa9428a392d7fda",
+    "bytes": 56452
+  },
+  {
+    "name": "VA_preference_info.tsv",
+    "url": "https://raw.githubusercontent.com/SapienzaNLP/nounatlas/8e0e7d41683eff548b53ffb3e02b71391fe95a45/resources/VerbAtlas/VA_preference_info.tsv",
+    "repository": "SapienzaNLP/nounatlas",
+    "revision": "8e0e7d41683eff548b53ffb3e02b71391fe95a45",
+    "git_blob_sha1": "90d97faa59307adfee64afe7a22ba3e3afe305b7",
+    "bytes": 13806
+  },
+  {
+    "name": "pb-vn2.json",
+    "url": "https://raw.githubusercontent.com/cu-clear/semlink/2636bf5a4ae9c93b669a1184a8aaae9ca21552d3/instances/pb-vn2.json",
+    "repository": "cu-clear/semlink",
+    "revision": "2636bf5a4ae9c93b669a1184a8aaae9ca21552d3",
+    "git_blob_sha1": "2d25e88789fffa3f73cb292e3b4ed87a79900a13",
+    "bytes": 312656
+  },
+  {
+    "name": "vn-fn2.json",
+    "url": "https://raw.githubusercontent.com/cu-clear/semlink/2636bf5a4ae9c93b669a1184a8aaae9ca21552d3/instances/vn-fn2.json",
+    "repository": "cu-clear/semlink",
+    "revision": "2636bf5a4ae9c93b669a1184a8aaae9ca21552d3",
+    "git_blob_sha1": "5e1f495f8d9bc204f918a606f7bf29c8a7062b5e",
+    "bytes": 67512
+  }
+]
