@@ -8,10 +8,18 @@ import argparse
 from collections import Counter, defaultdict
 from hashlib import sha256
 import json
+import re
 from pathlib import Path
 from seman_parser import Parser
 from scripts.novel_sources import EXPECTED_MANIFEST
-from scripts.evaluate_dialogue_gold import assess_option, locate
+from scripts.evaluate_dialogue_gold import assess_option
+
+def locate(text, needle, start=0, end=None):
+    end=len(text) if end is None else end
+    matches=list(re.finditer(r'(?<!\w)'+re.escape(needle)+r'(?!\w)', text[start:end]))
+    if len(matches)!=1: raise ValueError(f'Gold word anchor not unique: {needle} in {text[start:end]}')
+    return start+matches[0].start(), start+matches[0].end()
+
 from scripts.speaker_selection import POLICIES, speaker_options
 
 ROOT=Path(__file__).resolve().parents[1]
