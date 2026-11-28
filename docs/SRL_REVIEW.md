@@ -75,3 +75,5 @@ Independent architecture candidate AllenNLP SRL-BERT (official
 https://docs.allennlp.org/models/v2.10.1/models/structured_prediction/predictors/srl/
 uses a legacy runtime and a different predicate detection strategy. Evaluate
 in isolation if both HanLP models show failures; no replacement yet.
+
+The independent SRL-BERT run now executes in its own Python 3.9 environment, using the upstream predictor and identical external sample. Its official model card reports 86.49 OntoNotes test F1, with a different task setup from HanLP. The native predictor selects VERB/AUX tokens using spaCy; no new Seman2 predicate heuristics. HanLP pretokenized calls explicitly set `skip_tasks='tok*'` per https://hanlp.hankcs.com/docs/data_format.html.

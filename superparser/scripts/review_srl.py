@@ -17,7 +17,7 @@ UP_URL=f"https://raw.githubusercontent.com/UniversalPropositions/UP-1.0/{UP_REV}
 SPEECH_RETURN={"SRL-017","SRL-021"}
 
 def tokenized_report(model,text,tokens):
-    native=model.backend([tokens],tasks=["srl"])
+    native=model.backend([tokens],tasks=["srl"],skip_tasks="tok*")
     return project(text,tokens,native["srl"][0])
 
 def report_from_native(text,doc):
@@ -116,7 +116,7 @@ def main():
     with (args.out_dir/"external.jsonl").open("w") as out:
         for i in range(0,len(selected),8):
             batch=selected[i:i+8]
-            doc=model.backend([c["tokens"] for c in batch],tasks=["srl"])
+            doc=model.backend([c["tokens"] for c in batch],tasks=["srl"],skip_tasks="tok*")
             if len(doc["srl"])!=len(batch):raise ValueError("External cardinality mismatch")
             for c,frames in zip(batch,doc["srl"]):
                 report=project(" ".join(c["tokens"]),c["tokens"],frames)

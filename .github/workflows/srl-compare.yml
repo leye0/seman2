@@ -1,0 +1,41 @@
+name: Independent SRL-BERT comparator
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/scripts/compare_allennlp_srl.py'
+      - '.github/workflows/srl-compare.yml'
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install isolated legacy model runtime
+        run: |
+          python -m pip install 'pip<24.1'
+          python -m pip install 'torch==1.12.1+cpu' 'torchvision==0.13.1+cpu' --extra-index-url https://download.pytorch.org/whl/cpu
+          python -m pip install 'numpy<2' 'allennlp==2.10.1' 'allennlp-models==2.10.1' 'transformers==4.20.1' 'overrides==3.1.0' 'protobuf<4'
+          python -m spacy download en_core_web_sm
+      - name: Native independent comparator
+        run: python -m scripts.compare_allennlp_srl --out-dir "$RUNNER_TEMP/srl-compare"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: independent-srl-bert
+          path: ${{ runner.temp }}/srl-compare/
+          if-no-files-found: warn
+          retention-days: 30
