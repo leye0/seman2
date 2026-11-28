@@ -10,10 +10,19 @@ def main():
     p.add_argument("--grammar",required=True)
     p.add_argument("--text",help="One paragraph; otherwise read stdin")
     p.add_argument("--whole-only",action="store_true")
+    p.add_argument("--knowledge",action="store_true",help="Attach independent local lexical, POS and NER observations")
+    p.add_argument("--wiktionary-word",action="append",default=[],help="Explicit online Wiktionary lookup; repeat for more words")
     args=p.parse_args()
     text=args.text if args.text is not None else sys.stdin.read().rstrip("\r\n")
     with Parser(args.grammar,executable=args.ace) as parser:
         result=parser.parse_paragraph(text,parse_components=not args.whole_only)
+    if args.knowledge:
+        from .knowledge import Knowledge
+        result["external_knowledge"]=Knowledge().inspect(text)
+    if args.wiktionary_word:
+        from .knowledge import Wiktionary
+        wiki=Wiktionary()
+        result["wiktionary"]=[wiki.lookup(w) for w in args.wiktionary_word]
     print(json.dumps(result,ensure_ascii=False,indent=2,default=str))
 
 if __name__=="__main__": main()

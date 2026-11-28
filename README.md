@@ -30,3 +30,7 @@ The exact Novel-1000 v3 source anchors and original cleaned editions are retaine
 ## Dialogue graph
 
 See [the source-linked MRS dialogue graph](docs/DIALOGUE_GRAPH.md). The default paragraph API exposes alternative native analyses, exact source maps, reporting and resumption links and additional ERG views of interrupted speech.
+
+## Optional external linguistic knowledge
+
+See [independent knowledge providers](docs/EXTERNAL_KNOWLEDGE.md). WordNet, VerbNet, FrameNet, spaCy and explicitly requested Wiktionary data are exposed alongside ERG, with provenance and no new grammatical decisions.

@@ -1,0 +1,48 @@
+name: External linguistic knowledge inventory
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/seman_parser/knowledge.py'
+      - 'superparser/scripts/audit_knowledge.py'
+      - 'requirements-knowledge.txt'
+      - '.github/workflows/knowledge.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+      NLTK_DATA: ${{ runner.temp }}/nltk_data
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: erg-dialogue-graph-audit
+          run-id: '46094867467'
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/baseline
+      - name: Install existing NLP providers
+        run: |
+          python -m pip install -r requirements-knowledge.txt
+          python -m pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+          python -m nltk.downloader -d "$NLTK_DATA" wordnet verbnet3 framenet_v17
+      - name: Inventory native provider results on all dialogues
+        run: python -m scripts.audit_knowledge --baseline "$RUNNER_TEMP/baseline" --out-dir "$RUNNER_TEMP/knowledge" --wiktionary
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: linguistic-knowledge-inventory
+          path: ${{ runner.temp }}/knowledge/
+          if-no-files-found: warn
+          retention-days: 30

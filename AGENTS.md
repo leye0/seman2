@@ -7,3 +7,5 @@
 - Preserve the Novel-1000 v3 manifest and exact source anchors. Fail on source drift. Coverage is not correctness; opacity and resource failures remain explicit.
 - Enrichment from WordNet/VerbNet/FrameNet or historical lexical observations must be separate, provenance-bearing and validated against independent annotations; never silently rewrite source or native MRS.
 - Run retained source tests and native benchmark. Historical engine and experimental data are in Git history, not active grammar.
+
+- External linguistic providers are independent observations: no new handcrafted linguistic rules, lexical overrides, synonym substitution or candidate filtering without explicit approval. Evaluation examples must never become implementation rules.
