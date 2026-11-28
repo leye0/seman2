@@ -1,0 +1,58 @@
+name: Native neural SRL audit
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Published English ModernBERT checkpoint
+        type: choice
+        options: [large, base]
+        default: large
+  push:
+    branches: [main]
+    paths:
+      - 'superparser/seman_parser/srl.py'
+      - 'superparser/scripts/audit_srl.py'
+      - 'superparser/research/srl_targets_v1.json'
+      - 'superparser/tests/test_srl.py'
+      - 'requirements-srl.txt'
+      - '.github/workflows/srl.yml'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONPATH: superparser
+      PYTHONUNBUFFERED: '1'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: erg-dialogue-graph-audit
+          run-id: '46094867467'
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/baseline
+      - name: Install upstream SRL runtime
+        run: |
+          python -m pip install 'torch==2.8.0' --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements-srl.txt -r requirements-canonical.txt
+      - name: Adapter contract tests
+        run: python -m unittest discover -s superparser/tests -p test_srl.py
+      - name: Run native SRL on gold targets and 327 dialogues
+        run: python -m scripts.audit_srl --baseline "$RUNNER_TEMP/baseline" --out-dir "$RUNNER_TEMP/srl" --model "${{ inputs.model || 'large' }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-srl-audit
+          path: ${{ runner.temp }}/srl/
+          if-no-files-found: warn
+          retention-days: 30

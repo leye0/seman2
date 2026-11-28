@@ -13,6 +13,7 @@ def main():
     p.add_argument("--knowledge",action="store_true",help="Attach independent local lexical, POS and NER observations")
     p.add_argument("--wiktionary-word",action="append",default=[],help="Explicit online Wiktionary lookup; repeat for more words")
     p.add_argument("--wsd",action="store_true",help="Run upstream contextual WSD on content-word tokens (requires local knowledge and WSD dependencies)")
+    p.add_argument('--srl',action='store_true',help='Attach independent neural semantic role labels')
     args=p.parse_args()
     text=args.text if args.text is not None else sys.stdin.read().rstrip("\r\n")
     with Parser(args.grammar,executable=args.ace) as parser:
@@ -23,6 +24,9 @@ def main():
     if args.wsd:
         from .wsd import WSD
         result["wsd"]=WSD().inspect(text,result["external_knowledge"]["tokens"])
+    if args.srl:
+        from .srl import SRL
+        result['srl']=SRL().inspect(text)
     if args.wiktionary_word:
         from .knowledge import Wiktionary
         wiki=Wiktionary()

@@ -1,0 +1,552 @@
+[
+  {
+    "id": "SRL-001",
+    "family": "active",
+    "text": "Nora gave Felix a book yesterday.",
+    "targets": [
+      [
+        "gave",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "gave",
+        "ARG1",
+        "a book"
+      ],
+      [
+        "gave",
+        "ARG2",
+        "Felix"
+      ],
+      [
+        "gave",
+        "ARGM-TMP",
+        "yesterday"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-002",
+    "family": "passive",
+    "text": "The book was given to Felix by Nora.",
+    "targets": [
+      [
+        "given",
+        "ARG0",
+        "by Nora"
+      ],
+      [
+        "given",
+        "ARG1",
+        "The book"
+      ],
+      [
+        "given",
+        "ARG2",
+        "to Felix"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-003",
+    "family": "ditransitive",
+    "text": "The teacher sent the students a letter.",
+    "targets": [
+      [
+        "sent",
+        "ARG0",
+        "The teacher"
+      ],
+      [
+        "sent",
+        "ARG1",
+        "a letter"
+      ],
+      [
+        "sent",
+        "ARG2",
+        "the students"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-004",
+    "family": "negation",
+    "text": "Nora did not open the door.",
+    "targets": [
+      [
+        "open",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "open",
+        "ARG1",
+        "the door"
+      ],
+      [
+        "open",
+        "ARGM-NEG",
+        "not"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-005",
+    "family": "modal",
+    "text": "Felix might repair the clock tomorrow.",
+    "targets": [
+      [
+        "repair",
+        "ARG0",
+        "Felix"
+      ],
+      [
+        "repair",
+        "ARG1",
+        "the clock"
+      ],
+      [
+        "repair",
+        "ARGM-MOD",
+        "might"
+      ],
+      [
+        "repair",
+        "ARGM-TMP",
+        "tomorrow"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-006",
+    "family": "manner",
+    "text": "The child carefully opened the box.",
+    "targets": [
+      [
+        "opened",
+        "ARG0",
+        "The child"
+      ],
+      [
+        "opened",
+        "ARG1",
+        "the box"
+      ],
+      [
+        "opened",
+        "ARGM-MNR",
+        "carefully"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-007",
+    "family": "location",
+    "text": "Nora read the book in the library.",
+    "targets": [
+      [
+        "read",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "read",
+        "ARG1",
+        "the book"
+      ],
+      [
+        "read",
+        "ARGM-LOC",
+        "in the library"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-008",
+    "family": "instrument",
+    "text": "The carpenter cut the wood with a saw.",
+    "targets": [
+      [
+        "cut",
+        "ARG0",
+        "The carpenter"
+      ],
+      [
+        "cut",
+        "ARG1",
+        "the wood"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-009",
+    "family": "causation",
+    "text": "The wind broke the window.",
+    "targets": [
+      [
+        "broke",
+        "ARG0",
+        "The wind"
+      ],
+      [
+        "broke",
+        "ARG1",
+        "the window"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-010",
+    "family": "control",
+    "text": "Nora promised Felix to repair the clock.",
+    "targets": [
+      [
+        "promised",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "repair",
+        "ARG1",
+        "the clock"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-011",
+    "family": "coordination",
+    "text": "Nora opened the box and closed the lid.",
+    "targets": [
+      [
+        "opened",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "opened",
+        "ARG1",
+        "the box"
+      ],
+      [
+        "closed",
+        "ARG1",
+        "the lid"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-012",
+    "family": "relative",
+    "text": "The woman who repaired the clock smiled.",
+    "targets": [
+      [
+        "repaired",
+        "ARG1",
+        "the clock"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-013",
+    "family": "question",
+    "text": "Who opened the door?",
+    "targets": [
+      [
+        "opened",
+        "ARG0",
+        "Who"
+      ],
+      [
+        "opened",
+        "ARG1",
+        "the door"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-014",
+    "family": "imperative",
+    "text": "Close the door quietly.",
+    "targets": [
+      [
+        "Close",
+        "ARG1",
+        "the door"
+      ],
+      [
+        "Close",
+        "ARGM-MNR",
+        "quietly"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-015",
+    "family": "speech",
+    "text": "Nora told Felix the truth.",
+    "targets": [
+      [
+        "told",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "told",
+        "ARG1",
+        "the truth"
+      ],
+      [
+        "told",
+        "ARG2",
+        "Felix"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-016",
+    "family": "speech",
+    "text": "Nora said that Felix was ill.",
+    "targets": [
+      [
+        "said",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "said",
+        "ARG1",
+        "that Felix was ill"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-017",
+    "family": "speech",
+    "text": "‘What?’ returned Agnes.",
+    "targets": [
+      [
+        "returned",
+        "ARG0",
+        "Agnes"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-018",
+    "family": "speech",
+    "text": "‘Clara!’ said Mr. Murdstone sternly.",
+    "targets": [
+      [
+        "said",
+        "ARG0",
+        "Mr. Murdstone"
+      ],
+      [
+        "said",
+        "ARGM-MNR",
+        "sternly"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-019",
+    "family": "speech",
+    "text": "‘How very nice!’ exclaimed Miss Dartle.",
+    "targets": [
+      [
+        "exclaimed",
+        "ARG0",
+        "Miss Dartle"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-020",
+    "family": "speech",
+    "text": "‘Please stay,’ Nora murmured under her breath.",
+    "targets": [
+      [
+        "murmured",
+        "ARG0",
+        "Nora"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-021",
+    "family": "speech",
+    "text": "‘I beg, sir,’ he returned respectfully, ‘that you will be seated, and allow me to do this.’",
+    "targets": [
+      [
+        "returned",
+        "ARG0",
+        "he"
+      ],
+      [
+        "returned",
+        "ARGM-MNR",
+        "respectfully"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-022",
+    "family": "speech",
+    "text": "Felix asked Nora whether the train had left.",
+    "targets": [
+      [
+        "asked",
+        "ARG0",
+        "Felix"
+      ],
+      [
+        "asked",
+        "ARG2",
+        "Nora"
+      ],
+      [
+        "asked",
+        "ARG1",
+        "whether the train had left"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-023",
+    "family": "speech",
+    "text": "The child shouted the warning from the window.",
+    "targets": [
+      [
+        "shouted",
+        "ARG0",
+        "The child"
+      ],
+      [
+        "shouted",
+        "ARG1",
+        "the warning"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-024",
+    "family": "speech",
+    "text": "‘No!’ was shouted by Nora.",
+    "targets": [
+      [
+        "shouted",
+        "ARG0",
+        "by Nora"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-025",
+    "family": "polysemy",
+    "text": "Agnes returned the borrowed book to its owner.",
+    "targets": [
+      [
+        "returned",
+        "ARG0",
+        "Agnes"
+      ],
+      [
+        "returned",
+        "ARG1",
+        "the borrowed book"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-026",
+    "family": "motion",
+    "text": "Agnes returned to her village.",
+    "targets": [
+      [
+        "returned",
+        "ARG1",
+        "Agnes"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-027",
+    "family": "nested",
+    "text": "Nora said Felix believed the story.",
+    "targets": [
+      [
+        "said",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "believed",
+        "ARG0",
+        "Felix"
+      ],
+      [
+        "believed",
+        "ARG1",
+        "the story"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-028",
+    "family": "causal",
+    "text": "Nora left because the room was cold.",
+    "targets": [
+      [
+        "left",
+        "ARGM-CAU",
+        "because the room was cold"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-029",
+    "family": "temporal",
+    "text": "Before dinner, Felix washed the dishes.",
+    "targets": [
+      [
+        "washed",
+        "ARG0",
+        "Felix"
+      ],
+      [
+        "washed",
+        "ARG1",
+        "the dishes"
+      ],
+      [
+        "washed",
+        "ARGM-TMP",
+        "Before dinner"
+      ]
+    ]
+  },
+  {
+    "id": "SRL-030",
+    "family": "purpose",
+    "text": "Nora opened the window to cool the room.",
+    "targets": [
+      [
+        "opened",
+        "ARG0",
+        "Nora"
+      ],
+      [
+        "opened",
+        "ARG1",
+        "the window"
+      ],
+      [
+        "cool",
+        "ARG1",
+        "the room"
+      ]
+    ]
+  }
+]

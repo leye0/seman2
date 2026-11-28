@@ -38,3 +38,7 @@ See [independent knowledge providers](docs/EXTERNAL_KNOWLEDGE.md). WordNet, Verb
 ### Contextual WSD
 
 Optional [GlossBERT provider](docs/WSD.md), using WordNet and native upstream neural scores, not hand-written disambiguation rules.
+
+### Semantic role labeling
+
+Optional [HanLP ModernBERT SRL](docs/SRL.md) exposes native predicate-argument frames independently of ERG and GlossBERT.

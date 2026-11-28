@@ -1,0 +1,2 @@
+hanlp==2.1.5
+transformers==4.53.3
