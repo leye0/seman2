@@ -77,3 +77,32 @@ uses a legacy runtime and a different predicate detection strategy. Evaluate
 in isolation if both HanLP models show failures; no replacement yet.
 
 The independent SRL-BERT run now executes in its own Python 3.9 environment, using the upstream predictor and identical external sample. Its official model card reports 86.49 OntoNotes test F1, with a different task setup from HanLP. The native predictor selects VERB/AUX tokens using spaCy; no new Seman2 predicate heuristics. HanLP pretokenized calls explicitly set `skip_tasks='tok*'` per https://hanlp.hankcs.com/docs/data_format.html.
+
+## Measured outcome: run 46149251926
+
+Both ModernBERT models completed all five modes and the paired external sample.
+The exact target counts are invariant across inference modes: large 49/68,
+base 43/68. All 30 inputs have exact source alignment. Empty raw-input frame
+counts: large 5, base 7. Pretokenized input changes some frames but not exact
+recall. The failures are reproducible, not explained by batching or the scorer.
+
+External UP-EWT: 1,053 target relations on 200 passages, 1,088 eligible.
+Source SHA256 f511b4b39cf9525945fbb89660757b401d339d2deee805a36c3b4fc9ea2cd8b7.
+Large: 1,037 predicate-found, 890 labeled head hits. Base: 1,023 and 852.
+Pairwise native results (artifacts 15265745700 and 15265192031):
+
+| Sample | Both | Base only | Large only | Neither | Oracle union |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Diagnostic | 36 | 7 | 13 | 12 | 56/68 |
+| External | 812 | 40 | 78 | 123 | 930/1053 |
+
+Base independently recovers both roles of 'broke' in 'The wind broke the
+window', plus 'closed', 'repaired' and intransitive 'returned' targets
+missed by large. This shows complementarity; union is an oracle availability
+bound, not an actual ensemble accuracy or precision. No automatic selection
+or merged production analyses. The paired analysis is reproducible via
+`python -m scripts.compare_srl_overlap --base BASE_DIR --large LARGE_DIR --out overlap.json`.
+
+Independent AllenNLP initial run 46149251909 failed before inference because
+Ubuntu 26.04 does not provide Python 3.9 in setup-python. Comparator moved to
+Ubuntu 22.04, pinned Python 3.9.25 and the spaCy 3.3.0 model; still experimental.
